@@ -124,17 +124,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const ip = getClientIp(req);
-    const limit = checkAndIncrementLimit(ip, plan);
-
-    if (!limit.allowed) {
-      return NextResponse.json(
-        {
-          reply: `Daily AI limit reached for ${config.label}. Upgrade plan or try again tomorrow.`,
-        },
-        { status: 429 }
-      );
-    }
+    const limit = {
+  allowed: true,
+  remaining: 9999,
+};
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
