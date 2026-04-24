@@ -14,7 +14,7 @@ const PLAN_CONFIG: Record<
 > = {
   starter: {
     model: "gpt-5-nano",
-    dailyLimitPerIp: 10,
+    dailyLimitPerIp: 50,
     maxInputChars: 800,
     maxOutputTokens: 350,
     label: "Starter",
