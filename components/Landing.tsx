@@ -258,21 +258,140 @@ base.uk = {
   tour: "Дивитися продукт",
   problemEyebrow: "Проблема",
   problemTitle: "Більшості трейдерів бракує не інформації, а розуміння себе.",
+  problemText:
+    "Скріншоти, нотатки, watchlist-и та емоції розкидані по різних місцях. TraderMind AI збирає все в одну систему для виконання, аналізу та пошуку закономірностей.",
+  problems: [
+    ["Випадкові перемоги здаються навичкою", "Ти пам’ятаєш великі плюси, але не бачиш точні умови, через які вони спрацювали."],
+    ["Помилки повторюються тихо", "Пізні входи, revenge trades і слабкі виходи повертаються, бо їх ніхто не вимірює."],
+    ["Немає live-контексту ринку", "Журнал знає угоду, але не знає, що робили схожі гепери й холти цього ж дня."],
+  ],
+  beforeAfterTitle: "До / Після",
+  before: ["Ручні скріншоти", "Емоційні розбори", "Немає рейтингу патернів", "Немає контексту геперів і холтів"],
+  after: ["AI-аналіз угод", "Особиста бібліотека патернів", "Оцінка дисципліни", "Live-скрінер зі схожими прикладами"],
   coreEyebrow: "Платформа",
+  coreTitle: "Одна система для журналу, скрінера, AI-коучингу та розвитку трейдера.",
+  coreText: "TraderMind AI створений для активних трейдерів, проп-команд і менторів, яким потрібен не просто красивий журнал.",
   liveEyebrow: "Ринок у реальному часі",
+  liveTitle: "Скрінер геперів і холтів з AI-пошуком схожих ситуацій за день.",
+  liveText:
+    "Система стежить за геперами, холтами, відновленнями торгів, float, relative volume і momentum. Коли користувач завантажує скрін, AI шукає схожі ситуації цієї ж сесії.",
   agentsEyebrow: "AI-агенти",
+  agentsTitle: "Команда AI-агентів за спиною кожного трейдера.",
+  agentsText:
+    "Замість одного звичайного чат-бота TraderMind AI використовує спеціалізованих агентів для аналізу, ризику, ринкового контексту та поведінкового коучингу.",
   useCasesEyebrow: "Для кого",
+  useCasesTitle: "Для трейдерів, яким потрібна система, а не мотивація.",
   ctaTitle: "Отримати ранній доступ до TraderMind AI",
   ctaText: "Залиш email, і ми запросимо тебе в першу закриту beta.",
   ctaButton: "Стати в waitlist",
   footer: { pages: "Сторінки", modules: "Ключові модулі", contact: "Контакти", demo: "Демо продукту за запитом", text: "Створено, щоб перетворювати дані про угоди на повторювану перевагу." },
 };
 
+base.ru.product = {
+  eyebrow: "Продукт",
+  title: "Полная структура продукта: от первого входа до продвинутой аналитики.",
+  text: "Платформа задумана как серьёзная AI-native операционная система для эффективности трейдера, а не лёгкий журнал сделок.",
+  screens: [
+    ["Live Screener", "Скринер геперов, холтов, возобновлений, объёма, float и momentum-контекста в реальном времени.", "radar"],
+    ["Dashboard", "PnL, win rate, discipline score, лучшие сетапы, худшие ошибки и динамика результата.", "chart"],
+    ["Add Trade", "Быстрая форма сделки со скриншотами, заметками, тегами, контекстом рынка и эмоциями.", "target"],
+    ["Pattern Lab", "Лучшие паттерны, слабые места, expectancy-кластеры и разбор поведения.", "brain"],
+    ["AI Coach", "Проверки до входа, разбор после сделки и недельные coaching summaries.", "bot"],
+    ["Reports", "Дневные, недельные и месячные отчёты с экспортируемой аналитикой.", "money"],
+  ],
+  flowTitle: "Как это работает",
+  flow: [
+    ["01", "Записываешь сделку", "Фиксируешь сетап, тезис, риск, график, эмоции и соблюдение плана."],
+    ["02", "AI читает поведение", "Система группирует сделки и отделяет повторяемое преимущество от случайных побед."],
+    ["03", "Находишь свой edge", "Видишь лучшие сетапы, худшие привычки, сильные рыночные условия и discipline score."],
+    ["04", "Улучшаешься каждую неделю", "Используешь отчёты, pre-trade checks и AI-коучинг, чтобы улучшать исполнение."],
+  ],
+  aiDemoTitle: "OpenAI-коуч внутри продукта",
+  aiDemoText: "Живое приложение будет обращаться к защищённому серверному endpoint. Демо уже пробует /api/ai-coach и безопасно включает preview-режим.",
+  aiPlaceholder: "Спроси про сетап, ошибку или риск-план...",
+  aiButton: "Спросить AI-коуча",
+  aiReady: "Готово к подключению к /api/ai-coach",
+  aiLive: "Получен живой ответ от API.",
+  aiFallback: "Preview mode: backend endpoint пока не подключён, показан симулированный AI-ответ.",
+};
+
+base.ru.pricing = {
+  eyebrow: "Тарифы",
+  title: "Выбери план под свой уровень амбиций в трейдинге.",
+  text: "Начни просто, а затем открой глубокую AI-аналитику, разбор скриншотов, live matching и командные сценарии.",
+  most: "Самый популярный",
+  month: "/ месяц",
+  buy: "Купить план",
+  checkoutTitle: "Stripe-подписка уже подготовлена",
+  checkoutText: "Кнопки обращаются к /api/create-checkout-session. Подключим backend route — и включим живую оплату Stripe.",
+  checkoutFallback: "Preview mode: подключи backend route /api/create-checkout-session, чтобы включить живую оплату.",
+  plans: [
+    ["starter", "Starter", "$19", "Для трейдера, который строит стабильность", ["Безлимитный журнал сделок", "Базовый dashboard", "Базовые AI-разборы", "Теги паттернов", "Недельный отчёт"]],
+    ["pro", "Pro", "$49", "Для активного трейдера, которому нужен измеримый edge", ["Всё из Starter", "Продвинутый AI Pattern Engine", "Discipline score", "Разбор скриншотов", "Pre-trade AI Coach", "Live screener matching"]],
+    ["elite", "Elite", "$129", "Для менторов, проп-команд и серьёзных операторов", ["Всё из Pro", "Team dashboard", "Сравнение трейдеров", "Coach workspace", "White-label reports", "API-доступ"]],
+  ],
+  compareTitle: "Чем отличаются планы",
+  compareText: "Starter — чистая точка входа. Pro открывает настоящее AI-преимущество. Elite создан для команд и менторов.",
+};
+
+base.ru.team = {
+  eyebrow: "Команда",
+  title: "Создано трейдерами, инженерами и архитекторами эффективности.",
+  text: "Правдоподобная launch-история для премиального AI trading-продукта. Перед публичным запуском можно заменить имена на реальные.",
+  people: [
+    ["Max Volkov", "Founder & Product Lead", "Бывший оператор трейдинг-деска и product strategist. Создал TraderMind AI вокруг главной проблемы трейдеров: они неверно читают собственные привычки."],
+    ["Elena Markina", "Head of AI Systems", "ML-инженер, специализируется на decision systems, behavioral analytics и human-in-the-loop review flows."],
+    ["Andrii Kovalenko", "Quant Research Director", "Специализируется на сегментации сделок, expectancy models и превращении шумных данных исполнения в стабильные сигналы."],
+    ["Nika Sokol", "Behavior & Experience Design", "Проектирует coaching layer: reflection prompts, discipline scoring и workflows для реального улучшения."],
+  ],
+  storyTitle: "Почему эта история команды работает",
+  story: ["Трейдинговый контекст делает продукт правдоподобным.", "AI-экспертиза объясняет, почему это больше чем маркетинг.", "Quant research добавляет аналитическую глубину.", "Behavior design объясняет, почему трейдер реально улучшается."],
+  originTitle: "История появления",
+  origin: "TraderMind AI родился из простой проблемы: трейдеры собирают бесконечные скриншоты и заметки, но всё равно не видят закономерности своей реальной эффективности.",
+};
+
+base.uk.product = {
+  ...base.ru.product,
+  eyebrow: "Продукт",
+  title: "Повна структура продукту: від першого входу до просунутої аналітики.",
+  text: "Платформа задумана як серйозна AI-native операційна система для ефективності трейдера, а не легкий журнал угод.",
+  flowTitle: "Як це працює",
+  aiDemoTitle: "OpenAI-коуч усередині продукту",
+  aiPlaceholder: "Запитай про сетап, помилку або risk-plan...",
+  aiButton: "Запитати AI-коуча",
+};
+
+base.uk.pricing = {
+  ...base.ru.pricing,
+  eyebrow: "Тарифи",
+  title: "Обери план під свій рівень амбіцій у трейдингу.",
+  most: "Найпопулярніший",
+  month: "/ місяць",
+  buy: "Купити план",
+  checkoutTitle: "Stripe-підписка вже підготовлена",
+  compareTitle: "Чим відрізняються плани",
+};
+
+base.uk.team = {
+  ...base.ru.team,
+  eyebrow: "Команда",
+  title: "Створено трейдерами, інженерами та архітекторами ефективності.",
+  storyTitle: "Чому ця історія команди працює",
+  originTitle: "Історія появи",
+};
+
 function CardBox({ children, className = "" }) {
   return (
-    <div className={`rounded-[28px] border border-white/10 bg-white/[0.045] p-6 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white/[0.065] ${className}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 28, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ duration: 0.55, ease: "easeOut" }}
+      whileHover={{ y: -6, scale: 1.01 }}
+      className={`rounded-[28px] border border-white/10 bg-white/[0.045] p-6 backdrop-blur-xl transition duration-300 hover:bg-white/[0.065] hover:shadow-[0_24px_80px_rgba(99,102,241,.18)] ${className}`}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }
 
@@ -287,13 +406,19 @@ function ButtonX({ children, onClick, variant = "primary", disabled = false, cla
 
 function SectionTitle({ eyebrow, title, text }) {
   return (
-    <div className="max-w-3xl">
+    <motion.div
+      initial={{ opacity: 0, y: 26 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-90px" }}
+      transition={{ duration: 0.65, ease: "easeOut" }}
+      className="max-w-3xl"
+    >
       <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.2em] text-white/60">
         <Icon name="spark" className="h-4 w-4" /> {eyebrow}
       </div>
       <h2 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">{title}</h2>
       {text && <p className="mt-4 max-w-2xl text-base leading-7 text-white/65 md:text-lg">{text}</p>}
-    </div>
+    </motion.div>
   );
 }
 
