@@ -35,7 +35,7 @@ const PLAN_CONFIG: Record<
   },
 };
 
-const usageS:contentReference[oaicite:0]{index=0}etAt: number }>();
+const usageStore = new Map<string, { count: number; resetAt: number }>();
 
 function getClientIp(req: Request) {
   return (
@@ -46,7 +46,7 @@ function getClientIp(req: Request) {
 }
 
 function normalizePlan(planId: unknown): PlanId {
-  if (planId === "pro" || planId === "elite" || planId === "starter") {
+  if (planId === "starter" || planId === "pro" || planId === "elite") {
     return planId;
   }
 
