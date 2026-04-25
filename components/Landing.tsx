@@ -167,10 +167,10 @@ const dict = {
       most: "Most popular",
       month: "/ month",
       buy: "Buy plan",
-      checkoutEyebrow: "Payment",
-      checkoutTitle: "Stripe-ready subscription flow",
-      checkoutText: "Buttons call /api/create-checkout-session. Connect the backend route to enable live Stripe checkout.",
-      checkoutFallback: "Preview mode: connect backend route /api/create-checkout-session to enable live payment.",
+      checkoutEyebrow: "Crypto payment",
+      checkoutTitle: "USDT crypto checkout is ready",
+      checkoutText: "Pricing buttons create a secure NOWCrypto payments invoice. Clients can pay with USDT and other supported crypto assets.",
+      checkoutFallback: "Preview mode: add NOWCrypto payments API key to enable live crypto payments.",
       plans: [
         ["starter", "Starter", "$19", "For solo traders building consistency", ["Unlimited trade journal", "Core dashboard", "50 AI requests / month", "SkillEdge Core — basic trade intelligence", "Short AI trade reviews", "Pattern tagging", "Weekly summary"]],
         ["pro", "Pro", "$49", "For active traders who want a measurable edge", ["Everything in Starter", "500 AI requests / month", "SkillEdge Edge — advanced pattern intelligence", "Advanced trade and pattern review", "Discipline score", "Screenshot analysis", "Pre-trade AI coach", "Live screener matching"]],
@@ -288,10 +288,10 @@ const dict = {
       most: "Самый популярный",
       month: "/ месяц",
       buy: "Купить план",
-      checkoutEyebrow: "Оплата",
-      checkoutTitle: "Stripe-подписка уже подготовлена",
-      checkoutText: "Кнопки обращаются к /api/create-checkout-session. Подключим backend route — и включим живую оплату Stripe.",
-      checkoutFallback: "Preview mode: подключи backend route /api/create-checkout-session, чтобы включить живую оплату.",
+      checkoutEyebrow: "Крипто-оплата",
+      checkoutTitle: "USDT-оплата уже подготовлена",
+      checkoutText: "Кнопки создают защищённый счёт NOWCrypto payments. Клиент сможет оплатить подписку в USDT и других поддерживаемых криптоактивах.",
+      checkoutFallback: "Preview mode: добавь NOWCrypto payments API key, чтобы включить живую крипто-оплату.",
       plans: [["starter", "Старт", "$19", "Для трейдера, который строит стабильность", ["Безлимитный журнал сделок", "Базовый дашборд", "50 AI-запросов в месяц", "SkillEdge Core — базовый AI-анализ сделок", "Короткие AI-разборы сделок", "Теги паттернов", "Недельный отчёт"]], ["pro", "Про", "$49", "Для активного трейдера, которому нужен измеримый edge", ["Всё из тарифа Старт", "500 AI-запросов в месяц", "SkillEdge Edge — продвинутый AI-разбор и поиск паттернов", "Глубокий разбор сделок и паттернов", "Discipline score", "Разбор скриншотов", "Pre-trade AI-коуч", "Live-сопоставление через скринер"]], ["elite", "Элит", "$129", "Для менторов, проп-команд и серьёзных операторов", ["Всё из тарифа Про", "2 000 AI-запросов в месяц", "SkillEdge Elite — максимальный AI-уровень для команды и глубокого анализа", "Глубокие отчёты", "Командный дашборд", "Сравнение трейдеров", "Рабочее пространство коуча", "White-label отчёты", "Доступ к API"]]],
       compareEyebrow: "Сравнение тарифов",
       compareTitle: "Чем отличаются планы",
@@ -391,10 +391,10 @@ dict.uk = {
     most: "Найпопулярніший",
     month: "/ місяць",
     buy: "Купити план",
-    checkoutEyebrow: "Оплата",
-    checkoutTitle: "Stripe-підписка вже підготовлена",
-    checkoutText: "Кнопки звертаються до /api/create-checkout-session. Підключимо backend route — і ввімкнемо живу оплату Stripe.",
-    checkoutFallback: "Preview mode: підключи backend route /api/create-checkout-session, щоб увімкнути живу оплату.",
+    checkoutEyebrow: "Крипто-оплата",
+    checkoutTitle: "USDT-оплата вже підготовлена",
+    checkoutText: "Кнопки створюють захищений рахунок NOWCrypto payments. Клієнт зможе оплатити підписку в USDT та інших підтримуваних криптоактивах.",
+    checkoutFallback: "Preview mode: додай NOWCrypto payments API key, щоб увімкнути живу крипто-оплату.",
     plans: [["starter", "Старт", "$19", "Для трейдера, який будує стабільність", ["Безлімітний журнал угод", "Базовий дашборд", "50 AI-запитів на місяць", "SkillEdge Core — базовий AI-аналіз угод", "Короткі AI-розбори угод", "Теги патернів", "Тижневий звіт"]], ["pro", "Про", "$49", "Для активного трейдера, якому потрібен вимірюваний edge", ["Усе з тарифу Старт", "500 AI-запитів на місяць", "SkillEdge Edge — просунутий AI-розбір і пошук патернів", "Глибокий розбір угод і патернів", "Discipline score", "Розбір скріншотів", "Pre-trade AI-коуч", "Live-зіставлення через скрінер"]], ["elite", "Еліт", "$129", "Для менторів, проп-команд і серйозних операторів", ["Усе з тарифу Про", "2 000 AI-запитів на місяць", "SkillEdge Elite — максимальний AI-рівень для команди та глибокого аналізу", "Глибокі звіти", "Командний дашборд", "Порівняння трейдерів", "Робочий простір коуча", "White-label звіти", "Доступ до API"]]],
     compareEyebrow: "Порівняння тарифів",
     compareTitle: "Чим відрізняються плани",
@@ -512,10 +512,187 @@ function ProductPage({ t, aiInput, setAiInput, aiMessages, aiStatus, handleAiSub
 }
 
 function PricingPage({ t, handleCheckout, checkoutStatus }) {
+  const [billing, setBilling] = useState("monthly");
+
+  const isRu = t.lang === "RU";
+  const isUa = t.lang === "UA";
+
+  const priceMatrix = {
+    starter: { monthly: 49, halfyear: 249, yearly: 399 },
+    pro: { monthly: 99, halfyear: 499, yearly: 799 },
+    elite: { monthly: 149, halfyear: 749, yearly: 1249 },
+  };
+
+  const billingLabels = isUa
+    ? {
+        monthly: "1 місяць",
+        halfyear: "6 місяців",
+        yearly: "1 рік",
+        payCrypto: "Оплатити USDT",
+        cardSoon: "Оплата карткою — скоро",
+        periodMonthly: "/ місяць",
+        periodHalfyear: "/ 6 місяців",
+        periodYearly: "/ рік",
+      }
+    : isRu
+    ? {
+        monthly: "1 месяц",
+        halfyear: "6 месяцев",
+        yearly: "1 год",
+        payCrypto: "Оплатить USDT",
+        cardSoon: "Оплата картой — скоро",
+        periodMonthly: "/ месяц",
+        periodHalfyear: "/ 6 месяцев",
+        periodYearly: "/ год",
+      }
+    : {
+        monthly: "1 month",
+        halfyear: "6 months",
+        yearly: "1 year",
+        payCrypto: "Pay with USDT",
+        cardSoon: "Card payment — soon",
+        periodMonthly: "/ month",
+        periodHalfyear: "/ 6 months",
+        periodYearly: "/ year",
+      };
+
+  const periodLabel =
+    billing === "monthly"
+      ? billingLabels.periodMonthly
+      : billing === "halfyear"
+      ? billingLabels.periodHalfyear
+      : billingLabels.periodYearly;
+
+  const testimonials = isUa
+    ? [
+        ["+18% к якості виконання", "Після 4 тижнів регулярного розбору угод трейдери краще відсікають слабкі сетапи й рідше заходять імпульсивно."],
+        ["-32% повторюваних помилок", "AI-коуч виділяє revenge trades, пізні входи, порушення стопа та завеликий обсяг до того, як це стає звичкою."],
+        ["2.4x швидший розбір сесії", "Замість хаотичних скріншотів трейдер отримує структурований звіт за сетапами, ризиком і дисципліною."],
+      ]
+    : isRu
+    ? [
+        ["+18% к качеству исполнения", "После 4 недель регулярного разбора сделок трейдеры лучше отсекают слабые сетапы и реже входят импульсивно."],
+        ["-32% повторяющихся ошибок", "AI-коуч выделяет revenge trades, поздние входы, нарушения стопа и оверсайз до того, как это становится привычкой."],
+        ["2.4x быстрее разбор сессии", "Вместо хаотичных скриншотов трейдер получает структурированный отчёт по сетапам, риску и дисциплине."],
+      ]
+    : [
+        ["+18% execution quality", "After 4 weeks of structured reviews, traders filter weak setups better and enter less impulsively."],
+        ["-32% recurring mistakes", "The AI coach highlights revenge trades, late entries, stop violations and over-sizing before they become habits."],
+        ["2.4x faster session review", "Instead of scattered screenshots, traders get a structured report by setup, risk and discipline."],
+      ];
+
+  const testimonialTitle = isUa
+    ? "Що отримує трейдер після впровадження"
+    : isRu
+    ? "Что получает трейдер после внедрения"
+    : "What traders gain after implementation";
+
+  const testimonialEyebrow = isUa ? "Результати" : isRu ? "Результаты" : "Results";
+
   return (
     <div className="space-y-20 pt-8">
-      <section><SectionTitle eyebrow={t.pricing.eyebrow} title={t.pricing.title} text={t.pricing.text} /><div className="mt-10 grid gap-6 xl:grid-cols-3">{t.pricing.plans.map(([id, name, price, subtitle, features], idx) => <CardBox key={id} className={`h-full ${idx === 1 ? "border-indigo-300/35 bg-gradient-to-b from-indigo-500/15 to-white/[0.04]" : ""}`}>{idx === 1 && <div className="mb-5 inline-flex rounded-full border border-indigo-300/20 bg-indigo-300/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-indigo-100">{t.pricing.most}</div>}<div className="text-2xl font-semibold text-white">{name}</div><div className="mt-2 text-sm leading-7 text-white/55">{subtitle}</div><div className="mt-7 flex items-end gap-2"><div className="text-5xl font-semibold text-white">{price}</div><div className="pb-2 text-sm text-white/45">{t.pricing.month}</div></div><div className="mt-7 space-y-3">{features.map((f) => <div key={f} className="flex gap-3 text-sm text-white/70"><Icon name="check" className="text-emerald-300" />{f}</div>)}</div><ButtonX onClick={() => handleCheckout(id)} className="mt-8 w-full"><Icon name="money" className="mr-2 h-4 w-4" />{t.pricing.buy}</ButtonX></CardBox>)}</div></section>
-      <section className="grid gap-6 lg:grid-cols-2"><CardBox><div className="text-sm uppercase tracking-[0.2em] text-white/45">{t.pricing.checkoutEyebrow}</div><h3 className="mt-3 text-2xl font-semibold text-white">{t.pricing.checkoutTitle}</h3><p className="mt-3 text-sm leading-7 text-white/60">{t.pricing.checkoutText}</p><div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.03] p-4 text-sm text-white/70">{checkoutStatus || t.pricing.checkoutFallback}</div></CardBox><CardBox><div className="text-sm uppercase tracking-[0.2em] text-white/45">{t.pricing.compareEyebrow}</div><h3 className="mt-3 text-2xl font-semibold text-white">{t.pricing.compareTitle}</h3><p className="mt-3 text-sm leading-7 text-white/60">{t.pricing.compareText}</p><div className="mt-6 overflow-hidden rounded-3xl border border-white/10">{t.pricing.table.map((row, i) => <div key={i} className={`grid grid-cols-4 ${i === 0 ? "bg-white/5 text-white" : "border-t border-white/10 text-white/65"}`}>{row.map((c, j) => <div key={j} className="p-4 text-sm">{c}</div>)}</div>)}</div></CardBox></section>
+      <section>
+        <SectionTitle eyebrow={t.pricing.eyebrow} title={t.pricing.title} text={t.pricing.text} />
+
+        <div className="mt-8 inline-flex flex-wrap gap-2 rounded-full border border-white/10 bg-white/[0.04] p-2">
+          {[
+            ["monthly", billingLabels.monthly],
+            ["halfyear", billingLabels.halfyear],
+            ["yearly", billingLabels.yearly],
+          ].map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setBilling(key)}
+              className={`rounded-full px-5 py-2 text-sm transition ${
+                billing === key ? "bg-white text-black" : "text-white/65 hover:bg-white/10 hover:text-white"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-10 grid gap-6 xl:grid-cols-3">
+          {t.pricing.plans.map(([id, name, _price, subtitle, features], idx) => {
+            const currentPrice = priceMatrix[id]?.[billing] || 0;
+
+            return (
+              <CardBox key={id} className={`h-full ${idx === 1 ? "border-indigo-300/35 bg-gradient-to-b from-indigo-500/15 to-white/[0.04]" : ""}`}>
+                {idx === 1 && (
+                  <div className="mb-5 inline-flex rounded-full border border-indigo-300/20 bg-indigo-300/10 px-3 py-1 text-xs uppercase tracking-[0.2em] text-indigo-100">
+                    {t.pricing.most}
+                  </div>
+                )}
+
+                <div className="text-2xl font-semibold text-white">{name}</div>
+                <div className="mt-2 text-sm leading-7 text-white/55">{subtitle}</div>
+
+                <div className="mt-7 flex items-end gap-2">
+                  <div className="text-5xl font-semibold text-white">${currentPrice}</div>
+                  <div className="pb-2 text-sm text-white/45">{periodLabel}</div>
+                </div>
+
+                <div className="mt-7 space-y-3">
+                  {features.map((f) => (
+                    <div key={f} className="flex gap-3 text-sm text-white/70">
+                      <Icon name="check" className="text-emerald-300" />
+                      {f}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 grid gap-3">
+                  <ButtonX onClick={() => handleCheckout(id, billing)} className="w-full">
+                    <Icon name="money" className="mr-2 h-4 w-4" />
+                    {billingLabels.payCrypto}
+                  </ButtonX>
+                  <button
+                    disabled
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-medium text-white/35"
+                  >
+                    {billingLabels.cardSoon}
+                  </button>
+                </div>
+              </CardBox>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-2">
+        <CardBox>
+          <div className="text-sm uppercase tracking-[0.2em] text-white/45">{testimonialEyebrow}</div>
+          <h3 className="mt-3 text-2xl font-semibold text-white">{testimonialTitle}</h3>
+          <div className="mt-6 space-y-4">
+            {testimonials.map(([result, text]) => (
+              <div key={result} className="rounded-3xl border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-lg font-semibold text-emerald-300">{result}</div>
+                <p className="mt-2 text-sm leading-7 text-white/60">{text}</p>
+              </div>
+            ))}
+          </div>
+          {checkoutStatus && (
+            <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.03] p-4 text-sm text-white/70">
+              {checkoutStatus}
+            </div>
+          )}
+        </CardBox>
+
+        <CardBox>
+          <div className="text-sm uppercase tracking-[0.2em] text-white/45">{t.pricing.compareEyebrow}</div>
+          <h3 className="mt-3 text-2xl font-semibold text-white">{t.pricing.compareTitle}</h3>
+          <p className="mt-3 text-sm leading-7 text-white/60">{t.pricing.compareText}</p>
+          <div className="mt-6 overflow-hidden rounded-3xl border border-white/10">
+            {t.pricing.table.map((row, i) => (
+              <div key={i} className={`grid grid-cols-4 ${i === 0 ? "bg-white/5 text-white" : "border-t border-white/10 text-white/65"}`}>
+                {row.map((c, j) => (
+                  <div key={j} className="p-4 text-sm">{c}</div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </CardBox>
+      </section>
     </div>
   );
 }
@@ -539,37 +716,37 @@ export default function Landing() {
   const t = dict[language] || dict.en;
   const cycle = () => setLanguage((p) => (p === "en" ? "ru" : p === "ru" ? "uk" : "en"));
 
-  const handleCheckout = async (id) => {
-  try {
-    setCheckoutStatus("Creating crypto payment invoice...");
+  const handleCheckout = async (id, billingPeriod = "monthly") => {
+    try {
+      setCheckoutStatus("Creating crypto payment invoice...");
 
-    const r = await fetch("/api/create-crypto-payment", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ planId: id }),
-    });
+      const r = await fetch("/api/create-crypto-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId: id, billingPeriod }),
+      });
 
-    const d = await r.json();
+      const d = await r.json();
 
-    if (!r.ok) {
-      throw new Error(d?.error || "Crypto payment error");
+      if (!r.ok) {
+        throw new Error(d?.error || "Crypto payment error");
+      }
+
+      if (d?.url) {
+        window.location.href = d.url;
+        return;
+      }
+
+      setCheckoutStatus("Crypto payment invoice created, but payment URL was not returned.");
+    } catch (e) {
+      const message =
+        e instanceof Error
+          ? e.message
+          : "Crypto payment is not available right now.";
+
+      setCheckoutStatus(message);
     }
-
-    if (d?.url) {
-      window.location.href = d.url;
-      return;
-    }
-
-    setCheckoutStatus("Crypto payment invoice created, but payment URL was not returned.");
-  } catch (e) {
-    const message =
-      e instanceof Error
-        ? e.message
-        : "Crypto payment is not available right now.";
-
-    setCheckoutStatus(message);
-  }
-};
+  };
 
   const handleAiSubmit = async () => {
     const prompt = aiInput.trim();
@@ -611,7 +788,7 @@ export default function Landing() {
       <div className="fixed inset-0 -z-10 bg-[linear-gradient(rgba(255,255,255,.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.03)_1px,transparent_1px)] bg-[size:42px_42px] opacity-25" />
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070b16]/70 backdrop-blur-xl"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8"><button onClick={() => setActive("home")} className="flex items-center gap-3"><div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5"><Icon name="brain" className="h-6 w-6" /></div><div><div className="text-lg font-semibold">SkillEdge AI</div><div className="text-xs uppercase tracking-[0.2em] text-white/45">{t.brandTag}</div></div></button><nav className="hidden items-center gap-2 md:flex">{navKeys.map((k) => <button key={k} onClick={() => setActive(k)} className={`rounded-full px-4 py-2 text-sm transition ${active === k ? "bg-white text-black" : "text-white/65 hover:bg-white/5 hover:text-white"}`}>{t.nav[k]}</button>)}</nav><div className="hidden items-center gap-3 md:flex"><button onClick={cycle} className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"><Icon name="globe" className="mr-2 h-4 w-4" />{t.lang}</button><ButtonX>{t.requestDemo}</ButtonX></div><button onClick={() => setMenuOpen((v) => !v)} className="md:hidden"><Icon name={menuOpen ? "close" : "menu"} className="h-6 w-6" /></button></div><AnimatePresence>{menuOpen && <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="border-t border-white/10 bg-[#070b16]/95 px-4 pb-4 md:hidden"><div className="flex flex-col gap-2 pt-4"><button onClick={cycle} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75">{t.switchLanguage}: {t.lang}</button>{navKeys.map((k) => <button key={k} onClick={() => { setActive(k); setMenuOpen(false); }} className={`rounded-2xl px-4 py-3 text-left text-sm ${active === k ? "bg-white text-black" : "bg-white/[0.04] text-white/75"}`}>{t.nav[k]}</button>)}</div></motion.div>}</AnimatePresence></header>
       <main className="mx-auto max-w-7xl px-4 pb-24 md:px-8">{page}</main>
-      <footer className="border-t border-white/10 bg-white/[0.02]"><div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-[1.1fr_.9fr] md:px-8"><div><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5"><Icon name="brain" className="h-6 w-6" /></div><div><div className="font-semibold">SkillEdge AI</div><div className="text-sm text-white/45">{t.footer.text}</div></div></div></div><div className="grid gap-6 sm:grid-cols-3"><div><div className="text-sm font-medium">{t.footer.pages}</div><div className="mt-3 space-y-2 text-sm text-white/55">{navKeys.map((k) => <button key={k} onClick={() => setActive(k)} className="block hover:text-white">{t.nav[k]}</button>)}</div></div><div><div className="text-sm font-medium">{t.footer.modules}</div><div className="mt-3 space-y-2 text-sm text-white/55"><div>{t.footer.module1}</div><div>{t.footer.module2}</div><div>{t.footer.module3}</div><div>{t.footer.module4}</div></div></div><div><div className="text-sm font-medium">{t.footer.contact}</div><div className="mt-3 space-y-2 text-sm text-white/55"><div>hello@upyskills.site</div><div>Dubai / Warsaw / Kyiv</div><div>{t.footer.demo}</div></div></div></div></div></footer>
+      <footer className="border-t border-white/10 bg-white/[0.02]"><div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 md:grid-cols-[1.1fr_.9fr] md:px-8"><div><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/5"><Icon name="brain" className="h-6 w-6" /></div><div><div className="font-semibold">SkillEdge AI</div><div className="text-sm text-white/45">{t.footer.text}</div></div></div></div><div className="grid gap-6 sm:grid-cols-3"><div><div className="text-sm font-medium">{t.footer.pages}</div><div className="mt-3 space-y-2 text-sm text-white/55">{navKeys.map((k) => <button key={k} onClick={() => setActive(k)} className="block hover:text-white">{t.nav[k]}</button>)}</div></div><div><div className="text-sm font-medium">{t.footer.modules}</div><div className="mt-3 space-y-2 text-sm text-white/55"><div>{t.footer.module1}</div><div>{t.footer.module2}</div><div>{t.footer.module3}</div><div>{t.footer.module4}</div></div></div><div><div className="text-sm font-medium">{t.footer.contact}</div><div className="mt-3 space-y-2 text-sm text-white/55"><div>support@upyourskills.site</div><div>Dubai / Warsaw / Kyiv</div><div>{t.footer.demo}</div></div></div></div></div></footer>
     </div>
   );
 }

@@ -1,26 +1,45 @@
 import { NextResponse } from "next/server";
 
 type PlanId = "starter" | "pro" | "elite";
+type BillingPeriod = "monthly" | "halfyear" | "yearly";
 
 const PLANS: Record<
   PlanId,
   {
     name: string;
-    amount: number;
+    prices: Record<BillingPeriod, number>;
   }
 > = {
   starter: {
     name: "SkillEdge AI Starter",
-    amount: 19,
+    prices: {
+      monthly: 49,
+      halfyear: 249,
+      yearly: 399,
+    },
   },
   pro: {
     name: "SkillEdge AI Pro",
-    amount: 49,
+    prices: {
+      monthly: 99,
+      halfyear: 499,
+      yearly: 799,
+    },
   },
   elite: {
     name: "SkillEdge AI Elite",
-    amount: 129,
+    prices: {
+      monthly: 149,
+      halfyear: 749,
+      yearly: 1249,
+    },
   },
+};
+
+const PERIOD_LABELS: Record<BillingPeriod, string> = {
+  monthly: "1 month",
+  halfyear: "6 months",
+  yearly: "1 year",
 };
 
 function normalizePlan(planId: unknown): PlanId {
@@ -29,6 +48,14 @@ function normalizePlan(planId: unknown): PlanId {
   }
 
   return "starter";
+}
+
+function normalizeBillingPeriod(period: unknown): BillingPeriod {
+  if (period === "monthly" || period === "halfyear" || period === "yearly") {
+    return period;
+  }
+
+  return "monthly";
 }
 
 export async function POST(req: Request) {
@@ -45,13 +72,17 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
+
     const planId = normalizePlan(body?.planId);
+    const billingPeriod = normalizeBillingPeriod(body?.billingPeriod);
+
     const plan = PLANS[planId];
+    const amount = plan.prices[billingPeriod];
 
     const siteUrl =
       process.env.NEXT_PUBLIC_SITE_URL || "https://www.upyourskills.site";
 
-    const orderId = `skilledge_${planId}_${Date.now()}`;
+    const orderId = `skilledge_${planId}_${billingPeriod}_${Date.now()}`;
 
     const response = await fetch("https://api.nowpayments.io/v1/invoice", {
       method: "POST",
@@ -60,13 +91,13 @@ export async function POST(req: Request) {
         "x-api-key": apiKey,
       },
       body: JSON.stringify({
-        price_amount: plan.amount,
+        price_amount: amount,
         price_currency: "usd",
         order_id: orderId,
-        order_description: `${plan.name} monthly subscription`,
+        order_description: `${plan.name} subscription — ${PERIOD_LABELS[billingPeriod]}`,
         ipn_callback_url: `${siteUrl}/api/nowpayments-webhook`,
-        success_url: `${siteUrl}?payment=success&plan=${planId}`,
-        cancel_url: `${siteUrl}?payment=cancelled&plan=${planId}`,
+        success_url: `${siteUrl}?payment=success&plan=${planId}&period=${billingPeriod}`,
+        cancel_url: `${siteUrl}?payment=cancelled&plan=${planId}&period=${billingPeriod}`,
       }),
     });
 
@@ -87,6 +118,8 @@ export async function POST(req: Request) {
       invoiceId: data.id,
       orderId,
       planId,
+      billingPeriod,
+      amount,
     });
   } catch (error) {
     const message =
