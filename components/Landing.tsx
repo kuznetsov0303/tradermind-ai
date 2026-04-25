@@ -540,15 +540,36 @@ export default function Landing() {
   const cycle = () => setLanguage((p) => (p === "en" ? "ru" : p === "ru" ? "uk" : "en"));
 
   const handleCheckout = async (id) => {
-    try {
-      const r = await fetch("/api/create-checkout-session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ planId: id }) });
-      if (!r.ok) throw new Error("no api");
-      const d = await r.json();
-      setCheckoutStatus(d?.url || "Checkout session created");
-    } catch (e) {
-      setCheckoutStatus(t.pricing.checkoutFallback);
+  try {
+    setCheckoutStatus("Creating crypto payment invoice...");
+
+    const r = await fetch("/api/create-crypto-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ planId: id }),
+    });
+
+    const d = await r.json();
+
+    if (!r.ok) {
+      throw new Error(d?.error || "Crypto payment error");
     }
-  };
+
+    if (d?.url) {
+      window.location.href = d.url;
+      return;
+    }
+
+    setCheckoutStatus("Crypto payment invoice created, but payment URL was not returned.");
+  } catch (e) {
+    const message =
+      e instanceof Error
+        ? e.message
+        : "Crypto payment is not available right now.";
+
+    setCheckoutStatus(message);
+  }
+};
 
   const handleAiSubmit = async () => {
     const prompt = aiInput.trim();
