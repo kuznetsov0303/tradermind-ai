@@ -3,6 +3,7 @@
 
 import React, { useMemo, useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { supabase } from "@/lib/supabaseClient";
 
 const navKeys = ["home", "product", "pricing", "team"];
 
@@ -717,36 +718,49 @@ export default function Landing() {
   const cycle = () => setLanguage((p) => (p === "en" ? "ru" : p === "ru" ? "uk" : "en"));
 
   const handleCheckout = async (id, billingPeriod = "monthly") => {
-    try {
-      setCheckoutStatus("Creating crypto payment invoice...");
+  try {
+    setCheckoutStatus("Checking your account...");
 
-      const r = await fetch("/api/create-crypto-payment", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: id, billingPeriod }),
-      });
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
 
-      const d = await r.json();
-
-      if (!r.ok) {
-        throw new Error(d?.error || "Crypto payment error");
-      }
-
-      if (d?.url) {
-        window.location.href = d.url;
-        return;
-      }
-
-      setCheckoutStatus("Crypto payment invoice created, but payment URL was not returned.");
-    } catch (e) {
-      const message =
-        e instanceof Error
-          ? e.message
-          : "Crypto payment is not available right now.";
-
-      setCheckoutStatus(message);
+    if (!token) {
+      window.location.href = `/login?next=pricing&plan=${id}&period=${billingPeriod}`;
+      return;
     }
-  };
+
+    setCheckoutStatus("Creating crypto payment invoice...");
+
+    const r = await fetch("/api/create-crypto-payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ planId: id, billingPeriod }),
+    });
+
+    const d = await r.json();
+
+    if (!r.ok) {
+      throw new Error(d?.error || "Crypto payment error");
+    }
+
+    if (d?.url) {
+      window.location.href = d.url;
+      return;
+    }
+
+    setCheckoutStatus("Crypto payment invoice created, but payment URL was not returned.");
+  } catch (e) {
+    const message =
+      e instanceof Error
+        ? e.message
+        : "Crypto payment is not available right now.";
+
+    setCheckoutStatus(message);
+  }
+};
 
   const handleAiSubmit = async () => {
     const prompt = aiInput.trim();
