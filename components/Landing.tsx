@@ -55,6 +55,8 @@ const dict = {
       eyebrow: "Pricing",
       title: "Choose the plan that matches your trading ambition.",
       text: "Start simple, then unlock deeper AI analytics, screenshot review, live matching and team workflows.",
+      demoNote:
+  "By clicking Request demo, you get 15-minute access to the Pro plan for $5 with 10 AI requests to preview the dashboard and test basic features.",
       most: "Most popular",
       month: "/ month",
       buy: "Buy plan",
@@ -221,6 +223,8 @@ const dict = {
       eyebrow: "Тарифы",
       title: "Выбери план под свой уровень амбиций в трейдинге.",
       text: "Начни просто, затем открой глубокую AI-аналитику, разбор скриншотов, live-сопоставление и командные сценарии.",
+      demoNote:
+  "Натискаючи «Запросити демо», ви за $5 отримуєте доступ на 15 хвилин до тарифу Pro з 10 AI-запитами для перегляду кабінету та тесту функцій тарифу.",
       most: "Самый популярный",
       month: "/ месяц",
       buy: "Купить план",
@@ -387,6 +391,8 @@ const dict = {
       eyebrow: "Тарифи",
       title: "Обери план під свій рівень амбіцій у трейдингу.",
       text: "Почни просто, а потім відкрий глибоку AI-аналітику, розбір скриншотів, live-зіставлення й командні сценарії.",
+      demoNote:
+  "Натискаючи «Запросити демо», ви за $2 отримуєте доступ на 5 хвилин до базового тарифу для перегляду кабінету та тесту базових функцій.",
       most: "Найпопулярніший",
       month: "/ місяць",
       buy: "Купити план",
@@ -738,7 +744,9 @@ closeAuthModal();
     {t.lang}
   </button>
 
-  <ButtonX onClick={() => setActive("product")}>{t.requestDemo}</ButtonX>
+  <ButtonX onClick={() => handleCheckout("demo", "monthly")}>
+  {t.requestDemo}
+</ButtonX>
 
   {currentUserEmail ? (
     <>
@@ -1041,6 +1049,10 @@ function PricingPage({
           title={t.pricing.title}
           text={t.pricing.text}
         />
+        <div className="mt-6 rounded-3xl border border-emerald-300/20 bg-emerald-300/10 p-5 text-sm leading-7 text-emerald-50/80">
+  <strong className="text-white">Demo access:</strong>{" "}
+  {t.pricing.demoNote}
+</div>
 
         <div className="mt-8 inline-flex flex-wrap gap-2 rounded-full border border-white/10 bg-white/[0.04] p-2">
           {[

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 type PlanId = "starter" | "pro" | "elite";
+type PurchaseId = PlanId | "demo";
 type BillingPeriod = "monthly" | "halfyear" | "yearly";
 
 const PLANS: Record<
@@ -43,8 +44,13 @@ const PERIOD_LABELS: Record<BillingPeriod, string> = {
   yearly: "1 year",
 };
 
-function normalizePlan(planId: unknown): PlanId {
-  if (planId === "starter" || planId === "pro" || planId === "elite") {
+function normalizePurchase(planId: unknown): PurchaseId {
+  if (
+    planId === "starter" ||
+    planId === "pro" ||
+    planId === "elite" ||
+    planId === "demo"
+  ) {
     return planId;
   }
 
@@ -61,7 +67,6 @@ function normalizeBillingPeriod(period: unknown): BillingPeriod {
 
 export async function POST(req: Request) {
   try {
-    
     const apiKey = process.env.NOWPAYMENTS_API_KEY;
 
     if (!apiKey) {
@@ -98,16 +103,26 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const planId = normalizePlan(body?.planId);
+    const purchaseId = normalizePurchase(body?.planId);
+    const isDemo = purchaseId === "demo";
+
+    const planId: PlanId = isDemo ? "pro" : purchaseId;
     const billingPeriod = normalizeBillingPeriod(body?.billingPeriod);
 
     const plan = PLANS[planId];
-    const amount = plan.prices[billingPeriod];
+
+    const amount = isDemo ? 5 : plan.prices[billingPeriod];
 
     const siteUrl =
       process.env.NEXT_PUBLIC_SITE_URL || "https://www.upyourskills.site";
 
-    const orderId = `skilledge_${planId}_${billingPeriod}_${Date.now()}`;
+    const orderId = isDemo
+  ? `skilledge_demo_pro_15min_${Date.now()}`
+  : `skilledge_${planId}_${billingPeriod}_${Date.now()}`;
+
+    const orderDescription = isDemo
+  ? "SkillEdge AI Demo access — $5 — Pro plan — 15 minutes — 10 AI requests — USDT TRC20 payment"
+  : `${plan.name} subscription — ${PERIOD_LABELS[billingPeriod]} — USDT TRC20 payment`;
 
     const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
       id: user.id,
@@ -119,14 +134,6 @@ export async function POST(req: Request) {
         {
           error: "Failed to create user profile",
           details: profileError.message,
-          debug: {
-            userId: user.id,
-            email: user.email,
-            serviceKeyStart: process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 20),
-            serviceKeyHasServiceRole:
-              process.env.SUPABASE_SERVICE_ROLE_KEY?.includes("service_role"),
-            supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-          },
         },
         { status: 500 }
       );
@@ -143,7 +150,7 @@ export async function POST(req: Request) {
         price_currency: "usd",
         pay_currency: "usdttrc20",
         order_id: orderId,
-        order_description: `${plan.name} subscription — ${PERIOD_LABELS[billingPeriod]} — USDT TRC20 payment`,
+        order_description: orderDescription,
         ipn_callback_url: `${siteUrl}/api/nowpayments-webhook`,
         success_url: `${siteUrl}/dashboard?payment=success&plan=${planId}&period=${billingPeriod}`,
         cancel_url: `${siteUrl}/dashboard?payment=cancelled&plan=${planId}&period=${billingPeriod}`,
@@ -175,6 +182,7 @@ export async function POST(req: Request) {
         plan_id: planId,
         billing_period: billingPeriod,
         payment_status: "created",
+        is_demo: isDemo,
         raw_payload: data,
       });
 
@@ -185,14 +193,6 @@ export async function POST(req: Request) {
             "Payment invoice was created, but failed to save payment in database",
           details: paymentInsertError.message,
           nowpayments: data,
-          debug: {
-            userId: user.id,
-            email: user.email,
-            serviceKeyStart: process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 20),
-            serviceKeyHasServiceRole:
-              process.env.SUPABASE_SERVICE_ROLE_KEY?.includes("service_role"),
-            supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-          },
         },
         { status: 500 }
       );
@@ -205,6 +205,7 @@ export async function POST(req: Request) {
       planId,
       billingPeriod,
       amount,
+      isDemo,
     });
   } catch (error) {
     const message =

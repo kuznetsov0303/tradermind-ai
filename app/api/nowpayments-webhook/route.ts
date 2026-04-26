@@ -64,8 +64,13 @@ function verifyNowPaymentsSignature(rawBody: string, signature: string | null) {
   }
 }
 
-function getExpiresAt(period: BillingPeriod) {
+function getExpiresAt(period: BillingPeriod, isDemo = false) {
   const now = new Date();
+
+  if (isDemo) {
+  now.setMinutes(now.getMinutes() + 15);
+  return now.toISOString();
+}
 
   if (period === "monthly") {
     now.setMonth(now.getMonth() + 1);
@@ -178,9 +183,11 @@ export async function POST(req: Request) {
     }
 
     const planId = payment.plan_id;
-    const billingPeriod = payment.billing_period as BillingPeriod;
-    const expiresAt = getExpiresAt(billingPeriod);
-    const aiMonthlyLimit = getAiLimit(planId);
+const billingPeriod = payment.billing_period as BillingPeriod;
+const isDemo = Boolean(payment.is_demo);
+
+const expiresAt = getExpiresAt(billingPeriod, isDemo);
+const aiMonthlyLimit = isDemo ? 10 : getAiLimit(planId);
 
     const { error: subscriptionDeactivateError } = await supabaseAdmin
       .from("subscriptions")
