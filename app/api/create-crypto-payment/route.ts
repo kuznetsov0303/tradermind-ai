@@ -61,13 +61,7 @@ function normalizeBillingPeriod(period: unknown): BillingPeriod {
 
 export async function POST(req: Request) {
   try {
-    console.log("SUPABASE URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
-    console.log(
-      "SERVICE KEY START:",
-      process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(0, 20)
-    );
     
-
     const apiKey = process.env.NOWPAYMENTS_API_KEY;
 
     if (!apiKey) {
