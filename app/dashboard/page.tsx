@@ -26,6 +26,15 @@ type Subscription = {
   expiresAt: string | null;
 };
 
+type AiAnalysis = {
+  id: string;
+  user_message: string;
+  ai_response: string;
+  model: string | null;
+  tokens_used: number | null;
+  created_at: string | null;
+};
+
 const tabs: { id: TabId; label: string }[] = [
   { id: "overview", label: "Обзор" },
   { id: "journal", label: "Журнал сделок" },
@@ -67,6 +76,7 @@ export default function DashboardPage() {
 const [coachAnswer, setCoachAnswer] = useState("");
 const [coachLoading, setCoachLoading] = useState(false);
 const [coachError, setCoachError] = useState("");
+const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
   const [subscription, setSubscription] = useState({
   active: false,
   plan: null as PlanId | null,
@@ -88,6 +98,15 @@ const [coachError, setCoachError] = useState("");
 
       const user = userData.user;
       setEmail(user.email ?? null);
+
+      const { data: analysesData } = await supabase
+  .from("ai_analyses")
+  .select("id,user_message,ai_response,model,tokens_used,created_at")
+  .eq("user_id", user.id)
+  .order("created_at", { ascending: false })
+  .limit(10);
+
+setCoachHistory((analysesData as AiAnalysis[]) ?? []);
 
       const { data: subData, error } = await supabase
   .from("subscriptions")
@@ -162,6 +181,18 @@ const handleCoachSubmit = async () => {
 
     setCoachAnswer(result.answer || "");
     setCoachMessage("");
+
+    setCoachHistory((current) => [
+  {
+    id: crypto.randomUUID(),
+    user_message: message,
+    ai_response: result.answer || "",
+    model: "current",
+    tokens_used: null,
+    created_at: new Date().toISOString(),
+  },
+  ...current,
+].slice(0, 10));
 
     setSubscription((current) => ({
       ...current,
@@ -313,14 +344,20 @@ const handleCoachSubmit = async () => {
               {activeTab === "charts" && <ChartsTab />}
               {activeTab === "coach" && (
   <CoachTab
-    subscription={subscription}
-    message={coachMessage}
-    answer={coachAnswer}
-    error={coachError}
-    loading={coachLoading}
-    onMessageChange={setCoachMessage}
-    onSubmit={handleCoachSubmit}
-  />
+  subscription={subscription}
+  message={coachMessage}
+  answer={coachAnswer}
+  error={coachError}
+  loading={coachLoading}
+  history={coachHistory}
+  onMessageChange={setCoachMessage}
+  onSubmit={handleCoachSubmit}
+  onNewAnalysis={() => {
+    setCoachMessage("");
+    setCoachAnswer("");
+    setCoachError("");
+  }}
+/>
 )}
               {activeTab === "learning" && <LearningTab />}
               {activeTab === "reports" && <ReportsTab />}
@@ -617,25 +654,29 @@ function BillingTab({
 }
 
 function CoachTab({
-  subscription,
+ subscription,
   message,
   answer,
   error,
   loading,
+  history,
   onMessageChange,
   onSubmit,
+  onNewAnalysis,
 }: {
   subscription: {
     active: boolean;
     aiLimit: number;
     aiUsed: number;
   };
-  message: string;
+    message: string;
   answer: string;
   error: string;
   loading: boolean;
+  history: AiAnalysis[];
   onMessageChange: (value: string) => void;
   onSubmit: () => void;
+  onNewAnalysis: () => void;
 }) {
   const remaining = Math.max(subscription.aiLimit - subscription.aiUsed, 0);
 
@@ -699,18 +740,75 @@ function CoachTab({
           >
             {loading ? "AI анализирует..." : "Спросить AI"}
           </button>
+          <button
+  onClick={onNewAnalysis}
+  disabled={loading}
+  className="ml-3 mt-5 inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-3 text-sm font-medium text-white/75 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
+>
+  Новый разбор
+</button>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
-          <div className="text-xs uppercase tracking-[0.25em] text-white/35">
-            Ответ AI-коуча
-          </div>
+        <div className="space-y-6">
+  <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+    <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+      Ответ AI-коуча
+    </div>
 
-          <div className="mt-5 min-h-[260px] whitespace-pre-wrap rounded-3xl border border-white/10 bg-black/20 p-5 text-sm leading-7 text-white/75">
-            {answer ||
-              "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой."}
-          </div>
+    <div className="mt-5 min-h-[260px] whitespace-pre-wrap rounded-3xl border border-white/10 bg-black/20 p-5 text-sm leading-7 text-white/75">
+      {answer ||
+        "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой."}
+    </div>
+  </div>
+
+  <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+          История AI-разборов
         </div>
+        <p className="mt-2 text-sm text-white/45">
+          Последние 10 запросов к AI-коучу.
+        </p>
+      </div>
+    </div>
+
+    <div className="mt-5 space-y-3">
+      {history.length === 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/45">
+          История пока пустая. Первый разбор появится здесь после ответа AI.
+        </div>
+      ) : (
+        history.map((item) => (
+          <button
+            key={item.id}
+            onClick={() => {
+              onMessageChange(item.user_message);
+            }}
+            className="w-full rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-white/20 hover:bg-white/[0.04]"
+          >
+            <div className="flex items-center justify-between gap-4 text-xs text-white/35">
+              <span>{item.model || "AI coach"}</span>
+              <span>
+                {item.created_at
+                  ? new Date(item.created_at).toLocaleString("ru-RU")
+                  : ""}
+              </span>
+            </div>
+
+            <div className="mt-3 line-clamp-2 text-sm leading-6 text-white/75">
+              {item.user_message}
+            </div>
+
+            <div className="mt-3 line-clamp-3 text-xs leading-5 text-white/45">
+              {item.ai_response}
+            </div>
+          </button>
+        ))
+      )}
+    </div>
+  </div>
+</div>
       </div>
     </div>
   );
