@@ -1,149 +1,183 @@
 import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-type PlanId = "starter" | "pro" | "elite";
-
-const PLAN_CONFIG: Record<
-  PlanId,
-  {
-    model: string;
-    dailyLimitPerIp: number;
-    maxInputChars: number;
-    maxOutputTokens: number;
-    label: string;
-  }
-> = {
-  starter: {
-    model: "gpt-5-nano",
-    dailyLimitPerIp: 100,
-    maxInputChars: 800,
-    maxOutputTokens: 350,
-    label: "Starter",
-  },
-  pro: {
-    model: "gpt-5-mini",
-    dailyLimitPerIp: 50,
-    maxInputChars: 1800,
-    maxOutputTokens: 800,
-    label: "Pro",
-  },
-  elite: {
-    model: "gpt-5.1",
-    dailyLimitPerIp: 200,
-    maxInputChars: 4000,
-    maxOutputTokens: 1500,
-    label: "Elite",
-  },
+type SubscriptionRow = {
+  id: string;
+  user_id: string;
+  plan_id: string;
+  billing_period: string;
+  status: string;
+  ai_monthly_limit: number;
+  ai_used_this_month: number;
+  expires_at: string | null;
+  is_demo?: boolean;
 };
 
-const usageStore = new Map<string, { count: number; resetAt: number }>();
-
-function getClientIp(req: Request) {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    req.headers.get("x-real-ip") ||
-    "unknown"
-  );
+function getPublicPlanName(planId: string) {
+  if (planId === "starter") return "SkillEdge Core";
+  if (planId === "pro") return "SkillEdge Edge";
+  if (planId === "elite") return "SkillEdge Elite";
+  return "SkillEdge AI";
 }
 
-function normalizePlan(planId: unknown): PlanId {
-  if (planId === "starter" || planId === "pro" || planId === "elite") {
-    return planId;
-  }
+function getOpenAIModel(planId: string) {
+  if (planId === "starter") return "gpt-4o-mini";
+  if (planId === "pro") return "gpt-4o-mini";
+  if (planId === "elite") return "gpt-4o-mini";
 
-  return "starter";
+  return "gpt-4o-mini";
 }
 
-function getUsageKey(ip: string, plan: PlanId) {
-  const today = new Date().toISOString().slice(0, 10);
-  return `${ip}:${plan}:${today}`;
-}
-
-function checkAndIncrementLimit(ip: string, plan: PlanId) {
-  const config = PLAN_CONFIG[plan];
-  const key = getUsageKey(ip, plan);
-  const now = Date.now();
-  const existing = usageStore.get(key);
-
-  if (!existing || existing.resetAt < now) {
-    usageStore.set(key, {
-      count: 1,
-      resetAt: now + 24 * 60 * 60 * 1000,
-    });
-
-    return {
-      allowed: true,
-      remaining: config.dailyLimitPerIp - 1,
-    };
+function extractResponseText(openaiData: any) {
+  if (typeof openaiData.output_text === "string") {
+    return openaiData.output_text;
   }
 
-  if (existing.count >= config.dailyLimitPerIp) {
-    return {
-      allowed: false,
-      remaining: 0,
-    };
+  const output = openaiData.output;
+
+  if (Array.isArray(output)) {
+    for (const item of output) {
+      if (Array.isArray(item.content)) {
+        for (const contentItem of item.content) {
+          if (typeof contentItem.text === "string") {
+            return contentItem.text;
+          }
+        }
+      }
+    }
   }
 
-  existing.count += 1;
-  usageStore.set(key, existing);
-
-  return {
-    allowed: true,
-    remaining: config.dailyLimitPerIp - existing.count,
-  };
+  return "AI response was empty.";
 }
 
 export async function POST(req: Request) {
   try {
-    if (!process.env.OPENAI_API_KEY) {
+    const openaiApiKey = process.env.OPENAI_API_KEY;
+
+    if (!openaiApiKey) {
+      return NextResponse.json(
+        { error: "Missing OPENAI_API_KEY" },
+        { status: 500 }
+      );
+    }
+
+    const authHeader = req.headers.get("authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Please log in to use AI coach." },
+        { status: 401 }
+      );
+    }
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseAdmin.auth.getUser(token);
+
+    if (userError || !user) {
       return NextResponse.json(
         {
-          reply: "AI is not configured yet. Missing OPENAI_API_KEY.",
+          error: "Invalid user session. Please log in again.",
+          details: userError?.message,
         },
-        { status: 500 }
+        { status: 401 }
       );
     }
 
     const body = await req.json();
     const message = String(body?.message || "").trim();
-    const plan = normalizePlan(body?.planId);
-    const config = PLAN_CONFIG[plan];
 
     if (!message) {
       return NextResponse.json(
-        { reply: "Please enter a trading question." },
+        { error: "Message is required." },
         { status: 400 }
       );
     }
 
-    if (message.length > config.maxInputChars) {
+    if (message.length > 5000) {
+      return NextResponse.json(
+        { error: "Message is too long. Max 5000 characters." },
+        { status: 400 }
+      );
+    }
+
+    const now = new Date().toISOString();
+
+    const { data: subscription, error: subscriptionError } = await supabaseAdmin
+      .from("subscriptions")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("status", "active")
+      .gt("expires_at", now)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<SubscriptionRow>();
+
+    if (subscriptionError) {
       return NextResponse.json(
         {
-          reply: `Your message is too long for ${config.label}. Limit: ${config.maxInputChars} characters.`,
+          error: "Failed to check subscription.",
+          details: subscriptionError.message,
         },
-        { status: 400 }
+        { status: 500 }
       );
     }
 
-    const limit = {
-  allowed: true,
-  remaining: 9999,
-};
+    if (!subscription) {
+      return NextResponse.json(
+        {
+          error: "No active subscription. Please choose a plan first.",
+        },
+        { status: 403 }
+      );
+    }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    if (subscription.ai_used_this_month >= subscription.ai_monthly_limit) {
+      return NextResponse.json(
+        {
+          error: "AI request limit reached for your current plan.",
+          aiUsed: subscription.ai_used_this_month,
+          aiLimit: subscription.ai_monthly_limit,
+        },
+        { status: 403 }
+      );
+    }
+
+    const publicPlanName = getPublicPlanName(subscription.plan_id);
+
+    const systemPrompt = `
+You are ${publicPlanName}, a trading performance AI coach inside SkillEdge AI.
+
+Your job:
+- help traders analyze discipline, execution, risk, emotions, and patterns;
+- do not claim certainty about future market direction;
+- do not give guaranteed financial advice;
+- focus on process, risk, journaling, and decision quality;
+- answer clearly, practically, and in the user's language;
+- if the user writes in Russian, answer in Russian;
+- if the user writes in Ukrainian, answer in Ukrainian;
+- if the user writes in English, answer in English.
+
+User's current plan:
+- plan_id: ${subscription.plan_id}
+- demo: ${subscription.is_demo ? "yes" : "no"}
+- AI usage: ${subscription.ai_used_this_month}/${subscription.ai_monthly_limit}
+`.trim();
+
+    const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${openaiApiKey}`,
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: config.model,
-        max_tokens: config.maxOutputTokens,
-        temperature: 0.35,
-        messages: [
+       model: getOpenAIModel(subscription.plan_id),
+        input: [
           {
             role: "system",
-            content:
-              "You are TraderMind AI, a professional trading performance coach. Be practical, direct and concise. Focus on discipline, risk, execution, setup quality, gappers, halts, screenshots and pattern review. Do not give guaranteed predictions or financial promises. Always remind the user to manage risk.",
+            content: systemPrompt,
           },
           {
             role: "user",
@@ -153,29 +187,78 @@ export async function POST(req: Request) {
       }),
     });
 
-    const data = await response.json();
+    const openaiData = await response.json();
 
     if (!response.ok) {
+  console.error("OPENAI ERROR:", JSON.stringify(openaiData, null, 2));
+
+  return NextResponse.json(
+    {
+      error:
+        openaiData?.error?.message ||
+        openaiData?.message ||
+        "OpenAI request failed.",
+      details: openaiData,
+    },
+    { status: response.status }
+  );
+}
+
+    const aiText = extractResponseText(openaiData);
+
+    const tokensUsed =
+      openaiData.usage?.total_tokens ??
+      (openaiData.usage?.input_tokens || 0) +
+        (openaiData.usage?.output_tokens || 0);
+
+    const { error: insertError } = await supabaseAdmin
+      .from("ai_analyses")
+      .insert({
+        user_id: user.id,
+        subscription_id: subscription.id,
+        analysis_type: "coach",
+        user_message: message,
+        ai_response: aiText,
+        model: getOpenAIModel(subscription.plan_id),
+        tokens_used: tokensUsed,
+      });
+
+    if (insertError) {
       return NextResponse.json(
         {
-          reply: `OpenAI error: ${data?.error?.message || "Unknown error"}`,
+          error: "AI response created, but failed to save analysis.",
+          details: insertError.message,
         },
-        { status: response.status }
+        { status: 500 }
+      );
+    }
+
+    const { error: updateError } = await supabaseAdmin
+      .from("subscriptions")
+      .update({
+        ai_used_this_month: subscription.ai_used_this_month + 1,
+      })
+      .eq("id", subscription.id);
+
+    if (updateError) {
+      return NextResponse.json(
+        {
+          error: "AI response created, but failed to update usage.",
+          details: updateError.message,
+        },
+        { status: 500 }
       );
     }
 
     return NextResponse.json({
-      reply: data.choices?.[0]?.message?.content || "No text returned.",
-      plan,
-      model: config.model,
-      remaining: limit.remaining,
+      answer: aiText,
+      aiUsed: subscription.ai_used_this_month + 1,
+      aiLimit: subscription.ai_monthly_limit,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        reply: "AI backend error. Check server logs.",
-      },
-      { status: 500 }
-    );
+    const message =
+      error instanceof Error ? error.message : "AI coach route error";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -63,6 +63,10 @@ export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [loading, setLoading] = useState(true);
+  const [coachMessage, setCoachMessage] = useState("");
+const [coachAnswer, setCoachAnswer] = useState("");
+const [coachLoading, setCoachLoading] = useState(false);
+const [coachError, setCoachError] = useState("");
   const [subscription, setSubscription] = useState({
   active: false,
   plan: null as PlanId | null,
@@ -116,6 +120,60 @@ if (!error && subData && subData.status === "active") {
     await supabase.auth.signOut();
     window.location.href = "/";
   }
+
+const handleCoachSubmit = async () => {
+  const message = coachMessage.trim();
+
+  if (!message) {
+    setCoachError("Введите вопрос или описание сделки.");
+    return;
+  }
+
+  try {
+    setCoachLoading(true);
+    setCoachError("");
+    setCoachAnswer("");
+
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+
+    if (!token) {
+      setCoachError("Сначала войдите в аккаунт.");
+      return;
+    }
+
+    const response = await fetch("/api/ai-coach", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        message,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      setCoachError(result.error || "Ошибка AI-коуча.");
+      return;
+    }
+
+    setCoachAnswer(result.answer || "");
+    setCoachMessage("");
+
+    setSubscription((current) => ({
+      ...current,
+      aiUsed: result.aiUsed ?? current.aiUsed,
+      aiLimit: result.aiLimit ?? current.aiLimit,
+    }));
+  } catch {
+    setCoachError("Не удалось получить ответ AI-коуча.");
+  } finally {
+    setCoachLoading(false);
+  }
+};
 
   const locked = !subscription.active;
 
@@ -253,7 +311,17 @@ if (!error && subData && subData.status === "active") {
               {activeTab === "overview" && <OverviewTab />}
               {activeTab === "journal" && <JournalTab />}
               {activeTab === "charts" && <ChartsTab />}
-              {activeTab === "coach" && <CoachTab />}
+              {activeTab === "coach" && (
+  <CoachTab
+    subscription={subscription}
+    message={coachMessage}
+    answer={coachAnswer}
+    error={coachError}
+    loading={coachLoading}
+    onMessageChange={setCoachMessage}
+    onSubmit={handleCoachSubmit}
+  />
+)}
               {activeTab === "learning" && <LearningTab />}
               {activeTab === "reports" && <ReportsTab />}
               {activeTab === "billing" && (
@@ -453,26 +521,6 @@ function ChartsTab() {
   );
 }
 
-function CoachTab() {
-  return (
-    <div>
-      <SectionHeader
-        title="SkillEdge AI-коуч"
-        text="AI-разборы сделок, pre-trade checks, анализ ошибок и скриншотов."
-      />
-
-      <div className="mt-8 rounded-3xl border border-white/10 bg-black/30 p-5">
-        <textarea
-          placeholder="Опиши сетап, сделку или ошибку..."
-          className="min-h-40 w-full resize-none rounded-2xl border border-white/10 bg-[#070b16] p-4 text-white outline-none"
-        />
-        <button className="mt-4 rounded-full bg-white px-6 py-3 text-sm font-medium text-black">
-          Спросить AI-коуча
-        </button>
-      </div>
-    </div>
-  );
-}
 
 function LearningTab() {
   return (
@@ -563,6 +611,106 @@ function BillingTab({
         >
           Выбрать тариф
         </a>
+      </div>
+    </div>
+  );
+}
+
+function CoachTab({
+  subscription,
+  message,
+  answer,
+  error,
+  loading,
+  onMessageChange,
+  onSubmit,
+}: {
+  subscription: {
+    active: boolean;
+    aiLimit: number;
+    aiUsed: number;
+  };
+  message: string;
+  answer: string;
+  error: string;
+  loading: boolean;
+  onMessageChange: (value: string) => void;
+  onSubmit: () => void;
+}) {
+  const remaining = Math.max(subscription.aiLimit - subscription.aiUsed, 0);
+
+  return (
+    <div>
+      <SectionHeader
+        title="AI-коуч"
+        text="Опишите сделку, эмоции, ошибку или торговую ситуацию — AI-коуч даст разбор по дисциплине, риску и качеству решения."
+      />
+
+      <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+        <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-2xl font-semibold">Разбор сделки</h3>
+              <p className="mt-2 text-sm leading-6 text-white/55">
+                Чем конкретнее описание, тем полезнее ответ. Укажи тикер, вход,
+                стоп, причину входа, эмоции и результат.
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-right text-xs text-white/60">
+              <div>AI usage</div>
+              <div className="mt-1 text-lg font-semibold text-white">
+                {subscription.aiUsed}/{subscription.aiLimit}
+              </div>
+            </div>
+          </div>
+
+          <textarea
+            value={message}
+            onChange={(event) => onMessageChange(event.target.value)}
+            disabled={!subscription.active || loading || remaining <= 0}
+            placeholder="Пример: Сегодня зашёл в short после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка."
+            className="min-h-[180px] w-full resize-none rounded-3xl border border-white/10 bg-[#080c16] p-5 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-white/25"
+          />
+
+          {error && (
+            <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-100/85">
+              {error}
+            </div>
+          )}
+
+          {!subscription.active && (
+            <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50/85">
+              Для AI-коуча нужен активный тариф или demo-доступ.
+            </div>
+          )}
+
+          {subscription.active && remaining <= 0 && (
+            <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50/85">
+              Лимит AI-запросов закончился. Выберите тариф выше или дождитесь
+              обновления лимита.
+            </div>
+          )}
+
+          <button
+            onClick={onSubmit}
+            disabled={!subscription.active || loading || remaining <= 0}
+            className="mt-5 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {loading ? "AI анализирует..." : "Спросить AI"}
+          </button>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+          <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+            Ответ AI-коуча
+          </div>
+
+          <div className="mt-5 min-h-[260px] whitespace-pre-wrap rounded-3xl border border-white/10 bg-black/20 p-5 text-sm leading-7 text-white/75">
+            {answer ||
+              "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой."}
+          </div>
+        </div>
       </div>
     </div>
   );
