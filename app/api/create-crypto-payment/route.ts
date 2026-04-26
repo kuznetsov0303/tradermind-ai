@@ -106,22 +106,22 @@ export async function POST(req: Request) {
     const purchaseId = normalizePurchase(body?.planId);
     const isDemo = purchaseId === "demo";
 
-    const planId: PlanId = isDemo ? "pro" : purchaseId;
+    const planId: PlanId = isDemo ? "starter" : purchaseId;
     const billingPeriod = normalizeBillingPeriod(body?.billingPeriod);
 
     const plan = PLANS[planId];
 
-    const amount = isDemo ? 6 : plan.prices[billingPeriod];
+    const amount = isDemo ? 11.99 : plan.prices[billingPeriod];
 
     const siteUrl =
       process.env.NEXT_PUBLIC_SITE_URL || "https://www.upyourskills.site";
 
     const orderId = isDemo
-  ? `skilledge_demo_pro_15min_${Date.now()}`
+  ? `skilledge_demo_starter_7days_${Date.now()}`
   : `skilledge_${planId}_${billingPeriod}_${Date.now()}`;
 
    const orderDescription = isDemo
-  ? "SkillEdge AI Demo access — $6 — Pro plan — 15 minutes — 10 AI requests — USDT TRC20 payment"
+  ? "SkillEdge AI Demo access — $11.99 — Starter plan — 7 days — 10 AI requests — USDT TRC20 payment"
   : `${plan.name} subscription — ${PERIOD_LABELS[billingPeriod]} — USDT TRC20 payment`;
 
     const { error: profileError } = await supabaseAdmin.from("profiles").upsert({

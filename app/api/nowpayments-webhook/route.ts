@@ -68,9 +68,9 @@ function getExpiresAt(period: BillingPeriod, isDemo = false) {
   const now = new Date();
 
   if (isDemo) {
-  now.setMinutes(now.getMinutes() + 15);
-  return now.toISOString();
-}
+    now.setDate(now.getDate() + 7);
+    return now.toISOString();
+  }
 
   if (period === "monthly") {
     now.setMonth(now.getMonth() + 1);

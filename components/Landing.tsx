@@ -56,7 +56,7 @@ const dict = {
       title: "Choose the plan that matches your trading ambition.",
       text: "Start simple, then unlock deeper AI analytics, screenshot review, live matching and team workflows.",
       demoNote:
-  "By clicking Request demo, you get 15-minute access to the Pro plan for $5.99 with 10 AI requests to preview the dashboard and test basic features.",
+  "By clicking Request demo, you get 7-day access to the Starter plan for $11.99 with 10 AI requests to preview the dashboard and test basic features.",
       most: "Most popular",
       month: "/ month",
       buy: "Buy plan",
@@ -224,7 +224,7 @@ const dict = {
       title: "Выбери план под свой уровень амбиций в трейдинге.",
       text: "Начни просто, затем открой глубокую AI-аналитику, разбор скриншотов, live-сопоставление и командные сценарии.",
       demoNote:
-  "Нажимая «Запросить демо», вы за $5.99 получаете доступ на 15 минут к тарифу Pro с 10 AI-запросами для просмотра личного кабинета и теста функций тарифа.",
+  "Нажимая «Запросить демо», вы за $11.99 получаете доступ на 7 дней к тарифу Starter с 10 AI-запросами для просмотра личного кабинета и теста базовых функций.",
       most: "Самый популярный",
       month: "/ месяц",
       buy: "Купить план",
@@ -392,7 +392,7 @@ const dict = {
       title: "Обери план під свій рівень амбіцій у трейдингу.",
       text: "Почни просто, а потім відкрий глибоку AI-аналітику, розбір скриншотів, live-зіставлення й командні сценарії.",
       demoNote:
-  "Натискаючи «Запросити демо», ви за $5.99 отримуєте доступ на 15 хвилин до тарифу Pro з 10 AI-запитами для перегляду кабінету та тесту функцій тарифу.",
+  "Натискаючи «Запросити демо», ви за $11.99 отримуєте доступ на 7 днів до тарифу Starter з 10 AI-запитами для перегляду кабінету та тесту базових функцій.",
       most: "Найпопулярніший",
       month: "/ місяць",
       buy: "Купити план",
