@@ -134,7 +134,7 @@ if (!error && subData && subData.status === "active") {
 
             <div className="flex flex-wrap gap-3">
               <a
-                href="/"
+                href="/?page=pricing"
                 className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
               >
                 Выбрать тариф
@@ -219,7 +219,7 @@ if (!error && subData && subData.status === "active") {
                     </p>
 
                     <a
-                      href="/"
+                      href="/?page=pricing"
                       className="mt-7 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.03]"
                     >
                       Выбрать тариф
@@ -518,7 +518,7 @@ function BillingTab({
         </p>
 
         <a
-          href="/"
+          href="/?page=pricing"
           className="mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-medium text-black"
         >
           Выбрать тариф

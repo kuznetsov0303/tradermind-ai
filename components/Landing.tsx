@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -156,6 +156,8 @@ const dict = {
       registerTitle: "Create account",
       loginButton: "Login",
       registerButton: "Sign up",
+      dashboard: "Dashboard",
+      logout: "Log out",
       switchToLogin: "Already have an account? Login",
       switchToRegister: "No account? Sign up",
       checking: "Checking your account...",
@@ -320,6 +322,8 @@ const dict = {
       registerTitle: "Создать аккаунт",
       loginButton: "Войти",
       registerButton: "Зарегистрироваться",
+      dashboard: "Кабинет",
+      logout: "Выйти",
       switchToLogin: "Уже есть аккаунт? Войти",
       switchToRegister: "Нет аккаунта? Зарегистрироваться",
       checking: "Проверяем аккаунт...",
@@ -484,6 +488,8 @@ const dict = {
       registerTitle: "Створити акаунт",
       loginButton: "Увійти",
       registerButton: "Зареєструватися",
+      dashboard: "Кабінет",
+      logout: "Вийти",
       switchToLogin: "Вже є акаунт? Увійти",
       switchToRegister: "Немає акаунта? Зареєструватися",
       checking: "Перевіряємо акаунт...",
@@ -509,6 +515,7 @@ export default function Landing() {
   const [language, setLanguage] = useState<Language>("en");
   const [active, setActive] = useState<PageKey>("home");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [checkoutStatus, setCheckoutStatus] = useState("");
   const [authMode, setAuthMode] = useState<AuthMode>(null);
   const [authEmail, setAuthEmail] = useState("");
@@ -521,6 +528,38 @@ export default function Landing() {
 
   const t = dict[language];
   const authLabels = t.auth;
+  useEffect(() => {
+  const loadSession = async () => {
+    const { data } = await supabase.auth.getSession();
+    setCurrentUserEmail(data.session?.user?.email ?? null);
+  };
+
+  loadSession();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    setCurrentUserEmail(session?.user?.email ?? null);
+  });
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const page = params.get("page");
+
+    if (
+      page === "home" ||
+      page === "product" ||
+      page === "pricing" ||
+      page === "team"
+    ) {
+      setActive(page);
+    }
+  }, []);
 
   const cycle = () => {
     setLanguage((current) =>
@@ -539,6 +578,13 @@ export default function Landing() {
     setAuthEmail("");
     setAuthPassword("");
   };
+
+const handleLogout = async () => {
+  await supabase.auth.signOut();
+  setCurrentUserEmail(null);
+  setPendingCheckout(null);
+  setAuthStatus("");
+};
 
   const handleAuthSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -567,18 +613,21 @@ export default function Landing() {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email: authEmail,
-        password: authPassword,
-      });
+      const { data, error } = await supabase.auth.signInWithPassword({
+  email: authEmail,
+  password: authPassword,
+});
 
-      if (error) {
-        setAuthStatus(error.message);
-        return;
-      }
+if (error) {
+  setAuthStatus(error.message);
+  return;
+}
 
-      const checkout = pendingCheckout;
-      closeAuthModal();
+setCurrentUserEmail(data.user?.email ?? authEmail);
+
+const checkout = pendingCheckout;
+
+closeAuthModal();
 
       if (checkout) {
         setPendingCheckout(null);
@@ -681,30 +730,50 @@ export default function Landing() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <button
-              onClick={cycle}
-              className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
-            >
-              <Icon name="globe" className="mr-2 h-4 w-4" />
-              {t.lang}
-            </button>
+  <button
+    onClick={cycle}
+    className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
+  >
+    <Icon name="globe" className="mr-2 h-4 w-4" />
+    {t.lang}
+  </button>
 
-            <ButtonX onClick={() => setActive("product")}>{t.requestDemo}</ButtonX>
+  <ButtonX onClick={() => setActive("product")}>{t.requestDemo}</ButtonX>
 
-            <button
-              onClick={() => openAuthModal("login")}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-            >
-              {authLabels.login}
-            </button>
+  {currentUserEmail ? (
+    <>
+      <a
+        href="/dashboard"
+        className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+      >
+        {authLabels.dashboard}
+      </a>
 
-            <button
-              onClick={() => openAuthModal("register")}
-              className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
-            >
-              {authLabels.register}
-            </button>
-          </div>
+      <button
+        onClick={handleLogout}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+      >
+        {authLabels.logout}
+      </button>
+    </>
+  ) : (
+    <>
+      <button
+        onClick={() => openAuthModal("login")}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+      >
+        {authLabels.login}
+      </button>
+
+      <button
+        onClick={() => openAuthModal("register")}
+        className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+      >
+        {authLabels.register}
+      </button>
+    </>
+  )}
+</div>
 
           <button onClick={() => setMenuOpen((v) => !v)} className="md:hidden">
             <Icon name={menuOpen ? "close" : "menu"} className="h-6 w-6" />
@@ -744,25 +813,49 @@ export default function Landing() {
                   </button>
                 ))}
 
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    openAuthModal("login");
-                  }}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
-                >
-                  {authLabels.login}
-                </button>
+                {currentUserEmail ? (
+  <>
+    <a
+      href="/dashboard"
+      onClick={() => setMenuOpen(false)}
+      className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black"
+    >
+      {authLabels.dashboard}
+    </a>
 
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    openAuthModal("register");
-                  }}
-                  className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black"
-                >
-                  {authLabels.register}
-                </button>
+    <button
+      onClick={() => {
+        setMenuOpen(false);
+        handleLogout();
+      }}
+      className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
+    >
+      {authLabels.logout}
+    </button>
+  </>
+) : (
+  <>
+    <button
+      onClick={() => {
+        setMenuOpen(false);
+        openAuthModal("login");
+      }}
+      className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
+    >
+      {authLabels.login}
+    </button>
+
+    <button
+      onClick={() => {
+        setMenuOpen(false);
+        openAuthModal("register");
+      }}
+      className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black"
+    >
+      {authLabels.register}
+    </button>
+  </>
+)}
               </div>
             </motion.div>
           )}
