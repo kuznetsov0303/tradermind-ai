@@ -18,6 +18,7 @@ type BillingPeriod = "monthly" | "halfyear" | "yearly";
 
 type Subscription = {
   active: boolean;
+  isDemo: boolean;
   plan: PlanId | null;
   period: BillingPeriod | null;
   aiLimit: number;
@@ -46,19 +47,31 @@ const periodNames: Record<BillingPeriod, string> = {
   halfyear: "6 месяцев",
   yearly: "1 год",
 };
+function getPeriodName(subscription: Subscription) {
+  if (subscription.isDemo) {
+    return "7-дневная пробная версия";
+  }
+
+  if (!subscription.period) {
+    return "—";
+  }
+
+  return periodNames[subscription.period];
+}
 
 export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [loading, setLoading] = useState(true);
-  const [subscription, setSubscription] = useState<Subscription>({
-    active: false,
-    plan: null,
-    period: null,
-    aiLimit: 0,
-    aiUsed: 0,
-    expiresAt: null,
-  });
+  const [subscription, setSubscription] = useState({
+  active: false,
+  plan: null as PlanId | null,
+  period: null as BillingPeriod | null,
+  aiLimit: 0,
+  aiUsed: 0,
+  expiresAt: null as string | null,
+  isDemo: false,
+});
 
   useEffect(() => {
     async function loadDashboard() {
@@ -83,13 +96,14 @@ export default function DashboardPage() {
 
 if (!error && subData && subData.status === "active") {
   setSubscription({
-    active: true,
-    plan: subData.plan_id as PlanId,
-    period: subData.billing_period as BillingPeriod,
-    aiLimit: subData.ai_monthly_limit ?? 0,
-    aiUsed: subData.ai_used_this_month ?? 0,
-    expiresAt: subData.expires_at ?? null,
-  });
+  active: true,
+  plan: subData.plan_id,
+  period: subData.billing_period,
+  aiLimit: subData.ai_monthly_limit,
+  aiUsed: subData.ai_used_this_month,
+  expiresAt: subData.expires_at,
+  isDemo: Boolean(subData.is_demo),
+});
 }
 
       setLoading(false);
@@ -274,6 +288,12 @@ if (!error && subData && subData.status === "active") {
                     )}`
                   : "Активируйте тариф, чтобы открыть функции кабинета."}
               </p>
+
+{subscription.isDemo && (
+  <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-xs leading-5 text-amber-50/80">
+    7-дневная пробная версия. Лимит: 10 AI-запросов.
+  </div>
+)}
 
               <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
                 <div className="flex items-center justify-between text-sm">
@@ -500,7 +520,7 @@ function BillingTab({
         text="Информация о текущем тарифе, оплатах и сроке действия подписки."
       />
 
-      <div className="mt-8 rounded-3xl border border-white/10 bg-black/30 p-6">
+      <div className="mt-8 rounded-3xl border border-white/10 bg-black/20 p-6">
         <h3 className="text-2xl font-semibold">
           {loading
             ? "Загрузка..."
@@ -509,17 +529,37 @@ function BillingTab({
             : "Тариф не активирован"}
         </h3>
 
+        {subscription.isDemo && (
+          <div className="mt-5 rounded-3xl border border-amber-300/25 bg-amber-300/10 p-5 text-sm leading-7 text-amber-50/85">
+            <div className="text-xs uppercase tracking-[0.25em] text-amber-100/60">
+              Пробная версия
+            </div>
+
+            <div className="mt-2 text-lg font-semibold text-white">
+              У вас активирован 7-дневный demo-доступ
+            </div>
+
+            <p className="mt-2 text-white/65">
+              Это пробная версия тарифа Starter с лимитом 10 AI-запросов.
+              После окончания срока доступ будет закрыт, если вы не выберете
+              основной тариф.
+            </p>
+          </div>
+        )}
+
         <p className="mt-3 text-white/60">
           {subscription.active && subscription.period
-            ? `Период: ${periodNames[subscription.period]}. Действует до ${formatDate(
+            ? `Период: ${getPeriodName(subscription)}. Действует до ${
                 subscription.expiresAt
-              )}.`
-            : "После оплаты здесь появятся план, период, дата окончания и лимиты AI."}
+                  ? new Date(subscription.expiresAt).toLocaleDateString("ru-RU")
+                  : "—"
+              }.`
+            : "После оплаты здесь появятся план, период, дата окончания и история оплат."}
         </p>
 
         <a
           href="/?page=pricing"
-          className="mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-medium text-black"
+          className="mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
         >
           Выбрать тариф
         </a>

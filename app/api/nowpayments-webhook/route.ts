@@ -206,17 +206,18 @@ const aiMonthlyLimit = isDemo ? 10 : getAiLimit(planId);
     }
 
     const { error: subscriptionInsertError } = await supabaseAdmin
-      .from("subscriptions")
-      .insert({
-        user_id: payment.user_id,
-        plan_id: planId,
-        billing_period: billingPeriod,
-        status: "active",
-        ai_monthly_limit: aiMonthlyLimit,
-        ai_used_this_month: 0,
-        started_at: new Date().toISOString(),
-        expires_at: expiresAt,
-      });
+  .from("subscriptions")
+  .insert({
+    user_id: payment.user_id,
+    plan_id: planId,
+    billing_period: billingPeriod,
+    status: "active",
+    ai_monthly_limit: aiMonthlyLimit,
+    ai_used_this_month: 0,
+    started_at: new Date().toISOString(),
+    expires_at: expiresAt,
+    is_demo: isDemo,
+  });
 
     if (subscriptionInsertError) {
       return NextResponse.json(
