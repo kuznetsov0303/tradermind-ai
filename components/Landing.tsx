@@ -532,6 +532,19 @@ export default function Landing() {
     billingPeriod: BillingPeriod;
   } | null>(null);
 
+useEffect(() => {
+  const savedLanguage = localStorage.getItem("skilledge_language");
+
+  if (
+    savedLanguage === "en" ||
+    savedLanguage === "ru" ||
+    savedLanguage === "ua"
+  ) {
+    setLanguage(savedLanguage);
+  }
+}, []);
+
+
   const t = dict[language];
   const authLabels = t.auth;
   useEffect(() => {
@@ -568,10 +581,15 @@ export default function Landing() {
   }, []);
 
   const cycle = () => {
-    setLanguage((current) =>
-      current === "en" ? "ru" : current === "ru" ? "ua" : "en"
-    );
-  };
+  setLanguage((current) => {
+    const nextLanguage =
+      current === "en" ? "ru" : current === "ru" ? "ua" : "en";
+
+    localStorage.setItem("skilledge_language", nextLanguage);
+
+    return nextLanguage;
+  });
+};
 
   const openAuthModal = (mode: "login" | "register") => {
     setAuthMode(mode);

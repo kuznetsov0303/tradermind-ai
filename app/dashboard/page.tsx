@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 
+type Language = "en" | "ru" | "ua";
+
 type TabId =
   | "overview"
   | "journal"
@@ -35,14 +37,285 @@ type AiAnalysis = {
   created_at: string | null;
 };
 
-const tabs: { id: TabId; label: string }[] = [
-  { id: "overview", label: "Обзор" },
-  { id: "journal", label: "Журнал сделок" },
-  { id: "charts", label: "Графики" },
-  { id: "coach", label: "AI-коуч" },
-  { id: "learning", label: "Обучение" },
-  { id: "reports", label: "Отчёты" },
-  { id: "billing", label: "Тариф" },
+const dashboardDict = {
+  en: {
+    terminal: "SkillEdge AI Terminal",
+    dashboard: "Dashboard",
+    user: "User",
+    choosePlan: "Choose plan",
+    logout: "Log out",
+    currentPlan: "Current plan",
+    loading: "Loading...",
+    notActivated: "Not activated",
+    activatePlan: "Activate a plan to unlock dashboard features.",
+    aiUsage: "AI usage",
+    quickActions: "Quick actions",
+    addTrade: "Add trade",
+    uploadScreenshot: "Upload screenshot",
+    askAI: "Ask AI",
+    createReport: "Create report",
+    overview: {
+  title: "Performance overview",
+  text: "PnL summary, win rate, discipline score, best setups and main mistakes.",
+  pnlMonth: "Monthly PnL",
+  winRate: "Win rate",
+  discipline: "Discipline score",
+  weeklyAi: "Weekly AI summary",
+  weeklyAiText:
+    "This module will be connected to your trade database, plans and AI logic in the next stages.",
+},
+    locked: {
+      title: "Activate your plan",
+      label: "Access locked",
+      text: "After payment, trade journal, SkillEdge AI Coach, TradingView charts, learning, reports and AI review history will be unlocked.",
+      button: "Choose plan",
+    },
+    tabs: {
+      overview: "Overview",
+      journal: "Trade journal",
+      charts: "Charts",
+      coach: "AI Coach",
+      learning: "Learning",
+      reports: "Reports",
+      billing: "Billing",
+    },
+    periods: {
+      monthly: "1 month",
+      halfyear: "6 months",
+      yearly: "1 year",
+      demo: "7-day trial",
+    },
+    demo: {
+      label: "Trial version",
+      title: "Your 7-day demo access is active",
+      text: "This is a Starter trial with a limit of 10 AI requests. After the trial expires, access will be locked unless you choose a main plan.",
+      short: "7-day trial. Limit: 10 AI requests.",
+    },
+    billing: {
+      title: "Plan and billing",
+      text: "Current plan, payment status and subscription expiration date.",
+      activePlan: "Active plan",
+      inactivePlan: "Plan is not activated",
+      period: "Period",
+      validUntil: "valid until",
+      empty:
+        "After payment, your plan, period, expiration date and payment history will appear here.",
+    },
+    coach: {
+      title: "AI Coach",
+      text: "Describe a trade, emotion, mistake or market situation — the AI coach will analyze discipline, risk and decision quality.",
+      reviewTitle: "Trade review",
+      reviewText:
+        "The more specific your description is, the better the answer. Include ticker, entry, stop, entry reason, emotions and result.",
+      placeholder:
+        "Example: I entered short after a premarket pump, saw weakness below VWAP, but moved my stop and held the loss. Break down the mistake.",
+      ask: "Ask AI",
+      analyzing: "AI is analyzing...",
+      newReview: "New review",
+      answerTitle: "AI Coach answer",
+      answerPlaceholder:
+        "The review will appear here: what was good, where the mistake was, what lesson to write down and what to check before the next trade.",
+      historyTitle: "AI review history",
+      historyText: "Last 10 AI coach requests.",
+      historyEmpty: "History is empty. Your first review will appear here after AI responds.",
+      loginFirst: "Please log in first.",
+      messageRequired: "Enter a question or trade description.",
+      coachError: "AI Coach error.",
+      failed: "Failed to get AI Coach response.",
+      needPlan: "AI Coach requires an active plan or demo access.",
+      limitReached: "AI request limit reached. Upgrade your plan or wait for the limit reset.",
+    },
+  },
+
+  ru: {
+    terminal: "SkillEdge AI Terminal",
+    dashboard: "Личный кабинет",
+    user: "Пользователь",
+    choosePlan: "Выбрать тариф",
+    logout: "Выйти",
+    currentPlan: "Текущий тариф",
+    loading: "Загрузка...",
+    notActivated: "Не активирован",
+    activatePlan: "Активируйте тариф, чтобы открыть функции кабинета.",
+    aiUsage: "Использование AI",
+   quickActions: "Быстрые действия",
+    addTrade: "Добавить сделку",
+    uploadScreenshot: "Загрузить скрин",
+    askAI: "Спросить AI",
+    createReport: "Создать отчёт",
+    overview: {
+  title: "Обзор эффективности",
+  text: "Сводка PnL, win rate, discipline score, лучшие сетапы и главные ошибки.",
+  pnlMonth: "PnL за месяц",
+  winRate: "Win rate",
+  discipline: "Discipline score",
+  weeklyAi: "AI-сводка недели",
+  weeklyAiText:
+    "Этот модуль будет подключён к базе данных, тарифам и AI-логике на следующих этапах.",
+},
+    locked: {
+      title: "Активируйте тариф",
+      label: "Доступ закрыт",
+      text: "После оплаты откроются журнал сделок, SkillEdge AI-коуч, графики TradingView, обучение, отчёты и история AI-разборов.",
+      button: "Выбрать тариф",
+    },
+    tabs: {
+      overview: "Обзор",
+      journal: "Журнал сделок",
+      charts: "Графики",
+      coach: "AI-коуч",
+      learning: "Обучение",
+      reports: "Отчёты",
+      billing: "Тариф",
+    },
+    periods: {
+      monthly: "1 месяц",
+      halfyear: "6 месяцев",
+      yearly: "1 год",
+      demo: "7-дневная пробная версия",
+    },
+    demo: {
+      label: "Пробная версия",
+      title: "У вас активирован 7-дневный demo-доступ",
+      text: "Это пробная версия тарифа Starter с лимитом 10 AI-запросов. После окончания срока доступ будет закрыт, если вы не выберете основной тариф.",
+      short: "7-дневная пробная версия. Лимит: 10 AI-запросов.",
+    },
+    billing: {
+      title: "Тариф и оплата",
+      text: "Информация о текущем тарифе, оплатах и сроке действия подписки.",
+      activePlan: "Тариф активен",
+      inactivePlan: "Тариф не активирован",
+      period: "Период",
+      validUntil: "действует до",
+      empty:
+        "После оплаты здесь появятся план, период, дата окончания и история оплат.",
+    },
+    coach: {
+      title: "AI-коуч",
+      text: "Опишите сделку, эмоции, ошибку или торговую ситуацию — AI-коуч даст разбор по дисциплине, риску и качеству решения.",
+      reviewTitle: "Разбор сделки",
+      reviewText:
+        "Чем конкретнее описание, тем полезнее ответ. Укажи тикер, вход, стоп, причину входа, эмоции и результат.",
+      placeholder:
+        "Пример: Сегодня зашёл в short после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка.",
+      ask: "Спросить AI",
+      analyzing: "AI анализирует...",
+      newReview: "Новый разбор",
+      answerTitle: "Ответ AI-коуча",
+      answerPlaceholder:
+        "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой.",
+      historyTitle: "История AI-разборов",
+      historyText: "Последние 10 запросов к AI-коучу.",
+      historyEmpty: "История пока пустая. Первый разбор появится здесь после ответа AI.",
+      loginFirst: "Сначала войдите в аккаунт.",
+      messageRequired: "Введите вопрос или описание сделки.",
+      coachError: "Ошибка AI-коуча.",
+      failed: "Не удалось получить ответ AI-коуча.",
+      needPlan: "Для AI-коуча нужен активный тариф или demo-доступ.",
+      limitReached:
+        "Лимит AI-запросов закончился. Выберите тариф выше или дождитесь обновления лимита.",
+    },
+  },
+
+  ua: {
+    terminal: "SkillEdge AI Terminal",
+    dashboard: "Особистий кабінет",
+    user: "Користувач",
+    choosePlan: "Обрати тариф",
+    logout: "Вийти",
+    currentPlan: "Поточний тариф",
+    loading: "Завантаження...",
+    notActivated: "Не активовано",
+    activatePlan: "Активуйте тариф, щоб відкрити функції кабінету.",
+    aiUsage: "Використання AI",
+    quickActions: "Швидкі дії",
+    addTrade: "Додати угоду",
+    uploadScreenshot: "Завантажити скрин",
+    askAI: "Запитати AI",
+    createReport: "Створити звіт",
+    overview: {
+  title: "Огляд ефективності",
+  text: "Зведення PnL, win rate, discipline score, найкращі сетапи та головні помилки.",
+  pnlMonth: "PnL за місяць",
+  winRate: "Win rate",
+  discipline: "Discipline score",
+  weeklyAi: "AI-зведення тижня",
+  weeklyAiText:
+    "Цей модуль буде підключено до бази даних, тарифів та AI-логіки на наступних етапах.",
+},
+    locked: {
+      title: "Активуйте тариф",
+      label: "Доступ закрито",
+      text: "Після оплати відкриються журнал угод, SkillEdge AI-коуч, графіки TradingView, навчання, звіти та історія AI-розборів.",
+      button: "Обрати тариф",
+    },
+    tabs: {
+      overview: "Огляд",
+      journal: "Журнал угод",
+      charts: "Графіки",
+      coach: "AI-коуч",
+      learning: "Навчання",
+      reports: "Звіти",
+      billing: "Тариф",
+    },
+    periods: {
+      monthly: "1 місяць",
+      halfyear: "6 місяців",
+      yearly: "1 рік",
+      demo: "7-денна пробна версія",
+    },
+    demo: {
+      label: "Пробна версія",
+      title: "У вас активовано 7-денний demo-доступ",
+      text: "Це пробна версія тарифу Starter з лімітом 10 AI-запитів. Після завершення строку доступ буде закрито, якщо ви не оберете основний тариф.",
+      short: "7-денна пробна версія. Ліміт: 10 AI-запитів.",
+    },
+    billing: {
+      title: "Тариф і оплата",
+      text: "Інформація про поточний тариф, оплати та строк дії підписки.",
+      activePlan: "Тариф активний",
+      inactivePlan: "Тариф не активовано",
+      period: "Період",
+      validUntil: "діє до",
+      empty:
+        "Після оплати тут зʼявляться план, період, дата завершення та історія оплат.",
+    },
+    coach: {
+      title: "AI-коуч",
+      text: "Опишіть угоду, емоції, помилку або торгову ситуацію — AI-коуч зробить розбір дисципліни, ризику та якості рішення.",
+      reviewTitle: "Розбір угоди",
+      reviewText:
+        "Чим конкретніший опис, тим корисніша відповідь. Вкажіть тикер, вхід, стоп, причину входу, емоції та результат.",
+      placeholder:
+        "Приклад: Сьогодні зайшов у short після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
+      ask: "Запитати AI",
+      analyzing: "AI аналізує...",
+      newReview: "Новий розбір",
+      answerTitle: "Відповідь AI-коуча",
+      answerPlaceholder:
+        "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
+      historyTitle: "Історія AI-розборів",
+      historyText: "Останні 10 запитів до AI-коуча.",
+      historyEmpty: "Історія поки порожня. Перший розбір зʼявиться тут після відповіді AI.",
+      loginFirst: "Спочатку увійдіть в акаунт.",
+      messageRequired: "Введіть питання або опис угоди.",
+      coachError: "Помилка AI-коуча.",
+      failed: "Не вдалося отримати відповідь AI-коуча.",
+      needPlan: "Для AI-коуча потрібен активний тариф або demo-доступ.",
+      limitReached:
+        "Ліміт AI-запитів закінчився. Оберіть тариф вище або дочекайтеся оновлення ліміту.",
+    },
+  },
+} as const;
+
+const tabs: { id: TabId }[] = [
+  { id: "overview" },
+  { id: "journal" },
+  { id: "charts" },
+  { id: "coach" },
+  { id: "learning" },
+  { id: "reports" },
+  { id: "billing" },
 ];
 
 const planNames: Record<PlanId, string> = {
@@ -56,16 +329,22 @@ const periodNames: Record<BillingPeriod, string> = {
   halfyear: "6 месяцев",
   yearly: "1 год",
 };
-function getPeriodName(subscription: Subscription) {
+function getPeriodName(
+  subscription: {
+    period: BillingPeriod | null;
+    isDemo: boolean;
+  },
+  t: (typeof dashboardDict)[Language]
+) {
   if (subscription.isDemo) {
-    return "7-дневная пробная версия";
+    return t.periods.demo;
   }
 
   if (!subscription.period) {
     return "—";
   }
 
-  return periodNames[subscription.period];
+  return t.periods[subscription.period];
 }
 
 export default function DashboardPage() {
@@ -73,10 +352,12 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [loading, setLoading] = useState(true);
   const [coachMessage, setCoachMessage] = useState("");
-const [coachAnswer, setCoachAnswer] = useState("");
-const [coachLoading, setCoachLoading] = useState(false);
-const [coachError, setCoachError] = useState("");
-const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
+  const [coachAnswer, setCoachAnswer] = useState("");
+  const [coachLoading, setCoachLoading] = useState(false);
+  const [language, setLanguage] = useState<Language>("en");
+  const t = dashboardDict[language];
+  const [coachError, setCoachError] = useState("");
+  const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
   const [subscription, setSubscription] = useState({
   active: false,
   plan: null as PlanId | null,
@@ -89,6 +370,15 @@ const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
 
   useEffect(() => {
     async function loadDashboard() {
+      const savedLanguage = localStorage.getItem("skilledge_language");
+
+if (
+  savedLanguage === "en" ||
+  savedLanguage === "ru" ||
+  savedLanguage === "ua"
+) {
+  setLanguage(savedLanguage);
+}
       const { data: userData } = await supabase.auth.getUser();
 
       if (!userData.user) {
@@ -144,7 +434,7 @@ const handleCoachSubmit = async () => {
   const message = coachMessage.trim();
 
   if (!message) {
-    setCoachError("Введите вопрос или описание сделки.");
+    setCoachError(t.coach.messageRequired);
     return;
   }
 
@@ -157,7 +447,7 @@ const handleCoachSubmit = async () => {
     const token = data.session?.access_token;
 
     if (!token) {
-      setCoachError("Сначала войдите в аккаунт.");
+      setCoachError(t.coach.loginFirst);
       return;
     }
 
@@ -175,7 +465,7 @@ const handleCoachSubmit = async () => {
     const result = await response.json();
 
     if (!response.ok) {
-      setCoachError(result.error || "Ошибка AI-коуча.");
+      setCoachError(result.error || t.coach.coachError);
       return;
     }
 
@@ -187,7 +477,7 @@ const handleCoachSubmit = async () => {
     id: crypto.randomUUID(),
     user_message: message,
     ai_response: result.answer || "",
-    model: "current",
+    model: "SkillEdge AI Coach",
     tokens_used: null,
     created_at: new Date().toISOString(),
   },
@@ -200,7 +490,7 @@ const handleCoachSubmit = async () => {
       aiLimit: result.aiLimit ?? current.aiLimit,
     }));
   } catch {
-    setCoachError("Не удалось получить ответ AI-коуча.");
+    setCoachError(t.coach.failed);
   } finally {
     setCoachLoading(false);
   }
@@ -222,33 +512,31 @@ const handleCoachSubmit = async () => {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-[0.28em] text-white/45">
-                SkillEdge AI Terminal
-              </div>
+  {t.terminal}
+</div>
 
-              <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">
-                Личный кабинет
-              </h1>
+<h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">
+  {t.dashboard}
+</h1>
 
-              <p className="mt-3 text-sm text-white/55">
-                Пользователь:{" "}
-                <span className="text-white/75">{email || "загрузка..."}</span>
-              </p>
-            </div>
+<p className="mt-3 text-sm text-white/55">
+  {t.user}:{" "}
+  <span className="text-white/75">{email || t.loading}</span>
+</p>
 
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="/?page=pricing"
-                className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
-              >
-                Выбрать тариф
-              </a>
+<a
+  href="/?page=pricing"
+  className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+>
+  {t.choosePlan}
+</a>
 
-              <button
-                onClick={handleLogout}
-                className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-              >
-                Выйти
-              </button>
+<button
+  onClick={handleLogout}
+  className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+>
+  {t.logout}
+</button>
             </div>
           </div>
 
@@ -275,7 +563,7 @@ const handleCoachSubmit = async () => {
                       }}
                     />
                   )}
-                  <span className="relative z-10">{tab.label}</span>
+                  <span className="relative z-10">{t.tabs[tab.id]}</span>
                 </button>
               ))}
             </div>
@@ -339,7 +627,7 @@ const handleCoachSubmit = async () => {
               transition={{ duration: 0.35 }}
               className={!loading && locked && activeTab !== "billing" ? "blur-md" : ""}
             >
-              {activeTab === "overview" && <OverviewTab />}
+              {activeTab === "overview" && <OverviewTab t={t} />}
               {activeTab === "journal" && <JournalTab />}
               {activeTab === "charts" && <ChartsTab />}
               {activeTab === "coach" && (
@@ -350,6 +638,7 @@ const handleCoachSubmit = async () => {
   error={coachError}
   loading={coachLoading}
   history={coachHistory}
+  t={t}
   onMessageChange={setCoachMessage}
   onSubmit={handleCoachSubmit}
   onNewAnalysis={() => {
@@ -362,7 +651,7 @@ const handleCoachSubmit = async () => {
               {activeTab === "learning" && <LearningTab />}
               {activeTab === "reports" && <ReportsTab />}
               {activeTab === "billing" && (
-                <BillingTab subscription={subscription} loading={loading} />
+                <BillingTab subscription={subscription} loading={loading} t={t} />
               )}
             </motion.div>
           </section>
@@ -375,8 +664,8 @@ const handleCoachSubmit = async () => {
               className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl"
             >
               <p className="text-xs uppercase tracking-[0.28em] text-white/35">
-                Текущий тариф
-              </p>
+  {t.currentPlan}
+</p>
 
               <h3 className="mt-3 text-2xl font-semibold">
                 {loading
@@ -387,22 +676,22 @@ const handleCoachSubmit = async () => {
               </h3>
 
               <p className="mt-3 text-sm leading-7 text-white/50">
-                {subscription.active && subscription.plan && subscription.period
-                  ? `${periodNames[subscription.period]} · действует до ${formatDate(
-                      subscription.expiresAt
-                    )}`
-                  : "Активируйте тариф, чтобы открыть функции кабинета."}
-              </p>
+  {subscription.active && subscription.plan && subscription.period
+    ? `${getPeriodName(subscription, t)} · ${t.billing.validUntil} ${formatDate(
+        subscription.expiresAt
+      )}`
+    : t.activatePlan}
+</p>
 
 {subscription.isDemo && (
   <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-xs leading-5 text-amber-50/80">
-    7-дневная пробная версия. Лимит: 10 AI-запросов.
+    {t.demo.short}
   </div>
 )}
 
               <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-white/45">AI usage</span>
+                  <span className="text-white/45">{t.aiUsage}</span>
                   <span className="text-white/70">
                     {subscription.aiLimit > 0
                       ? `${subscription.aiUsed}/${subscription.aiLimit}`
@@ -434,14 +723,14 @@ const handleCoachSubmit = async () => {
               className="rounded-[2rem] border border-white/10 bg-gradient-to-b from-indigo-500/10 to-white/[0.035] p-6 backdrop-blur-xl"
             >
               <p className="text-xs uppercase tracking-[0.28em] text-white/35">
-                Quick actions
-              </p>
+  {t.quickActions}
+</p>
 
               <div className="mt-5 space-y-3">
-                <ActionButton label="Добавить сделку" disabled={locked} />
-                <ActionButton label="Загрузить скрин" disabled={locked} />
-                <ActionButton label="Спросить AI" disabled={locked} />
-                <ActionButton label="Создать отчёт" disabled={locked} />
+                <ActionButton label={t.addTrade} disabled={locked} />
+<ActionButton label={t.uploadScreenshot} disabled={locked} />
+<ActionButton label={t.askAI} disabled={locked} />
+<ActionButton label={t.createReport} disabled={locked} />
               </div>
             </motion.div>
           </aside>
@@ -506,36 +795,22 @@ function ActionButton({
   );
 }
 
-function OverviewTab() {
+function OverviewTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   return (
     <div>
-      <SectionHeader
-        title="Обзор эффективности"
-        text="Сводка PnL, win rate, discipline score, лучшие сетапы и главные ошибки."
-      />
+      <SectionHeader title={t.overview.title} text={t.overview.text} />
 
       <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <MetricCard label="PnL за месяц" value="$0" />
-        <MetricCard label="Win rate" value="—" />
-        <MetricCard label="Discipline score" value="—" />
+        <MetricCard label={t.overview.pnlMonth} value="$0" />
+        <MetricCard label={t.overview.winRate} value="—" />
+        <MetricCard label={t.overview.discipline} value="—" />
       </div>
 
-      <PlaceholderBlock title="AI-сводка недели" />
-    </div>
-  );
-}
-
-function JournalTab() {
-  return (
-    <div>
-      <SectionHeader
-        title="Журнал сделок"
-        text="Добавляйте сделки, теги, эмоции, риск, скриншоты и заметки."
-      />
-
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <PlaceholderBlock title="Добавить сделку" />
-        <PlaceholderBlock title="История сделок" />
+      <div className="mt-6 rounded-3xl border border-white/10 bg-black/20 p-6">
+        <h3 className="text-xl font-semibold">{t.overview.weeklyAi}</h3>
+        <p className="mt-3 text-sm leading-7 text-white/55">
+          {t.overview.weeklyAiText}
+        </p>
       </div>
     </div>
   );
@@ -594,9 +869,11 @@ function ReportsTab() {
 function BillingTab({
   subscription,
   loading,
+  t,
 }: {
   subscription: Subscription;
   loading: boolean;
+  t: (typeof dashboardDict)[Language];
 }) {
   return (
     <div>
@@ -634,7 +911,7 @@ function BillingTab({
 
         <p className="mt-3 text-white/60">
           {subscription.active && subscription.period
-            ? `Период: ${getPeriodName(subscription)}. Действует до ${
+            ? `Период: ${getPeriodName(subscription, t)}. Действует до ${
                 subscription.expiresAt
                   ? new Date(subscription.expiresAt).toLocaleDateString("ru-RU")
                   : "—"
@@ -646,7 +923,7 @@ function BillingTab({
           href="/?page=pricing"
           className="mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
         >
-          Выбрать тариф
+          {t.choosePlan}
         </a>
       </div>
     </div>
@@ -660,6 +937,7 @@ function CoachTab({
   error,
   loading,
   history,
+  t,
   onMessageChange,
   onSubmit,
   onNewAnalysis,
@@ -674,6 +952,7 @@ function CoachTab({
   error: string;
   loading: boolean;
   history: AiAnalysis[];
+  t: (typeof dashboardDict)[Language];
   onMessageChange: (value: string) => void;
   onSubmit: () => void;
   onNewAnalysis: () => void;
@@ -682,20 +961,16 @@ function CoachTab({
 
   return (
     <div>
-      <SectionHeader
-        title="AI-коуч"
-        text="Опишите сделку, эмоции, ошибку или торговую ситуацию — AI-коуч даст разбор по дисциплине, риску и качеству решения."
-      />
+      <SectionHeader title={t.coach.title} text={t.coach.text} />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-2xl font-semibold">Разбор сделки</h3>
+              <h3 className="text-2xl font-semibold">{t.coach.reviewTitle}</h3>
               <p className="mt-2 text-sm leading-6 text-white/55">
-                Чем конкретнее описание, тем полезнее ответ. Укажи тикер, вход,
-                стоп, причину входа, эмоции и результат.
-              </p>
+  {t.coach.reviewText}
+</p>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-right text-xs text-white/60">
@@ -710,7 +985,7 @@ function CoachTab({
             value={message}
             onChange={(event) => onMessageChange(event.target.value)}
             disabled={!subscription.active || loading || remaining <= 0}
-            placeholder="Пример: Сегодня зашёл в short после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка."
+            placeholder={t.coach.placeholder}
             className="min-h-[180px] w-full resize-none rounded-3xl border border-white/10 bg-[#080c16] p-5 text-sm leading-7 text-white outline-none transition placeholder:text-white/30 focus:border-white/25"
           />
 
@@ -722,14 +997,13 @@ function CoachTab({
 
           {!subscription.active && (
             <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50/85">
-              Для AI-коуча нужен активный тариф или demo-доступ.
+              {t.coach.needPlan}
             </div>
           )}
 
           {subscription.active && remaining <= 0 && (
             <div className="mt-4 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-50/85">
-              Лимит AI-запросов закончился. Выберите тариф выше или дождитесь
-              обновления лимита.
+              {t.coach.limitReached}
             </div>
           )}
 
@@ -738,26 +1012,25 @@ function CoachTab({
             disabled={!subscription.active || loading || remaining <= 0}
             className="mt-5 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {loading ? "AI анализирует..." : "Спросить AI"}
+            {loading ? t.coach.analyzing : t.coach.ask}
           </button>
           <button
   onClick={onNewAnalysis}
   disabled={loading}
   className="ml-3 mt-5 inline-flex rounded-full border border-white/10 bg-white/[0.04] px-7 py-3 text-sm font-medium text-white/75 transition hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
 >
-  Новый разбор
+  {t.coach.newReview}
 </button>
         </div>
 
         <div className="space-y-6">
   <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
     <div className="text-xs uppercase tracking-[0.25em] text-white/35">
-      Ответ AI-коуча
-    </div>
+  {t.coach.answerTitle}
+</div>
 
     <div className="mt-5 min-h-[260px] whitespace-pre-wrap rounded-3xl border border-white/10 bg-black/20 p-5 text-sm leading-7 text-white/75">
-      {answer ||
-        "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой."}
+        {answer || t.coach.answerPlaceholder}
     </div>
   </div>
 
@@ -765,10 +1038,10 @@ function CoachTab({
     <div className="flex items-center justify-between gap-4">
       <div>
         <div className="text-xs uppercase tracking-[0.25em] text-white/35">
-          История AI-разборов
+          {t.coach.historyTitle}
         </div>
         <p className="mt-2 text-sm text-white/45">
-          Последние 10 запросов к AI-коучу.
+          {t.coach.historyText}
         </p>
       </div>
     </div>
@@ -776,7 +1049,7 @@ function CoachTab({
     <div className="mt-5 space-y-3">
       {history.length === 0 ? (
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/45">
-          История пока пустая. Первый разбор появится здесь после ответа AI.
+          {t.coach.historyEmpty}
         </div>
       ) : (
         history.map((item) => (
@@ -788,7 +1061,7 @@ function CoachTab({
             className="w-full rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-white/20 hover:bg-white/[0.04]"
           >
             <div className="flex items-center justify-between gap-4 text-xs text-white/35">
-              <span>{item.model || "AI coach"}</span>
+              <span>SkillEdge AI Coach</span>
               <span>
                 {item.created_at
                   ? new Date(item.created_at).toLocaleString("ru-RU")
