@@ -128,3 +128,17 @@
     @apply font-sans;
   }
 }
+.field-input option {
+  background: #080c16;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.field-input option:checked {
+  background: #1b2030;
+  color: #ffffff;
+}
+
+.field-input option:hover {
+  background: #1b2030;
+  color: #ffffff;
+}

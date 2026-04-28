@@ -2,6 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+} from "recharts";
 import { supabase } from "@/lib/supabaseClient";
 
 type Language = "en" | "ru" | "ua";
@@ -37,6 +46,29 @@ type AiAnalysis = {
   created_at: string | null;
 };
 
+type Trade = {
+  id: string;
+  user_id: string;
+  ticker: string;
+  market: "stocks" | "crypto" | "futures" | "forex" | "options";
+  direction: "long" | "short";
+  entry_price: number | null;
+  exit_price: number | null;
+  stop_loss: number | null;
+  position_size: number | null;
+  risk_amount: number | null;
+  pnl: number | null;
+  result: "win" | "loss" | "breakeven" | null;
+  setup: string | null;
+  emotion: string | null;
+  mistake: string | null;
+  lesson: string | null;
+  notes: string | null;
+  screenshot_url: string | null;
+  trade_date: string;
+  created_at: string;
+};
+
 const dashboardDict = {
   en: {
     terminal: "SkillEdge AI Terminal",
@@ -64,7 +96,111 @@ const dashboardDict = {
   weeklyAiText:
     "This module will be connected to your trade database, plans and AI logic in the next stages.",
 },
-    locked: {
+    
+journal: {
+  title: "Trade journal",
+  text: "Add trades, track risk, result, emotions, mistakes and lessons.",
+  locked: "An active plan or demo access is required to add trades.",
+  addTitle: "Add trade",
+  addText:
+    "Fill in the basic data. Later we will connect screenshots and AI review for each trade.",
+  totalTrades: "Total trades",
+  totalPnl: "Total PnL",
+  winRate: "Win rate",
+  avgPnl: "Avg PnL",
+  grossProfit: "Gross Profit",
+grossLoss: "Gross Loss",
+bestTrade: "Best Trade",
+worstTrade: "Worst Trade",
+profitFactor: "Profit Factor",
+equityTitle: "Equity curve",
+equityText: "Cumulative PnL based on saved trades.",
+equityEmpty: "Add trades with PnL to build your equity curve.",
+equityPoints: "points",
+expand: "Expand",
+close: "Close",
+cardLabels: {
+  entry: "Entry",
+  exit: "Exit",
+  stop: "Stop",
+  risk: "Risk",
+  result: "Result",
+  setup: "Setup",
+  mistake: "Mistake",
+  lesson: "Lesson",
+  notes: "Notes",
+},
+fullTitle: "Full journal",
+fullText: "Complete trade list. Filters and export are available below.",
+downloadCsv: "Download CSV",
+searchTicker: "Search ticker",
+allMarkets: "All markets",
+allSides: "All sides",
+allResults: "All results",
+table: {
+  date: "Date",
+  ticker: "Ticker",
+  market: "Market",
+  side: "Side",
+  entry: "Entry",
+  exit: "Exit",
+  stop: "Stop",
+  risk: "Risk",
+  pnl: "PnL",
+  result: "Result",
+  setup: "Setup",
+},
+  recentTitle: "Recent trades",
+  recentText:
+    "Last 3 trades from your personal journal. Full table and export will be added next.",
+  empty:
+    "No trades yet. Add your first trade to start building your performance database.",
+  tradesCount: "trades",
+  saving: "Saving...",
+  save: "Save trade",
+  tickerRequired: "Enter ticker.",
+  loginFirst: "Please log in first.",
+  saveFailed: "Failed to save trade.",
+  fields: {
+    ticker: "Ticker",
+    date: "Date",
+    market: "Market",
+    direction: "Direction",
+    entry: "Entry",
+    exit: "Exit",
+    stop: "Stop",
+    size: "Size",
+    risk: "Risk $",
+    pnl: "PnL $",
+    result: "Result",
+    setup: "Setup",
+    emotion: "Emotion",
+    mistake: "Mistake",
+    lesson: "Lesson",
+    notes: "Notes",
+  },
+  placeholders: {
+    ticker: "AAPL / BTC / NQ",
+    entry: "100",
+    exit: "105",
+    stop: "98",
+    size: "Shares / contracts",
+    risk: "50",
+    pnl: "-25 / 120",
+    setup: "VWAP reclaim / gap fade",
+    emotion: "Calm / FOMO / fear",
+    mistake: "What did you do wrong?",
+    lesson: "What should you remember next time?",
+    notes: "Context, catalyst, tape, levels...",
+  },
+  options: {
+    notSet: "Not set",
+    win: "Win",
+    loss: "Loss",
+    breakeven: "Breakeven",
+  },
+},
+locked: {
       title: "Activate your plan",
       label: "Access locked",
       text: "After payment, trade journal, SkillEdge AI Coach, TradingView charts, learning, reports and AI review history will be unlocked.",
@@ -153,7 +289,111 @@ const dashboardDict = {
   weeklyAiText:
     "Этот модуль будет подключён к базе данных, тарифам и AI-логике на следующих этапах.",
 },
-    locked: {
+    
+journal: {
+  title: "Журнал сделок",
+  text: "Добавляйте сделки, фиксируйте риск, результат, эмоции, ошибки и уроки.",
+  locked: "Для добавления сделок нужен активный тариф или demo-доступ.",
+  addTitle: "Добавить сделку",
+  addText:
+    "Заполните базовые данные. Позже мы подключим скриншоты и AI-разбор конкретной сделки.",
+  totalTrades: "Всего сделок",
+  totalPnl: "Общий PnL",
+  winRate: "Win rate",
+  avgPnl: "Средний PnL",
+  grossProfit: "Gross profit",
+grossLoss: "Gross loss",
+bestTrade: "Лучшая сделка",
+worstTrade: "Худшая сделка",
+profitFactor: "Profit factor",
+equityTitle: "Кривая PnL",
+equityText: "Накопительный PnL на основе сохранённых сделок.",
+equityEmpty: "Добавьте сделки с PnL, чтобы построить кривую доходности.",
+equityPoints: "точек",
+expand: "Развернуть",
+close: "Закрыть",
+cardLabels: {
+  entry: "Вход",
+  exit: "Выход",
+  stop: "Стоп",
+  risk: "Риск",
+  result: "Результат",
+  setup: "Сетап",
+  mistake: "Ошибка",
+  lesson: "Урок",
+  notes: "Заметки",
+},
+fullTitle: "Полный журнал",
+fullText: "Полный список сделок. Ниже доступны фильтры и экспорт.",
+downloadCsv: "Скачать CSV",
+searchTicker: "Поиск тикера",
+allMarkets: "Все рынки",
+allSides: "Все направления",
+allResults: "Все результаты",
+table: {
+  date: "Дата",
+  ticker: "Тикер",
+  market: "Рынок",
+  side: "Сторона",
+  entry: "Вход",
+  exit: "Выход",
+  stop: "Стоп",
+  risk: "Риск",
+  pnl: "PnL",
+  result: "Результат",
+  setup: "Сетап",
+},
+  recentTitle: "Последние сделки",
+  recentText:
+    "Последние 3 сделки из личного журнала. Полную таблицу и экспорт добавим следующим шагом.",
+  empty:
+    "Сделок пока нет. Добавьте первую сделку, чтобы начать собирать базу своей статистики.",
+  tradesCount: "сделок",
+  saving: "Сохраняем...",
+  save: "Сохранить сделку",
+  tickerRequired: "Введите тикер.",
+  loginFirst: "Сначала войдите в аккаунт.",
+  saveFailed: "Не удалось сохранить сделку.",
+  fields: {
+    ticker: "Тикер",
+    date: "Дата",
+    market: "Рынок",
+    direction: "Направление",
+    entry: "Вход",
+    exit: "Выход",
+    stop: "Стоп",
+    size: "Размер позиции",
+    risk: "Риск $",
+    pnl: "PnL $",
+    result: "Результат",
+    setup: "Сетап",
+    emotion: "Эмоция",
+    mistake: "Ошибка",
+    lesson: "Урок",
+    notes: "Заметки",
+  },
+  placeholders: {
+    ticker: "AAPL / BTC / NQ",
+    entry: "100",
+    exit: "105",
+    stop: "98",
+    size: "Акции / контракты",
+    risk: "50",
+    pnl: "-25 / 120",
+    setup: "VWAP reclaim / gap fade",
+    emotion: "Спокойствие / FOMO / страх",
+    mistake: "Что было сделано неправильно?",
+    lesson: "Что нужно запомнить на следующую сделку?",
+    notes: "Контекст, катализатор, лента, уровни...",
+  },
+  options: {
+    notSet: "Не задано",
+    win: "Плюс",
+    loss: "Минус",
+    breakeven: "Безубыток",
+  },
+},
+locked: {
       title: "Активируйте тариф",
       label: "Доступ закрыт",
       text: "После оплаты откроются журнал сделок, SkillEdge AI-коуч, графики TradingView, обучение, отчёты и история AI-разборов.",
@@ -243,7 +483,111 @@ const dashboardDict = {
   weeklyAiText:
     "Цей модуль буде підключено до бази даних, тарифів та AI-логіки на наступних етапах.",
 },
-    locked: {
+    
+journal: {
+  title: "Журнал угод",
+  text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
+  locked: "Для додавання угод потрібен активний тариф або demo-доступ.",
+  addTitle: "Додати угоду",
+  addText:
+    "Заповніть базові дані. Пізніше ми підключимо скриншоти та AI-розбір конкретної угоди.",
+  totalTrades: "Усього угод",
+  totalPnl: "Загальний PnL",
+  winRate: "Win rate",
+  avgPnl: "Середній PnL",
+  grossProfit: "Gross profit",
+grossLoss: "Gross loss",
+bestTrade: "Найкраща угода",
+worstTrade: "Найгірша угода",
+profitFactor: "Profit factor",
+equityTitle: "Крива PnL",
+equityText: "Накопичувальний PnL на основі збережених угод.",
+equityEmpty: "Додайте угоди з PnL, щоб побудувати криву дохідності.",
+equityPoints: "точок",
+expand: "Розгорнути",
+close: "Закрити",
+cardLabels: {
+  entry: "Вхід",
+  exit: "Вихід",
+  stop: "Стоп",
+  risk: "Ризик",
+  result: "Результат",
+  setup: "Сетап",
+  mistake: "Помилка",
+  lesson: "Урок",
+  notes: "Нотатки",
+},
+fullTitle: "Повний журнал",
+fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
+downloadCsv: "Завантажити CSV",
+searchTicker: "Пошук тикера",
+allMarkets: "Усі ринки",
+allSides: "Усі напрямки",
+allResults: "Усі результати",
+table: {
+  date: "Дата",
+  ticker: "Тикер",
+  market: "Ринок",
+  side: "Сторона",
+  entry: "Вхід",
+  exit: "Вихід",
+  stop: "Стоп",
+  risk: "Ризик",
+  pnl: "PnL",
+  result: "Результат",
+  setup: "Сетап",
+},
+  recentTitle: "Останні угоди",
+  recentText:
+    "Останні 3 угоди з особистого журналу. Повну таблицю та експорт додамо наступним кроком.",
+  empty:
+    "Угод поки немає. Додайте першу угоду, щоб почати збирати базу своєї статистики.",
+  tradesCount: "угод",
+  saving: "Зберігаємо...",
+  save: "Зберегти угоду",
+  tickerRequired: "Введіть тикер.",
+  loginFirst: "Спочатку увійдіть в акаунт.",
+  saveFailed: "Не вдалося зберегти угоду.",
+  fields: {
+    ticker: "Тикер",
+    date: "Дата",
+    market: "Ринок",
+    direction: "Напрямок",
+    entry: "Вхід",
+    exit: "Вихід",
+    stop: "Стоп",
+    size: "Розмір позиції",
+    risk: "Ризик $",
+    pnl: "PnL $",
+    result: "Результат",
+    setup: "Сетап",
+    emotion: "Емоція",
+    mistake: "Помилка",
+    lesson: "Урок",
+    notes: "Нотатки",
+  },
+  placeholders: {
+    ticker: "AAPL / BTC / NQ",
+    entry: "100",
+    exit: "105",
+    stop: "98",
+    size: "Акції / контракти",
+    risk: "50",
+    pnl: "-25 / 120",
+    setup: "VWAP reclaim / gap fade",
+    emotion: "Спокій / FOMO / страх",
+    mistake: "Що було зроблено неправильно?",
+    lesson: "Що потрібно запамʼятати на наступну угоду?",
+    notes: "Контекст, каталізатор, стрічка, рівні...",
+  },
+  options: {
+    notSet: "Не задано",
+    win: "Плюс",
+    loss: "Мінус",
+    breakeven: "Беззбиток",
+  },
+},
+locked: {
       title: "Активуйте тариф",
       label: "Доступ закрито",
       text: "Після оплати відкриються журнал угод, SkillEdge AI-коуч, графіки TradingView, навчання, звіти та історія AI-розборів.",
@@ -347,6 +691,53 @@ function getPeriodName(
   return t.periods[subscription.period];
 }
 
+function toNumberOrNull(value: string) {
+  const cleaned = value.trim();
+
+  if (!cleaned) {
+    return null;
+  }
+
+  const numberValue = Number(cleaned.replace(",", "."));
+
+  return Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function buildEquityCurveData(trades: Trade[]) {
+  return [...trades]
+    .filter((trade) => trade.pnl !== null)
+    .sort((a, b) => {
+      const dateA = new Date(a.trade_date).getTime();
+      const dateB = new Date(b.trade_date).getTime();
+
+      if (dateA !== dateB) {
+        return dateA - dateB;
+      }
+
+      return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    })
+    .reduce<
+      {
+        date: string;
+        ticker: string;
+        pnl: number;
+        equity: number;
+      }[]
+    >((acc, trade) => {
+      const previousEquity = acc.length > 0 ? acc[acc.length - 1].equity : 0;
+      const pnl = trade.pnl ?? 0;
+
+      acc.push({
+        date: trade.trade_date,
+        ticker: trade.ticker,
+        pnl,
+        equity: previousEquity + pnl,
+      });
+
+      return acc;
+    }, []);
+}
+
 export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
@@ -358,6 +749,28 @@ export default function DashboardPage() {
   const t = dashboardDict[language];
   const [coachError, setCoachError] = useState("");
   const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
+  const [trades, setTrades] = useState<Trade[]>([]);
+  const [equityExpanded, setEquityExpanded] = useState(false);
+const [tradeForm, setTradeForm] = useState({
+  ticker: "",
+  market: "stocks",
+  direction: "long",
+  entryPrice: "",
+  exitPrice: "",
+  stopLoss: "",
+  positionSize: "",
+  riskAmount: "",
+  pnl: "",
+  result: "",
+  setup: "",
+  emotion: "",
+  mistake: "",
+  lesson: "",
+  notes: "",
+  tradeDate: new Date().toISOString().slice(0, 10),
+});
+const [tradeSaving, setTradeSaving] = useState(false);
+const [tradeError, setTradeError] = useState("");
   const [subscription, setSubscription] = useState({
   active: false,
   plan: null as PlanId | null,
@@ -397,6 +810,15 @@ if (
   .limit(10);
 
 setCoachHistory((analysesData as AiAnalysis[]) ?? []);
+const { data: tradesData } = await supabase
+  .from("trades")
+  .select("*")
+  .eq("user_id", user.id)
+  .order("trade_date", { ascending: false })
+  .order("created_at", { ascending: false })
+  .limit(50);
+
+setTrades((tradesData as Trade[]) ?? []);
 
       const { data: subData, error } = await supabase
   .from("subscriptions")
@@ -493,6 +915,83 @@ const handleCoachSubmit = async () => {
     setCoachError(t.coach.failed);
   } finally {
     setCoachLoading(false);
+  }
+};
+const handleTradeSubmit = async () => {
+  setTradeError("");
+
+  const ticker = tradeForm.ticker.trim().toUpperCase();
+
+  if (!ticker) {
+   setTradeError(t.journal.tickerRequired);
+    return;
+  }
+
+  const { data: userData } = await supabase.auth.getUser();
+
+  if (!userData.user) {
+    setTradeError(t.journal.loginFirst);
+    return;
+  }
+
+  setTradeSaving(true);
+
+  try {
+    const payload = {
+      user_id: userData.user.id,
+      ticker,
+      market: tradeForm.market,
+      direction: tradeForm.direction,
+      entry_price: toNumberOrNull(tradeForm.entryPrice),
+      exit_price: toNumberOrNull(tradeForm.exitPrice),
+      stop_loss: toNumberOrNull(tradeForm.stopLoss),
+      position_size: toNumberOrNull(tradeForm.positionSize),
+      risk_amount: toNumberOrNull(tradeForm.riskAmount),
+      pnl: toNumberOrNull(tradeForm.pnl),
+      result: tradeForm.result || null,
+      setup: tradeForm.setup.trim() || null,
+      emotion: tradeForm.emotion.trim() || null,
+      mistake: tradeForm.mistake.trim() || null,
+      lesson: tradeForm.lesson.trim() || null,
+      notes: tradeForm.notes.trim() || null,
+      trade_date: tradeForm.tradeDate,
+    };
+
+    const { data, error } = await supabase
+      .from("trades")
+      .insert(payload)
+      .select("*")
+      .single();
+
+    if (error) {
+      setTradeError(error.message);
+      return;
+    }
+
+    setTrades((current) => [data as Trade, ...current]);
+
+    setTradeForm({
+      ticker: "",
+      market: "stocks",
+      direction: "long",
+      entryPrice: "",
+      exitPrice: "",
+      stopLoss: "",
+      positionSize: "",
+      riskAmount: "",
+      pnl: "",
+      result: "",
+      setup: "",
+      emotion: "",
+      mistake: "",
+      lesson: "",
+      notes: "",
+      tradeDate: new Date().toISOString().slice(0, 10),
+    });
+  } catch {
+    setTradeError(t.journal.saveFailed);
+  } finally {
+    setTradeSaving(false);
   }
 };
 
@@ -628,7 +1127,19 @@ const handleCoachSubmit = async () => {
               className={!loading && locked && activeTab !== "billing" ? "blur-md" : ""}
             >
               {activeTab === "overview" && <OverviewTab t={t} />}
-              {activeTab === "journal" && <JournalTab />}
+             
+             {activeTab === "journal" && (
+  <JournalTab
+    trades={trades}
+    tradeForm={tradeForm}
+    tradeSaving={tradeSaving}
+    tradeError={tradeError}
+    locked={locked}
+    t={t}
+    onTradeFormChange={setTradeForm}
+    onTradeSubmit={handleTradeSubmit}
+  />
+)}
               {activeTab === "charts" && <ChartsTab />}
               {activeTab === "coach" && (
   <CoachTab
@@ -732,10 +1243,44 @@ const handleCoachSubmit = async () => {
 <ActionButton label={t.askAI} disabled={locked} />
 <ActionButton label={t.createReport} disabled={locked} />
               </div>
+
+{activeTab === "journal" && (
+  <motion.div
+  className="mt-6"
+    initial={{ opacity: 0, y: 18 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.45 }}
+  >
+    <EquityCurveCard
+  trades={trades}
+  compact
+  t={t}
+  onExpand={() => setEquityExpanded(true)}
+/>
+  </motion.div>
+)}
+
             </motion.div>
           </aside>
         </motion.section>
       </div>
+
+{equityExpanded && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 px-4 py-6 backdrop-blur-md">
+    <div className="relative w-full max-w-6xl">
+      <button
+        type="button"
+        onClick={() => setEquityExpanded(false)}
+        className="absolute -right-2 -top-14 rounded-full border border-white/10 bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.03]"
+      >
+        ✕ {t.journal.close}
+      </button>
+
+      <EquityCurveCard trades={trades} t={t} />
+    </div>
+  </div>
+)}
+
     </main>
   );
 }
@@ -792,6 +1337,996 @@ function ActionButton({
     >
       {label}
     </button>
+  );
+}
+
+function JournalTab({
+  trades,
+  tradeForm,
+  tradeSaving,
+  tradeError,
+  locked,
+  t,
+  onTradeFormChange,
+  onTradeSubmit,
+}: {
+  trades: Trade[];
+  tradeForm: {
+    ticker: string;
+    market: string;
+    direction: string;
+    entryPrice: string;
+    exitPrice: string;
+    stopLoss: string;
+    positionSize: string;
+    riskAmount: string;
+    pnl: string;
+    result: string;
+    setup: string;
+    emotion: string;
+    mistake: string;
+    lesson: string;
+    notes: string;
+    tradeDate: string;
+  };
+  tradeSaving: boolean;
+  tradeError: string;
+  locked: boolean;
+  t: (typeof dashboardDict)[Language];
+  onTradeFormChange: React.Dispatch<
+    React.SetStateAction<{
+      ticker: string;
+      market: string;
+      direction: string;
+      entryPrice: string;
+      exitPrice: string;
+      stopLoss: string;
+      positionSize: string;
+      riskAmount: string;
+      pnl: string;
+      result: string;
+      setup: string;
+      emotion: string;
+      mistake: string;
+      lesson: string;
+      notes: string;
+      tradeDate: string;
+    }>
+  >;
+  onTradeSubmit: () => void;
+}) {
+
+function EquityCurveCard({
+  trades,
+  compact = false,
+  t,
+  onExpand,
+}: {
+  trades: Trade[];
+  compact?: boolean;
+  t: (typeof dashboardDict)[Language];
+  onExpand?: () => void;
+}) {
+  const equityCurveData = buildEquityCurveData(trades);
+const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+  setMounted(true);
+}, []);
+
+  return (
+    <div
+      className={
+        compact
+          ? "rounded-3xl border border-white/10 bg-white/[0.04] p-5"
+          : "rounded-3xl border border-white/10 bg-[#111621] p-6 shadow-2xl"
+      }
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h3 className={compact ? "text-lg font-semibold" : "text-2xl font-semibold"}>
+            {t.journal.equityTitle}
+          </h3>
+          <p className="mt-2 text-xs leading-6 text-white/45">
+            {t.journal.equityText}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/65">
+            {equityCurveData.length} {t.journal.equityPoints}
+          </div>
+
+          {compact && onExpand && (
+            <button
+              type="button"
+              onClick={onExpand}
+              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
+            >
+              {t.journal.expand}
+            </button>
+          )}
+        </div>
+      </div>
+
+     <div
+  className={
+    compact
+      ? "mt-5 h-[230px] w-full overflow-hidden"
+      : "mt-6 h-[520px] w-full overflow-x-auto overflow-y-hidden"
+  }
+>
+        {!mounted ? (
+  <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+    Loading chart...
+  </div>
+) : equityCurveData.length === 0 ? (
+          <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+            {t.journal.equityEmpty}
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={equityCurveData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
+              <XAxis
+                dataKey="date"
+                stroke="rgba(255,255,255,0.35)"
+                tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 11 }}
+              />
+              <YAxis
+                stroke="rgba(255,255,255,0.35)"
+                tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 11 }}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "#080c16",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: "16px",
+                  color: "#fff",
+                }}
+                labelStyle={{ color: "rgba(255,255,255,0.7)" }}
+              />
+              <Line
+                type="monotone"
+                dataKey="equity"
+                stroke="#67e8f9"
+                strokeWidth={3}
+                dot={{ r: compact ? 3 : 4 }}
+                activeDot={{ r: compact ? 5 : 7 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </div>
+    </div>
+  );
+}
+
+  const updateField = (field: keyof typeof tradeForm, value: string) => {
+    onTradeFormChange((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const totalTrades = trades.length;
+
+const totalPnl = trades.reduce((sum, trade) => {
+  return sum + (trade.pnl ?? 0);
+}, 0);
+
+const wins = trades.filter((trade) => trade.result === "win").length;
+
+const closedTrades = trades.filter(
+  (trade) => trade.result === "win" || trade.result === "loss"
+).length;
+
+const winRate =
+  closedTrades > 0 ? Math.round((wins / closedTrades) * 100) : null;
+
+const averagePnl =
+  totalTrades > 0 ? totalPnl / totalTrades : null;
+
+  const pnlValues = trades
+  .map((trade) => trade.pnl)
+  .filter((pnl): pnl is number => pnl !== null);
+
+const grossProfit = pnlValues
+  .filter((pnl) => pnl > 0)
+  .reduce((sum, pnl) => sum + pnl, 0);
+
+const grossLoss = pnlValues
+  .filter((pnl) => pnl < 0)
+  .reduce((sum, pnl) => sum + pnl, 0);
+
+const bestTrade = pnlValues.length > 0 ? Math.max(...pnlValues) : null;
+
+const worstTrade = pnlValues.length > 0 ? Math.min(...pnlValues) : null;
+
+const profitFactor =
+  grossLoss < 0 ? grossProfit / Math.abs(grossLoss) : null;
+
+const recentTrades = trades.slice(0, 3);
+
+const [journalFilters, setJournalFilters] = useState({
+  ticker: "",
+  market: "all",
+  direction: "all",
+  result: "all",
+});
+
+const updateJournalFilter = (
+  field: keyof typeof journalFilters,
+  value: string
+) => {
+  setJournalFilters((current) => ({
+    ...current,
+    [field]: value,
+  }));
+};
+
+const filteredTrades = trades.filter((trade) => {
+  const tickerMatch = trade.ticker
+    .toLowerCase()
+    .includes(journalFilters.ticker.trim().toLowerCase());
+
+  const marketMatch =
+    journalFilters.market === "all" || trade.market === journalFilters.market;
+
+  const directionMatch =
+    journalFilters.direction === "all" ||
+    trade.direction === journalFilters.direction;
+
+  const resultMatch =
+    journalFilters.result === "all" || trade.result === journalFilters.result;
+
+  return tickerMatch && marketMatch && directionMatch && resultMatch;
+});
+
+const equityCurveData = [...trades]
+  .filter((trade) => trade.pnl !== null)
+  .sort((a, b) => {
+    const dateA = new Date(a.trade_date).getTime();
+    const dateB = new Date(b.trade_date).getTime();
+
+    if (dateA !== dateB) {
+      return dateA - dateB;
+    }
+
+    return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+  })
+  .reduce<
+    {
+      date: string;
+      ticker: string;
+      pnl: number;
+      equity: number;
+    }[]
+  >((acc, trade) => {
+    const previousEquity = acc.length > 0 ? acc[acc.length - 1].equity : 0;
+    const pnl = trade.pnl ?? 0;
+
+    acc.push({
+      date: trade.trade_date,
+      ticker: trade.ticker,
+      pnl,
+      equity: previousEquity + pnl,
+    });
+
+    return acc;
+  }, []);
+
+const downloadTradesCsv = () => {
+  const headers = [
+    "Date",
+    "Ticker",
+    "Market",
+    "Direction",
+    "Entry",
+    "Exit",
+    "Stop",
+    "Size",
+    "Risk",
+    "PnL",
+    "Result",
+    "Setup",
+    "Emotion",
+    "Mistake",
+    "Lesson",
+    "Notes",
+  ];
+
+  const rows = filteredTrades.map((trade) => [
+    trade.trade_date,
+    trade.ticker,
+    trade.market,
+    trade.direction,
+    trade.entry_price ?? "",
+    trade.exit_price ?? "",
+    trade.stop_loss ?? "",
+    trade.position_size ?? "",
+    trade.risk_amount ?? "",
+    trade.pnl ?? "",
+    trade.result ?? "",
+    trade.setup ?? "",
+    trade.emotion ?? "",
+    trade.mistake ?? "",
+    trade.lesson ?? "",
+    trade.notes ?? "",
+  ]);
+
+  const csvContent =
+  "\uFEFFsep=;\n" +
+  [headers, ...rows]
+    .map((row) =>
+      row
+        .map((cell) => {
+          const value = String(cell).replace(/"/g, '""');
+          return `"${value}"`;
+        })
+        .join(";")
+    )
+    .join("\n");
+
+  const blob = new Blob([csvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `skilledge-trades-${new Date()
+    .toISOString()
+    .slice(0, 10)}.csv`;
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(url);
+};
+
+  return (
+    <div>
+      <SectionHeader title={t.journal.title} text={t.journal.text} />
+
+<div className="mt-8 grid gap-4 md:grid-cols-4 xl:grid-cols-4">
+  <MetricCard label={t.journal.totalTrades} value={String(totalTrades)} />
+
+  <MetricCard
+    label={t.journal.totalPnl}
+    value={`${totalPnl >= 0 ? "$" : "-$"}${Math.abs(totalPnl).toFixed(2)}`}
+  />
+
+  <MetricCard
+    label={t.journal.winRate}
+    value={winRate === null ? "—" : `${winRate}%`}
+  />
+
+  <MetricCard
+    label={t.journal.avgPnl}
+    value={
+      averagePnl === null
+        ? "—"
+        : `${averagePnl >= 0 ? "$" : "-$"}${Math.abs(averagePnl).toFixed(2)}`
+    }
+  />
+
+  <MetricCard
+  label={t.journal.grossProfit}
+  value={`$${grossProfit.toFixed(2)}`}
+/>
+
+<MetricCard
+  label={t.journal.grossLoss}
+  value={`${grossLoss < 0 ? "-$" : "$"}${Math.abs(grossLoss).toFixed(2)}`}
+/>
+
+<MetricCard
+  label={t.journal.bestTrade}
+  value={bestTrade === null ? "—" : `$${bestTrade.toFixed(2)}`}
+/>
+
+<MetricCard
+  label={t.journal.worstTrade}
+  value={
+    worstTrade === null
+      ? "—"
+      : `${worstTrade < 0 ? "-$" : "$"}${Math.abs(worstTrade).toFixed(2)}`
+  }
+/>
+
+<MetricCard
+  label={t.journal.profitFactor}
+  value={profitFactor === null ? "—" : profitFactor.toFixed(2)}
+/>
+</div>
+
+      {locked && (
+        <div className="mt-6 rounded-3xl border border-amber-300/25 bg-amber-300/10 p-5 text-sm leading-7 text-amber-50/85">
+         {t.journal.locked}
+        </div>
+      )}
+
+      <div className="mt-8 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
+          <h3 className="text-2xl font-semibold">{t.journal.addTitle}</h3>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <Field label={t.journal.fields.ticker}>
+              <input
+                value={tradeForm.ticker}
+                onChange={(event) => updateField("ticker", event.target.value)}
+                placeholder={t.journal.placeholders.ticker}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.date}>
+              <input
+                type="date"
+                value={tradeForm.tradeDate}
+                onChange={(event) =>
+                  updateField("tradeDate", event.target.value)
+                }
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.market}>
+              <select
+                value={tradeForm.market}
+                onChange={(event) => updateField("market", event.target.value)}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              >
+                <option value="stocks">Stocks</option>
+                <option value="crypto">Crypto</option>
+                <option value="futures">Futures</option>
+                <option value="forex">Forex</option>
+                <option value="options">Options</option>
+              </select>
+            </Field>
+
+            <Field label={t.journal.fields.direction}>
+              <select
+                value={tradeForm.direction}
+                onChange={(event) =>
+                  updateField("direction", event.target.value)
+                }
+                disabled={locked || tradeSaving}
+                className="field-input"
+              >
+                <option value="long">Long</option>
+                <option value="short">Short</option>
+              </select>
+            </Field>
+
+            <Field label={t.journal.fields.entry}>
+
+              <input
+                value={tradeForm.entryPrice}
+                onChange={(event) =>
+                  updateField("entryPrice", event.target.value)
+                }
+                placeholder={t.journal.placeholders.entry}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.exit}>
+              <input
+                value={tradeForm.exitPrice}
+                onChange={(event) =>
+                  updateField("exitPrice", event.target.value)
+                }
+                placeholder={t.journal.placeholders.exit}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.stop}>
+              <input
+                value={tradeForm.stopLoss}
+                onChange={(event) =>
+                  updateField("stopLoss", event.target.value)
+                }
+                placeholder={t.journal.placeholders.stop}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.size}>
+              <input
+                value={tradeForm.positionSize}
+                onChange={(event) =>
+                  updateField("positionSize", event.target.value)
+                }
+                placeholder={t.journal.placeholders.size}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.risk}>
+              <input
+                value={tradeForm.riskAmount}
+                onChange={(event) =>
+                  updateField("riskAmount", event.target.value)
+                }
+                placeholder={t.journal.placeholders.risk}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.pnl}>
+              <input
+                value={tradeForm.pnl}
+                onChange={(event) => updateField("pnl", event.target.value)}
+                placeholder={t.journal.placeholders.pnl}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.result}>
+              <select
+                value={tradeForm.result}
+                onChange={(event) => updateField("result", event.target.value)}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              >
+                <option value="">{t.journal.options.notSet}</option>
+<option value="win">{t.journal.options.win}</option>
+<option value="loss">{t.journal.options.loss}</option>
+<option value="breakeven">{t.journal.options.breakeven}</option>
+              </select>
+            </Field>
+
+            <Field label={t.journal.fields.setup}>
+              <input
+                value={tradeForm.setup}
+                onChange={(event) => updateField("setup", event.target.value)}
+                placeholder={t.journal.placeholders.setup}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+          </div>
+
+          <div className="mt-4 grid gap-4">
+            <Field label={t.journal.fields.emotion}>
+              <input
+                value={tradeForm.emotion}
+                onChange={(event) => updateField("emotion", event.target.value)}
+                placeholder={t.journal.placeholders.emotion}
+                disabled={locked || tradeSaving}
+                className="field-input"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.mistake}>
+              <textarea
+                value={tradeForm.mistake}
+                onChange={(event) => updateField("mistake", event.target.value)}
+                placeholder={t.journal.placeholders.mistake}
+                disabled={locked || tradeSaving}
+                className="field-input min-h-24 resize-none"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.lesson}>
+              <textarea
+                value={tradeForm.lesson}
+                onChange={(event) => updateField("lesson", event.target.value)}
+                placeholder={t.journal.placeholders.lesson}
+                disabled={locked || tradeSaving}
+                className="field-input min-h-24 resize-none"
+              />
+            </Field>
+
+            <Field label={t.journal.fields.notes}>
+              <textarea
+                value={tradeForm.notes}
+                onChange={(event) => updateField("notes", event.target.value)}
+                placeholder={t.journal.placeholders.notes}
+                disabled={locked || tradeSaving}
+                className="field-input min-h-24 resize-none"
+              />
+            </Field>
+          </div>
+
+          {tradeError && (
+            <div className="mt-5 rounded-2xl border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm text-red-100">
+              {tradeError}
+            </div>
+          )}
+
+          <button
+            onClick={onTradeSubmit}
+            disabled={locked || tradeSaving}
+            className="mt-6 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {tradeSaving ? t.journal.saving : t.journal.save}
+          </button>
+        </div>
+
+        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-2xl font-semibold">{t.journal.recentTitle}</h3>
+              <p className="mt-2 text-sm text-white/45">
+                {t.journal.recentText}
+              </p>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
+              {trades.length} {t.journal.tradesCount}
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            {trades.length === 0 ? (
+              <div className="rounded-3xl border border-white/10 bg-black/20 p-6 text-sm leading-7 text-white/50">
+                {t.journal.empty}
+              </div>
+            ) : (
+              recentTrades.map((trade) => (
+                <div
+                  key={trade.id}
+                  className="rounded-3xl border border-white/10 bg-black/20 p-5"
+                >
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-xl font-semibold">
+                          {trade.ticker}
+                        </h4>
+
+                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase text-white/50">
+                          {trade.direction}
+                        </span>
+
+                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase text-white/50">
+                          {trade.market}
+                        </span>
+                      </div>
+
+                      <p className="mt-2 text-sm text-white/40">
+                        {trade.trade_date}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="text-xs uppercase tracking-[0.2em] text-white/35">
+                        PnL
+                      </div>
+                      <div className="mt-1 text-2xl font-semibold">
+                        {trade.pnl === null ? "—" : `$${trade.pnl}`}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 grid gap-3 text-sm text-white/55">
+  <div>
+    {t.journal.cardLabels.entry}: {trade.entry_price ?? "—"}
+  </div>
+  <div>
+    {t.journal.cardLabels.exit}: {trade.exit_price ?? "—"}
+  </div>
+  <div>
+    {t.journal.cardLabels.stop}: {trade.stop_loss ?? "—"}
+  </div>
+  <div>
+    {t.journal.cardLabels.risk}:{" "}
+    {trade.risk_amount === null ? "—" : `$${trade.risk_amount}`}
+  </div>
+  <div>
+    {t.journal.cardLabels.result}: {trade.result ?? "—"}
+  </div>
+  <div>
+    {t.journal.cardLabels.setup}: {trade.setup ?? "—"}
+  </div>
+</div>
+
+                  {(trade.mistake || trade.lesson || trade.notes) && (
+  <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/55">
+    {trade.mistake && (
+      <p>
+        {t.journal.cardLabels.mistake}: {trade.mistake}
+      </p>
+    )}
+
+    {trade.lesson && (
+      <p className="mt-2">
+        {t.journal.cardLabels.lesson}: {trade.lesson}
+      </p>
+    )}
+
+    {trade.notes && (
+      <p className="mt-2">
+        {t.journal.cardLabels.notes}: {trade.notes}
+      </p>
+    )}
+  </div>
+)}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+            
+            
+
+            <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+  <div>
+    <h3 className="text-2xl font-semibold">{t.journal.fullTitle}</h3>
+<p className="mt-2 text-sm text-white/45">{t.journal.fullText}</p>
+  </div>
+
+  <button
+    type="button"
+    onClick={downloadTradesCsv}
+    disabled={filteredTrades.length === 0}
+    className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+  >
+    {t.journal.downloadCsv}
+  </button>
+</div>
+
+        <div className="mt-6 grid gap-4 md:grid-cols-4">
+  <Field label={t.journal.searchTicker}>
+    <input
+      value={journalFilters.ticker}
+      onChange={(event) =>
+        updateJournalFilter("ticker", event.target.value)
+      }
+      placeholder="AAPL / BTC / NQ"
+      className="field-input"
+    />
+  </Field>
+
+  <Field label={t.journal.fields.market}>
+    <select
+      value={journalFilters.market}
+      onChange={(event) =>
+        updateJournalFilter("market", event.target.value)
+      }
+      className="field-input"
+    >
+      <option value="all">{t.journal.allMarkets}</option>
+      <option value="stocks">Stocks</option>
+      <option value="crypto">Crypto</option>
+      <option value="futures">Futures</option>
+      <option value="forex">Forex</option>
+      <option value="options">Options</option>
+    </select>
+  </Field>
+
+  <Field label={t.journal.fields.direction}>
+    <select
+      value={journalFilters.direction}
+      onChange={(event) =>
+        updateJournalFilter("direction", event.target.value)
+      }
+      className="field-input"
+    >
+      <option value="all">{t.journal.allSides}</option>
+      <option value="long">Long</option>
+      <option value="short">Short</option>
+    </select>
+  </Field>
+
+  <Field label={t.journal.fields.result}>
+    <select
+      value={journalFilters.result}
+      onChange={(event) =>
+        updateJournalFilter("result", event.target.value)
+      }
+      className="field-input"
+    >
+      <option value="all">{t.journal.allResults}</option>
+      <option value="win">{t.journal.options.win}</option>
+      <option value="loss">{t.journal.options.loss}</option>
+      <option value="breakeven">{t.journal.options.breakeven}</option>
+    </select>
+  </Field>
+</div>
+
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full min-w-[950px] text-left text-sm">
+            <thead className="text-xs uppercase tracking-[0.18em] text-white/35">
+              <tr className="border-b border-white/10">
+                <th className="py-3 pr-4">{t.journal.table.date}</th>
+<th className="py-3 pr-4">{t.journal.table.ticker}</th>
+<th className="py-3 pr-4">{t.journal.table.market}</th>
+<th className="py-3 pr-4">{t.journal.table.side}</th>
+<th className="py-3 pr-4">{t.journal.table.entry}</th>
+<th className="py-3 pr-4">{t.journal.table.exit}</th>
+<th className="py-3 pr-4">{t.journal.table.stop}</th>
+<th className="py-3 pr-4">{t.journal.table.risk}</th>
+<th className="py-3 pr-4">{t.journal.table.pnl}</th>
+<th className="py-3 pr-4">{t.journal.table.result}</th>
+<th className="py-3 pr-4">{t.journal.table.setup}</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-white/10 text-white/65">
+              {filteredTrades.length === 0 ? (
+                <tr>
+                  <td colSpan={11} className="py-8 text-center text-white/45">
+                    {t.journal.empty}
+                  </td>
+                </tr>
+              ) : (
+                filteredTrades.map((trade) => (
+                  <tr key={trade.id} className="transition hover:bg-white/[0.03]">
+                    <td className="py-4 pr-4">{trade.trade_date}</td>
+                    <td className="py-4 pr-4 font-semibold text-white">
+                      {trade.ticker}
+                    </td>
+                    <td className="py-4 pr-4 uppercase">{trade.market}</td>
+                    <td className="py-4 pr-4 uppercase">{trade.direction}</td>
+                    <td className="py-4 pr-4">{trade.entry_price ?? "—"}</td>
+                    <td className="py-4 pr-4">{trade.exit_price ?? "—"}</td>
+                    <td className="py-4 pr-4">{trade.stop_loss ?? "—"}</td>
+                    <td className="py-4 pr-4">
+                      {trade.risk_amount === null ? "—" : `$${trade.risk_amount}`}
+                    </td>
+                    <td className="py-4 pr-4 font-semibold">
+                      {trade.pnl === null ? "—" : `$${trade.pnl}`}
+                    </td>
+                    <td className="py-4 pr-4">{trade.result ?? "—"}</td>
+                    <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function EquityCurveCard({
+  trades,
+  compact = false,
+  t,
+  onExpand,
+}: {
+  trades: Trade[];
+  compact?: boolean;
+  t: (typeof dashboardDict)[Language];
+  onExpand?: () => void;
+}) {
+  const equityCurveData = buildEquityCurveData(trades);
+  const [mounted, setMounted] = useState(false);
+
+useEffect(() => {
+  setMounted(true);
+}, []);
+
+  return (
+    <div
+      className={
+        compact
+          ? "rounded-3xl border border-white/10 bg-white/[0.04] p-5 overflow-hidden"
+          : "rounded-3xl border border-white/10 bg-[#111621] p-6 shadow-2xl"
+      }
+    >
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h3
+            className={
+              compact ? "text-lg font-semibold" : "text-2xl font-semibold"
+            }
+          >
+            {t.journal.equityTitle}
+          </h3>
+          <p className="mt-2 text-xs leading-6 text-white/45">
+            {t.journal.equityText}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/65">
+            {equityCurveData.length} {t.journal.equityPoints}
+          </div>
+
+          {compact && onExpand && (
+            <button
+              type="button"
+              onClick={onExpand}
+              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
+            >
+              {t.journal.expand}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div
+  className={
+    compact
+      ? "mt-5 h-[230px] w-full overflow-hidden"
+      : "mt-6 h-[520px] w-full overflow-x-auto overflow-y-hidden"
+  }
+>
+        {!mounted ? (
+  <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+    Loading chart...
+  </div>
+) : equityCurveData.length === 0 ? (
+          <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+            {t.journal.equityEmpty}
+          </div>
+        ) : (
+          <LineChart
+  data={equityCurveData}
+  width={compact ? 220 : 1000}
+  height={compact ? 220 : 520}
+>
+  <CartesianGrid
+    strokeDasharray="3 3"
+    stroke="rgba(255,255,255,0.08)"
+  />
+  <XAxis
+    dataKey="date"
+    stroke="rgba(255,255,255,0.35)"
+    tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 11 }}
+  />
+  <YAxis
+    stroke="rgba(255,255,255,0.35)"
+    tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 11 }}
+  />
+  <Tooltip
+    contentStyle={{
+      background: "#080c16",
+      border: "1px solid rgba(255,255,255,0.12)",
+      borderRadius: "16px",
+      color: "#fff",
+    }}
+    labelStyle={{ color: "rgba(255,255,255,0.7)" }}
+  />
+  <Line
+    type="monotone"
+    dataKey="equity"
+    stroke="#67e8f9"
+    strokeWidth={3}
+    dot={{ r: compact ? 3 : 4 }}
+    activeDot={{ r: compact ? 5 : 7 }}
+  />
+</LineChart>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-xs uppercase tracking-[0.2em] text-white/35">
+        {label}
+      </span>
+      {children}
+    </label>
   );
 }
 
