@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import * as XLSX from "xlsx";
 import { supabase } from "@/lib/supabaseClient";
 
 type Language = "en" | "ru" | "ua";
@@ -133,6 +134,7 @@ cardLabels: {
 fullTitle: "Full journal",
 fullText: "Complete trade list. Filters and export are available below.",
 downloadCsv: "Download CSV",
+downloadXlsx: "Download XLSX",
 searchTicker: "Search ticker",
 allMarkets: "All markets",
 allSides: "All sides",
@@ -326,6 +328,7 @@ cardLabels: {
 fullTitle: "Полный журнал",
 fullText: "Полный список сделок. Ниже доступны фильтры и экспорт.",
 downloadCsv: "Скачать CSV",
+downloadXlsx: "Скачать XLSX",
 searchTicker: "Поиск тикера",
 allMarkets: "Все рынки",
 allSides: "Все направления",
@@ -520,6 +523,7 @@ cardLabels: {
 fullTitle: "Повний журнал",
 fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
 downloadCsv: "Завантажити CSV",
+downloadXlsx: "Завантажити XLSX",
 searchTicker: "Пошук тикера",
 allMarkets: "Усі ринки",
 allSides: "Усі напрямки",
@@ -1687,6 +1691,133 @@ const downloadTradesCsv = () => {
   URL.revokeObjectURL(url);
 };
 
+const downloadTradesXlsx = () => {
+  const exportTrades = filteredTrades;
+
+  const tradeRows = exportTrades.map((trade) => ({
+    Date: trade.trade_date,
+    Ticker: trade.ticker,
+    Market: trade.market,
+    Direction: trade.direction,
+    Entry: trade.entry_price ?? "",
+    Exit: trade.exit_price ?? "",
+    Stop: trade.stop_loss ?? "",
+    Size: trade.position_size ?? "",
+    Risk: trade.risk_amount ?? "",
+    PnL: trade.pnl ?? "",
+    Result: trade.result ?? "",
+    Setup: trade.setup ?? "",
+    Emotion: trade.emotion ?? "",
+    Mistake: trade.mistake ?? "",
+    Lesson: trade.lesson ?? "",
+    Notes: trade.notes ?? "",
+    Created: trade.created_at ?? "",
+  }));
+
+  const exportPnlValues = exportTrades
+    .map((trade) => trade.pnl)
+    .filter((pnl): pnl is number => pnl !== null);
+
+  const exportTotalTrades = exportTrades.length;
+
+  const exportTotalPnl = exportPnlValues.reduce((sum, pnl) => sum + pnl, 0);
+
+  const exportWins = exportTrades.filter((trade) => trade.result === "win").length;
+
+  const exportClosedTrades = exportTrades.filter(
+    (trade) => trade.result === "win" || trade.result === "loss"
+  ).length;
+
+  const exportWinRate =
+    exportClosedTrades > 0 ? Math.round((exportWins / exportClosedTrades) * 100) : null;
+
+  const exportAveragePnl =
+    exportTotalTrades > 0 ? exportTotalPnl / exportTotalTrades : null;
+
+  const exportGrossProfit = exportPnlValues
+    .filter((pnl) => pnl > 0)
+    .reduce((sum, pnl) => sum + pnl, 0);
+
+  const exportGrossLoss = exportPnlValues
+    .filter((pnl) => pnl < 0)
+    .reduce((sum, pnl) => sum + pnl, 0);
+
+  const exportBestTrade =
+    exportPnlValues.length > 0 ? Math.max(...exportPnlValues) : null;
+
+  const exportWorstTrade =
+    exportPnlValues.length > 0 ? Math.min(...exportPnlValues) : null;
+
+  const exportProfitFactor =
+    exportGrossLoss < 0 ? exportGrossProfit / Math.abs(exportGrossLoss) : null;
+
+  const equityRows = buildEquityCurveData(exportTrades).map((point, index) => ({
+    "#": index + 1,
+    Date: point.date,
+    Ticker: point.ticker,
+    "Trade PnL": point.pnl,
+    "Cumulative PnL": point.equity,
+  }));
+
+  const summaryRows = [
+    ["Metric", "Value"],
+    ["Total trades", exportTotalTrades],
+    ["Total PnL", exportTotalPnl],
+    ["Win rate", exportWinRate === null ? "" : `${exportWinRate}%`],
+    ["Average PnL", exportAveragePnl === null ? "" : exportAveragePnl],
+    ["Gross Profit", exportGrossProfit],
+    ["Gross Loss", exportGrossLoss],
+    ["Best Trade", exportBestTrade ?? ""],
+    ["Worst Trade", exportWorstTrade ?? ""],
+    ["Profit Factor", exportProfitFactor === null ? "" : exportProfitFactor],
+    ["Exported At", new Date().toLocaleString()],
+  ];
+
+  const workbook = XLSX.utils.book_new();
+
+  const tradesSheet = XLSX.utils.json_to_sheet(tradeRows);
+  tradesSheet["!cols"] = [
+    { wch: 14 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 12 },
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 12 },
+    { wch: 10 },
+    { wch: 10 },
+    { wch: 12 },
+    { wch: 22 },
+    { wch: 20 },
+    { wch: 32 },
+    { wch: 32 },
+    { wch: 42 },
+    { wch: 22 },
+  ];
+
+  const summarySheet = XLSX.utils.aoa_to_sheet(summaryRows);
+  summarySheet["!cols"] = [{ wch: 24 }, { wch: 22 }];
+
+  const equitySheet = XLSX.utils.json_to_sheet(equityRows);
+  equitySheet["!cols"] = [
+    { wch: 8 },
+    { wch: 14 },
+    { wch: 12 },
+    { wch: 14 },
+    { wch: 18 },
+  ];
+
+  XLSX.utils.book_append_sheet(workbook, tradesSheet, "Trades");
+  XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
+  XLSX.utils.book_append_sheet(workbook, equitySheet, "Equity Curve");
+
+  XLSX.writeFile(
+    workbook,
+    `skilledge-trades-${new Date().toISOString().slice(0, 10)}.xlsx`
+  );
+};
+
   return (
     <div>
       <SectionHeader title={t.journal.title} text={t.journal.text} />
@@ -2073,14 +2204,25 @@ const downloadTradesCsv = () => {
 <p className="mt-2 text-sm text-white/45">{t.journal.fullText}</p>
   </div>
 
+  <div className="flex flex-wrap gap-3">
   <button
     type="button"
     onClick={downloadTradesCsv}
     disabled={filteredTrades.length === 0}
-    className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+    className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/75 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
   >
     {t.journal.downloadCsv}
   </button>
+
+  <button
+    type="button"
+    onClick={downloadTradesXlsx}
+    disabled={filteredTrades.length === 0}
+    className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+  >
+    {t.journal.downloadXlsx}
+  </button>
+</div>
 </div>
 
         <div className="mt-6 grid gap-4 md:grid-cols-4">
