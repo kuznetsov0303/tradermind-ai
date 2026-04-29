@@ -40,8 +40,12 @@ type Subscription = {
 
 type AiAnalysis = {
   id: string;
-  user_message: string;
-  ai_response: string;
+  user_id: string | null;
+  subscription_id: string | null;
+  trade_id: string | null;
+  analysis_type: string | null;
+  user_message: string | null;
+  ai_response: string | null;
   model: string | null;
   tokens_used: number | null;
   created_at: string | null;
@@ -67,6 +71,18 @@ type Trade = {
   notes: string | null;
   screenshot_url: string | null;
   trade_date: string;
+  created_at: string;
+};
+
+type TradeScreenshot = {
+  id: string;
+  trade_id: string;
+  user_id: string;
+  file_path: string;
+  file_name: string | null;
+  file_size: number | null;
+  mime_type: string | null;
+  screenshot_type: string | null;
   created_at: string;
 };
 
@@ -135,6 +151,36 @@ fullTitle: "Full journal",
 fullText: "Complete trade list. Filters and export are available below.",
 downloadCsv: "Download CSV",
 downloadXlsx: "Download XLSX",
+uploadScreenshotTitle: "Upload trade screenshot",
+uploadScreenshotText:
+  "Attach chart screenshots to your saved trades. Later SkillEdge AI will use them to analyze entries, exits, stops and repeated chart mistakes.",
+screenshotsCount: "screenshots",
+screenshotTradeLabel: "Trade",
+screenshotFileLabel: "Screenshot",
+screenshotChoose: "Choose screenshot",
+screenshotNoFile: "No file selected",
+screenshotSelected: "Selected file",
+screenshotHint:
+  "Steps: 1) Select a trade  2) Click “Choose screenshot”  3) Click “Upload”",
+screenshotFormats: "Supported formats: PNG, JPG, WEBP",
+uploadButton: "Upload",
+uploadingButton: "Uploading...",
+selectTradePlaceholder: "Select trade",
+stepOne: "{t.journal.stepOne}",
+stepTwo: "{t.journal.stepTwo}",
+stepThree: "{t.journal.stepThree}",
+chartAnalyzeButton: "Analyze chart",
+chartAnalyzingButton: "Analyzing chart...",
+chartScreenshotsLabel: "screenshots",
+journalAnalysisTitle: "SkillEdge AI Journal Analysis",
+journalAnalysisText:
+  "AI will analyze your saved trades, repeated mistakes, setups, emotions, risk and execution quality.",
+journalAnalyzeButton: "Analyze journal",
+journalAnalyzingButton: "Analyzing...",
+savedChartAnalysis: "Saved AI chart analysis",
+showChartHistory: "Show AI history",
+hideChartHistory: "Hide AI history",
+noChartHistory: "No saved chart analyses yet.",
 searchTicker: "Search ticker",
 allMarkets: "All markets",
 allSides: "All sides",
@@ -329,6 +375,36 @@ fullTitle: "Полный журнал",
 fullText: "Полный список сделок. Ниже доступны фильтры и экспорт.",
 downloadCsv: "Скачать CSV",
 downloadXlsx: "Скачать XLSX",
+uploadScreenshotTitle: "Загрузка скриншота сделки",
+uploadScreenshotText:
+  "Прикрепляйте скриншоты графиков к сохранённым сделкам. Позже SkillEdge AI будет использовать их для анализа входов, выходов, стопов и повторяющихся ошибок на графике.",
+screenshotsCount: "скриншотов",
+screenshotTradeLabel: "Сделка",
+screenshotFileLabel: "Скриншот",
+screenshotChoose: "Выбрать скриншот",
+screenshotNoFile: "Файл не выбран",
+screenshotSelected: "Выбранный файл",
+screenshotHint:
+  "Шаги: 1) Выберите сделку  2) Нажмите «Выбрать скриншот»  3) Нажмите «Загрузить»",
+screenshotFormats: "Поддерживаемые форматы: PNG, JPG, WEBP",
+uploadButton: "Загрузить",
+uploadingButton: "Загрузка...",
+selectTradePlaceholder: "Выберите сделку",
+stepOne: "Шаг 1",
+stepTwo: "Шаг 2",
+stepThree: "Шаг 3",
+chartAnalyzeButton: "Разобрать график",
+chartAnalyzingButton: "Анализ графика...",
+chartScreenshotsLabel: "скриншотов",
+journalAnalysisTitle: "AI-анализ журнала сделок",
+journalAnalysisText:
+  "AI проанализирует сохранённые сделки, повторяющиеся ошибки, сетапы, эмоции, риск и качество исполнения.",
+journalAnalyzeButton: "Разобрать журнал",
+journalAnalyzingButton: "Анализ...",
+savedChartAnalysis: "Сохранённый AI-разбор графика",
+showChartHistory: "Показать AI-разборы",
+hideChartHistory: "Скрыть AI-разборы",
+noChartHistory: "Сохранённых разборов графика пока нет.",
 searchTicker: "Поиск тикера",
 allMarkets: "Все рынки",
 allSides: "Все направления",
@@ -524,6 +600,36 @@ fullTitle: "Повний журнал",
 fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
 downloadCsv: "Завантажити CSV",
 downloadXlsx: "Завантажити XLSX",
+uploadScreenshotTitle: "Завантаження скріншота угоди",
+uploadScreenshotText:
+  "Додавайте скріншоти графіків до збережених угод. Пізніше SkillEdge AI використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+screenshotsCount: "скріншотів",
+screenshotTradeLabel: "Угода",
+screenshotFileLabel: "Скріншот",
+screenshotChoose: "Вибрати скріншот",
+screenshotNoFile: "Файл не вибрано",
+screenshotSelected: "Вибраний файл",
+screenshotHint:
+  "Кроки: 1) Оберіть угоду  2) Натисніть «Вибрати скріншот»  3) Натисніть «Завантажити»",
+screenshotFormats: "Підтримувані формати: PNG, JPG, WEBP",
+uploadButton: "Завантажити",
+uploadingButton: "Завантаження...",
+selectTradePlaceholder: "Оберіть угоду",
+stepOne: "Крок 1",
+stepTwo: "Крок 2",
+stepThree: "Крок 3",
+chartAnalyzeButton: "Розібрати графік",
+chartAnalyzingButton: "Аналіз графіка...",
+chartScreenshotsLabel: "скріншотів",
+journalAnalysisTitle: "AI-аналіз журналу угод",
+journalAnalysisText:
+  "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+journalAnalyzeButton: "Розібрати журнал",
+journalAnalyzingButton: "Аналіз...",
+savedChartAnalysis: "Збережений AI-розбір графіка",
+showChartHistory: "Показати AI-розбори",
+hideChartHistory: "Сховати AI-розбори",
+noChartHistory: "Збережених розборів графіка ще немає.",
 searchTicker: "Пошук тикера",
 allMarkets: "Усі ринки",
 allSides: "Усі напрямки",
@@ -754,7 +860,19 @@ export default function DashboardPage() {
   const [coachError, setCoachError] = useState("");
   const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
   const [trades, setTrades] = useState<Trade[]>([]);
-  const [equityExpanded, setEquityExpanded] = useState(false);
+  const [tradeScreenshots, setTradeScreenshots] = useState<TradeScreenshot[]>([]);
+const [selectedTradeIdForScreenshot, setSelectedTradeIdForScreenshot] = useState("");
+const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+const [screenshotUploading, setScreenshotUploading] = useState(false);
+const [screenshotError, setScreenshotError] = useState("");
+const [chartAnalysisTradeId, setChartAnalysisTradeId] = useState("");
+const [chartAnalysis, setChartAnalysis] = useState("");
+const [chartAnalysisLoading, setChartAnalysisLoading] = useState(false);
+const [chartAnalysisError, setChartAnalysisError] = useState("");
+const [chartAnalysisHistory, setChartAnalysisHistory] = useState<AiAnalysis[]>([]);
+const [expandedChartAnalysisTradeId, setExpandedChartAnalysisTradeId] =
+  useState(""); 
+const [equityExpanded, setEquityExpanded] = useState(false);
 const [tradeForm, setTradeForm] = useState({
   ticker: "",
   market: "stocks",
@@ -775,6 +893,9 @@ const [tradeForm, setTradeForm] = useState({
 });
 const [tradeSaving, setTradeSaving] = useState(false);
 const [tradeError, setTradeError] = useState("");
+const [journalAnalysis, setJournalAnalysis] = useState("");
+const [journalAnalysisLoading, setJournalAnalysisLoading] = useState(false);
+const [journalAnalysisError, setJournalAnalysisError] = useState("");
   const [subscription, setSubscription] = useState({
   active: false,
   plan: null as PlanId | null,
@@ -813,6 +934,12 @@ if (
   .order("created_at", { ascending: false })
   .limit(10);
 
+  setChartAnalysisHistory(
+  ((analysesData ?? []) as AiAnalysis[]).filter(
+    (item) => item.analysis_type === "trade_chart"
+  )
+);
+
 setCoachHistory((analysesData as AiAnalysis[]) ?? []);
 const { data: tradesData } = await supabase
   .from("trades")
@@ -823,6 +950,17 @@ const { data: tradesData } = await supabase
   .limit(50);
 
 setTrades((tradesData as Trade[]) ?? []);
+
+const { data: screenshotRows, error: screenshotRowsError } = await supabase
+  .from("trade_screenshots")
+  .select("*")
+  .order("created_at", { ascending: false });
+
+if (screenshotRowsError) {
+  console.error("Failed to load trade screenshots:", screenshotRowsError);
+} else {
+  setTradeScreenshots((screenshotRows ?? []) as TradeScreenshot[]);
+}
 
       const { data: subData, error } = await supabase
   .from("subscriptions")
@@ -898,17 +1036,23 @@ const handleCoachSubmit = async () => {
     setCoachAnswer(result.answer || "");
     setCoachMessage("");
 
-    setCoachHistory((current) => [
-  {
-    id: crypto.randomUUID(),
-    user_message: message,
-    ai_response: result.answer || "",
-    model: "SkillEdge AI Coach",
-    tokens_used: null,
-    created_at: new Date().toISOString(),
-  },
-  ...current,
-].slice(0, 10));
+    setCoachHistory((current) =>
+  [
+    {
+      id: crypto.randomUUID(),
+      user_id: data.session?.user.id ?? null,
+      subscription_id: null,
+      trade_id: null,
+      analysis_type: "coach",
+      user_message: message,
+      ai_response: result.answer || "",
+      model: "SkillEdge AI Coach",
+      tokens_used: null,
+      created_at: new Date().toISOString(),
+    } as AiAnalysis,
+    ...current,
+  ].slice(0, 10)
+);
 
     setSubscription((current) => ({
       ...current,
@@ -998,6 +1142,180 @@ const handleTradeSubmit = async () => {
     setTradeSaving(false);
   }
 };
+
+const handleJournalAnalysis = async () => {
+  try {
+    setJournalAnalysisLoading(true);
+    setJournalAnalysisError("");
+    setJournalAnalysis("");
+
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+
+    if (!token) {
+      setJournalAnalysisError(t.journal.loginFirst);
+      return;
+    }
+
+    const response = await fetch("/api/journal-analysis", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+  body: JSON.stringify({
+    language,
+  }),
+});
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      setJournalAnalysisError(result.error || "Journal analysis failed.");
+      return;
+    }
+
+    setJournalAnalysis(result.answer || "");
+  } catch {
+    setJournalAnalysisError("Failed to analyze journal.");
+  } finally {
+    setJournalAnalysisLoading(false);
+  }
+};
+const handleScreenshotUpload = async () => {
+  try {
+    setScreenshotUploading(true);
+    setScreenshotError("");
+
+    if (!selectedTradeIdForScreenshot) {
+      setScreenshotError("Select a trade first.");
+      return;
+    }
+
+    if (!screenshotFile) {
+      setScreenshotError("Choose a screenshot file.");
+      return;
+    }
+
+    const { data } = await supabase.auth.getSession();
+    const user = data.session?.user;
+
+    if (!user) {
+      setScreenshotError(t.journal.loginFirst);
+      return;
+    }
+
+    const safeFileName = screenshotFile.name
+      .replace(/\s+/g, "-")
+      .replace(/[^a-zA-Z0-9._-]/g, "");
+
+    const filePath = `${user.id}/${selectedTradeIdForScreenshot}/${Date.now()}-${safeFileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("trade-screenshots")
+      .upload(filePath, screenshotFile, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: screenshotFile.type,
+      });
+
+    if (uploadError) {
+      setScreenshotError(uploadError.message || "Failed to upload screenshot.");
+      return;
+    }
+
+    const { data: insertedScreenshot, error: insertError } = await supabase
+      .from("trade_screenshots")
+      .insert({
+        trade_id: selectedTradeIdForScreenshot,
+        user_id: user.id,
+        file_path: filePath,
+        file_name: screenshotFile.name,
+        file_size: screenshotFile.size,
+        mime_type: screenshotFile.type,
+        screenshot_type: "chart",
+      })
+      .select("*")
+      .single();
+
+    if (insertError) {
+      setScreenshotError(insertError.message || "Failed to save screenshot.");
+      return;
+    }
+
+    setTradeScreenshots((current) => [
+      insertedScreenshot as TradeScreenshot,
+      ...current,
+    ]);
+
+    setScreenshotFile(null);
+    setSelectedTradeIdForScreenshot("");
+  } catch {
+    setScreenshotError("Screenshot upload failed.");
+  } finally {
+    setScreenshotUploading(false);
+  }
+};
+
+const handleTradeChartAnalysis = async (tradeId: string) => {
+  try {
+    setChartAnalysisTradeId(tradeId);
+    setChartAnalysisLoading(true);
+    setChartAnalysisError("");
+    setChartAnalysis("");
+
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+
+    if (!token) {
+      setChartAnalysisError(t.journal.loginFirst);
+      return;
+    }
+
+    const response = await fetch("/api/analyze-trade-screenshot", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+  tradeId,
+  language,
+}),
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      setChartAnalysisError(result.error || "Chart analysis failed.");
+      return;
+    }
+
+    setChartAnalysis(result.answer || "");
+    setChartAnalysisHistory((current) => [
+  {
+    id: `local-${Date.now()}`,
+    user_id: "",
+    subscription_id: null,
+    trade_id: tradeId,
+    analysis_type: "trade_chart",
+    user_message: "Trade chart analysis",
+    ai_response: result.answer || "",
+    model: null,
+    tokens_used: 0,
+    created_at: new Date().toISOString(),
+  } as AiAnalysis,
+  ...current,
+]);
+setExpandedChartAnalysisTradeId(tradeId);
+  } catch {
+    setChartAnalysisError("Chart analysis failed.");
+  } finally {
+    setChartAnalysisLoading(false);
+  }
+};
+
+
 
   const locked = !subscription.active;
 
@@ -1140,6 +1458,26 @@ const handleTradeSubmit = async () => {
     tradeError={tradeError}
     locked={locked}
     t={t}
+    journalAnalysis={journalAnalysis}
+journalAnalysisLoading={journalAnalysisLoading}
+journalAnalysisError={journalAnalysisError}
+tradeScreenshots={tradeScreenshots}
+selectedTradeIdForScreenshot={selectedTradeIdForScreenshot}
+screenshotFile={screenshotFile}
+screenshotUploading={screenshotUploading}
+screenshotError={screenshotError}
+chartAnalysisTradeId={chartAnalysisTradeId}
+chartAnalysis={chartAnalysis}
+chartAnalysisLoading={chartAnalysisLoading}
+chartAnalysisError={chartAnalysisError}
+chartAnalysisHistory={chartAnalysisHistory}
+expandedChartAnalysisTradeId={expandedChartAnalysisTradeId}
+onExpandedChartAnalysisTradeIdChange={setExpandedChartAnalysisTradeId}
+onTradeChartAnalysis={handleTradeChartAnalysis}
+onSelectedTradeIdForScreenshotChange={setSelectedTradeIdForScreenshot}
+onScreenshotFileChange={setScreenshotFile}
+onScreenshotUpload={handleScreenshotUpload}
+onJournalAnalysis={handleJournalAnalysis}
     onTradeFormChange={setTradeForm}
     onTradeSubmit={handleTradeSubmit}
   />
@@ -1351,8 +1689,28 @@ function JournalTab({
   tradeError,
   locked,
   t,
+  journalAnalysis,
+  journalAnalysisLoading,
+  journalAnalysisError,
+  tradeScreenshots,
+  selectedTradeIdForScreenshot,
+  screenshotFile,
+  screenshotUploading,
+  screenshotError,
+  chartAnalysisTradeId,
+ chartAnalysis,
+ chartAnalysisLoading,
+ chartAnalysisError,
+ chartAnalysisHistory,
+ expandedChartAnalysisTradeId,
+onExpandedChartAnalysisTradeIdChange,
   onTradeFormChange,
   onTradeSubmit,
+  onJournalAnalysis,
+  onSelectedTradeIdForScreenshotChange,
+  onScreenshotFileChange,
+  onScreenshotUpload,
+  onTradeChartAnalysis,
 }: {
   trades: Trade[];
   tradeForm: {
@@ -1377,6 +1735,26 @@ function JournalTab({
   tradeError: string;
   locked: boolean;
   t: (typeof dashboardDict)[Language];
+  journalAnalysis: string;
+journalAnalysisLoading: boolean;
+journalAnalysisError: string;
+tradeScreenshots: TradeScreenshot[];
+selectedTradeIdForScreenshot: string;
+screenshotFile: File | null;
+screenshotUploading: boolean;
+screenshotError: string;
+chartAnalysisTradeId: string;
+chartAnalysis: string;
+chartAnalysisLoading: boolean;
+chartAnalysisError: string;
+chartAnalysisHistory: AiAnalysis[];
+expandedChartAnalysisTradeId: string;
+onExpandedChartAnalysisTradeIdChange: (tradeId: string) => void;
+onSelectedTradeIdForScreenshotChange: (value: string) => void;
+onScreenshotFileChange: (file: File | null) => void;
+onScreenshotUpload: () => void;
+onTradeChartAnalysis: (tradeId: string) => void;
+onJournalAnalysis: () => void;
   onTradeFormChange: React.Dispatch<
     React.SetStateAction<{
       ticker: string;
@@ -1512,6 +1890,10 @@ useEffect(() => {
       [field]: value,
     }));
   };
+
+const getTradeScreenshots = (tradeId: string) => {
+  return tradeScreenshots.filter((item) => item.trade_id === tradeId);
+};
 
   const totalTrades = trades.length;
 
@@ -1874,6 +2256,178 @@ const downloadTradesXlsx = () => {
 />
 </div>
 
+<div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h3 className="text-2xl font-semibold">
+        {t.journal.uploadScreenshotTitle}
+      </h3>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
+        {t.journal.uploadScreenshotText}
+      </p>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-3">
+        <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
+          <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
+            Step 1
+          </span>
+          <span className="mt-1 block">
+            {t.journal.screenshotTradeLabel}
+          </span>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
+          <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
+            Step 2
+          </span>
+          <span className="mt-1 block">{t.journal.screenshotChoose}</span>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
+          <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
+            Step 3
+          </span>
+          <span className="mt-1 block">{t.journal.uploadButton}</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/65">
+      {tradeScreenshots.length} {t.journal.screenshotsCount}
+    </div>
+  </div>
+
+  <div className="mt-6 grid gap-4 md:grid-cols-[1.1fr_1fr_auto]">
+    <Field label={t.journal.screenshotTradeLabel}>
+      <select
+        value={selectedTradeIdForScreenshot}
+        onChange={(event) =>
+          onSelectedTradeIdForScreenshotChange(event.target.value)
+        }
+        disabled={locked || screenshotUploading || trades.length === 0}
+        className="field-input"
+      >
+        <option value="">{t.journal.selectTradePlaceholder}</option>
+
+        {trades.map((trade) => {
+          const screenshotCount = tradeScreenshots.filter(
+            (item) => item.trade_id === trade.id
+          ).length;
+
+          return (
+            <option key={trade.id} value={trade.id}>
+              {trade.trade_date} · {trade.ticker} · {trade.direction} · PnL{" "}
+              {trade.pnl ?? "—"} · {screenshotCount}{" "}
+              {t.journal.screenshotsCount}
+            </option>
+          );
+        })}
+      </select>
+    </Field>
+
+    <Field label={t.journal.screenshotFileLabel}>
+      <div className="space-y-3">
+        <input
+          id="trade-screenshot-file"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          disabled={locked || screenshotUploading}
+          onChange={(event) =>
+            onScreenshotFileChange(event.target.files?.[0] ?? null)
+          }
+          className="hidden"
+        />
+
+        <div className="flex flex-wrap items-center gap-3">
+          <label
+            htmlFor="trade-screenshot-file"
+            className={`inline-flex cursor-pointer items-center justify-center rounded-full border border-white/10 px-4 py-2 text-sm font-medium transition ${
+              locked || screenshotUploading
+                ? "cursor-not-allowed opacity-40"
+                : "bg-white text-black hover:scale-[1.02]"
+            }`}
+          >
+            {t.journal.screenshotChoose}
+          </label>
+
+          <div className="max-w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white/65">
+            {screenshotFile
+              ? `${t.journal.screenshotSelected}: ${screenshotFile.name}`
+              : t.journal.screenshotNoFile}
+          </div>
+        </div>
+
+        <div className="text-xs leading-5 text-white/40">
+          <div>{t.journal.screenshotHint}</div>
+          <div className="mt-1">{t.journal.screenshotFormats}</div>
+        </div>
+      </div>
+    </Field>
+
+    <div className="flex items-end">
+      <button
+        type="button"
+        onClick={onScreenshotUpload}
+        disabled={
+          locked ||
+          screenshotUploading ||
+          !selectedTradeIdForScreenshot ||
+          !screenshotFile
+        }
+        className="w-full rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        {screenshotUploading
+          ? t.journal.uploadingButton
+          : t.journal.uploadButton}
+      </button>
+    </div>
+  </div>
+
+  {screenshotError && (
+    <div className="mt-4 rounded-2xl border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm text-red-100">
+      {screenshotError}
+    </div>
+  )}
+</div>
+
+<div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+  <div className="flex flex-wrap items-center justify-between gap-4">
+    <div>
+      <h3 className="text-2xl font-semibold">
+  {t.journal.journalAnalysisTitle}
+</h3>
+
+      <p className="mt-2 text-sm leading-6 text-white/45">
+  {t.journal.journalAnalysisText}
+</p>
+    </div>
+
+    <button
+      type="button"
+      onClick={onJournalAnalysis}
+      disabled={locked || journalAnalysisLoading || trades.length === 0}
+      className="rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+    >
+      {journalAnalysisLoading
+  ? t.journal.journalAnalyzingButton
+  : t.journal.journalAnalyzeButton}
+    </button>
+  </div>
+
+  {journalAnalysisError && (
+    <div className="mt-5 rounded-2xl border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm text-red-100">
+      {journalAnalysisError}
+    </div>
+  )}
+
+  {journalAnalysis && (
+  <div className="mt-5 rounded-3xl border border-white/10 bg-black/20 p-5">
+    <AiReport text={journalAnalysis} />
+  </div>
+)}
+</div>
+
       {locked && (
         <div className="mt-6 rounded-3xl border border-amber-300/25 bg-amber-300/10 p-5 text-sm leading-7 text-amber-50/85">
          {t.journal.locked}
@@ -2143,6 +2697,27 @@ const downloadTradesXlsx = () => {
                         {trade.pnl === null ? "—" : `$${trade.pnl}`}
                       </div>
                     </div>
+                    <div className="flex flex-col items-end gap-2">
+  <button
+    type="button"
+    onClick={() => onTradeChartAnalysis(trade.id)}
+    disabled={
+      locked ||
+      chartAnalysisLoading ||
+      tradeScreenshots.filter((item) => item.trade_id === trade.id).length === 0
+    }
+    className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+  >
+    {chartAnalysisLoading && chartAnalysisTradeId === trade.id
+  ? t.journal.chartAnalyzingButton
+  : t.journal.chartAnalyzeButton}
+  </button>
+
+  <div className="text-xs text-white/35">
+    {tradeScreenshots.filter((item) => item.trade_id === trade.id).length}{" "}
+{t.journal.chartScreenshotsLabel}
+  </div>
+</div>
                   </div>
 
                   <div className="mt-4 grid gap-3 text-sm text-white/55">
@@ -2188,9 +2763,70 @@ const downloadTradesXlsx = () => {
     )}
   </div>
 )}
+{chartAnalysisError && chartAnalysisTradeId === trade.id && (
+  <div className="mt-4 rounded-2xl border border-red-400/25 bg-red-400/10 p-4 text-sm text-red-100">
+    {chartAnalysisError}
+  </div>
+)}
+
+
+
+{(() => {
+  const tradeChartHistory = chartAnalysisHistory.filter(
+    (item) => item.trade_id === trade.id
+  );
+
+  const isHistoryOpen = expandedChartAnalysisTradeId === trade.id;
+
+  return (
+    <div className="mt-4">
+      <button
+        type="button"
+        onClick={() =>
+          onExpandedChartAnalysisTradeIdChange(
+            isHistoryOpen ? "" : trade.id
+          )
+        }
+        disabled={tradeChartHistory.length === 0}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+      >
+        {isHistoryOpen
+          ? t.journal.hideChartHistory
+          : t.journal.showChartHistory}
+      </button>
+
+      {isHistoryOpen && tradeChartHistory.length === 0 && (
+        <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/45">
+          {t.journal.noChartHistory}
+        </div>
+      )}
+
+      {isHistoryOpen &&
+        tradeChartHistory.slice(0, 3).map((item) => (
+          <div
+            key={item.id}
+            className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-5"
+          >
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 text-xs text-white/35">
+              <span>{t.journal.savedChartAnalysis}</span>
+              <span>
+                {item.created_at
+                  ? new Date(item.created_at).toLocaleString()
+                  : ""}
+              </span>
+            </div>
+
+            <AiReport text={item.ai_response ?? ""} />
+          </div>
+        ))}
+    </div>
+  );
+})()}
+
                 </div>
               ))
             )}
+            
           </div>
         </div>
       </div>
@@ -2769,6 +3405,90 @@ function SectionHeader({ title, text }: { title: string; text: string }) {
     <div>
       <h2 className="text-3xl font-semibold md:text-4xl">{title}</h2>
       <p className="mt-3 max-w-3xl text-sm leading-7 text-white/60">{text}</p>
+    </div>
+  );
+}
+
+function AiReport({ text }: { text: string }) {
+  const lines = text
+    .replace(/\r/g, "")
+    .split("\n")
+    .map((line) => line.trim());
+
+  return (
+    <div className="space-y-3">
+      {lines.map((line, index) => {
+        if (!line) {
+          return <div key={index} className="h-2" />;
+        }
+
+        if (line.startsWith("###")) {
+          return (
+            <h4
+              key={index}
+              className="pt-2 text-xl font-semibold leading-snug text-white"
+            >
+              {line.replace(/^#+\s*/, "")}
+            </h4>
+          );
+        }
+
+        if (line.startsWith("##")) {
+          return (
+            <h4
+              key={index}
+              className="pt-2 text-xl font-semibold leading-snug text-white"
+            >
+              {line.replace(/^#+\s*/, "")}
+            </h4>
+          );
+        }
+
+        if (line.startsWith("#")) {
+          return (
+            <h4
+              key={index}
+              className="pt-2 text-xl font-semibold leading-snug text-white"
+            >
+              {line.replace(/^#+\s*/, "")}
+            </h4>
+          );
+        }
+
+        if (line.startsWith("**") && line.endsWith("**")) {
+          return (
+            <h5
+              key={index}
+              className="pt-3 text-base font-semibold leading-snug text-white"
+            >
+              {line.replace(/\*\*/g, "")}
+            </h5>
+          );
+        }
+
+        if (line.startsWith("- ")) {
+          return (
+            <div key={index} className="flex gap-3 text-sm leading-7 text-white/72">
+              <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300/80" />
+              <p>{line.replace(/^-+\s*/, "").replace(/\*\*/g, "")}</p>
+            </div>
+          );
+        }
+
+        if (/^\d+[\).]\s/.test(line)) {
+          return (
+            <div key={index} className="text-sm leading-7 text-white/75">
+              {line.replace(/\*\*/g, "")}
+            </div>
+          );
+        }
+
+        return (
+          <p key={index} className="text-sm leading-7 text-white/70">
+            {line.replace(/\*\*/g, "")}
+          </p>
+        );
+      })}
     </div>
   );
 }
