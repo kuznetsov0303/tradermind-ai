@@ -185,6 +185,23 @@ searchTicker: "Search ticker",
 allMarkets: "All markets",
 allSides: "All sides",
 allResults: "All results",
+marketLabels: {
+  stocks: "Stocks",
+  crypto: "Crypto",
+  futures: "Futures",
+  forex: "Forex",
+  options: "Options",
+},
+directionLabels: {
+  long: "Long",
+  short: "Short",
+},
+resultLabels: {
+  win: "Win",
+  loss: "Loss",
+  breakeven: "Breakeven",
+  notSet: "Not set",
+},
 table: {
   date: "Date",
   ticker: "Ticker",
@@ -409,6 +426,23 @@ searchTicker: "Поиск тикера",
 allMarkets: "Все рынки",
 allSides: "Все направления",
 allResults: "Все результаты",
+marketLabels: {
+  stocks: "Акции",
+  crypto: "Крипто",
+  futures: "Фьючерсы",
+  forex: "Форекс",
+  options: "Опционы",
+},
+directionLabels: {
+  long: "Лонг",
+  short: "Шорт",
+},
+resultLabels: {
+  win: "Прибыльная",
+  loss: "Убыточная",
+  breakeven: "Безубыток",
+  notSet: "Не задано",
+},
 table: {
   date: "Дата",
   ticker: "Тикер",
@@ -634,6 +668,23 @@ searchTicker: "Пошук тикера",
 allMarkets: "Усі ринки",
 allSides: "Усі напрямки",
 allResults: "Усі результати",
+marketLabels: {
+  stocks: "Акції",
+  crypto: "Крипто",
+  futures: "Ф’ючерси",
+  forex: "Форекс",
+  options: "Опціони",
+},
+directionLabels: {
+  long: "Лонг",
+  short: "Шорт",
+},
+resultLabels: {
+  win: "Прибуткова",
+  loss: "Збиткова",
+  breakeven: "Беззбиткова",
+  notSet: "Не задано",
+},
 table: {
   date: "Дата",
   ticker: "Тикер",
@@ -1934,6 +1985,30 @@ const profitFactor =
 
 const recentTrades = trades.slice(0, 3);
 
+function getMarketLabel(value: string | null | undefined) {
+  if (!value) return "—";
+
+  const key = value.toLowerCase() as keyof typeof t.journal.marketLabels;
+
+  return t.journal.marketLabels[key] ?? value;
+}
+
+function getDirectionLabel(value: string | null | undefined) {
+  if (!value) return "—";
+
+  const key = value.toLowerCase() as keyof typeof t.journal.directionLabels;
+
+  return t.journal.directionLabels[key] ?? value;
+}
+
+function getResultLabel(value: string | null | undefined) {
+  if (!value) return t.journal.resultLabels.notSet;
+
+  const key = value.toLowerCase() as keyof typeof t.journal.resultLabels;
+
+  return t.journal.resultLabels[key] ?? value;
+}
+
 const [journalFilters, setJournalFilters] = useState({
   ticker: "",
   market: "all",
@@ -2079,15 +2154,15 @@ const downloadTradesXlsx = () => {
   const tradeRows = exportTrades.map((trade) => ({
     Date: trade.trade_date,
     Ticker: trade.ticker,
-    Market: trade.market,
-    Direction: trade.direction,
+    Market: getMarketLabel(trade.market),
+    Direction: getDirectionLabel(trade.direction),
     Entry: trade.entry_price ?? "",
     Exit: trade.exit_price ?? "",
     Stop: trade.stop_loss ?? "",
     Size: trade.position_size ?? "",
     Risk: trade.risk_amount ?? "",
     PnL: trade.pnl ?? "",
-    Result: trade.result ?? "",
+    Result: getResultLabel(trade.result),
     Setup: trade.setup ?? "",
     Emotion: trade.emotion ?? "",
     Mistake: trade.mistake ?? "",
@@ -2190,6 +2265,30 @@ const downloadTradesXlsx = () => {
     { wch: 18 },
   ];
 
+function getMarketLabel(value: string | null | undefined) {
+  if (!value) return "—";
+
+  const key = value.toLowerCase() as keyof typeof t.journal.marketLabels;
+
+  return t.journal.marketLabels[key] ?? value;
+}
+
+function getDirectionLabel(value: string | null | undefined) {
+  if (!value) return "—";
+
+  const key = value.toLowerCase() as keyof typeof t.journal.directionLabels;
+
+  return t.journal.directionLabels[key] ?? value;
+}
+
+function getResultLabel(value: string | null | undefined) {
+  if (!value) return t.journal.resultLabels.notSet;
+
+  const key = value.toLowerCase() as keyof typeof t.journal.resultLabels;
+
+  return t.journal.resultLabels[key] ?? value;
+}
+  
   XLSX.utils.book_append_sheet(workbook, tradesSheet, "Trades");
   XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
   XLSX.utils.book_append_sheet(workbook, equitySheet, "Equity Curve");
@@ -2317,7 +2416,7 @@ const downloadTradesXlsx = () => {
 
           return (
             <option key={trade.id} value={trade.id}>
-              {trade.trade_date} · {trade.ticker} · {trade.direction} · PnL{" "}
+              {trade.trade_date} · {trade.ticker} · {getDirectionLabel(trade.direction)} · PnL{" "}
               {trade.pnl ?? "—"} · {screenshotCount}{" "}
               {t.journal.screenshotsCount}
             </option>
@@ -2468,11 +2567,11 @@ const downloadTradesXlsx = () => {
                 disabled={locked || tradeSaving}
                 className="field-input"
               >
-                <option value="stocks">Stocks</option>
-                <option value="crypto">Crypto</option>
-                <option value="futures">Futures</option>
-                <option value="forex">Forex</option>
-                <option value="options">Options</option>
+                <option value="stocks">{t.journal.marketLabels.stocks}</option>
+<option value="crypto">{t.journal.marketLabels.crypto}</option>
+<option value="futures">{t.journal.marketLabels.futures}</option>
+<option value="forex">{t.journal.marketLabels.forex}</option>
+<option value="options">{t.journal.marketLabels.options}</option>
               </select>
             </Field>
 
@@ -2485,8 +2584,8 @@ const downloadTradesXlsx = () => {
                 disabled={locked || tradeSaving}
                 className="field-input"
               >
-                <option value="long">Long</option>
-                <option value="short">Short</option>
+                <option value="long">{t.journal.directionLabels.long}</option>
+<option value="short">{t.journal.directionLabels.short}</option>
               </select>
             </Field>
 
@@ -2568,10 +2667,10 @@ const downloadTradesXlsx = () => {
                 disabled={locked || tradeSaving}
                 className="field-input"
               >
-                <option value="">{t.journal.options.notSet}</option>
-<option value="win">{t.journal.options.win}</option>
-<option value="loss">{t.journal.options.loss}</option>
-<option value="breakeven">{t.journal.options.breakeven}</option>
+                <option value="all">{t.journal.allResults}</option>
+<option value="win">{t.journal.resultLabels.win}</option>
+<option value="loss">{t.journal.resultLabels.loss}</option>
+<option value="breakeven">{t.journal.resultLabels.breakeven}</option>
               </select>
             </Field>
 
@@ -2676,11 +2775,11 @@ const downloadTradesXlsx = () => {
                         </h4>
 
                         <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase text-white/50">
-                          {trade.direction}
+                          {getDirectionLabel(trade.direction)}
                         </span>
 
                         <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase text-white/50">
-                          {trade.market}
+                          {getMarketLabel(trade.market)}
                         </span>
                       </div>
 
@@ -2735,7 +2834,7 @@ const downloadTradesXlsx = () => {
     {trade.risk_amount === null ? "—" : `$${trade.risk_amount}`}
   </div>
   <div>
-    {t.journal.cardLabels.result}: {trade.result ?? "—"}
+    {t.journal.cardLabels.result}: {getResultLabel(trade.result)}
   </div>
   <div>
     {t.journal.cardLabels.setup}: {trade.setup ?? "—"}
@@ -2882,11 +2981,11 @@ const downloadTradesXlsx = () => {
       className="field-input"
     >
       <option value="all">{t.journal.allMarkets}</option>
-      <option value="stocks">Stocks</option>
-      <option value="crypto">Crypto</option>
-      <option value="futures">Futures</option>
-      <option value="forex">Forex</option>
-      <option value="options">Options</option>
+      <option value="stocks">{t.journal.marketLabels.stocks}</option>
+<option value="crypto">{t.journal.marketLabels.crypto}</option>
+<option value="futures">{t.journal.marketLabels.futures}</option>
+<option value="forex">{t.journal.marketLabels.forex}</option>
+<option value="options">{t.journal.marketLabels.options}</option>
     </select>
   </Field>
 
@@ -2899,8 +2998,8 @@ const downloadTradesXlsx = () => {
       className="field-input"
     >
       <option value="all">{t.journal.allSides}</option>
-      <option value="long">Long</option>
-      <option value="short">Short</option>
+      <option value="long">{t.journal.directionLabels.long}</option>
+      <option value="short">{t.journal.directionLabels.short}</option>
     </select>
   </Field>
 
@@ -2913,9 +3012,9 @@ const downloadTradesXlsx = () => {
       className="field-input"
     >
       <option value="all">{t.journal.allResults}</option>
-      <option value="win">{t.journal.options.win}</option>
-      <option value="loss">{t.journal.options.loss}</option>
-      <option value="breakeven">{t.journal.options.breakeven}</option>
+<option value="win">{t.journal.resultLabels.win}</option>
+<option value="loss">{t.journal.resultLabels.loss}</option>
+<option value="breakeven">{t.journal.resultLabels.breakeven}</option>
     </select>
   </Field>
 </div>
@@ -2952,8 +3051,8 @@ const downloadTradesXlsx = () => {
                     <td className="py-4 pr-4 font-semibold text-white">
                       {trade.ticker}
                     </td>
-                    <td className="py-4 pr-4 uppercase">{trade.market}</td>
-                    <td className="py-4 pr-4 uppercase">{trade.direction}</td>
+                    <td className="py-4 pr-4">{getMarketLabel(trade.market)}</td>
+                    <td className="py-4 pr-4">{getDirectionLabel(trade.direction)}</td>
                     <td className="py-4 pr-4">{trade.entry_price ?? "—"}</td>
                     <td className="py-4 pr-4">{trade.exit_price ?? "—"}</td>
                     <td className="py-4 pr-4">{trade.stop_loss ?? "—"}</td>
@@ -2963,7 +3062,7 @@ const downloadTradesXlsx = () => {
                     <td className="py-4 pr-4 font-semibold">
                       {trade.pnl === null ? "—" : `$${trade.pnl}`}
                     </td>
-                    <td className="py-4 pr-4">{trade.result ?? "—"}</td>
+                    <td className="py-4 pr-4">{getResultLabel(trade.result)}</td>
                     <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
                   </tr>
                 ))
