@@ -151,6 +151,9 @@ fullTitle: "Full journal",
 fullText: "Complete trade list. Filters and export are available below.",
 downloadCsv: "Download CSV",
 downloadXlsx: "Download XLSX",
+deleteTradeButton: "Delete trade",
+deleteTradeConfirm: "Delete this trade? This action cannot be undone.",
+deleteTradeError: "Failed to delete trade.",
 uploadScreenshotTitle: "Upload trade screenshot",
 uploadScreenshotText:
   "Attach chart screenshots to your saved trades. Later SkillEdge AI will use them to analyze entries, exits, stops and repeated chart mistakes.",
@@ -392,6 +395,9 @@ fullTitle: "Полный журнал",
 fullText: "Полный список сделок. Ниже доступны фильтры и экспорт.",
 downloadCsv: "Скачать CSV",
 downloadXlsx: "Скачать XLSX",
+deleteTradeButton: "Удалить сделку",
+deleteTradeConfirm: "Удалить эту сделку? Это действие нельзя отменить.",
+deleteTradeError: "Не удалось удалить сделку.",
 uploadScreenshotTitle: "Загрузка скриншота сделки",
 uploadScreenshotText:
   "Прикрепляйте скриншоты графиков к сохранённым сделкам. Позже SkillEdge AI будет использовать их для анализа входов, выходов, стопов и повторяющихся ошибок на графике.",
@@ -634,6 +640,9 @@ fullTitle: "Повний журнал",
 fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
 downloadCsv: "Завантажити CSV",
 downloadXlsx: "Завантажити XLSX",
+deleteTradeButton: "Видалити угоду",
+deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+deleteTradeError: "Не вдалося видалити угоду.",
 uploadScreenshotTitle: "Завантаження скріншота угоди",
 uploadScreenshotText:
   "Додавайте скріншоти графіків до збережених угод. Пізніше SkillEdge AI використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
@@ -1116,6 +1125,59 @@ const handleCoachSubmit = async () => {
     setCoachLoading(false);
   }
 };
+
+const handleTradeDelete = async (tradeId: string) => {
+  const confirmed = window.confirm(t.journal.deleteTradeConfirm);
+
+  if (!confirmed) return;
+
+  setTradeError("");
+
+  const screenshotPaths = tradeScreenshots
+    .filter((screenshot) => screenshot.trade_id === tradeId)
+    .map((screenshot) => screenshot.file_path)
+    .filter(Boolean);
+
+  const { error } = await supabase.from("trades").delete().eq("id", tradeId);
+
+  if (error) {
+    setTradeError(t.journal.deleteTradeError);
+    return;
+  }
+
+  if (screenshotPaths.length > 0) {
+    const { error: storageError } = await supabase.storage
+      .from("trade-screenshots")
+      .remove(screenshotPaths);
+
+    if (storageError) {
+      console.error("Failed to delete trade screenshots from storage:", storageError);
+    }
+  }
+
+  setTrades((current) => current.filter((trade) => trade.id !== tradeId));
+
+  setTradeScreenshots((current) =>
+    current.filter((screenshot) => screenshot.trade_id !== tradeId)
+  );
+
+  setChartAnalysisHistory((current) =>
+    current.filter((analysis) => analysis.trade_id !== tradeId)
+  );
+
+  if (selectedTradeIdForScreenshot === tradeId) {
+    setSelectedTradeIdForScreenshot("");
+  }
+
+  if (chartAnalysisTradeId === tradeId) {
+    setChartAnalysisTradeId("");
+    setChartAnalysis("");
+  }
+
+  if (expandedChartAnalysisTradeId === tradeId) {
+    setExpandedChartAnalysisTradeId("");
+  }
+};
 const handleTradeSubmit = async () => {
   setTradeError("");
 
@@ -1531,6 +1593,7 @@ onScreenshotUpload={handleScreenshotUpload}
 onJournalAnalysis={handleJournalAnalysis}
     onTradeFormChange={setTradeForm}
     onTradeSubmit={handleTradeSubmit}
+    onTradeDelete={handleTradeDelete}
   />
 )}
               {activeTab === "charts" && <ChartsTab />}
@@ -1757,6 +1820,7 @@ function JournalTab({
 onExpandedChartAnalysisTradeIdChange,
   onTradeFormChange,
   onTradeSubmit,
+  onTradeDelete,
   onJournalAnalysis,
   onSelectedTradeIdForScreenshotChange,
   onScreenshotFileChange,
@@ -1806,7 +1870,9 @@ onScreenshotFileChange: (file: File | null) => void;
 onScreenshotUpload: () => void;
 onTradeChartAnalysis: (tradeId: string) => void;
 onJournalAnalysis: () => void;
-  onTradeFormChange: React.Dispatch<
+onTradeSubmit: () => void;
+onTradeDelete: (tradeId: string) => void;
+onTradeFormChange: React.Dispatch<
     React.SetStateAction<{
       ticker: string;
       market: string;
@@ -1826,7 +1892,6 @@ onJournalAnalysis: () => void;
       tradeDate: string;
     }>
   >;
-  onTradeSubmit: () => void;
 }) {
 
 function EquityCurveCard({
@@ -2812,6 +2877,14 @@ function getResultLabel(value: string | null | undefined) {
   : t.journal.chartAnalyzeButton}
   </button>
 
+  <button
+  type="button"
+  onClick={() => onTradeDelete(trade.id)}
+  className="rounded-full border border-red-400/20 bg-red-400/10 px-4 py-2 text-xs font-medium text-red-200 transition hover:bg-red-400/15"
+>
+  {t.journal.deleteTradeButton}
+</button>
+
   <div className="text-xs text-white/35">
     {tradeScreenshots.filter((item) => item.trade_id === trade.id).length}{" "}
 {t.journal.chartScreenshotsLabel}
@@ -3034,6 +3107,7 @@ function getResultLabel(value: string | null | undefined) {
 <th className="py-3 pr-4">{t.journal.table.pnl}</th>
 <th className="py-3 pr-4">{t.journal.table.result}</th>
 <th className="py-3 pr-4">{t.journal.table.setup}</th>
+<th className="py-3 pr-4 text-right">Action</th>
               </tr>
             </thead>
 
@@ -3064,6 +3138,15 @@ function getResultLabel(value: string | null | undefined) {
                     </td>
                     <td className="py-4 pr-4">{getResultLabel(trade.result)}</td>
                     <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
+                  <td className="py-4 pr-4 text-right">
+  <button
+    type="button"
+    onClick={() => onTradeDelete(trade.id)}
+    className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-medium text-red-200 transition hover:bg-red-400/15"
+  >
+    {t.journal.deleteTradeButton}
+  </button>
+</td>
                   </tr>
                 ))
               )}
@@ -3468,7 +3551,7 @@ function CoachTab({
           <button
             key={item.id}
             onClick={() => {
-              onMessageChange(item.user_message);
+              onMessageChange(item.user_message ?? "");
             }}
             className="w-full rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:border-white/20 hover:bg-white/[0.04]"
           >
