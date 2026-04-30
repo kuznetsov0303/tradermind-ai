@@ -152,6 +152,11 @@ fullText: "Complete trade list. Filters and export are available below.",
 downloadCsv: "Download CSV",
 downloadXlsx: "Download XLSX",
 deleteTradeButton: "Delete trade",
+editTradeButton: "Edit trade",
+cancelEditButton: "Cancel edit",
+editModeTitle: "Editing trade",
+editModeText: "Change the highlighted fields and save the trade.",
+actions: "Actions",
 deleteTradeConfirm: "Delete this trade? This action cannot be undone.",
 deleteTradeError: "Failed to delete trade.",
 uploadScreenshotTitle: "Upload trade screenshot",
@@ -226,6 +231,8 @@ table: {
   tradesCount: "trades",
   saving: "Saving...",
   save: "Save trade",
+  updateTradeButton: "Update trade",
+  updatingTradeButton: "Updating...",
   tickerRequired: "Enter ticker.",
   loginFirst: "Please log in first.",
   saveFailed: "Failed to save trade.",
@@ -396,6 +403,11 @@ fullText: "Полный список сделок. Ниже доступны ф�
 downloadCsv: "Скачать CSV",
 downloadXlsx: "Скачать XLSX",
 deleteTradeButton: "Удалить сделку",
+editTradeButton: "Редактировать",
+cancelEditButton: "Отменить редактирование",
+editModeTitle: "Режим редактирования",
+editModeText: "Измени подсвеченные поля и сохрани сделку.",
+actions: "Действия",
 deleteTradeConfirm: "Удалить эту сделку? Это действие нельзя отменить.",
 deleteTradeError: "Не удалось удалить сделку.",
 uploadScreenshotTitle: "Загрузка скриншота сделки",
@@ -470,6 +482,8 @@ table: {
   tradesCount: "сделок",
   saving: "Сохраняем...",
   save: "Сохранить сделку",
+  updateTradeButton: "Обновить сделку",
+  updatingTradeButton: "Обновление...",
   tickerRequired: "Введите тикер.",
   loginFirst: "Сначала войдите в аккаунт.",
   saveFailed: "Не удалось сохранить сделку.",
@@ -641,6 +655,11 @@ fullText: "Повний список угод. Нижче доступні фі�
 downloadCsv: "Завантажити CSV",
 downloadXlsx: "Завантажити XLSX",
 deleteTradeButton: "Видалити угоду",
+editTradeButton: "Редагувати",
+cancelEditButton: "Скасувати редагування",
+editModeTitle: "Режим редагування",
+editModeText: "Зміни підсвічені поля та збережи угоду.",
+actions: "Дії",
 deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
 deleteTradeError: "Не вдалося видалити угоду.",
 uploadScreenshotTitle: "Завантаження скріншота угоди",
@@ -715,6 +734,8 @@ table: {
   tradesCount: "угод",
   saving: "Зберігаємо...",
   save: "Зберегти угоду",
+  updateTradeButton: "Оновити угоду",
+  updatingTradeButton: "Оновлення...",
   tickerRequired: "Введіть тикер.",
   loginFirst: "Спочатку увійдіть в акаунт.",
   saveFailed: "Не вдалося зберегти угоду.",
@@ -951,6 +972,27 @@ const [tradeForm, setTradeForm] = useState({
   notes: "",
   tradeDate: new Date().toISOString().slice(0, 10),
 });
+const resetTradeForm = () => {
+  setTradeForm({
+    ticker: "",
+    market: "stocks",
+    direction: "long",
+    entryPrice: "",
+    exitPrice: "",
+    stopLoss: "",
+    positionSize: "",
+    riskAmount: "",
+    pnl: "",
+    result: "",
+    setup: "",
+    emotion: "",
+    mistake: "",
+    lesson: "",
+    notes: "",
+    tradeDate: new Date().toISOString().slice(0, 10),
+  });
+};
+const [editingTradeId, setEditingTradeId] = useState("");
 const [tradeSaving, setTradeSaving] = useState(false);
 const [tradeError, setTradeError] = useState("");
 const [journalAnalysis, setJournalAnalysis] = useState("");
@@ -1151,7 +1193,10 @@ const handleTradeDelete = async (tradeId: string) => {
       .remove(screenshotPaths);
 
     if (storageError) {
-      console.error("Failed to delete trade screenshots from storage:", storageError);
+      console.error(
+        "Failed to delete trade screenshots from storage:",
+        storageError
+      );
     }
   }
 
@@ -1177,6 +1222,40 @@ const handleTradeDelete = async (tradeId: string) => {
   if (expandedChartAnalysisTradeId === tradeId) {
     setExpandedChartAnalysisTradeId("");
   }
+
+  if (editingTradeId === tradeId) {
+    setEditingTradeId("");
+  }
+};
+
+const handleTradeEditStart = (trade: Trade) => {
+  setEditingTradeId(trade.id);
+
+  setTradeForm({
+    ticker: trade.ticker ?? "",
+    market: trade.market ?? "stocks",
+    direction: trade.direction ?? "long",
+    entryPrice: trade.entry_price?.toString() ?? "",
+    exitPrice: trade.exit_price?.toString() ?? "",
+    stopLoss: trade.stop_loss?.toString() ?? "",
+    positionSize: trade.position_size?.toString() ?? "",
+    riskAmount: trade.risk_amount?.toString() ?? "",
+    pnl: trade.pnl?.toString() ?? "",
+    result: trade.result ?? "",
+    setup: trade.setup ?? "",
+    emotion: trade.emotion ?? "",
+    mistake: trade.mistake ?? "",
+    lesson: trade.lesson ?? "",
+    notes: trade.notes ?? "",
+    tradeDate: trade.trade_date ?? "",
+  });
+
+  
+};
+
+const handleTradeEditCancel = () => {
+  setEditingTradeId("");
+  resetTradeForm();
 };
 const handleTradeSubmit = async () => {
   setTradeError("");
@@ -1184,76 +1263,81 @@ const handleTradeSubmit = async () => {
   const ticker = tradeForm.ticker.trim().toUpperCase();
 
   if (!ticker) {
-   setTradeError(t.journal.tickerRequired);
+    setTradeError(t.journal.tickerRequired);
     return;
   }
 
   const { data: userData } = await supabase.auth.getUser();
 
   if (!userData.user) {
-    setTradeError(t.journal.loginFirst);
+    setTradeError(t.coach.loginFirst);
     return;
   }
 
+  const tradePayload = {
+    ticker,
+    market: tradeForm.market,
+    direction: tradeForm.direction,
+    trade_date: tradeForm.tradeDate || new Date().toISOString().slice(0, 10),
+    entry_price: tradeForm.entryPrice ? Number(tradeForm.entryPrice) : null,
+    exit_price: tradeForm.exitPrice ? Number(tradeForm.exitPrice) : null,
+    stop_loss: tradeForm.stopLoss ? Number(tradeForm.stopLoss) : null,
+    position_size: tradeForm.positionSize ? Number(tradeForm.positionSize) : null,
+    risk_amount: tradeForm.riskAmount ? Number(tradeForm.riskAmount) : null,
+    pnl: tradeForm.pnl ? Number(tradeForm.pnl) : null,
+    result: tradeForm.result || null,
+    setup: tradeForm.setup.trim() || null,
+    emotion: tradeForm.emotion.trim() || null,
+    mistake: tradeForm.mistake.trim() || null,
+    lesson: tradeForm.lesson.trim() || null,
+    notes: tradeForm.notes.trim() || null,
+  };
+
   setTradeSaving(true);
 
-  try {
-    const payload = {
-      user_id: userData.user.id,
-      ticker,
-      market: tradeForm.market,
-      direction: tradeForm.direction,
-      entry_price: toNumberOrNull(tradeForm.entryPrice),
-      exit_price: toNumberOrNull(tradeForm.exitPrice),
-      stop_loss: toNumberOrNull(tradeForm.stopLoss),
-      position_size: toNumberOrNull(tradeForm.positionSize),
-      risk_amount: toNumberOrNull(tradeForm.riskAmount),
-      pnl: toNumberOrNull(tradeForm.pnl),
-      result: tradeForm.result || null,
-      setup: tradeForm.setup.trim() || null,
-      emotion: tradeForm.emotion.trim() || null,
-      mistake: tradeForm.mistake.trim() || null,
-      lesson: tradeForm.lesson.trim() || null,
-      notes: tradeForm.notes.trim() || null,
-      trade_date: tradeForm.tradeDate,
-    };
-
+  if (editingTradeId) {
     const { data, error } = await supabase
       .from("trades")
-      .insert(payload)
+      .update(tradePayload)
+      .eq("id", editingTradeId)
+      .eq("user_id", userData.user.id)
       .select("*")
       .single();
 
     if (error) {
       setTradeError(error.message);
+      setTradeSaving(false);
       return;
     }
 
-    setTrades((current) => [data as Trade, ...current]);
+    setTrades((current) =>
+      current.map((trade) => (trade.id === editingTradeId ? (data as Trade) : trade))
+    );
 
-    setTradeForm({
-      ticker: "",
-      market: "stocks",
-      direction: "long",
-      entryPrice: "",
-      exitPrice: "",
-      stopLoss: "",
-      positionSize: "",
-      riskAmount: "",
-      pnl: "",
-      result: "",
-      setup: "",
-      emotion: "",
-      mistake: "",
-      lesson: "",
-      notes: "",
-      tradeDate: new Date().toISOString().slice(0, 10),
-    });
-  } catch {
-    setTradeError(t.journal.saveFailed);
-  } finally {
+    setEditingTradeId("");
+    resetTradeForm();
     setTradeSaving(false);
+    return;
   }
+
+  const { data, error } = await supabase
+    .from("trades")
+    .insert({
+      user_id: userData.user.id,
+      ...tradePayload,
+    })
+    .select("*")
+    .single();
+
+  if (error) {
+    setTradeError(error.message);
+    setTradeSaving(false);
+    return;
+  }
+
+  setTrades((current) => [data as Trade, ...current]);
+  resetTradeForm();
+  setTradeSaving(false);
 };
 
 const handleJournalAnalysis = async () => {
@@ -1591,9 +1675,12 @@ onSelectedTradeIdForScreenshotChange={setSelectedTradeIdForScreenshot}
 onScreenshotFileChange={setScreenshotFile}
 onScreenshotUpload={handleScreenshotUpload}
 onJournalAnalysis={handleJournalAnalysis}
-    onTradeFormChange={setTradeForm}
-    onTradeSubmit={handleTradeSubmit}
-    onTradeDelete={handleTradeDelete}
+onTradeFormChange={setTradeForm}
+onTradeSubmit={handleTradeSubmit}
+onTradeDelete={handleTradeDelete}
+editingTradeId={editingTradeId}
+onTradeEditStart={handleTradeEditStart}
+onTradeEditCancel={handleTradeEditCancel}
   />
 )}
               {activeTab === "charts" && <ChartsTab />}
@@ -1821,6 +1908,9 @@ onExpandedChartAnalysisTradeIdChange,
   onTradeFormChange,
   onTradeSubmit,
   onTradeDelete,
+  editingTradeId,
+onTradeEditStart,
+onTradeEditCancel,
   onJournalAnalysis,
   onSelectedTradeIdForScreenshotChange,
   onScreenshotFileChange,
@@ -1872,6 +1962,9 @@ onTradeChartAnalysis: (tradeId: string) => void;
 onJournalAnalysis: () => void;
 onTradeSubmit: () => void;
 onTradeDelete: (tradeId: string) => void;
+editingTradeId: string;
+onTradeEditStart: (trade: Trade) => void;
+onTradeEditCancel: () => void;
 onTradeFormChange: React.Dispatch<
     React.SetStateAction<{
       ticker: string;
@@ -2599,9 +2692,25 @@ function getResultLabel(value: string | null | undefined) {
       )}
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
+        <div
+  className={`rounded-[2rem] border p-6 transition ${
+    editingTradeId
+      ? "border-cyan-300/40 bg-cyan-300/[0.04] shadow-[0_0_40px_rgba(103,232,249,0.08)] [&_.field-input]:border-cyan-300/45 [&_.field-input]:bg-cyan-300/[0.05]"
+      : "border-white/10 bg-white/[0.03]"
+  }`}
+>
           <h3 className="text-2xl font-semibold">{t.journal.addTitle}</h3>
 
+{editingTradeId && (
+  <div className="mt-4 rounded-2xl border border-cyan-300/25 bg-cyan-300/10 p-4">
+    <div className="text-sm font-semibold text-cyan-100">
+      {t.journal.editModeTitle}
+    </div>
+    <div className="mt-1 text-xs leading-5 text-cyan-100/70">
+      {t.journal.editModeText}
+    </div>
+  </div>
+)}
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             <Field label={t.journal.fields.ticker}>
               <input
@@ -2803,8 +2912,23 @@ function getResultLabel(value: string | null | undefined) {
             disabled={locked || tradeSaving}
             className="mt-6 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {tradeSaving ? t.journal.saving : t.journal.save}
+            {tradeSaving
+  ? editingTradeId
+    ? t.journal.updatingTradeButton
+    : t.journal.saving
+  : editingTradeId
+    ? t.journal.updateTradeButton
+    : t.journal.save}
           </button>
+          {editingTradeId && (
+  <button
+    type="button"
+    onClick={onTradeEditCancel}
+    className="mt-3 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+  >
+    {t.journal.cancelEditButton}
+  </button>
+)}
         </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
@@ -2876,6 +3000,14 @@ function getResultLabel(value: string | null | undefined) {
   ? t.journal.chartAnalyzingButton
   : t.journal.chartAnalyzeButton}
   </button>
+
+  <button
+  type="button"
+  onClick={() => onTradeEditStart(trade)}
+  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+>
+  {t.journal.editTradeButton}
+</button>
 
   <button
   type="button"
@@ -3107,7 +3239,7 @@ function getResultLabel(value: string | null | undefined) {
 <th className="py-3 pr-4">{t.journal.table.pnl}</th>
 <th className="py-3 pr-4">{t.journal.table.result}</th>
 <th className="py-3 pr-4">{t.journal.table.setup}</th>
-<th className="py-3 pr-4 text-right">Action</th>
+<th className="py-3 pr-4 text-right">{t.journal.actions}</th>
               </tr>
             </thead>
 
@@ -3139,6 +3271,15 @@ function getResultLabel(value: string | null | undefined) {
                     <td className="py-4 pr-4">{getResultLabel(trade.result)}</td>
                     <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
                   <td className="py-4 pr-4 text-right">
+  
+<button
+  type="button"
+  onClick={() => onTradeEditStart(trade)}
+  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+>
+  {t.journal.editTradeButton}
+</button>
+
   <button
     type="button"
     onClick={() => onTradeDelete(trade.id)}
