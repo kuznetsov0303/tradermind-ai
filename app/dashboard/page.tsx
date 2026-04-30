@@ -119,6 +119,8 @@ journal: {
   text: "Add trades, track risk, result, emotions, mistakes and lessons.",
   locked: "An active plan or demo access is required to add trades.",
   addTitle: "Add trade",
+  editTitle: "Edit trade",
+addModeText: "Add a new trade to your personal journal.",
   addText:
     "Fill in the basic data. Later we will connect screenshots and AI review for each trade.",
   totalTrades: "Total trades",
@@ -174,9 +176,9 @@ screenshotFormats: "Supported formats: PNG, JPG, WEBP",
 uploadButton: "Upload",
 uploadingButton: "Uploading...",
 selectTradePlaceholder: "Select trade",
-stepOne: "{t.journal.stepOne}",
-stepTwo: "{t.journal.stepTwo}",
-stepThree: "{t.journal.stepThree}",
+stepOne: "Step 1",
+stepTwo: "Step 2",
+stepThree: "Step 3",
 chartAnalyzeButton: "Analyze chart",
 chartAnalyzingButton: "Analyzing chart...",
 chartScreenshotsLabel: "screenshots",
@@ -370,6 +372,8 @@ journal: {
   text: "Добавляйте сделки, фиксируйте риск, результат, эмоции, ошибки и уроки.",
   locked: "Для добавления сделок нужен активный тариф или demo-доступ.",
   addTitle: "Добавить сделку",
+  editTitle: "Редактировать сделку",
+addModeText: "Добавь новую сделку в личный журнал.",
   addText:
     "Заполните базовые данные. Позже мы подключим скриншоты и AI-разбор конкретной сделки.",
   totalTrades: "Всего сделок",
@@ -622,6 +626,8 @@ journal: {
   text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
   locked: "Для додавання угод потрібен активний тариф або demo-доступ.",
   addTitle: "Додати угоду",
+  editTitle: "Редагувати угоду",
+addModeText: "Додай нову угоду до особистого журналу.",
   addText:
     "Заповніть базові дані. Пізніше ми підключимо скриншоти та AI-розбір конкретної угоди.",
   totalTrades: "Усього угод",
@@ -1031,18 +1037,20 @@ if (
 
       const { data: analysesData } = await supabase
   .from("ai_analyses")
-  .select("id,user_message,ai_response,model,tokens_used,created_at")
+  .select("id,user_id,subscription_id,trade_id,analysis_type,user_message,ai_response,model,tokens_used,created_at")
   .eq("user_id", user.id)
   .order("created_at", { ascending: false })
   .limit(10);
 
-  setChartAnalysisHistory(
-  ((analysesData ?? []) as AiAnalysis[]).filter(
-    (item) => item.analysis_type === "trade_chart"
-  )
+  const analyses = ((analysesData ?? []) as AiAnalysis[]);
+
+setChartAnalysisHistory(
+  analyses.filter((item) => item.analysis_type === "trade_chart")
 );
 
-setCoachHistory((analysesData as AiAnalysis[]) ?? []);
+setCoachHistory(
+  analyses.filter((item) => item.analysis_type === "coach").slice(0, 10)
+);
 const { data: tradesData } = await supabase
   .from("trades")
   .select("*")
@@ -2258,15 +2266,15 @@ const downloadTradesCsv = () => {
   const rows = filteredTrades.map((trade) => [
     trade.trade_date,
     trade.ticker,
-    trade.market,
-    trade.direction,
+    getMarketLabel(trade.market),
+getDirectionLabel(trade.direction),
     trade.entry_price ?? "",
     trade.exit_price ?? "",
     trade.stop_loss ?? "",
     trade.position_size ?? "",
     trade.risk_amount ?? "",
     trade.pnl ?? "",
-    trade.result ?? "",
+   getResultLabel(trade.result),
     trade.setup ?? "",
     trade.emotion ?? "",
     trade.mistake ?? "",
@@ -2423,29 +2431,7 @@ const downloadTradesXlsx = () => {
     { wch: 18 },
   ];
 
-function getMarketLabel(value: string | null | undefined) {
-  if (!value) return "—";
 
-  const key = value.toLowerCase() as keyof typeof t.journal.marketLabels;
-
-  return t.journal.marketLabels[key] ?? value;
-}
-
-function getDirectionLabel(value: string | null | undefined) {
-  if (!value) return "—";
-
-  const key = value.toLowerCase() as keyof typeof t.journal.directionLabels;
-
-  return t.journal.directionLabels[key] ?? value;
-}
-
-function getResultLabel(value: string | null | undefined) {
-  if (!value) return t.journal.resultLabels.notSet;
-
-  const key = value.toLowerCase() as keyof typeof t.journal.resultLabels;
-
-  return t.journal.resultLabels[key] ?? value;
-}
   
   XLSX.utils.book_append_sheet(workbook, tradesSheet, "Trades");
   XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
@@ -2527,7 +2513,7 @@ function getResultLabel(value: string | null | undefined) {
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
           <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
-            Step 1
+            {t.journal.stepOne}
           </span>
           <span className="mt-1 block">
             {t.journal.screenshotTradeLabel}
@@ -2536,14 +2522,14 @@ function getResultLabel(value: string | null | undefined) {
 
         <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
           <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
-            Step 2
+            {t.journal.stepTwo}
           </span>
           <span className="mt-1 block">{t.journal.screenshotChoose}</span>
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
           <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
-            Step 3
+            {t.journal.stepThree}
           </span>
           <span className="mt-1 block">{t.journal.uploadButton}</span>
         </div>
@@ -2699,7 +2685,9 @@ function getResultLabel(value: string | null | undefined) {
       : "border-white/10 bg-white/[0.03]"
   }`}
 >
-          <h3 className="text-2xl font-semibold">{t.journal.addTitle}</h3>
+          <h2 className="text-2xl font-semibold text-white">
+  {editingTradeId ? t.journal.editTitle : t.journal.addTitle}
+</h2>
 
 {editingTradeId && (
   <div className="mt-4 rounded-2xl border border-cyan-300/25 bg-cyan-300/10 p-4">
@@ -2841,7 +2829,7 @@ function getResultLabel(value: string | null | undefined) {
                 disabled={locked || tradeSaving}
                 className="field-input"
               >
-                <option value="all">{t.journal.allResults}</option>
+                <option value="">{t.journal.resultLabels.notSet}</option>
 <option value="win">{t.journal.resultLabels.win}</option>
 <option value="loss">{t.journal.resultLabels.loss}</option>
 <option value="breakeven">{t.journal.resultLabels.breakeven}</option>
@@ -2956,73 +2944,80 @@ function getResultLabel(value: string | null | undefined) {
                   key={trade.id}
                   className="rounded-3xl border border-white/10 bg-black/20 p-5"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <div className="flex items-center gap-3">
-                        <h4 className="text-xl font-semibold">
-                          {trade.ticker}
-                        </h4>
+                  <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_170px] md:items-start">
+  <div className="min-w-0">
+    <div className="flex flex-wrap items-center gap-3">
+      <h4 className="text-xl font-semibold">
+        {trade.ticker}
+      </h4>
 
-                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase text-white/50">
-                          {getDirectionLabel(trade.direction)}
-                        </span>
+      <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wide text-white/55">
+        {getDirectionLabel(trade.direction)}
+      </span>
 
-                        <span className="rounded-full border border-white/10 px-3 py-1 text-xs uppercase text-white/50">
-                          {getMarketLabel(trade.market)}
-                        </span>
-                      </div>
+      <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wide text-white/55">
+        {getMarketLabel(trade.market)}
+      </span>
+    </div>
 
-                      <p className="mt-2 text-sm text-white/40">
-                        {trade.trade_date}
-                      </p>
-                    </div>
+    <p className="mt-2 text-sm text-white/40">
+      {trade.trade_date}
+    </p>
+  </div>
 
-                    <div className="text-right">
-                      <div className="text-xs uppercase tracking-[0.2em] text-white/35">
-                        PnL
-                      </div>
-                      <div className="mt-1 text-2xl font-semibold">
-                        {trade.pnl === null ? "—" : `$${trade.pnl}`}
-                      </div>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-  <button
-    type="button"
-    onClick={() => onTradeChartAnalysis(trade.id)}
-    disabled={
-      locked ||
-      chartAnalysisLoading ||
-      tradeScreenshots.filter((item) => item.trade_id === trade.id).length === 0
-    }
-    className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
-  >
-    {chartAnalysisLoading && chartAnalysisTradeId === trade.id
-  ? t.journal.chartAnalyzingButton
-  : t.journal.chartAnalyzeButton}
-  </button>
+  <div className="flex w-full flex-col items-stretch gap-2 md:items-end">
+    <div className="mb-2 text-right md:w-[150px]">
+      <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+        PnL
+      </div>
 
-  <button
-  type="button"
-  onClick={() => onTradeEditStart(trade)}
-  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
->
-  {t.journal.editTradeButton}
-</button>
+      <div className="mt-1 text-2xl font-semibold text-white">
+        {trade.pnl === null ? "—" : `$${trade.pnl}`}
+      </div>
+    </div>
 
-  <button
-  type="button"
-  onClick={() => onTradeDelete(trade.id)}
-  className="rounded-full border border-red-400/20 bg-red-400/10 px-4 py-2 text-xs font-medium text-red-200 transition hover:bg-red-400/15"
->
-  {t.journal.deleteTradeButton}
-</button>
+    <button
+      type="button"
+      onClick={() => onTradeChartAnalysis(trade.id)}
+      disabled={
+        locked ||
+        chartAnalysisLoading ||
+        tradeScreenshots.filter((item) => item.trade_id === trade.id)
+          .length === 0
+      }
+      className="w-full rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35 md:w-[150px]"
+    >
+      {chartAnalysisLoading && chartAnalysisTradeId === trade.id
+        ? t.journal.chartAnalyzingButton
+        : t.journal.chartAnalyzeButton}
+    </button>
 
-  <div className="text-xs text-white/35">
-    {tradeScreenshots.filter((item) => item.trade_id === trade.id).length}{" "}
-{t.journal.chartScreenshotsLabel}
+    <button
+      type="button"
+      onClick={() => onTradeEditStart(trade)}
+      className="w-full rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white md:w-[150px]"
+    >
+      {t.journal.editTradeButton}
+    </button>
+
+    <button
+      type="button"
+      onClick={() => onTradeDelete(trade.id)}
+      className="w-full rounded-full border border-red-400/20 bg-red-400/10 px-4 py-2 text-xs font-medium text-red-200 transition hover:bg-red-400/15 md:w-[150px]"
+    >
+      {t.journal.deleteTradeButton}
+    </button>
+
+    <div className="text-center text-xs text-white/35 md:w-[150px]">
+      {
+        tradeScreenshots.filter(
+          (screenshot) => screenshot.trade_id === trade.id
+        ).length
+      }{" "}
+      {t.journal.chartScreenshotsLabel}
+    </div>
   </div>
 </div>
-                  </div>
 
                   <div className="mt-4 grid gap-3 text-sm text-white/55">
   <div>
@@ -3246,7 +3241,7 @@ function getResultLabel(value: string | null | undefined) {
             <tbody className="divide-y divide-white/10 text-white/65">
               {filteredTrades.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="py-8 text-center text-white/45">
+                  <td colSpan={12} className="py-8 text-center text-white/45">
                     {t.journal.empty}
                   </td>
                 </tr>
