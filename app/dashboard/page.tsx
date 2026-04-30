@@ -113,6 +113,21 @@ const dashboardDict = {
   weeklyAiText:
     "This module will be connected to your trade database, plans and AI logic in the next stages.",
 },
+charts: {
+  title: "TradingView charts",
+  text: "Embedded TradingView chart for ticker analysis, levels and setups.",
+  placeholder: "TradingView widget will be added in the next stage.",
+},
+learning: {
+  title: "Training center",
+  text: "Structured trading education, setups, risk management and practice tasks.",
+  placeholder: "Training modules will be added in the next stage.",
+},
+reports: {
+  title: "Reports",
+  text: "Performance reports, trading statistics, AI summaries and export history.",
+  placeholder: "Advanced reports will be added in the next stage.",
+},
     
 journal: {
   title: "Trade journal",
@@ -365,6 +380,21 @@ locked: {
   weeklyAi: "AI-сводка недели",
   weeklyAiText:
     "Этот модуль будет подключён к базе данных, тарифам и AI-логике на следующих этапах.",
+},
+charts: {
+  title: "Графики TradingView",
+  text: "Встроенный график TradingView для анализа тикеров, уровней и сетапов.",
+  placeholder: "TradingView widget будет добавлен на следующем этапе.",
+},
+learning: {
+  title: "Центр обучения",
+  text: "Структурное обучение трейдингу, сетапы, риск-менеджмент и практические задания.",
+  placeholder: "Учебные модули будут добавлены на следующем этапе.",
+},
+reports: {
+  title: "Отчёты",
+  text: "Отчёты по результатам, торговая статистика, AI-сводки и история экспортов.",
+  placeholder: "Расширенные отчёты будут добавлены на следующем этапе.",
 },
     
 journal: {
@@ -619,6 +649,21 @@ locked: {
   weeklyAi: "AI-зведення тижня",
   weeklyAiText:
     "Цей модуль буде підключено до бази даних, тарифів та AI-логіки на наступних етапах.",
+},
+charts: {
+  title: "Графіки TradingView",
+  text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
+  placeholder: "TradingView widget буде додано на наступному етапі.",
+},
+learning: {
+  title: "Центр навчання",
+  text: "Структурне навчання трейдингу, сетапи, ризик-менеджмент і практичні завдання.",
+  placeholder: "Навчальні модулі буде додано на наступному етапі.",
+},
+reports: {
+  title: "Звіти",
+  text: "Звіти за результатами, торгова статистика, AI-зведення та історія експортів.",
+  placeholder: "Розширені звіти буде додано на наступному етапі.",
 },
     
 journal: {
@@ -1622,25 +1667,23 @@ setExpandedChartAnalysisTradeId(tradeId);
                     </div>
 
                     <p className="mt-5 text-xs uppercase tracking-[0.28em] text-white/40">
-                      Доступ закрыт
-                    </p>
+  {t.locked.label}
+</p>
 
-                    <h2 className="mt-3 text-3xl font-semibold">
-                      Активируйте тариф
-                    </h2>
+<h2 className="mt-3 text-3xl font-semibold">
+  {t.locked.title}
+</h2>
 
-                    <p className="mt-4 text-sm leading-7 text-white/60">
-                      После оплаты откроются журнал сделок, SkillEdge AI-коуч,
-                      графики TradingView, обучение, отчёты и история
-                      AI-разборов.
-                    </p>
+<p className="mt-4 text-sm leading-7 text-white/60">
+  {t.locked.text}
+</p>
 
-                    <a
-                      href="/?page=pricing"
-                      className="mt-7 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.03]"
-                    >
-                      Выбрать тариф
-                    </a>
+<a
+  href="/?page=pricing"
+  className="mt-7 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.03]"
+>
+  {t.locked.button}
+</a>
                   </div>
                 </motion.div>
               </div>
@@ -1691,7 +1734,7 @@ onTradeEditStart={handleTradeEditStart}
 onTradeEditCancel={handleTradeEditCancel}
   />
 )}
-              {activeTab === "charts" && <ChartsTab />}
+              {activeTab === "charts" && <ChartsTab t={t} />}
               {activeTab === "coach" && (
   <CoachTab
   subscription={subscription}
@@ -1710,8 +1753,8 @@ onTradeEditCancel={handleTradeEditCancel}
   }}
 />
 )}
-              {activeTab === "learning" && <LearningTab />}
-              {activeTab === "reports" && <ReportsTab />}
+              {activeTab === "learning" && <LearningTab t={t} />}
+              {activeTab === "reports" && <ReportsTab t={t} />}
               {activeTab === "billing" && (
                 <BillingTab subscription={subscription} loading={loading} t={t} />
               )}
@@ -1730,12 +1773,12 @@ onTradeEditCancel={handleTradeEditCancel}
 </p>
 
               <h3 className="mt-3 text-2xl font-semibold">
-                {loading
-                  ? "Загрузка..."
-                  : subscription.active && subscription.plan
-                  ? planNames[subscription.plan]
-                  : "Не активирован"}
-              </h3>
+  {loading
+    ? t.loading
+    : subscription.active && subscription.plan
+    ? planNames[subscription.plan]
+    : t.notActivated}
+</h3>
 
               <p className="mt-3 text-sm leading-7 text-white/50">
   {subscription.active && subscription.plan && subscription.period
@@ -3447,17 +3490,14 @@ function OverviewTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   );
 }
 
-function ChartsTab() {
+function ChartsTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   return (
     <div>
-      <SectionHeader
-        title="Графики TradingView"
-        text="Встроенный график TradingView для анализа тикеров и сетапов."
-      />
+      <SectionHeader title={t.charts.title} text={t.charts.text} />
 
       <div className="mt-8 h-[420px] rounded-3xl border border-white/10 bg-black/30 p-6">
         <div className="flex h-full items-center justify-center text-white/40">
-          TradingView widget будет добавлен на следующем этапе
+          {t.charts.placeholder}
         </div>
       </div>
     </div>
@@ -3465,33 +3505,25 @@ function ChartsTab() {
 }
 
 
-function LearningTab() {
+function LearningTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   return (
     <div>
-      <SectionHeader
-        title="Обучение"
-        text="Уроки, чеклисты, видео, PDF и торговые материалы."
-      />
+      <SectionHeader title={t.learning.title} text={t.learning.text} />
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <PlaceholderBlock title="Базовый курс" />
-        <PlaceholderBlock title="Разбор сетапов" />
+      <div className="mt-8 rounded-3xl border border-white/10 bg-black/20 p-8 text-white/50">
+        {t.learning.placeholder}
       </div>
     </div>
   );
 }
 
-function ReportsTab() {
+function ReportsTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   return (
     <div>
-      <SectionHeader
-        title="Отчёты"
-        text="Дневные, недельные и месячные отчёты с возможностью скачать или распечатать."
-      />
+      <SectionHeader title={t.reports.title} text={t.reports.text} />
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <PlaceholderBlock title="Недельный отчёт" />
-        <PlaceholderBlock title="PDF-экспорт" />
+      <div className="mt-8 rounded-3xl border border-white/10 bg-black/20 p-8 text-white/50">
+        {t.reports.placeholder}
       </div>
     </div>
   );
@@ -3506,48 +3538,43 @@ function BillingTab({
   loading: boolean;
   t: (typeof dashboardDict)[Language];
 }) {
+  const hasActivePlan = subscription.active && subscription.plan;
+
   return (
     <div>
-      <SectionHeader
-        title="Тариф и оплата"
-        text="Информация о текущем тарифе, оплатах и сроке действия подписки."
-      />
+      <SectionHeader title={t.billing.title} text={t.billing.text} />
 
       <div className="mt-8 rounded-3xl border border-white/10 bg-black/20 p-6">
         <h3 className="text-2xl font-semibold">
           {loading
-            ? "Загрузка..."
-            : subscription.active && subscription.plan
-            ? `Тариф активен: ${planNames[subscription.plan]}`
-            : "Тариф не активирован"}
+            ? t.loading
+            : hasActivePlan
+              ? `${t.billing.activePlan}: ${planNames[subscription.plan as PlanId]}`
+              : t.billing.inactivePlan}
         </h3>
 
         {subscription.isDemo && (
           <div className="mt-5 rounded-3xl border border-amber-300/25 bg-amber-300/10 p-5 text-sm leading-7 text-amber-50/85">
             <div className="text-xs uppercase tracking-[0.25em] text-amber-100/60">
-              Пробная версия
+              {t.demo.label}
             </div>
 
             <div className="mt-2 text-lg font-semibold text-white">
-              У вас активирован 7-дневный demo-доступ
+              {t.demo.title}
             </div>
 
             <p className="mt-2 text-white/65">
-              Это пробная версия тарифа Starter с лимитом 10 AI-запросов.
-              После окончания срока доступ будет закрыт, если вы не выберете
-              основной тариф.
+              {t.demo.text}
             </p>
           </div>
         )}
 
         <p className="mt-3 text-white/60">
           {subscription.active && subscription.period
-            ? `Период: ${getPeriodName(subscription, t)}. Действует до ${
-                subscription.expiresAt
-                  ? new Date(subscription.expiresAt).toLocaleDateString("ru-RU")
-                  : "—"
-              }.`
-            : "После оплаты здесь появятся план, период, дата окончания и история оплат."}
+            ? `${t.billing.period}: ${getPeriodName(subscription, t)}. ${
+                t.billing.validUntil
+              } ${formatDate(subscription.expiresAt)}.`
+            : t.billing.empty}
         </p>
 
         <a
@@ -3820,14 +3847,22 @@ function MetricCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-function PlaceholderBlock({ title }: { title: string }) {
+function PlaceholderBlock({
+  title,
+  text,
+}: {
+  title: string;
+  text?: string;
+}) {
   return (
     <div className="mt-5 rounded-3xl border border-white/10 bg-black/25 p-6">
       <h3 className="text-xl font-semibold">{title}</h3>
-      <p className="mt-3 text-sm leading-7 text-white/55">
-        Этот модуль будет подключён к базе данных, тарифам и AI-логике на
-        следующих этапах.
-      </p>
+
+      {text && (
+        <p className="mt-3 text-sm leading-7 text-white/55">
+          {text}
+        </p>
+      )}
     </div>
   );
 }
