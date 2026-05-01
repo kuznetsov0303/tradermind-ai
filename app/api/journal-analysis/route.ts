@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
 
 type Trade = {
   id: string;
@@ -176,6 +177,26 @@ const language =
     const model = getOpenAIModel(planId);
     const publicPlanName = getPublicPlanName(planId);
     const summary = buildTradeSummary(safeTrades);
+    const usage = await checkAiFeatureLimit({
+  supabaseAdmin,
+  userId: user.id,
+  planId,
+  feature: "journal_analysis",
+});
+
+if (!usage.allowed) {
+  return NextResponse.json(
+    {
+      error:
+        "Journal analysis limit reached for your current SkillEdge plan. Upgrade your plan or wait until the next monthly reset.",
+      code: "AI_LIMIT_REACHED",
+      used: usage.used,
+      limit: usage.limit,
+      remaining: usage.remaining,
+    },
+    { status: 429 }
+  );
+}
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -198,10 +219,15 @@ const language =
             content: JSON.stringify(
               {
   plan: publicPlanName,
-  language,
-  outputLanguageInstruction: getOutputLanguageInstruction(language),
-  summary,
-  trades: safeTrades.map((trade) => ({
+language,
+outputLanguageInstruction: getOutputLanguageInstruction(language),
+aiUsageThisMonth: {
+  used: usage.used,
+  limit: usage.limit,
+  remaining: usage.remaining,
+},
+summary,
+trades: safeTrades.map((trade) => ({
                   date: trade.trade_date,
                   ticker: trade.ticker,
                   market: trade.market,
@@ -250,10 +276,13 @@ const language =
 });
 
     return NextResponse.json({
-      answer,
-      totalTrades: safeTrades.length,
-      plan: publicPlanName,
-    });
+  answer,
+  totalTrades: safeTrades.length,
+  plan: publicPlanName,
+  aiUsed: usage.used + 1,
+  aiLimit: usage.limit,
+  remaining: Math.max(usage.remaining - 1, 0),
+});
   } catch (error) {
     return NextResponse.json(
       { error: "Journal analysis backend error." },

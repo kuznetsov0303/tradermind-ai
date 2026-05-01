@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
 
 type Trade = {
   id: string;
@@ -196,6 +197,26 @@ export async function POST(req: Request) {
     const planId = subscription.plan_id ?? "starter";
     const model = getOpenAIModel(planId);
     const publicPlanName = getPublicPlanName(planId);
+    const usage = await checkAiFeatureLimit({
+  supabaseAdmin,
+  userId: user.id,
+  planId,
+  feature: "trade_chart_analysis",
+});
+
+if (!usage.allowed) {
+  return NextResponse.json(
+    {
+      error:
+        "Trade chart analysis limit reached for your current SkillEdge plan. Upgrade your plan or wait until the next monthly reset.",
+      code: "AI_LIMIT_REACHED",
+      used: usage.used,
+      limit: usage.limit,
+      remaining: usage.remaining,
+    },
+    { status: 429 }
+  );
+}
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
@@ -288,10 +309,11 @@ export async function POST(req: Request) {
 });
 
     return NextResponse.json({
-      answer,
-      screenshots: screenshots.length,
-      plan: publicPlanName,
-    });
+  answer,
+  aiUsed: usage.used + 1,
+  aiLimit: usage.limit,
+  remaining: Math.max(usage.remaining - 1, 0),
+});
   } catch {
     return NextResponse.json(
       { error: "Trade chart analysis backend error." },

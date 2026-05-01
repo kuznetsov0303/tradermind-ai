@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
 
 type SubscriptionRow = {
   id: string;
@@ -134,16 +135,26 @@ export async function POST(req: Request) {
       );
     }
 
-    if (subscription.ai_used_this_month >= subscription.ai_monthly_limit) {
-      return NextResponse.json(
-        {
-          error: "AI request limit reached for your current plan.",
-          aiUsed: subscription.ai_used_this_month,
-          aiLimit: subscription.ai_monthly_limit,
-        },
-        { status: 403 }
-      );
-    }
+    const usage = await checkAiFeatureLimit({
+  supabaseAdmin,
+  userId: user.id,
+  planId: subscription.plan_id,
+  feature: "ai_coach",
+});
+
+if (!usage.allowed) {
+  return NextResponse.json(
+    {
+      error:
+        "AI message limit reached for your current SkillEdge plan. Upgrade your plan or wait until the next monthly reset.",
+      code: "AI_LIMIT_REACHED",
+      used: usage.used,
+      limit: usage.limit,
+      remaining: usage.remaining,
+    },
+    { status: 429 }
+  );
+}
 
     const publicPlanName = getPublicPlanName(subscription.plan_id);
 
@@ -163,7 +174,7 @@ Your job:
 User's current plan:
 - plan_id: ${subscription.plan_id}
 - demo: ${subscription.is_demo ? "yes" : "no"}
-- AI usage: ${subscription.ai_used_this_month}/${subscription.ai_monthly_limit}
+- AI usage this month: ${usage.used}/${usage.limit}
 `.trim();
 
     const response = await fetch("https://api.openai.com/v1/responses", {
@@ -251,10 +262,11 @@ User's current plan:
     }
 
     return NextResponse.json({
-      answer: aiText,
-      aiUsed: subscription.ai_used_this_month + 1,
-      aiLimit: subscription.ai_monthly_limit,
-    });
+  answer: aiText,
+  aiUsed: usage.used + 1,
+  aiLimit: usage.limit,
+  remaining: Math.max(usage.remaining - 1, 0),
+});
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "AI coach route error";

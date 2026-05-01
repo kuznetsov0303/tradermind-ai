@@ -316,7 +316,8 @@ locked: {
     demo: {
       label: "Trial version",
       title: "Your 7-day demo access is active",
-      text: "This is a Starter trial with a limit of 10 AI requests. After the trial expires, access will be locked unless you choose a main plan.",
+      text:
+  "This is a trial version of the SkillEdge Core plan with a limit of 10 AI requests. After the trial ends, access will be closed unless you choose a paid plan.",
       short: "7-day trial. Limit: 10 AI requests.",
     },
     billing: {
@@ -329,6 +330,12 @@ locked: {
       empty:
         "After payment, your plan, period, expiration date and payment history will appear here.",
     },
+    aiLimits: {
+  reachedTitle: "AI limit reached",
+  reachedText:
+    "You have used all AI requests available for your current plan this month. Upgrade your plan or wait until the next monthly reset.",
+  remainingPrefix: "Remaining AI requests",
+},
     coach: {
       title: "AI Coach",
       text: "Describe a trade, emotion, mistake or market situation — the AI coach will analyze discipline, risk and decision quality.",
@@ -349,6 +356,7 @@ locked: {
       loginFirst: "Please log in first.",
       messageRequired: "Enter a question or trade description.",
       coachError: "AI Coach error.",
+      error: "AI coach request failed.",
       failed: "Failed to get AI Coach response.",
       needPlan: "AI Coach requires an active plan or demo access.",
       limitReached: "AI request limit reached. Upgrade your plan or wait for the limit reset.",
@@ -584,7 +592,8 @@ locked: {
     demo: {
       label: "Пробная версия",
       title: "У вас активирован 7-дневный demo-доступ",
-      text: "Это пробная версия тарифа Starter с лимитом 10 AI-запросов. После окончания срока доступ будет закрыт, если вы не выберете основной тариф.",
+      text:
+  "Это пробная версия тарифа SkillEdge Core с лимитом 10 AI-запросов. После окончания срока доступ будет закрыт, если вы не выберете основной тариф.",
       short: "7-дневная пробная версия. Лимит: 10 AI-запросов.",
     },
     billing: {
@@ -597,6 +606,12 @@ locked: {
       empty:
         "После оплаты здесь появятся план, период, дата окончания и история оплат.",
     },
+    aiLimits: {
+  reachedTitle: "Лимит AI исчерпан",
+  reachedText:
+    "Вы использовали все AI-запросы, доступные по вашему текущему тарифу в этом месяце. Обновите тариф или дождитесь следующего месячного сброса.",
+  remainingPrefix: "Осталось AI-запросов",
+},
     coach: {
       title: "AI-коуч",
       text: "Опишите сделку, эмоции, ошибку или торговую ситуацию — AI-коуч даст разбор по дисциплине, риску и качеству решения.",
@@ -617,6 +632,7 @@ locked: {
       loginFirst: "Сначала войдите в аккаунт.",
       messageRequired: "Введите вопрос или описание сделки.",
       coachError: "Ошибка AI-коуча.",
+      error: "Ошибка запроса к AI-коучу.",
       failed: "Не удалось получить ответ AI-коуча.",
       needPlan: "Для AI-коуча нужен активный тариф или demo-доступ.",
       limitReached:
@@ -853,8 +869,8 @@ locked: {
     demo: {
       label: "Пробна версія",
       title: "У вас активовано 7-денний demo-доступ",
-      text: "Це пробна версія тарифу Starter з лімітом 10 AI-запитів. Після завершення строку доступ буде закрито, якщо ви не оберете основний тариф.",
-      short: "7-денна пробна версія. Ліміт: 10 AI-запитів.",
+      text:
+  "Це пробна версія тарифу SkillEdge Core з лімітом 10 AI-запитів. Після завершення пробного періоду доступ буде закрито, якщо ви не оберете основний тариф.",
     },
     billing: {
       title: "Тариф і оплата",
@@ -866,6 +882,12 @@ locked: {
       empty:
         "Після оплати тут зʼявляться план, період, дата завершення та історія оплат.",
     },
+    aiLimits: {
+  reachedTitle: "Ліміт AI вичерпано",
+  reachedText:
+    "Ви використали всі AI-запити, доступні у вашому поточному тарифі цього місяця. Оновіть тариф або дочекайтеся наступного місячного скидання.",
+  remainingPrefix: "Залишилось AI-запитів",
+},
     coach: {
       title: "AI-коуч",
       text: "Опишіть угоду, емоції, помилку або торгову ситуацію — AI-коуч зробить розбір дисципліни, ризику та якості рішення.",
@@ -886,6 +908,7 @@ locked: {
       loginFirst: "Спочатку увійдіть в акаунт.",
       messageRequired: "Введіть питання або опис угоди.",
       coachError: "Помилка AI-коуча.",
+      error: "Помилка запиту до AI-коуча.",
       failed: "Не вдалося отримати відповідь AI-коуча.",
       needPlan: "Для AI-коуча потрібен активний тариф або demo-доступ.",
       limitReached:
@@ -905,9 +928,9 @@ const tabs: { id: TabId }[] = [
 ];
 
 const planNames: Record<PlanId, string> = {
-  starter: "Starter",
-  pro: "Pro",
-  elite: "Elite",
+   starter: "SkillEdge Core",
+  pro: "SkillEdge Edge",
+  elite: "SkillEdge Elite",
 };
 
 const periodNames: Record<BillingPeriod, string> = {
@@ -1184,9 +1207,14 @@ const handleCoachSubmit = async () => {
     const result = await response.json();
 
     if (!response.ok) {
-      setCoachError(result.error || t.coach.coachError);
-      return;
-    }
+  if (result.code === "AI_LIMIT_REACHED") {
+    setCoachError(`${t.aiLimits.reachedTitle}. ${t.aiLimits.reachedText}`);
+    return;
+  }
+
+  setCoachError(result.error || t.coach.error);
+  return;
+}
 
     setCoachAnswer(result.answer || "");
     setCoachMessage("");
@@ -1421,9 +1449,16 @@ const handleJournalAnalysis = async () => {
     const result = await response.json();
 
     if (!response.ok) {
-      setJournalAnalysisError(result.error || "Journal analysis failed.");
-      return;
-    }
+  if (result.code === "AI_LIMIT_REACHED") {
+    setJournalAnalysisError(
+      `${t.aiLimits.reachedTitle}. ${t.aiLimits.reachedText}`
+    );
+    return;
+  }
+
+  setJournalAnalysisError(result.error || "Journal analysis failed.");
+  return;
+}
 
     setJournalAnalysis(result.answer || "");
   } catch {
@@ -1537,9 +1572,16 @@ const handleTradeChartAnalysis = async (tradeId: string) => {
     const result = await response.json();
 
     if (!response.ok) {
-      setChartAnalysisError(result.error || "Chart analysis failed.");
-      return;
-    }
+  if (result.code === "AI_LIMIT_REACHED") {
+    setChartAnalysisError(
+      `${t.aiLimits.reachedTitle}. ${t.aiLimits.reachedText}`
+    );
+    return;
+  }
+
+  setChartAnalysisError(result.error || "Chart analysis failed.");
+  return;
+}
 
     setChartAnalysis(result.answer || "");
     setChartAnalysisHistory((current) => [
@@ -3576,6 +3618,30 @@ function BillingTab({
               } ${formatDate(subscription.expiresAt)}.`
             : t.billing.empty}
         </p>
+
+        {subscription.active && (
+  <div className="mt-5 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+    <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+      {t.aiLimits.remainingPrefix}
+    </div>
+
+    <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <div className="text-3xl font-semibold text-white">
+          {Math.max(subscription.aiLimit - subscription.aiUsed, 0)}
+        </div>
+
+        <div className="mt-1 text-sm text-white/45">
+          {subscription.aiUsed} / {subscription.aiLimit}
+        </div>
+      </div>
+
+      <div className="rounded-full border border-white/10 px-4 py-2 text-xs text-white/55">
+        {subscription.plan ? planNames[subscription.plan] : "SkillEdge AI"}
+      </div>
+    </div>
+  </div>
+)}
 
         <a
           href="/?page=pricing"
