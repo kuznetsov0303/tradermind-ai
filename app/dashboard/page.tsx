@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import * as XLSX from "xlsx";
 import { supabase } from "@/lib/supabaseClient";
+import { getPlanLimits } from "@/lib/plan-limits";
 
 type Language = "en" | "ru" | "ua";
 
@@ -177,6 +178,7 @@ actions: "Actions",
 deleteTradeConfirm: "Delete this trade? This action cannot be undone.",
 deleteTradeError: "Failed to delete trade.",
 uploadScreenshotTitle: "Upload trade screenshot",
+
 uploadScreenshotText:
   "Attach chart screenshots to your saved trades. Later SkillEdge AI will use them to analyze entries, exits, stops and repeated chart mistakes.",
 screenshotsCount: "screenshots",
@@ -187,7 +189,9 @@ screenshotNoFile: "No file selected",
 screenshotSelected: "Selected file",
 screenshotHint:
   "Steps: 1) Select a trade  2) Click “Choose screenshot”  3) Click “Upload”",
-screenshotFormats: "Supported formats: PNG, JPG, WEBP",
+screenshotUploadHintCompact:
+  "Upload 1 to 3 screenshots with different timeframes for a deeper analysis.",
+  screenshotFormats: "Supported formats: PNG, JPG, WEBP",
 uploadButton: "Upload",
 uploadingButton: "Uploading...",
 selectTradePlaceholder: "Select trade",
@@ -251,8 +255,15 @@ table: {
   updateTradeButton: "Update trade",
   updatingTradeButton: "Updating...",
   tickerRequired: "Enter ticker.",
+  tradeLimitReached: "Trade limit reached for your current plan",
+ tradeUsageTitle: "Trades used",
+ tradesLeftLabel: "left",
+  screenshotLimitReached: "Screenshot limit reached for this trade",
+ screenshotUsageTitle: "Screenshots used", 
+ limitReached: "Trade limit reached for your current plan",
   loginFirst: "Please log in first.",
   saveFailed: "Failed to save trade.",
+  
   fields: {
     ticker: "Ticker",
     date: "Date",
@@ -453,6 +464,7 @@ actions: "Действия",
 deleteTradeConfirm: "Удалить эту сделку? Это действие нельзя отменить.",
 deleteTradeError: "Не удалось удалить сделку.",
 uploadScreenshotTitle: "Загрузка скриншота сделки",
+
 uploadScreenshotText:
   "Прикрепляйте скриншоты графиков к сохранённым сделкам. Позже SkillEdge AI будет использовать их для анализа входов, выходов, стопов и повторяющихся ошибок на графике.",
 screenshotsCount: "скриншотов",
@@ -463,7 +475,9 @@ screenshotNoFile: "Файл не выбран",
 screenshotSelected: "Выбранный файл",
 screenshotHint:
   "Шаги: 1) Выберите сделку  2) Нажмите «Выбрать скриншот»  3) Нажмите «Загрузить»",
-screenshotFormats: "Поддерживаемые форматы: PNG, JPG, WEBP",
+screenshotUploadHintCompact:
+  "Загружай от одного до трёх скринов с разными таймфреймами для более глубокого анализа.",
+  screenshotFormats: "Поддерживаемые форматы: PNG, JPG, WEBP",
 uploadButton: "Загрузить",
 uploadingButton: "Загрузка...",
 selectTradePlaceholder: "Выберите сделку",
@@ -527,6 +541,12 @@ table: {
   updateTradeButton: "Обновить сделку",
   updatingTradeButton: "Обновление...",
   tickerRequired: "Введите тикер.",
+  tradeLimitReached: "Достигнут лимит сделок для вашего текущего тарифа",
+  tradeUsageTitle: "Использовано сделок",
+  tradesLeftLabel: "осталось",
+  screenshotLimitReached: "Достигнут лимит скриншотов для этой сделки",
+  screenshotUsageTitle: "Использовано скриншотов",
+  limitReached: "Достигнут лимит сделок для вашего текущего тарифа",
   loginFirst: "Сначала войдите в аккаунт.",
   saveFailed: "Не удалось сохранить сделку.",
   fields: {
@@ -730,6 +750,7 @@ actions: "Дії",
 deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
 deleteTradeError: "Не вдалося видалити угоду.",
 uploadScreenshotTitle: "Завантаження скріншота угоди",
+
 uploadScreenshotText:
   "Додавайте скріншоти графіків до збережених угод. Пізніше SkillEdge AI використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
 screenshotsCount: "скріншотів",
@@ -740,7 +761,9 @@ screenshotNoFile: "Файл не вибрано",
 screenshotSelected: "Вибраний файл",
 screenshotHint:
   "Кроки: 1) Оберіть угоду  2) Натисніть «Вибрати скріншот»  3) Натисніть «Завантажити»",
-screenshotFormats: "Підтримувані формати: PNG, JPG, WEBP",
+screenshotUploadHintCompact:
+  "Завантажуй від одного до трьох скрінів з різними таймфреймами для глибшого аналізу.",
+  screenshotFormats: "Підтримувані формати: PNG, JPG, WEBP",
 uploadButton: "Завантажити",
 uploadingButton: "Завантаження...",
 selectTradePlaceholder: "Оберіть угоду",
@@ -804,6 +827,12 @@ table: {
   updateTradeButton: "Оновити угоду",
   updatingTradeButton: "Оновлення...",
   tickerRequired: "Введіть тикер.",
+  tradeLimitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
+  tradeUsageTitle: "Використано угод",
+  tradesLeftLabel: "залишилось",
+  screenshotLimitReached: "Досягнуто ліміт скриншотів для цієї угоди",
+  screenshotUsageTitle: "Використано скриншотів",
+  limitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
   loginFirst: "Спочатку увійдіть в акаунт.",
   saveFailed: "Не вдалося зберегти угоду.",
   fields: {
@@ -871,7 +900,8 @@ locked: {
       title: "У вас активовано 7-денний demo-доступ",
       text:
   "Це пробна версія тарифу SkillEdge Core з лімітом 10 AI-запитів. Після завершення пробного періоду доступ буде закрито, якщо ви не оберете основний тариф.",
-    },
+      short: "7-денна пробна версія. Ліміт: 10 AI-запитів.",    
+},
     billing: {
       title: "Тариф і оплата",
       text: "Інформація про поточний тариф, оплати та строк дії підписки.",
@@ -1017,7 +1047,7 @@ export default function DashboardPage() {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [tradeScreenshots, setTradeScreenshots] = useState<TradeScreenshot[]>([]);
 const [selectedTradeIdForScreenshot, setSelectedTradeIdForScreenshot] = useState("");
-const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
 const [screenshotUploading, setScreenshotUploading] = useState(false);
 const [screenshotError, setScreenshotError] = useState("");
 const [chartAnalysisTradeId, setChartAnalysisTradeId] = useState("");
@@ -1311,6 +1341,9 @@ const handleTradeDelete = async (tradeId: string) => {
 
 const handleTradeEditStart = (trade: Trade) => {
   setEditingTradeId(trade.id);
+  setSelectedTradeIdForScreenshot(trade.id);
+  setScreenshotFiles([]);
+  setScreenshotError("");
 
   setTradeForm({
     ticker: trade.ticker ?? "",
@@ -1336,6 +1369,9 @@ const handleTradeEditStart = (trade: Trade) => {
 
 const handleTradeEditCancel = () => {
   setEditingTradeId("");
+  setSelectedTradeIdForScreenshot("");
+  setScreenshotFiles([]);
+  setScreenshotError("");
   resetTradeForm();
 };
 const handleTradeSubmit = async () => {
@@ -1354,6 +1390,15 @@ const handleTradeSubmit = async () => {
     setTradeError(t.coach.loginFirst);
     return;
   }
+
+  const planLimits = getPlanLimits(subscription.plan);
+
+if (!editingTradeId && trades.length >= planLimits.maxTrades) {
+  setTradeError(
+    `${t.journal.tradeLimitReached}: ${planLimits.maxTrades}`
+  );
+  return;
+}
 
   const tradePayload = {
     ticker,
@@ -1392,13 +1437,38 @@ const handleTradeSubmit = async () => {
     }
 
     setTrades((current) =>
-      current.map((trade) => (trade.id === editingTradeId ? (data as Trade) : trade))
-    );
+  current.map((trade) => (trade.id === editingTradeId ? (data as Trade) : trade))
+);
 
-    setEditingTradeId("");
-    resetTradeForm();
+if (screenshotFiles.length > 0) {
+  try {
+    setScreenshotUploading(true);
+
+    await uploadScreenshotsForTrade({
+      tradeId: editingTradeId,
+      files: screenshotFiles,
+      userId: userData.user.id,
+    });
+
+    setScreenshotFiles([]);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Screenshot upload failed.";
+
+    setTradeError(message);
+    setScreenshotError(message);
     setTradeSaving(false);
+    setScreenshotUploading(false);
     return;
+  } finally {
+    setScreenshotUploading(false);
+  }
+}
+
+setEditingTradeId("");
+resetTradeForm();
+setTradeSaving(false);
+return;
   }
 
   const { data, error } = await supabase
@@ -1417,8 +1487,34 @@ const handleTradeSubmit = async () => {
   }
 
   setTrades((current) => [data as Trade, ...current]);
-  resetTradeForm();
-  setTradeSaving(false);
+
+if (screenshotFiles.length > 0) {
+  try {
+    setScreenshotUploading(true);
+
+    await uploadScreenshotsForTrade({
+      tradeId: (data as Trade).id,
+      files: screenshotFiles,
+      userId: userData.user.id,
+    });
+
+    setScreenshotFiles([]);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Screenshot upload failed.";
+
+    setTradeError(message);
+    setScreenshotError(message);
+    setTradeSaving(false);
+    setScreenshotUploading(false);
+    return;
+  } finally {
+    setScreenshotUploading(false);
+  }
+}
+
+resetTradeForm();
+setTradeSaving(false);
 };
 
 const handleJournalAnalysis = async () => {
@@ -1467,80 +1563,86 @@ const handleJournalAnalysis = async () => {
     setJournalAnalysisLoading(false);
   }
 };
-const handleScreenshotUpload = async () => {
-  try {
-    setScreenshotUploading(true);
-    setScreenshotError("");
+const uploadScreenshotsForTrade = async ({
+  tradeId,
+  files,
+  userId,
+}: {
+  tradeId: string;
+  files: File[];
+  userId: string;
+}) => {
+  if (files.length === 0) {
+    return;
+  }
 
-    if (!selectedTradeIdForScreenshot) {
-      setScreenshotError("Select a trade first.");
-      return;
-    }
+  const currentScreenshotsCount = tradeScreenshots.filter(
+    (screenshot) => screenshot.trade_id === tradeId
+  ).length;
 
-    if (!screenshotFile) {
-      setScreenshotError("Choose a screenshot file.");
-      return;
-    }
+  const maxScreenshotsPerTrade = getPlanLimits(
+    subscription.plan ?? "starter"
+  ).maxScreenshotsPerTrade;
 
-    const { data } = await supabase.auth.getSession();
-    const user = data.session?.user;
+  const availableSlots = Math.max(
+    maxScreenshotsPerTrade - currentScreenshotsCount,
+    0
+  );
 
-    if (!user) {
-      setScreenshotError(t.journal.loginFirst);
-      return;
-    }
+  if (files.length > availableSlots) {
+    throw new Error(
+      `${t.journal.screenshotLimitReached}: ${maxScreenshotsPerTrade}`
+    );
+  }
 
-    const safeFileName = screenshotFile.name
+  const insertedScreenshots: TradeScreenshot[] = [];
+
+  for (const [index, file] of files.entries()) {
+    const safeFileName = file.name
       .replace(/\s+/g, "-")
       .replace(/[^a-zA-Z0-9._-]/g, "");
 
-    const filePath = `${user.id}/${selectedTradeIdForScreenshot}/${Date.now()}-${safeFileName}`;
+    const filePath = `${userId}/${tradeId}/${Date.now()}-${index}-${safeFileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("trade-screenshots")
-      .upload(filePath, screenshotFile, {
+      .upload(filePath, file, {
         cacheControl: "3600",
         upsert: false,
-        contentType: screenshotFile.type,
+        contentType: file.type,
       });
 
     if (uploadError) {
-      setScreenshotError(uploadError.message || "Failed to upload screenshot.");
-      return;
+      throw new Error(uploadError.message || "Failed to upload screenshot.");
     }
 
     const { data: insertedScreenshot, error: insertError } = await supabase
       .from("trade_screenshots")
       .insert({
-        trade_id: selectedTradeIdForScreenshot,
-        user_id: user.id,
+        trade_id: tradeId,
+        user_id: userId,
         file_path: filePath,
-        file_name: screenshotFile.name,
-        file_size: screenshotFile.size,
-        mime_type: screenshotFile.type,
+        file_name: file.name,
+        file_size: file.size,
+        mime_type: file.type,
         screenshot_type: "chart",
       })
       .select("*")
       .single();
 
     if (insertError) {
-      setScreenshotError(insertError.message || "Failed to save screenshot.");
-      return;
+      throw new Error(insertError.message || "Failed to save screenshot.");
     }
 
-    setTradeScreenshots((current) => [
-      insertedScreenshot as TradeScreenshot,
-      ...current,
-    ]);
-
-    setScreenshotFile(null);
-    setSelectedTradeIdForScreenshot("");
-  } catch {
-    setScreenshotError("Screenshot upload failed.");
-  } finally {
-    setScreenshotUploading(false);
+    insertedScreenshots.push(insertedScreenshot as TradeScreenshot);
   }
+
+  setTradeScreenshots((current) => [
+    ...insertedScreenshots,
+    ...current,
+  ]);
 };
+
 
 const handleTradeChartAnalysis = async (tradeId: string) => {
   try {
@@ -1752,8 +1854,9 @@ setExpandedChartAnalysisTradeId(tradeId);
 journalAnalysisLoading={journalAnalysisLoading}
 journalAnalysisError={journalAnalysisError}
 tradeScreenshots={tradeScreenshots}
-selectedTradeIdForScreenshot={selectedTradeIdForScreenshot}
-screenshotFile={screenshotFile}
+screenshotLimit={getPlanLimits(subscription.plan ?? "starter").maxScreenshotsPerTrade}
+tradeLimit={getPlanLimits(subscription.plan ?? "starter").maxTrades}
+screenshotFiles={screenshotFiles}
 screenshotUploading={screenshotUploading}
 screenshotError={screenshotError}
 chartAnalysisTradeId={chartAnalysisTradeId}
@@ -1764,9 +1867,7 @@ chartAnalysisHistory={chartAnalysisHistory}
 expandedChartAnalysisTradeId={expandedChartAnalysisTradeId}
 onExpandedChartAnalysisTradeIdChange={setExpandedChartAnalysisTradeId}
 onTradeChartAnalysis={handleTradeChartAnalysis}
-onSelectedTradeIdForScreenshotChange={setSelectedTradeIdForScreenshot}
-onScreenshotFileChange={setScreenshotFile}
-onScreenshotUpload={handleScreenshotUpload}
+onScreenshotFilesChange={setScreenshotFiles}
 onJournalAnalysis={handleJournalAnalysis}
 onTradeFormChange={setTradeForm}
 onTradeSubmit={handleTradeSubmit}
@@ -1987,8 +2088,9 @@ function JournalTab({
   journalAnalysisLoading,
   journalAnalysisError,
   tradeScreenshots,
-  selectedTradeIdForScreenshot,
-  screenshotFile,
+  tradeLimit,
+  screenshotLimit,
+  screenshotFiles,
   screenshotUploading,
   screenshotError,
   chartAnalysisTradeId,
@@ -2005,9 +2107,7 @@ onExpandedChartAnalysisTradeIdChange,
 onTradeEditStart,
 onTradeEditCancel,
   onJournalAnalysis,
-  onSelectedTradeIdForScreenshotChange,
-  onScreenshotFileChange,
-  onScreenshotUpload,
+  onScreenshotFilesChange,
   onTradeChartAnalysis,
 }: {
   trades: Trade[];
@@ -2037,8 +2137,9 @@ onTradeEditCancel,
 journalAnalysisLoading: boolean;
 journalAnalysisError: string;
 tradeScreenshots: TradeScreenshot[];
-selectedTradeIdForScreenshot: string;
-screenshotFile: File | null;
+screenshotLimit: number;
+tradeLimit: number;
+screenshotFiles: File[];
 screenshotUploading: boolean;
 screenshotError: string;
 chartAnalysisTradeId: string;
@@ -2048,9 +2149,7 @@ chartAnalysisError: string;
 chartAnalysisHistory: AiAnalysis[];
 expandedChartAnalysisTradeId: string;
 onExpandedChartAnalysisTradeIdChange: (tradeId: string) => void;
-onSelectedTradeIdForScreenshotChange: (value: string) => void;
-onScreenshotFileChange: (file: File | null) => void;
-onScreenshotUpload: () => void;
+onScreenshotFilesChange: (files: File[]) => void;
 onTradeChartAnalysis: (tradeId: string) => void;
 onJournalAnalysis: () => void;
 onTradeSubmit: () => void;
@@ -2080,111 +2179,7 @@ onTradeFormChange: React.Dispatch<
   >;
 }) {
 
-function EquityCurveCard({
-  trades,
-  compact = false,
-  t,
-  onExpand,
-}: {
-  trades: Trade[];
-  compact?: boolean;
-  t: (typeof dashboardDict)[Language];
-  onExpand?: () => void;
-}) {
-  const equityCurveData = buildEquityCurveData(trades);
-const [mounted, setMounted] = useState(false);
 
-useEffect(() => {
-  setMounted(true);
-}, []);
-
-  return (
-    <div
-      className={
-        compact
-          ? "rounded-3xl border border-white/10 bg-white/[0.04] p-5"
-          : "rounded-3xl border border-white/10 bg-[#111621] p-6 shadow-2xl"
-      }
-    >
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h3 className={compact ? "text-lg font-semibold" : "text-2xl font-semibold"}>
-            {t.journal.equityTitle}
-          </h3>
-          <p className="mt-2 text-xs leading-6 text-white/45">
-            {t.journal.equityText}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/65">
-            {equityCurveData.length} {t.journal.equityPoints}
-          </div>
-
-          {compact && onExpand && (
-            <button
-              type="button"
-              onClick={onExpand}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
-            >
-              {t.journal.expand}
-            </button>
-          )}
-        </div>
-      </div>
-
-     <div
-  className={
-    compact
-      ? "mt-5 h-[230px] w-full overflow-hidden"
-      : "mt-6 h-[520px] w-full overflow-x-auto overflow-y-hidden"
-  }
->
-        {!mounted ? (
-  <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
-    Loading chart...
-  </div>
-) : equityCurveData.length === 0 ? (
-          <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
-            {t.journal.equityEmpty}
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={equityCurveData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" />
-              <XAxis
-                dataKey="date"
-                stroke="rgba(255,255,255,0.35)"
-                tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 11 }}
-              />
-              <YAxis
-                stroke="rgba(255,255,255,0.35)"
-                tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 11 }}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "#080c16",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  borderRadius: "16px",
-                  color: "#fff",
-                }}
-                labelStyle={{ color: "rgba(255,255,255,0.7)" }}
-              />
-              <Line
-                type="monotone"
-                dataKey="equity"
-                stroke="#67e8f9"
-                strokeWidth={3}
-                dot={{ r: compact ? 3 : 4 }}
-                activeDot={{ r: compact ? 5 : 7 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </div>
-    </div>
-  );
-}
 
   const updateField = (field: keyof typeof tradeForm, value: string) => {
     onTradeFormChange((current) => ({
@@ -2532,6 +2527,24 @@ const downloadTradesXlsx = () => {
     <div>
       <SectionHeader title={t.journal.title} text={t.journal.text} />
 
+<div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+  <div className="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+        {t.journal.tradeUsageTitle}
+      </div>
+
+      <div className="mt-2 text-3xl font-semibold text-white">
+        {trades.length} / {tradeLimit}
+      </div>
+    </div>
+
+    <div className="text-sm text-white/45">
+      {Math.max(tradeLimit - trades.length, 0)} {t.journal.tradesLeftLabel}
+    </div>
+  </div>
+</div>
+
 <div className="mt-8 grid gap-4 md:grid-cols-4 xl:grid-cols-4">
   <MetricCard label={t.journal.totalTrades} value={String(totalTrades)} />
 
@@ -2584,140 +2597,7 @@ const downloadTradesXlsx = () => {
 />
 </div>
 
-<div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-6">
-  <div className="flex flex-wrap items-start justify-between gap-4">
-    <div>
-      <h3 className="text-2xl font-semibold">
-        {t.journal.uploadScreenshotTitle}
-      </h3>
 
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
-        {t.journal.uploadScreenshotText}
-      </p>
-
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
-        <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
-          <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
-            {t.journal.stepOne}
-          </span>
-          <span className="mt-1 block">
-            {t.journal.screenshotTradeLabel}
-          </span>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
-          <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
-            {t.journal.stepTwo}
-          </span>
-          <span className="mt-1 block">{t.journal.screenshotChoose}</span>
-        </div>
-
-        <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
-          <span className="block text-xs uppercase tracking-[0.22em] text-white/35">
-            {t.journal.stepThree}
-          </span>
-          <span className="mt-1 block">{t.journal.uploadButton}</span>
-        </div>
-      </div>
-    </div>
-
-    <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/65">
-      {tradeScreenshots.length} {t.journal.screenshotsCount}
-    </div>
-  </div>
-
-  <div className="mt-6 grid gap-4 md:grid-cols-[1.1fr_1fr_auto]">
-    <Field label={t.journal.screenshotTradeLabel}>
-      <select
-        value={selectedTradeIdForScreenshot}
-        onChange={(event) =>
-          onSelectedTradeIdForScreenshotChange(event.target.value)
-        }
-        disabled={locked || screenshotUploading || trades.length === 0}
-        className="field-input"
-      >
-        <option value="">{t.journal.selectTradePlaceholder}</option>
-
-        {trades.map((trade) => {
-          const screenshotCount = tradeScreenshots.filter(
-            (item) => item.trade_id === trade.id
-          ).length;
-
-          return (
-            <option key={trade.id} value={trade.id}>
-              {trade.trade_date} · {trade.ticker} · {getDirectionLabel(trade.direction)} · PnL{" "}
-              {trade.pnl ?? "—"} · {screenshotCount}{" "}
-              {t.journal.screenshotsCount}
-            </option>
-          );
-        })}
-      </select>
-    </Field>
-
-    <Field label={t.journal.screenshotFileLabel}>
-      <div className="space-y-3">
-        <input
-          id="trade-screenshot-file"
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          disabled={locked || screenshotUploading}
-          onChange={(event) =>
-            onScreenshotFileChange(event.target.files?.[0] ?? null)
-          }
-          className="hidden"
-        />
-
-        <div className="flex flex-wrap items-center gap-3">
-          <label
-            htmlFor="trade-screenshot-file"
-            className={`inline-flex cursor-pointer items-center justify-center rounded-full border border-white/10 px-4 py-2 text-sm font-medium transition ${
-              locked || screenshotUploading
-                ? "cursor-not-allowed opacity-40"
-                : "bg-white text-black hover:scale-[1.02]"
-            }`}
-          >
-            {t.journal.screenshotChoose}
-          </label>
-
-          <div className="max-w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white/65">
-            {screenshotFile
-              ? `${t.journal.screenshotSelected}: ${screenshotFile.name}`
-              : t.journal.screenshotNoFile}
-          </div>
-        </div>
-
-        <div className="text-xs leading-5 text-white/40">
-          <div>{t.journal.screenshotHint}</div>
-          <div className="mt-1">{t.journal.screenshotFormats}</div>
-        </div>
-      </div>
-    </Field>
-
-    <div className="flex items-end">
-      <button
-        type="button"
-        onClick={onScreenshotUpload}
-        disabled={
-          locked ||
-          screenshotUploading ||
-          !selectedTradeIdForScreenshot ||
-          !screenshotFile
-        }
-        className="w-full rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        {screenshotUploading
-          ? t.journal.uploadingButton
-          : t.journal.uploadButton}
-      </button>
-    </div>
-  </div>
-
-  {screenshotError && (
-    <div className="mt-4 rounded-2xl border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm text-red-100">
-      {screenshotError}
-    </div>
-  )}
-</div>
 
 <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-6">
   <div className="flex flex-wrap items-center justify-between gap-4">
@@ -2972,7 +2852,50 @@ const downloadTradesXlsx = () => {
                 className="field-input min-h-24 resize-none"
               />
             </Field>
-          </div>
+            
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-5">
+  <input
+    id="trade-form-screenshot-file"
+    type="file"
+    multiple
+    accept="image/png,image/jpeg,image/webp"
+    disabled={locked || tradeSaving || screenshotUploading}
+    onChange={(event) => {
+      const files = Array.from(event.target.files ?? []);
+      const maxFilesToSelect = Math.min(screenshotLimit, 5);
+
+      onScreenshotFilesChange(files.slice(0, maxFilesToSelect));
+    }}
+    className="hidden"
+  />
+
+  <label
+    htmlFor="trade-form-screenshot-file"
+    className={`inline-flex cursor-pointer items-center justify-center rounded-full px-5 py-3 text-sm font-medium transition ${
+      locked || tradeSaving || screenshotUploading
+        ? "cursor-not-allowed bg-white/10 text-white/35"
+        : "bg-white text-black hover:scale-[1.02]"
+    }`}
+  >
+    {t.journal.screenshotChoose}
+  </label>
+
+  <p className="mt-3 text-xs leading-5 text-white/40">
+    * {t.journal.screenshotUploadHintCompact}
+  </p>
+
+  {screenshotFiles.length > 0 && (
+    <div className="mt-3 text-xs text-white/50">
+      {screenshotFiles.length} {t.journal.screenshotsCount}
+    </div>
+  )}
+
+  {screenshotError && (
+    <div className="mt-4 rounded-2xl border border-red-400/25 bg-red-400/10 p-4 text-sm text-red-100">
+      {screenshotError}
+    </div>
+  )}
+</div>
 
           {tradeError && (
             <div className="mt-5 rounded-2xl border border-red-400/25 bg-red-400/10 px-4 py-3 text-sm text-red-100">
@@ -3003,6 +2926,7 @@ const downloadTradesXlsx = () => {
   </button>
 )}
         </div>
+      </div>
 
         <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
           <div className="flex items-center justify-between gap-4">
