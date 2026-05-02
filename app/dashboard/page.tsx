@@ -118,6 +118,7 @@ charts: {
   title: "TradingView charts",
   text: "Embedded TradingView chart for ticker analysis, levels and setups.",
   placeholder: "TradingView widget will be added in the next stage.",
+  analyzeCurrentChart: "Analyze current chart",
 },
 learning: {
   title: "Training center",
@@ -404,6 +405,7 @@ charts: {
   title: "Графики TradingView",
   text: "Встроенный график TradingView для анализа тикеров, уровней и сетапов.",
   placeholder: "TradingView widget будет добавлен на следующем этапе.",
+  analyzeCurrentChart: "Проанализировать график",
 },
 learning: {
   title: "Центр обучения",
@@ -690,6 +692,7 @@ charts: {
   title: "Графіки TradingView",
   text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
   placeholder: "TradingView widget буде додано на наступному етапі.",
+  analyzeCurrentChart: "Проаналізувати графік",
 },
 learning: {
   title: "Центр навчання",
@@ -3459,30 +3462,260 @@ function OverviewTab({ t }: { t: (typeof dashboardDict)[Language] }) {
 function ChartsTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   const [symbol, setSymbol] = useState("NASDAQ:AAPL");
   const [interval, setIntervalValue] = useState("5");
-  const [watchlist, setWatchlist] = useState<string[]>([
-    "NASDAQ:AAPL",
-    "NASDAQ:TSLA",
-    "BINANCE:BTCUSDT",
-  ]);
+  const [watchlist, setWatchlist] = useState<ChartWatchlistRow[]>([]);
   const [moversOpen, setMoversOpen] = useState(true);
+  const [chartsLoading, setChartsLoading] = useState(true);
+  const [chartsReady, setChartsReady] = useState(false);
+  const [chartsError, setChartsError] = useState("");
 
-  const addToWatchlist = () => {
-    const normalized = symbol.trim().toUpperCase();
+  const [watchlistAdding, setWatchlistAdding] = useState(false);
+  const [watchlistInput, setWatchlistInput] = useState("");
+  const [watchlistSaving, setWatchlistSaving] = useState(false);
+  const [watchlistSort, setWatchlistSort] = useState<
+    "symbol" | "change" | "volume"
+  >("change");
+  const [watchlistOpen, setWatchlistOpen] = useState(false);
+  const watchlistInputRef = useRef<HTMLInputElement | null>(null);
 
-    if (!normalized) {
+useEffect(() => {
+  if (!watchlistAdding) {
+    return;
+  }
+
+  const focusTimer = setTimeout(() => {
+    watchlistInputRef.current?.focus();
+  }, 50);
+
+  return () => {
+    clearTimeout(focusTimer);
+  };
+}, [watchlistAdding]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadChartsData = async () => {
+      try {
+        setChartsLoading(true);
+        setChartsError("");
+
+        const { data: userData, error: userError } =
+          await supabase.auth.getUser();
+
+        if (userError || !userData.user) {
+          setChartsError("Сначала войдите в аккаунт.");
+          return;
+        }
+
+        const { data: settingsData, error: settingsError } = await supabase
+          .from("chart_settings")
+          .select("selected_symbol, selected_interval, selected_market")
+          .eq("user_id", userData.user.id)
+          .maybeSingle();
+
+        if (settingsError) {
+          throw new Error(settingsError.message);
+        }
+
+        const { data: watchlistData, error: watchlistError } = await supabase
+          .from("chart_watchlist")
+          .select(
+            "id, user_id, symbol, market, name, volume_24h, change_24h, created_at, updated_at"
+          )
+          .eq("user_id", userData.user.id)
+          .order("created_at", { ascending: false });
+
+        if (watchlistError) {
+          throw new Error(watchlistError.message);
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        if (settingsData?.selected_symbol) {
+          setSymbol(settingsData.selected_symbol);
+        }
+
+        if (settingsData?.selected_interval) {
+          setIntervalValue(settingsData.selected_interval);
+        }
+
+        setWatchlist((watchlistData ?? []) as ChartWatchlistRow[]);
+      } catch (error) {
+        if (!cancelled) {
+          setChartsError(
+            error instanceof Error
+              ? error.message
+              : "Не удалось загрузить настройки графиков."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setChartsLoading(false);
+          setChartsReady(true);
+        }
+      }
+    };
+
+    loadChartsData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!chartsReady) {
       return;
     }
 
-    if (watchlist.includes(normalized)) {
-      return;
+    const saveTimer = setTimeout(async () => {
+      try {
+        const normalizedSymbol = symbol.trim().toUpperCase();
+
+        if (!normalizedSymbol) {
+          return;
+        }
+
+        const { data: userData } = await supabase.auth.getUser();
+
+        if (!userData.user) {
+          return;
+        }
+
+        const selectedMarket = detectChartMarket(normalizedSymbol);
+
+        const { error } = await supabase.from("chart_settings").upsert(
+          {
+            user_id: userData.user.id,
+            selected_symbol: normalizedSymbol,
+            selected_interval: interval,
+            selected_market: selectedMarket,
+            updated_at: new Date().toISOString(),
+          },
+          {
+            onConflict: "user_id",
+          }
+        );
+
+        if (error) {
+          console.error("Failed to save chart settings:", error);
+        }
+      } catch (error) {
+        console.error("Failed to save chart settings:", error);
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(saveTimer);
+    };
+  }, [symbol, interval, chartsReady]);
+
+  const handleWatchlistAdd = async () => {
+    try {
+      setChartsError("");
+
+      const normalized = normalizeChartSymbol(watchlistInput);
+
+      if (!normalized) {
+        return;
+      }
+
+      if (watchlist.some((item) => item.symbol === normalized)) {
+        setWatchlistInput("");
+        setWatchlistAdding(false);
+        setSymbol(normalized);
+        return;
+      }
+
+      setWatchlistSaving(true);
+
+      const { data: userData, error: userError } =
+        await supabase.auth.getUser();
+
+      if (userError || !userData.user) {
+        setChartsError("Сначала войдите в аккаунт.");
+        return;
+      }
+
+      const market = detectChartMarket(normalized);
+      const meta = await fetchWatchlistTickerMeta(normalized, market);
+
+      const { data, error } = await supabase
+        .from("chart_watchlist")
+        .insert({
+          user_id: userData.user.id,
+          symbol: normalized,
+          market,
+          name: meta.name,
+          volume_24h: meta.volume24h,
+          change_24h: meta.change24h,
+        })
+        .select(
+          "id, user_id, symbol, market, name, volume_24h, change_24h, created_at, updated_at"
+        )
+        .single();
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      setWatchlist((current) => [data as ChartWatchlistRow, ...current]);
+      setSymbol(normalized);
+      setWatchlistInput("");
+      setWatchlistAdding(false);
+    } catch (error) {
+      setChartsError(
+        error instanceof Error
+          ? error.message
+          : "Не удалось добавить тикер в watchlist."
+      );
+    } finally {
+      setWatchlistSaving(false);
+    }
+  };
+
+  const removeFromWatchlist = async (row: ChartWatchlistRow) => {
+    const previousWatchlist = watchlist;
+
+    try {
+      setChartsError("");
+
+      setWatchlist((current) =>
+        current.filter((item) => item.id !== row.id)
+      );
+
+      const { error } = await supabase
+        .from("chart_watchlist")
+        .delete()
+        .eq("id", row.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      setWatchlist(previousWatchlist);
+
+      setChartsError(
+        error instanceof Error
+          ? error.message
+          : "Не удалось удалить тикер из watchlist."
+      );
+    }
+  };
+
+  const sortedWatchlist = [...watchlist].sort((a, b) => {
+    if (watchlistSort === "symbol") {
+      return formatChartSymbol(a.symbol).localeCompare(formatChartSymbol(b.symbol));
     }
 
-    setWatchlist((current) => [normalized, ...current]);
-  };
+    if (watchlistSort === "volume") {
+      return Number(b.volume_24h ?? 0) - Number(a.volume_24h ?? 0);
+    }
 
-  const removeFromWatchlist = (value: string) => {
-    setWatchlist((current) => current.filter((item) => item !== value));
-  };
+    return Number(b.change_24h ?? 0) - Number(a.change_24h ?? 0);
+  });
 
   return (
     <div>
@@ -3492,83 +3725,213 @@ function ChartsTab({ t }: { t: (typeof dashboardDict)[Language] }) {
       />
 
       <div className="mt-8 rounded-3xl border border-white/10 bg-black/20 p-5">
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="h-[720px] overflow-hidden rounded-3xl border border-white/10 bg-[#050813]">
-            <TradingViewChart symbol={symbol} interval={interval} />
+        {chartsError && (
+          <div className="mb-5 rounded-2xl border border-red-400/25 bg-red-400/10 p-4 text-sm text-red-100">
+            {chartsError}
+          </div>
+        )}
+
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+  <div className="text-xs text-white/35">
+    Watchlist examples: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT
+  </div>
+
+  <div className="flex flex-wrap items-center gap-3">
+    <button
+      type="button"
+      className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+    >
+      {t.charts.analyzeCurrentChart}
+    </button>
+
+    <button
+      type="button"
+      onClick={() => setWatchlistOpen((current) => !current)}
+      className={`rounded-full border px-5 py-3 text-sm font-medium transition ${
+        watchlistOpen
+          ? "border-cyan-300/40 bg-cyan-300/10 text-cyan-100"
+          : "border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/10 hover:text-white"
+      }`}
+    >
+      {watchlistOpen ? "Hide watchlist" : "Open watchlist"}
+    </button>
+  </div>
+</div>
+
+    <div
+  className={`grid gap-5 ${
+    watchlistOpen
+      ? "xl:grid-cols-[minmax(0,1fr)_340px]"
+      : "xl:grid-cols-1"
+  }`}
+>
+  <div className="h-[760px] overflow-hidden rounded-3xl border border-white/10 bg-[#050813]">
+    <TradingViewChart symbol={symbol} interval={interval} />
+  </div>
+
+  {watchlistOpen && (
+    <div className="flex h-[760px] flex-col rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+            Watchlist
           </div>
 
-          <div className="space-y-5">
-            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-              <div className="text-xs uppercase tracking-[0.25em] text-white/35">
-                AI chart analysis
-              </div>
-
-              <div className="mt-3 text-sm leading-6 text-white/55">
-                Анализ текущего графика, уровней, структуры и возможного сетапа.
-              </div>
-
-              <button
-                type="button"
-                className="mt-5 w-full rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
-              >
-                Analyze current chart
-              </button>
-            </div>
-
-            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="text-xs uppercase tracking-[0.25em] text-white/35">
-                    Watchlist
-                  </div>
-
-                  <div className="mt-2 text-sm text-white/50">
-                    Список инструментов для быстрого открытия на графике.
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={addToWatchlist}
-                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-                >
-                  Add
-                </button>
-              </div>
-
-              <div className="mt-4 space-y-2">
-                {watchlist.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-white/10 px-4 py-4 text-sm text-white/40">
-                    Watchlist пуст.
-                  </div>
-                ) : (
-                  watchlist.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3"
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setSymbol(item)}
-                        className="min-w-0 flex-1 truncate text-left text-sm text-white transition hover:text-cyan-100"
-                      >
-                        {formatChartSymbol(item)}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => removeFromWatchlist(item)}
-                        className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/45 transition hover:border-red-400/30 hover:text-red-300"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
+          <div className="mt-1 text-xs text-white/40">
+            Symbol / 24h % / volume
           </div>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setWatchlistAdding((current) => !current)}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-lg text-white transition hover:bg-white/10"
+        >
+          +
+        </button>
+      </div>
+
+      {watchlistAdding && (
+  <div className="mt-4 space-y-2">
+    <div className="rounded-2xl border border-cyan-300/40 bg-cyan-300/[0.08] p-2 shadow-[0_0_0_1px_rgba(103,232,249,0.08)]">
+      <div className="flex gap-2">
+        <input
+          ref={watchlistInputRef}
+          value={watchlistInput}
+          onChange={(event) =>
+            setWatchlistInput(event.target.value.toUpperCase())
+          }
+          onKeyDown={(event) => {
+            if (event.key === "Enter") {
+              handleWatchlistAdd();
+            }
+          }}
+          placeholder="AA.NY / TSLA.NQ / SPY.AM / BTCUSDT"
+          className="field-input min-w-0 flex-1 border-cyan-300/30 bg-cyan-300/[0.08] text-white placeholder:text-cyan-100/45"
+        />
+
+        <button
+          type="button"
+          onClick={handleWatchlistAdd}
+          disabled={watchlistSaving || !watchlistInput.trim()}
+          className="rounded-full bg-white px-4 py-2 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Add
+        </button>
+      </div>
+    </div>
+
+    <div className="text-xs leading-5 text-white/35">
+      Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.
+    </div>
+  </div>
+)}
+
+      <div className="mt-4 flex flex-wrap gap-2 text-xs">
+        <button
+          type="button"
+          onClick={() => setWatchlistSort("symbol")}
+          className={`rounded-full px-3 py-1 transition ${
+            watchlistSort === "symbol"
+              ? "bg-white text-black"
+              : "border border-white/10 bg-white/[0.04] text-white/55 hover:text-white"
+          }`}
+        >
+          Symbol
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setWatchlistSort("change")}
+          className={`rounded-full px-3 py-1 transition ${
+            watchlistSort === "change"
+              ? "bg-white text-black"
+              : "border border-white/10 bg-white/[0.04] text-white/55 hover:text-white"
+          }`}
+        >
+          % 24h
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setWatchlistSort("volume")}
+          className={`rounded-full px-3 py-1 transition ${
+            watchlistSort === "volume"
+              ? "bg-white text-black"
+              : "border border-white/10 bg-white/[0.04] text-white/55 hover:text-white"
+          }`}
+        >
+          Vol
+        </button>
+      </div>
+
+      <div className="mt-4 grid grid-cols-[minmax(0,1fr)_64px_74px_32px] gap-2 border-b border-white/10 pb-2 text-[10px] uppercase tracking-[0.18em] text-white/35">
+  <div>Symbol</div>
+  <div>%</div>
+  <div>Volume</div>
+  <div></div>
+</div>
+
+      <div className="mt-2 min-h-0 flex-1 overflow-y-auto pr-1">
+        {chartsLoading ? (
+          <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-4 text-sm text-white/45">
+            Loading watchlist...
+          </div>
+        ) : sortedWatchlist.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-white/10 p-4 text-sm leading-6 text-white/40">
+            Watchlist пуст. Нажми + и добавь тикер.
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {sortedWatchlist.map((item) => (
+              <div
+  key={item.id}
+  className="grid grid-cols-[minmax(0,1fr)_64px_74px_32px] items-center gap-2 rounded-2xl border border-white/10 bg-black/20 px-3 py-3 text-sm"
+>
+  <button
+    type="button"
+    onClick={() => setSymbol(item.symbol)}
+    className="min-w-0 text-left transition hover:text-cyan-100"
+  >
+    <div className="whitespace-nowrap text-sm font-medium text-white">
+      {formatChartSymbol(item.symbol)}
+    </div>
+
+    <div className="truncate text-[11px] text-white/35">
+      {item.name || item.market}
+    </div>
+  </button>
+
+  <div
+    className={
+      Number(item.change_24h ?? 0) >= 0
+        ? "text-emerald-300"
+        : "text-red-300"
+    }
+  >
+    {formatPercent(item.change_24h)}
+  </div>
+
+  <div className="text-white/60">
+    {formatCompactNumber(item.volume_24h)}
+  </div>
+
+  <button
+    type="button"
+    onClick={() => removeFromWatchlist(item)}
+    title="Remove from watchlist"
+    className="flex h-7 w-7 items-center justify-center rounded-full border border-red-400/20 bg-red-400/10 text-sm leading-none text-red-200 transition hover:bg-red-400/20"
+  >
+    ×
+  </button>
+</div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  )}
+</div>    
 
         <MoversPanel
           open={moversOpen}
@@ -3634,6 +3997,25 @@ function TradingViewChart({
 
 type ChartsMoverMarket = "stocks" | "crypto";
 type ChartsMoverSide = "gainers" | "losers";
+
+type ChartWatchlistMarket =
+  | "stocks"
+  | "crypto"
+  | "futures"
+  | "forex"
+  | "custom";
+
+type ChartWatchlistRow = {
+  id: string;
+  user_id: string;
+  symbol: string;
+  market: ChartWatchlistMarket;
+  name: string | null;
+  volume_24h: number | null;
+  change_24h: number | null;
+  created_at: string;
+  updated_at: string;
+};
 
 type ChartsMoverItem = {
   symbol: string;
@@ -3980,13 +4362,27 @@ function parseChangePct(value: unknown): number {
   return 0;
 }
 
-function formatCompactNumber(value: number): string {
-  if (!Number.isFinite(value)) return "—";
+function formatCompactNumber(value: number | null | undefined): string {
+  const numericValue = Number(value ?? 0);
+
+  if (!Number.isFinite(numericValue) || numericValue === 0) {
+    return "—";
+  }
 
   return new Intl.NumberFormat("en", {
     notation: "compact",
     maximumFractionDigits: 2,
-  }).format(value);
+  }).format(numericValue);
+}
+
+function formatPercent(value: number | null | undefined): string {
+  const numericValue = Number(value ?? 0);
+
+  if (!Number.isFinite(numericValue)) {
+    return "—";
+  }
+
+  return `${numericValue >= 0 ? "+" : ""}${numericValue.toFixed(2)}%`;
 }
 
 function formatChartSymbol(value: string): string {
@@ -3999,6 +4395,169 @@ function formatChartSymbol(value: string): string {
     .replace("CBOT_MINI:", "")
     .replace("CME:", "")
     .replace("FX:", "");
+}
+
+function normalizeChartSymbol(value: string): string {
+  const normalized = value.trim().toUpperCase();
+
+  if (!normalized) {
+    return "";
+  }
+
+  if (normalized.includes(":")) {
+    return normalized;
+  }
+
+  if (normalized.endsWith(".NQ")) {
+    return `NASDAQ:${normalized.replace(".NQ", "")}`;
+  }
+
+  if (normalized.endsWith(".NY")) {
+    return `NYSE:${normalized.replace(".NY", "")}`;
+  }
+
+  if (normalized.endsWith(".AM")) {
+    return `AMEX:${normalized.replace(".AM", "")}`;
+  }
+
+  if (normalized.endsWith(".BN")) {
+    return `BINANCE:${normalized.replace(".BN", "")}`;
+  }
+
+  if (
+    normalized.endsWith("USDT") ||
+    normalized.endsWith("USDC") ||
+    normalized.endsWith("BTC") ||
+    normalized.endsWith("ETH")
+  ) {
+    return `BINANCE:${normalized}`;
+  }
+
+  return `NASDAQ:${normalized}`;
+}
+
+async function fetchWatchlistTickerMeta(
+  symbol: string,
+  market: ChartWatchlistMarket
+): Promise<{
+  name: string | null;
+  volume24h: number | null;
+  change24h: number | null;
+}> {
+  if (market === "crypto") {
+    const binanceSymbol = symbol
+      .replace("BINANCE:", "")
+      .replace("/", "")
+      .toUpperCase();
+
+    const response = await fetch(
+      `https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`
+    );
+
+    if (!response.ok) {
+      return {
+        name: formatChartSymbol(symbol),
+        volume24h: null,
+        change24h: null,
+      };
+    }
+
+    const data = await response.json();
+
+    return {
+      name: `${binanceSymbol.replace("USDT", "")}/USDT`,
+      volume24h: Number(data.quoteVolume ?? 0),
+      change24h: Number(data.priceChangePercent ?? 0),
+    };
+  }
+
+  if (market === "stocks") {
+    const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY;
+
+    if (!apiKey) {
+      return {
+        name: formatChartSymbol(symbol),
+        volume24h: null,
+        change24h: null,
+      };
+    }
+
+    const cleanSymbol = formatChartSymbol(symbol);
+
+    const response = await fetch(
+      `https://financialmodelingprep.com/api/v3/quote/${cleanSymbol}?apikey=${apiKey}`
+    );
+
+    if (!response.ok) {
+      return {
+        name: cleanSymbol,
+        volume24h: null,
+        change24h: null,
+      };
+    }
+
+    const data = await response.json();
+    const item = Array.isArray(data) ? data[0] : null;
+
+    if (!item) {
+      return {
+        name: cleanSymbol,
+        volume24h: null,
+        change24h: null,
+      };
+    }
+
+    return {
+      name: item.name ?? cleanSymbol,
+      volume24h: Number(item.volume ?? 0),
+      change24h: parseChangePct(
+        item.changesPercentage ?? item.changePercentage ?? 0
+      ),
+    };
+  }
+
+  return {
+    name: formatChartSymbol(symbol),
+    volume24h: null,
+    change24h: null,
+  };
+}
+
+function detectChartMarket(symbol: string): ChartWatchlistMarket {
+  const normalized = symbol.trim().toUpperCase();
+
+  if (
+    normalized.startsWith("BINANCE:") ||
+    normalized.endsWith("USDT") ||
+    normalized.endsWith("USDC")
+  ) {
+    return "crypto";
+  }
+
+  if (
+    normalized.startsWith("CME:") ||
+    normalized.startsWith("CME_MINI:") ||
+    normalized.startsWith("CBOT_MINI:") ||
+    normalized.includes(":NQ") ||
+    normalized.includes(":ES") ||
+    normalized.includes(":YM")
+  ) {
+    return "futures";
+  }
+
+  if (normalized.startsWith("FX:")) {
+    return "forex";
+  }
+
+  if (
+    normalized.startsWith("NASDAQ:") ||
+    normalized.startsWith("NYSE:") ||
+    normalized.startsWith("AMEX:")
+  ) {
+    return "stocks";
+  }
+
+  return "custom";
 }
 
 function LearningTab({ t }: { t: (typeof dashboardDict)[Language] }) {
