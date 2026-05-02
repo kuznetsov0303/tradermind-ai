@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   LineChart,
@@ -3457,19 +3457,549 @@ function OverviewTab({ t }: { t: (typeof dashboardDict)[Language] }) {
 }
 
 function ChartsTab({ t }: { t: (typeof dashboardDict)[Language] }) {
+  const [symbol, setSymbol] = useState("NASDAQ:AAPL");
+  const [interval, setIntervalValue] = useState("5");
+  const [watchlist, setWatchlist] = useState<string[]>([
+    "NASDAQ:AAPL",
+    "NASDAQ:TSLA",
+    "BINANCE:BTCUSDT",
+  ]);
+  const [moversOpen, setMoversOpen] = useState(true);
+
+  const addToWatchlist = () => {
+    const normalized = symbol.trim().toUpperCase();
+
+    if (!normalized) {
+      return;
+    }
+
+    if (watchlist.includes(normalized)) {
+      return;
+    }
+
+    setWatchlist((current) => [normalized, ...current]);
+  };
+
+  const removeFromWatchlist = (value: string) => {
+    setWatchlist((current) => current.filter((item) => item !== value));
+  };
+
   return (
     <div>
-      <SectionHeader title={t.charts.title} text={t.charts.text} />
+      <SectionHeader
+        title={t.charts.title}
+        text="Рабочий график, watchlist и сильные movers в одном месте."
+      />
 
-      <div className="mt-8 h-[420px] rounded-3xl border border-white/10 bg-black/30 p-6">
-        <div className="flex h-full items-center justify-center text-white/40">
-          {t.charts.placeholder}
+      <div className="mt-8 rounded-3xl border border-white/10 bg-black/20 p-5">
+        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="h-[720px] overflow-hidden rounded-3xl border border-white/10 bg-[#050813]">
+            <TradingViewChart symbol={symbol} interval={interval} />
+          </div>
+
+          <div className="space-y-5">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+                AI chart analysis
+              </div>
+
+              <div className="mt-3 text-sm leading-6 text-white/55">
+                Анализ текущего графика, уровней, структуры и возможного сетапа.
+              </div>
+
+              <button
+                type="button"
+                className="mt-5 w-full rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+              >
+                Analyze current chart
+              </button>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+                    Watchlist
+                  </div>
+
+                  <div className="mt-2 text-sm text-white/50">
+                    Список инструментов для быстрого открытия на графике.
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={addToWatchlist}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+                >
+                  Add
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-2">
+                {watchlist.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-white/10 px-4 py-4 text-sm text-white/40">
+                    Watchlist пуст.
+                  </div>
+                ) : (
+                  watchlist.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 px-4 py-3"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setSymbol(item)}
+                        className="min-w-0 flex-1 truncate text-left text-sm text-white transition hover:text-cyan-100"
+                      >
+                        {formatChartSymbol(item)}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => removeFromWatchlist(item)}
+                        className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/45 transition hover:border-red-400/30 hover:text-red-300"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
         </div>
+
+        <MoversPanel
+          open={moversOpen}
+          onToggle={() => setMoversOpen((current) => !current)}
+        />
       </div>
     </div>
   );
 }
 
+function TradingViewChart({
+  symbol,
+  interval,
+}: {
+  symbol: string;
+  interval: string;
+}) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    containerRef.current.innerHTML = "";
+
+    const widgetContainer = document.createElement("div");
+    widgetContainer.className = "tradingview-widget-container__widget";
+    widgetContainer.style.height = "100%";
+    widgetContainer.style.width = "100%";
+
+    const script = document.createElement("script");
+    script.src =
+      "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.type = "text/javascript";
+    script.async = true;
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol,
+      interval,
+      timezone: "Etc/UTC",
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      enable_publishing: false,
+      allow_symbol_change: true,
+      hide_side_toolbar: false,
+      details: true,
+      hotlist: false,
+      calendar: false,
+      support_host: "https://www.tradingview.com",
+    });
+
+    containerRef.current.appendChild(widgetContainer);
+    containerRef.current.appendChild(script);
+  }, [symbol, interval]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="tradingview-widget-container h-full w-full"
+    />
+  );
+}
+
+type ChartsMoverMarket = "stocks" | "crypto";
+type ChartsMoverSide = "gainers" | "losers";
+
+type ChartsMoverItem = {
+  symbol: string;
+  name: string;
+  price: number | null;
+  changePct: number;
+  volume: string;
+};
+
+function MoversPanel({
+  open,
+  onToggle,
+}: {
+  open: boolean;
+  onToggle: () => void;
+}) {
+  const [market, setMarket] = useState<ChartsMoverMarket>("stocks");
+  const [side, setSide] = useState<ChartsMoverSide>("gainers");
+  const [items, setItems] = useState<ChartsMoverItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const data =
+          market === "crypto"
+            ? await fetchCryptoMovers(side)
+            : await fetchStockMovers(side);
+
+        if (!cancelled) {
+          setItems(data);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setItems([]);
+          setError(
+            err instanceof Error ? err.message : "Failed to load movers."
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    load();
+
+    const timer = setInterval(load, 10000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [market, side]);
+
+  return (
+    <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+          <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+            {[
+              { id: "stocks", label: "Stocks" },
+              { id: "crypto", label: "Crypto" },
+            ].map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setMarket(item.id as ChartsMoverMarket)}
+                className={`rounded-full px-4 py-2 text-sm transition ${
+                  market === item.id
+                    ? "bg-white text-black"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
+            {[
+              { id: "gainers", label: "Top Gainers" },
+              { id: "losers", label: "Top Losers" },
+            ].map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSide(item.id as ChartsMoverSide)}
+                className={`rounded-full px-4 py-2 text-sm transition ${
+                  side === item.id
+                    ? "bg-emerald-400/20 text-emerald-300"
+                    : "text-white/70 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={onToggle}
+          className="rounded-full border border-white/10 px-4 py-2 text-sm text-white/70 transition hover:text-white"
+        >
+          {open ? "Collapse" : "Expand"}
+        </button>
+      </div>
+
+      {open && (
+        <>
+          <div className="mt-5 overflow-hidden rounded-3xl border border-white/10">
+            <div className="grid grid-cols-[110px_minmax(180px,1fr)_120px_140px] gap-3 border-b border-white/10 bg-white/[0.04] px-4 py-3 text-xs uppercase tracking-[0.2em] text-white/35">
+              <div>Symbol</div>
+              <div>Name</div>
+              <div>% Change</div>
+              <div>Volume</div>
+            </div>
+
+            {loading ? (
+              <div className="px-4 py-8 text-sm text-white/50">
+                Loading movers...
+              </div>
+            ) : error ? (
+              <div className="px-4 py-8 text-sm text-red-300">
+                {error}
+              </div>
+            ) : items.length === 0 ? (
+              <div className="px-4 py-8 text-sm text-white/50">
+                Нет инструментов под фильтр: {side === "gainers" ? "+10%" : "-10%"} и объём.
+              </div>
+            ) : (
+              <div className="divide-y divide-white/10">
+                {items.map((item) => (
+                  <div
+                    key={`${market}-${side}-${item.symbol}`}
+                    className="grid grid-cols-[110px_minmax(180px,1fr)_120px_140px] gap-3 px-4 py-3 text-sm"
+                  >
+                    <div className="font-medium text-white">
+                      {item.symbol}
+                    </div>
+
+                    <div className="truncate text-white/70">
+                      {item.name}
+                    </div>
+
+                    <div
+                      className={
+                        item.changePct >= 0
+                          ? "text-emerald-300"
+                          : "text-red-300"
+                      }
+                    >
+                      {item.changePct >= 0 ? "+" : ""}
+                      {item.changePct.toFixed(2)}%
+                    </div>
+
+                    <div className="text-white/55">
+                      {item.volume}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="mt-3 text-xs text-white/35">
+            Crypto берём с Binance USDT pairs. Stocks заработают после добавления NEXT_PUBLIC_FMP_API_KEY.
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+async function fetchCryptoMovers(
+  side: ChartsMoverSide
+): Promise<ChartsMoverItem[]> {
+  const response = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+
+  if (!response.ok) {
+    throw new Error("Binance crypto movers are unavailable right now.");
+  }
+
+  const data = await response.json();
+
+  if (!Array.isArray(data)) {
+    throw new Error("Binance returned invalid movers data.");
+  }
+
+  const mapped: ChartsMoverItem[] = data
+    .filter((item: any) => {
+      const symbol = String(item.symbol || "");
+
+      return (
+        symbol.endsWith("USDT") &&
+        !symbol.includes("UPUSDT") &&
+        !symbol.includes("DOWNUSDT") &&
+        !symbol.includes("BULLUSDT") &&
+        !symbol.includes("BEARUSDT")
+      );
+    })
+    .map((item: any) => {
+      const symbol = String(item.symbol || "");
+      const baseSymbol = symbol.replace("USDT", "");
+      const changePct = Number(item.priceChangePercent ?? 0);
+      const quoteVolume = Number(item.quoteVolume ?? 0);
+
+      return {
+        symbol: baseSymbol,
+        name: `${baseSymbol}/USDT`,
+        price: Number(item.lastPrice ?? 0),
+        changePct,
+        volume: formatCompactNumber(quoteVolume),
+        rawVolume: quoteVolume,
+      };
+    })
+    .filter((item: ChartsMoverItem & { rawVolume?: number }) => {
+      const volume = item.rawVolume ?? 0;
+
+      if (!Number.isFinite(item.changePct) || !Number.isFinite(volume)) {
+        return false;
+      }
+
+      if (volume < 500000) {
+        return false;
+      }
+
+      if (side === "gainers") {
+        return item.changePct >= 10;
+      }
+
+      return item.changePct <= -10;
+    })
+    .sort((a, b) =>
+      side === "gainers"
+        ? b.changePct - a.changePct
+        : a.changePct - b.changePct
+    )
+    .slice(0, 25)
+    .map(({ rawVolume, ...item }) => item);
+
+  return mapped;
+}
+
+async function fetchStockMovers(
+  side: ChartsMoverSide
+): Promise<ChartsMoverItem[]> {
+  const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY;
+
+  if (!apiKey) {
+    throw new Error(
+      "Для stocks movers добавь NEXT_PUBLIC_FMP_API_KEY в .env.local"
+    );
+  }
+
+  const endpoint =
+    side === "gainers"
+      ? `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${apiKey}`
+      : `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${apiKey}`;
+
+  const response = await fetch(endpoint);
+
+  if (!response.ok) {
+    throw new Error("Stocks movers are unavailable right now.");
+  }
+
+  const data = await response.json();
+
+  if (!Array.isArray(data)) {
+    throw new Error("Stocks movers returned invalid data.");
+  }
+
+  const mapped: ChartsMoverItem[] = data
+    .map((item: any) => {
+      const changePct = parseChangePct(
+        item.changesPercentage ??
+          item.changePercentage ??
+          item.percentageChange ??
+          item.change ??
+          0
+      );
+
+      const rawVolume = Number(item.volume ?? 0);
+
+      return {
+        symbol: item.symbol || "—",
+        name: item.name || item.companyName || item.symbol || "—",
+        price:
+          typeof item.price === "number"
+            ? item.price
+            : typeof item.lastPrice === "number"
+            ? item.lastPrice
+            : null,
+        changePct,
+        volume: formatCompactNumber(rawVolume),
+        rawVolume,
+      };
+    })
+    .filter((item: ChartsMoverItem & { rawVolume?: number }) => {
+      const volume = item.rawVolume ?? 0;
+
+      if (!Number.isFinite(item.changePct) || !Number.isFinite(volume)) {
+        return false;
+      }
+
+      if (volume < 50000) {
+        return false;
+      }
+
+      if (side === "gainers") {
+        return item.changePct >= 10;
+      }
+
+      return item.changePct <= -10;
+    })
+    .sort((a, b) =>
+      side === "gainers"
+        ? b.changePct - a.changePct
+        : a.changePct - b.changePct
+    )
+    .slice(0, 25)
+    .map(({ rawVolume, ...item }) => item);
+
+  return mapped;
+}
+
+function parseChangePct(value: unknown): number {
+  if (typeof value === "number") return value;
+
+  if (typeof value === "string") {
+    const normalized = value.replace("%", "").replace(/[()]/g, "").trim();
+    const parsed = Number(normalized);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  return 0;
+}
+
+function formatCompactNumber(value: number): string {
+  if (!Number.isFinite(value)) return "—";
+
+  return new Intl.NumberFormat("en", {
+    notation: "compact",
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function formatChartSymbol(value: string): string {
+  return value
+    .replace("NASDAQ:", "")
+    .replace("NYSE:", "")
+    .replace("AMEX:", "")
+    .replace("BINANCE:", "")
+    .replace("CME_MINI:", "")
+    .replace("CBOT_MINI:", "")
+    .replace("CME:", "")
+    .replace("FX:", "");
+}
 
 function LearningTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   return (
