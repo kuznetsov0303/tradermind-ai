@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { getPlanLimits, normalizePlanId } from "@/lib/plan-limits";
 
 type BillingPeriod = "monthly" | "halfyear" | "yearly";
 
@@ -88,10 +89,13 @@ function getExpiresAt(period: BillingPeriod, isDemo = false) {
 }
 
 function getAiLimit(planId: string) {
-  if (planId === "starter") return 50;
-  if (planId === "pro") return 500;
-  if (planId === "elite") return 2000;
-  return 0;
+  const limits = getPlanLimits(planId);
+  return (
+    limits.aiCoachMessagesPerMonth +
+    limits.journalAnalysesPerMonth +
+    limits.chartAnalysesPerMonth +
+    limits.aiReportsPerMonth
+  );
 }
 
 export async function POST(req: Request) {
@@ -182,12 +186,12 @@ export async function POST(req: Request) {
       });
     }
 
-    const planId = payment.plan_id;
-const billingPeriod = payment.billing_period as BillingPeriod;
-const isDemo = Boolean(payment.is_demo);
+    const planId = normalizePlanId(payment.plan_id);
+    const billingPeriod = payment.billing_period as BillingPeriod;
+    const isDemo = Boolean(payment.is_demo);
 
-const expiresAt = getExpiresAt(billingPeriod, isDemo);
-const aiMonthlyLimit = isDemo ? 10 : getAiLimit(planId);
+    const expiresAt = getExpiresAt(billingPeriod, isDemo);
+    const aiMonthlyLimit = isDemo ? 10 : getAiLimit(planId);
 
     const { error: subscriptionDeactivateError } = await supabaseAdmin
       .from("subscriptions")

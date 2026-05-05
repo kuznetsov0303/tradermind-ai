@@ -142,3 +142,12 @@
   background: #1b2030;
   color: #ffffff;
 }
+.learning-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-inline: contain;
+}
+
+.learning-scroll::-webkit-scrollbar {
+  display: none;
+}

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-type PlanId = "starter" | "pro" | "elite";
+type PlanId = "core" | "edge" | "elite";
 type PurchaseId = PlanId | "demo";
 type BillingPeriod = "monthly" | "halfyear" | "yearly";
 
@@ -12,16 +12,16 @@ const PLANS: Record<
     prices: Record<BillingPeriod, number>;
   }
 > = {
-  starter: {
-    name: "SkillEdge AI Starter",
+  core: {
+    name: "SkillEdge Core",
     prices: {
       monthly: 49,
       halfyear: 249,
       yearly: 399,
     },
   },
-  pro: {
-    name: "SkillEdge AI Pro",
+  edge: {
+    name: "SkillEdge Edge",
     prices: {
       monthly: 99,
       halfyear: 499,
@@ -29,7 +29,7 @@ const PLANS: Record<
     },
   },
   elite: {
-    name: "SkillEdge AI Elite",
+    name: "SkillEdge Elite",
     prices: {
       monthly: 149,
       halfyear: 749,
@@ -45,16 +45,19 @@ const PERIOD_LABELS: Record<BillingPeriod, string> = {
 };
 
 function normalizePurchase(planId: unknown): PurchaseId {
-  if (
-    planId === "starter" ||
-    planId === "pro" ||
-    planId === "elite" ||
-    planId === "demo"
-  ) {
+  if (planId === "starter" || planId === "core") {
+    return "core";
+  }
+
+  if (planId === "pro" || planId === "edge") {
+    return "edge";
+  }
+
+  if (planId === "elite" || planId === "demo") {
     return planId;
   }
 
-  return "starter";
+  return "core";
 }
 
 function normalizeBillingPeriod(period: unknown): BillingPeriod {
@@ -106,7 +109,7 @@ export async function POST(req: Request) {
     const purchaseId = normalizePurchase(body?.planId);
     const isDemo = purchaseId === "demo";
 
-    const planId: PlanId = isDemo ? "starter" : purchaseId;
+    const planId: PlanId = isDemo ? "core" : purchaseId;
     const billingPeriod = normalizeBillingPeriod(body?.billingPeriod);
 
     const plan = PLANS[planId];
@@ -117,11 +120,11 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_SITE_URL || "https://www.upyourskills.site";
 
     const orderId = isDemo
-  ? `skilledge_demo_starter_7days_${Date.now()}`
+  ? `skilledge_demo_core_7days_${Date.now()}`
   : `skilledge_${planId}_${billingPeriod}_${Date.now()}`;
 
    const orderDescription = isDemo
-  ? "SkillEdge AI Demo access — $11.99 — Starter plan — 7 days — 10 AI requests — USDT TRC20 payment"
+  ? "SkillEdge AI Demo access — $11.99 — SkillEdge Core — 7 days — 10 AI requests — USDT TRC20 payment"
   : `${plan.name} subscription — ${PERIOD_LABELS[billingPeriod]} — USDT TRC20 payment`;
 
     const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
