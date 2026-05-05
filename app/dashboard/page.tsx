@@ -2860,7 +2860,7 @@ onTradeEditCancel={handleTradeEditCancel}
 )}
               
               {activeTab === "market" && (
-  <MarketTab subscription={subscription} t={t} />
+  <MarketTab subscription={subscription} language={language} t={t} />
 )}
               {activeTab === "coach" && (
   <CoachTab
@@ -4812,23 +4812,415 @@ function MarketSourceCard({
   );
 }
 
+
+
+type MarketScannerItem = {
+  id?: string;
+  symbol: string;
+  exchange: string | null;
+  name: string | null;
+  asset_type?: string;
+  scan_bucket: "pump_watch" | "dump_watch" | "unusual_volume" | "catalyst_watch";
+  direction_bias: "upside" | "downside" | "neutral";
+  price: number | null;
+  change_percent: number | null;
+  gap_percent: number | null;
+  volume: number | null;
+  relative_volume: number | null;
+  mentions: number | null;
+  mention_velocity: number | null;
+  sentiment: "bullish" | "neutral" | "bearish";
+  catalyst: string | null;
+  risk_label: string | null;
+  opportunity_score: number | null;
+  source?: string;
+  scanned_at?: string;
+};
+
+type MarketScannerCopy = {
+  title: string;
+  text: string;
+  lockedTitle: string;
+  lockedText: string;
+  refresh: string;
+  refreshing: string;
+  source: string;
+  scanned: string;
+  pumpWatch: string;
+  dumpWatch: string;
+  unusualVolume: string;
+  catalystWatch: string;
+  all: string;
+  filters: string;
+  allBuckets: string;
+  stocks: string;
+  crypto: string;
+  search: string;
+  score: string;
+  change: string;
+  volume: string;
+  mentions: string;
+  sentiment: string;
+  risk: string;
+  noData: string;
+  openChart: string;
+  bullish: string;
+  bearish: string;
+  neutral: string;
+  upside: string;
+  downside: string;
+};
+
+const marketScannerCopy: Record<Language, MarketScannerCopy> = {
+  en: {
+    title: "Market Intelligence Scanner",
+    text: "Full-market research across NYSE, NASDAQ and AMEX to find potential pump, dump, unusual volume and catalyst candidates before the move becomes obvious.",
+    lockedTitle: "Market Scanner is available on SkillEdge Edge and Elite.",
+    lockedText:
+      "Core users can see the module preview. Upgrade to unlock full-market scanner results, opportunity score and in-play ticker research.",
+    refresh: "Refresh scanner",
+    refreshing: "Scanning...",
+    source: "Source",
+    scanned: "Scanned",
+    pumpWatch: "Pump candidates",
+    dumpWatch: "Dump candidates",
+    unusualVolume: "Unusual volume",
+    catalystWatch: "Catalysts",
+    all: "All",
+    filters: "Filters",
+    allBuckets: "All categories",
+    stocks: "Stocks",
+    crypto: "Crypto",
+    search: "Search ticker...",
+    score: "Score",
+    change: "Move",
+    volume: "Volume",
+    mentions: "Mentions",
+    sentiment: "Sentiment",
+    risk: "Risk",
+    noData: "No scanner data yet. Press refresh or check your data provider.",
+    openChart: "Open chart",
+    bullish: "Bullish",
+    bearish: "Bearish",
+    neutral: "Neutral",
+    upside: "Upside",
+    downside: "Downside",
+  },
+  ru: {
+    title: "Market Intelligence Scanner",
+    text: "Сканер всего рынка NYSE, NASDAQ и AMEX для поиска потенциальных пампов, дампов, аномального объёма и тикеров с катализатором до того, как движение станет очевидным.",
+    lockedTitle: "Market Scanner доступен на SkillEdge Edge и Elite.",
+    lockedText:
+      "На Core доступен только preview. Edge и Elite открывают полный сканер рынка, opportunity score и поиск in-play тикеров.",
+    refresh: "Обновить сканер",
+    refreshing: "Сканируем...",
+    source: "Источник",
+    scanned: "Скан",
+    pumpWatch: "Кандидаты на памп",
+    dumpWatch: "Кандидаты на дамп",
+    unusualVolume: "Аномальный объём",
+    catalystWatch: "Катализаторы",
+    all: "Все",
+    filters: "Фильтры",
+    allBuckets: "Все категории",
+    stocks: "Акции",
+    crypto: "Крипта",
+    search: "Поиск тикера...",
+    score: "Рейтинг",
+    change: "Движение",
+    volume: "Объём",
+    mentions: "Упоминания",
+    sentiment: "Сентимент",
+    risk: "Риск",
+    noData: "Пока нет данных scanner. Нажми обновить или проверь provider.",
+    openChart: "Открыть график",
+    bullish: "Бычий",
+    bearish: "Медвежий",
+    neutral: "Нейтральный",
+    upside: "Вверх",
+    downside: "Вниз",
+  },
+  ua: {
+    title: "Market Intelligence Scanner",
+    text: "Сканер усього ринку NYSE, NASDAQ і AMEX для пошуку потенційних пампів, дампів, аномального обʼєму та тикерів з каталізатором до того, як рух стане очевидним.",
+    lockedTitle: "Market Scanner доступний на SkillEdge Edge та Elite.",
+    lockedText:
+      "На Core доступний тільки preview. Edge та Elite відкривають повний сканер ринку, opportunity score і пошук in-play тикерів.",
+    refresh: "Оновити сканер",
+    refreshing: "Скануємо...",
+    source: "Джерело",
+    scanned: "Скан",
+    pumpWatch: "Кандидати на памп",
+    dumpWatch: "Кандидати на дамп",
+    unusualVolume: "Аномальний обʼєм",
+    catalystWatch: "Каталізатори",
+    all: "Усі",
+    filters: "Фільтри",
+    allBuckets: "Усі категорії",
+    stocks: "Акції",
+    crypto: "Крипта",
+    search: "Пошук тикера...",
+    score: "Рейтинг",
+    change: "Рух",
+    volume: "Обʼєм",
+    mentions: "Згадки",
+    sentiment: "Сентимент",
+    risk: "Ризик",
+    noData: "Поки немає даних scanner. Натисни оновити або перевір provider.",
+    openChart: "Відкрити графік",
+    bullish: "Бичачий",
+    bearish: "Ведмежий",
+    neutral: "Нейтральний",
+    upside: "Вгору",
+    downside: "Вниз",
+  },
+};
+
+function formatMarketNumber(value: number | null | undefined) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) {
+    return "—";
+  }
+
+  const number = Number(value);
+
+  if (Math.abs(number) >= 1_000_000_000) {
+    return `${(number / 1_000_000_000).toFixed(1)}B`;
+  }
+
+  if (Math.abs(number) >= 1_000_000) {
+    return `${(number / 1_000_000).toFixed(1)}M`;
+  }
+
+  if (Math.abs(number) >= 1_000) {
+    return `${(number / 1_000).toFixed(1)}K`;
+  }
+
+  return number.toLocaleString();
+}
+
+function getBucketLabel(
+  bucket: MarketScannerItem["scan_bucket"],
+  copy: (typeof marketScannerCopy)[Language]
+) {
+  if (bucket === "pump_watch") return copy.pumpWatch;
+  if (bucket === "dump_watch") return copy.dumpWatch;
+  if (bucket === "unusual_volume") return copy.unusualVolume;
+  return copy.catalystWatch;
+}
+
+function getSentimentMarketLabel(
+  sentiment: MarketScannerItem["sentiment"],
+  copy: (typeof marketScannerCopy)[Language]
+) {
+  if (sentiment === "bullish") return copy.bullish;
+  if (sentiment === "bearish") return copy.bearish;
+  return copy.neutral;
+}
+
+function MarketScannerRow({
+  item,
+  language,
+  onOpenChart,
+}: {
+  item: MarketScannerItem;
+  language: Language;
+  onOpenChart?: (symbol: string) => void;
+}) {
+  const copy = marketScannerCopy[language] ?? marketScannerCopy.ru;
+  const score = item.opportunity_score ?? 0;
+  const change = Number(item.change_percent ?? 0);
+
+  return (
+    <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 transition hover:border-cyan-300/25 hover:bg-cyan-300/[0.04]">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="text-2xl font-semibold text-white">{item.symbol}</div>
+
+            <span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] uppercase text-white/45">
+              {item.exchange || "US"}
+            </span>
+
+            <span
+              className={`rounded-full px-2.5 py-1 text-[11px] ${
+                item.scan_bucket === "pump_watch"
+                  ? "bg-emerald-300/10 text-emerald-100"
+                  : item.scan_bucket === "dump_watch"
+                    ? "bg-red-300/10 text-red-100"
+                    : "bg-cyan-300/10 text-cyan-100"
+              }`}
+            >
+              {getBucketLabel(item.scan_bucket, copy)}
+            </span>
+          </div>
+
+          <div className="mt-1 truncate text-sm text-white/45">
+            {item.name || item.symbol}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 xl:min-w-[620px]">
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.score}
+            </div>
+            <div className="mt-1 text-lg font-semibold text-white">{score}</div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+  {copy.change}
+</div>
+            <div
+              className={`mt-1 text-lg font-semibold ${
+                change >= 0 ? "text-emerald-100" : "text-red-100"
+              }`}
+            >
+              {change >= 0 ? "+" : ""}
+              {change.toFixed(2)}%
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.volume}
+            </div>
+            <div className="mt-1 text-lg font-semibold text-white">
+              {formatMarketNumber(item.volume)}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.mentions}
+            </div>
+            <div className="mt-1 text-lg font-semibold text-white">
+              {formatMarketNumber(item.mentions)}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.sentiment}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {getSentimentMarketLabel(item.sentiment, copy)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4 md:flex-row md:items-center md:justify-between">
+        <div className="text-sm leading-6 text-white/45">
+          <span className="text-white/65">{copy.risk}:</span>{" "}
+          {item.risk_label || "Needs chart confirmation"}
+        </div>
+
+        {onOpenChart && (
+          <button
+            type="button"
+            onClick={() => onOpenChart(item.symbol)}
+            className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm text-cyan-50 transition hover:bg-cyan-300/15"
+          >
+            {copy.openChart}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MarketTab({
   subscription,
+  language,
   t,
 }: {
   subscription: Subscription;
+  language: Language;
   t: (typeof dashboardDict)[Language];
 }) {
+    const safeLanguage: Language =
+    language === "en" || language === "ua" || language === "ru"
+      ? language
+      : "ru";
+
+  const copy = marketScannerCopy[safeLanguage] ?? marketScannerCopy.ru;
+  const [items, setItems] = useState<MarketScannerItem[]>([]);
+  const [marketLoading, setMarketLoading] = useState(false);
+  const [marketError, setMarketError] = useState("");
+  const [marketSource, setMarketSource] = useState("");
+  const [scannedAt, setScannedAt] = useState("");
+  const [bucketFilter, setBucketFilter] = useState<"all" | MarketScannerItem["scan_bucket"]>("all");
+  const [query, setQuery] = useState("");
+
   const hasAccess =
-    subscription.active &&
-    subscription.plan !== "core";
+    subscription.active && canUseFeature(subscription.plan, "social_tickers");
+
+  const loadScanner = async (refresh = false) => {
+    try {
+      setMarketError("");
+      setMarketLoading(true);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        setMarketError("Unauthorized.");
+        return;
+      }
+
+      const response = await fetch(
+        `/api/market/scanner${refresh ? "?refresh=true" : ""}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setMarketError(data?.error || "Failed to load market scanner.");
+        return;
+      }
+
+      setItems(data.items || []);
+      setMarketSource(data.source || "");
+      setScannedAt(data.scannedAt || "");
+    } catch {
+      setMarketError("Failed to load market scanner.");
+    } finally {
+      setMarketLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (hasAccess) {
+      loadScanner(false);
+    }
+  }, [hasAccess]);
+
+  const filteredItems = items.filter((item) => {
+    const matchesBucket = bucketFilter === "all" || item.scan_bucket === bucketFilter;
+    const q = query.trim().toLowerCase();
+
+    const matchesQuery =
+      !q ||
+      item.symbol.toLowerCase().includes(q) ||
+      (item.name || "").toLowerCase().includes(q);
+
+    return matchesBucket && matchesQuery;
+  });
+
+  const pumpCount = items.filter((item) => item.scan_bucket === "pump_watch").length;
+  const dumpCount = items.filter((item) => item.scan_bucket === "dump_watch").length;
+  const unusualCount = items.filter((item) => item.scan_bucket === "unusual_volume").length;
 
   return (
     <div className="space-y-6">
-      <SectionHeader
-        title="Social Market Intelligence"
-        text="Reddit, X/Twitter and Truth Social market pulse, trending tickers, mention velocity, volume, sentiment and momentum score."
-      />
+      <SectionHeader title={copy.title} text={copy.text} />
 
       {!hasAccess && (
         <div className="rounded-[2rem] border border-amber-300/20 bg-amber-400/10 p-6">
@@ -4836,25 +5228,24 @@ function MarketTab({
             Locked
           </div>
           <div className="mt-3 text-xl font-semibold text-white">
-            Social Market is available on SkillEdge Edge and Elite.
+            {copy.lockedTitle}
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
-            This module tracks market attention across social sources and prepares
-            data for the future AI scanner.
+            {copy.lockedText}
           </p>
         </div>
       )}
 
-      <div className={hasAccess ? "" : "pointer-events-none select-none opacity-45 blur-[1px]"}>
+      <div className={hasAccess ? "space-y-6" : "pointer-events-none select-none space-y-6 opacity-45 blur-[1px]"}>
         <div className="grid gap-4 md:grid-cols-4">
           {[
-            ["Sources", "3"],
-            ["Tracked symbols", "250+"],
-            ["Refresh window", "5–15m"],
-            ["AI scanner ready", "Elite"],
+            [copy.pumpWatch, pumpCount],
+            [copy.dumpWatch, dumpCount],
+            [copy.unusualVolume, unusualCount],
+            ["Universe", "NYSE / NASDAQ / AMEX"],
           ].map(([label, value]) => (
             <div
-              key={label}
+              key={String(label)}
               className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5"
             >
               <div className="text-xs uppercase tracking-[0.2em] text-white/35">
@@ -4865,27 +5256,74 @@ function MarketTab({
           ))}
         </div>
 
-        <div className="mt-6 grid gap-5 xl:grid-cols-3">
-          <MarketSourceCard
-            title="Reddit"
-            subtitle="Retail attention, discussion velocity and community-driven tickers."
-            items={redditMarketItems}
-            t={t}
-          />
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+            <div>
+              <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">
+                {copy.filters}
+              </div>
+              <div className="mt-2 text-sm text-white/45">
+                {copy.source}: {marketSource || "—"} · {copy.scanned}:{" "}
+                {scannedAt ? new Date(scannedAt).toLocaleString() : "—"}
+              </div>
+            </div>
 
-          <MarketSourceCard
-            title="X / Twitter"
-            subtitle="Fast momentum flow, trader mentions and narrative acceleration."
-            items={xMarketItems}
-            t={t}
-          />
+            <div className="flex flex-col gap-3 md:flex-row">
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={copy.search}
+                className="min-w-[220px] rounded-full border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-cyan-300/40"
+              />
 
-          <MarketSourceCard
-            title="Truth Social"
-            subtitle="Political and event-driven ticker attention for selected equities."
-            items={truthMarketItems}
-            t={t}
-          />
+              <select
+                value={bucketFilter}
+                onChange={(event) =>
+                  setBucketFilter(
+                    event.target.value as "all" | MarketScannerItem["scan_bucket"]
+                  )
+                }
+                className="rounded-full border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none focus:border-cyan-300/40"
+              >
+                <option value="all">{copy.allBuckets}</option>
+                <option value="pump_watch">{copy.pumpWatch}</option>
+                <option value="dump_watch">{copy.dumpWatch}</option>
+                <option value="unusual_volume">{copy.unusualVolume}</option>
+                <option value="catalyst_watch">{copy.catalystWatch}</option>
+              </select>
+
+              <button
+                type="button"
+                onClick={() => loadScanner(true)}
+                disabled={marketLoading}
+                className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {marketLoading ? copy.refreshing : copy.refresh}
+              </button>
+            </div>
+          </div>
+
+          {marketError && (
+            <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+              {marketError}
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-3">
+          {filteredItems.length === 0 ? (
+            <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6 text-sm text-white/50">
+              {copy.noData}
+            </div>
+          ) : (
+            filteredItems.map((item) => (
+              <MarketScannerRow
+                key={`${item.scan_bucket}-${item.symbol}-${item.scanned_at || ""}`}
+  item={item}
+  language={safeLanguage}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>
