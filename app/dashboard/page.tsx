@@ -4837,6 +4837,28 @@ type MarketScannerItem = {
   scanned_at?: string;
 };
 
+type MarketSocialMentionItem = {
+  id?: string;
+  symbol: string;
+  exchange: string | null;
+  name: string | null;
+  source: string;
+  mentions_24h: number;
+  mentions_1h: number;
+  mention_velocity: number;
+  sentiment: "bullish" | "neutral" | "bearish";
+  social_score: number;
+  sample_posts?: Array<{
+    title: string;
+    subreddit: string;
+    url: string;
+    score: number;
+    comments: number;
+    created_utc: number;
+  }>;
+  scanned_at?: string;
+};
+
 type MarketScannerCopy = {
   title: string;
   text: string;
@@ -4863,6 +4885,17 @@ type MarketScannerCopy = {
   sentiment: string;
   risk: string;
   noData: string;
+  socialTitle: string;
+socialText: string;
+socialRefresh: string;
+socialRefreshing: string;
+socialScore: string;
+mentions24h: string;
+mentions1h: string;
+velocity: string;
+provider: string;
+topPosts: string;
+noSocialData: string;
   openChart: string;
   bullish: string;
   bearish: string;
@@ -4899,6 +4932,19 @@ const marketScannerCopy: Record<Language, MarketScannerCopy> = {
     sentiment: "Sentiment",
     risk: "Risk",
     noData: "No scanner data yet. Press refresh or check your data provider.",
+    socialTitle: "Most mentioned stocks — 24H",
+socialText:
+  "Reddit attention scanner: tickers with unusual discussion activity over the last 24 hours.",
+socialRefresh: "Refresh social scanner",
+socialRefreshing: "Scanning Reddit...",
+socialScore: "Social score",
+mentions24h: "Mentions 24H",
+mentions1h: "Mentions 1H",
+velocity: "Velocity",
+provider: "Provider",
+topPosts: "Top posts",
+noSocialData:
+  "No social mention data yet. Press refresh or check the Reddit provider.",
     openChart: "Open chart",
     bullish: "Bullish",
     bearish: "Bearish",
@@ -4933,6 +4979,19 @@ const marketScannerCopy: Record<Language, MarketScannerCopy> = {
     sentiment: "Сентимент",
     risk: "Риск",
     noData: "Пока нет данных scanner. Нажми обновить или проверь provider.",
+    socialTitle: "Самые упоминаемые акции — 24 часа",
+socialText:
+  "Reddit scanner внимания: тикеры, которые необычно часто обсуждают за последние 24 часа.",
+socialRefresh: "Обновить social scanner",
+socialRefreshing: "Сканируем Reddit...",
+socialScore: "Social рейтинг",
+mentions24h: "Упоминания 24ч",
+mentions1h: "Упоминания 1ч",
+velocity: "Скорость",
+provider: "Источник",
+topPosts: "Топ посты",
+noSocialData:
+  "Пока нет social mentions. Нажми обновить или проверь Reddit provider.",
     openChart: "Открыть график",
     bullish: "Бычий",
     bearish: "Медвежий",
@@ -4967,6 +5026,19 @@ const marketScannerCopy: Record<Language, MarketScannerCopy> = {
     sentiment: "Сентимент",
     risk: "Ризик",
     noData: "Поки немає даних scanner. Натисни оновити або перевір provider.",
+    socialTitle: "Найбільш згадувані акції — 24 години",
+socialText:
+  "Reddit scanner уваги: тикери, які незвично часто обговорюють за останні 24 години.",
+socialRefresh: "Оновити social scanner",
+socialRefreshing: "Скануємо Reddit...",
+socialScore: "Social рейтинг",
+mentions24h: "Згадки 24г",
+mentions1h: "Згадки 1г",
+velocity: "Швидкість",
+provider: "Джерело",
+topPosts: "Топ пости",
+noSocialData:
+  "Поки немає social mentions. Натисни оновити або перевір Reddit provider.",
     openChart: "Відкрити графік",
     bullish: "Бичачий",
     bearish: "Ведмежий",
@@ -5015,6 +5087,111 @@ function getSentimentMarketLabel(
   if (sentiment === "bullish") return copy.bullish;
   if (sentiment === "bearish") return copy.bearish;
   return copy.neutral;
+}
+
+function MarketSocialMentionRow({
+  item,
+  copy,
+}: {
+  item: MarketSocialMentionItem;
+  copy: MarketScannerCopy;
+}) {
+  return (
+    <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-4 transition hover:border-fuchsia-300/25 hover:bg-fuchsia-300/[0.04]">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="text-2xl font-semibold text-white">
+              {item.symbol}
+            </div>
+
+            <span className="rounded-full border border-white/10 px-2.5 py-1 text-[11px] uppercase text-white/45">
+              {item.exchange || "US"}
+            </span>
+
+            <span className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-2.5 py-1 text-[11px] text-fuchsia-100">
+              Reddit
+            </span>
+          </div>
+
+          <div className="mt-1 truncate text-sm text-white/45">
+            {item.name || item.symbol}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 xl:min-w-[660px]">
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.socialScore}
+            </div>
+            <div className="mt-1 text-lg font-semibold text-white">
+              {item.social_score}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.mentions24h}
+            </div>
+            <div className="mt-1 text-lg font-semibold text-white">
+              {formatMarketNumber(item.mentions_24h)}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.mentions1h}
+            </div>
+            <div className="mt-1 text-lg font-semibold text-white">
+              {formatMarketNumber(item.mentions_1h)}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.velocity}
+            </div>
+            <div className="mt-1 text-lg font-semibold text-white">
+              {(Number(item.mention_velocity || 0) * 100).toFixed(1)}%
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-white/[0.04] p-3">
+            <div className="text-[11px] uppercase tracking-[0.16em] text-white/30">
+              {copy.sentiment}
+            </div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {getSentimentMarketLabel(item.sentiment, copy)}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {Array.isArray(item.sample_posts) && item.sample_posts.length > 0 && (
+        <div className="mt-4 border-t border-white/10 pt-4">
+          <div className="mb-2 text-xs uppercase tracking-[0.18em] text-white/35">
+            {copy.topPosts}
+          </div>
+
+          <div className="space-y-2">
+            {item.sample_posts.slice(0, 2).map((post) => (
+              <a
+                key={`${item.symbol}-${post.url}-${post.created_utc}`}
+                href={post.url}
+                target="_blank"
+                rel="noreferrer"
+                className="block rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-sm leading-6 text-white/55 transition hover:border-fuchsia-300/25 hover:text-white"
+              >
+                <span className="text-white/75">r/{post.subreddit}</span>
+                {" · "}
+                {post.title}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function MarketScannerRow({
@@ -5150,6 +5327,11 @@ function MarketTab({
   const [marketError, setMarketError] = useState("");
   const [marketSource, setMarketSource] = useState("");
   const [scannedAt, setScannedAt] = useState("");
+  const [socialItems, setSocialItems] = useState<MarketSocialMentionItem[]>([]);
+const [socialLoading, setSocialLoading] = useState(false);
+const [socialError, setSocialError] = useState("");
+const [socialSource, setSocialSource] = useState("");
+const [socialScannedAt, setSocialScannedAt] = useState("");
   const [bucketFilter, setBucketFilter] = useState<"all" | MarketScannerItem["scan_bucket"]>("all");
   const [query, setQuery] = useState("");
 
@@ -5196,11 +5378,52 @@ function MarketTab({
     }
   };
 
-  useEffect(() => {
-    if (hasAccess) {
-      loadScanner(false);
+const loadSocialMentions = async (refresh = false) => {
+  try {
+    setSocialError("");
+    setSocialLoading(true);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setSocialError("Unauthorized.");
+      return;
     }
-  }, [hasAccess]);
+
+    const response = await fetch(
+      `/api/market/social-mentions${refresh ? "?refresh=true" : ""}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setSocialError(data?.error || "Failed to load social mentions.");
+      return;
+    }
+
+    setSocialItems(data.items || []);
+    setSocialSource(data.provider || data.source || "");
+    setSocialScannedAt(data.scannedAt || "");
+  } catch {
+    setSocialError("Failed to load social mentions.");
+  } finally {
+    setSocialLoading(false);
+  }
+};
+
+  useEffect(() => {
+  if (hasAccess) {
+    loadScanner(false);
+    loadSocialMentions(false);
+  }
+}, [hasAccess]);
 
   const filteredItems = items.filter((item) => {
     const matchesBucket = bucketFilter === "all" || item.scan_bucket === bucketFilter;
@@ -5309,6 +5532,56 @@ function MarketTab({
             </div>
           )}
         </div>
+
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
+  <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <div>
+      <div className="text-xs uppercase tracking-[0.24em] text-fuchsia-100/45">
+        {copy.socialTitle}
+      </div>
+
+      <div className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
+        {copy.socialText}
+      </div>
+
+      <div className="mt-2 text-xs text-white/35">
+        {copy.provider}: {socialSource || "—"} · {copy.scanned}:{" "}
+        {socialScannedAt ? new Date(socialScannedAt).toLocaleString() : "—"}
+      </div>
+    </div>
+
+    <button
+      type="button"
+      onClick={() => loadSocialMentions(true)}
+      disabled={socialLoading}
+      className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-5 py-3 text-sm font-semibold text-fuchsia-50 transition hover:bg-fuchsia-300/15 disabled:cursor-not-allowed disabled:opacity-50"
+    >
+      {socialLoading ? copy.socialRefreshing : copy.socialRefresh}
+    </button>
+  </div>
+
+  {socialError && (
+    <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+      {socialError}
+    </div>
+  )}
+
+  <div className="mt-5 space-y-3">
+    {socialItems.length === 0 ? (
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/45">
+        {copy.noSocialData}
+      </div>
+    ) : (
+      socialItems.slice(0, 10).map((item) => (
+        <MarketSocialMentionRow
+          key={`${item.source}-${item.symbol}-${item.scanned_at || ""}`}
+          item={item}
+          copy={copy}
+        />
+      ))
+    )}
+  </div>
+</div>
 
         <div className="space-y-3">
           {filteredItems.length === 0 ? (
