@@ -12,6 +12,19 @@ type FmpSymbol = {
   type?: string;
 };
 
+type BinanceExchangeInfoSymbol = {
+  symbol?: string;
+  status?: string;
+  baseAsset?: string;
+  quoteAsset?: string;
+  isSpotTradingAllowed?: boolean;
+  permissions?: string[];
+};
+
+type BinanceExchangeInfoResponse = {
+  symbols?: BinanceExchangeInfoSymbol[];
+};
+
 type RedditPost = {
   data?: {
     title?: string;
@@ -57,6 +70,67 @@ const REDDIT_SUBREDDITS = [
   "investing",
   "smallstreetbets",
 ];
+
+const STATIC_US_STOCK_UNIVERSE: Array<{
+  symbol: string;
+  name: string;
+  exchange: "NASDAQ" | "NYSE" | "AMEX";
+}> = [
+  { symbol: "AAPL", name: "Apple Inc.", exchange: "NASDAQ" },
+  { symbol: "MSFT", name: "Microsoft Corporation", exchange: "NASDAQ" },
+  { symbol: "NVDA", name: "NVIDIA Corporation", exchange: "NASDAQ" },
+  { symbol: "TSLA", name: "Tesla Inc.", exchange: "NASDAQ" },
+  { symbol: "AMD", name: "Advanced Micro Devices Inc.", exchange: "NASDAQ" },
+  { symbol: "AMZN", name: "Amazon.com Inc.", exchange: "NASDAQ" },
+  { symbol: "META", name: "Meta Platforms Inc.", exchange: "NASDAQ" },
+  { symbol: "GOOGL", name: "Alphabet Inc.", exchange: "NASDAQ" },
+  { symbol: "GOOG", name: "Alphabet Inc.", exchange: "NASDAQ" },
+  { symbol: "PLTR", name: "Palantir Technologies Inc.", exchange: "NASDAQ" },
+  { symbol: "SMCI", name: "Super Micro Computer Inc.", exchange: "NASDAQ" },
+  { symbol: "AVGO", name: "Broadcom Inc.", exchange: "NASDAQ" },
+  { symbol: "INTC", name: "Intel Corporation", exchange: "NASDAQ" },
+  { symbol: "COIN", name: "Coinbase Global Inc.", exchange: "NASDAQ" },
+  { symbol: "MARA", name: "MARA Holdings Inc.", exchange: "NASDAQ" },
+  { symbol: "RIOT", name: "Riot Platforms Inc.", exchange: "NASDAQ" },
+  { symbol: "SOFI", name: "SoFi Technologies Inc.", exchange: "NASDAQ" },
+  { symbol: "HOOD", name: "Robinhood Markets Inc.", exchange: "NASDAQ" },
+  { symbol: "GME", name: "GameStop Corp.", exchange: "NYSE" },
+  { symbol: "AMC", name: "AMC Entertainment Holdings Inc.", exchange: "NYSE" },
+  { symbol: "BBAI", name: "BigBear.ai Holdings Inc.", exchange: "NYSE" },
+  { symbol: "SOUN", name: "SoundHound AI Inc.", exchange: "NASDAQ" },
+  { symbol: "IONQ", name: "IonQ Inc.", exchange: "NYSE" },
+  { symbol: "RGTI", name: "Rigetti Computing Inc.", exchange: "NASDAQ" },
+  { symbol: "QBTS", name: "D-Wave Quantum Inc.", exchange: "NYSE" },
+  { symbol: "RKLB", name: "Rocket Lab USA Inc.", exchange: "NASDAQ" },
+  { symbol: "ASTS", name: "AST SpaceMobile Inc.", exchange: "NASDAQ" },
+  { symbol: "NIO", name: "NIO Inc.", exchange: "NYSE" },
+  { symbol: "LCID", name: "Lucid Group Inc.", exchange: "NASDAQ" },
+  { symbol: "RIVN", name: "Rivian Automotive Inc.", exchange: "NASDAQ" },
+  { symbol: "OPEN", name: "Opendoor Technologies Inc.", exchange: "NASDAQ" },
+  { symbol: "WULF", name: "TeraWulf Inc.", exchange: "NASDAQ" },
+  { symbol: "HIMS", name: "Hims & Hers Health Inc.", exchange: "NYSE" },
+  { symbol: "CVNA", name: "Carvana Co.", exchange: "NYSE" },
+  { symbol: "UPST", name: "Upstart Holdings Inc.", exchange: "NASDAQ" },
+  
+  { symbol: "JOBY", name: "Joby Aviation Inc.", exchange: "NYSE" },
+  { symbol: "ACHR", name: "Archer Aviation Inc.", exchange: "NYSE" },
+  { symbol: "KULR", name: "KULR Technology Group Inc.", exchange: "AMEX" },
+  { symbol: "SERV", name: "Serve Robotics Inc.", exchange: "NASDAQ" },
+  { symbol: "TEM", name: "Tempus AI Inc.", exchange: "NASDAQ" },
+  { symbol: "CRWV", name: "CoreWeave Inc.", exchange: "NASDAQ" },
+  { symbol: "UNH", name: "UnitedHealth Group Inc.", exchange: "NYSE" },
+  { symbol: "LLY", name: "Eli Lilly and Company", exchange: "NYSE" },
+  { symbol: "JPM", name: "JPMorgan Chase & Co.", exchange: "NYSE" },
+  { symbol: "BAC", name: "Bank of America Corporation", exchange: "NYSE" },
+  { symbol: "NFLX", name: "Netflix Inc.", exchange: "NASDAQ" },
+  { symbol: "BA", name: "The Boeing Company", exchange: "NYSE" },
+  { symbol: "BABA", name: "Alibaba Group Holding Limited", exchange: "NYSE" },
+  { symbol: "SPY", name: "SPDR S&P 500 ETF Trust", exchange: "AMEX" },
+  { symbol: "QQQ", name: "Invesco QQQ Trust", exchange: "NASDAQ" },
+  { symbol: "IWM", name: "iShares Russell 2000 ETF", exchange: "AMEX" },
+];
+
+
 
 const COMMON_FALSE_POSITIVES = new Set([
   "A",
@@ -156,12 +230,11 @@ function cleanSymbol(symbol: string) {
 
 function isProbablyCommonStockSymbol(symbol: string) {
   if (!symbol) return false;
-  if (symbol.length > 5) return false;
+  if (symbol.length > 10) return false;
   if (COMMON_FALSE_POSITIVES.has(symbol)) return false;
 
-  return /^[A-Z]{1,5}$/.test(symbol);
+  return /^[A-Z]{1,10}$/.test(symbol);
 }
-
 async function fetchFmpUniverse() {
   const apiKey = process.env.FMP_API_KEY;
 
@@ -169,19 +242,10 @@ async function fetchFmpUniverse() {
     throw new Error("FMP_API_KEY is missing");
   }
 
-  const response = await fetch(
-    `https://financialmodelingprep.com/stable/stock-list?apikey=${apiKey}`,
-    {
-      next: { revalidate: 60 * 60 * 6 },
-    }
-  );
-
-  if (!response.ok) {
-    const text = await response.text();
-    throw new Error(`FMP stock-list error ${response.status}: ${text}`);
-  }
-
-  const data = (await response.json()) as FmpSymbol[];
+  const urls = [
+    `https://financialmodelingprep.com/stable/actively-trading-list?apikey=${apiKey}`,
+    `https://financialmodelingprep.com/api/v3/stock/list?apikey=${apiKey}`,
+  ];
 
   const universe = new Map<
     string,
@@ -192,38 +256,166 @@ async function fetchFmpUniverse() {
     }
   >();
 
-  for (const item of data) {
-    const symbol = cleanSymbol(item.symbol || "");
-    const exchange = normalizeExchange(item.exchangeShortName || item.exchange);
+  for (const url of urls) {
+    try {
+      const response = await fetch(url, {
+        next: { revalidate: 60 * 60 * 6 },
+      });
 
-    if (!isProbablyCommonStockSymbol(symbol)) {
-      continue;
+      if (!response.ok) {
+        const text = await response.text();
+
+        console.warn("FMP universe endpoint failed:", {
+          status: response.status,
+          url,
+          text: text.slice(0, 300),
+        });
+
+        continue;
+      }
+
+      const data = (await response.json()) as FmpSymbol[];
+
+      if (!Array.isArray(data)) {
+        console.warn("FMP universe endpoint returned non-array:", {
+          url,
+          dataType: typeof data,
+        });
+
+        continue;
+      }
+
+      for (const item of data) {
+        const symbol = cleanSymbol(item.symbol || "");
+        const exchange = normalizeExchange(
+          item.exchangeShortName || item.exchange
+        );
+
+        if (!isProbablyCommonStockSymbol(symbol)) {
+          continue;
+        }
+
+        if (!isAllowedExchange(exchange)) {
+          continue;
+        }
+
+        const type = (item.type || "").toLowerCase();
+
+        if (
+          type.includes("etf") ||
+          type.includes("fund") ||
+          type.includes("trust") ||
+          type.includes("warrant") ||
+          type.includes("unit")
+        ) {
+          continue;
+        }
+
+        universe.set(symbol, {
+          symbol,
+          name: item.name || symbol,
+          exchange,
+        });
+      }
+
+      if (universe.size > 0) {
+        console.log("FMP universe loaded:", {
+          size: universe.size,
+          url,
+        });
+
+        break;
+      }
+    } catch (error) {
+      console.warn("FMP universe endpoint error:", {
+        url,
+        error,
+      });
     }
-
-    if (!isAllowedExchange(exchange)) {
-      continue;
-    }
-
-    const type = (item.type || "").toLowerCase();
-
-    if (
-      type.includes("etf") ||
-      type.includes("fund") ||
-      type.includes("trust") ||
-      type.includes("warrant") ||
-      type.includes("unit")
-    ) {
-      continue;
-    }
-
-    universe.set(symbol, {
-      symbol,
-      name: item.name || symbol,
-      exchange,
-    });
   }
 
+    if (universe.size === 0) {
+    console.warn("FMP universe is empty. Using static fallback universe.");
+
+    for (const item of STATIC_US_STOCK_UNIVERSE) {
+      universe.set(item.symbol, {
+        symbol: item.symbol,
+        name: item.name,
+        exchange: item.exchange,
+      });
+    }
+  }
+
+  
   return universe;
+}
+
+async function fetchBinanceUniverse() {
+  const universe = new Map<
+    string,
+    {
+      symbol: string;
+      name: string | null;
+      exchange: string | null;
+    }
+  >();
+
+  try {
+    const response = await fetch("https://api.binance.com/api/v3/exchangeInfo", {
+      next: { revalidate: 60 * 60 },
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+
+      console.warn("Binance exchangeInfo failed:", {
+        status: response.status,
+        text: text.slice(0, 300),
+      });
+
+      return universe;
+    }
+
+    const data = (await response.json()) as BinanceExchangeInfoResponse;
+
+    const symbols = Array.isArray(data.symbols) ? data.symbols : [];
+
+    for (const item of symbols) {
+      const baseAsset = cleanSymbol(item.baseAsset || "");
+      const quoteAsset = cleanSymbol(item.quoteAsset || "");
+
+      if (!baseAsset || quoteAsset !== "USDT") {
+        continue;
+      }
+
+      if (item.status && item.status !== "TRADING") {
+        continue;
+      }
+
+      if (item.isSpotTradingAllowed === false) {
+        continue;
+      }
+
+      if (!isProbablyCommonStockSymbol(baseAsset)) {
+        continue;
+      }
+
+      universe.set(baseAsset, {
+        symbol: baseAsset,
+        name: baseAsset,
+        exchange: "BINANCE",
+      });
+    }
+
+    console.log("Binance universe loaded:", {
+      size: universe.size,
+    });
+
+    return universe;
+  } catch (error) {
+    console.warn("Binance universe error:", error);
+    return universe;
+  }
 }
 
 function extractSymbolsFromText(text: string, universe: Map<string, unknown>) {
@@ -239,10 +431,23 @@ function extractSymbolsFromText(text: string, universe: Map<string, unknown>) {
     }
   }
 
-  const uppercaseWords = text.match(/\b[A-Z]{2,5}\b/g) || [];
+  const uppercaseWords = text.match(/\b[A-Z]{2,10}\b/g) || [];
 
   for (const word of uppercaseWords) {
     const symbol = cleanSymbol(word);
+
+    if (universe.has(symbol) && isProbablyCommonStockSymbol(symbol)) {
+      symbols.add(symbol);
+    }
+  }
+
+  const commonTickerPatterns =
+  text.match(
+    /\b(TSLA|NVDA|AMD|AAPL|MSFT|META|GOOG|GOOGL|AMZN|PLTR|MARA|RIOT|COIN|SOFI|GME|AMC|BBBY|HOOD|NIO|LCID|RIVN|SMCI|AVGO|INTC|BBAI|SOUN|IONQ|RGTI|QBTS|RKLB|ASTS|BTC|ETH|BNB|SOL|XRP|DOGE|ADA|AVAX|LINK|DOT|TON|TRX|MATIC|ARB|OP|SUI|APT|NEAR|LTC|BCH|PEPE|SHIB|WIF|BONK|FLOKI|RUNE|INJ|SEI|TIA|JUP|PYTH|WLD)\b/gi
+  ) || [];
+
+  for (const ticker of commonTickerPatterns) {
+    const symbol = cleanSymbol(ticker);
 
     if (universe.has(symbol) && isProbablyCommonStockSymbol(symbol)) {
       symbols.add(symbol);
@@ -351,7 +556,10 @@ async function fetchRedditSubredditPosts(subreddit: string) {
 }
 
 async function loadRedditMentions() {
-  const universe = await fetchFmpUniverse();
+  const stockUniverse = await fetchFmpUniverse();
+const cryptoUniverse = await fetchBinanceUniverse();
+
+const universe = new Map([...stockUniverse, ...cryptoUniverse]);
 
   const nowSeconds = Math.floor(Date.now() / 1000);
   const dayAgoSeconds = nowSeconds - 24 * 60 * 60;
@@ -372,6 +580,17 @@ async function loadRedditMentions() {
   const subredditResults = await Promise.allSettled(
     REDDIT_SUBREDDITS.map((subreddit) => fetchRedditSubredditPosts(subreddit))
   );
+
+  const totalFetchedPosts = subredditResults.reduce((total, result) => {
+  if (result.status !== "fulfilled") return total;
+  return total + result.value.length;
+}, 0);
+
+console.log("Social scanner debug:", {
+  universeSize: universe.size,
+  subreddits: REDDIT_SUBREDDITS.length,
+  totalFetchedPosts,
+});
 
   for (const result of subredditResults) {
     if (result.status !== "fulfilled") {
@@ -491,9 +710,20 @@ async function loadRedditMentions() {
     });
   }
 
-  return items
-    .sort((a, b) => b.social_score - a.social_score)
-    .slice(0, 100);
+  const sortedItems = items
+  .sort((a, b) => b.social_score - a.social_score)
+  .slice(0, 100);
+
+console.log("Social scanner result:", {
+  matchedSymbols: sortedItems.length,
+  topSymbols: sortedItems.slice(0, 10).map((item) => ({
+    symbol: item.symbol,
+    mentions_24h: item.mentions_24h,
+    social_score: item.social_score,
+  })),
+});
+
+return sortedItems;
 }
 
 export async function GET(request: Request) {

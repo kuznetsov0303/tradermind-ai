@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   LineChart,
@@ -5316,24 +5316,208 @@ function MarketTab({
   language: Language;
   t: (typeof dashboardDict)[Language];
 }) {
-    const safeLanguage: Language =
+  void t;
+
+  const safeLanguage: Language =
     language === "en" || language === "ua" || language === "ru"
       ? language
       : "ru";
 
-  const copy = marketScannerCopy[safeLanguage] ?? marketScannerCopy.ru;
+  const copy: MarketScannerCopy =
+    marketScannerCopy[safeLanguage] ?? marketScannerCopy.ru;
+
+  type UnifiedMarketOpportunity = {
+    symbol: string;
+    name: string | null;
+    exchange: string | null;
+    assetType: "stock" | "crypto";
+    signalType: "market" | "social" | "combined";
+    marketScore: number;
+    socialScore: number;
+    combinedScore: number;
+    changePercent: number | null;
+    mentions24h: number;
+    mentions1h: number;
+    mentionVelocity: number;
+    sentiment: "bullish" | "neutral" | "bearish";
+    marketBucket: MarketScannerItem["scan_bucket"] | null;
+    directionBias: string | null;
+    riskLabel: string | null;
+    reason: string;
+    marketItem?: MarketScannerItem;
+    socialItem?: MarketSocialMentionItem;
+  };
+
+  const localText = {
+    ru: {
+      title: "Market Intelligence Center",
+      subtitle:
+        "Единый центр поиска in-play тикеров: рыночное движение + social mentions + будущий AI-анализ сигналов.",
+      topTitle: "Top Opportunities Now",
+      topText:
+        "Один список вместо отдельных сканеров. Система объединяет market activity, Reddit/X mentions, Binance crypto universe и готовит тикеры для дальнейшего AI-разбора.",
+      aiSoon: "AI layer скоро",
+      aiSoonText:
+        "Дальше сюда добавим AI-сценарии, confluence score, risk notes, сигналы и персональные alerts под стиль клиента.",
+      dataNote:
+        "MVP использует доступные источники. Перед релизом подключаем premium full-data providers, intraday 1m/5m/15m и полный universe.",
+      refreshAll: "Обновить всё",
+      refreshing: "Обновляем...",
+      search: "Поиск тикера...",
+      asset: "Актив",
+      signal: "Сигнал",
+      sort: "Сортировка",
+      allAssets: "Все активы",
+      stocks: "Акции",
+      crypto: "Крипта",
+      allSignals: "Все сигналы",
+      combined: "Combined",
+      marketOnly: "Market only",
+      socialOnly: "Social only",
+      sortScore: "Combined score",
+      sortMentions: "Mentions 24H",
+      sortMove: "Move %",
+      sortSocial: "Social score",
+      ticker: "Тикер",
+      marketScore: "Market",
+      socialScore: "Social",
+      combinedScore: "Score",
+      mentions24h: "24ч",
+      mentions1h: "1ч",
+      move: "Move",
+      reason: "Почему важно",
+      noData: "Пока нет данных. Нажми “Обновить всё”.",
+      rawMarket: "Raw market movers",
+      rawSocial: "Raw social mentions",
+      showRaw: "Показать raw data",
+      hideRaw: "Скрыть raw data",
+      source: "Источник",
+      scanned: "Скан",
+      lockedTitle: "Market Intelligence доступен на SkillEdge Edge и Elite.",
+      lockedText:
+        "На Core доступен preview. Edge и Elite открывают market/social scanner, combined opportunities и будущие AI-сигналы.",
+    },
+    en: {
+      title: "Market Intelligence Center",
+      subtitle:
+        "Unified in-play ticker research: market movement + social mentions + future AI signal analysis.",
+      topTitle: "Top Opportunities Now",
+      topText:
+        "One list instead of separate scanners. The system combines market activity, Reddit/X mentions, Binance crypto universe and prepares tickers for AI analysis.",
+      aiSoon: "AI layer soon",
+      aiSoonText:
+        "Next we add AI scenarios, confluence score, risk notes, signals and personalized alerts based on the client’s trading style.",
+      dataNote:
+        "MVP uses available sources. Before launch we connect premium full-data providers, intraday 1m/5m/15m and full universe coverage.",
+      refreshAll: "Refresh all",
+      refreshing: "Refreshing...",
+      search: "Search ticker...",
+      asset: "Asset",
+      signal: "Signal",
+      sort: "Sort",
+      allAssets: "All assets",
+      stocks: "Stocks",
+      crypto: "Crypto",
+      allSignals: "All signals",
+      combined: "Combined",
+      marketOnly: "Market only",
+      socialOnly: "Social only",
+      sortScore: "Combined score",
+      sortMentions: "Mentions 24H",
+      sortMove: "Move %",
+      sortSocial: "Social score",
+      ticker: "Ticker",
+      marketScore: "Market",
+      socialScore: "Social",
+      combinedScore: "Score",
+      mentions24h: "24H",
+      mentions1h: "1H",
+      move: "Move",
+      reason: "Why it matters",
+      noData: "No data yet. Click “Refresh all”.",
+      rawMarket: "Raw market movers",
+      rawSocial: "Raw social mentions",
+      showRaw: "Show raw data",
+      hideRaw: "Hide raw data",
+      source: "Source",
+      scanned: "Scanned",
+      lockedTitle: "Market Intelligence is available on SkillEdge Edge and Elite.",
+      lockedText:
+        "Core users can see the preview. Edge and Elite unlock market/social scanner, combined opportunities and future AI signals.",
+    },
+    ua: {
+      title: "Market Intelligence Center",
+      subtitle:
+        "Єдиний центр пошуку in-play тикерів: рух ринку + social mentions + майбутній AI-аналіз сигналів.",
+      topTitle: "Top Opportunities Now",
+      topText:
+        "Один список замість окремих сканерів. Система поєднує market activity, Reddit/X mentions, Binance crypto universe і готує тикери для AI-аналізу.",
+      aiSoon: "AI layer скоро",
+      aiSoonText:
+        "Далі додамо AI-сценарії, confluence score, risk notes, сигнали та персональні alerts під стиль клієнта.",
+      dataNote:
+        "MVP використовує доступні джерела. Перед релізом підключаємо premium full-data providers, intraday 1m/5m/15m і повний universe.",
+      refreshAll: "Оновити все",
+      refreshing: "Оновлюємо...",
+      search: "Пошук тикера...",
+      asset: "Актив",
+      signal: "Сигнал",
+      sort: "Сортування",
+      allAssets: "Усі активи",
+      stocks: "Акції",
+      crypto: "Крипта",
+      allSignals: "Усі сигнали",
+      combined: "Combined",
+      marketOnly: "Market only",
+      socialOnly: "Social only",
+      sortScore: "Combined score",
+      sortMentions: "Mentions 24H",
+      sortMove: "Move %",
+      sortSocial: "Social score",
+      ticker: "Тикер",
+      marketScore: "Market",
+      socialScore: "Social",
+      combinedScore: "Score",
+      mentions24h: "24г",
+      mentions1h: "1г",
+      move: "Move",
+      reason: "Чому важливо",
+      noData: "Поки немає даних. Натисни “Оновити все”.",
+      rawMarket: "Raw market movers",
+      rawSocial: "Raw social mentions",
+      showRaw: "Показати raw data",
+      hideRaw: "Сховати raw data",
+      source: "Джерело",
+      scanned: "Скан",
+      lockedTitle: "Market Intelligence доступний на SkillEdge Edge та Elite.",
+      lockedText:
+        "На Core доступний preview. Edge та Elite відкривають market/social scanner, combined opportunities і майбутні AI-сигнали.",
+    },
+  }[safeLanguage];
+
   const [items, setItems] = useState<MarketScannerItem[]>([]);
   const [marketLoading, setMarketLoading] = useState(false);
   const [marketError, setMarketError] = useState("");
   const [marketSource, setMarketSource] = useState("");
   const [scannedAt, setScannedAt] = useState("");
+
   const [socialItems, setSocialItems] = useState<MarketSocialMentionItem[]>([]);
-const [socialLoading, setSocialLoading] = useState(false);
-const [socialError, setSocialError] = useState("");
-const [socialSource, setSocialSource] = useState("");
-const [socialScannedAt, setSocialScannedAt] = useState("");
-  const [bucketFilter, setBucketFilter] = useState<"all" | MarketScannerItem["scan_bucket"]>("all");
+  const [socialLoading, setSocialLoading] = useState(false);
+  const [socialError, setSocialError] = useState("");
+  const [socialSource, setSocialSource] = useState("");
+  const [socialScannedAt, setSocialScannedAt] = useState("");
+
   const [query, setQuery] = useState("");
+  const [assetFilter, setAssetFilter] = useState<"all" | "stock" | "crypto">(
+    "all"
+  );
+  const [signalFilter, setSignalFilter] = useState<
+    "all" | "combined" | "market" | "social"
+  >("all");
+  const [sortBy, setSortBy] = useState<
+    "combined" | "mentions" | "move" | "social"
+  >("combined");
+  const [rawExpanded, setRawExpanded] = useState(false);
 
   const hasAccess =
     subscription.active && canUseFeature(subscription.plan, "social_tickers");
@@ -5361,14 +5545,19 @@ const [socialScannedAt, setSocialScannedAt] = useState("");
         }
       );
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        items?: MarketScannerItem[];
+        source?: string;
+        scannedAt?: string;
+        error?: string;
+      };
 
       if (!response.ok) {
         setMarketError(data?.error || "Failed to load market scanner.");
         return;
       }
 
-      setItems(data.items || []);
+      setItems(Array.isArray(data.items) ? data.items : []);
       setMarketSource(data.source || "");
       setScannedAt(data.scannedAt || "");
     } catch {
@@ -5378,230 +5567,560 @@ const [socialScannedAt, setSocialScannedAt] = useState("");
     }
   };
 
-const loadSocialMentions = async (refresh = false) => {
-  try {
-    setSocialError("");
-    setSocialLoading(true);
+  const loadSocialMentions = async (refresh = false) => {
+    try {
+      setSocialError("");
+      setSocialLoading(true);
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    if (!session?.access_token) {
-      setSocialError("Unauthorized.");
-      return;
-    }
-
-    const response = await fetch(
-      `/api/market/social-mentions${refresh ? "?refresh=true" : ""}`,
-      {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
+      if (!session?.access_token) {
+        setSocialError("Unauthorized.");
+        return;
       }
-    );
 
-    const data = await response.json();
+      const response = await fetch(
+        `/api/market/social-mentions${refresh ? "?refresh=true" : ""}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
 
-    if (!response.ok) {
-      setSocialError(data?.error || "Failed to load social mentions.");
-      return;
+      const data = (await response.json()) as {
+        items?: MarketSocialMentionItem[];
+        source?: string;
+        provider?: string;
+        scannedAt?: string;
+        error?: string;
+      };
+
+      if (!response.ok) {
+        setSocialError(data?.error || "Failed to load social mentions.");
+        return;
+      }
+
+      const rawItems = Array.isArray(data.items) ? data.items : [];
+
+      const deduped = Array.from(
+        new Map(
+          rawItems.map((item) => [
+            `${item.exchange || ""}:${item.symbol || ""}:${item.source || ""}`,
+            item,
+          ])
+        ).values()
+      );
+
+      setSocialItems(deduped);
+      setSocialSource(data.provider || data.source || "");
+      setSocialScannedAt(data.scannedAt || "");
+    } catch {
+      setSocialError("Failed to load social mentions.");
+    } finally {
+      setSocialLoading(false);
     }
+  };
 
-    setSocialItems(data.items || []);
-    setSocialSource(data.provider || data.source || "");
-    setSocialScannedAt(data.scannedAt || "");
-  } catch {
-    setSocialError("Failed to load social mentions.");
-  } finally {
-    setSocialLoading(false);
-  }
-};
+  const refreshAll = async () => {
+    await Promise.all([loadScanner(true), loadSocialMentions(true)]);
+  };
 
   useEffect(() => {
-  if (hasAccess) {
+    if (!hasAccess) return;
+
     loadScanner(false);
     loadSocialMentions(false);
-  }
-}, [hasAccess]);
 
-  const filteredItems = items.filter((item) => {
-    const matchesBucket = bucketFilter === "all" || item.scan_bucket === bucketFilter;
+    const interval = window.setInterval(() => {
+      loadSocialMentions(false);
+    }, 120000);
+
+    return () => window.clearInterval(interval);
+  }, [hasAccess]);
+
+  const opportunities = useMemo<UnifiedMarketOpportunity[]>(() => {
+    const map = new Map<string, UnifiedMarketOpportunity>();
+
+    const makeKey = (symbol: string, exchange?: string | null) =>
+      `${(exchange || "US").toUpperCase()}:${symbol.toUpperCase()}`;
+
+    for (const item of items) {
+      const symbol = item.symbol.toUpperCase();
+      const exchange = item.exchange || "US";
+      const key = makeKey(symbol, exchange);
+      const marketScore = Number(item.opportunity_score || 0);
+      const changePercent = Number(item.change_percent ?? 0);
+      const isCrypto = exchange.toUpperCase() === "BINANCE";
+
+      map.set(key, {
+        symbol,
+        name: item.name || symbol,
+        exchange,
+        assetType: isCrypto ? "crypto" : "stock",
+        signalType: "market",
+        marketScore,
+        socialScore: 0,
+        combinedScore: marketScore,
+        changePercent,
+        mentions24h: Number(item.mentions || 0),
+        mentions1h: 0,
+        mentionVelocity: Number(item.mention_velocity || 0),
+        sentiment: item.sentiment || "neutral",
+        marketBucket: item.scan_bucket,
+        directionBias: item.direction_bias || null,
+        riskLabel: item.risk_label || null,
+        reason:
+          item.scan_bucket === "pump_watch"
+            ? "Market mover: potential pump candidate based on price/volume activity."
+            : item.scan_bucket === "dump_watch"
+              ? "Market mover: potential dump candidate based on downside activity."
+              : item.scan_bucket === "unusual_volume"
+                ? "Market mover: unusual activity / volume candidate."
+                : "Market activity candidate.",
+        marketItem: item,
+      });
+    }
+
+    for (const item of socialItems) {
+      const symbol = item.symbol.toUpperCase();
+      const exchange = item.exchange || "US";
+      const key = makeKey(symbol, exchange);
+      const socialScore = Number(item.social_score || 0);
+      const mentions24h = Number(item.mentions_24h || 0);
+      const mentions1h = Number(item.mentions_1h || 0);
+      const mentionVelocity = Number(item.mention_velocity || 0);
+      const isCrypto = exchange.toUpperCase() === "BINANCE";
+      const existing = map.get(key);
+
+      if (existing) {
+        const combinedScore = Math.min(
+          100,
+          Math.round(existing.marketScore * 0.55 + socialScore * 0.45 + 10)
+        );
+
+        map.set(key, {
+          ...existing,
+          signalType: "combined",
+          socialScore,
+          combinedScore,
+          mentions24h,
+          mentions1h,
+          mentionVelocity,
+          sentiment: item.sentiment || existing.sentiment || "neutral",
+          socialItem: item,
+          reason:
+            "Combined opportunity: ticker has both market activity and social attention.",
+        });
+      } else {
+        map.set(key, {
+          symbol,
+          name: item.name || symbol,
+          exchange,
+          assetType: isCrypto ? "crypto" : "stock",
+          signalType: "social",
+          marketScore: 0,
+          socialScore,
+          combinedScore: Math.min(100, Math.round(socialScore * 0.9)),
+          changePercent: null,
+          mentions24h,
+          mentions1h,
+          mentionVelocity,
+          sentiment: item.sentiment || "neutral",
+          marketBucket: null,
+          directionBias: null,
+          riskLabel: null,
+          reason: isCrypto
+            ? "Social attention: Binance crypto ticker is being mentioned in the last 24H."
+            : "Social attention: stock ticker is being mentioned in the last 24H.",
+          socialItem: item,
+        });
+      }
+    }
+
+    return Array.from(map.values());
+  }, [items, socialItems]);
+
+  const filteredOpportunities = useMemo(() => {
     const q = query.trim().toLowerCase();
 
-    const matchesQuery =
-      !q ||
-      item.symbol.toLowerCase().includes(q) ||
-      (item.name || "").toLowerCase().includes(q);
+    return opportunities
+      .filter((item) => {
+        const matchesQuery =
+          !q ||
+          item.symbol.toLowerCase().includes(q) ||
+          (item.name || "").toLowerCase().includes(q);
 
-    return matchesBucket && matchesQuery;
-  });
+        const matchesAsset =
+          assetFilter === "all" || item.assetType === assetFilter;
 
-  const pumpCount = items.filter((item) => item.scan_bucket === "pump_watch").length;
-  const dumpCount = items.filter((item) => item.scan_bucket === "dump_watch").length;
-  const unusualCount = items.filter((item) => item.scan_bucket === "unusual_volume").length;
+        const matchesSignal =
+          signalFilter === "all" || item.signalType === signalFilter;
+
+        return matchesQuery && matchesAsset && matchesSignal;
+      })
+      .sort((a, b) => {
+        if (sortBy === "mentions") return b.mentions24h - a.mentions24h;
+        if (sortBy === "move") {
+          return Number(b.changePercent || 0) - Number(a.changePercent || 0);
+        }
+        if (sortBy === "social") return b.socialScore - a.socialScore;
+
+        return b.combinedScore - a.combinedScore;
+      });
+  }, [opportunities, query, assetFilter, signalFilter, sortBy]);
+
+  const topRows = filteredOpportunities.slice(0, 25);
+  const combinedCount = opportunities.filter(
+    (item) => item.signalType === "combined"
+  ).length;
+  const marketOnlyCount = opportunities.filter(
+    (item) => item.signalType === "market"
+  ).length;
+  const socialOnlyCount = opportunities.filter(
+    (item) => item.signalType === "social"
+  ).length;
+  const cryptoCount = opportunities.filter(
+    (item) => item.assetType === "crypto"
+  ).length;
 
   return (
-    <div className="space-y-6">
-      <SectionHeader title={copy.title} text={copy.text} />
-
+    <div className="space-y-5">
       {!hasAccess && (
-        <div className="rounded-[2rem] border border-amber-300/20 bg-amber-400/10 p-6">
-          <div className="text-xs uppercase tracking-[0.24em] text-amber-100/55">
+        <div className="rounded-[1.5rem] border border-amber-300/20 bg-amber-400/5 p-5">
+          <div className="text-xs uppercase tracking-[0.24em] text-amber-100/80">
             Locked
           </div>
-          <div className="mt-3 text-xl font-semibold text-white">
-            {copy.lockedTitle}
+          <div className="mt-2 text-xl font-semibold text-white">
+            {localText.lockedTitle}
           </div>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
-            {copy.lockedText}
+            {localText.lockedText}
           </p>
         </div>
       )}
 
-      <div className={hasAccess ? "space-y-6" : "pointer-events-none select-none space-y-6 opacity-45 blur-[1px]"}>
-        <div className="grid gap-4 md:grid-cols-4">
-          {[
-            [copy.pumpWatch, pumpCount],
-            [copy.dumpWatch, dumpCount],
-            [copy.unusualVolume, unusualCount],
-            ["Universe", "NYSE / NASDAQ / AMEX"],
-          ].map(([label, value]) => (
-            <div
-              key={String(label)}
-              className="rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5"
-            >
-              <div className="text-xs uppercase tracking-[0.2em] text-white/35">
-                {label}
-              </div>
-              <div className="mt-3 text-2xl font-semibold text-white">{value}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+      <div
+        className={
+          hasAccess
+            ? "space-y-5"
+            : "pointer-events-none select-none space-y-5 opacity-50"
+        }
+      >
+        <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.035] p-5 shadow-[0_20px_80px_rgba(0,0,0,0.22)]">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
             <div>
-              <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">
-                {copy.filters}
+              <h2 className="text-3xl font-semibold text-white sm:text-4xl">
+                {localText.title}
+              </h2>
+              <p className="mt-3 max-w-4xl text-sm leading-7 text-white/55">
+                {localText.subtitle}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={refreshAll}
+              disabled={marketLoading || socialLoading}
+              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {marketLoading || socialLoading
+                ? localText.refreshing
+                : localText.refreshAll}
+            </button>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-4">
+            {[
+              [localText.combined, combinedCount],
+              [localText.marketOnly, marketOnlyCount],
+              [localText.socialOnly, socialOnlyCount],
+              [localText.crypto, cryptoCount],
+            ].map(([label, value]) => (
+              <div
+                key={String(label)}
+                className="rounded-[1.1rem] border border-white/10 bg-white/[0.03] p-3"
+              >
+                <div className="text-[10px] uppercase tracking-[0.18em] text-white/40">
+                  {label}
+                </div>
+                <div className="mt-2 text-xl font-semibold text-white">
+                  {value}
+                </div>
               </div>
-              <div className="mt-2 text-sm text-white/45">
-                {copy.source}: {marketSource || "—"} · {copy.scanned}:{" "}
-                {scannedAt ? new Date(scannedAt).toLocaleString() : "—"}
+            ))}
+          </div>
+
+          <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="rounded-[1.4rem] border border-white/10 bg-black/10 p-4">
+              <div className="text-[11px] uppercase tracking-[0.24em] text-white/40">
+                {localText.topTitle}
+              </div>
+              <p className="mt-2 text-sm leading-6 text-white/55">
+                {localText.topText}
+              </p>
+
+              <div className="mt-4 grid gap-3 md:grid-cols-4">
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={localText.search}
+                  className="rounded-full border border-white/10 bg-[#121828] px-4 py-3 text-sm text-white outline-none placeholder:text-white/30"
+                />
+
+                <select
+                  value={assetFilter}
+                  onChange={(event) =>
+                    setAssetFilter(event.target.value as "all" | "stock" | "crypto")
+                  }
+                  className="rounded-full border border-white/10 bg-[#121828] px-4 py-3 text-sm text-white outline-none"
+                >
+                  <option value="all">{localText.allAssets}</option>
+                  <option value="stock">{localText.stocks}</option>
+                  <option value="crypto">{localText.crypto}</option>
+                </select>
+
+                <select
+                  value={signalFilter}
+                  onChange={(event) =>
+                    setSignalFilter(
+                      event.target.value as "all" | "combined" | "market" | "social"
+                    )
+                  }
+                  className="rounded-full border border-white/10 bg-[#121828] px-4 py-3 text-sm text-white outline-none"
+                >
+                  <option value="all">{localText.allSignals}</option>
+                  <option value="combined">{localText.combined}</option>
+                  <option value="market">{localText.marketOnly}</option>
+                  <option value="social">{localText.socialOnly}</option>
+                </select>
+
+                <select
+                  value={sortBy}
+                  onChange={(event) =>
+                    setSortBy(
+                      event.target.value as
+                        | "combined"
+                        | "mentions"
+                        | "move"
+                        | "social"
+                    )
+                  }
+                  className="rounded-full border border-white/10 bg-[#121828] px-4 py-3 text-sm text-white outline-none"
+                >
+                  <option value="combined">{localText.sortScore}</option>
+                  <option value="mentions">{localText.sortMentions}</option>
+                  <option value="move">{localText.sortMove}</option>
+                  <option value="social">{localText.sortSocial}</option>
+                </select>
+              </div>
+
+              {(marketError || socialError) && (
+                <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+                  {marketError || socialError}
+                </div>
+              )}
+
+              <div className="mt-4 overflow-hidden rounded-[1.2rem] border border-white/10">
+                <div className="grid grid-cols-[110px_80px_100px_80px_80px_70px_minmax(220px,1fr)] bg-white/[0.04] px-3 py-3 text-[10px] uppercase tracking-[0.16em] text-white/35">
+                  <div>{localText.ticker}</div>
+                  <div>{localText.asset}</div>
+                  <div>{localText.signal}</div>
+                  <div>{localText.combinedScore}</div>
+                  <div>{localText.mentions24h}</div>
+                  <div>{localText.move}</div>
+                  <div>{localText.reason}</div>
+                </div>
+
+                {topRows.length === 0 ? (
+                  <div className="p-5 text-sm text-white/50">
+                    {localText.noData}
+                  </div>
+                ) : (
+                  topRows.map((item) => (
+                    <div
+                      key={`${item.exchange || ""}-${item.symbol}-${item.signalType}`}
+                      className="grid grid-cols-[110px_80px_100px_80px_80px_70px_minmax(220px,1fr)] items-center border-t border-white/10 px-3 py-3 text-sm text-white/70 transition hover:bg-white/[0.035]"
+                    >
+                      <div className="min-w-0">
+                        <div className="font-semibold text-white">
+                          {item.symbol}
+                        </div>
+                        <div className="truncate text-xs text-white/35">
+                          {item.exchange || "US"}
+                        </div>
+                      </div>
+
+                      <div>
+                        <span className="rounded-full border border-white/10 px-2 py-1 text-[11px] text-white/60">
+                          {item.assetType === "crypto"
+                            ? localText.crypto
+                            : localText.stocks}
+                        </span>
+                      </div>
+
+                      <div>
+                        <span
+                          className={`rounded-full px-2 py-1 text-[11px] ${
+                            item.signalType === "combined"
+                              ? "border border-emerald-300/25 bg-emerald-300/10 text-emerald-100"
+                              : item.signalType === "market"
+                                ? "border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"
+                                : "border border-violet-300/25 bg-violet-300/10 text-violet-100"
+                          }`}
+                        >
+                          {item.signalType === "combined"
+                            ? localText.combined
+                            : item.signalType === "market"
+                              ? localText.marketOnly
+                              : localText.socialOnly}
+                        </span>
+                      </div>
+
+                      <div className="font-semibold text-white">
+                        {item.combinedScore}
+                      </div>
+
+                      <div>
+                        <div className="font-semibold text-white">
+                          {formatMarketNumber(item.mentions24h)}
+                        </div>
+                        <div className="text-xs text-white/35">
+                          1h: {formatMarketNumber(item.mentions1h)}
+                        </div>
+                      </div>
+
+                      <div
+                        className={
+                          Number(item.changePercent || 0) >= 0
+                            ? "font-semibold text-emerald-100"
+                            : "font-semibold text-red-100"
+                        }
+                      >
+                        {item.changePercent === null
+                          ? "—"
+                          : `${Number(item.changePercent || 0) >= 0 ? "+" : ""}${Number(
+                              item.changePercent || 0
+                            ).toFixed(2)}%`}
+                      </div>
+
+                      <div className="text-xs leading-5 text-white/50">
+                        {item.reason}
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 md:flex-row">
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={copy.search}
-                className="min-w-[220px] rounded-full border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 focus:border-cyan-300/40"
-              />
+            <div className="space-y-3">
+              <div className="rounded-[1.4rem] border border-violet-300/20 bg-violet-400/10 p-4">
+                <div className="text-[11px] uppercase tracking-[0.22em] text-violet-100/65">
+                  {localText.aiSoon}
+                </div>
+                <p className="mt-3 text-sm leading-6 text-white/70">
+                  {localText.aiSoonText}
+                </p>
+              </div>
 
-              <select
-                value={bucketFilter}
-                onChange={(event) =>
-                  setBucketFilter(
-                    event.target.value as "all" | MarketScannerItem["scan_bucket"]
-                  )
-                }
-                className="rounded-full border border-white/10 bg-black/25 px-4 py-3 text-sm text-white outline-none focus:border-cyan-300/40"
-              >
-                <option value="all">{copy.allBuckets}</option>
-                <option value="pump_watch">{copy.pumpWatch}</option>
-                <option value="dump_watch">{copy.dumpWatch}</option>
-                <option value="unusual_volume">{copy.unusualVolume}</option>
-                <option value="catalyst_watch">{copy.catalystWatch}</option>
-              </select>
+              <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-4">
+                <div className="text-[11px] uppercase tracking-[0.22em] text-white/40">
+                  Premium data stack
+                </div>
+                <p className="mt-3 text-sm leading-6 text-white/55">
+                  {localText.dataNote}
+                </p>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => loadScanner(true)}
-                disabled={marketLoading}
-                className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {marketLoading ? copy.refreshing : copy.refresh}
-              </button>
+              <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-4 text-xs leading-6 text-white/45">
+                <div>
+                  {localText.source}: market {marketSource || "—"} · social{" "}
+                  {socialSource || "—"}
+                </div>
+                <div>
+                  {localText.scanned}:{" "}
+                  {scannedAt ? new Date(scannedAt).toLocaleString() : "—"} /{" "}
+                  {socialScannedAt
+                    ? new Date(socialScannedAt).toLocaleString()
+                    : "—"}
+                </div>
+              </div>
             </div>
           </div>
 
-          {marketError && (
-            <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
-              {marketError}
+          <div className="mt-5">
+            <button
+              type="button"
+              onClick={() => setRawExpanded((current) => !current)}
+              className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08]"
+            >
+              {rawExpanded ? localText.hideRaw : localText.showRaw}
+            </button>
+          </div>
+
+          {rawExpanded && (
+            <div className="mt-4 grid gap-4 xl:grid-cols-2">
+              <div className="rounded-[1.4rem] border border-white/10 bg-black/10 p-4">
+                <div className="text-sm font-semibold text-white">
+                  {localText.rawMarket}
+                </div>
+                <div className="mt-3 space-y-2">
+                  {items.slice(0, 12).map((item) => (
+                    <div
+                      key={`${item.scan_bucket}-${item.symbol}-${item.scanned_at || ""}`}
+                      className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2 text-sm"
+                    >
+                      <div>
+                        <div className="font-semibold text-white">
+                          {item.symbol}
+                        </div>
+                        <div className="text-xs text-white/35">
+                          {getBucketLabel(item.scan_bucket, copy)}
+                        </div>
+                      </div>
+                      <div className="text-white/60">
+                        {item.opportunity_score ?? 0}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="rounded-[1.4rem] border border-white/10 bg-black/10 p-4">
+                <div className="text-sm font-semibold text-white">
+                  {localText.rawSocial}
+                </div>
+                <div className="mt-3 space-y-2">
+                  {socialItems.slice(0, 12).map((item) => (
+                    <div
+                      key={`${item.exchange || ""}-${item.symbol}-${item.source || ""}`}
+                      className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2 text-sm"
+                    >
+                      <div>
+                        <div className="font-semibold text-white">
+                          {item.symbol}
+                        </div>
+                        <div className="text-xs text-white/35">
+                          {item.exchange || "US"} · {item.source || "social"}
+                        </div>
+                      </div>
+                      <div className="text-white/60">
+                        {item.mentions_24h ?? 0}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-          )}
-        </div>
-
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-5">
-  <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-    <div>
-      <div className="text-xs uppercase tracking-[0.24em] text-fuchsia-100/45">
-        {copy.socialTitle}
-      </div>
-
-      <div className="mt-2 max-w-3xl text-sm leading-6 text-white/45">
-        {copy.socialText}
-      </div>
-
-      <div className="mt-2 text-xs text-white/35">
-        {copy.provider}: {socialSource || "—"} · {copy.scanned}:{" "}
-        {socialScannedAt ? new Date(socialScannedAt).toLocaleString() : "—"}
-      </div>
-    </div>
-
-    <button
-      type="button"
-      onClick={() => loadSocialMentions(true)}
-      disabled={socialLoading}
-      className="rounded-full border border-fuchsia-300/20 bg-fuchsia-300/10 px-5 py-3 text-sm font-semibold text-fuchsia-50 transition hover:bg-fuchsia-300/15 disabled:cursor-not-allowed disabled:opacity-50"
-    >
-      {socialLoading ? copy.socialRefreshing : copy.socialRefresh}
-    </button>
-  </div>
-
-  {socialError && (
-    <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
-      {socialError}
-    </div>
-  )}
-
-  <div className="mt-5 space-y-3">
-    {socialItems.length === 0 ? (
-      <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/45">
-        {copy.noSocialData}
-      </div>
-    ) : (
-      socialItems.slice(0, 10).map((item) => (
-        <MarketSocialMentionRow
-          key={`${item.source}-${item.symbol}-${item.scanned_at || ""}`}
-          item={item}
-          copy={copy}
-        />
-      ))
-    )}
-  </div>
-</div>
-
-        <div className="space-y-3">
-          {filteredItems.length === 0 ? (
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.035] p-6 text-sm text-white/50">
-              {copy.noData}
-            </div>
-          ) : (
-            filteredItems.map((item) => (
-              <MarketScannerRow
-                key={`${item.scan_bucket}-${item.symbol}-${item.scanned_at || ""}`}
-  item={item}
-  language={safeLanguage}
-              />
-            ))
           )}
         </div>
       </div>
     </div>
   );
 }
+
 
 function OverviewTab({ t }: { t: (typeof dashboardDict)[Language] }) {
   return (
