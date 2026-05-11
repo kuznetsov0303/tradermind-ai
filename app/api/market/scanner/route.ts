@@ -14,6 +14,38 @@ type FmpMover = {
   volume?: number;
 };
 
+type FmpNewsItem = {
+  symbol?: string;
+  symbols?: string | string[];
+  tickers?: string[];
+  title?: string;
+  text?: string;
+  site?: string;
+  publisher?: string;
+  publishedDate?: string;
+  publishedAt?: string;
+  date?: string;
+  url?: string;
+};
+
+type NewsCatalyst = {
+  symbol: string;
+  title: string;
+  site: string | null;
+  url: string | null;
+  published_at: string | null;
+  catalyst_type:
+    | "earnings"
+    | "offering_or_dilution"
+    | "analyst_rating"
+    | "biotech_fda"
+    | "crypto_related"
+    | "legal_or_investigation"
+    | "partnership_or_contract"
+    | "general_news";
+  catalyst_score: number;
+};
+
 type ScannerItem = {
   symbol: string;
   exchange: string;
@@ -32,6 +64,7 @@ type ScannerItem = {
   risk_label: string;
   opportunity_score: number;
   source: string;
+news_catalyst?: NewsCatalyst | null;
 };
 
 async function getRequestUser(request: Request) {
@@ -117,6 +150,247 @@ function isProbablyCommonStock(symbol: string) {
   if (s.endsWith("R")) return false;
 
   return true;
+}
+
+function splitNewsSymbols(value: unknown): string[] {
+  if (!value) return [];
+
+  if (Array.isArray(value)) {
+    return value.flatMap((item: unknown) => splitNewsSymbols(item));
+  }
+
+  if (typeof value !== "string") {
+    return [];
+  }
+
+  return value
+    .split(/[,\s|]+/g)
+    .map((item) => cleanSymbol(item))
+    .filter((item): item is string => Boolean(item));
+}
+
+function extractNewsSymbols(item: FmpNewsItem) {
+  const symbols = [
+    ...splitNewsSymbols(item.symbol),
+    ...splitNewsSymbols(item.symbols),
+    ...splitNewsSymbols(item.tickers),
+  ];
+
+  return Array.from(new Set(symbols)).filter((symbol) =>
+    isProbablyCommonStock(symbol)
+  );
+}
+
+function getNewsPublishedAt(item: FmpNewsItem) {
+  return item.publishedDate || item.publishedAt || item.date || null;
+}
+
+function getNewsAgeHours(item: FmpNewsItem) {
+  const publishedAt = getNewsPublishedAt(item);
+
+  if (!publishedAt) {
+    return null;
+  }
+
+  const timestamp = new Date(publishedAt).getTime();
+
+  if (!Number.isFinite(timestamp)) {
+    return null;
+  }
+
+  return (Date.now() - timestamp) / (1000 * 60 * 60);
+}
+
+function classifyNewsCatalyst(title: string): NewsCatalyst["catalyst_type"] {
+  const lower = title.toLowerCase();
+
+  if (
+    lower.includes("earnings") ||
+    lower.includes("revenue") ||
+    lower.includes("eps") ||
+    lower.includes("guidance") ||
+    lower.includes("quarterly results")
+  ) {
+    return "earnings";
+  }
+
+  if (
+    lower.includes("offering") ||
+    lower.includes("registered direct") ||
+    lower.includes("private placement") ||
+    lower.includes("dilution") ||
+    lower.includes("atm offering")
+  ) {
+    return "offering_or_dilution";
+  }
+
+  if (
+    lower.includes("upgrade") ||
+    lower.includes("downgrade") ||
+    lower.includes("price target") ||
+    lower.includes("initiates coverage") ||
+    lower.includes("analyst")
+  ) {
+    return "analyst_rating";
+  }
+
+  if (
+    lower.includes("fda") ||
+    lower.includes("phase 1") ||
+    lower.includes("phase 2") ||
+    lower.includes("phase 3") ||
+    lower.includes("clinical") ||
+    lower.includes("approval")
+  ) {
+    return "biotech_fda";
+  }
+
+  if (
+    lower.includes("bitcoin") ||
+    lower.includes("crypto") ||
+    lower.includes("ethereum") ||
+    lower.includes("blockchain")
+  ) {
+    return "crypto_related";
+  }
+
+  if (
+    lower.includes("lawsuit") ||
+    lower.includes("investigation") ||
+    lower.includes("sec") ||
+    lower.includes("fraud") ||
+    lower.includes("bankruptcy")
+  ) {
+    return "legal_or_investigation";
+  }
+
+  if (
+    lower.includes("partnership") ||
+    lower.includes("contract") ||
+    lower.includes("agreement") ||
+    lower.includes("collaboration") ||
+    lower.includes("deal")
+  ) {
+    return "partnership_or_contract";
+  }
+
+  return "general_news";
+}
+
+function calculateNewsCatalystScore(item: FmpNewsItem) {
+  const ageHours = getNewsAgeHours(item);
+
+  let recencyScore = 4;
+
+  if (ageHours !== null) {
+    if (ageHours <= 1) recencyScore = 15;
+    else if (ageHours <= 6) recencyScore = 12;
+    else if (ageHours <= 24) recencyScore = 8;
+  }
+
+  const catalystType = classifyNewsCatalyst(item.title || "");
+
+  const typeBoost: Record<NewsCatalyst["catalyst_type"], number> = {
+    earnings: 5,
+    offering_or_dilution: 6,
+    analyst_rating: 4,
+    biotech_fda: 6,
+    crypto_related: 4,
+    legal_or_investigation: 5,
+    partnership_or_contract: 5,
+    general_news: 2,
+  };
+
+  return Math.min(20, recencyScore + typeBoost[catalystType]);
+}
+
+function buildNewsCatalystMap(newsItems: FmpNewsItem[]) {
+  const newsMap = new Map<string, NewsCatalyst[]>();
+
+  for (const newsItem of newsItems) {
+    const title = newsItem.title?.trim();
+
+    if (!title) {
+      continue;
+    }
+
+    const symbols = extractNewsSymbols(newsItem);
+
+    if (symbols.length === 0) {
+      continue;
+    }
+
+    const catalystType = classifyNewsCatalyst(title);
+    const catalystScore = calculateNewsCatalystScore(newsItem);
+
+    for (const symbol of symbols) {
+      const catalyst: NewsCatalyst = {
+        symbol,
+        title,
+        site: newsItem.site || newsItem.publisher || null,
+        url: newsItem.url || null,
+        published_at: getNewsPublishedAt(newsItem),
+        catalyst_type: catalystType,
+        catalyst_score: catalystScore,
+      };
+
+      const existing = newsMap.get(symbol) || [];
+      existing.push(catalyst);
+
+      newsMap.set(
+        symbol,
+        existing.sort((a, b) => b.catalyst_score - a.catalyst_score)
+      );
+    }
+  }
+
+  return newsMap;
+}
+
+function buildCatalystRiskLabel(
+  item: ScannerItem,
+  catalyst: NewsCatalyst
+) {
+  if (catalyst.catalyst_type === "offering_or_dilution") {
+    return "Fresh offering/dilution headline — high trap risk";
+  }
+
+  if (catalyst.catalyst_type === "legal_or_investigation") {
+    return "Fresh legal/investigation headline — elevated headline risk";
+  }
+
+  if (catalyst.catalyst_type === "earnings") {
+    return "Fresh earnings catalyst — watch volume and VWAP reaction";
+  }
+
+  if (catalyst.catalyst_type === "biotech_fda") {
+    return "Fresh biotech/FDA catalyst — high volatility risk";
+  }
+
+  return `${item.risk_label} + fresh news catalyst`;
+}
+
+function enrichScannerItemWithNews(
+  item: ScannerItem,
+  newsMap: Map<string, NewsCatalyst[]>
+): ScannerItem {
+  const catalysts = newsMap.get(item.symbol) || [];
+  const topCatalyst = catalysts[0];
+
+  if (!topCatalyst) {
+    return item;
+  }
+
+  return {
+    ...item,
+    catalyst: topCatalyst.title,
+    risk_label: buildCatalystRiskLabel(item, topCatalyst),
+    opportunity_score: Math.min(
+      100,
+      Math.round(item.opportunity_score + topCatalyst.catalyst_score)
+    ),
+    news_catalyst: topCatalyst,
+  };
 }
 
 function scoreMover(item: FmpMover, bucket: ScannerItem["scan_bucket"]) {
@@ -208,12 +482,12 @@ async function fetchFmpJson(path: string) {
 }
 
 async function loadFreshScannerData() {
-  const [gainers, losers, active] = await Promise.allSettled([
-    fetchFmpJson("biggest-gainers"),
-    fetchFmpJson("biggest-losers"),
-    fetchFmpJson("most-actives"),
-  ]);
-
+  const [gainers, losers, active, news] = await Promise.allSettled([
+  fetchFmpJson("biggest-gainers"),
+  fetchFmpJson("biggest-losers"),
+  fetchFmpJson("most-actives"),
+  fetchFmpJson("news/stock-latest?page=0&limit=100"),
+]);
   const rows: ScannerItem[] = [];
 
   const appendRows = (
@@ -238,12 +512,28 @@ async function loadFreshScannerData() {
   };
 
   appendRows(gainers, "pump_watch");
-  appendRows(losers, "dump_watch");
-  appendRows(active, "unusual_volume");
+appendRows(losers, "dump_watch");
+appendRows(active, "unusual_volume");
+
+const newsItems =
+  news.status === "fulfilled" && Array.isArray(news.value)
+    ? (news.value as FmpNewsItem[])
+    : [];
+
+const newsMap = buildNewsCatalystMap(newsItems);
+
+console.log("News catalyst provider result:", {
+  fetchedNews: newsItems.length,
+  matchedSymbols: newsMap.size,
+});
+
+const enrichedRows = rows.map((item) =>
+  enrichScannerItemWithNews(item, newsMap)
+);
 
   const deduped = new Map<string, ScannerItem>();
 
-  for (const item of rows) {
+  for (const item of enrichedRows) {
     const key = `${item.scan_bucket}-${item.symbol}`;
     const existing = deduped.get(key);
 

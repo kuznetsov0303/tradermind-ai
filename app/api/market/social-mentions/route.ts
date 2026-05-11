@@ -38,11 +38,13 @@ type RedditPost = {
   };
 };
 
+type SocialMentionSource = "reddit" | "stocktwits";
+
 type SocialMentionItem = {
   symbol: string;
   exchange: string | null;
   name: string | null;
-  source: "reddit";
+  source: SocialMentionSource;
   mentions_24h: number;
   mentions_1h: number;
   mention_velocity: number;
@@ -57,6 +59,53 @@ type SocialMentionItem = {
     created_utc: number;
   }>;
   raw_data: Record<string, unknown>;
+};
+
+type StocktwitsSymbol = {
+  id?: number;
+  symbol?: string;
+  title?: string;
+  exchange?: string;
+  sector?: string;
+  industry?: string;
+  trending?: boolean;
+  trending_score?: number;
+  watchlist_count?: number;
+};
+
+type StocktwitsMessage = {
+  id?: number;
+  body?: string;
+  created_at?: string;
+  user?: {
+    id?: number;
+    username?: string;
+    followers?: number;
+  };
+  symbols?: StocktwitsSymbol[];
+  entities?: {
+    sentiment?: {
+      basic?: "Bullish" | "Bearish" | string | null;
+    } | null;
+  };
+};
+
+type StocktwitsSymbolStreamResponse = {
+  response?: {
+    status?: number;
+  };
+  symbol?: StocktwitsSymbol;
+  messages?: StocktwitsMessage[];
+  errors?: Array<{
+    message?: string;
+  }>;
+};
+
+type SocialEnrichmentCandidate = {
+  symbol: string;
+  exchange: string | null;
+  name: string | null;
+  opportunity_score: number;
 };
 
 const REDDIT_SUBREDDITS = [
@@ -243,9 +292,8 @@ async function fetchFmpUniverse() {
   }
 
   const urls = [
-    `https://financialmodelingprep.com/stable/actively-trading-list?apikey=${apiKey}`,
-    `https://financialmodelingprep.com/api/v3/stock/list?apikey=${apiKey}`,
-  ];
+  `https://financialmodelingprep.com/stable/actively-trading-list?apikey=${apiKey}`,
+];
 
   const universe = new Map<
     string,
@@ -362,9 +410,8 @@ async function fetchBinanceUniverse() {
 
   try {
     const response = await fetch("https://api.binance.com/api/v3/exchangeInfo", {
-      next: { revalidate: 60 * 60 },
-    });
-
+  cache: "no-store",
+});
     if (!response.ok) {
       const text = await response.text();
 
@@ -531,6 +578,322 @@ function calculateSocialScore({
   else if (velocity >= 0.2) score += 7;
 
   return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+async function loadLatestMarketCandidatesForSocialEnrichment() {
+  const maxCandidates = Number(
+    process.env.STOCKTWITS_MAX_CANDIDATES_PER_REFRESH || "50"
+  );
+
+  const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabaseAdmin
+    .from("market_scanner_snapshots")
+    .select("symbol, exchange, name, opportunity_score, scanned_at")
+    .gte("scanned_at", since)
+    .order("opportunity_score", { ascending: false })
+    .limit(250);
+
+  if (error) {
+    console.warn("Failed to load market candidates for Stocktwits:", error);
+  }
+
+  const candidates = new Map<string, SocialEnrichmentCandidate>();
+
+  for (const row of data || []) {
+    const symbol = cleanSymbol(String(row.symbol || ""));
+    const exchange = normalizeExchange(String(row.exchange || ""));
+
+    if (!symbol || !isProbablyCommonStockSymbol(symbol)) {
+      continue;
+    }
+
+    if (!isAllowedExchange(exchange)) {
+      continue;
+    }
+
+    const existing = candidates.get(symbol);
+    const opportunityScore = Number(row.opportunity_score || 0);
+
+    if (!existing || opportunityScore > existing.opportunity_score) {
+      candidates.set(symbol, {
+        symbol,
+        exchange,
+        name: row.name ? String(row.name) : symbol,
+        opportunity_score: opportunityScore,
+      });
+    }
+  }
+
+  if (candidates.size > 0) {
+    return Array.from(candidates.values()).slice(
+      0,
+      Math.max(1, maxCandidates)
+    );
+  }
+
+  console.warn(
+    "No fresh market candidates found. Using static fallback for Stocktwits enrichment."
+  );
+
+  return STATIC_US_STOCK_UNIVERSE.slice(0, Math.max(1, maxCandidates)).map(
+    (item) => ({
+      symbol: item.symbol,
+      exchange: item.exchange,
+      name: item.name,
+      opportunity_score: 0,
+    })
+  );
+}
+
+function getStocktwitsMessageAgeHours(createdAt?: string) {
+  if (!createdAt) return null;
+
+  const createdTime = new Date(createdAt).getTime();
+
+  if (!Number.isFinite(createdTime)) {
+    return null;
+  }
+
+  return (Date.now() - createdTime) / (1000 * 60 * 60);
+}
+
+async function fetchStocktwitsSymbolStream(symbol: string) {
+  const cleanStocktwitsSymbol = cleanSymbol(symbol);
+  const messageLimit = Number(
+    process.env.STOCKTWITS_SYMBOL_MESSAGE_LIMIT || "30"
+  );
+
+  if (!cleanStocktwitsSymbol) {
+    return null;
+  }
+
+  const params = new URLSearchParams({
+    limit: String(Math.min(Math.max(messageLimit, 1), 30)),
+  });
+
+  try {
+    const response = await fetch(
+      `https://api.stocktwits.com/api/2/streams/symbol/${cleanStocktwitsSymbol}.json?${params.toString()}`,
+      {
+        headers: {
+          Accept: "application/json",
+        },
+        cache: "no-store",
+      }
+    );
+
+    const data =
+      (await response.json().catch(() => null)) as StocktwitsSymbolStreamResponse | null;
+
+    if (!response.ok) {
+      console.warn("Stocktwits stream error:", {
+        symbol: cleanStocktwitsSymbol,
+        status: response.status,
+        data,
+      });
+
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.warn("Stocktwits fetch failed:", {
+      symbol: cleanStocktwitsSymbol,
+      error,
+    });
+
+    return null;
+  }
+}
+
+function calculateStocktwitsSocialScore({
+  mentions24h,
+  mentions1h,
+  bullishCount,
+  bearishCount,
+  uniqueUsers,
+  opportunityScore,
+  trendingScore,
+  watchlistCount,
+}: {
+  mentions24h: number;
+  mentions1h: number;
+  bullishCount: number;
+  bearishCount: number;
+  uniqueUsers: number;
+  opportunityScore: number;
+  trendingScore: number;
+  watchlistCount: number;
+}) {
+  let score = 20;
+
+  score += Math.min(mentions24h * 3, 25);
+  score += Math.min(mentions1h * 8, 18);
+  score += Math.min(uniqueUsers * 3, 15);
+  score += Math.min((bullishCount + bearishCount) * 4, 12);
+  score += Math.min(Math.max(trendingScore, 0), 10);
+  score += Math.min(Math.log10(Math.max(watchlistCount, 1)) * 4, 8);
+  score += Math.min(opportunityScore * 0.12, 12);
+
+  return Math.max(0, Math.min(100, Math.round(score)));
+}
+
+function buildStocktwitsRawData({
+  bullishCount,
+  bearishCount,
+  uniqueUsers,
+  opportunityScore,
+  trendingScore,
+  watchlistCount,
+}: {
+  bullishCount: number;
+  bearishCount: number;
+  uniqueUsers: number;
+  opportunityScore: number;
+  trendingScore: number;
+  watchlistCount: number;
+}) {
+  return {
+    provider: "stocktwits",
+    bullishCount,
+    bearishCount,
+    uniqueUsers,
+    marketCandidateScore: opportunityScore,
+    trendingScore,
+    watchlistCount,
+  };
+}
+
+async function loadStocktwitsMentions() {
+    if (process.env.STOCKTWITS_ENABLED !== "true") {
+    console.log("Stocktwits scanner skipped:", {
+      reason: "STOCKTWITS_ENABLED is not true",
+      premiumPlan: "Use Stocktwits Firestream / premium provider before release.",
+    });
+
+    return [];
+  }
+  const candidates = await loadLatestMarketCandidatesForSocialEnrichment();
+  const items: SocialMentionItem[] = [];
+
+  for (const candidate of candidates) {
+    const data = await fetchStocktwitsSymbolStream(candidate.symbol);
+
+    if (!data?.messages?.length) {
+      continue;
+    }
+
+    const messages24h = data.messages.filter((message) => {
+      const ageHours = getStocktwitsMessageAgeHours(message.created_at);
+
+      if (ageHours === null) {
+        return true;
+      }
+
+      return ageHours <= 24;
+    });
+
+    if (messages24h.length === 0) {
+      continue;
+    }
+
+    const messages1h = messages24h.filter((message) => {
+      const ageHours = getStocktwitsMessageAgeHours(message.created_at);
+
+      if (ageHours === null) {
+        return false;
+      }
+
+      return ageHours <= 1;
+    });
+
+    const bullishCount = messages24h.filter(
+      (message) => message.entities?.sentiment?.basic === "Bullish"
+    ).length;
+
+    const bearishCount = messages24h.filter(
+      (message) => message.entities?.sentiment?.basic === "Bearish"
+    ).length;
+
+    const uniqueUsers = new Set(
+      messages24h
+        .map((message) => message.user?.id || message.user?.username)
+        .filter(Boolean)
+    ).size;
+
+    const sentiment =
+      bullishCount > bearishCount
+        ? "bullish"
+        : bearishCount > bullishCount
+          ? "bearish"
+          : "neutral";
+
+    const mentionVelocity =
+      messages24h.length > 0
+        ? Number((messages1h.length / messages24h.length).toFixed(3))
+        : 0;
+
+    const trendingScore = Number(data.symbol?.trending_score || 0);
+    const watchlistCount = Number(data.symbol?.watchlist_count || 0);
+
+    const socialScore = calculateStocktwitsSocialScore({
+      mentions24h: messages24h.length,
+      mentions1h: messages1h.length,
+      bullishCount,
+      bearishCount,
+      uniqueUsers,
+      opportunityScore: candidate.opportunity_score,
+      trendingScore,
+      watchlistCount,
+    });
+
+    items.push({
+      symbol: candidate.symbol,
+      exchange: candidate.exchange,
+      name: candidate.name,
+      source: "stocktwits",
+      mentions_24h: messages24h.length,
+      mentions_1h: messages1h.length,
+      mention_velocity: mentionVelocity,
+      sentiment,
+      social_score: socialScore,
+      sample_posts: messages24h.slice(0, 3).map((message) => ({
+        title: message.body || `${candidate.symbol} Stocktwits discussion`,
+        subreddit: "Stocktwits",
+        url: `https://stocktwits.com/symbol/${candidate.symbol}`,
+        score: Number(message.user?.followers || 0),
+        comments: 0,
+        created_utc: message.created_at
+          ? Math.floor(new Date(message.created_at).getTime() / 1000)
+          : Math.floor(Date.now() / 1000),
+      })),
+      raw_data: buildStocktwitsRawData({
+        bullishCount,
+        bearishCount,
+        uniqueUsers,
+        opportunityScore: candidate.opportunity_score,
+        trendingScore,
+        watchlistCount,
+      }),
+    });
+  }
+
+  const sortedItems = items
+    .sort((a, b) => b.social_score - a.social_score)
+    .slice(0, 100);
+
+  console.log("Stocktwits scanner result:", {
+    candidates: candidates.length,
+    matchedSymbols: sortedItems.length,
+    topSymbols: sortedItems.slice(0, 10).map((item) => ({
+      symbol: item.symbol,
+      mentions_24h: item.mentions_24h,
+      social_score: item.social_score,
+    })),
+  });
+
+  return sortedItems;
 }
 
 async function fetchRedditSubredditPosts(subreddit: string) {
@@ -758,19 +1121,26 @@ export async function GET(request: Request) {
         .select("*")
         .gte("scanned_at", since)
         .order("social_score", { ascending: false })
-        .limit(100);
+        .limit(150);
 
       if (cachedRows && cachedRows.length > 0) {
         return NextResponse.json({
           source: "cache",
-          provider: "reddit",
+          provider: "reddit_stocktwits",
           scannedAt: cachedRows[0]?.scanned_at,
           items: cachedRows,
         });
       }
     }
 
-    const freshItems = await loadRedditMentions();
+   const [redditItems, stocktwitsItems] = await Promise.all([
+  loadRedditMentions(),
+  loadStocktwitsMentions(),
+]);
+
+const freshItems = [...redditItems, ...stocktwitsItems]
+  .sort((a, b) => b.social_score - a.social_score)
+  .slice(0, 150);
     const scannedAt = new Date().toISOString();
 
     if (freshItems.length > 0) {
@@ -794,7 +1164,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       source: "fresh",
-      provider: "reddit",
+      provider: "reddit_stocktwits",
       scannedAt,
       items: freshItems,
     });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 import {
   LineChart,
@@ -27,6 +28,7 @@ type TabId =
   | "journal"
   | "charts"
   | "market"
+  | "alerts"
   | "coach"
   | "learning"
   | "reports"
@@ -79,6 +81,18 @@ type Trade = {
   screenshot_url: string | null;
   trade_date: string;
   created_at: string;
+  source_alert_id?: string | null;
+source_setup_slug?: string | null;
+source_setup_name?: string | null;
+alert_confidence_score?: number | null;
+alert_confidence_tier?: string | null;
+alert_entry_zone_min?: number | null;
+alert_entry_zone_max?: number | null;
+alert_stop_price?: number | null;
+alert_target_1?: number | null;
+alert_target_2?: number | null;
+alert_target_3?: number | null;
+alert_plan?: Record<string, unknown> | null;
 };
 
 type SavedAiReport = {
@@ -606,11 +620,12 @@ locked: {
       text: "After payment, trade journal, SkillEdge AI Coach, TradingView charts, learning, reports and AI review history will be unlocked.",
       button: "Choose plan",
     },
-    tabs: {
+   tabs: {
   overview: "Overview",
   journal: "Trade journal",
   charts: "Charts",
   market: "Market",
+  alerts: "Alerts",
   coach: "AI Coach",
   learning: "Learning",
   reports: "Reports",
@@ -1202,6 +1217,7 @@ locked: {
   journal: "Журнал сделок",
   charts: "Графики",
   market: "Рынок",
+  alerts: "Alerts",
   coach: "AI Coach",
   learning: "Обучение",
   reports: "Отчёты",
@@ -1795,6 +1811,7 @@ locked: {
   journal: "Журнал угод",
   charts: "Графіки",
   market: "Ринок",
+  alerts: "Alerts",
   coach: "AI Coach",
   learning: "Навчання",
   reports: "Звіти",
@@ -1907,6 +1924,7 @@ const tabs: { id: TabId }[] = [
   { id: "journal" },
   { id: "charts" },
   { id: "market" },
+  { id: "alerts" },
   { id: "coach" },
   { id: "learning" },
   { id: "reports" },
@@ -2015,6 +2033,8 @@ const [chartAnalysisHistory, setChartAnalysisHistory] = useState<AiAnalysis[]>([
 const [expandedChartAnalysisTradeId, setExpandedChartAnalysisTradeId] =
   useState(""); 
 const [equityExpanded, setEquityExpanded] = useState(false);
+const [tradeDraftAlert, setTradeDraftAlert] =
+  useState<DashboardMarketAlert | null>(null);
 const [tradeForm, setTradeForm] = useState({
   ticker: "",
   market: "stocks",
@@ -2034,6 +2054,7 @@ const [tradeForm, setTradeForm] = useState({
   tradeDate: new Date().toISOString().slice(0, 10),
 });
 const resetTradeForm = () => {
+    setTradeDraftAlert(null);
   setTradeForm({
     ticker: "",
     market: "stocks",
@@ -2316,7 +2337,88 @@ const handleOpenTradeChart = (trade: Trade) => {
   setActiveTab("charts");
 };
 
+const handleCreateTradeFromAlert = (alert: DashboardMarketAlert) => {
+  setEditingTradeId("");
+  setSelectedTradeIdForScreenshot("");
+  setScreenshotFiles([]);
+  setScreenshotError("");
+
+  const isShort = alert.direction === "downside";
+  const market = alert.asset_type === "crypto" ? "crypto" : "stocks";
+  const direction = isShort ? "short" : "long";
+
+  const entryMin =
+    typeof alert.entry_zone_min === "number" ? alert.entry_zone_min : null;
+
+  const entryMax =
+    typeof alert.entry_zone_max === "number" ? alert.entry_zone_max : null;
+
+  const entryReference =
+    entryMin !== null && entryMax !== null
+      ? (entryMin + entryMax) / 2
+      : entryMin ?? entryMax;
+
+  const targets = [alert.target_1, alert.target_2, alert.target_3]
+    .filter((value): value is number => typeof value === "number")
+    .join(" / ");
+
+  const setupName =
+    alert.setup_name || alert.setup_type || alert.title || "SkillEdge AI Alert";
+
+  const notes = [
+    "Created from SkillEdge AI Alert.",
+    `Alert title: ${alert.title}`,
+    `Direction: ${alert.direction}`,
+    `Timeframe: ${alert.setup_timeframe || "5m"} setup / ${
+      alert.confirmation_timeframe || "10m"
+    } confirmation`,
+    `Entry zone: ${
+      entryMin !== null && entryMax !== null
+        ? `${entryMin}–${entryMax}`
+        : "wait trigger"
+    }`,
+    `Stop: ${alert.stop_price || "—"}`,
+    `Targets: ${targets || "—"}`,
+    alert.trigger_label ? `Trigger: ${alert.trigger_label}` : null,
+    alert.why_signal_fired ? `Why signal fired: ${alert.why_signal_fired}` : null,
+    alert.risk_note ? `Risk: ${alert.risk_note}` : null,
+    alert.management_plan ? `Management: ${alert.management_plan}` : null,
+    alert.invalidation ? `Invalidation: ${alert.invalidation}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  setTradeDraftAlert(alert);
+
+  setTradeForm({
+    ticker: alert.symbol || "",
+    market,
+    direction,
+    entryPrice: entryReference !== null ? String(Number(entryReference.toFixed(4))) : "",
+    exitPrice: "",
+    stopLoss: alert.stop_price ? String(alert.stop_price) : "",
+    positionSize: "",
+    riskAmount: "",
+    pnl: "",
+    result: "",
+    setup: setupName,
+    emotion: "",
+    mistake: "",
+    lesson: alert.lesson_summary || "",
+    notes,
+    tradeDate: new Date().toISOString().slice(0, 10),
+  });
+
+  setActiveTab("journal");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
+
 const handleTradeEditStart = (trade: Trade) => {
+    setTradeDraftAlert(null);
   setEditingTradeId(trade.id);
   setSelectedTradeIdForScreenshot(trade.id);
   setScreenshotFiles([]);
@@ -2393,8 +2495,55 @@ if (!editingTradeId && trades.length >= planLimits.maxTrades) {
     emotion: tradeForm.emotion.trim() || null,
     mistake: tradeForm.mistake.trim() || null,
     lesson: tradeForm.lesson.trim() || null,
-    notes: tradeForm.notes.trim() || null,
-  };
+notes: tradeForm.notes.trim() || null,
+...(tradeDraftAlert
+  ? {
+      source_alert_id: tradeDraftAlert.id,
+      source_setup_slug: tradeDraftAlert.setup_slug || null,
+      source_setup_name:
+        tradeDraftAlert.setup_name ||
+        tradeDraftAlert.setup_type ||
+        tradeDraftAlert.title ||
+        null,
+      alert_confidence_score:
+        tradeDraftAlert.confidence_score || tradeDraftAlert.score || null,
+      alert_confidence_tier: tradeDraftAlert.confidence_tier || null,
+      alert_entry_zone_min: tradeDraftAlert.entry_zone_min || null,
+      alert_entry_zone_max: tradeDraftAlert.entry_zone_max || null,
+      alert_stop_price: tradeDraftAlert.stop_price || null,
+      alert_target_1: tradeDraftAlert.target_1 || null,
+      alert_target_2: tradeDraftAlert.target_2 || null,
+      alert_target_3: tradeDraftAlert.target_3 || null,
+      alert_plan: {
+        alert_id: tradeDraftAlert.id,
+        symbol: tradeDraftAlert.symbol,
+        title: tradeDraftAlert.title,
+        direction: tradeDraftAlert.direction,
+        setup_slug: tradeDraftAlert.setup_slug,
+        setup_name: tradeDraftAlert.setup_name || tradeDraftAlert.setup_type,
+        setup_timeframe: tradeDraftAlert.setup_timeframe,
+        confirmation_timeframe: tradeDraftAlert.confirmation_timeframe,
+        confidence_score:
+          tradeDraftAlert.confidence_score || tradeDraftAlert.score || null,
+        confidence_tier: tradeDraftAlert.confidence_tier,
+        trigger_label: tradeDraftAlert.trigger_label,
+        entry_zone_min: tradeDraftAlert.entry_zone_min,
+        entry_zone_max: tradeDraftAlert.entry_zone_max,
+        stop_price: tradeDraftAlert.stop_price,
+        target_1: tradeDraftAlert.target_1,
+        target_2: tradeDraftAlert.target_2,
+        target_3: tradeDraftAlert.target_3,
+        reason: tradeDraftAlert.reason,
+        risk_note: tradeDraftAlert.risk_note,
+        scenario: tradeDraftAlert.scenario,
+        invalidation: tradeDraftAlert.invalidation,
+        management_plan: tradeDraftAlert.management_plan,
+        confirmation_checklist: tradeDraftAlert.confirmation_checklist || [],
+        avoid_if: tradeDraftAlert.avoid_if || [],
+      },
+    }
+  : {}),
+};
 
   setTradeSaving(true);
 
@@ -2693,6 +2842,11 @@ setExpandedChartAnalysisTradeId(tradeId);
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#050813] px-4 py-6 text-white md:px-8">
       <BackgroundFX />
+      <DashboardAlertsWidget
+  subscription={subscription}
+  language={language}
+  onOpenAlerts={() => setActiveTab("alerts")}
+/>
 
       <div className="relative z-10 mx-auto max-w-7xl">
         <motion.header
@@ -2861,6 +3015,14 @@ onTradeEditCancel={handleTradeEditCancel}
               
               {activeTab === "market" && (
   <MarketTab subscription={subscription} language={language} t={t} />
+)}
+{activeTab === "alerts" && (
+  <AlertsTab
+    subscription={subscription}
+    language={language}
+    trades={trades}
+    onCreateTradeFromAlert={handleCreateTradeFromAlert}
+  />
 )}
               {activeTab === "coach" && (
   <CoachTab
@@ -3061,6 +3223,135 @@ function ActionButton({
       {label}
     </button>
   );
+}
+
+function formatExecutionNumber(value: number | null | undefined) {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "—";
+  }
+
+  if (Math.abs(value) >= 100) return value.toFixed(2);
+  if (Math.abs(value) >= 10) return value.toFixed(2);
+  if (Math.abs(value) >= 1) return value.toFixed(3);
+
+  return value.toFixed(5);
+}
+
+function getSignalPlanDirection(trade: Trade) {
+  const plan =
+    trade.alert_plan && typeof trade.alert_plan === "object"
+      ? (trade.alert_plan as Record<string, unknown>)
+      : {};
+
+  const rawDirection =
+    typeof plan.direction === "string" ? plan.direction : "";
+
+  if (rawDirection === "downside") return "short";
+  if (rawDirection === "upside") return "long";
+
+  return null;
+}
+
+function getTargetHitFromTrade(trade: Trade) {
+  if (trade.exit_price === null) return "—";
+
+  const direction = trade.direction;
+  const targets = [
+    { label: "TP3", value: trade.alert_target_3 },
+    { label: "TP2", value: trade.alert_target_2 },
+    { label: "TP1", value: trade.alert_target_1 },
+  ].filter((target) => typeof target.value === "number") as Array<{
+    label: string;
+    value: number;
+  }>;
+
+  for (const target of targets) {
+    if (direction === "long" && trade.exit_price >= target.value) {
+      return target.label;
+    }
+
+    if (direction === "short" && trade.exit_price <= target.value) {
+      return target.label;
+    }
+  }
+
+  return "No TP";
+}
+
+function getSignalExecutionReview(trade: Trade) {
+  if (!trade.source_alert_id) return null;
+
+  const entryMin = trade.alert_entry_zone_min;
+  const entryMax = trade.alert_entry_zone_max;
+  const entry = trade.entry_price;
+  const stop = trade.stop_loss;
+  const plannedStop = trade.alert_stop_price;
+
+  const hasEntryZone =
+    typeof entryMin === "number" && typeof entryMax === "number";
+
+  const entryInZone =
+    entry !== null && hasEntryZone
+      ? entry >= Math.min(entryMin, entryMax) &&
+        entry <= Math.max(entryMin, entryMax)
+      : null;
+
+  const entryDistance =
+    entry !== null && hasEntryZone
+      ? trade.direction === "long"
+        ? ((entry - Math.max(entryMin, entryMax)) /
+            Math.max(entryMin, entryMax)) *
+          100
+        : ((Math.min(entryMin, entryMax) - entry) /
+            Math.min(entryMin, entryMax)) *
+          100
+      : null;
+
+  const stopDiffPercent =
+    stop !== null && plannedStop
+      ? (Math.abs(stop - plannedStop) / plannedStop) * 100
+      : null;
+
+  const stopMatched =
+    stopDiffPercent !== null ? stopDiffPercent <= 0.75 : null;
+
+  const planDirection = getSignalPlanDirection(trade);
+  const directionMatched = planDirection ? trade.direction === planDirection : true;
+
+  const targetHit = getTargetHitFromTrade(trade);
+
+  let adherenceScore = 40;
+
+  if (directionMatched) adherenceScore += 15;
+  if (entryInZone === true) adherenceScore += 25;
+  if (entryInZone === false) adherenceScore -= 10;
+  if (stopMatched === true) adherenceScore += 15;
+  if (stopMatched === false) adherenceScore -= 10;
+  if (targetHit !== "—" && targetHit !== "No TP") adherenceScore += 15;
+  if (trade.pnl !== null && trade.pnl > 0) adherenceScore += 10;
+  if (trade.pnl !== null && trade.pnl < 0) adherenceScore -= 5;
+
+  adherenceScore = Math.max(0, Math.min(100, Math.round(adherenceScore)));
+
+  const executionLabel =
+    adherenceScore >= 80
+      ? "Strong execution"
+      : adherenceScore >= 60
+        ? "Acceptable execution"
+        : adherenceScore >= 40
+          ? "Weak execution"
+          : "Plan broken";
+
+  return {
+    entryInZone,
+    entryDistance,
+    stopMatched,
+    stopDiffPercent,
+    directionMatched,
+    targetHit,
+    adherenceScore,
+    executionLabel,
+  };
 }
 
 function JournalTab({
@@ -4154,6 +4445,122 @@ const downloadTradesXlsx = () => {
   </div>
 </div>
 
+{trade.source_alert_id ? (
+  (() => {
+    const executionReview = getSignalExecutionReview(trade);
+
+    if (!executionReview) return null;
+
+    return (
+      <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+              Signal-linked trade
+            </div>
+
+            <div className="mt-2 text-sm font-semibold text-white/85">
+              {trade.source_setup_name || trade.setup || "SkillEdge AI Signal"}
+            </div>
+
+            <div className="mt-1 text-xs leading-5 text-white/45">
+              Alert confidence:{" "}
+              {trade.alert_confidence_score ?? "—"}
+              {trade.alert_confidence_tier
+                ? ` · ${trade.alert_confidence_tier}`
+                : ""}
+            </div>
+          </div>
+
+          <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
+            {executionReview.adherenceScore}/100 ·{" "}
+            {executionReview.executionLabel}
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              Entry quality
+            </div>
+
+            <div className="mt-2 text-sm font-semibold text-white/80">
+              {executionReview.entryInZone === null
+                ? "No plan zone"
+                : executionReview.entryInZone
+                  ? "In zone"
+                  : "Outside zone"}
+            </div>
+
+            <div className="mt-1 text-xs leading-5 text-white/45">
+              Plan:{" "}
+              {trade.alert_entry_zone_min && trade.alert_entry_zone_max
+                ? `${formatExecutionNumber(
+                    trade.alert_entry_zone_min
+                  )}–${formatExecutionNumber(trade.alert_entry_zone_max)}`
+                : "—"}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              Stop adherence
+            </div>
+
+            <div className="mt-2 text-sm font-semibold text-white/80">
+              {executionReview.stopMatched === null
+                ? "No stop data"
+                : executionReview.stopMatched
+                  ? "Matched"
+                  : "Different"}
+            </div>
+
+            <div className="mt-1 text-xs leading-5 text-white/45">
+              Plan: {formatExecutionNumber(trade.alert_stop_price)}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              Target result
+            </div>
+
+            <div className="mt-2 text-sm font-semibold text-white/80">
+              {executionReview.targetHit}
+            </div>
+
+            <div className="mt-1 text-xs leading-5 text-white/45">
+              TP1 / TP2 / TP3
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              Direction
+            </div>
+
+            <div className="mt-2 text-sm font-semibold text-white/80">
+              {executionReview.directionMatched ? "Matched" : "Different"}
+            </div>
+
+            <div className="mt-1 text-xs leading-5 text-white/45">
+              Trade: {trade.direction}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/55">
+          {executionReview.adherenceScore >= 80
+            ? "You followed the alert plan well. This is the type of execution SkillEdge AI should track as a personal strength."
+            : executionReview.adherenceScore >= 60
+              ? "Execution was acceptable, but review entry timing, stop placement and target management."
+              : "Execution likely deviated from the original alert plan. Review whether you entered late, changed the stop, or ignored confirmation."}
+        </div>
+      </div>
+    );
+  })()
+) : null}
+
                   <div className="mt-4 grid gap-3 text-sm text-white/55">
   <div>
     {t.journal.cardLabels.entry}: {trade.entry_price ?? "—"}
@@ -4904,6 +5311,8 @@ noSocialData: string;
   downside: string;
 };
 
+
+
 const marketScannerCopy: Record<Language, MarketScannerCopy> = {
   en: {
     title: "Market Intelligence Scanner",
@@ -5307,6 +5716,6330 @@ function MarketScannerRow({
   );
 }
 
+type DashboardMarketAlert = {
+  id: string;
+  symbol: string;
+  name: string | null;
+  exchange: string | null;
+  asset_type: "stock" | "crypto" | string;
+  alert_type: string;
+  direction: "upside" | "downside" | "neutral" | string;
+  score: number;
+  confidence_score?: number | null;
+  title: string;
+  reason: string;
+  risk_note: string | null;
+  scenario: string | null;
+  setup_type?: string | null;
+  setup_timeframe?: string | null;
+  confirmation_timeframe?: string | null;
+  confidence_tier?: string | null;
+  why_signal_fired?: string | null;
+  confirmation_checklist?: string[] | null;
+  avoid_if?: string[] | null;
+  lesson_summary?: string | null;
+  playbook_status?: string | null;
+  setup_slug?: string | null;
+  setup_name?: string | null;
+  setup_description?: string | null;
+  setup_confirmation?: string | null;
+  setup_common_mistake?: string | null;
+  trigger_label?: string | null;
+  entry_zone_min?: number | null;
+  entry_zone_max?: number | null;
+  stop_price?: number | null;
+  target_1?: number | null;
+  target_2?: number | null;
+  target_3?: number | null;
+  invalidation?: string | null;
+  management_plan?: string | null;
+  is_new?: boolean;
+  viewed_at?: string | null;
+  status: string;
+  created_at: string;
+  expires_at: string;
+  outcome_status?: "pending" | "worked" | "failed" | "neutral" | string;
+outcome_checked_at?: string | null;
+mfe?: number | null;
+mae?: number | null;
+hit_target?: string | null;
+hit_stop?: boolean | null;
+time_to_target_minutes?: number | null;
+personalization_label?: string | null;
+personalization_type?: "strength" | "risk" | "learning" | "neutral" | string | null;
+personalization_note?: string | null;
+personal_strength_score?: number | null;
+personal_win_rate?: number | null;
+personal_total_pnl?: number | null;
+personal_plan_adherence?: number | null;
+journal_pattern_label?: string | null;
+journal_pattern_type?: "journal_strength" | "journal_learning" | string | null;
+journal_pattern_note?: string | null;
+journal_pattern_name?: string | null;
+journal_pattern_match_score?: number | null;
+journal_pattern_strength_score?: number | null;
+journal_pattern_total_pnl?: number | null;
+journal_pattern_avg_pnl?: number | null;
+journal_pattern_keywords?: string[] | null;
+personal_priority_score?: number | null;
+personal_priority_type?: "priority" | "caution" | "watch" | "neutral" | string | null;
+personal_priority_label?: string | null;
+personal_priority_reason?: string | null;
+signal_mode?: "actionable" | "watchlist" | "caution" | "monitoring" | string | null;
+signal_mode_label?: string | null;
+signal_mode_note?: string | null;
+user_alert_decision?: string | null;
+user_alert_decision_note?: string | null;
+};
+
+type UserSignalPlaybookItem = {
+  id: string;
+  setup_slug: string;
+  setup_name: string;
+  asset_type: string | null;
+  direction: string | null;
+  setup_timeframe: string | null;
+  confirmation_timeframe: string | null;
+  confidence_score: number | null;
+  confidence_tier: string | null;
+  setup_description: string | null;
+  setup_confirmation: string | null;
+  setup_common_mistake: string | null;
+  lesson_summary: string | null;
+  confirmation_checklist: string[] | null;
+  avoid_if: string[] | null;
+  example_symbol: string | null;
+  example_entry_zone_min: number | null;
+  example_entry_zone_max: number | null;
+  example_stop_price: number | null;
+  example_target_1: number | null;
+  example_target_2: number | null;
+  example_target_3: number | null;
+  notes: string | null;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+
+type UserSignalProfileItem = {
+  id: string;
+  user_id: string;
+  setup_slug: string;
+  setup_name: string;
+  asset_type: string | null;
+  direction: string | null;
+  trades_count: number;
+  wins_count: number;
+  losses_count: number;
+  win_rate: number | null;
+  total_pnl: number;
+  avg_pnl: number | null;
+  best_pnl: number | null;
+  worst_pnl: number | null;
+  avg_plan_adherence: number | null;
+  strength_score: number;
+  profile_label: "personal_strength" | "risk_zone" | "learning" | "neutral" | string;
+  ai_note: string | null;
+  last_trade_at: string | null;
+  updated_at: string;
+  created_at: string;
+};
+
+type UserTradePatternProfileItem = {
+  id: string;
+  user_id: string;
+  pattern_slug: string;
+  pattern_name: string;
+  source: string;
+  market: string | null;
+  direction: string | null;
+  trades_count: number;
+  wins_count: number;
+  total_pnl: number;
+  avg_pnl: number | null;
+  best_pnl: number | null;
+  avg_entry_price: number | null;
+  avg_stop_distance_percent: number | null;
+  example_tickers: string[] | null;
+  matching_keywords: string[] | null;
+  pattern_fingerprint: Record<string, unknown> | null;
+  profile_label: string;
+  strength_score: number;
+  ai_note: string | null;
+  last_trade_at: string | null;
+  updated_at: string;
+  created_at: string;
+};
+
+type AlertFilter =
+  | "all"
+  | "actionable"
+  | "watchlist"
+  | "decision_watching"
+  | "decision_taken"
+  | "decision_skipped"
+  | "decision_missed"
+  | "taken_without_journal"
+  | "journal_linked"
+  | "execution_strong"
+  | "execution_review"
+  | "execution_entry_issue"
+  | "execution_stop_issue"
+  | "execution_direction_issue"
+  | "execution_target_issue"
+  | "outcome_taken_worked"
+  | "outcome_taken_failed"
+  | "outcome_missed_opportunity"
+  | "outcome_good_skip"
+  | "priority"
+  | "caution"
+  | "journal_match"
+  | "ai_strength"
+  | "long"
+  | "short"
+  | "crypto"
+  | "stocks";
+
+  function getAlertImportanceScore(alert: DashboardMarketAlert) {
+  const baseScore =
+    alert.personal_priority_score ??
+    alert.confidence_score ??
+    alert.score ??
+    0;
+
+  let score = Number(baseScore) || 0;
+
+  if (alert.personal_priority_type === "priority") score += 400;
+  if (alert.journal_pattern_type === "journal_strength") score += 300;
+  if (alert.personalization_type === "strength") score += 260;
+  if (alert.personal_priority_type === "caution") score += 220;
+  if (alert.journal_pattern_type === "journal_learning") score += 120;
+  if (alert.personalization_type === "learning") score += 80;
+
+  if (alert.is_new !== false && !alert.viewed_at) score += 70;
+  if (alert.status === "active") score += 60;
+
+  const createdAt = alert.created_at
+    ? new Date(alert.created_at).getTime()
+    : 0;
+
+  if (createdAt > 0) {
+    const ageMinutes = Math.max(0, (Date.now() - createdAt) / 60000);
+    const freshnessScore = Math.max(0, 60 - ageMinutes);
+    score += freshnessScore;
+  }
+
+  return score;
+}
+
+function getAlertTransparencyItems(alert: DashboardMarketAlert) {
+  const confidence = alert.confidence_score ?? alert.score ?? null;
+  const priority = alert.personal_priority_score ?? null;
+
+  const items: {
+    label: string;
+    value: string;
+    note: string;
+    type: "positive" | "warning" | "neutral";
+  }[] = [];
+
+  items.push({
+    label: "Base confidence",
+    value: confidence === null ? "—" : String(confidence),
+    note:
+      "Core signal quality based on market activity, setup quality, catalyst/social context and risk structure.",
+    type: confidence !== null && confidence >= 80 ? "positive" : "neutral",
+  });
+
+  if (priority !== null) {
+    items.push({
+      label: "Personal priority",
+      value: String(priority),
+      note:
+        alert.personal_priority_reason ||
+        "Personal score after journal profile, setup history and pattern match are applied.",
+      type:
+        alert.personal_priority_type === "priority"
+          ? "positive"
+          : alert.personal_priority_type === "caution"
+            ? "warning"
+            : "neutral",
+    });
+  }
+
+  if (alert.personalization_label) {
+    items.push({
+      label: "AI-linked profile",
+      value: alert.personalization_label,
+      note:
+        alert.personalization_note ||
+        "This checks whether the setup matches your previous AI-linked trading history.",
+      type:
+        alert.personalization_type === "strength"
+          ? "positive"
+          : alert.personalization_type === "risk"
+            ? "warning"
+            : "neutral",
+    });
+  }
+
+  if (alert.journal_pattern_label) {
+    items.push({
+      label: "Journal pattern match",
+      value: alert.journal_pattern_label,
+      note:
+        alert.journal_pattern_note ||
+        "This checks whether the setup is similar to your profitable independent journal trades.",
+      type:
+        alert.journal_pattern_type === "journal_strength"
+          ? "positive"
+          : "neutral",
+    });
+  }
+
+  if (alert.risk_note) {
+    items.push({
+      label: "Risk filter",
+      value: "Active",
+      note: alert.risk_note,
+      type: "warning",
+    });
+  }
+
+  if (alert.trigger_label) {
+    items.push({
+      label: "Trigger logic",
+      value: alert.trigger_label,
+      note:
+        "The alert should still be traded only if the trigger/confirmation condition is respected.",
+      type: "neutral",
+    });
+  }
+
+  return items;
+}
+
+function playSkillEdgeAlertSound() {
+  try {
+    const AudioContextClass =
+      window.AudioContext ||
+      (window as typeof window & {
+        webkitAudioContext?: typeof AudioContext;
+      }).webkitAudioContext;
+
+    if (!AudioContextClass) return;
+
+    const audioContext = new AudioContextClass();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(
+      1320,
+      audioContext.currentTime + 0.08
+    );
+
+    gainNode.gain.setValueAtTime(0.0001, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.18,
+      audioContext.currentTime + 0.02
+    );
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.0001,
+      audioContext.currentTime + 0.22
+    );
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.24);
+  } catch {
+    // Browser may block sound until user interaction. Widget still works.
+  }
+}
+
+function DashboardAlertsWidget({
+  subscription,
+  language,
+  onOpenAlerts,
+}: {
+  subscription: Subscription;
+  language: Language;
+  onOpenAlerts: () => void;
+}) {
+  const [alerts, setAlerts] = useState<DashboardMarketAlert[]>([]);
+const [open, setOpen] = useState(false);
+const [loading, setLoading] = useState(false);
+const [generating, setGenerating] = useState(false);
+const [lastCheckedAt, setLastCheckedAt] = useState<string | null>(null);
+const [error, setError] = useState("");
+  const [seenAlertIds, setSeenAlertIds] = useState<string[]>([]);
+  const previousAlertIdsRef = useRef<string[]>([]);
+
+  const safeLanguage: Language =
+    language === "en" || language === "ua" || language === "ru"
+      ? language
+      : "ru";
+
+  const copy = {
+    ru: {
+      title: "AI Alerts",
+      subtitle: "Последние торговые сигналы",
+      empty: "Пока нет активных alerts.",
+      scan: "Сканировать",
+      scanning: "Сканируем...",
+      open: "Открыть",
+      close: "Свернуть",
+      expand: "Развернуть",
+      direction: "Направление",
+      entry: "Entry",
+      stop: "Stop",
+      targets: "Targets",
+      risk: "Risk",
+      newLabel: "new",
+      live: "Live",
+lastChecked: "Проверено",
+autoRefresh: "Auto-refresh 60s / scan 5m",
+priority: "priority",
+latest: "Последний",
+openCenter: "Открыть центр",
+quiet: "Ждём качественный setup",
+    },
+    en: {
+      title: "AI Alerts",
+      subtitle: "Latest trading signals",
+      empty: "No active alerts yet.",
+      scan: "Scan",
+      scanning: "Scanning...",
+      open: "Open",
+      close: "Collapse",
+      expand: "Expand",
+      direction: "Direction",
+      entry: "Entry",
+      stop: "Stop",
+      targets: "Targets",
+      risk: "Risk",
+      newLabel: "new",live: "Live",
+lastChecked: "Checked",
+autoRefresh: "Auto-refresh 60s / scan 5m",
+priority: "priority",
+latest: "Latest",
+openCenter: "Open center",
+quiet: "Waiting for quality setup",
+    },
+    ua: {
+      title: "AI Alerts",
+      subtitle: "Останні торгові сигнали",
+      empty: "Активних alerts поки немає.",
+      scan: "Сканувати",
+      scanning: "Скануємо...",
+      open: "Відкрити",
+      close: "Згорнути",
+      expand: "Розгорнути",
+      direction: "Напрямок",
+      entry: "Entry",
+      stop: "Stop",
+      targets: "Targets",
+      risk: "Risk",
+      newLabel: "new",
+      live: "Live",
+lastChecked: "Перевірено",
+autoRefresh: "Auto-refresh 60s / scan 5m",
+priority: "priority",
+latest: "Останній",
+openCenter: "Відкрити центр",
+quiet: "Чекаємо якісний setup",
+    },
+  }[safeLanguage];
+
+  const hasAccess =
+    subscription.active && canUseFeature(subscription.plan, "social_tickers");
+
+  const newAlerts = alerts.filter(
+  (alert) =>
+    alert.is_new !== false &&
+    !alert.viewed_at &&
+    !seenAlertIds.includes(alert.id)
+);
+
+const priorityAlerts = alerts.filter((alert) => {
+  const score = alert.confidence_score ?? alert.score ?? 0;
+
+  return (
+    alert.signal_mode === "actionable" ||
+    alert.personalization_type === "journal_strength" ||
+    score >= 80
+  );
+});
+
+const latestAlert = alerts[0] || null;
+const shouldPulse = newAlerts.length > 0 && !open;
+
+  const loadAlerts = async (generate = false) => {
+    if (!hasAccess) return;
+
+    try {
+      setError("");
+      if (generate) {
+        setGenerating(true);
+      } else {
+        setLoading(true);
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        setError("Unauthorized.");
+        return;
+      }
+
+      if (generate) {
+        await fetch("/api/market/alerts", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+      }
+
+      const response = await fetch("/api/market/alerts/personalized?limit=3", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        cache: "no-store",
+      });
+
+      const data = (await response.json().catch(() => null)) as
+        | { items?: DashboardMarketAlert[]; error?: string }
+        | null;
+
+      if (!response.ok) {
+        setError(data?.error || "Failed to load alerts.");
+        return;
+      }
+
+      const nextAlerts = Array.isArray(data?.items) ? data.items : [];
+      const nextIds = nextAlerts.map((alert) => alert.id);
+      const previousIds = previousAlertIdsRef.current;
+
+      const hasFreshAlert = nextIds.some((id) => !previousIds.includes(id));
+
+      if (hasFreshAlert && previousIds.length > 0 && !open) {
+        playSkillEdgeAlertSound();
+      }
+
+      previousAlertIdsRef.current = nextIds;
+      setAlerts(nextAlerts);
+      setLastCheckedAt(new Date().toISOString());
+    } catch {
+      setError("Failed to load alerts.");
+    } finally {
+      setLoading(false);
+      setGenerating(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!hasAccess) return;
+
+    try {
+      const saved = window.localStorage.getItem("skilledge_seen_alert_ids");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          setSeenAlertIds(parsed.filter((id) => typeof id === "string"));
+        }
+      }
+    } catch {
+      // ignore localStorage parsing errors
+    }
+
+
+    
+    loadAlerts(true);
+
+    
+
+    const readInterval = window.setInterval(() => {
+      loadAlerts(false);
+    }, 60000);
+
+    const generateInterval = window.setInterval(() => {
+      loadAlerts(true);
+    }, 300000);
+
+    return () => {
+      window.clearInterval(readInterval);
+      window.clearInterval(generateInterval);
+    };
+  }, [hasAccess]);
+
+  const markAlertsViewed = async (alertIds: string[]) => {
+  if (alertIds.length === 0) return;
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) return;
+
+    await fetch("/api/market/alerts/viewed", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        alertIds,
+      }),
+    });
+
+    setAlerts((current) =>
+      current.map((alert) =>
+        alertIds.includes(alert.id)
+          ? { ...alert, is_new: false, viewed_at: new Date().toISOString() }
+          : alert
+      )
+    );
+  } catch {
+    // Keep local UI working even if server update fails.
+  }
+};
+
+  const markOpen = () => {
+  setOpen((current) => {
+    const nextOpen = !current;
+
+    if (nextOpen) {
+      const ids = alerts.map((alert) => alert.id);
+      const merged = Array.from(new Set([...seenAlertIds, ...ids])).slice(-100);
+
+      setSeenAlertIds(merged);
+      markAlertsViewed(ids);
+
+      try {
+        window.localStorage.setItem(
+          "skilledge_seen_alert_ids",
+          JSON.stringify(merged)
+        );
+      } catch {
+        // ignore localStorage errors
+      }
+    }
+
+    return nextOpen;
+  });
+};
+
+  if (!hasAccess) {
+    return null;
+  }
+
+  return (
+    <div className="fixed bottom-5 right-4 z-50 w-[min(380px,calc(100vw-2rem))] sm:right-6">
+      <div
+        className={`rounded-[1.4rem] border bg-[#101827]/95 shadow-[0_20px_80px_rgba(0,0,0,0.42)] backdrop-blur-2xl transition ${
+  shouldPulse
+    ? "border-cyan-300/50 shadow-cyan-500/25"
+    : "border-white/10"
+}`}
+      >
+        <button
+          type="button"
+          onClick={markOpen}
+          className="flex w-full items-center justify-between gap-3 p-4 text-left"
+        >
+          <div className="flex items-center gap-3">
+            <div
+  className={`relative flex h-11 w-11 items-center justify-center rounded-2xl border ${
+    shouldPulse
+      ? "border-cyan-300/35 bg-cyan-300/15 text-cyan-100 shadow-[0_0_28px_rgba(103,232,249,0.28)]"
+      : "border-white/10 bg-white/[0.04] text-white/70"
+  }`}
+>
+  {shouldPulse ? (
+    <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(103,232,249,0.9)]" />
+  ) : null}
+  ⚡
+</div>
+
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-white">{copy.title}</p>
+
+                {newAlerts.length > 0 ? (
+                  <span className="rounded-full bg-cyan-300 px-2 py-0.5 text-[10px] font-bold text-black">
+                    {newAlerts.length} {copy.newLabel}
+                  </span>
+                ) : null}
+                {priorityAlerts.length > 0 ? (
+  <span className="rounded-full border border-amber-300/25 bg-amber-300/10 px-2 py-0.5 text-[10px] font-bold text-amber-100">
+    {priorityAlerts.length} {copy.priority}
+  </span>
+) : null}
+              </div>
+
+              <p className="mt-0.5 line-clamp-1 text-xs text-white/45">
+  {latestAlert
+    ? `${copy.latest}: ${latestAlert.symbol} · ${
+        latestAlert.setup_name ||
+        latestAlert.setup_type ||
+        latestAlert.signal_mode_label ||
+        latestAlert.direction ||
+        "AI setup"
+      }`
+    : copy.quiet}
+</p>
+            </div>
+          </div>
+
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/60">
+            {open ? copy.close : copy.open}
+          </span>
+        </button>
+
+        {open ? (
+  <div className="max-h-[min(620px,calc(100vh-8rem))] overflow-y-auto border-t border-white/10 p-4 pt-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-white/10 bg-black/20 p-3">
+  <div className="flex items-center gap-2 text-xs text-white/55">
+    <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.8)]" />
+    <span>{copy.live}</span>
+    <span className="text-white/25">·</span>
+    <span>{copy.autoRefresh}</span>
+  </div>
+
+  <div className="text-xs text-white/40">
+    {copy.lastChecked}:{" "}
+    {lastCheckedAt ? new Date(lastCheckedAt).toLocaleTimeString() : "—"}
+  </div>
+</div>
+            <div className="flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onClick={() => loadAlerts(true)}
+                disabled={generating || loading}
+                className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-xs font-medium text-cyan-100 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                {generating ? copy.scanning : copy.scan}
+              </button>
+
+              <button
+  type="button"
+  onClick={() => {
+    setOpen(false);
+    onOpenAlerts();
+  }}
+  className="mt-3 w-full rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/15"
+>
+  {copy.openCenter}
+</button>
+            </div>
+
+            {error ? (
+              <div className="mt-3 rounded-2xl border border-red-400/20 bg-red-500/10 p-3 text-xs text-red-100/80">
+                {error}
+              </div>
+            ) : null}
+
+            <div className="mt-3 space-y-2">
+              {loading && alerts.length === 0 ? (
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-xs text-white/45">
+                  Loading alerts...
+                </div>
+              ) : alerts.length === 0 ? (
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-xs text-white/45">
+                  {copy.empty}
+                </div>
+              ) : (
+                alerts.map((alert) => (
+                  <div
+                    key={alert.id}
+                    className="rounded-2xl border border-white/10 bg-black/20 p-3"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-base font-semibold text-white">
+                          {alert.symbol}
+                        </div>
+                        <div className="mt-0.5 text-[10px] uppercase tracking-[0.16em] text-white/35">
+                          {alert.setup_type || alert.alert_type}
+                        </div>
+                      </div>
+
+                      <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-2.5 py-1 text-xs font-semibold text-cyan-100">
+                        {alert.confidence_score || alert.score}
+                      </div>
+                    </div>
+
+                    <div className="mt-2 text-xs leading-5 text-white/58">
+                      {alert.title}
+                    </div>
+                    {alert.personal_priority_label ? (
+  <div
+    className={`mt-2 rounded-xl border p-2 text-[11px] leading-4 ${
+      alert.personal_priority_type === "priority"
+        ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-50/80"
+        : alert.personal_priority_type === "caution"
+          ? "border-red-300/20 bg-red-300/10 text-red-50/80"
+          : alert.personal_priority_type === "watch"
+            ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-50/80"
+            : "border-white/10 bg-white/[0.04] text-white/60"
+    }`}
+  >
+    {alert.personal_priority_label} ·{" "}
+    {alert.personal_priority_score ?? alert.confidence_score ?? alert.score}
+  </div>
+) : null}
+
+{alert.personalization_label ? (
+  <div
+    className={`mt-2 rounded-xl border p-2 text-[11px] leading-4 ${
+      alert.personalization_type === "strength"
+        ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-50/80"
+        : alert.personalization_type === "risk"
+          ? "border-red-300/20 bg-red-300/10 text-red-50/80"
+          : alert.personalization_type === "learning"
+            ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-50/80"
+            : "border-white/10 bg-white/[0.04] text-white/60"
+    }`}
+  >
+    {alert.personalization_label}
+  </div>
+) : null}
+
+{alert.journal_pattern_label ? (
+  <div
+    className={`mt-2 rounded-xl border p-2 text-[11px] leading-4 ${
+      alert.journal_pattern_type === "journal_strength"
+        ? "border-amber-300/20 bg-amber-300/10 text-amber-50/80"
+        : "border-white/10 bg-white/[0.04] text-white/60"
+    }`}
+  >
+    {alert.journal_pattern_label}
+  </div>
+) : null}
+
+                    <div className="mt-2 grid grid-cols-1 gap-2 text-[11px] text-white/48 sm:grid-cols-2">
+                      <div>
+                        {copy.direction}:{" "}
+                        <span className="text-white/70">{alert.direction}</span>
+                      </div>
+                      <div>
+                        {copy.entry}:{" "}
+                        <span className="text-white/70">
+                          {alert.entry_zone_min && alert.entry_zone_max
+                            ? `${alert.entry_zone_min}–${alert.entry_zone_max}`
+                            : "wait trigger"}
+                        </span>
+                      </div>
+                      <div>
+                        {copy.stop}:{" "}
+                        <span className="text-white/70">
+                          {alert.stop_price || "—"}
+                        </span>
+                      </div>
+                      <div>
+                        {copy.targets}:{" "}
+                        <span className="text-white/70">
+                          {[alert.target_1, alert.target_2, alert.target_3]
+                            .filter(Boolean)
+                            .join(" / ") || "—"}
+                        </span>
+                      </div>
+                    </div>
+
+                    {alert.risk_note ? (
+                      <div className="mt-2 rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-2 text-[11px] leading-4 text-amber-50/70">
+                        {copy.risk}: {alert.risk_note}
+                      </div>
+                    ) : null}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function AlertsTab({
+  subscription,
+  language,
+  trades,
+  onCreateTradeFromAlert,
+}: {
+  subscription: Subscription;
+  language: Language;
+  trades: Trade[];
+  onCreateTradeFromAlert: (alert: DashboardMarketAlert) => void;
+}) {
+const [alerts, setAlerts] = useState<DashboardMarketAlert[]>([]);
+const [alertFilter, setAlertFilter] = useState<AlertFilter>("all");
+const [decisionReasonFilter, setDecisionReasonFilter] = useState<string | null>(
+  null
+);
+const [expandedAlertId, setExpandedAlertId] = useState<string | null>(null);
+const [visibleAlertsCount, setVisibleAlertsCount] = useState(5);
+const [alertsLastCheckedAt, setAlertsLastCheckedAt] = useState<string | null>(null);
+const [loading, setLoading] = useState(false);
+const [generating, setGenerating] = useState(false);
+const [checkingOutcomes, setCheckingOutcomes] = useState(false);
+const [savingPlaybookId, setSavingPlaybookId] = useState("");
+const [savedPlaybookAlertIds, setSavedPlaybookAlertIds] = useState<string[]>([]);
+const [playbookOpen, setPlaybookOpen] = useState(false);
+const [playbookLoading, setPlaybookLoading] = useState(false);
+const [playbookError, setPlaybookError] = useState("");
+const [playbookItems, setPlaybookItems] = useState<UserSignalPlaybookItem[]>([]);
+
+const [signalProfileOpen, setSignalProfileOpen] = useState(false);
+const [signalProfileLoading, setSignalProfileLoading] = useState(false);
+const [signalProfileRebuilding, setSignalProfileRebuilding] = useState(false);
+const [signalProfileError, setSignalProfileError] = useState("");
+const [signalProfileItems, setSignalProfileItems] = useState<UserSignalProfileItem[]>([]);
+
+const [tradePatternsOpen, setTradePatternsOpen] = useState(false);
+const [tradePatternsLoading, setTradePatternsLoading] = useState(false);
+const [tradePatternsRebuilding, setTradePatternsRebuilding] = useState(false);
+const [tradePatternsError, setTradePatternsError] = useState("");
+const [tradePatternItems, setTradePatternItems] = useState<UserTradePatternProfileItem[]>([]);
+
+const [error, setError] = useState("");
+
+  const safeLanguage: Language =
+    language === "en" || language === "ua" || language === "ru"
+      ? language
+      : "ru";
+
+  const copy = {
+    ru: {
+      title: "AI Alerts Center",
+      subtitle:
+        "Сигналы за последние дни: направление, setup, entry zone, stop, targets, risk и management plan.",
+      generate: "Сканировать рынок",
+      generating: "Сканируем...",
+      refresh: "Обновить",
+      checkOutcomes: "Проверить результаты",
+checkingOutcomes: "Проверяем...",
+      empty: "Пока нет активных alerts. Запусти сканирование.",
+      locked:
+        "AI Alerts доступны на SkillEdge Edge и SkillEdge Elite.",
+      direction: "Направление",
+setup: "Сетап",
+entry: "Зона входа",
+stop: "Стоп",
+targets: "Цели",
+trigger: "Триггер",
+reason: "Причина",
+risk: "Риск",
+scenario: "Сценарий",
+invalidation: "Отмена идеи",
+management: "Управление",
+confidence: "Уверенность",
+status: "Статус",
+outcome: "Исход",
+time: "Время",
+worked: "Отработал",
+failed: "Не отработал",
+pending: "В ожидании",
+neutral: "Нейтрально",
+avgMfe: "Средний MFE",
+avgMae: "Средний MAE",
+tpHit: "TP достигнут",
+stopHit: "Стоп задет",
+quality: "Качество",
+saveToPlaybook: "Сохранить в Playbook",
+savingToPlaybook: "Сохраняем...",
+savedToPlaybook: "Сохранено",
+createTradeDraft: "Создать черновик сделки",
+openPlaybook: "Открыть Playbook",
+hidePlaybook: "Скрыть Playbook",
+playbookTitle: "Personal Signal Playbook",
+playbookText:
+  "Твоя личная база сохранённых сетапов: логика, подтверждение, ошибки и примеры сигналов.",
+playbookEmpty:
+  "Пока нет сохранённых сетапов. Нажми Save to Playbook на любом сигнале.",
+playbookLoading: "Загружаем playbook...",
+lastExample: "Last example",
+openSignalProfile: "Открыть Signal Profile",
+hideSignalProfile: "Скрыть Signal Profile",
+rebuildSignalProfile: "Пересобрать профиль",
+rebuildingSignalProfile: "Собираем профиль...",
+signalProfileTitle: "Personal Signal Profile",
+signalProfileText:
+  "SkillEdge AI показывает, какие AI-сетапы ты торгуешь лучше, где теряешь деньги и какие сигналы стоит приоритезировать.",
+signalProfileEmpty:
+  "Профиль пока пустой. Создай сделки из AI Alerts и сохрани их в журнал.",
+signalProfileLoading: "Загружаем signal profile...",
+personalStrength: "Personal strength",
+riskZone: "Risk zone",
+learningProfile: "Learning",
+neutralProfile: "Neutral",
+strengthScore: "Strength score",
+planAdherence: "Plan adherence",
+aiNote: "AI note",
+openTradePatterns: "Открыть Trade Patterns",
+hideTradePatterns: "Скрыть Trade Patterns",
+rebuildTradePatterns: "Найти мои паттерны",
+rebuildingTradePatterns: "Ищем паттерны...",
+tradePatternsTitle: "Independent Trade Pattern Profile",
+tradePatternsText:
+  "SkillEdge AI анализирует твои самостоятельные прибыльные сделки и ищет повторяющиеся паттерны, которые потом можно использовать для персональных AI Alerts.",
+tradePatternsEmpty:
+  "Пока нет найденных паттернов. Добавь в Journal несколько самостоятельных прибыльных сделок.",
+tradePatternsLoading: "Загружаем trade patterns...",
+patternStrength: "Pattern strength",
+examples: "Examples",
+keywords: "Keywords",
+filterAll: "Все",
+filterActionable: "Actionable",
+filterWatchlist: "Watchlist",
+filterPriority: "Приоритет",
+filterCaution: "Осторожно",
+filterJournalMatch: "Совпадение с журналом",
+filterAiStrength: "AI-сила",
+filterLong: "Long",
+filterShort: "Short",
+filterCrypto: "Крипто",
+filterStocks: "Акции",
+filterDecisionWatching: "Наблюдаю",
+filterDecisionTaken: "Взял",
+filterDecisionSkipped: "Пропустил",
+filterDecisionMissed: "Упустил",
+decisionAnalyticsTitle: "Signal-to-Trade Decisions",
+decisionAnalyticsText:
+  "Тут видно, як клієнт працює з сигналами: спостерігає, бере, пропускає або відмічає missed. Це база майбутньої статистики якості сигналів і виконання.",
+filterEmpty: "Нет alerts под выбранный фильтр.",
+openAlertDetails: "Открыть разбор",
+hideAlertDetails: "Скрыть разбор",
+liveDesk: "Live AI Trading Desk",
+lastChecked: "Последняя проверка",
+autoRefreshNote:
+  "Alerts обновляются автоматически. Market scan работает в фоне, список обновляется каждые 60 секунд.",
+showMoreAlerts: "Показать ещё 10",
+collapseAlerts: "Свернуть всё",   
+smartTopFive:
+  "Первые 5 alerts отсортированы по важности: priority, journal match, AI strength, confidence и свежесть сигнала.", 
+emptyDeskTitle: "AI Trading Desk ждёт качественный сетап",
+emptyDeskText:
+  "Сейчас нет активных alerts под выбранный фильтр. Это нормально: SkillEdge AI не должен стрелять мусором. Система ждёт high-confidence ситуацию с понятным trigger, stop, targets и risk note.",
+emptyDeskAction:
+  "Оставь страницу открытой — список обновляется автоматически каждые 60 секунд.",
+confidenceTransparency: "Score transparency",
+confidenceTransparencyText:
+  "Почему SkillEdge AI выделил этот сигнал и какие факторы усиливают или ослабляют идею.",
+breakdownTitle: "SkillEdge AI Signal Breakdown",
+traderDecision: "Решение трейдера",
+tradePlan: "План сделки",
+whyNow: "Почему сейчас",
+confirmationChecklist: "Чеклист подтверждения",
+avoidThisTradeIf: "Не торговать, если",
+learningLayer: "Обучающий слой",
+decisionWatching: "Наблюдаю",
+decisionTaken: "Взял",
+decisionSkipped: "Пропустил",
+decisionMissed: "Упустил",
+decisionSaved: "Решение сохранено",
+decisionReasonTitle: "Причина решения",
+reasonCleanTrigger: "Чистый триггер",
+reasonGoodRiskReward: "Хороший RR",
+reasonJournalMatch: "Совпадает с журналом",
+reasonNoConfirmation: "Нет подтверждения",
+reasonTooLate: "Слишком поздно",
+reasonRiskHigh: "Риск слишком высокий",
+reasonLiquidity: "Спред / ликвидность",
+reasonNotAtDesk: "Не был у экрана",
+reasonTradeDraftCreated: "Черновик сделки создан",
+topReason: "Главная причина",
+allReasons: "Все причины",
+journalSyncTitle: "Journal Sync",
+journalSyncText:
+  "Ты отметил сигнал как Taken. Создай trade draft, чтобы SkillEdge позже сравнил план сигнала с твоим реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
+journalSyncAction: "Создать trade draft",
+linkedJournalTitle: "Linked Journal Trade",
+linkedJournalText:
+  "Эта сделка уже связана с alert. SkillEdge сможет сравнить план сигнала с реальным исполнением клиента.",
+linkedJournalEmpty:
+  "Пока нет сохранённой сделки в журнале, связанной с этим alert.",
+linkedTrades: "Linked trades",
+linkedPnl: "Linked PnL",
+linkedResult: "Result",
+journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsText:
+  "SkillEdge отслеживает, какие alerts превратились в реальные сделки в Journal. Это база для анализа исполнения, PnL по сигналам и пропущенных возможностей.",
+takenWithoutJournal: "Taken без Journal",
+linkedAlertsCount: "Linked alerts",
+linkedTradesPnl: "Linked trades PnL",
+avgExecutionScore: "Avg execution",
+takenWithoutJournalFilter: "Taken без Journal",
+takenWithoutJournalTitle: "Taken alert без сделки в Journal",
+takenWithoutJournalText:
+  "Клиент отметил сигнал как Taken, но ещё не сохранил сделку в журнал. Создай trade draft, чтобы SkillEdge смог сравнить план сигнала с реальным исполнением.",
+executionScore: "Execution score",
+executionReview: "Execution review",
+executionStrong: "Сильное исполнение",
+executionMedium: "Нормально, но есть что улучшить",
+executionWeak: "Нужно разобрать исполнение",
+filterJournalLinked: "Journal linked",
+filterExecutionStrong: "Strong execution",
+filterExecutionReview: "Needs review",
+executionQualityTitle: "Execution Quality",
+executionQualityText:
+  "SkillEdge показывает, какие AI Alerts уже привели к сделкам в Journal и где исполнение было сильным или требует разбора.",
+executionCoachTitle: "AI Execution Coach",
+executionCoachText:
+  "SkillEdge разбирает исполнение клиента относительно плана сигнала: вход, стоп, направление, targets и дисциплину.",
+executionCoachStrong:
+  "Сильное исполнение: клиент в целом следовал плану сигнала. Такие сделки стоит сохранять как личный сильный паттерн.",
+executionCoachMedium:
+  "Исполнение нормальное, но есть зоны для улучшения. Проверь вход, стоп и управление после первого target.",
+executionCoachWeak:
+  "Исполнение требует разбора. Вероятно, клиент отклонился от плана сигнала: поздний вход, другой стоп или слабое следование сценарию.",
+executionCoachEntryIssue:
+  "Entry issue: вход был вне плановой зоны или слишком поздно относительно сигнала.",
+executionCoachStopIssue:
+  "Stop issue: стоп отличается от плана сигнала. Это может ломать статистику и risk/reward.",
+executionCoachDirectionIssue:
+  "Direction issue: направление сделки отличается от направления alert.",
+executionCoachTargetIssue:
+  "Target issue: сделка не дошла до TP или выход был не по плану.",
+executionWeaknessTitle: "Execution Weakness Map",
+executionWeaknessText:
+  "SkillEdge показывает, где клиент чаще всего отклоняется от плана сигнала: вход, стоп, направление или управление целями.",
+entryIssueFilter: "Entry issues",
+stopIssueFilter: "Stop issues",
+directionIssueFilter: "Direction issues",
+targetIssueFilter: "Target issues",
+executionFocusTitle: "Personal Execution Focus",
+executionFocusText:
+  "SkillEdge выбирает главный фокус на основе связанных Journal-сделок и отклонений от плана сигнала.",
+executionFocusEmpty:
+  "Пока недостаточно linked trades для персонального фокуса. Создай сделки из alerts, чтобы SkillEdge начал находить повторяющиеся слабые места.",
+focusEntryText:
+  "Главный фокус — entry timing. Проверь, не входишь ли ты поздно или вне плановой зоны сигнала.",
+focusStopText:
+  "Главный фокус — stop discipline. Проверь, не меняешь ли стоп относительно плана и не ломаешь ли risk/reward.",
+focusDirectionText:
+  "Главный фокус — direction discipline. Проверь, не торгуешь ли против направления alert или без подтверждения сценария.",
+focusTargetText:
+  "Главный фокус — target management. Проверь, как ты ведёшь сделку после входа и не выходишь ли хаотично.",
+focusStrongText:
+  "Исполнение выглядит сильным. Продолжай фиксировать такие сделки — это база для будущих Personal AI Alerts.",
+openFocusAlerts: "Открыть alerts с этим фокусом",
+executionActionPlanTitle: "This Week Action Plan",
+executionActionPlanText:
+  "SkillEdge превращает главный execution focus в конкретные правила на следующую торговую неделю.",
+entryActionOne: "Бери вход только внутри плановой entry zone или после подтверждённого reclaim/rejection.",
+entryActionTwo: "Не догоняй свечу после trigger — поздний вход лучше отметить как Missed.",
+entryActionThree: "Перед входом проверь: цена, стоп и риск всё ещё дают нормальный risk/reward.",
+stopActionOne: "Перед сделкой заранее запиши stop/invalidation и не двигай его без нового сценария.",
+stopActionTwo: "Если стоп отличается от плана alert — уменьши размер позиции или пропусти сделку.",
+stopActionThree: "После сделки проверь, не сломал ли изменённый стоп ожидаемый risk/reward.",
+directionActionOne: "Не торгуй против direction alert без сильного reverse-confirmation.",
+directionActionTwo: "Перед входом проверь, совпадает ли твоя сделка с направлением setup.",
+directionActionThree: "Если рынок сменил структуру — отметь alert как Skipped/Missed, а не входи импульсивно.",
+targetActionOne: "До входа выбери основной target и partial plan.",
+targetActionTwo: "После TP1 не выходи хаотично — веди сделку по заранее заданному management plan.",
+targetActionThree: "Если цена не идёт к target — оцени invalidation, а не надейся.",
+strongActionOne: "Продолжай сохранять сделки, где ты следовал плану alert.",
+strongActionTwo: "Ищи повторяемость: какие setup чаще дают сильное исполнение.",
+strongActionThree: "Эти сделки позже станут базой для Personal AI Alerts.",
+outcomeFollowupTitle: "Alert Outcome Follow-up",
+outcomeFollowupText:
+  "SkillEdge сравнивает решение клиента с фактическим исходом сигнала, чтобы находить missed opportunities, хорошие пропуски и сделки, которые требуют разбора.",
+outcomeTakenWorked:
+  "Ты взял сигнал, и он отработал. Проверь, была ли сделка сохранена в Journal и насколько исполнение совпало с планом.",
+outcomeTakenFailed:
+  "Ты взял сигнал, но он не отработал. Разбери, было ли подтверждение, не был ли вход поздним и был ли стоп по плану.",
+outcomeSkippedWorked:
+  "Сигнал был пропущен, но позже отработал. Это missed opportunity — проверь, почему не было входа: страх, отсутствие у экрана или сомнение.",
+outcomeSkippedFailed:
+  "Сигнал был пропущен, и он не отработал. Это хороший фильтр — сохрани причину, почему ты не входил.",
+outcomeMissedWorked:
+  "Ты отметил сигнал как Missed, и он отработал. Это важная возможность для обучения: что помешало включиться вовремя?",
+outcomeMissedFailed:
+  "Ты отметил сигнал как Missed, но он не отработал. Пропуск был безопасным, но всё равно проверь, была ли идея качественной.",
+outcomePendingNote:
+  "Outcome ещё pending. Позже SkillEdge сможет сравнить твоё решение с фактическим движением цены.",
+outcomeNeutralNote:
+  "Outcome neutral. Сигнал не дал чистого follow-through, поэтому важно оценивать только качество решения, а не только PnL.",
+outcomeLearningLabel: "Learning note",
+outcomeStatsLabel: "Outcome stats",
+outcomeLearningAnalyticsTitle: "Outcome Learning Analytics",
+outcomeLearningAnalyticsText:
+  "SkillEdge группирует alerts по решению клиента и фактическому результату сигнала: что было взято, что провалилось, что стало missed opportunity и где клиент правильно отфильтровал плохую идею.",
+filterTakenWorked: "Taken + Worked",
+filterTakenFailed: "Taken + Failed",
+filterMissedOpportunity: "Missed opportunity",
+filterGoodSkip: "Good skip",
+takenWorkedText: "Сигналы, которые клиент взял и которые отработали.",
+takenFailedText: "Сигналы, которые клиент взял, но они не отработали.",
+missedOpportunityText: "Сигналы, которые клиент пропустил, но они позже отработали.",
+goodSkipText: "Сигналы, которые клиент пропустил, и они не отработали.",
+outcomeLearningFocusTitle: "Outcome Learning Focus",
+outcomeLearningFocusText:
+  "SkillEdge выбирает главный фокус обучения на основе того, как решения клиента совпали с фактическим исходом сигналов.",
+outcomeFocusTakenWorked:
+  "Сильная зона: клиент берёт сигналы, которые отрабатывают. Теперь важно проверить качество исполнения и повторяемость этих setup.",
+outcomeFocusTakenFailed:
+  "Главный фокус — taken failed. Клиент берёт сигналы, которые не отрабатывают. Нужно проверить подтверждение, вход, риск и фильтры качества.",
+outcomeFocusMissedOpportunity:
+  "Главный фокус — missed opportunities. Клиент пропускает сигналы, которые потом отрабатывают. Нужно понять причину: страх, сомнение, отсутствие у экрана или поздняя реакция.",
+outcomeFocusGoodSkip:
+  "Сильная зона фильтрации: клиент пропускает сигналы, которые не отрабатывают. Нужно сохранить причины таких решений в playbook.",
+outcomeFocusEmpty:
+  "Пока недостаточно отмеченных решений и outcomes. Отмечай alerts как Taken, Skipped или Missed, чтобы SkillEdge начал строить learning focus.",
+openOutcomeFocusAlerts: "Открыть alerts с этим фокусом",
+missedOpportunityCoachTitle: "Missed Opportunity Coach",
+missedOpportunityCoachText:
+  "SkillEdge разбирает рабочие сигналы, которые клиент пропустил, чтобы найти повторяющуюся причину: страх, отсутствие у экрана, поздняя реакция или слабое доверие к setup.",
+missedOpportunityCoachEmpty:
+  "Пока нет missed opportunities. Это хорошо: либо клиент не пропускал рабочие сигналы, либо outcomes ещё формируются.",
+missedOpportunityTopSetup: "Top missed setup",
+missedOpportunityActionPlan: "Missed Opportunity Action Plan",
+missedOpportunityActionOne:
+  "Перед сессией выбери 2–3 setup, которые ты готов торговать без сомнений при появлении trigger.",
+missedOpportunityActionTwo:
+  "Если trigger появился, но ты не вошёл — сразу отметь причину: страх, поздно, не у экрана или не хватило подтверждения.",
+missedOpportunityActionThree:
+  "Если сигнал отработал без тебя — добавь его в playbook и реши, что должно измениться, чтобы в следующий раз не пропустить.",
+alertsStateLoadingTitle: "SkillEdge AI сканирует рынок",
+alertsStateLoadingText:
+  "Загружаем последние alerts, проверяем персональный приоритет, журнал, outcomes и свежесть сигналов.",
+alertsStateErrorTitle: "Не удалось загрузить AI Alerts",
+alertsStateErrorText:
+  "Проверь подключение, авторизацию или повтори запрос. Если ошибка повторяется — это нужно проверить в backend/API logs.",
+alertsStateEmptyTitle: "AI Trading Desk ждёт качественный сетап",
+alertsStateEmptyText:
+  "Сейчас нет активных alerts. Это нормально: SkillEdge не должен стрелять шумом. Лучше меньше сигналов, но выше качество и понятнее риск.",
+alertsStateFilterEmptyTitle: "Под этот фильтр alerts нет",
+alertsStateFilterEmptyText:
+  "Список работает, но текущий фильтр не нашёл подходящих сигналов. Сбрось фильтр или дождись новой high-confidence ситуации.",
+alertsStateResetFilters: "Сбросить фильтры",
+alertsStateRetry: "Повторить загрузку",
+alertsStateRunScan: "Запустить скан",
+alertsStateLiveNote: "Live monitoring работает в фоне",
+selectedFilter: "Выбранный фильтр",
+totalAlerts: "Всего alerts",
+alertsStateErrorLabel: "Ошибка",
+alertsStateLoadingLabel: "Загрузка",
+alertsStateWaitingLabel: "Ожидание",
+alertsStateLiveMonitoringLabel: "Фоновый мониторинг",
+decisionVsOutcomeLabel: "Решение / outcome",
+nextLearningFocus: "Следующий learning focus",
+noFocusYet: "Фокус пока не сформирован",
+outcomeProfileStillForming: "Outcome learning profile ещё формируется",
+missedOpportunitiesLabel: "missed opportunities",
+noMissedOpportunityPatternTitle: "Паттерн missed opportunities пока не сформирован",
+workedAlertsMissedSuffix: "рабочих alerts были пропущены в этой группе setup.",
+},
+    en: {
+      title: "AI Alerts Center",
+      subtitle:
+        "Recent signals: direction, setup, entry zone, stop, targets, risk and management plan.",
+      generate: "Scan market",
+      generating: "Scanning...",
+      refresh: "Refresh",
+      checkOutcomes: "Check outcomes",
+checkingOutcomes: "Checking...",
+      empty: "No active alerts yet. Run market scan.",
+      locked:
+        "AI Alerts are available on SkillEdge Edge and SkillEdge Elite.",
+      direction: "Direction",
+      setup: "Setup",
+      entry: "Entry zone",
+      stop: "Stop",
+      targets: "Targets",
+      trigger: "Trigger",
+      reason: "Reason",
+      risk: "Risk",
+      scenario: "Scenario",
+      invalidation: "Invalidation",
+      management: "Management",
+      confidence: "Confidence",
+      status: "Status",
+      outcome: "Outcome",
+time: "Time",
+worked: "Worked",
+failed: "Failed",
+pending: "Pending",
+neutral: "Neutral",
+avgMfe: "Avg MFE",
+avgMae: "Avg MAE",
+tpHit: "TP hit",
+stopHit: "Stop hit",
+quality: "Quality",
+saveToPlaybook: "Save to Playbook",
+savingToPlaybook: "Saving...",
+savedToPlaybook: "Saved",
+createTradeDraft: "Create trade draft",
+openPlaybook: "Open Playbook",
+hidePlaybook: "Hide Playbook",
+playbookTitle: "Personal Signal Playbook",
+playbookText:
+  "Your personal database of saved setups: logic, confirmation, mistakes and signal examples.",
+playbookEmpty:
+  "No saved setups yet. Click Save to Playbook on any signal.",
+playbookLoading: "Loading playbook...",
+lastExample: "Last example",
+openSignalProfile: "Open Signal Profile",
+hideSignalProfile: "Hide Signal Profile",
+rebuildSignalProfile: "Rebuild profile",
+rebuildingSignalProfile: "Rebuilding...",
+signalProfileTitle: "Personal Signal Profile",
+signalProfileText:
+  "SkillEdge AI shows which AI setups you execute best, where you lose money, and which signals should be prioritized.",
+signalProfileEmpty:
+  "Profile is empty yet. Create trades from AI Alerts and save them to the journal.",
+signalProfileLoading: "Loading signal profile...",
+personalStrength: "Personal strength",
+riskZone: "Risk zone",
+learningProfile: "Learning",
+neutralProfile: "Neutral",
+strengthScore: "Strength score",
+planAdherence: "Plan adherence",
+aiNote: "AI note",
+openTradePatterns: "Open Trade Patterns",
+hideTradePatterns: "Hide Trade Patterns",
+rebuildTradePatterns: "Find my patterns",
+rebuildingTradePatterns: "Finding patterns...",
+tradePatternsTitle: "Independent Trade Pattern Profile",
+tradePatternsText:
+  "SkillEdge AI analyzes your independent profitable journal trades and finds repeated patterns that can later power Personal AI Alerts.",
+tradePatternsEmpty:
+  "No patterns found yet. Add several independent profitable trades to the Journal.",
+tradePatternsLoading: "Loading trade patterns...",
+patternStrength: "Pattern strength",
+examples: "Examples",
+keywords: "Keywords",
+filterAll: "All",
+filterActionable: "Actionable",
+filterWatchlist: "Watchlist",
+filterPriority: "Priority",
+filterCaution: "Caution",
+filterJournalMatch: "Journal Match",
+filterAiStrength: "AI Strength",
+filterLong: "Long",
+filterShort: "Short",
+filterCrypto: "Crypto",
+filterStocks: "Stocks",
+filterDecisionWatching: "Watching",
+filterDecisionTaken: "Taken",
+filterDecisionSkipped: "Skipped",
+filterDecisionMissed: "Missed",
+decisionAnalyticsTitle: "Signal-to-Trade Decisions",
+decisionAnalyticsText:
+  "See how the client handles alerts: watching, taken, skipped or missed. This becomes the base for future signal quality and execution analytics.",
+filterEmpty: "No alerts for the selected filter.",
+openAlertDetails: "Open breakdown",
+hideAlertDetails: "Hide breakdown",
+liveDesk: "Live AI Trading Desk",
+lastChecked: "Last checked",
+autoRefreshNote:
+  "Alerts refresh automatically. Market scan runs in the background, list updates every 60 seconds.",
+showMoreAlerts: "Show 10 more",
+collapseAlerts: "Collapse all",    
+smartTopFive:
+  "Top 5 alerts are ranked by priority, journal match, AI strength, confidence and freshness.",
+emptyDeskTitle: "AI Trading Desk is waiting for a quality setup",
+emptyDeskText:
+  "There are no active alerts for the selected filter right now. That is normal: SkillEdge AI should not fire low-quality noise. The system is waiting for a high-confidence situation with clear trigger, stop, targets and risk note.",
+emptyDeskAction:
+  "Keep the page open — the list refreshes automatically every 60 seconds.",
+confidenceTransparency: "Score transparency",
+confidenceTransparencyText:
+  "Why SkillEdge AI highlighted this signal and which factors strengthen or weaken the idea.",
+breakdownTitle: "SkillEdge AI Signal Breakdown",
+traderDecision: "Trader Decision",
+tradePlan: "Trade Plan",
+whyNow: "Why now",
+confirmationChecklist: "Confirmation Checklist",
+avoidThisTradeIf: "Avoid This Trade If",
+learningLayer: "Learning Layer",
+closeBreakdown: "Close breakdown",
+decisionTitle: "My decision",
+decisionWatching: "Watching",
+decisionTaken: "Taken",
+decisionSkipped: "Skipped",
+decisionMissed: "Missed",
+decisionSaved: "Decision saved",
+decisionReasonTitle: "Decision reason",
+reasonCleanTrigger: "Clean trigger",
+reasonGoodRiskReward: "Good RR",
+reasonJournalMatch: "Journal match",
+reasonNoConfirmation: "No confirmation",
+reasonTooLate: "Too late",
+reasonRiskHigh: "Risk too high",
+reasonLiquidity: "Spread / liquidity",
+reasonNotAtDesk: "Not at desk",
+reasonTradeDraftCreated: "Trade draft created",
+reasonInsightsTitle: "Execution reason insights",
+reasonInsightsText:
+  "SkillEdge tracks decision reasons to show where the client loses the best opportunities: late reaction, no confirmation, high risk or liquidity issues.",
+topReason: "Top reason",
+allReasons: "All reasons",
+journalSyncTitle: "Journal Sync",
+journalSyncText:
+  "You marked this signal as Taken. Create a trade draft so SkillEdge can later compare the signal plan with your real execution: entry, stop, exit, PnL and trade quality.",
+journalSyncAction: "Create trade draft",
+linkedJournalTitle: "Linked Journal Trade",
+linkedJournalText:
+  "This trade is already linked to the alert. SkillEdge can compare the signal plan with the client’s real execution.",
+linkedJournalEmpty:
+  "No saved journal trade is linked to this alert yet.",
+linkedTrades: "Linked trades",
+linkedPnl: "Linked PnL",
+linkedResult: "Result",
+journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsText:
+  "SkillEdge tracks which alerts became real Journal trades. This is the base for execution analysis, signal PnL and missed opportunity analytics.",
+takenWithoutJournal: "Taken without Journal",
+linkedAlertsCount: "Linked alerts",
+linkedTradesPnl: "Linked trades PnL",
+avgExecutionScore: "Avg execution",
+takenWithoutJournalFilter: "Taken without Journal",
+takenWithoutJournalTitle: "Taken alert without Journal trade",
+takenWithoutJournalText:
+  "The client marked this signal as Taken but has not saved a Journal trade yet. Create a trade draft so SkillEdge can compare the signal plan with real execution.",
+executionScore: "Execution score",
+executionReview: "Execution review",
+executionStrong: "Strong execution",
+executionMedium: "Good, but needs improvement",
+executionWeak: "Needs execution review",
+filterJournalLinked: "Journal linked",
+filterExecutionStrong: "Strong execution",
+filterExecutionReview: "Needs review",
+executionQualityTitle: "Execution Quality",
+executionQualityText:
+  "SkillEdge shows which AI Alerts already became Journal trades and where execution was strong or needs review.",
+executionCoachTitle: "AI Execution Coach",
+executionCoachText:
+  "SkillEdge reviews the client’s execution against the signal plan: entry, stop, direction, targets and discipline.",
+executionCoachStrong:
+  "Strong execution: the client mostly followed the signal plan. These trades should be saved as a personal strength pattern.",
+executionCoachMedium:
+  "Execution was acceptable, but there are areas to improve. Review entry timing, stop placement and management after the first target.",
+executionCoachWeak:
+  "Execution needs review. The client likely deviated from the signal plan: late entry, different stop or weak scenario discipline.",
+executionCoachEntryIssue:
+  "Entry issue: the entry was outside the planned zone or too late after the signal.",
+executionCoachStopIssue:
+  "Stop issue: the stop differs from the signal plan. This may break statistics and risk/reward.",
+executionCoachDirectionIssue:
+  "Direction issue: the trade direction differs from the alert direction.",
+executionCoachTargetIssue:
+  "Target issue: the trade did not reach TP or the exit did not follow the plan.",
+executionWeaknessTitle: "Execution Weakness Map",
+executionWeaknessText:
+  "SkillEdge shows where the client most often deviates from the signal plan: entry, stop, direction or target management.",
+entryIssueFilter: "Entry issues",
+stopIssueFilter: "Stop issues",
+directionIssueFilter: "Direction issues",
+targetIssueFilter: "Target issues",
+executionFocusTitle: "Personal Execution Focus",
+executionFocusText:
+  "SkillEdge selects the main focus based on linked Journal trades and deviations from the signal plan.",
+executionFocusEmpty:
+  "Not enough linked trades for a personal focus yet. Create trades from alerts so SkillEdge can detect repeated execution weaknesses.",
+focusEntryText:
+  "Main focus: entry timing. Check whether you enter late or outside the planned signal zone.",
+focusStopText:
+  "Main focus: stop discipline. Check whether you change the stop versus the plan and break risk/reward.",
+focusDirectionText:
+  "Main focus: direction discipline. Check whether you trade against the alert direction or without scenario confirmation.",
+focusTargetText:
+  "Main focus: target management. Check how you manage the trade after entry and whether exits are chaotic.",
+focusStrongText:
+  "Execution looks strong. Keep logging these trades — they become the base for future Personal AI Alerts.",
+openFocusAlerts: "Open alerts with this focus",
+executionActionPlanTitle: "This Week Action Plan",
+executionActionPlanText:
+  "SkillEdge turns the main execution focus into concrete rules for the next trading week.",
+entryActionOne: "Only take entries inside the planned entry zone or after confirmed reclaim/rejection.",
+entryActionTwo: "Do not chase after the trigger candle — late entry should be marked as Missed.",
+entryActionThree: "Before entry, check that price, stop and risk still offer valid risk/reward.",
+stopActionOne: "Before the trade, write the stop/invalidation and do not move it without a new scenario.",
+stopActionTwo: "If your stop differs from the alert plan, reduce size or skip the trade.",
+stopActionThree: "After the trade, check whether the changed stop broke the expected risk/reward.",
+directionActionOne: "Do not trade against the alert direction without strong reverse confirmation.",
+directionActionTwo: "Before entry, check whether your trade matches the setup direction.",
+directionActionThree: "If market structure changes, mark the alert as Skipped/Missed instead of entering impulsively.",
+targetActionOne: "Before entry, choose the main target and partial plan.",
+targetActionTwo: "After TP1, do not exit randomly — manage the trade by the predefined plan.",
+targetActionThree: "If price does not move toward target, evaluate invalidation instead of hoping.",
+strongActionOne: "Keep saving trades where you followed the alert plan.",
+strongActionTwo: "Look for repetition: which setups produce strong execution most often.",
+strongActionThree: "These trades will later become the base for Personal AI Alerts.",
+outcomeFollowupTitle: "Alert Outcome Follow-up",
+outcomeFollowupText:
+  "SkillEdge compares the client’s decision with the actual signal outcome to detect missed opportunities, good skips and trades that need review.",
+outcomeTakenWorked:
+  "You took the signal and it worked. Check whether the trade was saved in Journal and how closely execution followed the plan.",
+outcomeTakenFailed:
+  "You took the signal but it failed. Review confirmation, late entry risk and whether the stop followed the plan.",
+outcomeSkippedWorked:
+  "The signal was skipped but later worked. This is a missed opportunity — check why you did not enter: fear, not at desk or hesitation.",
+outcomeSkippedFailed:
+  "The signal was skipped and failed. This was a good filter — save the reason why you avoided it.",
+outcomeMissedWorked:
+  "You marked the signal as Missed and it worked. This is an important learning opportunity: what stopped you from acting in time?",
+outcomeMissedFailed:
+  "You marked the signal as Missed but it failed. The miss was safe, but still review whether the idea was high quality.",
+outcomePendingNote:
+  "Outcome is still pending. Later SkillEdge can compare your decision with the actual price path.",
+outcomeNeutralNote:
+  "Outcome is neutral. The signal did not give clean follow-through, so focus on decision quality rather than PnL only.",
+outcomeLearningLabel: "Learning note",
+outcomeStatsLabel: "Outcome stats",
+outcomeLearningAnalyticsTitle: "Outcome Learning Analytics",
+outcomeLearningAnalyticsText:
+  "SkillEdge groups alerts by the client’s decision and the actual signal outcome: what was taken, what failed, what became a missed opportunity and where the client correctly filtered a bad idea.",
+filterTakenWorked: "Taken + Worked",
+filterTakenFailed: "Taken + Failed",
+filterMissedOpportunity: "Missed opportunity",
+filterGoodSkip: "Good skip",
+takenWorkedText: "Signals the client took and that worked.",
+takenFailedText: "Signals the client took but they failed.",
+missedOpportunityText: "Signals the client skipped or missed, but they later worked.",
+goodSkipText: "Signals the client skipped or missed, and they failed.",
+outcomeLearningFocusTitle: "Outcome Learning Focus",
+outcomeLearningFocusText:
+  "SkillEdge selects the main learning focus based on how the client’s decisions matched the actual signal outcomes.",
+outcomeFocusTakenWorked:
+  "Strength zone: the client takes signals that work. Now review execution quality and setup repeatability.",
+outcomeFocusTakenFailed:
+  "Main focus: taken failed. The client takes signals that fail. Review confirmation, entry timing, risk and quality filters.",
+outcomeFocusMissedOpportunity:
+  "Main focus: missed opportunities. The client skips or misses signals that later work. Identify the cause: fear, hesitation, not at desk or late reaction.",
+outcomeFocusGoodSkip:
+  "Strong filtering zone: the client skips signals that fail. Save the reasons behind these decisions into the playbook.",
+outcomeFocusEmpty:
+  "Not enough marked decisions and outcomes yet. Mark alerts as Taken, Skipped or Missed so SkillEdge can build a learning focus.",
+openOutcomeFocusAlerts: "Open alerts with this focus",
+missedOpportunityCoachTitle: "Missed Opportunity Coach",
+missedOpportunityCoachText:
+  "SkillEdge reviews working signals the client skipped or missed to find the repeated cause: fear, not at desk, late reaction or weak trust in the setup.",
+missedOpportunityCoachEmpty:
+  "No missed opportunities yet. This is good: either the client did not skip working signals, or outcomes are still forming.",
+missedOpportunityTopSetup: "Top missed setup",
+missedOpportunityActionPlan: "Missed Opportunity Action Plan",
+missedOpportunityActionOne:
+  "Before the session, choose 2–3 setups you are ready to trade without hesitation when the trigger appears.",
+missedOpportunityActionTwo:
+  "If the trigger appears but you do not enter, immediately mark the reason: fear, too late, not at desk or not enough confirmation.",
+missedOpportunityActionThree:
+  "If the signal worked without you, add it to the playbook and decide what must change so you do not miss it next time.",
+alertsStateLoadingTitle: "SkillEdge AI is scanning the market",
+alertsStateLoadingText:
+  "Loading the latest alerts, checking personal priority, journal context, outcomes and signal freshness.",
+alertsStateErrorTitle: "Failed to load AI Alerts",
+alertsStateErrorText:
+  "Check connection, authorization or retry the request. If the error repeats, review backend/API logs.",
+alertsStateEmptyTitle: "AI Trading Desk is waiting for a quality setup",
+alertsStateEmptyText:
+  "There are no active alerts right now. This is normal: SkillEdge should not fire noisy signals. Fewer alerts with higher quality is better.",
+alertsStateFilterEmptyTitle: "No alerts for this filter",
+alertsStateFilterEmptyText:
+  "The list is working, but the current filter did not match any alerts. Reset the filter or wait for a new high-confidence situation.",
+alertsStateResetFilters: "Reset filters",
+alertsStateRetry: "Retry loading",
+alertsStateRunScan: "Run scan",
+alertsStateLiveNote: "Live monitoring runs in the background",
+selectedFilter: "Selected filter",
+totalAlerts: "Total alerts",
+alertsStateErrorLabel: "Error",
+alertsStateLoadingLabel: "Loading",
+alertsStateWaitingLabel: "Waiting",
+alertsStateLiveMonitoringLabel: "Live monitoring",
+decisionVsOutcomeLabel: "Decision / outcome",
+nextLearningFocus: "Next learning focus",
+noFocusYet: "No focus yet",
+outcomeProfileStillForming: "Outcome learning profile is still forming",
+missedOpportunitiesLabel: "missed opportunities",
+noMissedOpportunityPatternTitle: "No missed opportunity pattern yet",
+workedAlertsMissedSuffix: "worked alerts were missed in this setup group.",
+},
+    ua: {
+      title: "AI Alerts Center",
+      subtitle:
+        "Останні сигнали: напрямок, setup, entry zone, stop, targets, risk і management plan.",
+      generate: "Сканувати ринок",
+      generating: "Скануємо...",
+      refresh: "Оновити",
+      checkOutcomes: "Перевірити результати",
+checkingOutcomes: "Перевіряємо...",
+      empty: "Активних alerts поки немає. Запусти сканування.",
+      locked:
+        "AI Alerts доступні на SkillEdge Edge та SkillEdge Elite.",
+      direction: "Direction",
+      setup: "Setup",
+      entry: "Entry zone",
+      stop: "Stop",
+      targets: "Targets",
+      trigger: "Trigger",
+      reason: "Reason",
+      risk: "Risk",
+      scenario: "Scenario",
+      invalidation: "Invalidation",
+      management: "Management",
+      confidence: "Confidence",
+      status: "Status",
+      outcome: "Outcome",
+time: "Time",
+worked: "Worked",
+failed: "Failed",
+pending: "Pending",
+neutral: "Neutral",
+avgMfe: "Avg MFE",
+avgMae: "Avg MAE",
+tpHit: "TP hit",
+stopHit: "Stop hit",
+quality: "Quality",
+saveToPlaybook: "Save to Playbook",
+savingToPlaybook: "Saving...",
+savedToPlaybook: "Saved",
+createTradeDraft: "Create trade draft",
+openPlaybook: "Відкрити Playbook",
+hidePlaybook: "Сховати Playbook",
+playbookTitle: "Personal Signal Playbook",
+playbookText:
+  "Твоя особиста база збережених сетапів: логіка, підтвердження, помилки та приклади сигналів.",
+playbookEmpty:
+  "Збережених сетапів поки немає. Натисни Save to Playbook на будь-якому сигналі.",
+playbookLoading: "Завантажуємо playbook...",
+lastExample: "Last example",
+openSignalProfile: "Відкрити Signal Profile",
+hideSignalProfile: "Сховати Signal Profile",
+rebuildSignalProfile: "Перезібрати профіль",
+rebuildingSignalProfile: "Збираємо профіль...",
+signalProfileTitle: "Personal Signal Profile",
+signalProfileText:
+  "SkillEdge AI показує, які AI-сетапи ти торгуєш краще, де втрачаєш гроші і які сигнали варто пріоритезувати.",
+signalProfileEmpty:
+  "Профіль поки порожній. Створи угоди з AI Alerts і збережи їх у журнал.",
+signalProfileLoading: "Завантажуємо signal profile...",
+personalStrength: "Personal strength",
+riskZone: "Risk zone",
+learningProfile: "Learning",
+neutralProfile: "Neutral",
+strengthScore: "Strength score",
+planAdherence: "Plan adherence",
+aiNote: "AI note",
+openTradePatterns: "Відкрити Trade Patterns",
+hideTradePatterns: "Сховати Trade Patterns",
+rebuildTradePatterns: "Знайти мої патерни",
+rebuildingTradePatterns: "Шукаємо патерни...",
+tradePatternsTitle: "Independent Trade Pattern Profile",
+tradePatternsText:
+  "SkillEdge AI аналізує твої самостійні прибуткові угоди з Journal і знаходить повторювані патерни для майбутніх Personal AI Alerts.",
+tradePatternsEmpty:
+  "Патернів поки немає. Додай у Journal кілька самостійних прибуткових угод.",
+tradePatternsLoading: "Завантажуємо trade patterns...",
+patternStrength: "Pattern strength",
+examples: "Examples",
+keywords: "Keywords",
+filterAll: "All",
+filterActionable: "Actionable",
+filterWatchlist: "Watchlist",
+filterPriority: "Priority",
+filterCaution: "Caution",
+filterJournalMatch: "Journal Match",
+filterAiStrength: "AI Strength",
+filterLong: "Long",
+filterShort: "Short",
+filterCrypto: "Crypto",
+filterStocks: "Stocks",
+filterDecisionWatching: "Watching",
+filterDecisionTaken: "Taken",
+filterDecisionSkipped: "Skipped",
+filterDecisionMissed: "Missed",
+decisionAnalyticsTitle: "Signal-to-Trade Decisions",
+decisionAnalyticsText:
+  "Тут видно, як клієнт працює з сигналами: спостерігає, бере, пропускає або відмічає missed. Це база майбутньої статистики якості сигналів і виконання.",
+filterEmpty: "Немає alerts для вибраного фільтра.",
+openAlertDetails: "Відкрити розбір",
+hideAlertDetails: "Сховати розбір",
+liveDesk: "Live AI Trading Desk",
+lastChecked: "Остання перевірка",
+autoRefreshNote:
+  "Alerts оновлюються автоматично. Market scan працює у фоні, список оновлюється кожні 60 секунд.",
+showMoreAlerts: "Показати ще 10",
+collapseAlerts: "Згорнути все",    
+emptyDeskTitle: "AI Trading Desk чекає якісний сетап",
+emptyDeskText:
+  "Зараз немає active alerts для вибраного фільтра. Це нормально: SkillEdge AI не має стріляти шумом. Система чекає high-confidence ситуацію з чітким trigger, stop, targets і risk note.",
+emptyDeskAction:
+  "Залиш сторінку відкритою — список оновлюється автоматично кожні 60 секунд.",
+confidenceTransparency: "Score transparency",
+confidenceTransparencyText:
+  "Чому SkillEdge AI виділив цей сигнал і які фактори підсилюють або послаблюють ідею.",
+breakdownTitle: "SkillEdge AI Signal Breakdown",
+traderDecision: "Trader Decision",
+tradePlan: "Trade Plan",
+whyNow: "Why now",
+confirmationChecklist: "Confirmation Checklist",
+avoidThisTradeIf: "Avoid This Trade If",
+learningLayer: "Learning Layer",
+closeBreakdown: "Закрити розбір",
+decisionTitle: "Моє рішення",
+decisionWatching: "Watching",
+decisionTaken: "Taken",
+decisionSkipped: "Skipped",
+decisionMissed: "Missed",
+decisionSaved: "Decision saved",
+decisionReasonTitle: "Причина рішення",
+reasonCleanTrigger: "Clean trigger",
+reasonGoodRiskReward: "Good RR",
+reasonJournalMatch: "Journal match",
+reasonNoConfirmation: "No confirmation",
+reasonTooLate: "Too late",
+reasonRiskHigh: "Risk too high",
+reasonLiquidity: "Spread / liquidity",
+reasonNotAtDesk: "Not at desk",
+reasonTradeDraftCreated: "Trade draft created",
+reasonInsightsTitle: "Execution reason insights",
+reasonInsightsText:
+  "SkillEdge відстежує причини рішень, щоб потім показувати, де клієнт втрачає найкращі можливості: запізнення, відсутність підтвердження, високий ризик або проблеми з ліквідністю.",
+topReason: "Top reason",
+allReasons: "Усі причини",
+journalSyncTitle: "Journal Sync",
+journalSyncText:
+  "Ти відмітив сигнал як Taken. Створи trade draft, щоб SkillEdge пізніше порівняв план сигналу з твоїм реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
+journalSyncAction: "Створити trade draft",
+linkedJournalTitle: "Linked Journal Trade",
+linkedJournalText:
+  "Ця угода вже пов’язана з alert. SkillEdge зможе порівняти план сигналу з реальним виконанням клієнта.",
+linkedJournalEmpty:
+  "Поки немає збереженої угоди в журналі, пов’язаної з цим alert.",
+linkedTrades: "Linked trades",
+linkedPnl: "Linked PnL",
+linkedResult: "Result",
+journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsText:
+  "SkillEdge відстежує, які alerts стали реальними угодами в Journal. Це база для аналізу виконання, PnL по сигналах і пропущених можливостей.",
+takenWithoutJournal: "Taken без Journal",
+linkedAlertsCount: "Linked alerts",
+linkedTradesPnl: "Linked trades PnL",
+avgExecutionScore: "Avg execution",
+takenWithoutJournalFilter: "Taken без Journal",
+takenWithoutJournalTitle: "Taken alert без угоди в Journal",
+takenWithoutJournalText:
+  "Клієнт відмітив сигнал як Taken, але ще не зберіг угоду в журналі. Створи trade draft, щоб SkillEdge зміг порівняти план сигналу з реальним виконанням.",
+executionScore: "Execution score",
+executionReview: "Execution review",
+executionStrong: "Сильне виконання",
+executionMedium: "Нормально, але є що покращити",
+executionWeak: "Потрібен розбір виконання",
+filterJournalLinked: "Journal linked",
+filterExecutionStrong: "Strong execution",
+filterExecutionReview: "Needs review",
+executionQualityTitle: "Execution Quality",
+executionQualityText:
+  "SkillEdge показує, які AI Alerts вже стали угодами в Journal і де виконання було сильним або потребує розбору.",
+executionCoachTitle: "AI Execution Coach",
+executionCoachText:
+  "SkillEdge розбирає виконання клієнта відносно плану сигналу: вхід, стоп, напрямок, targets і дисципліну.",
+executionCoachStrong:
+  "Сильне виконання: клієнт загалом дотримався плану сигналу. Такі угоди варто зберігати як особистий сильний патерн.",
+executionCoachMedium:
+  "Виконання нормальне, але є зони для покращення. Перевір вхід, стоп і management після першого target.",
+executionCoachWeak:
+  "Виконання потребує розбору. Ймовірно, клієнт відійшов від плану сигналу: пізній вхід, інший стоп або слабка дисципліна сценарію.",
+executionCoachEntryIssue:
+  "Entry issue: вхід був поза плановою зоною або занадто пізно після сигналу.",
+executionCoachStopIssue:
+  "Stop issue: стоп відрізняється від плану сигналу. Це може ламати статистику і risk/reward.",
+executionCoachDirectionIssue:
+  "Direction issue: напрямок угоди відрізняється від напрямку alert.",
+executionCoachTargetIssue:
+  "Target issue: угода не дійшла до TP або вихід був не за планом.",
+executionWeaknessTitle: "Execution Weakness Map",
+executionWeaknessText:
+  "SkillEdge показує, де клієнт найчастіше відхиляється від плану сигналу: вхід, стоп, напрямок або управління цілями.",
+entryIssueFilter: "Entry issues",
+stopIssueFilter: "Stop issues",
+directionIssueFilter: "Direction issues",
+targetIssueFilter: "Target issues",
+executionFocusTitle: "Personal Execution Focus",
+executionFocusText:
+  "SkillEdge обирає головний фокус на основі пов’язаних Journal-угод і відхилень від плану сигналу.",
+executionFocusEmpty:
+  "Поки недостатньо linked trades для персонального фокусу. Створюй угоди з alerts, щоб SkillEdge почав знаходити повторювані слабкі місця.",
+focusEntryText:
+  "Головний фокус — entry timing. Перевір, чи не входиш ти запізно або поза плановою зоною сигналу.",
+focusStopText:
+  "Головний фокус — stop discipline. Перевір, чи не змінюєш стоп відносно плану і чи не ламаєш risk/reward.",
+focusDirectionText:
+  "Головний фокус — direction discipline. Перевір, чи не торгуєш проти напрямку alert або без підтвердження сценарію.",
+focusTargetText:
+  "Головний фокус — target management. Перевір, як ведеш угоду після входу і чи не виходиш хаотично.",
+focusStrongText:
+  "Виконання виглядає сильним. Продовжуй фіксувати такі угоди — це база для майбутніх Personal AI Alerts.",
+openFocusAlerts: "Відкрити alerts з цим фокусом",
+executionActionPlanTitle: "This Week Action Plan",
+executionActionPlanText:
+  "SkillEdge перетворює головний execution focus на конкретні правила для наступного торгового тижня.",
+entryActionOne: "Бери вхід тільки всередині планової entry zone або після підтвердженого reclaim/rejection.",
+entryActionTwo: "Не наздоганяй свічку після trigger — пізній вхід краще відмітити як Missed.",
+entryActionThree: "Перед входом перевір: ціна, стоп і ризик все ще дають нормальний risk/reward.",
+stopActionOne: "Перед угодою заздалегідь запиши stop/invalidation і не рухай його без нового сценарію.",
+stopActionTwo: "Якщо стоп відрізняється від плану alert — зменш позицію або пропусти угоду.",
+stopActionThree: "Після угоди перевір, чи не зламав змінений стоп очікуваний risk/reward.",
+directionActionOne: "Не торгуй проти direction alert без сильного reverse-confirmation.",
+directionActionTwo: "Перед входом перевір, чи збігається твоя угода з напрямком setup.",
+directionActionThree: "Якщо ринок змінив структуру — відміть alert як Skipped/Missed, а не входь імпульсивно.",
+targetActionOne: "До входу обери основний target і partial plan.",
+targetActionTwo: "Після TP1 не виходь хаотично — веди угоду за заздалегідь заданим management plan.",
+targetActionThree: "Якщо ціна не йде до target — оцінюй invalidation, а не надійся.",
+strongActionOne: "Продовжуй зберігати угоди, де ти дотримався плану alert.",
+strongActionTwo: "Шукай повторюваність: які setup найчастіше дають сильне виконання.",
+strongActionThree: "Ці угоди пізніше стануть базою для Personal AI Alerts.",
+outcomeFollowupTitle: "Alert Outcome Follow-up",
+outcomeFollowupText:
+  "SkillEdge порівнює рішення клієнта з фактичним результатом сигналу, щоб знаходити missed opportunities, хороші пропуски та угоди, які потребують розбору.",
+outcomeTakenWorked:
+  "Ти взяв сигнал, і він відпрацював. Перевір, чи збережена угода в Journal і наскільки виконання збіглося з планом.",
+outcomeTakenFailed:
+  "Ти взяв сигнал, але він не відпрацював. Розбери, чи було підтвердження, чи не був вхід пізнім і чи був стоп за планом.",
+outcomeSkippedWorked:
+  "Сигнал був пропущений, але потім відпрацював. Це missed opportunity — перевір, чому не було входу: страх, не був біля екрана або сумнів.",
+outcomeSkippedFailed:
+  "Сигнал був пропущений і не відпрацював. Це хороший фільтр — збережи причину, чому ти не входив.",
+outcomeMissedWorked:
+  "Ти відмітив сигнал як Missed, і він відпрацював. Це важлива можливість для навчання: що завадило включитися вчасно?",
+outcomeMissedFailed:
+  "Ти відмітив сигнал як Missed, але він не відпрацював. Пропуск був безпечним, але все одно перевір якість ідеї.",
+outcomePendingNote:
+  "Outcome ще pending. Пізніше SkillEdge зможе порівняти твоє рішення з фактичним рухом ціни.",
+outcomeNeutralNote:
+  "Outcome neutral. Сигнал не дав чистого follow-through, тому важливо оцінювати якість рішення, а не тільки PnL.",
+outcomeLearningLabel: "Learning note",
+outcomeStatsLabel: "Outcome stats",
+outcomeLearningAnalyticsTitle: "Outcome Learning Analytics",
+outcomeLearningAnalyticsText:
+  "SkillEdge групує alerts за рішенням клієнта і фактичним результатом сигналу: що було взято, що провалилось, що стало missed opportunity і де клієнт правильно відфільтрував слабку ідею.",
+filterTakenWorked: "Taken + Worked",
+filterTakenFailed: "Taken + Failed",
+filterMissedOpportunity: "Missed opportunity",
+filterGoodSkip: "Good skip",
+takenWorkedText: "Сигнали, які клієнт взяв і які відпрацювали.",
+takenFailedText: "Сигнали, які клієнт взяв, але вони не відпрацювали.",
+missedOpportunityText: "Сигнали, які клієнт пропустив, але вони потім відпрацювали.",
+goodSkipText: "Сигнали, які клієнт пропустив, і вони не відпрацювали.",
+outcomeLearningFocusTitle: "Outcome Learning Focus",
+outcomeLearningFocusText:
+  "SkillEdge обирає головний фокус навчання на основі того, як рішення клієнта збіглися з фактичним результатом сигналів.",
+outcomeFocusTakenWorked:
+  "Сильна зона: клієнт бере сигнали, які відпрацьовують. Тепер важливо перевірити якість виконання і повторюваність цих setup.",
+outcomeFocusTakenFailed:
+  "Головний фокус — taken failed. Клієнт бере сигнали, які не відпрацьовують. Потрібно перевірити підтвердження, вхід, ризик і фільтри якості.",
+outcomeFocusMissedOpportunity:
+  "Головний фокус — missed opportunities. Клієнт пропускає сигнали, які потім відпрацьовують. Потрібно зрозуміти причину: страх, сумнів, відсутність біля екрана або пізня реакція.",
+outcomeFocusGoodSkip:
+  "Сильна зона фільтрації: клієнт пропускає сигнали, які не відпрацьовують. Потрібно зберегти причини таких рішень у playbook.",
+outcomeFocusEmpty:
+  "Поки недостатньо відмічених рішень і outcomes. Відмічай alerts як Taken, Skipped або Missed, щоб SkillEdge почав будувати learning focus.",
+openOutcomeFocusAlerts: "Відкрити alerts з цим фокусом",
+missedOpportunityCoachTitle: "Missed Opportunity Coach",
+missedOpportunityCoachText:
+  "SkillEdge розбирає робочі сигнали, які клієнт пропустив, щоб знайти повторювану причину: страх, відсутність біля екрана, пізня реакція або слабка довіра до setup.",
+missedOpportunityCoachEmpty:
+  "Поки немає missed opportunities. Це добре: або клієнт не пропускав робочі сигнали, або outcomes ще формуються.",
+missedOpportunityTopSetup: "Top missed setup",
+missedOpportunityActionPlan: "Missed Opportunity Action Plan",
+missedOpportunityActionOne:
+  "Перед сесією обери 2–3 setup, які ти готовий торгувати без сумнівів при появі trigger.",
+missedOpportunityActionTwo:
+  "Якщо trigger з’явився, але ти не увійшов — одразу відміть причину: страх, запізно, не біля екрана або не вистачило підтвердження.",
+missedOpportunityActionThree:
+  "Якщо сигнал відпрацював без тебе — додай його в playbook і виріши, що має змінитися, щоб наступного разу не пропустити.",
+alertsStateLoadingTitle: "SkillEdge AI сканує ринок",
+alertsStateLoadingText:
+  "Завантажуємо останні alerts, перевіряємо персональний пріоритет, журнал, outcomes і свіжість сигналів.",
+alertsStateErrorTitle: "Не вдалося завантажити AI Alerts",
+alertsStateErrorText:
+  "Перевір підключення, авторизацію або повтори запит. Якщо помилка повторюється — потрібно перевірити backend/API logs.",
+alertsStateEmptyTitle: "AI Trading Desk чекає якісний setup",
+alertsStateEmptyText:
+  "Зараз немає активних alerts. Це нормально: SkillEdge не має стріляти шумом. Краще менше сигналів, але вища якість і зрозуміліший ризик.",
+alertsStateFilterEmptyTitle: "Для цього фільтра alerts немає",
+alertsStateFilterEmptyText:
+  "Список працює, але поточний фільтр не знайшов відповідних сигналів. Скинь фільтр або дочекайся нової high-confidence ситуації.",
+alertsStateResetFilters: "Скинути фільтри",
+alertsStateRetry: "Повторити завантаження",
+alertsStateRunScan: "Запустити скан",
+alertsStateLiveNote: "Live monitoring працює у фоні",
+selectedFilter: "Selected filter",
+totalAlerts: "Total alerts",
+alertsStateErrorLabel: "Помилка",
+alertsStateLoadingLabel: "Завантаження",
+alertsStateWaitingLabel: "Очікування",
+alertsStateLiveMonitoringLabel: "Live monitoring",
+decisionVsOutcomeLabel: "Рішення / outcome",
+nextLearningFocus: "Наступний learning focus",
+noFocusYet: "Фокус ще не сформований",
+outcomeProfileStillForming: "Outcome learning profile ще формується",
+missedOpportunitiesLabel: "missed opportunities",
+noMissedOpportunityPatternTitle: "Патерн missed opportunities ще не сформований",
+workedAlertsMissedSuffix: "робочих alerts були пропущені в цій групі setup.",
+},
+  }[safeLanguage];
+
+  const hasAccess =
+    subscription.active && canUseFeature(subscription.plan, "social_tickers");
+
+  const loadAlerts = async (generate = false) => {
+    if (!hasAccess) return;
+
+    try {
+      setError("");
+
+      if (generate) {
+        setGenerating(true);
+      } else {
+        setLoading(true);
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        setError("Unauthorized.");
+        return;
+      }
+
+      if (generate) {
+        const generateResponse = await fetch("/api/market/alerts", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        if (!generateResponse.ok) {
+          const payload = await generateResponse.json().catch(() => null);
+          setError(payload?.error || "Failed to generate alerts.");
+          return;
+        }
+      }
+
+      const response = await fetch("/api/market/alerts/personalized?limit=100&period=7d", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        cache: "no-store",
+      });
+
+      const data = (await response.json().catch(() => null)) as
+        | { items?: DashboardMarketAlert[]; error?: string }
+        | null;
+
+      if (!response.ok) {
+        setError(data?.error || "Failed to load alerts.");
+        setAlerts([]);
+        return;
+      }
+
+      setAlerts(Array.isArray(data?.items) ? data.items : []);
+      setAlertsLastCheckedAt(new Date().toISOString());
+    } catch {
+      setError("Failed to load alerts.");
+      setAlerts([]);
+    } finally {
+      setLoading(false);
+      setGenerating(false);
+    }
+  };
+
+  const checkAlertOutcomes = async () => {
+  if (!hasAccess) return;
+
+  try {
+    setCheckingOutcomes(true);
+    setError("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setError("Unauthorized.");
+      return;
+    }
+
+    const response = await fetch("/api/market/alerts/outcomes", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      setError(payload?.error || "Failed to check alert outcomes.");
+      return;
+    }
+
+    await loadAlerts(false);
+  } catch {
+    setError("Failed to check alert outcomes.");
+  } finally {
+    setCheckingOutcomes(false);
+  }
+};
+
+const loadTradePatterns = async () => {
+  if (!hasAccess) return;
+
+  try {
+    setTradePatternsOpen(true);
+    setTradePatternsLoading(true);
+    setTradePatternsError("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setTradePatternsError("Unauthorized.");
+      return;
+    }
+
+    const response = await fetch("/api/playbook/trade-patterns", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      cache: "no-store",
+    });
+
+    const payload = (await response.json().catch(() => null)) as
+      | { items?: UserTradePatternProfileItem[]; error?: string }
+      | null;
+
+    if (!response.ok) {
+      setTradePatternsError(payload?.error || "Failed to load trade patterns.");
+      setTradePatternItems([]);
+      return;
+    }
+
+    setTradePatternItems(Array.isArray(payload?.items) ? payload.items : []);
+  } catch {
+    setTradePatternsError("Failed to load trade patterns.");
+    setTradePatternItems([]);
+  } finally {
+    setTradePatternsLoading(false);
+  }
+};
+
+const rebuildTradePatterns = async () => {
+  if (!hasAccess) return;
+
+  try {
+    setTradePatternsOpen(true);
+    setTradePatternsRebuilding(true);
+    setTradePatternsError("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setTradePatternsError("Unauthorized.");
+      return;
+    }
+
+    const response = await fetch("/api/playbook/trade-patterns", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    const payload = (await response.json().catch(() => null)) as
+      | { items?: UserTradePatternProfileItem[]; error?: string }
+      | null;
+
+    if (!response.ok) {
+      setTradePatternsError(payload?.error || "Failed to rebuild trade patterns.");
+      return;
+    }
+
+    setTradePatternItems(Array.isArray(payload?.items) ? payload.items : []);
+  } catch {
+    setTradePatternsError("Failed to rebuild trade patterns.");
+  } finally {
+    setTradePatternsRebuilding(false);
+  }
+};
+
+const loadSignalProfile = async () => {
+  if (!hasAccess) return;
+
+  try {
+    setSignalProfileOpen(true);
+    setSignalProfileLoading(true);
+    setSignalProfileError("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setSignalProfileError("Unauthorized.");
+      return;
+    }
+
+    const response = await fetch("/api/playbook/signal-profile", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      cache: "no-store",
+    });
+
+    const payload = (await response.json().catch(() => null)) as
+      | { items?: UserSignalProfileItem[]; error?: string }
+      | null;
+
+    if (!response.ok) {
+      setSignalProfileError(payload?.error || "Failed to load signal profile.");
+      setSignalProfileItems([]);
+      return;
+    }
+
+    setSignalProfileItems(Array.isArray(payload?.items) ? payload.items : []);
+  } catch {
+    setSignalProfileError("Failed to load signal profile.");
+    setSignalProfileItems([]);
+  } finally {
+    setSignalProfileLoading(false);
+  }
+};
+
+const rebuildSignalProfile = async () => {
+  if (!hasAccess) return;
+
+  try {
+    setSignalProfileOpen(true);
+    setSignalProfileRebuilding(true);
+    setSignalProfileError("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setSignalProfileError("Unauthorized.");
+      return;
+    }
+
+    const response = await fetch("/api/playbook/signal-profile", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+    });
+
+    const payload = (await response.json().catch(() => null)) as
+      | { items?: UserSignalProfileItem[]; error?: string }
+      | null;
+
+    if (!response.ok) {
+      setSignalProfileError(payload?.error || "Failed to rebuild signal profile.");
+      return;
+    }
+
+    setSignalProfileItems(Array.isArray(payload?.items) ? payload.items : []);
+  } catch {
+    setSignalProfileError("Failed to rebuild signal profile.");
+  } finally {
+    setSignalProfileRebuilding(false);
+  }
+};
+
+const loadPersonalPlaybook = async () => {
+  if (!hasAccess) return;
+
+  try {
+    setPlaybookOpen(true);
+    setPlaybookLoading(true);
+    setPlaybookError("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setPlaybookError("Unauthorized.");
+      return;
+    }
+
+    const response = await fetch("/api/playbook/setups", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      cache: "no-store",
+    });
+
+    const payload = (await response.json().catch(() => null)) as
+      | { items?: UserSignalPlaybookItem[]; error?: string }
+      | null;
+
+    if (!response.ok) {
+      setPlaybookError(payload?.error || "Failed to load personal playbook.");
+      setPlaybookItems([]);
+      return;
+    }
+
+    setPlaybookItems(Array.isArray(payload?.items) ? payload.items : []);
+  } catch {
+    setPlaybookError("Failed to load personal playbook.");
+    setPlaybookItems([]);
+  } finally {
+    setPlaybookLoading(false);
+  }
+};
+
+const markSingleAlertViewed = async (alertId: string) => {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) return;
+
+    await fetch("/api/market/alerts/viewed", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        alertIds: [alertId],
+      }),
+    });
+
+    setAlerts((current) =>
+      current.map((alert) =>
+        alert.id === alertId
+          ? { ...alert, is_new: false, viewed_at: new Date().toISOString() }
+          : alert
+      )
+    );
+  } catch {
+    // ignore viewed state failure
+  }
+};
+
+const saveAlertDecision = async (
+  alertId: string,
+  decision: "watching" | "taken" | "skipped" | "missed",
+  decisionNote = ""
+) => {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) return;
+
+    const response = await fetch("/api/market/alerts/decision", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+  alertId,
+  decision,
+  decisionNote,
+}),
+    });
+
+    if (!response.ok) return;
+
+    setAlerts((current) =>
+      current.map((alert) =>
+        alert.id === alertId
+          ? {
+              ...alert,
+              is_new: false,
+              viewed_at: new Date().toISOString(),
+              user_alert_decision: decision,
+              user_alert_decision_note: decisionNote || alert.user_alert_decision_note || null,
+            }
+          : alert
+      )
+    );
+  } catch {
+    // Keep UI usable even if decision sync fails.
+  }
+};
+
+const saveAlertToPlaybook = async (alert: DashboardMarketAlert) => {
+  if (!hasAccess) return;
+
+  try {
+    setSavingPlaybookId(alert.id);
+    setError("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setError("Unauthorized.");
+      return;
+    }
+
+    const response = await fetch("/api/playbook/setups", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        alertId: alert.id,
+      }),
+    });
+
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      setError(payload?.error || "Failed to save setup to playbook.");
+      return;
+    }
+
+    setSavedPlaybookAlertIds((current) =>
+      Array.from(new Set([...current, alert.id]))
+    );
+    if (playbookOpen) {
+  await loadPersonalPlaybook();
+}
+  } catch {
+    setError("Failed to save setup to playbook.");
+  } finally {
+    setSavingPlaybookId("");
+  }
+};
+
+  useEffect(() => {
+  if (!hasAccess) return;
+
+  loadAlerts(false);
+
+  const interval = window.setInterval(() => {
+    loadAlerts(false);
+  }, 60000);
+
+  return () => {
+    window.clearInterval(interval);
+  };
+}, [hasAccess]);
+
+useEffect(() => {
+  if (!expandedAlertId) return;
+
+  const previousOverflow = document.body.style.overflow;
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setExpandedAlertId(null);
+    }
+  };
+
+  document.body.style.overflow = "hidden";
+  window.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    document.body.style.overflow = previousOverflow;
+    window.removeEventListener("keydown", handleKeyDown);
+  };
+}, [expandedAlertId]);
+
+useEffect(() => {
+  setVisibleAlertsCount(5);
+  setExpandedAlertId(null);
+  setDecisionReasonFilter(null);
+}, [alertFilter]);
+
+const workedCount = alerts.filter(
+  (alert) => alert.outcome_status === "worked"
+).length;
+
+const failedCount = alerts.filter(
+  (alert) => alert.outcome_status === "failed"
+).length;
+
+const neutralCount = alerts.filter(
+  (alert) => alert.outcome_status === "neutral"
+).length;
+
+const pendingCount = alerts.filter(
+  (alert) => !alert.outcome_status || alert.outcome_status === "pending"
+).length;
+
+const resolvedCount = workedCount + failedCount + neutralCount;
+
+const qualityRate =
+  resolvedCount > 0 ? Math.round((workedCount / resolvedCount) * 100) : null;
+
+const mfeValues = alerts
+  .map((alert) => alert.mfe)
+  .filter((value): value is number => typeof value === "number");
+
+const maeValues = alerts
+  .map((alert) => alert.mae)
+  .filter((value): value is number => typeof value === "number");
+
+const avgMfe =
+  mfeValues.length > 0
+    ? mfeValues.reduce((sum, value) => sum + value, 0) / mfeValues.length
+    : null;
+
+const avgMae =
+  maeValues.length > 0
+    ? maeValues.reduce((sum, value) => sum + value, 0) / maeValues.length
+    : null;
+
+const tpHitCount = alerts.filter((alert) => Boolean(alert.hit_target)).length;
+
+const stopHitCount = alerts.filter((alert) => Boolean(alert.hit_stop)).length;
+const personalStrengthProfiles = signalProfileItems.filter(
+  (profile) => profile.profile_label === "personal_strength"
+);
+
+const riskZoneProfiles = signalProfileItems.filter(
+  (profile) => profile.profile_label === "risk_zone"
+);
+
+const learningProfiles = signalProfileItems.filter(
+  (profile) => profile.profile_label === "learning"
+);
+
+const neutralProfiles = signalProfileItems.filter(
+  (profile) => profile.profile_label === "neutral"
+);
+
+const topSignalProfile = signalProfileItems[0] || null;
+const topTradePattern = tradePatternItems[0] || null;
+
+const strongTradePatterns = tradePatternItems.filter(
+  (pattern) => pattern.profile_label === "personal_strength_candidate"
+);
+
+const learningTradePatterns = tradePatternItems.filter(
+  (pattern) => pattern.profile_label === "learning_candidate"
+);
+
+const tradePatternTotalPnl = tradePatternItems.reduce(
+  (sum, pattern) => sum + Number(pattern.total_pnl || 0),
+  0
+);
+
+function isAlertTakenWithoutJournal(alert: DashboardMarketAlert) {
+  if (alert.user_alert_decision !== "taken") return false;
+
+  return !trades.some((trade) => trade.source_alert_id === alert.id);
+}
+
+const visibleAlerts = alerts.filter((alert) => {
+  if (
+    decisionReasonFilter &&
+    alert.user_alert_decision_note !== decisionReasonFilter
+  ) {
+    return false;
+  }
+
+  if (alertFilter === "all") return true;
+
+if (alertFilter === "actionable") {
+  return alert.signal_mode === "actionable";
+}
+
+if (alertFilter === "watchlist") {
+  return alert.signal_mode === "watchlist";
+}
+
+if (alertFilter === "decision_watching") {
+  return alert.user_alert_decision === "watching";
+}
+
+if (alertFilter === "decision_taken") {
+  return alert.user_alert_decision === "taken";
+}
+
+if (alertFilter === "decision_skipped") {
+  return alert.user_alert_decision === "skipped";
+}
+
+if (alertFilter === "decision_missed") {
+  return alert.user_alert_decision === "missed";
+}
+
+if (alertFilter === "taken_without_journal") {
+  return isAlertTakenWithoutJournal(alert);
+}
+
+if (alertFilter === "journal_linked") {
+  return hasLinkedJournalTrade(alert);
+}
+
+if (alertFilter === "execution_strong") {
+  return hasStrongExecution(alert);
+}
+
+if (alertFilter === "execution_review") {
+  return needsExecutionReview(alert);
+}
+
+if (alertFilter === "execution_entry_issue") {
+  return hasEntryExecutionIssue(alert);
+}
+
+if (alertFilter === "execution_stop_issue") {
+  return hasStopExecutionIssue(alert);
+}
+
+if (alertFilter === "execution_direction_issue") {
+  return hasDirectionExecutionIssue(alert);
+}
+
+if (alertFilter === "execution_target_issue") {
+  return hasTargetExecutionIssue(alert);
+}
+
+if (alertFilter === "outcome_taken_worked") {
+  return isTakenWorkedAlert(alert);
+}
+
+if (alertFilter === "outcome_taken_failed") {
+  return isTakenFailedAlert(alert);
+}
+
+if (alertFilter === "outcome_missed_opportunity") {
+  return isMissedOpportunityAlert(alert);
+}
+
+if (alertFilter === "outcome_good_skip") {
+  return isGoodSkipAlert(alert);
+}
+
+  if (alertFilter === "priority") {
+    return alert.personal_priority_type === "priority";
+  }
+
+  if (alertFilter === "caution") {
+    return (
+      alert.personal_priority_type === "caution" ||
+      alert.personalization_type === "risk"
+    );
+  }
+
+  if (alertFilter === "journal_match") {
+    return Boolean(alert.journal_pattern_label);
+  }
+
+  if (alertFilter === "ai_strength") {
+    return alert.personalization_type === "strength";
+  }
+
+  if (alertFilter === "long") {
+    return alert.direction === "upside" || alert.direction === "long";
+  }
+
+  if (alertFilter === "short") {
+    return alert.direction === "downside" || alert.direction === "short";
+  }
+
+  if (alertFilter === "crypto") {
+    return alert.asset_type === "crypto";
+  }
+
+  if (alertFilter === "stocks") {
+    return alert.asset_type !== "crypto";
+  }
+
+
+return true;
+});
+
+const decisionCounts = {
+  watching: alerts.filter(
+    (alert) => alert.user_alert_decision === "watching"
+  ).length,
+  taken: alerts.filter((alert) => alert.user_alert_decision === "taken")
+    .length,
+  skipped: alerts.filter(
+    (alert) => alert.user_alert_decision === "skipped"
+  ).length,
+  missed: alerts.filter((alert) => alert.user_alert_decision === "missed")
+    .length,
+};
+
+const totalDecisionCount =
+  decisionCounts.watching +
+  decisionCounts.taken +
+  decisionCounts.skipped +
+  decisionCounts.missed;
+
+const takenRate =
+  totalDecisionCount > 0
+    ? Math.round((decisionCounts.taken / totalDecisionCount) * 100)
+    : null;
+
+    const decisionReasonCounts = alerts.reduce<Record<string, number>>(
+  (acc, alert) => {
+    const reason = alert.user_alert_decision_note?.trim();
+
+    if (!reason) return acc;
+
+    acc[reason] = (acc[reason] || 0) + 1;
+
+    return acc;
+  },
+  {}
+);
+
+const decisionReasonItems = Object.entries(decisionReasonCounts)
+  .map(([reason, count]) => ({
+    reason,
+    count,
+  }))
+  .sort((a, b) => b.count - a.count);
+
+const topDecisionReason = decisionReasonItems[0] || null;
+
+const rankedVisibleAlerts = [...visibleAlerts].sort((a, b) => {
+  const importanceDiff =
+    getAlertImportanceScore(b) - getAlertImportanceScore(a);
+
+  if (importanceDiff !== 0) return importanceDiff;
+
+  return (
+    new Date(b.created_at || 0).getTime() -
+    new Date(a.created_at || 0).getTime()
+  );
+});
+
+const displayedAlerts = rankedVisibleAlerts.slice(0, visibleAlertsCount);
+
+const hiddenAlertsCount = Math.max(
+  rankedVisibleAlerts.length - displayedAlerts.length,
+  0
+);
+
+const hasActiveAlertFilters =
+  alertFilter !== "all" || Boolean(decisionReasonFilter);
+
+const resetAlertFilters = () => {
+  setAlertFilter("all");
+  setDecisionReasonFilter(null);
+  setVisibleAlertsCount(5);
+  setExpandedAlertId(null);
+};
+
+const breakdownAlert = expandedAlertId
+  ? alerts.find((alert) => alert.id === expandedAlertId) || null
+  : null;
+
+  useEffect(() => {
+  if (!breakdownAlert || typeof document === "undefined") return;
+
+  const previousOverflow = document.body.style.overflow;
+
+  document.body.style.overflow = "hidden";
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Escape") {
+      setExpandedAlertId(null);
+    }
+  };
+
+  window.addEventListener("keydown", handleKeyDown);
+
+  return () => {
+    document.body.style.overflow = previousOverflow;
+    window.removeEventListener("keydown", handleKeyDown);
+  };
+}, [breakdownAlert]);
+
+  const linkedTradesByAlertId = useMemo(() => {
+  return trades.reduce<Record<string, Trade[]>>((acc, trade) => {
+    const alertId = trade.source_alert_id;
+
+    if (!alertId) return acc;
+
+    if (!acc[alertId]) {
+      acc[alertId] = [];
+    }
+
+    acc[alertId].push(trade);
+
+    return acc;
+  }, {});
+}, [trades]);
+
+const getLinkedTradesForAlert = (alertId: string) => {
+  return linkedTradesByAlertId[alertId] || [];
+};
+
+const getLinkedPnlLabel = (items: Trade[]) => {
+  const pnlItems = items.filter((trade) => typeof trade.pnl === "number");
+
+  if (pnlItems.length === 0) return "—";
+
+  const total = pnlItems.reduce((sum, trade) => sum + (trade.pnl || 0), 0);
+
+  return `${total >= 0 ? "+" : ""}${total.toFixed(2)}`;
+};
+
+const getLinkedResultLabel = (items: Trade[]) => {
+  const resultCounts = items.reduce<Record<string, number>>((acc, trade) => {
+    const result = trade.result || "open";
+
+    acc[result] = (acc[result] || 0) + 1;
+
+    return acc;
+  }, {});
+
+  return Object.entries(resultCounts)
+    .map(([result, count]) => `${result}: ${count}`)
+    .join(" / ");
+};
+
+const getLinkedExecutionScoreLabel = (items: Trade[]) => {
+  const reviews = items
+    .map((trade) => getSignalExecutionReview(trade))
+    .filter(
+      (review): review is NonNullable<ReturnType<typeof getSignalExecutionReview>> =>
+        Boolean(review)
+    );
+
+  if (reviews.length === 0) return "—";
+
+  const average = Math.round(
+    reviews.reduce((sum, review) => sum + review.adherenceScore, 0) /
+      reviews.length
+  );
+
+  return `${average}/100`;
+};
+
+const getLinkedExecutionScoreValue = (items: Trade[]) => {
+  const reviews = items
+    .map((trade) => getSignalExecutionReview(trade))
+    .filter(
+      (review): review is NonNullable<ReturnType<typeof getSignalExecutionReview>> =>
+        Boolean(review)
+    );
+
+  if (reviews.length === 0) return null;
+
+  return Math.round(
+    reviews.reduce((sum, review) => sum + review.adherenceScore, 0) /
+      reviews.length
+  );
+};
+
+const hasLinkedJournalTrade = (alert: DashboardMarketAlert) => {
+  return getLinkedTradesForAlert(alert.id).length > 0;
+};
+
+const hasStrongExecution = (alert: DashboardMarketAlert) => {
+  const score = getLinkedExecutionScoreValue(getLinkedTradesForAlert(alert.id));
+
+  return score !== null && score >= 80;
+};
+
+const needsExecutionReview = (alert: DashboardMarketAlert) => {
+  const score = getLinkedExecutionScoreValue(getLinkedTradesForAlert(alert.id));
+
+  return score !== null && score < 60;
+};
+
+const hasEntryExecutionIssue = (alert: DashboardMarketAlert) => {
+  return getLinkedTradesForAlert(alert.id).some((trade) => {
+    const review = getSignalExecutionReview(trade);
+
+    return review?.entryInZone === false;
+  });
+};
+
+const hasStopExecutionIssue = (alert: DashboardMarketAlert) => {
+  return getLinkedTradesForAlert(alert.id).some((trade) => {
+    const review = getSignalExecutionReview(trade);
+
+    return review?.stopMatched === false;
+  });
+};
+
+const hasDirectionExecutionIssue = (alert: DashboardMarketAlert) => {
+  return getLinkedTradesForAlert(alert.id).some((trade) => {
+    const review = getSignalExecutionReview(trade);
+
+    return review?.directionMatched === false;
+  });
+};
+
+const hasTargetExecutionIssue = (alert: DashboardMarketAlert) => {
+  return getLinkedTradesForAlert(alert.id).some((trade) => {
+    const review = getSignalExecutionReview(trade);
+
+    return review?.targetHit === "No TP";
+  });
+};
+
+const getAlertExecutionCoachNotes = (alert: DashboardMarketAlert) => {
+  const linkedTrades = getLinkedTradesForAlert(alert.id);
+
+  const reviews = linkedTrades
+    .map((trade) => getSignalExecutionReview(trade))
+    .filter(
+      (review): review is NonNullable<ReturnType<typeof getSignalExecutionReview>> =>
+        Boolean(review)
+    );
+
+  if (reviews.length === 0) {
+    return [];
+  }
+
+  const avgScore = Math.round(
+    reviews.reduce((sum, review) => sum + review.adherenceScore, 0) /
+      reviews.length
+  );
+
+  const notes: {
+    title: string;
+    text: string;
+    tone: "strong" | "medium" | "weak" | "neutral";
+  }[] = [];
+
+  notes.push({
+    title: `${copy.executionScore}: ${avgScore}/100`,
+    text:
+      avgScore >= 80
+        ? copy.executionCoachStrong
+        : avgScore >= 60
+          ? copy.executionCoachMedium
+          : copy.executionCoachWeak,
+    tone: avgScore >= 80 ? "strong" : avgScore >= 60 ? "medium" : "weak",
+  });
+
+  const entryIssues = reviews.filter(
+    (review) => review.entryInZone === false
+  ).length;
+
+  const stopIssues = reviews.filter(
+    (review) => review.stopMatched === false
+  ).length;
+
+  const directionIssues = reviews.filter(
+    (review) => review.directionMatched === false
+  ).length;
+
+  const targetIssues = reviews.filter(
+    (review) => review.targetHit === "No TP"
+  ).length;
+
+  if (entryIssues > 0) {
+    notes.push({
+      title: "Entry timing",
+      text: copy.executionCoachEntryIssue,
+      tone: "weak",
+    });
+  }
+
+  if (stopIssues > 0) {
+    notes.push({
+      title: "Risk discipline",
+      text: copy.executionCoachStopIssue,
+      tone: "weak",
+    });
+  }
+
+  if (directionIssues > 0) {
+    notes.push({
+      title: "Direction discipline",
+      text: copy.executionCoachDirectionIssue,
+      tone: "weak",
+    });
+  }
+
+  if (targetIssues > 0) {
+    notes.push({
+      title: "Target management",
+      text: copy.executionCoachTargetIssue,
+      tone: "medium",
+    });
+  }
+
+  return notes.slice(0, 4);
+};
+
+const getExecutionScoreTone = (score: number | null) => {
+  if (score === null) return "neutral";
+  if (score >= 80) return "strong";
+  if (score >= 60) return "medium";
+  return "weak";
+};
+
+const linkedJournalTrades = trades.filter((trade) => trade.source_alert_id);
+
+const linkedAlertIds = new Set(
+  linkedJournalTrades
+    .map((trade) => trade.source_alert_id)
+    .filter((alertId): alertId is string => Boolean(alertId))
+);
+
+const takenAlerts = alerts.filter(
+  (alert) => alert.user_alert_decision === "taken"
+);
+
+const takenWithoutJournalCount = takenAlerts.filter(
+  (alert) => !linkedAlertIds.has(alert.id)
+).length;
+
+const linkedTradesTotalPnl = linkedJournalTrades
+  .filter((trade) => typeof trade.pnl === "number")
+  .reduce((sum, trade) => sum + (trade.pnl || 0), 0);
+
+const linkedExecutionReviews = linkedJournalTrades
+  .map((trade) => getSignalExecutionReview(trade))
+  .filter(
+    (review): review is NonNullable<ReturnType<typeof getSignalExecutionReview>> =>
+      Boolean(review)
+  );
+
+const avgLinkedExecutionScore =
+  linkedExecutionReviews.length > 0
+    ? Math.round(
+        linkedExecutionReviews.reduce(
+          (sum, review) => sum + review.adherenceScore,
+          0
+        ) / linkedExecutionReviews.length
+      )
+    : null;
+
+const executionWeaknessCounts = {
+  entry: alerts.filter((alert) => hasEntryExecutionIssue(alert)).length,
+  stop: alerts.filter((alert) => hasStopExecutionIssue(alert)).length,
+  direction: alerts.filter((alert) => hasDirectionExecutionIssue(alert)).length,
+  target: alerts.filter((alert) => hasTargetExecutionIssue(alert)).length,
+};
+
+const totalExecutionWeaknesses =
+  executionWeaknessCounts.entry +
+  executionWeaknessCounts.stop +
+  executionWeaknessCounts.direction +
+  executionWeaknessCounts.target;
+
+  type ExecutionFocusItem = {
+  id: "entry" | "stop" | "direction" | "target";
+  count: number;
+  label: string;
+  text: string;
+  filter: AlertFilter;
+};
+
+const executionFocusItems = (
+  [
+    {
+      id: "entry",
+      count: executionWeaknessCounts.entry,
+      label: copy.entryIssueFilter,
+      text: copy.focusEntryText,
+      filter: "execution_entry_issue",
+    },
+    {
+      id: "stop",
+      count: executionWeaknessCounts.stop,
+      label: copy.stopIssueFilter,
+      text: copy.focusStopText,
+      filter: "execution_stop_issue",
+    },
+    {
+      id: "direction",
+      count: executionWeaknessCounts.direction,
+      label: copy.directionIssueFilter,
+      text: copy.focusDirectionText,
+      filter: "execution_direction_issue",
+    },
+    {
+      id: "target",
+      count: executionWeaknessCounts.target,
+      label: copy.targetIssueFilter,
+      text: copy.focusTargetText,
+      filter: "execution_target_issue",
+    },
+  ] satisfies ExecutionFocusItem[]
+).sort((a, b) => b.count - a.count);
+
+const primaryExecutionFocus =
+  executionFocusItems.length > 0 && executionFocusItems[0].count > 0
+    ? executionFocusItems[0]
+    : null;
+
+const getExecutionActionPlan = () => {
+  if (!primaryExecutionFocus) {
+    return [
+      copy.strongActionOne,
+      copy.strongActionTwo,
+      copy.strongActionThree,
+    ];
+  }
+
+  if (primaryExecutionFocus.id === "entry") {
+    return [copy.entryActionOne, copy.entryActionTwo, copy.entryActionThree];
+  }
+
+  if (primaryExecutionFocus.id === "stop") {
+    return [copy.stopActionOne, copy.stopActionTwo, copy.stopActionThree];
+  }
+
+  if (primaryExecutionFocus.id === "direction") {
+    return [
+      copy.directionActionOne,
+      copy.directionActionTwo,
+      copy.directionActionThree,
+    ];
+  }
+
+  return [copy.targetActionOne, copy.targetActionTwo, copy.targetActionThree];
+};
+
+const executionActionPlan = getExecutionActionPlan();
+
+const getAlertOutcomeFollowup = (alert: DashboardMarketAlert) => {
+  const decision = alert.user_alert_decision;
+  const outcome = alert.outcome_status || "pending";
+
+  let text = copy.outcomePendingNote;
+  let tone: "strong" | "warning" | "danger" | "neutral" = "neutral";
+
+  if (outcome === "worked" && decision === "taken") {
+    text = copy.outcomeTakenWorked;
+    tone = "strong";
+  } else if (outcome === "failed" && decision === "taken") {
+    text = copy.outcomeTakenFailed;
+    tone = "danger";
+  } else if (outcome === "worked" && decision === "skipped") {
+    text = copy.outcomeSkippedWorked;
+    tone = "warning";
+  } else if (outcome === "failed" && decision === "skipped") {
+    text = copy.outcomeSkippedFailed;
+    tone = "strong";
+  } else if (outcome === "worked" && decision === "missed") {
+    text = copy.outcomeMissedWorked;
+    tone = "warning";
+  } else if (outcome === "failed" && decision === "missed") {
+    text = copy.outcomeMissedFailed;
+    tone = "neutral";
+  } else if (outcome === "neutral") {
+    text = copy.outcomeNeutralNote;
+    tone = "neutral";
+  }
+
+  return {
+    decision: decision || "not marked",
+    outcome,
+    text,
+    tone,
+  };
+};
+
+const isTakenWorkedAlert = (alert: DashboardMarketAlert) => {
+  return (
+    alert.user_alert_decision === "taken" &&
+    alert.outcome_status === "worked"
+  );
+};
+
+const isTakenFailedAlert = (alert: DashboardMarketAlert) => {
+  return (
+    alert.user_alert_decision === "taken" &&
+    alert.outcome_status === "failed"
+  );
+};
+
+const isMissedOpportunityAlert = (alert: DashboardMarketAlert) => {
+  return (
+    (alert.user_alert_decision === "skipped" ||
+      alert.user_alert_decision === "missed") &&
+    alert.outcome_status === "worked"
+  );
+};
+
+const isGoodSkipAlert = (alert: DashboardMarketAlert) => {
+  return (
+    (alert.user_alert_decision === "skipped" ||
+      alert.user_alert_decision === "missed") &&
+    alert.outcome_status === "failed"
+  );
+};
+
+const outcomeLearningCounts = {
+  takenWorked: alerts.filter((alert) => isTakenWorkedAlert(alert)).length,
+  takenFailed: alerts.filter((alert) => isTakenFailedAlert(alert)).length,
+  missedOpportunity: alerts.filter((alert) =>
+    isMissedOpportunityAlert(alert)
+  ).length,
+  goodSkip: alerts.filter((alert) => isGoodSkipAlert(alert)).length,
+};
+
+const totalOutcomeLearningCount =
+  outcomeLearningCounts.takenWorked +
+  outcomeLearningCounts.takenFailed +
+  outcomeLearningCounts.missedOpportunity +
+  outcomeLearningCounts.goodSkip;
+
+  type OutcomeLearningFocusItem = {
+  id: "taken_worked" | "taken_failed" | "missed_opportunity" | "good_skip";
+  count: number;
+  label: string;
+  text: string;
+  filter: AlertFilter;
+  tone: "strong" | "danger" | "warning" | "neutral";
+};
+
+const outcomeLearningFocusItems = (
+  [
+    {
+      id: "missed_opportunity",
+      count: outcomeLearningCounts.missedOpportunity,
+      label: copy.filterMissedOpportunity,
+      text: copy.outcomeFocusMissedOpportunity,
+      filter: "outcome_missed_opportunity",
+      tone: "warning",
+    },
+    {
+      id: "taken_failed",
+      count: outcomeLearningCounts.takenFailed,
+      label: copy.filterTakenFailed,
+      text: copy.outcomeFocusTakenFailed,
+      filter: "outcome_taken_failed",
+      tone: "danger",
+    },
+    {
+      id: "taken_worked",
+      count: outcomeLearningCounts.takenWorked,
+      label: copy.filterTakenWorked,
+      text: copy.outcomeFocusTakenWorked,
+      filter: "outcome_taken_worked",
+      tone: "strong",
+    },
+    {
+      id: "good_skip",
+      count: outcomeLearningCounts.goodSkip,
+      label: copy.filterGoodSkip,
+      text: copy.outcomeFocusGoodSkip,
+      filter: "outcome_good_skip",
+      tone: "neutral",
+    },
+  ] satisfies OutcomeLearningFocusItem[]
+).sort((a, b) => b.count - a.count);
+
+const primaryOutcomeLearningFocus =
+  outcomeLearningFocusItems.length > 0 &&
+  outcomeLearningFocusItems[0].count > 0
+    ? outcomeLearningFocusItems[0]
+    : null;
+
+    const missedOpportunityAlerts = alerts.filter((alert) =>
+  isMissedOpportunityAlert(alert)
+);
+
+const missedOpportunitySetupCounts = missedOpportunityAlerts.reduce<
+  Record<string, number>
+>((acc, alert) => {
+  const setupLabel =
+    alert.setup_name ||
+    alert.setup_type ||
+    alert.setup_slug ||
+    `${alert.symbol} setup`;
+
+  acc[setupLabel] = (acc[setupLabel] || 0) + 1;
+
+  return acc;
+}, {});
+
+const topMissedOpportunitySetup =
+  Object.entries(missedOpportunitySetupCounts).sort((a, b) => b[1] - a[1])[0] ||
+  null;
+
+const missedOpportunityActionPlan = [
+  copy.missedOpportunityActionOne,
+  copy.missedOpportunityActionTwo,
+  copy.missedOpportunityActionThree,
+];
+
+const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = [
+  { id: "all", label: copy.filterAll, count: alerts.length },
+  {
+  id: "actionable",
+  label: copy.filterActionable,
+  count: alerts.filter((alert) => alert.signal_mode === "actionable").length,
+},
+{
+  id: "watchlist",
+  label: copy.filterWatchlist,
+  count: alerts.filter((alert) => alert.signal_mode === "watchlist").length,
+},
+{
+  id: "decision_watching",
+  label: copy.filterDecisionWatching,
+  count: decisionCounts.watching,
+},
+{
+  id: "decision_taken",
+  label: copy.filterDecisionTaken,
+  count: decisionCounts.taken,
+},
+{
+  id: "taken_without_journal",
+  label: copy.takenWithoutJournalFilter,
+  count: alerts.filter((alert) => isAlertTakenWithoutJournal(alert)).length,
+},
+{
+  id: "journal_linked",
+  label: copy.filterJournalLinked,
+  count: alerts.filter((alert) => hasLinkedJournalTrade(alert)).length,
+},
+{
+  id: "execution_strong",
+  label: copy.filterExecutionStrong,
+  count: alerts.filter((alert) => hasStrongExecution(alert)).length,
+},
+{
+  id: "execution_review",
+  label: copy.filterExecutionReview,
+  count: alerts.filter((alert) => needsExecutionReview(alert)).length,
+},
+{
+  id: "execution_entry_issue",
+  label: copy.entryIssueFilter,
+  count: executionWeaknessCounts.entry,
+},
+{
+  id: "execution_stop_issue",
+  label: copy.stopIssueFilter,
+  count: executionWeaknessCounts.stop,
+},
+{
+  id: "execution_direction_issue",
+  label: copy.directionIssueFilter,
+  count: executionWeaknessCounts.direction,
+},
+{
+  id: "execution_target_issue",
+  label: copy.targetIssueFilter,
+  count: executionWeaknessCounts.target,
+},
+{
+  id: "outcome_taken_worked",
+  label: copy.filterTakenWorked,
+  count: outcomeLearningCounts.takenWorked,
+},
+{
+  id: "outcome_taken_failed",
+  label: copy.filterTakenFailed,
+  count: outcomeLearningCounts.takenFailed,
+},
+{
+  id: "outcome_missed_opportunity",
+  label: copy.filterMissedOpportunity,
+  count: outcomeLearningCounts.missedOpportunity,
+},
+{
+  id: "outcome_good_skip",
+  label: copy.filterGoodSkip,
+  count: outcomeLearningCounts.goodSkip,
+},
+{
+  id: "decision_skipped",
+  label: copy.filterDecisionSkipped,
+  count: decisionCounts.skipped,
+},
+{
+  id: "decision_missed",
+  label: copy.filterDecisionMissed,
+  count: decisionCounts.missed,
+},
+  {
+    id: "priority",
+    label: copy.filterPriority,
+    count: alerts.filter((alert) => alert.personal_priority_type === "priority")
+      .length,
+  },
+  {
+    id: "caution",
+    label: copy.filterCaution,
+    count: alerts.filter(
+      (alert) =>
+        alert.personal_priority_type === "caution" ||
+        alert.personalization_type === "risk"
+    ).length,
+  },
+  {
+    id: "journal_match",
+    label: copy.filterJournalMatch,
+    count: alerts.filter((alert) => Boolean(alert.journal_pattern_label)).length,
+  },
+  {
+    id: "ai_strength",
+    label: copy.filterAiStrength,
+    count: alerts.filter((alert) => alert.personalization_type === "strength")
+      .length,
+  },
+  {
+    id: "long",
+    label: copy.filterLong,
+    count: alerts.filter(
+      (alert) => alert.direction === "upside" || alert.direction === "long"
+    ).length,
+  },
+  {
+    id: "short",
+    label: copy.filterShort,
+    count: alerts.filter(
+      (alert) => alert.direction === "downside" || alert.direction === "short"
+    ).length,
+  },
+  {
+    id: "crypto",
+    label: copy.filterCrypto,
+    count: alerts.filter((alert) => alert.asset_type === "crypto").length,
+  },
+  {
+    id: "stocks",
+    label: copy.filterStocks,
+    count: alerts.filter((alert) => alert.asset_type !== "crypto").length,
+  },
+];
+
+  if (!hasAccess) {
+    return (
+      <section className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-6">
+        <div className="text-[11px] uppercase tracking-[0.24em] text-white/35">
+          SkillEdge AI Trading Desk
+        </div>
+
+        <h2 className="mt-2 text-3xl font-semibold text-white">
+          {copy.title}
+        </h2>
+
+        <p className="mt-3 text-sm leading-6 text-white/55">
+          {copy.locked}
+        </p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="rounded-[1.6rem] border border-white/10 bg-white/[0.03] p-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] sm:p-5">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-100/40">
+            SkillEdge AI Trading Desk
+          </div>
+
+          <h2 className="mt-2 text-3xl font-semibold text-white">
+            {copy.title}
+          </h2>
+
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+            {copy.subtitle}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => loadAlerts(true)}
+            disabled={generating || loading}
+            className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-5 py-3 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {generating ? copy.generating : copy.generate}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => loadAlerts(false)}
+            disabled={generating || loading}
+            className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {copy.refresh}
+          </button>
+
+          <button
+  type="button"
+  onClick={checkAlertOutcomes}
+  disabled={generating || loading || checkingOutcomes}
+  className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-5 py-3 text-sm font-medium text-emerald-50 transition hover:bg-emerald-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+>
+  {checkingOutcomes ? copy.checkingOutcomes : copy.checkOutcomes}
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+    if (playbookOpen) {
+      setPlaybookOpen(false);
+      return;
+    }
+
+    loadPersonalPlaybook();
+  }}
+  disabled={playbookLoading}
+  className="rounded-full border border-violet-300/20 bg-violet-300/10 px-5 py-3 text-sm font-medium text-violet-50 transition hover:bg-violet-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+>
+  {playbookOpen ? copy.hidePlaybook : copy.openPlaybook}
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+    if (signalProfileOpen) {
+      setSignalProfileOpen(false);
+      return;
+    }
+
+    loadSignalProfile();
+  }}
+  disabled={signalProfileLoading || signalProfileRebuilding}
+  className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-5 py-3 text-sm font-medium text-emerald-50 transition hover:bg-emerald-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+>
+  {signalProfileOpen ? copy.hideSignalProfile : copy.openSignalProfile}
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+    if (tradePatternsOpen) {
+      setTradePatternsOpen(false);
+      return;
+    }
+
+    loadTradePatterns();
+  }}
+  disabled={tradePatternsLoading || tradePatternsRebuilding}
+  className="rounded-full border border-amber-300/20 bg-amber-300/10 px-5 py-3 text-sm font-medium text-amber-50 transition hover:bg-amber-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+>
+  {tradePatternsOpen ? copy.hideTradePatterns : copy.openTradePatterns}
+</button>
+        </div>
+      </div>
+
+      {error ? (
+        <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+          {error}
+        </div>
+      ) : null}
+
+<div className="mt-5 rounded-[1.25rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-4">
+  <div className="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <div className="flex items-center gap-2 text-sm font-semibold text-white/85">
+        <span className="h-2.5 w-2.5 rounded-full bg-emerald-300 shadow-[0_0_20px_rgba(110,231,183,0.85)]" />
+        {copy.liveDesk}
+      </div>
+
+      <div className="mt-1 text-xs leading-5 text-white/45">
+        {copy.autoRefreshNote}
+      </div>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs text-white/55">
+      {copy.lastChecked}:{" "}
+      {alertsLastCheckedAt
+        ? new Date(alertsLastCheckedAt).toLocaleTimeString()
+        : "—"}
+    </div>
+  </div>
+</div>
+
+<div className="mt-5 overflow-hidden rounded-[1.25rem] border border-white/10 bg-black/20 p-3">
+  <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] sm:flex-wrap sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
+    {alertFilterOptions.map((filter) => {
+      const isActive = alertFilter === filter.id;
+
+      return (
+        <button
+          key={filter.id}
+          type="button"
+          onClick={() => setAlertFilter(filter.id)}
+          className={`shrink-0 rounded-full border px-4 py-2 text-xs font-medium transition ${
+            isActive
+              ? "border-cyan-300/30 bg-cyan-300/15 text-cyan-50"
+              : "border-white/10 bg-white/[0.035] text-white/55 hover:bg-white/[0.07] hover:text-white"
+          }`}
+        >
+          {filter.label} · {filter.count}
+        </button>
+      );
+    })}
+  </div>
+
+  <div className="mt-3 text-xs text-white/35">
+    Showing {visibleAlerts.length} of {alerts.length} alerts
+{decisionReasonFilter ? ` · Reason: ${decisionReasonFilter}` : ""}
+  </div>
+</div>
+
+<div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-8">
+  <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.045] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-100/45">
+      {copy.worked}
+    </div>
+    <div className="mt-2 text-2xl font-semibold text-white">
+      {workedCount}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-red-300/15 bg-red-300/[0.045] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-red-100/45">
+      {copy.failed}
+    </div>
+    <div className="mt-2 text-2xl font-semibold text-white">
+      {failedCount}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+      {copy.pending}
+    </div>
+    <div className="mt-2 text-2xl font-semibold text-white">
+      {pendingCount}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+      {copy.neutral}
+    </div>
+    <div className="mt-2 text-2xl font-semibold text-white">
+      {neutralCount}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+      {copy.quality}
+    </div>
+    <div className="mt-2 text-2xl font-semibold text-white">
+      {qualityRate === null ? "—" : `${qualityRate}%`}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+      {copy.avgMfe}
+    </div>
+    <div className="mt-2 text-2xl font-semibold text-white">
+      {avgMfe === null ? "—" : `${avgMfe.toFixed(2)}%`}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.045] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
+      {copy.avgMae}
+    </div>
+    <div className="mt-2 text-2xl font-semibold text-white">
+      {avgMae === null ? "—" : `${avgMae.toFixed(2)}%`}
+    </div>
+  </div>
+
+  <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+    <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+      TP / Stop
+    </div>
+    <div className="mt-2 text-lg font-semibold text-white">
+      {tpHitCount} / {stopHitCount}
+    </div>
+  </div>
+</div>
+
+{tradePatternsOpen ? (
+  <div className="mt-5 rounded-[1.5rem] border border-amber-300/15 bg-amber-300/[0.035] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-amber-100/45">
+          SkillEdge AI Journal Intelligence
+        </div>
+
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          {copy.tradePatternsTitle}
+        </h3>
+
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+          {copy.tradePatternsText}
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <div className="rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-2 text-sm font-semibold text-amber-100">
+          {tradePatternItems.length} patterns
+        </div>
+
+        <button
+          type="button"
+          onClick={rebuildTradePatterns}
+          disabled={tradePatternsRebuilding}
+          className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {tradePatternsRebuilding
+            ? copy.rebuildingTradePatterns
+            : copy.rebuildTradePatterns}
+        </button>
+      </div>
+    </div>
+
+    {tradePatternsError ? (
+      <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+        {tradePatternsError}
+      </div>
+    ) : null}
+
+    <div className="mt-5 grid gap-3 md:grid-cols-4">
+      <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.045] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
+          Strong candidates
+        </div>
+        <div className="mt-2 text-2xl font-semibold text-white">
+          {strongTradePatterns.length}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+          Learning candidates
+        </div>
+        <div className="mt-2 text-2xl font-semibold text-white">
+          {learningTradePatterns.length}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+          Pattern PnL
+        </div>
+        <div className="mt-2 text-2xl font-semibold text-white">
+          ${tradePatternTotalPnl.toFixed(2)}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+          Top pattern
+        </div>
+        <div className="mt-2 truncate text-sm font-semibold text-white">
+          {topTradePattern ? topTradePattern.pattern_name : "—"}
+        </div>
+      </div>
+    </div>
+
+    {topTradePattern ? (
+      <div className="mt-5 rounded-2xl border border-amber-300/15 bg-black/20 p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
+          Best independent journal pattern
+        </div>
+
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-lg font-semibold text-white">
+              {topTradePattern.pattern_name}
+            </div>
+
+            <div className="mt-1 text-xs text-white/45">
+              {topTradePattern.trades_count} trades · PnL $
+              {Number(topTradePattern.total_pnl || 0).toFixed(2)} · avg $
+              {topTradePattern.avg_pnl === null
+                ? "—"
+                : Number(topTradePattern.avg_pnl).toFixed(2)}
+            </div>
+          </div>
+
+          <div className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-sm font-semibold text-amber-100">
+            {copy.patternStrength}: {topTradePattern.strength_score}
+          </div>
+        </div>
+
+        {topTradePattern.ai_note ? (
+          <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/62">
+            {topTradePattern.ai_note}
+          </div>
+        ) : null}
+      </div>
+    ) : null}
+
+    <div className="mt-5 space-y-3">
+      {tradePatternsLoading ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {copy.tradePatternsLoading}
+        </div>
+      ) : tradePatternItems.length === 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {copy.tradePatternsEmpty}
+        </div>
+      ) : (
+        tradePatternItems.map((pattern) => (
+          <div
+            key={pattern.id}
+            className="rounded-2xl border border-white/10 bg-black/20 p-4"
+          >
+            <div className="grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)]">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                  {pattern.market || "market"} · {pattern.direction || "setup"}
+                </div>
+
+                <div className="mt-2 text-xl font-semibold text-white">
+                  {pattern.pattern_name}
+                </div>
+
+                <div className="mt-3 inline-flex rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-xs font-semibold text-amber-100">
+                  {copy.patternStrength}: {pattern.strength_score}
+                </div>
+
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/50">
+                  Trades: {pattern.trades_count}
+                  <br />
+                  Wins: {pattern.wins_count}
+                  <br />
+                  Total PnL: ${Number(pattern.total_pnl || 0).toFixed(2)}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {pattern.ai_note ? (
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/62">
+                    <span className="font-semibold text-white/85">
+                      AI note:
+                    </span>{" "}
+                    {pattern.ai_note}
+                  </div>
+                ) : null}
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      Avg PnL
+                    </div>
+                    <div className="mt-1 text-lg font-semibold text-white">
+                      {pattern.avg_pnl === null
+                        ? "—"
+                        : `$${Number(pattern.avg_pnl).toFixed(2)}`}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      Best PnL
+                    </div>
+                    <div className="mt-1 text-lg font-semibold text-white">
+                      {pattern.best_pnl === null
+                        ? "—"
+                        : `$${Number(pattern.best_pnl).toFixed(2)}`}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      Avg stop %
+                    </div>
+                    <div className="mt-1 text-lg font-semibold text-white">
+                      {pattern.avg_stop_distance_percent === null
+                        ? "—"
+                        : `${pattern.avg_stop_distance_percent}%`}
+                    </div>
+                  </div>
+                </div>
+
+                {Array.isArray(pattern.example_tickers) &&
+                pattern.example_tickers.length > 0 ? (
+                  <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+                      {copy.examples}
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {pattern.example_tickers.map((ticker) => (
+                        <span
+                          key={`${pattern.id}-${ticker}`}
+                          className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/65"
+                        >
+                          {ticker}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {Array.isArray(pattern.matching_keywords) &&
+                pattern.matching_keywords.length > 0 ? (
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+                      {copy.keywords}
+                    </div>
+
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {pattern.matching_keywords.map((keyword) => (
+                        <span
+                          key={`${pattern.id}-${keyword}`}
+                          className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs text-white/55"
+                        >
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+) : null}
+
+{signalProfileOpen ? (
+  <div className="mt-5 rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-emerald-100/45">
+          SkillEdge AI Personalization Layer
+        </div>
+
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          {copy.signalProfileTitle}
+        </h3>
+
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+          {copy.signalProfileText}
+        </p>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-sm font-semibold text-emerald-100">
+          {signalProfileItems.length} setups
+        </div>
+
+        <button
+          type="button"
+          onClick={rebuildSignalProfile}
+          disabled={signalProfileRebuilding}
+          className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {signalProfileRebuilding
+            ? copy.rebuildingSignalProfile
+            : copy.rebuildSignalProfile}
+        </button>
+      </div>
+    </div>
+
+    {signalProfileError ? (
+      <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+        {signalProfileError}
+      </div>
+    ) : null}
+
+    <div className="mt-5 grid gap-3 md:grid-cols-4">
+      <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.045] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-100/45">
+          {copy.personalStrength}
+        </div>
+        <div className="mt-2 text-2xl font-semibold text-white">
+          {personalStrengthProfiles.length}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-red-300/15 bg-red-300/[0.045] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-red-100/45">
+          {copy.riskZone}
+        </div>
+        <div className="mt-2 text-2xl font-semibold text-white">
+          {riskZoneProfiles.length}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+          {copy.learningProfile}
+        </div>
+        <div className="mt-2 text-2xl font-semibold text-white">
+          {learningProfiles.length}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+          {copy.neutralProfile}
+        </div>
+        <div className="mt-2 text-2xl font-semibold text-white">
+          {neutralProfiles.length}
+        </div>
+      </div>
+    </div>
+
+    {topSignalProfile ? (
+      <div className="mt-5 rounded-2xl border border-emerald-300/15 bg-black/20 p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-100/45">
+          Top personalized setup
+        </div>
+
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-lg font-semibold text-white">
+              {topSignalProfile.setup_name}
+            </div>
+
+            <div className="mt-1 text-xs text-white/45">
+              {topSignalProfile.trades_count} trades · win rate{" "}
+              {topSignalProfile.win_rate === null
+                ? "—"
+                : `${topSignalProfile.win_rate}%`}{" "}
+              · PnL ${Number(topSignalProfile.total_pnl || 0).toFixed(2)}
+            </div>
+          </div>
+
+          <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-sm font-semibold text-emerald-100">
+            {copy.strengthScore}: {topSignalProfile.strength_score}
+          </div>
+        </div>
+
+        {topSignalProfile.ai_note ? (
+          <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/62">
+            {topSignalProfile.ai_note}
+          </div>
+        ) : null}
+      </div>
+    ) : null}
+
+    <div className="mt-5 space-y-3">
+      {signalProfileLoading ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {copy.signalProfileLoading}
+        </div>
+      ) : signalProfileItems.length === 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {copy.signalProfileEmpty}
+        </div>
+      ) : (
+        signalProfileItems.map((profile) => {
+          const labelText =
+            profile.profile_label === "personal_strength"
+              ? copy.personalStrength
+              : profile.profile_label === "risk_zone"
+                ? copy.riskZone
+                : profile.profile_label === "learning"
+                  ? copy.learningProfile
+                  : copy.neutralProfile;
+
+          const labelClass =
+            profile.profile_label === "personal_strength"
+              ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100"
+              : profile.profile_label === "risk_zone"
+                ? "border-red-300/20 bg-red-300/10 text-red-100"
+                : profile.profile_label === "learning"
+                  ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-100"
+                  : "border-white/10 bg-white/[0.04] text-white/65";
+
+          return (
+            <div
+              key={profile.id}
+              className="rounded-2xl border border-white/10 bg-black/20 p-4"
+            >
+              <div className="grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)]">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                    {profile.asset_type || "market"} ·{" "}
+                    {profile.direction || "setup"}
+                  </div>
+
+                  <div className="mt-2 text-xl font-semibold text-white">
+                    {profile.setup_name}
+                  </div>
+
+                  <div
+                    className={`mt-3 inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${labelClass}`}
+                  >
+                    {labelText}
+                  </div>
+
+                  <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/50">
+                    {copy.strengthScore}: {profile.strength_score}
+                    <br />
+                    {copy.planAdherence}:{" "}
+                    {profile.avg_plan_adherence === null
+                      ? "—"
+                      : `${profile.avg_plan_adherence}%`}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="grid gap-3 md:grid-cols-4">
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                      <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                        Trades
+                      </div>
+                      <div className="mt-1 text-lg font-semibold text-white">
+                        {profile.trades_count}
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                      <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                        Win rate
+                      </div>
+                      <div className="mt-1 text-lg font-semibold text-white">
+                        {profile.win_rate === null ? "—" : `${profile.win_rate}%`}
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                      <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                        Total PnL
+                      </div>
+                      <div className="mt-1 text-lg font-semibold text-white">
+                        ${Number(profile.total_pnl || 0).toFixed(2)}
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                      <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                        Avg PnL
+                      </div>
+                      <div className="mt-1 text-lg font-semibold text-white">
+                        {profile.avg_pnl === null
+                          ? "—"
+                          : `$${Number(profile.avg_pnl).toFixed(2)}`}
+                      </div>
+                    </div>
+                  </div>
+
+                  {profile.ai_note ? (
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/62">
+                      <span className="font-semibold text-white/85">
+                        {copy.aiNote}:
+                      </span>{" "}
+                      {profile.ai_note}
+                    </div>
+                  ) : null}
+
+                  <div className="flex flex-wrap gap-2 text-xs text-white/45">
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                      Wins: {profile.wins_count}
+                    </span>
+
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                      Losses: {profile.losses_count}
+                    </span>
+
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                      Best:{" "}
+                      {profile.best_pnl === null
+                        ? "—"
+                        : `$${Number(profile.best_pnl).toFixed(2)}`}
+                    </span>
+
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                      Worst:{" "}
+                      {profile.worst_pnl === null
+                        ? "—"
+                        : `$${Number(profile.worst_pnl).toFixed(2)}`}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
+  </div>
+) : null}
+
+{playbookOpen ? (
+  <div className="mt-5 rounded-[1.5rem] border border-violet-300/15 bg-violet-300/[0.035] p-5 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-violet-100/45">
+          SkillEdge AI Learning Layer
+        </div>
+
+        <h3 className="mt-2 text-2xl font-semibold text-white">
+          {copy.playbookTitle}
+        </h3>
+
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+          {copy.playbookText}
+        </p>
+      </div>
+
+      <div className="rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-sm font-semibold text-violet-100">
+        {playbookItems.length} setups
+      </div>
+    </div>
+
+    {playbookError ? (
+      <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+        {playbookError}
+      </div>
+    ) : null}
+
+    <div className="mt-5 space-y-3">
+      {playbookLoading ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {copy.playbookLoading}
+        </div>
+      ) : playbookItems.length === 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {copy.playbookEmpty}
+        </div>
+      ) : (
+        playbookItems.map((setup) => (
+          <div
+            key={setup.id}
+            className="rounded-2xl border border-white/10 bg-black/20 p-4"
+          >
+            <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-violet-100/40">
+                  {setup.asset_type || "market"} · {setup.direction || "setup"}
+                </div>
+
+                <div className="mt-2 text-xl font-semibold text-white">
+                  {setup.setup_name}
+                </div>
+
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/50">
+                  TF: {setup.setup_timeframe || "5m"} setup /{" "}
+                  {setup.confirmation_timeframe || "10m"} confirmation
+                </div>
+
+                <div className="mt-3 rounded-xl border border-cyan-300/15 bg-cyan-300/[0.04] p-3 text-xs leading-5 text-cyan-50/75">
+                  {copy.lastExample}: {setup.example_symbol || "—"}
+                  {setup.confidence_tier ? ` · ${setup.confidence_tier}` : ""}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                {setup.lesson_summary ? (
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/65">
+                    <span className="font-semibold text-white/85">
+                      Mini lesson:
+                    </span>{" "}
+                    {setup.lesson_summary}
+                  </div>
+                ) : null}
+
+                {setup.setup_description ? (
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/62">
+                    {setup.setup_description}
+                  </div>
+                ) : null}
+
+                {Array.isArray(setup.confirmation_checklist) &&
+                setup.confirmation_checklist.length > 0 ? (
+                  <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+                      Confirmation checklist
+                    </div>
+
+                    <div className="mt-2 grid gap-2 md:grid-cols-2">
+                      {setup.confirmation_checklist.map((item, index) => (
+                        <div
+                          key={`${setup.id}-confirm-${index}`}
+                          className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs leading-5 text-cyan-50/75"
+                        >
+                          ✓ {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {Array.isArray(setup.avoid_if) && setup.avoid_if.length > 0 ? (
+                  <div className="rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
+                      Avoid this trade if
+                    </div>
+
+                    <div className="mt-2 grid gap-2 md:grid-cols-2">
+                      {setup.avoid_if.map((item, index) => (
+                        <div
+                          key={`${setup.id}-avoid-${index}`}
+                          className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs leading-5 text-amber-50/75"
+                        >
+                          ⚠ {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {setup.setup_common_mistake ? (
+                  <div className="rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3 text-xs leading-5 text-red-50/75">
+                    <span className="font-semibold text-red-100">
+                      Common mistake:
+                    </span>{" "}
+                    {setup.setup_common_mistake}
+                  </div>
+                ) : null}
+
+                <div className="flex flex-wrap gap-2 text-xs text-white/45">
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                    Entry:{" "}
+                    {setup.example_entry_zone_min && setup.example_entry_zone_max
+                      ? `${setup.example_entry_zone_min}–${setup.example_entry_zone_max}`
+                      : "—"}
+                  </span>
+
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                    Stop: {setup.example_stop_price || "—"}
+                  </span>
+
+                  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                    Targets:{" "}
+                    {[
+                      setup.example_target_1,
+                      setup.example_target_2,
+                      setup.example_target_3,
+                    ]
+                      .filter(Boolean)
+                      .join(" / ") || "—"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+) : null}
+
+<div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-white/35">
+        {copy.decisionAnalyticsTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.decisionAnalyticsText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xs font-semibold text-emerald-100">
+      Taken rate: {takenRate === null ? "—" : `${takenRate}%`}
+    </div>
+  </div>
+
+  <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+    <button
+      type="button"
+      onClick={() => setAlertFilter("decision_watching")}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "decision_watching"
+          ? "border-cyan-300/30 bg-cyan-300/10"
+          : "border-white/10 bg-black/20 hover:bg-white/[0.05]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        Watching
+      </div>
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {decisionCounts.watching}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => setAlertFilter("decision_taken")}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "decision_taken"
+          ? "border-emerald-300/30 bg-emerald-300/10"
+          : "border-white/10 bg-black/20 hover:bg-white/[0.05]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        Taken
+      </div>
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {decisionCounts.taken}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => setAlertFilter("decision_skipped")}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "decision_skipped"
+          ? "border-white/30 bg-white/[0.08]"
+          : "border-white/10 bg-black/20 hover:bg-white/[0.05]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        Skipped
+      </div>
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {decisionCounts.skipped}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => setAlertFilter("decision_missed")}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "decision_missed"
+          ? "border-amber-300/30 bg-amber-300/10"
+          : "border-white/10 bg-black/20 hover:bg-white/[0.05]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        Missed
+      </div>
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {decisionCounts.missed}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => setAlertFilter("all")}
+      className="rounded-2xl border border-white/10 bg-black/20 p-4 text-left transition hover:bg-white/[0.05]"
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        Total marked
+      </div>
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {totalDecisionCount}
+      </div>
+    </button>
+  </div>
+</div>
+
+<div className="mt-5 rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-emerald-100/45">
+        {copy.journalLinkAnalyticsTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.journalLinkAnalyticsText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+      {linkedJournalTrades.length} linked trades
+    </div>
+  </div>
+
+  <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        {copy.linkedAlertsCount}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {linkedAlertIds.size}
+      </div>
+    </div>
+
+    <button
+  type="button"
+  onClick={() => {
+    setAlertFilter("taken_without_journal");
+    setVisibleAlertsCount(5);
+    setExpandedAlertId(null);
+  }}
+  className={`rounded-2xl border p-4 text-left transition ${
+    alertFilter === "taken_without_journal"
+      ? "border-amber-300/35 bg-amber-300/10"
+      : "border-amber-300/15 bg-amber-300/[0.035] hover:bg-amber-300/[0.07]"
+  }`}
+>
+  <div className="text-[10px] uppercase tracking-[0.2em] text-amber-100/45">
+    {copy.takenWithoutJournal}
+  </div>
+
+  <div className="mt-2 text-2xl font-semibold text-white">
+    {takenWithoutJournalCount}
+  </div>
+</button>
+
+    <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        {copy.linkedTradesPnl}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {linkedTradesTotalPnl >= 0 ? "+" : ""}
+        {linkedTradesTotalPnl.toFixed(2)}
+      </div>
+    </div>
+
+    <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.035] p-4">
+      <div className="text-[10px] uppercase tracking-[0.2em] text-cyan-100/45">
+        {copy.avgExecutionScore}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {avgLinkedExecutionScore === null
+          ? "—"
+          : `${avgLinkedExecutionScore}/100`}
+      </div>
+    </div>
+  </div>
+  <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-100/45">
+        {copy.executionQualityTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.executionQualityText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+      {avgLinkedExecutionScore === null
+        ? "No reviews yet"
+        : `Avg ${avgLinkedExecutionScore}/100`}
+    </div>
+  </div>
+
+  <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("journal_linked");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "journal_linked"
+          ? "border-emerald-300/35 bg-emerald-300/10"
+          : "border-white/10 bg-black/20 hover:bg-white/[0.05]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        {copy.filterJournalLinked}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {alerts.filter((alert) => hasLinkedJournalTrade(alert)).length}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("execution_strong");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "execution_strong"
+          ? "border-emerald-300/35 bg-emerald-300/10"
+          : "border-emerald-300/15 bg-emerald-300/[0.035] hover:bg-emerald-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-emerald-100/45">
+        {copy.filterExecutionStrong}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {alerts.filter((alert) => hasStrongExecution(alert)).length}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("execution_review");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "execution_review"
+          ? "border-amber-300/35 bg-amber-300/10"
+          : "border-amber-300/15 bg-amber-300/[0.035] hover:bg-amber-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-amber-100/45">
+        {copy.filterExecutionReview}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {alerts.filter((alert) => needsExecutionReview(alert)).length}
+      </div>
+    </button>
+  </div>
+</div>
+</div>
+
+<div className="mt-5 rounded-[1.5rem] border border-amber-300/15 bg-amber-300/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-amber-100/45">
+        {copy.executionWeaknessTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.executionWeaknessText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+      {totalExecutionWeaknesses} issues tracked
+    </div>
+  </div>
+
+  <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("execution_entry_issue");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "execution_entry_issue"
+          ? "border-amber-300/35 bg-amber-300/10"
+          : "border-white/10 bg-black/20 hover:bg-white/[0.05]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+        {copy.entryIssueFilter}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {executionWeaknessCounts.entry}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("execution_stop_issue");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "execution_stop_issue"
+          ? "border-red-300/35 bg-red-300/10"
+          : "border-red-300/15 bg-red-300/[0.035] hover:bg-red-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-red-100/45">
+        {copy.stopIssueFilter}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {executionWeaknessCounts.stop}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("execution_direction_issue");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "execution_direction_issue"
+          ? "border-cyan-300/35 bg-cyan-300/10"
+          : "border-cyan-300/15 bg-cyan-300/[0.035] hover:bg-cyan-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-cyan-100/45">
+        {copy.directionIssueFilter}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {executionWeaknessCounts.direction}
+      </div>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("execution_target_issue");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "execution_target_issue"
+          ? "border-violet-300/35 bg-violet-300/10"
+          : "border-violet-300/15 bg-violet-300/[0.035] hover:bg-violet-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-violet-100/45">
+        {copy.targetIssueFilter}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {executionWeaknessCounts.target}
+      </div>
+    </button>
+  </div>
+</div>
+
+<div className="mt-5 rounded-[1.5rem] border border-violet-300/15 bg-violet-300/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-violet-100/45">
+        {copy.executionFocusTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.executionFocusText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+      {primaryExecutionFocus
+        ? `${primaryExecutionFocus.label} · ${primaryExecutionFocus.count}`
+        : copy.noFocusYet}
+    </div>
+  </div>
+
+  <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-5">
+    {primaryExecutionFocus ? (
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-xl font-semibold text-white">
+            Next focus: {primaryExecutionFocus.label}
+          </div>
+
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-white/58">
+            {primaryExecutionFocus.text}
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {executionFocusItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => {
+                  setAlertFilter(item.filter);
+                  setVisibleAlertsCount(5);
+                  setExpandedAlertId(null);
+                }}
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  primaryExecutionFocus.id === item.id
+                    ? "border-violet-300/30 bg-violet-300/15 text-violet-100"
+                    : "border-white/10 bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white"
+                }`}
+              >
+                {item.label} · {item.count}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setAlertFilter(primaryExecutionFocus.filter);
+            setVisibleAlertsCount(5);
+            setExpandedAlertId(null);
+          }}
+          className="rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-xs font-semibold text-violet-100 transition hover:bg-violet-300/15"
+        >
+          {copy.openFocusAlerts}
+        </button>
+      </div>
+    ) : (
+      <div>
+        <div className="text-xl font-semibold text-white">
+          Execution profile is still forming
+        </div>
+
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/55">
+          {linkedJournalTrades.length > 0
+            ? copy.focusStrongText
+            : copy.executionFocusEmpty}
+        </p>
+      </div>
+    )}
+  </div>
+  <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[10px] uppercase tracking-[0.22em] text-violet-100/45">
+        {copy.executionActionPlanTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.executionActionPlanText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-violet-300/20 bg-violet-300/10 px-3 py-1 text-xs font-semibold text-violet-100">
+      {primaryExecutionFocus ? primaryExecutionFocus.label : "Strong profile"}
+    </div>
+  </div>
+
+  <div className="mt-4 grid gap-3 md:grid-cols-3">
+    {executionActionPlan.map((item, index) => (
+      <div
+        key={`${item}-${index}`}
+        className="rounded-xl border border-white/10 bg-white/[0.035] p-4"
+      >
+        <div className="flex h-7 w-7 items-center justify-center rounded-full border border-violet-300/20 bg-violet-300/10 text-xs font-semibold text-violet-100">
+          {index + 1}
+        </div>
+
+        <p className="mt-3 text-xs leading-5 text-white/62">
+          {item}
+        </p>
+      </div>
+    ))}
+  </div>
+</div>
+
+</div>
+
+<div className="mt-5 rounded-[1.5rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-emerald-100/45">
+        {copy.outcomeLearningAnalyticsTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.outcomeLearningAnalyticsText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+      {totalOutcomeLearningCount} tracked outcomes
+    </div>
+  </div>
+
+  <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("outcome_taken_worked");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "outcome_taken_worked"
+          ? "border-emerald-300/35 bg-emerald-300/10"
+          : "border-emerald-300/15 bg-emerald-300/[0.035] hover:bg-emerald-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-emerald-100/45">
+        {copy.filterTakenWorked}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {outcomeLearningCounts.takenWorked}
+      </div>
+
+      <p className="mt-2 text-xs leading-5 text-white/45">
+        {copy.takenWorkedText}
+      </p>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("outcome_taken_failed");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "outcome_taken_failed"
+          ? "border-red-300/35 bg-red-300/10"
+          : "border-red-300/15 bg-red-300/[0.035] hover:bg-red-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-red-100/45">
+        {copy.filterTakenFailed}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {outcomeLearningCounts.takenFailed}
+      </div>
+
+      <p className="mt-2 text-xs leading-5 text-white/45">
+        {copy.takenFailedText}
+      </p>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("outcome_missed_opportunity");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "outcome_missed_opportunity"
+          ? "border-amber-300/35 bg-amber-300/10"
+          : "border-amber-300/15 bg-amber-300/[0.035] hover:bg-amber-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-amber-100/45">
+        {copy.filterMissedOpportunity}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {outcomeLearningCounts.missedOpportunity}
+      </div>
+
+      <p className="mt-2 text-xs leading-5 text-white/45">
+        {copy.missedOpportunityText}
+      </p>
+    </button>
+
+    <button
+      type="button"
+      onClick={() => {
+        setAlertFilter("outcome_good_skip");
+        setVisibleAlertsCount(5);
+        setExpandedAlertId(null);
+      }}
+      className={`rounded-2xl border p-4 text-left transition ${
+        alertFilter === "outcome_good_skip"
+          ? "border-cyan-300/35 bg-cyan-300/10"
+          : "border-cyan-300/15 bg-cyan-300/[0.035] hover:bg-cyan-300/[0.07]"
+      }`}
+    >
+      <div className="text-[10px] uppercase tracking-[0.2em] text-cyan-100/45">
+        {copy.filterGoodSkip}
+      </div>
+
+      <div className="mt-2 text-2xl font-semibold text-white">
+        {outcomeLearningCounts.goodSkip}
+      </div>
+
+      <p className="mt-2 text-xs leading-5 text-white/45">
+        {copy.goodSkipText}
+      </p>
+    </button>
+  </div>
+</div>
+
+<div className="mt-5 rounded-[1.5rem] border border-amber-300/15 bg-amber-300/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-amber-100/45">
+        {copy.outcomeLearningFocusTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.outcomeLearningFocusText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+      {primaryOutcomeLearningFocus
+        ? `${primaryOutcomeLearningFocus.label} · ${primaryOutcomeLearningFocus.count}`
+        : copy.noFocusYet}
+    </div>
+  </div>
+
+  <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-5">
+    {primaryOutcomeLearningFocus ? (
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-xl font-semibold text-white">
+           {copy.nextLearningFocus}: {primaryOutcomeLearningFocus.label}
+          </div>
+
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-white/58">
+            {primaryOutcomeLearningFocus.text}
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {outcomeLearningFocusItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => {
+                  setAlertFilter(item.filter);
+                  setVisibleAlertsCount(5);
+                  setExpandedAlertId(null);
+                }}
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  primaryOutcomeLearningFocus.id === item.id
+                    ? "border-amber-300/30 bg-amber-300/15 text-amber-100"
+                    : "border-white/10 bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white"
+                }`}
+              >
+                {item.label} · {item.count}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            setAlertFilter(primaryOutcomeLearningFocus.filter);
+            setVisibleAlertsCount(5);
+            setExpandedAlertId(null);
+          }}
+          className="rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-2 text-xs font-semibold text-amber-100 transition hover:bg-amber-300/15"
+        >
+          {copy.openOutcomeFocusAlerts}
+        </button>
+      </div>
+    ) : (
+      <div>
+        <div className="text-xl font-semibold text-white">
+          {copy.outcomeProfileStillForming}
+        </div>
+
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/55">
+          {copy.outcomeFocusEmpty}
+        </p>
+      </div>
+    )}
+  </div>
+</div>
+
+<div className="mt-5 rounded-[1.5rem] border border-red-300/15 bg-red-300/[0.035] p-5">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-[11px] uppercase tracking-[0.24em] text-red-100/45">
+        {copy.missedOpportunityCoachTitle}
+      </div>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+        {copy.missedOpportunityCoachText}
+      </p>
+    </div>
+
+    <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+      {missedOpportunityAlerts.length} {copy.missedOpportunitiesLabel}
+    </div>
+  </div>
+
+  {missedOpportunityAlerts.length > 0 ? (
+    <div className="mt-5 grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-red-100/45">
+          {copy.missedOpportunityTopSetup}
+        </div>
+
+        <div className="mt-3 text-2xl font-semibold text-white">
+          {topMissedOpportunitySetup ? topMissedOpportunitySetup[0] : "—"}
+        </div>
+
+        <p className="mt-3 text-sm leading-6 text-white/55">
+          {topMissedOpportunitySetup
+            ? `${topMissedOpportunitySetup[1]} ${copy.workedAlertsMissedSuffix}`
+            : copy.missedOpportunityCoachEmpty}
+        </p>
+
+        <button
+          type="button"
+          onClick={() => {
+            setAlertFilter("outcome_missed_opportunity");
+            setVisibleAlertsCount(5);
+            setExpandedAlertId(null);
+          }}
+          className="mt-4 rounded-full border border-red-300/20 bg-red-300/10 px-4 py-2 text-xs font-semibold text-red-100 transition hover:bg-red-300/15"
+        >
+          {copy.openOutcomeFocusAlerts}
+        </button>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+        <div className="text-[10px] uppercase tracking-[0.22em] text-red-100/45">
+          {copy.missedOpportunityActionPlan}
+        </div>
+
+        <div className="mt-4 grid gap-3">
+          {missedOpportunityActionPlan.map((item, index) => (
+            <div
+              key={`${item}-${index}`}
+              className="rounded-xl border border-white/10 bg-white/[0.035] p-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-red-300/20 bg-red-300/10 text-xs font-semibold text-red-100">
+                  {index + 1}
+                </div>
+
+                <p className="text-xs leading-5 text-white/62">
+                  {item}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-5">
+      <div className="text-xl font-semibold text-white">
+        {copy.noMissedOpportunityPatternTitle}
+      </div>
+
+      <p className="mt-3 max-w-3xl text-sm leading-6 text-white/55">
+        {copy.missedOpportunityCoachEmpty}
+      </p>
+    </div>
+  )}
+</div>
+
+{decisionReasonItems.length > 0 ? (
+  <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.035] p-5">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-100/45">
+          {copy.reasonInsightsTitle}
+        </div>
+
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-white/50">
+          {copy.reasonInsightsText}
+        </p>
+      </div>
+
+      <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
+        {copy.topReason}: {topDecisionReason?.reason || "—"}
+      </div>
+    </div>
+
+    <div className="mt-5 flex flex-wrap gap-2">
+      <button
+        type="button"
+        onClick={() => setDecisionReasonFilter(null)}
+        className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
+          decisionReasonFilter === null
+            ? "border-cyan-300/30 bg-cyan-300/15 text-cyan-100"
+            : "border-white/10 bg-black/20 text-white/55 hover:bg-white/[0.07] hover:text-white"
+        }`}
+      >
+        {copy.allReasons}
+      </button>
+
+      {decisionReasonItems.map((item) => (
+        <button
+          key={item.reason}
+          type="button"
+          onClick={() => {
+            setDecisionReasonFilter(item.reason);
+            setVisibleAlertsCount(5);
+            setExpandedAlertId(null);
+          }}
+          className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
+            decisionReasonFilter === item.reason
+              ? "border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+              : "border-white/10 bg-black/20 text-white/55 hover:bg-white/[0.07] hover:text-white"
+          }`}
+        >
+          {item.reason} · {item.count}
+        </button>
+      ))}
+    </div>
+  </div>
+) : null}
+
+{visibleAlerts.length > 5 ? (
+  <div className="mt-5 rounded-[1.25rem] border border-cyan-300/15 bg-cyan-300/[0.035] p-4 text-xs leading-5 text-cyan-50/65">
+    <span className="font-semibold text-cyan-100">SkillEdge Priority:</span>{" "}
+    {copy.smartTopFive}
+  </div>
+) : null}
+
+      <div className="mt-5 space-y-3">
+       {error ? (
+  <div className="rounded-[1.5rem] border border-red-300/15 bg-red-300/[0.035] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-red-100/45">
+          {copy.alertsStateErrorLabel}
+        </div>
+
+        <h3 className="mt-2 text-xl font-semibold text-white">
+          {copy.alertsStateErrorTitle}
+        </h3>
+
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/58">
+          {copy.alertsStateErrorText}
+        </p>
+
+        <div className="mt-4 rounded-2xl border border-red-300/15 bg-black/20 p-4 text-xs leading-5 text-red-50/75">
+          {error}
+        </div>
+      </div>
+
+      <div className="rounded-full border border-red-300/20 bg-red-300/10 px-4 py-2 text-xs font-semibold text-red-100">
+        Error
+      </div>
+    </div>
+
+    <div className="mt-5 flex flex-wrap gap-2">
+      <button
+        type="button"
+        onClick={() => loadAlerts(false)}
+        disabled={generating || loading}
+        className="rounded-full border border-red-300/20 bg-red-300/10 px-5 py-2.5 text-sm font-medium text-red-50 transition hover:bg-red-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        {copy.alertsStateRetry}
+      </button>
+
+      <button
+        type="button"
+        onClick={resetAlertFilters}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white"
+      >
+        {copy.alertsStateResetFilters}
+      </button>
+    </div>
+  </div>
+) : loading && alerts.length === 0 ? (
+  <div className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.035] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-100/45">
+          SkillEdge AI Loading State
+        </div>
+
+        <h3 className="mt-2 text-xl font-semibold text-white">
+          {copy.alertsStateLoadingTitle}
+        </h3>
+
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/58">
+          {copy.alertsStateLoadingText}
+        </p>
+      </div>
+
+      <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-semibold text-cyan-100">
+        Loading
+      </div>
+    </div>
+
+    <div className="mt-5 grid gap-3 md:grid-cols-3">
+      {[0, 1, 2].map((item) => (
+        <div
+          key={item}
+          className="rounded-2xl border border-white/10 bg-black/20 p-4"
+        >
+          <div className="h-3 w-24 rounded-full bg-white/10" />
+          <div className="mt-4 h-7 w-32 rounded-full bg-white/10" />
+          <div className="mt-4 h-3 w-full rounded-full bg-white/10" />
+          <div className="mt-2 h-3 w-2/3 rounded-full bg-white/10" />
+        </div>
+      ))}
+    </div>
+  </div>
+) : displayedAlerts.length === 0 ? (
+  <div className="rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.035] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-100/45">
+          {copy.alertsStateWaitingLabel}
+        </div>
+
+        <h3 className="mt-2 text-xl font-semibold text-white">
+          {hasActiveAlertFilters
+            ? copy.alertsStateFilterEmptyTitle
+            : copy.alertsStateEmptyTitle}
+        </h3>
+
+        <p className="mt-3 max-w-3xl text-sm leading-6 text-white/58">
+          {hasActiveAlertFilters
+            ? copy.alertsStateFilterEmptyText
+            : copy.alertsStateEmptyText}
+        </p>
+
+        <p className="mt-3 text-xs leading-5 text-cyan-50/60">
+          {copy.alertsStateLiveNote}
+        </p>
+      </div>
+
+      <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xs font-semibold text-emerald-100">
+  {copy.alertsStateLiveMonitoringLabel}
+</div>
+    </div>
+
+    <div className="mt-5 grid gap-3 md:grid-cols-3">
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+          {copy.selectedFilter}
+        </div>
+
+        <div className="mt-2 text-lg font-semibold text-white">
+          {alertFilterOptions.find((filter) => filter.id === alertFilter)
+            ?.label || copy.filterAll}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+          {copy.totalAlerts}
+        </div>
+
+        <div className="mt-2 text-lg font-semibold text-white">
+          {alerts.length}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+        <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+          Last checked
+        </div>
+
+        <div className="mt-2 text-lg font-semibold text-white">
+          {alertsLastCheckedAt
+            ? new Date(alertsLastCheckedAt).toLocaleTimeString()
+            : "—"}
+        </div>
+      </div>
+    </div>
+
+    <div className="mt-5 flex flex-wrap gap-2">
+      {hasActiveAlertFilters ? (
+        <button
+          type="button"
+          onClick={resetAlertFilters}
+          className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-5 py-2.5 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/15"
+        >
+          {copy.alertsStateResetFilters}
+        </button>
+      ) : null}
+
+      <button
+        type="button"
+        onClick={() => loadAlerts(true)}
+        disabled={generating || loading}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        {generating ? copy.generating : copy.alertsStateRunScan}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => loadAlerts(false)}
+        disabled={generating || loading}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+      >
+        {copy.refresh}
+      </button>
+    </div>
+  </div>
+) : (
+  displayedAlerts.map((alert) => (
+            <div
+              key={alert.id}
+              className="rounded-2xl border border-white/10 bg-black/20 p-4"
+            >
+              <div className="grid gap-4 xl:grid-cols-[120px_minmax(190px,260px)_minmax(0,1fr)]">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                    {alert.asset_type} · {alert.exchange || "—"}
+                  </div>
+
+                  <div className="mt-1 text-3xl font-semibold text-white">
+                    {alert.symbol}
+                  </div>
+
+                  <div className="mt-2 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
+                    {copy.confidence}: {alert.confidence_score || alert.score}
+{alert.confidence_tier ? ` · ${alert.confidence_tier}` : ""}
+                  </div>
+
+                  <div className="mt-3 text-xs leading-5 text-white/40">
+                    {copy.time}: {new Date(alert.created_at).toLocaleString()}
+                  </div>
+                  <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.03] p-2 text-[11px] leading-4 text-white/45">
+  TF: {alert.setup_timeframe || "5m"} setup /{" "}
+  {alert.confirmation_timeframe || "10m"} confirmation
+</div>
+                </div>
+
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+                    {copy.setup}
+                  </div>
+
+                  <div className="mt-2 text-sm font-semibold leading-5 text-white/85">
+                    {alert.setup_name || alert.setup_type || alert.title}
+                  </div>
+
+                  {alert.signal_mode_label ? (
+  <div
+    className={`mt-3 inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${
+      alert.signal_mode === "actionable"
+        ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100"
+        : alert.signal_mode === "caution"
+          ? "border-red-300/20 bg-red-300/10 text-red-100"
+          : alert.signal_mode === "watchlist"
+            ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-100"
+            : "border-white/10 bg-white/[0.04] text-white/60"
+    }`}
+  >
+    {alert.signal_mode_label}
+  </div>
+) : null}
+
+                  <div className="mt-3 text-sm leading-5 text-white/60">
+                    {alert.title}
+                  </div>
+
+                  <div className="mt-3 grid gap-2 text-xs leading-5 text-white/50">
+                    <div>
+                      {copy.direction}:{" "}
+                      <span className="text-white/75">{alert.direction}</span>
+                    </div>
+
+                    <div>
+                      {copy.trigger}:{" "}
+                      <span className="text-white/75">
+                        {alert.trigger_label || "wait confirmation"}
+                      </span>
+                    </div>
+
+                    <div>
+                      {copy.entry}:{" "}
+                      <span className="text-white/75">
+                        {alert.entry_zone_min && alert.entry_zone_max
+                          ? `${alert.entry_zone_min}–${alert.entry_zone_max}`
+                          : "wait trigger"}
+                      </span>
+                    </div>
+
+                    <div>
+                      {copy.stop}:{" "}
+                      <span className="text-white/75">
+                        {alert.stop_price || "—"}
+                      </span>
+                    </div>
+
+                    <div>
+                      {copy.targets}:{" "}
+                      <span className="text-white/75">
+                        {[alert.target_1, alert.target_2, alert.target_3]
+                          .filter(Boolean)
+                          .join(" / ") || "—"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+                      {copy.reason}
+                    </div>
+                    <div className="mt-2 text-xs leading-5 text-white/65">
+                      {alert.reason}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
+                      {copy.risk}
+                    </div>
+                    <div className="mt-2 text-xs leading-5 text-amber-50/75">
+                      {alert.risk_note || "Wait for confirmation."}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+                      {copy.scenario}
+                    </div>
+                    <div className="mt-2 text-xs leading-5 text-cyan-50/75">
+                      {alert.scenario || "Watch trigger and confirmation."}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.18em] text-red-100/45">
+                      {copy.invalidation}
+                    </div>
+                    <div className="mt-2 text-xs leading-5 text-red-50/75">
+                      {alert.invalidation || "Invalid if setup fails confirmation."}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+<div className="mt-3 flex flex-wrap items-center gap-2">
+  <button
+    type="button"
+    onClick={() => saveAlertToPlaybook(alert)}
+    disabled={
+      savingPlaybookId === alert.id ||
+      savedPlaybookAlertIds.includes(alert.id)
+    }
+    className="rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2 text-xs font-medium text-violet-100 transition hover:bg-violet-300/15 disabled:cursor-not-allowed disabled:opacity-50"
+  >
+    {savedPlaybookAlertIds.includes(alert.id)
+      ? copy.savedToPlaybook
+      : savingPlaybookId === alert.id
+        ? copy.savingToPlaybook
+        : copy.saveToPlaybook}
+  </button>
+
+  <button
+  type="button"
+  onClick={() => {
+    void saveAlertDecision(
+      alert.id,
+      "taken",
+      alert.user_alert_decision_note || copy.reasonTradeDraftCreated
+    );
+
+    onCreateTradeFromAlert(alert);
+  }}
+  className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xs font-medium text-emerald-100 transition hover:bg-emerald-300/15"
+>
+  {copy.createTradeDraft}
+</button>
+
+<button
+  type="button"
+  onClick={() => {
+    const nextExpandedId = expandedAlertId === alert.id ? null : alert.id;
+
+    setExpandedAlertId(nextExpandedId);
+
+    if (nextExpandedId === alert.id) {
+      markSingleAlertViewed(alert.id);
+    }
+  }}
+  className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-medium text-cyan-100 transition hover:bg-cyan-300/15"
+>
+  {expandedAlertId === alert.id
+    ? copy.hideAlertDetails
+    : copy.openAlertDetails}
+</button>
+
+  <div className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[11px] text-white/45">
+    Adds this setup to your personal SkillEdge playbook
+  </div>
+</div>
+
+
+
+              <div className="mt-3 flex flex-wrap gap-2 text-xs text-white/45">
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                  {copy.status}: {alert.status}
+                </span>
+
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+                  {copy.outcome}: {alert.outcome_status || "pending"}
+                </span>
+                {alert.user_alert_decision ? (
+  <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-cyan-100/75">
+    Decision: {alert.user_alert_decision}
+  </span>
+) : null}
+
+{alert.user_alert_decision_note ? (
+  <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-white/50">
+    Reason: {alert.user_alert_decision_note}
+  </span>
+) : null}
+
+{(() => {
+  const linkedTrades = getLinkedTradesForAlert(alert.id);
+
+  if (linkedTrades.length === 0) return null;
+
+  const executionScore = getLinkedExecutionScoreLabel(linkedTrades);
+
+  return (
+    <>
+      <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-emerald-100/75">
+        Journal linked: {linkedTrades.length} · PnL{" "}
+        {getLinkedPnlLabel(linkedTrades)}
+      </span>
+
+      <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-cyan-100/75">
+        Execution: {executionScore}
+      </span>
+    </>
+  );
+})()}
+
+{isAlertTakenWithoutJournal(alert) ? (
+  <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-amber-100/80">
+    Taken · Journal missing
+  </span>
+) : null}
+
+{(() => {
+  const followup = getAlertOutcomeFollowup(alert);
+
+  if (!alert.user_alert_decision) return null;
+
+  return (
+    <span
+      className={`rounded-full border px-3 py-1 ${
+        followup.tone === "strong"
+          ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100/80"
+          : followup.tone === "warning"
+            ? "border-amber-300/20 bg-amber-300/10 text-amber-100/80"
+            : followup.tone === "danger"
+              ? "border-red-300/20 bg-red-300/10 text-red-100/80"
+              : "border-white/10 bg-white/[0.04] text-white/55"
+      }`}
+    >
+      {copy.decisionVsOutcomeLabel}: {followup.decision} / {followup.outcome}
+    </span>
+  );
+})()}
+
+              </div>
+              {alert.outcome_status && alert.outcome_status !== "pending" ? (
+  <div className="mt-3 grid gap-2 text-xs text-white/45 md:grid-cols-4">
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+      <div className="uppercase tracking-[0.16em] text-white/30">MFE</div>
+      <div className="mt-1 font-semibold text-white/70">
+        {alert.mfe === null || alert.mfe === undefined ? "—" : `${alert.mfe}%`}
+      </div>
+    </div>
+
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+      <div className="uppercase tracking-[0.16em] text-white/30">MAE</div>
+      <div className="mt-1 font-semibold text-white/70">
+        {alert.mae === null || alert.mae === undefined ? "—" : `${alert.mae}%`}
+      </div>
+    </div>
+
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+      <div className="uppercase tracking-[0.16em] text-white/30">Target</div>
+      <div className="mt-1 font-semibold text-white/70">
+        {alert.hit_target || "—"}
+      </div>
+    </div>
+
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+      <div className="uppercase tracking-[0.16em] text-white/30">Stop</div>
+      <div className="mt-1 font-semibold text-white/70">
+        {alert.hit_stop ? "Hit" : "No"}
+      </div>
+    </div>
+  </div>
+) : null}
+            </div>
+          ))
+        )}
+      </div>
+      {visibleAlerts.length > 5 ? (
+  <div className="mt-5 flex flex-wrap items-center gap-3">
+    {hiddenAlertsCount > 0 ? (
+      <button
+        type="button"
+        onClick={() =>
+  setVisibleAlertsCount((current) =>
+    Math.min(current + 10, rankedVisibleAlerts.length)
+  )
+}
+        className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-5 py-2.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-300/15"
+      >
+        {copy.showMoreAlerts} ({hiddenAlertsCount})
+      </button>
+    ) : null}
+
+    {visibleAlertsCount > 5 ? (
+      <button
+        type="button"
+        onClick={() => {
+          setVisibleAlertsCount(5);
+          setExpandedAlertId(null);
+        }}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white"
+      >
+        {copy.collapseAlerts}
+      </button>
+    ) : null}
+  </div>
+) : null}
+{breakdownAlert && typeof document !== "undefined"
+  ? createPortal(
+      <div
+  className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-black/80 px-3 py-4 backdrop-blur-md sm:px-6 sm:py-6"
+  onClick={() => setExpandedAlertId(null)}
+>
+        <div
+  className="relative w-[min(1180px,calc(100vw-24px))] max-h-[88vh] overflow-y-auto rounded-[2rem] border border-white/10 bg-[#10131d] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.85)] [scrollbar-width:none] [-ms-overflow-style:none] sm:p-5 [&::-webkit-scrollbar]:hidden"
+          style={{
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <div className="sticky top-0 z-20 -mx-4 -mt-4 flex flex-wrap items-start justify-between gap-4 rounded-t-[2rem] border-b border-white/10 bg-[#10131d]/95 px-4 py-4 backdrop-blur-xl sm:-mx-5 sm:-mt-5 sm:px-5">
+            <div>
+              <div className="text-[11px] uppercase tracking-[0.28em] text-cyan-100/45">
+                {copy.breakdownTitle}
+              </div>
+
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <h3 className="text-3xl font-semibold text-white">
+                  {breakdownAlert.symbol}
+                </h3>
+
+                <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
+                  Confidence:{" "}
+                  {breakdownAlert.confidence_score ?? breakdownAlert.score ?? "—"}
+                  {breakdownAlert.confidence_tier
+                    ? ` · ${breakdownAlert.confidence_tier}`
+                    : ""}
+                </span>
+
+                {breakdownAlert.signal_mode_label ? (
+                  <span
+                    className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+                      breakdownAlert.signal_mode === "actionable"
+                        ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100"
+                        : breakdownAlert.signal_mode === "caution"
+                          ? "border-red-300/20 bg-red-300/10 text-red-100"
+                          : breakdownAlert.signal_mode === "watchlist"
+                            ? "border-cyan-300/20 bg-cyan-300/10 text-cyan-100"
+                            : "border-white/10 bg-white/[0.04] text-white/60"
+                    }`}
+                  >
+                    {breakdownAlert.signal_mode_label}
+                  </span>
+                ) : null}
+              </div>
+
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+                {breakdownAlert.setup_name ||
+                  breakdownAlert.setup_type ||
+                  breakdownAlert.title ||
+                  "SkillEdge AI signal"}
+              </p>
+            </div>
+
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
+              <button
+                type="button"
+                onClick={() => saveAlertToPlaybook(breakdownAlert)}
+                disabled={
+                  savingPlaybookId === breakdownAlert.id ||
+                  savedPlaybookAlertIds.includes(breakdownAlert.id)
+                }
+                className="inline-flex w-full items-center justify-center rounded-full border border-violet-300/20 bg-violet-300/10 px-4 py-2.5 text-sm font-medium text-violet-100 transition hover:bg-violet-300/15 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+              >
+                {savedPlaybookAlertIds.includes(breakdownAlert.id)
+                  ? copy.savedToPlaybook
+                  : savingPlaybookId === breakdownAlert.id
+                    ? copy.savingToPlaybook
+                    : copy.saveToPlaybook}
+              </button>
+
+              <button
+  type="button"
+  onClick={() => {
+    void saveAlertDecision(
+      breakdownAlert.id,
+      "taken",
+      breakdownAlert.user_alert_decision_note || copy.reasonTradeDraftCreated
+    );
+
+    onCreateTradeFromAlert(breakdownAlert);
+    setExpandedAlertId(null);
+  }}
+  className="inline-flex w-full items-center justify-center rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2.5 text-sm font-medium text-emerald-100 transition hover:bg-emerald-300/15 sm:w-auto"
+>
+  {copy.createTradeDraft}
+</button>
+
+              <button
+  type="button"
+  onClick={() => setExpandedAlertId(null)}
+  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white sm:w-auto"
+>
+  <span className="text-base leading-none">×</span>
+  {copy.closeBreakdown}
+</button>
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                  {copy.decisionTitle}
+                </div>
+
+                <div className="mt-1 text-xs leading-5 text-white/45">
+                  Mark how you handled this alert. This will power future Signal-to-Trade analytics.
+                </div>
+              </div>
+
+              {breakdownAlert.user_alert_decision ? (
+                <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
+                  {copy.decisionSaved}: {breakdownAlert.user_alert_decision}
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              {[
+                { id: "watching", label: copy.decisionWatching },
+                { id: "taken", label: copy.decisionTaken },
+                { id: "skipped", label: copy.decisionSkipped },
+                { id: "missed", label: copy.decisionMissed },
+              ].map((item) => {
+                const isActive = breakdownAlert.user_alert_decision === item.id;
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() =>
+                      saveAlertDecision(
+                        breakdownAlert.id,
+                        item.id as "watching" | "taken" | "skipped" | "missed"
+                      )
+                    }
+                    className={`rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                      isActive
+                        ? "border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+                        : "border-white/10 bg-black/20 text-white/55 hover:bg-white/[0.07] hover:text-white"
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+            {breakdownAlert.user_alert_decision ? (
+  <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+        {copy.decisionReasonTitle}
+      </div>
+
+      {breakdownAlert.user_alert_decision_note ? (
+        <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
+          {breakdownAlert.user_alert_decision_note}
+        </div>
+      ) : null}
+    </div>
+
+    <div className="mt-3 flex flex-wrap gap-2">
+      {[
+  copy.reasonTradeDraftCreated,
+  copy.reasonCleanTrigger,
+  copy.reasonGoodRiskReward,
+  copy.reasonJournalMatch,
+  copy.reasonNoConfirmation,
+  copy.reasonTooLate,
+  copy.reasonRiskHigh,
+  copy.reasonLiquidity,
+  copy.reasonNotAtDesk,
+].map((reason) => {
+        const isActive = breakdownAlert.user_alert_decision_note === reason;
+
+        return (
+          <button
+            key={reason}
+            type="button"
+            onClick={() =>
+              saveAlertDecision(
+                breakdownAlert.id,
+                breakdownAlert.user_alert_decision as
+                  | "watching"
+                  | "taken"
+                  | "skipped"
+                  | "missed",
+                reason
+              )
+            }
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              isActive
+                ? "border-emerald-300/30 bg-emerald-300/15 text-emerald-100"
+                : "border-white/10 bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white"
+            }`}
+          >
+            {reason}
+          </button>
+        );
+      })}
+    </div>
+  </div>
+) : null}
+
+{isAlertTakenWithoutJournal(breakdownAlert) ? (
+  <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.035] p-4">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+          {copy.takenWithoutJournalTitle}
+        </div>
+
+        <p className="mt-2 max-w-3xl text-xs leading-5 text-white/58">
+          {copy.takenWithoutJournalText}
+        </p>
+      </div>
+
+      <button
+  type="button"
+  onClick={() => {
+    void saveAlertDecision(
+      breakdownAlert.id,
+      "taken",
+      breakdownAlert.user_alert_decision_note || copy.reasonTradeDraftCreated
+    );
+
+    onCreateTradeFromAlert(breakdownAlert);
+    setExpandedAlertId(null);
+  }}
+  className="rounded-full border border-emerald-300/25 bg-emerald-300/10 px-4 py-2 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-300/15"
+>
+  {copy.journalSyncAction}
+</button>
+    </div>
+  </div>
+) : null}
+
+{(() => {
+  const linkedTrades = getLinkedTradesForAlert(breakdownAlert.id);
+  const hasLinkedTrades = linkedTrades.length > 0;
+
+  return (
+    <div
+      className={`mt-4 rounded-2xl border p-4 ${
+        hasLinkedTrades
+          ? "border-emerald-300/15 bg-emerald-300/[0.035]"
+          : "border-white/10 bg-black/20"
+      }`}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+            {copy.linkedJournalTitle}
+          </div>
+
+          <p className="mt-2 max-w-3xl text-xs leading-5 text-white/58">
+            {hasLinkedTrades ? copy.linkedJournalText : copy.linkedJournalEmpty}
+          </p>
+        </div>
+
+        <div
+          className={`rounded-full border px-3 py-1 text-xs font-semibold ${
+            hasLinkedTrades
+              ? "border-emerald-300/20 bg-emerald-300/10 text-emerald-100"
+              : "border-white/10 bg-white/[0.04] text-white/55"
+          }`}
+        >
+          {hasLinkedTrades ? "Linked" : "Not linked"}
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-4">
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+            {copy.linkedTrades}
+          </div>
+          <div className="mt-1 text-lg font-semibold text-white">
+            {linkedTrades.length}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+            {copy.linkedPnl}
+          </div>
+          <div className="mt-1 text-lg font-semibold text-white">
+            {getLinkedPnlLabel(linkedTrades)}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+            {copy.linkedResult}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {getLinkedResultLabel(linkedTrades) || "—"}
+          </div>
+        </div>
+        <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.035] p-3">
+  <div className="text-[10px] uppercase tracking-[0.16em] text-cyan-100/45">
+    {copy.executionScore}
+  </div>
+  <div className="mt-1 text-lg font-semibold text-white">
+    {getLinkedExecutionScoreLabel(linkedTrades)}
+  </div>
+</div>
+      </div>
+
+      {hasLinkedTrades ? (
+  <div className="mt-4 grid gap-2">
+    {linkedTrades.slice(0, 3).map((trade) => {
+      const review = getSignalExecutionReview(trade);
+      const score = review?.adherenceScore ?? null;
+      const tone = getExecutionScoreTone(score);
+
+      const label =
+        score === null
+          ? "—"
+          : score >= 80
+            ? copy.executionStrong
+            : score >= 60
+              ? copy.executionMedium
+              : copy.executionWeak;
+
+      return (
+        <div
+          key={trade.id}
+          className={`rounded-xl border p-3 text-xs leading-5 ${
+            tone === "strong"
+              ? "border-emerald-300/15 bg-emerald-300/[0.035] text-emerald-50/75"
+              : tone === "medium"
+                ? "border-cyan-300/15 bg-cyan-300/[0.035] text-cyan-50/75"
+                : tone === "weak"
+                  ? "border-amber-300/15 bg-amber-300/[0.035] text-amber-50/75"
+                  : "border-white/10 bg-white/[0.035] text-white/58"
+          }`}
+        >
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <span className="font-semibold text-white/85">
+                {trade.ticker}
+              </span>{" "}
+              · {trade.direction} · {trade.trade_date} · PnL{" "}
+              {typeof trade.pnl === "number"
+                ? `${trade.pnl >= 0 ? "+" : ""}${trade.pnl.toFixed(2)}`
+                : "—"}{" "}
+              · {trade.result || "open"}
+            </div>
+
+            <div className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 text-[10px] font-semibold text-white/70">
+              {copy.executionScore}: {score === null ? "—" : `${score}/100`}
+            </div>
+          </div>
+
+          <div className="mt-2 text-white/55">
+            {copy.executionReview}: {label}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+) : null}
+{hasLinkedTrades ? (
+  (() => {
+    const coachNotes = getAlertExecutionCoachNotes(breakdownAlert);
+
+    if (coachNotes.length === 0) return null;
+
+    return (
+      <div className="mt-4 rounded-2xl border border-violet-300/15 bg-violet-300/[0.035] p-5">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-violet-100/45">
+              {copy.executionCoachTitle}
+            </div>
+
+            <p className="mt-2 max-w-3xl text-xs leading-5 text-white/58">
+              {copy.executionCoachText}
+            </p>
+          </div>
+
+          <div className="rounded-full border border-violet-300/20 bg-violet-300/10 px-3 py-1 text-xs font-semibold text-violet-100">
+            Coach notes
+          </div>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-2">
+          {coachNotes.map((note) => (
+            <div
+              key={`${breakdownAlert.id}-${note.title}`}
+              className={`rounded-xl border p-4 ${
+                note.tone === "strong"
+                  ? "border-emerald-300/15 bg-emerald-300/[0.035]"
+                  : note.tone === "medium"
+                    ? "border-cyan-300/15 bg-cyan-300/[0.035]"
+                    : note.tone === "weak"
+                      ? "border-amber-300/15 bg-amber-300/[0.035]"
+                      : "border-white/10 bg-black/20"
+              }`}
+            >
+              <div className="text-xs font-semibold text-white/85">
+                {note.title}
+              </div>
+
+              <div className="mt-2 text-xs leading-5 text-white/58">
+                {note.text}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  })()
+) : null}
+    </div>
+  );
+})()}
+
+{breakdownAlert.user_alert_decision ? (
+  (() => {
+    const followup = getAlertOutcomeFollowup(breakdownAlert);
+
+    return (
+      <div
+        className={`mt-4 rounded-2xl border p-5 ${
+          followup.tone === "strong"
+            ? "border-emerald-300/15 bg-emerald-300/[0.035]"
+            : followup.tone === "warning"
+              ? "border-amber-300/15 bg-amber-300/[0.035]"
+              : followup.tone === "danger"
+                ? "border-red-300/15 bg-red-300/[0.035]"
+                : "border-white/10 bg-black/20"
+        }`}
+      >
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+              {copy.outcomeFollowupTitle}
+            </div>
+
+            <p className="mt-2 max-w-3xl text-xs leading-5 text-white/58">
+              {copy.outcomeFollowupText}
+            </p>
+          </div>
+
+          <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs font-semibold text-white/70">
+            {followup.decision} / {followup.outcome}
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.outcomeLearningLabel}
+          </div>
+
+          <p className="mt-2 text-sm leading-6 text-white/68">
+            {followup.text}
+          </p>
+        </div>
+
+        <div className="mt-4 grid gap-3 md:grid-cols-4">
+          <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+            <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+              Decision
+            </div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {followup.decision}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+            <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+              Outcome
+            </div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {followup.outcome}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+            <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+              MFE / MAE
+            </div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {breakdownAlert.mfe === null || breakdownAlert.mfe === undefined
+                ? "—"
+                : `${Number(breakdownAlert.mfe).toFixed(2)}%`}{" "}
+              /{" "}
+              {breakdownAlert.mae === null || breakdownAlert.mae === undefined
+                ? "—"
+                : `${Number(breakdownAlert.mae).toFixed(2)}%`}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+            <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+              TP / Stop
+            </div>
+            <div className="mt-1 text-sm font-semibold text-white">
+              {breakdownAlert.hit_target || "No TP"} /{" "}
+              {breakdownAlert.hit_stop ? "Stop hit" : "No stop"}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  })()
+) : null}
+
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]">
+            <div className="space-y-4">
+              <div
+                className={`rounded-2xl border p-5 ${
+                  breakdownAlert.signal_mode === "actionable"
+                    ? "border-emerald-300/20 bg-emerald-300/[0.055]"
+                    : breakdownAlert.signal_mode === "caution"
+                      ? "border-red-300/20 bg-red-300/[0.055]"
+                      : breakdownAlert.signal_mode === "watchlist"
+                        ? "border-cyan-300/20 bg-cyan-300/[0.055]"
+                        : "border-white/10 bg-white/[0.04]"
+                }`}
+              >
+                <div className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+                  {copy.traderDecision}
+                </div>
+
+                <div className="mt-2 text-lg font-semibold text-white">
+                  {breakdownAlert.signal_mode_label || "Signal review"}
+                </div>
+
+                <p className="mt-2 text-sm leading-6 text-white/62">
+                  {breakdownAlert.signal_mode_note ||
+                    "Review the setup, wait for confirmation, and trade only if risk/reward is valid."}
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-black/25 p-5">
+                <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                  {copy.tradePlan}
+                </div>
+
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      {copy.direction}
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white">
+                      {breakdownAlert.direction || "—"}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      TF
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white">
+                      {breakdownAlert.setup_timeframe || "5m"} setup /{" "}
+                      {breakdownAlert.confirmation_timeframe || "10m"} confirmation
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      {copy.entry}
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white">
+                      {breakdownAlert.entry_zone_min != null &&
+                      breakdownAlert.entry_zone_max != null
+                        ? `${breakdownAlert.entry_zone_min}–${breakdownAlert.entry_zone_max}`
+                        : "Wait trigger"}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-red-100/45">
+                      {copy.stop}
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white">
+                      {breakdownAlert.stop_price ?? breakdownAlert.invalidation ?? "—"}
+                    </div>
+                  </div>
+
+                  <div className="rounded-xl border border-emerald-300/15 bg-emerald-300/[0.035] p-3 md:col-span-2">
+                    <div className="text-[10px] uppercase tracking-[0.16em] text-emerald-100/45">
+                      {copy.targets}
+                    </div>
+                    <div className="mt-1 text-sm font-semibold text-white">
+                      {[
+                        breakdownAlert.target_1,
+                        breakdownAlert.target_2,
+                        breakdownAlert.target_3,
+                      ]
+                        .filter((value) => value != null)
+                        .join(" / ") || "—"}
+                    </div>
+                  </div>
+                </div>
+
+                {breakdownAlert.management_plan ? (
+                  <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.035] p-3 text-sm leading-6 text-white/65">
+                    <span className="font-semibold text-white/85">
+                      {copy.management}:
+                    </span>{" "}
+                    {breakdownAlert.management_plan}
+                  </div>
+                ) : null}
+              </div>
+
+              <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.035] p-5">
+                <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-100/45">
+                  {copy.whyNow}
+                </div>
+
+                <p className="mt-2 text-sm leading-6 text-white/65">
+                  {breakdownAlert.why_signal_fired ||
+                    breakdownAlert.reason ||
+                    "SkillEdge AI detected market activity, setup context and risk/reward conditions that made this ticker worth reviewing."}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                      {copy.confidenceTransparency}
+                    </div>
+
+                    <p className="mt-2 text-xs leading-5 text-white/50">
+                      {copy.confidenceTransparencyText}
+                    </p>
+                  </div>
+
+                  <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
+                    {breakdownAlert.confidence_score ?? breakdownAlert.score ?? "—"}
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3">
+                  {getAlertTransparencyItems(breakdownAlert).map((item) => (
+                    <div
+                      key={`${breakdownAlert.id}-${item.label}`}
+                      className={`rounded-xl border p-3 ${
+                        item.type === "positive"
+                          ? "border-emerald-300/15 bg-emerald-300/[0.035]"
+                          : item.type === "warning"
+                            ? "border-amber-300/15 bg-amber-300/[0.035]"
+                            : "border-white/10 bg-black/20"
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="text-[10px] uppercase tracking-[0.16em] text-white/35">
+                          {item.label}
+                        </div>
+
+                        <div className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-semibold text-white/65">
+                          {item.value}
+                        </div>
+                      </div>
+
+                      <div className="mt-2 text-xs leading-5 text-white/58">
+                        {item.note}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {Array.isArray(breakdownAlert.confirmation_checklist) &&
+              breakdownAlert.confirmation_checklist.length > 0 ? (
+                <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.035] p-5">
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+                    {copy.confirmationChecklist}
+                  </div>
+
+                  <div className="mt-3 grid gap-2">
+                    {breakdownAlert.confirmation_checklist.map((item, index) => (
+                      <div
+                        key={`${breakdownAlert.id}-modal-confirm-${index}`}
+                        className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs leading-5 text-emerald-50/75"
+                      >
+                        ✓ {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {Array.isArray(breakdownAlert.avoid_if) &&
+              breakdownAlert.avoid_if.length > 0 ? (
+                <div className="rounded-2xl border border-amber-300/15 bg-amber-300/[0.035] p-5">
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-amber-100/45">
+                    {copy.avoidThisTradeIf}
+                  </div>
+
+                  <div className="mt-3 grid gap-2">
+                    {breakdownAlert.avoid_if.map((item, index) => (
+                      <div
+                        key={`${breakdownAlert.id}-modal-avoid-${index}`}
+                        className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs leading-5 text-amber-50/75"
+                      >
+                        ⚠ {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          {(breakdownAlert.lesson_summary ||
+            breakdownAlert.setup_description ||
+            breakdownAlert.setup_common_mistake) ? (
+            <div className="mt-4 rounded-2xl border border-violet-300/15 bg-violet-300/[0.035] p-5">
+              <div className="text-[10px] uppercase tracking-[0.22em] text-violet-100/45">
+                {copy.learningLayer}
+              </div>
+
+              {breakdownAlert.lesson_summary ? (
+                <p className="mt-3 text-sm leading-6 text-white/65">
+                  {breakdownAlert.lesson_summary}
+                </p>
+              ) : null}
+
+              {breakdownAlert.setup_description ? (
+                <p className="mt-3 text-xs leading-5 text-white/55">
+                  {breakdownAlert.setup_description}
+                </p>
+              ) : null}
+
+              {breakdownAlert.setup_common_mistake ? (
+                <div className="mt-3 rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3 text-xs leading-5 text-red-50/75">
+                  <span className="font-semibold text-red-100">
+                    Common mistake:
+                  </span>{" "}
+                  {breakdownAlert.setup_common_mistake}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div className="mt-4 rounded-2xl border border-red-300/15 bg-red-300/[0.03] p-4 text-xs leading-5 text-red-50/70">
+  Score is not a guarantee. Trade only after confirmation, valid
+  risk/reward and your own execution checklist.
+
+  <div className="mt-3 flex flex-wrap items-center gap-2 text-white/35">
+    <span className="rounded-full border border-white/10 bg-black/20 px-2 py-1">
+      Esc
+    </span>
+    <span>or click outside the window to close this breakdown.</span>
+  </div>
+</div>
+        </div>
+      </div>,
+      document.body
+    )
+  : null}
+    </section>
+  );
+}
+
 function MarketTab({
   subscription,
   language,
@@ -5326,27 +12059,117 @@ function MarketTab({
   const copy: MarketScannerCopy =
     marketScannerCopy[safeLanguage] ?? marketScannerCopy.ru;
 
-  type UnifiedMarketOpportunity = {
-    symbol: string;
-    name: string | null;
-    exchange: string | null;
-    assetType: "stock" | "crypto";
-    signalType: "market" | "social" | "combined";
-    marketScore: number;
-    socialScore: number;
-    combinedScore: number;
-    changePercent: number | null;
-    mentions24h: number;
-    mentions1h: number;
-    mentionVelocity: number;
-    sentiment: "bullish" | "neutral" | "bearish";
-    marketBucket: MarketScannerItem["scan_bucket"] | null;
-    directionBias: string | null;
-    riskLabel: string | null;
-    reason: string;
-    marketItem?: MarketScannerItem;
-    socialItem?: MarketSocialMentionItem;
+ type UnifiedMarketOpportunity = {
+  symbol: string;
+  name: string | null;
+  exchange: string | null;
+  assetType: "stock" | "crypto";
+  signalType: "market" | "social" | "combined";
+  marketScore: number;
+  socialScore: number;
+  combinedScore: number;
+  changePercent: number | null;
+  mentions24h: number;
+  mentions1h: number;
+  mentionVelocity: number;
+  sentiment: "bullish" | "neutral" | "bearish" | string;
+  marketBucket: MarketScannerItem["scan_bucket"] | null;
+  directionBias: string | null;
+  riskLabel: string | null;
+  riskNote: string | null;
+  catalystTitle: string | null;
+  catalystUrl: string | null;
+  catalystType: string | null;
+  reason: string;
+  marketItem?: MarketScannerItem;
+  socialItem?: MarketSocialMentionItem;
+};
+
+  type MarketIntelligenceSignal = "combined" | "market_only" | "social_only";
+
+type MarketIntelligenceItem = {
+  symbol: string;
+  exchange: string | null;
+  name: string | null;
+  asset_type: "stock" | "crypto" | string;
+  signal: MarketIntelligenceSignal;
+  score: number;
+  market_score: number;
+  social_score: number;
+  change_percent: number | null;
+  price: number | null;
+  volume: number | null;
+  mentions_24h: number;
+  mentions_1h: number;
+  mention_velocity: number;
+  sentiment: "bullish" | "neutral" | "bearish" | string;
+  catalyst: {
+    title: string;
+    site: string | null;
+    url: string | null;
+    published_at: string | null;
+    catalyst_type: string;
+    catalyst_score: number;
+  } | null;
+  reason: string;
+  risk_note: string;
+  sources: {
+    market: string | null;
+    social: string[];
   };
+  scanned_at: string | null;
+};
+
+type MarketIntelligenceResponse = {
+  source: string;
+  provider: string;
+  scannedAt: string;
+  metrics: {
+    total: number;
+    combined: number;
+    marketOnly: number;
+    socialOnly: number;
+    crypto: number;
+    withCatalyst: number;
+  };
+  items: MarketIntelligenceItem[];
+};
+
+type MarketAIAnalysisItem = {
+  symbol: string;
+  verdict: string;
+  confluence_score: number;
+  setup_type: string;
+  reason: string;
+  risk_note: string;
+  scenario: string;
+  invalidation: string;
+  action_note: string;
+};
+
+type MarketAIAnalysisResponse = {
+  source: string;
+  analyzedAt: string;
+  summary: string;
+  items: MarketAIAnalysisItem[];
+};
+
+type MarketAIBriefHistoryItem = {
+  id: string;
+  planId: string;
+  language: string;
+  source: string;
+  summary: string;
+  inputItems: unknown[];
+  analysisItems: MarketAIAnalysisItem[];
+  createdAt: string;
+};
+
+type MarketAIBriefHistoryResponse = {
+  source: string;
+  count: number;
+  items: MarketAIBriefHistoryItem[];
+};
 
   const localText = {
     ru: {
@@ -5355,13 +12178,34 @@ function MarketTab({
         "Единый центр поиска in-play тикеров: рыночное движение + social mentions + будущий AI-анализ сигналов.",
       topTitle: "Top Opportunities Now",
       topText:
-        "Один список вместо отдельных сканеров. Система объединяет market activity, Reddit/X mentions, Binance crypto universe и готовит тикеры для дальнейшего AI-разбора.",
-      aiSoon: "AI layer скоро",
+        "Один список вместо отдельных сканеров. Система объединяет market activity, Reddit mentions, news catalysts, Binance crypto universe и готовит тикеры для дальнейшего AI-разбора.",
+      aiSoon: "AI Layer Soon",
       aiSoonText:
         "Дальше сюда добавим AI-сценарии, confluence score, risk notes, сигналы и персональные alerts под стиль клиента.",
       dataNote:
         "MVP использует доступные источники. Перед релизом подключаем premium full-data providers, intraday 1m/5m/15m и полный universe.",
       refreshAll: "Обновить всё",
+      aiAnalyzeTop: "AI Market Brief",
+aiAnalyzeTitle: "AI Market Brief по топ-10 возможностям",
+aiAnalyzeText:
+  "SkillEdge AI разбирает топ-10 кандидатов из Market Intelligence: почему тикер in-play, какой сетап формируется, где риск ловушки, какой сценарий смотреть и где идея ломается.",
+aiAnalyzeEmpty: "Сначала обнови scanner, чтобы появились тикеры для AI-разбора.",
+aiAnalyzePreview: "AI preview",
+aiAnalyzeClose: "Закрыть",
+aiHistory: "History",
+aiHistoryTitle: "История AI Market Brief",
+aiHistoryText: "Последние сохранённые AI-брифы по рынку.",
+aiHistoryEmpty: "Истории пока нет. Запусти AI Market Brief, чтобы сохранить первый разбор.",
+aiHistoryLoading: "Загружаем историю...",
+aiOpenBrief: "Открыть brief",
+aiCloseBrief: "Закрыть brief",
+aiSavedAnalysis: "Сохранённый AI-разбор",
+aiStocks: "Акции",
+aiCrypto: "Крипта",
+aiShowMore: "Показать ещё",
+aiShowLess: "Свернуть",
+aiNoItemsForTab: "Нет кандидатов для этого рынка.",
+aiAnalyzeError: "Не удалось получить AI-разбор. Проверь backend env и попробуй ещё раз.",
       refreshing: "Обновляем...",
       search: "Поиск тикера...",
       asset: "Актив",
@@ -5379,11 +12223,8 @@ function MarketTab({
       sortMove: "Move %",
       sortSocial: "Social score",
       ticker: "Тикер",
-      marketScore: "Market",
-      socialScore: "Social",
       combinedScore: "Score",
-      mentions24h: "24ч",
-      mentions1h: "1ч",
+      mentions24h: "Tracked 24H",
       move: "Move",
       reason: "Почему важно",
       noData: "Пока нет данных. Нажми “Обновить всё”.",
@@ -5392,6 +12233,11 @@ function MarketTab({
       showRaw: "Показать raw data",
       hideRaw: "Скрыть raw data",
       source: "Источник",
+      autoRefresh: "Auto-refresh",
+autoRefreshValue: "каждые 15 минут",
+coverageTitle: "Data coverage",
+coverageText:
+  "Mentions показывают только подключённые источники: Reddit сейчас, Stocktwits и crypto-native sources позже. Это не полный интернет-охват.",
       scanned: "Скан",
       lockedTitle: "Market Intelligence доступен на SkillEdge Edge и Elite.",
       lockedText:
@@ -5403,13 +12249,34 @@ function MarketTab({
         "Unified in-play ticker research: market movement + social mentions + future AI signal analysis.",
       topTitle: "Top Opportunities Now",
       topText:
-        "One list instead of separate scanners. The system combines market activity, Reddit/X mentions, Binance crypto universe and prepares tickers for AI analysis.",
-      aiSoon: "AI layer soon",
+        "One list instead of separate scanners. The system combines market activity, Reddit mentions, news catalysts, Binance crypto universe and prepares tickers for AI analysis.",
+      aiSoon: "AI Layer Soon",
       aiSoonText:
         "Next we add AI scenarios, confluence score, risk notes, signals and personalized alerts based on the client’s trading style.",
       dataNote:
         "MVP uses available sources. Before launch we connect premium full-data providers, intraday 1m/5m/15m and full universe coverage.",
       refreshAll: "Refresh all",
+      aiAnalyzeTop: "AI Market Brief",
+aiAnalyzeTitle: "AI Market Brief for top 10 opportunities",
+aiAnalyzeText:
+  "SkillEdge AI breaks down the top 10 Market Intelligence candidates: why the ticker is in-play, what setup is forming, where the trap risk is, what scenario to watch and where the idea breaks.",
+aiAnalyzeEmpty: "Refresh the scanner first to load tickers for AI analysis.",
+aiAnalyzePreview: "AI preview",
+aiAnalyzeClose: "Close",
+aiHistory: "History",
+aiHistoryTitle: "AI Market Brief History",
+aiHistoryText: "Latest saved AI market briefs.",
+aiHistoryEmpty: "No history yet. Run AI Market Brief to save the first brief.",
+aiHistoryLoading: "Loading history...",
+aiOpenBrief: "Open brief",
+aiCloseBrief: "Close brief",
+aiSavedAnalysis: "Saved AI analysis",
+aiStocks: "Stocks",
+aiCrypto: "Crypto",
+aiShowMore: "Show more",
+aiShowLess: "Collapse",
+aiNoItemsForTab: "No candidates for this market.",
+aiAnalyzeError: "Failed to load AI analysis. Check backend env and try again.",
       refreshing: "Refreshing...",
       search: "Search ticker...",
       asset: "Asset",
@@ -5427,11 +12294,8 @@ function MarketTab({
       sortMove: "Move %",
       sortSocial: "Social score",
       ticker: "Ticker",
-      marketScore: "Market",
-      socialScore: "Social",
       combinedScore: "Score",
-      mentions24h: "24H",
-      mentions1h: "1H",
+      mentions24h: "Tracked 24H",
       move: "Move",
       reason: "Why it matters",
       noData: "No data yet. Click “Refresh all”.",
@@ -5440,6 +12304,11 @@ function MarketTab({
       showRaw: "Show raw data",
       hideRaw: "Hide raw data",
       source: "Source",
+      autoRefresh: "Auto-refresh",
+autoRefreshValue: "every 15 minutes",
+coverageTitle: "Data coverage",
+coverageText:
+  "Mentions show tracked sources only: Reddit now, Stocktwits and crypto-native sources later. This is not full internet coverage.",
       scanned: "Scanned",
       lockedTitle: "Market Intelligence is available on SkillEdge Edge and Elite.",
       lockedText:
@@ -5451,13 +12320,34 @@ function MarketTab({
         "Єдиний центр пошуку in-play тикерів: рух ринку + social mentions + майбутній AI-аналіз сигналів.",
       topTitle: "Top Opportunities Now",
       topText:
-        "Один список замість окремих сканерів. Система поєднує market activity, Reddit/X mentions, Binance crypto universe і готує тикери для AI-аналізу.",
-      aiSoon: "AI layer скоро",
+        "Один список замість окремих сканерів. Система поєднує market activity, Reddit mentions, news catalysts, Binance crypto universe і готує тикери для AI-аналізу.",
+      aiSoon: "AI Layer Soon",
       aiSoonText:
         "Далі додамо AI-сценарії, confluence score, risk notes, сигнали та персональні alerts під стиль клієнта.",
       dataNote:
         "MVP використовує доступні джерела. Перед релізом підключаємо premium full-data providers, intraday 1m/5m/15m і повний universe.",
       refreshAll: "Оновити все",
+      aiAnalyzeTop: "AI Market Brief",
+aiAnalyzeTitle: "AI Market Brief по топ-10 можливостям",
+aiAnalyzeText:
+  "SkillEdge AI розбирає топ-10 кандидатів із Market Intelligence: чому тикер in-play, який сетап формується, де ризик пастки, який сценарій дивитися і де ідея ламається.",
+aiAnalyzeEmpty: "Спочатку онови scanner, щоб зʼявилися тикери для AI-розбору.",
+aiAnalyzePreview: "AI preview",
+aiAnalyzeClose: "Закрити",
+aiHistory: "History",
+aiHistoryTitle: "Історія AI Market Brief",
+aiHistoryText: "Останні збережені AI-брифи по ринку.",
+aiHistoryEmpty: "Історії ще немає. Запусти AI Market Brief, щоб зберегти перший розбір.",
+aiHistoryLoading: "Завантажуємо історію...",
+aiOpenBrief: "Відкрити brief",
+aiCloseBrief: "Закрити brief",
+aiSavedAnalysis: "Збережений AI-розбір",
+aiStocks: "Акції",
+aiCrypto: "Крипта",
+aiShowMore: "Показати ще",
+aiShowLess: "Згорнути",
+aiNoItemsForTab: "Немає кандидатів для цього ринку.",
+aiAnalyzeError: "Не вдалося отримати AI-розбір. Перевір backend env і спробуй ще раз.",
       refreshing: "Оновлюємо...",
       search: "Пошук тикера...",
       asset: "Актив",
@@ -5475,11 +12365,8 @@ function MarketTab({
       sortMove: "Move %",
       sortSocial: "Social score",
       ticker: "Тикер",
-      marketScore: "Market",
-      socialScore: "Social",
       combinedScore: "Score",
       mentions24h: "24г",
-      mentions1h: "1г",
       move: "Move",
       reason: "Чому важливо",
       noData: "Поки немає даних. Натисни “Оновити все”.",
@@ -5488,6 +12375,11 @@ function MarketTab({
       showRaw: "Показати raw data",
       hideRaw: "Сховати raw data",
       source: "Джерело",
+      autoRefresh: "Auto-refresh",
+autoRefreshValue: "кожні 15 хвилин",
+coverageTitle: "Data coverage",
+coverageText:
+  "Mentions показують лише підключені джерела: Reddit зараз, Stocktwits і crypto-native sources пізніше. Це не повне покриття всього інтернету.",
       scanned: "Скан",
       lockedTitle: "Market Intelligence доступний на SkillEdge Edge та Elite.",
       lockedText:
@@ -5506,6 +12398,16 @@ function MarketTab({
   const [socialError, setSocialError] = useState("");
   const [socialSource, setSocialSource] = useState("");
   const [socialScannedAt, setSocialScannedAt] = useState("");
+  const [marketIntelligenceItems, setMarketIntelligenceItems] = useState<
+  MarketIntelligenceItem[]
+>([]);
+const [marketIntelligenceMetrics, setMarketIntelligenceMetrics] =
+  useState<MarketIntelligenceResponse["metrics"] | null>(null);
+const [marketIntelligenceLoading, setMarketIntelligenceLoading] =
+  useState(false);
+const [marketIntelligenceError, setMarketIntelligenceError] = useState("");
+const [marketIntelligenceScannedAt, setMarketIntelligenceScannedAt] =
+  useState("");
 
   const [query, setQuery] = useState("");
   const [assetFilter, setAssetFilter] = useState<"all" | "stock" | "crypto">(
@@ -5518,9 +12420,48 @@ function MarketTab({
     "combined" | "mentions" | "move" | "social"
   >("combined");
   const [rawExpanded, setRawExpanded] = useState(false);
-
+  const [aiPreviewOpen, setAiPreviewOpen] = useState(false);
+ const [aiPreviewLoading, setAiPreviewLoading] = useState(false);
+ const [aiPreviewItems, setAiPreviewItems] = useState<UnifiedMarketOpportunity[]>([]);
+ const [aiAnalysisSummary, setAiAnalysisSummary] = useState("");
+ const [aiAnalysisItems, setAiAnalysisItems] = useState<MarketAIAnalysisItem[]>([]);
+ const [aiAnalysisError, setAiAnalysisError] = useState("");
+  const [aiBriefTab, setAiBriefTab] = useState<"stocks" | "crypto">("stocks");
+const [aiBriefExpanded, setAiBriefExpanded] = useState({
+  stocks: false,
+  crypto: false,
+});
+const [aiHistoryOpen, setAiHistoryOpen] = useState(false);
+const [aiHistoryLoading, setAiHistoryLoading] = useState(false);
+const [aiHistoryError, setAiHistoryError] = useState("");
+const [aiHistoryItems, setAiHistoryItems] = useState<MarketAIBriefHistoryItem[]>([]);
+const [selectedAiBriefId, setSelectedAiBriefId] = useState<string | null>(null);
   const hasAccess =
     subscription.active && canUseFeature(subscription.plan, "social_tickers");
+const tableScrollRef = useRef<HTMLDivElement | null>(null);
+
+const handleTableWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+  const container = tableScrollRef.current;
+
+  if (!container) return;
+
+  const canScrollHorizontally =
+    container.scrollWidth > container.clientWidth;
+
+  if (!canScrollHorizontally) {
+    return;
+  }
+
+  if (Math.abs(event.deltaY) >= Math.abs(event.deltaX)) {
+    event.preventDefault();
+
+    container.scrollBy({
+      left: event.deltaY,
+      behavior: "smooth",
+    });
+  }
+};
+ 
 
   const loadScanner = async (refresh = false) => {
     try {
@@ -5624,124 +12565,270 @@ function MarketTab({
     }
   };
 
-  const refreshAll = async () => {
-    await Promise.all([loadScanner(true), loadSocialMentions(true)]);
+  const loadMarketIntelligence = async () => {
+    try {
+      setMarketIntelligenceError("");
+      setMarketIntelligenceLoading(true);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session?.access_token) {
+        setMarketIntelligenceError("Unauthorized.");
+        setMarketIntelligenceItems([]);
+        setMarketIntelligenceMetrics(null);
+        return;
+      }
+
+      const response = await fetch("/api/market/intelligence", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        cache: "no-store",
+      });
+
+      const data = (await response.json().catch(() => null)) as
+        | MarketIntelligenceResponse
+        | { error?: string; locked?: boolean }
+        | null;
+
+      if (!response.ok) {
+        const message =
+          data && "error" in data && data.error
+            ? data.error
+            : "Failed to load market intelligence.";
+
+        setMarketIntelligenceError(message);
+        setMarketIntelligenceItems([]);
+        setMarketIntelligenceMetrics(null);
+        return;
+      }
+
+      const payload = data as MarketIntelligenceResponse;
+
+      setMarketIntelligenceItems(Array.isArray(payload.items) ? payload.items : []);
+      setMarketIntelligenceMetrics(payload.metrics || null);
+      setMarketIntelligenceScannedAt(payload.scannedAt || "");
+    } catch {
+      setMarketIntelligenceError("Failed to load market intelligence.");
+      setMarketIntelligenceItems([]);
+      setMarketIntelligenceMetrics(null);
+    } finally {
+      setMarketIntelligenceLoading(false);
+    }
   };
 
+  const refreshAll = async () => {
+  await loadScanner(true);
+  await loadSocialMentions(true);
+  await loadMarketIntelligence();
+};
+
+const handleAiAnalyzeTop = async () => {
+  setAiPreviewOpen(true);
+  setAiPreviewLoading(true);
+  setAiAnalysisError("");
+  setAiAnalysisSummary("");
+  setAiAnalysisItems([]);
+
+  const sortedOpportunities = opportunities
+  .slice()
+  .sort((a, b) => b.combinedScore - a.combinedScore);
+
+const topStocks = sortedOpportunities
+  .filter((item) => item.assetType !== "crypto")
+  .slice(0, 10);
+
+const topCrypto = sortedOpportunities
+  .filter((item) => item.assetType === "crypto")
+  .slice(0, 10);
+
+const topCandidates = [...topStocks, ...topCrypto];
+
+setAiBriefTab(topStocks.length > 0 ? "stocks" : "crypto");
+setAiBriefExpanded({
+  stocks: false,
+  crypto: false,
+});
+
+  setAiPreviewItems(topCandidates);
+
+  if (topCandidates.length === 0) {
+    setAiPreviewLoading(false);
+    return;
+  }
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setAiAnalysisError("Unauthorized.");
+      setAiPreviewLoading(false);
+      return;
+    }
+
+    const response = await fetch("/api/market/ai-analysis", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        language: safeLanguage,
+        items: topCandidates.map((item) => ({
+          symbol: item.symbol,
+          name: item.name,
+          exchange: item.exchange,
+          assetType: item.assetType,
+          signalType: item.signalType,
+          combinedScore: item.combinedScore,
+          marketScore: item.marketScore,
+          socialScore: item.socialScore,
+          changePercent: item.changePercent,
+          mentions24h: item.mentions24h,
+          mentions1h: item.mentions1h,
+          sentiment: item.sentiment,
+          catalystTitle: item.catalystTitle,
+          catalystType: item.catalystType,
+          reason: item.reason,
+          riskNote: item.riskNote,
+        })),
+      }),
+    });
+
+    const data = (await response.json().catch(() => null)) as
+      | MarketAIAnalysisResponse
+      | { error?: string; locked?: boolean }
+      | null;
+
+    if (!response.ok) {
+      const message =
+        data && "error" in data && data.error
+          ? data.error
+          : localText.aiAnalyzeError;
+
+      setAiAnalysisError(message);
+      return;
+    }
+
+    const payload = data as MarketAIAnalysisResponse;
+
+    setAiAnalysisSummary(payload.summary || "");
+    setAiAnalysisItems(Array.isArray(payload.items) ? payload.items : []);
+  } catch {
+    setAiAnalysisError(localText.aiAnalyzeError);
+  } finally {
+    setAiPreviewLoading(false);
+  }
+};
+
+const loadAiBriefHistory = async () => {
+  setAiHistoryOpen(true);
+  setAiHistoryLoading(true);
+  setAiHistoryError("");
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      setAiHistoryError("Unauthorized.");
+      setAiHistoryLoading(false);
+      return;
+    }
+
+    const response = await fetch("/api/market/ai-briefs?limit=10", {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      cache: "no-store",
+    });
+
+    const data = (await response.json().catch(() => null)) as
+      | MarketAIBriefHistoryResponse
+      | { error?: string }
+      | null;
+
+    if (!response.ok) {
+      setAiHistoryError(
+        data && "error" in data && data.error
+          ? data.error
+          : "Failed to load AI brief history."
+      );
+      setAiHistoryItems([]);
+      return;
+    }
+
+    const payload = data as MarketAIBriefHistoryResponse;
+
+    setAiHistoryItems(Array.isArray(payload.items) ? payload.items : []);
+  } catch {
+    setAiHistoryError("Failed to load AI brief history.");
+    setAiHistoryItems([]);
+  } finally {
+    setAiHistoryLoading(false);
+  }
+};
+
   useEffect(() => {
-    if (!hasAccess) return;
+  if (!hasAccess) return;
 
-    loadScanner(false);
-    loadSocialMentions(false);
+  const loadAllMarketData = async () => {
+    await loadScanner(false);
+    await loadSocialMentions(false);
+    await loadMarketIntelligence();
+  };
 
-    const interval = window.setInterval(() => {
-      loadSocialMentions(false);
-    }, 120000);
+  loadAllMarketData();
 
-    return () => window.clearInterval(interval);
-  }, [hasAccess]);
+  const interval = window.setInterval(() => {
+    loadAllMarketData().catch((error) => {
+      console.warn("Market auto-refresh failed:", error);
+    });
+  }, 900000);
 
-  const opportunities = useMemo<UnifiedMarketOpportunity[]>(() => {
-    const map = new Map<string, UnifiedMarketOpportunity>();
+  return () => window.clearInterval(interval);
+}, [hasAccess]);
 
-    const makeKey = (symbol: string, exchange?: string | null) =>
-      `${(exchange || "US").toUpperCase()}:${symbol.toUpperCase()}`;
+const opportunities = useMemo<UnifiedMarketOpportunity[]>(() => {
+  return marketIntelligenceItems.map((item) => {
+    const signalType: UnifiedMarketOpportunity["signalType"] =
+      item.signal === "combined"
+        ? "combined"
+        : item.signal === "market_only"
+          ? "market"
+          : "social";
 
-    for (const item of items) {
-      const symbol = item.symbol.toUpperCase();
-      const exchange = item.exchange || "US";
-      const key = makeKey(symbol, exchange);
-      const marketScore = Number(item.opportunity_score || 0);
-      const changePercent = Number(item.change_percent ?? 0);
-      const isCrypto = exchange.toUpperCase() === "BINANCE";
-
-      map.set(key, {
-        symbol,
-        name: item.name || symbol,
-        exchange,
-        assetType: isCrypto ? "crypto" : "stock",
-        signalType: "market",
-        marketScore,
-        socialScore: 0,
-        combinedScore: marketScore,
-        changePercent,
-        mentions24h: Number(item.mentions || 0),
-        mentions1h: 0,
-        mentionVelocity: Number(item.mention_velocity || 0),
-        sentiment: item.sentiment || "neutral",
-        marketBucket: item.scan_bucket,
-        directionBias: item.direction_bias || null,
-        riskLabel: item.risk_label || null,
-        reason:
-          item.scan_bucket === "pump_watch"
-            ? "Market mover: potential pump candidate based on price/volume activity."
-            : item.scan_bucket === "dump_watch"
-              ? "Market mover: potential dump candidate based on downside activity."
-              : item.scan_bucket === "unusual_volume"
-                ? "Market mover: unusual activity / volume candidate."
-                : "Market activity candidate.",
-        marketItem: item,
-      });
-    }
-
-    for (const item of socialItems) {
-      const symbol = item.symbol.toUpperCase();
-      const exchange = item.exchange || "US";
-      const key = makeKey(symbol, exchange);
-      const socialScore = Number(item.social_score || 0);
-      const mentions24h = Number(item.mentions_24h || 0);
-      const mentions1h = Number(item.mentions_1h || 0);
-      const mentionVelocity = Number(item.mention_velocity || 0);
-      const isCrypto = exchange.toUpperCase() === "BINANCE";
-      const existing = map.get(key);
-
-      if (existing) {
-        const combinedScore = Math.min(
-          100,
-          Math.round(existing.marketScore * 0.55 + socialScore * 0.45 + 10)
-        );
-
-        map.set(key, {
-          ...existing,
-          signalType: "combined",
-          socialScore,
-          combinedScore,
-          mentions24h,
-          mentions1h,
-          mentionVelocity,
-          sentiment: item.sentiment || existing.sentiment || "neutral",
-          socialItem: item,
-          reason:
-            "Combined opportunity: ticker has both market activity and social attention.",
-        });
-      } else {
-        map.set(key, {
-          symbol,
-          name: item.name || symbol,
-          exchange,
-          assetType: isCrypto ? "crypto" : "stock",
-          signalType: "social",
-          marketScore: 0,
-          socialScore,
-          combinedScore: Math.min(100, Math.round(socialScore * 0.9)),
-          changePercent: null,
-          mentions24h,
-          mentions1h,
-          mentionVelocity,
-          sentiment: item.sentiment || "neutral",
-          marketBucket: null,
-          directionBias: null,
-          riskLabel: null,
-          reason: isCrypto
-            ? "Social attention: Binance crypto ticker is being mentioned in the last 24H."
-            : "Social attention: stock ticker is being mentioned in the last 24H.",
-          socialItem: item,
-        });
-      }
-    }
-
-    return Array.from(map.values());
-  }, [items, socialItems]);
+    return {
+      symbol: item.symbol,
+      name: item.name || item.symbol,
+      exchange: item.exchange || "US",
+      assetType: item.asset_type === "crypto" ? "crypto" : "stock",
+      signalType,
+      marketScore: Number(item.market_score || 0),
+      socialScore: Number(item.social_score || 0),
+      combinedScore: Number(item.score || 0),
+      changePercent:
+        typeof item.change_percent === "number" ? item.change_percent : null,
+      mentions24h: Number(item.mentions_24h || 0),
+      mentions1h: Number(item.mentions_1h || 0),
+      mentionVelocity: Number(item.mention_velocity || 0),
+      sentiment: item.sentiment || "neutral",
+      marketBucket: null,
+      directionBias: null,
+      riskLabel: null,
+      riskNote: item.risk_note || null,
+catalystTitle: item.catalyst?.title || null,
+catalystUrl: item.catalyst?.url || null,
+catalystType: item.catalyst?.catalyst_type || null,
+reason: item.reason || "Market Intelligence candidate detected.",
+    };
+  });
+}, [marketIntelligenceItems]);  
 
   const filteredOpportunities = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -5773,18 +12860,61 @@ function MarketTab({
   }, [opportunities, query, assetFilter, signalFilter, sortBy]);
 
   const topRows = filteredOpportunities.slice(0, 25);
-  const combinedCount = opportunities.filter(
-    (item) => item.signalType === "combined"
-  ).length;
-  const marketOnlyCount = opportunities.filter(
-    (item) => item.signalType === "market"
-  ).length;
-  const socialOnlyCount = opportunities.filter(
-    (item) => item.signalType === "social"
-  ).length;
-  const cryptoCount = opportunities.filter(
-    (item) => item.assetType === "crypto"
-  ).length;
+  const combinedCount =
+  marketIntelligenceMetrics?.combined ??
+  opportunities.filter((item) => item.signalType === "combined").length;
+
+const marketOnlyCount =
+  marketIntelligenceMetrics?.marketOnly ??
+  opportunities.filter((item) => item.signalType === "market").length;
+
+const socialOnlyCount =
+  marketIntelligenceMetrics?.socialOnly ??
+  opportunities.filter((item) => item.signalType === "social").length;
+
+const cryptoCount =
+  marketIntelligenceMetrics?.crypto ??
+  opportunities.filter((item) => item.assetType === "crypto").length;
+
+const aiPreviewStocks = aiPreviewItems.filter(
+  (item) => item.assetType !== "crypto"
+);
+
+const aiPreviewCrypto = aiPreviewItems.filter(
+  (item) => item.assetType === "crypto"
+);
+
+const aiAnalysisStocks = aiAnalysisItems.filter((analysisItem) =>
+  aiPreviewStocks.some((candidate) => candidate.symbol === analysisItem.symbol)
+);
+
+const aiAnalysisCrypto = aiAnalysisItems.filter((analysisItem) =>
+  aiPreviewCrypto.some((candidate) => candidate.symbol === analysisItem.symbol)
+);
+
+const activeAiPreviewItems =
+  aiBriefTab === "stocks" ? aiPreviewStocks : aiPreviewCrypto;
+
+const activeAiAnalysisItems =
+  aiBriefTab === "stocks" ? aiAnalysisStocks : aiAnalysisCrypto;
+
+const activeAiExpanded =
+  aiBriefTab === "stocks" ? aiBriefExpanded.stocks : aiBriefExpanded.crypto;
+
+const visibleAiAnalysisItems = activeAiExpanded
+  ? activeAiAnalysisItems
+  : activeAiAnalysisItems.slice(0, 3);
+
+const visibleAiPreviewItems = activeAiExpanded
+  ? activeAiPreviewItems
+  : activeAiPreviewItems.slice(0, 3);
+
+const hiddenAiCount = Math.max(
+  0,
+  (aiAnalysisItems.length > 0
+    ? activeAiAnalysisItems.length
+    : activeAiPreviewItems.length) - 3
+);
 
   return (
     <div className="space-y-5">
@@ -5820,25 +12950,46 @@ function MarketTab({
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={refreshAll}
-              disabled={marketLoading || socialLoading}
-              className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {marketLoading || socialLoading
-                ? localText.refreshing
-                : localText.refreshAll}
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+  <button
+    type="button"
+    onClick={handleAiAnalyzeTop}
+    disabled={marketIntelligenceItems.length === 0 || aiPreviewLoading}
+    className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-5 py-3 text-sm font-medium text-cyan-50 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-40"
+  >
+    {aiPreviewLoading ? "AI..." : localText.aiAnalyzeTop}
+  </button>
+
+<button
+  type="button"
+  onClick={loadAiBriefHistory}
+  disabled={aiHistoryLoading}
+  className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+>
+  {aiHistoryLoading ? "..." : localText.aiHistory}
+</button>
+
+  <button
+    type="button"
+    onClick={refreshAll}
+    disabled={marketLoading || socialLoading || marketIntelligenceLoading}
+    className="rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+  >
+    {marketLoading || socialLoading || marketIntelligenceLoading
+      ? localText.refreshing
+      : localText.refreshAll}
+  </button>
+</div>
           </div>
 
-          <div className="mt-5 grid gap-3 md:grid-cols-4">
+          <div className="mt-5 grid gap-3 md:grid-cols-5">
             {[
-              [localText.combined, combinedCount],
-              [localText.marketOnly, marketOnlyCount],
-              [localText.socialOnly, socialOnlyCount],
-              [localText.crypto, cryptoCount],
-            ].map(([label, value]) => (
+  [localText.combined, combinedCount],
+  [localText.marketOnly, marketOnlyCount],
+  [localText.socialOnly, socialOnlyCount],
+  [localText.crypto, cryptoCount],
+  ["News", marketIntelligenceMetrics?.withCatalyst ?? 0],
+].map(([label, value]) => (
               <div
                 key={String(label)}
                 className="rounded-[1.1rem] border border-white/10 bg-white/[0.03] p-3"
@@ -5853,7 +13004,428 @@ function MarketTab({
             ))}
           </div>
 
-          <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+          {aiPreviewOpen && (
+  <div className="mt-5 rounded-[1.5rem] border border-cyan-300/15 bg-cyan-300/[0.045] p-5 shadow-[0_18px_60px_rgba(34,211,238,0.08)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-100/45">
+          {localText.aiAnalyzePreview}
+        </div>
+
+        <h3 className="mt-2 text-xl font-semibold text-white">
+          {localText.aiAnalyzeTitle}
+        </h3>
+
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+          {localText.aiAnalyzeText}
+        </p>
+        <div className="mt-4 inline-flex rounded-full border border-white/10 bg-black/20 p-1">
+  {[
+    ["stocks", localText.aiStocks, aiPreviewStocks.length],
+    ["crypto", localText.aiCrypto, aiPreviewCrypto.length],
+  ].map(([tab, label, count]) => (
+    <button
+      key={String(tab)}
+      type="button"
+      onClick={() => setAiBriefTab(tab as "stocks" | "crypto")}
+      className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+        aiBriefTab === tab
+          ? "bg-cyan-300/15 text-cyan-50"
+          : "text-white/50 hover:text-white"
+      }`}
+    >
+      {label} · {count}
+    </button>
+  ))}
+</div>
+
+<div className="mt-4 inline-flex rounded-full border border-white/10 bg-black/20 p-1">
+  {[
+    {
+      id: "stocks" as const,
+      label: localText.aiStocks,
+      count: aiPreviewStocks.length,
+    },
+    {
+      id: "crypto" as const,
+      label: localText.aiCrypto,
+      count: aiPreviewCrypto.length,
+    },
+  ].map((tab) => (
+    <button
+      key={tab.id}
+      type="button"
+      onClick={() => setAiBriefTab(tab.id)}
+      className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+        aiBriefTab === tab.id
+          ? "bg-cyan-300/15 text-cyan-50"
+          : "text-white/50 hover:text-white"
+      }`}
+    >
+      {tab.label} · {tab.count}
+    </button>
+  ))}
+</div>
+
+<p className="mt-3 max-w-3xl text-xs leading-5 text-white/42">
+  Social attention is based on tracked sources only. Crypto-native attention may be
+  undercounted until dedicated crypto sources are connected.
+</p>
+
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setAiPreviewOpen(false)}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/65 transition hover:bg-white/[0.08] hover:text-white"
+      >
+        {localText.aiAnalyzeClose}
+      </button>
+    </div>
+
+    {aiAnalysisError ? (
+  <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-500/10 p-5 text-sm text-red-100/80">
+    {aiAnalysisError}
+  </div>
+) : null}
+
+{aiAnalysisSummary ? (
+  <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-black/20 p-5">
+    <div className="text-[11px] uppercase tracking-[0.22em] text-cyan-100/45">
+      SkillEdge AI Summary
+    </div>
+    <p className="mt-2 text-sm leading-6 text-white/70">
+      {aiAnalysisSummary}
+    </p>
+  </div>
+) : null}
+
+<div className="mt-5 space-y-3">
+  {aiPreviewLoading ? (
+    <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+      SkillEdge AI анализирует топовые возможности...
+    </div>
+  ) : activeAiPreviewItems.length === 0 ? (
+    <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+      {localText.aiNoItemsForTab}
+    </div>
+  ) : aiAnalysisItems.length === 0 ? (
+    visibleAiPreviewItems.map((item, index) => (
+      <div
+        key={`ai-preview-${item.symbol}-${item.signalType}`}
+        className="grid gap-4 rounded-2xl border border-white/10 bg-black/20 p-4 md:grid-cols-[90px_minmax(0,1fr)_90px]"
+      >
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.2em] text-white/30">
+            #{index + 1}
+          </div>
+          <div className="mt-1 text-xl font-semibold text-white">
+            {item.symbol}
+          </div>
+          <div className="mt-1 text-xs uppercase tracking-[0.18em] text-white/35">
+            {item.signalType}
+          </div>
+        </div>
+
+        <div className="text-sm leading-6 text-white/55">
+          Waiting for SkillEdge AI output...
+        </div>
+
+        <div className="flex items-start justify-end">
+          <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
+            {item.combinedScore}
+          </div>
+        </div>
+      </div>
+    ))
+  ) : (
+    visibleAiAnalysisItems.map((item, index) => (
+      <div
+        key={`ai-analysis-${item.symbol}`}
+        className="rounded-2xl border border-white/10 bg-black/20 p-4 shadow-[0_12px_40px_rgba(0,0,0,0.22)]"
+      >
+        <div className="grid gap-4 xl:grid-cols-[110px_minmax(180px,240px)_minmax(0,1fr)]">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-100/35">
+              #{index + 1}
+            </div>
+
+            <div className="mt-1 text-2xl font-semibold text-white">
+              {item.symbol}
+            </div>
+
+            <div className="mt-2 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
+              {item.confluence_score}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              Setup
+            </div>
+
+            <div className="mt-2 text-sm font-semibold leading-5 text-white/85">
+              {item.setup_type}
+            </div>
+
+            <div className="mt-3 text-sm leading-5 text-white/70">
+              {item.verdict}
+            </div>
+          </div>
+
+          <div className="grid gap-3 lg:grid-cols-2">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+                Reason
+              </div>
+              <div className="mt-2 text-xs leading-5 text-white/65">
+                {item.reason}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
+                Risk
+              </div>
+              <div className="mt-2 text-xs leading-5 text-amber-50/75">
+                {item.risk_note}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.035] p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+                Scenario
+              </div>
+              <div className="mt-2 text-xs leading-5 text-cyan-50/75">
+                {item.scenario}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-red-100/45">
+                Invalidation
+              </div>
+              <div className="mt-2 text-xs leading-5 text-red-50/75">
+                {item.invalidation}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/62">
+          {item.action_note}
+        </div>
+      </div>
+    ))
+  )}
+
+  {hiddenAiCount > 0 ? (
+    <button
+      type="button"
+      onClick={() =>
+        setAiBriefExpanded((current) => ({
+          ...current,
+          [aiBriefTab]: !activeAiExpanded,
+        }))
+      }
+      className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white"
+    >
+      {activeAiExpanded
+        ? localText.aiShowLess
+        : `${localText.aiShowMore} ${hiddenAiCount}`}
+    </button>
+  ) : null}
+</div>
+  </div>
+)}
+
+{aiHistoryOpen && (
+  <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-5 shadow-[0_18px_60px_rgba(0,0,0,0.18)]">
+    <div className="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <div className="text-[11px] uppercase tracking-[0.24em] text-white/35">
+          SkillEdge AI
+        </div>
+
+        <h3 className="mt-2 text-xl font-semibold text-white">
+          {localText.aiHistoryTitle}
+        </h3>
+
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+          {localText.aiHistoryText}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setAiHistoryOpen(false)}
+        className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-white/65 transition hover:bg-white/[0.08] hover:text-white"
+      >
+        {localText.aiAnalyzeClose}
+      </button>
+    </div>
+
+    <div className="mt-5 space-y-3">
+      {aiHistoryLoading ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {localText.aiHistoryLoading}
+        </div>
+      ) : aiHistoryError ? (
+        <div className="rounded-2xl border border-red-400/20 bg-red-500/10 p-5 text-sm text-red-100/80">
+          {aiHistoryError}
+        </div>
+      ) : aiHistoryItems.length === 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+          {localText.aiHistoryEmpty}
+        </div>
+      ) : (
+        aiHistoryItems.map((brief) => (
+          <div
+            key={brief.id}
+            className="rounded-2xl border border-white/10 bg-black/20 p-4"
+          >
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  {new Date(brief.createdAt).toLocaleString()}
+                </div>
+
+                <div className="mt-1 text-xs text-white/35">
+                  {brief.analysisItems.length} AI items · {brief.planId}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+  <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
+    Saved brief
+  </div>
+
+  <button
+    type="button"
+    onClick={() =>
+      setSelectedAiBriefId((current) =>
+        current === brief.id ? null : brief.id
+      )
+    }
+    className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/65 transition hover:bg-white/[0.08] hover:text-white"
+  >
+    {selectedAiBriefId === brief.id
+      ? localText.aiCloseBrief
+      : localText.aiOpenBrief}
+  </button>
+</div>
+            </div>
+
+            {brief.summary ? (
+              <p className="mt-3 text-sm leading-6 text-white/65">
+                {brief.summary}
+              </p>
+            ) : null}
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {brief.analysisItems.slice(0, 10).map((item) => (
+                <span
+                  key={`${brief.id}-${item.symbol}`}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/65"
+                >
+                  {item.symbol} · {item.confluence_score}
+                </span>
+              ))}
+            </div>
+            {selectedAiBriefId === brief.id ? (
+  <div className="mt-4 space-y-3">
+    <div className="text-[11px] uppercase tracking-[0.22em] text-white/35">
+      {localText.aiSavedAnalysis}
+    </div>
+
+    {brief.analysisItems.map((item, index) => (
+      <div
+        key={`${brief.id}-full-${item.symbol}-${index}`}
+        className="rounded-2xl border border-white/10 bg-white/[0.03] p-4"
+      >
+        <div className="grid gap-4 xl:grid-cols-[110px_minmax(180px,240px)_minmax(0,1fr)]">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-100/35">
+              #{index + 1}
+            </div>
+
+            <div className="mt-1 text-2xl font-semibold text-white">
+              {item.symbol}
+            </div>
+
+            <div className="mt-2 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
+              {item.confluence_score}
+            </div>
+          </div>
+
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+              Setup
+            </div>
+
+            <div className="mt-2 text-sm font-semibold leading-5 text-white/85">
+              {item.setup_type}
+            </div>
+
+            <div className="mt-3 text-sm leading-5 text-white/70">
+              {item.verdict}
+            </div>
+          </div>
+
+          <div className="grid gap-3 lg:grid-cols-2">
+            <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+                Reason
+              </div>
+              <div className="mt-2 text-xs leading-5 text-white/65">
+                {item.reason}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
+                Risk
+              </div>
+              <div className="mt-2 text-xs leading-5 text-amber-50/75">
+                {item.risk_note}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.035] p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+                Scenario
+              </div>
+              <div className="mt-2 text-xs leading-5 text-cyan-50/75">
+                {item.scenario}
+              </div>
+            </div>
+
+            <div className="rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-red-100/45">
+                Invalidation
+              </div>
+              <div className="mt-2 text-xs leading-5 text-red-50/75">
+                {item.invalidation}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3 text-xs leading-5 text-white/62">
+          {item.action_note}
+        </div>
+      </div>
+    ))}
+  </div>
+) : null}
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+)}
+
+          <div className="mt-5">
             <div className="rounded-[1.4rem] border border-white/10 bg-black/10 p-4">
               <div className="text-[11px] uppercase tracking-[0.24em] text-white/40">
                 {localText.topTitle}
@@ -5917,147 +13489,260 @@ function MarketTab({
                 </select>
               </div>
 
-              {(marketError || socialError) && (
-                <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
-                  {marketError || socialError}
-                </div>
-              )}
+              {(marketError || socialError || marketIntelligenceError) && (
+  <div className="mt-4 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
+    {marketError || socialError || marketIntelligenceError}
+  </div>
+)}
 
-              <div className="mt-4 overflow-hidden rounded-[1.2rem] border border-white/10">
-                <div className="grid grid-cols-[110px_80px_100px_80px_80px_70px_minmax(220px,1fr)] bg-white/[0.04] px-3 py-3 text-[10px] uppercase tracking-[0.16em] text-white/35">
-                  <div>{localText.ticker}</div>
-                  <div>{localText.asset}</div>
-                  <div>{localText.signal}</div>
-                  <div>{localText.combinedScore}</div>
-                  <div>{localText.mentions24h}</div>
-                  <div>{localText.move}</div>
-                  <div>{localText.reason}</div>
-                </div>
-
-                {topRows.length === 0 ? (
-                  <div className="p-5 text-sm text-white/50">
-                    {localText.noData}
+              <div className="mt-4 rounded-[1.2rem] border border-white/10 bg-white/[0.02]">
+ <div
+  ref={tableScrollRef}
+  onWheel={handleTableWheel}
+  className="w-full overflow-x-auto overscroll-x-contain rounded-[1.1rem] scroll-smooth [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.28)_transparent] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/20 hover:[&::-webkit-scrollbar-thumb]:bg-white/35"
+>
+                  <div className="grid min-w-[1040px] grid-cols-[96px_78px_112px_70px_76px_88px_minmax(440px,1fr)] gap-x-3 bg-white/[0.04] px-3 py-3 text-[10px] uppercase tracking-[0.16em] text-white/35">
+                    <div>{localText.ticker}</div>
+                    <div>{localText.asset}</div>
+                    <div>{localText.signal}</div>
+                    <div>{localText.combinedScore}</div>
+                    <div>{localText.mentions24h}</div>
+                    <div>{localText.move}</div>
+                    <div>{localText.reason}</div>
                   </div>
-                ) : (
-                  topRows.map((item) => (
-                    <div
-                      key={`${item.exchange || ""}-${item.symbol}-${item.signalType}`}
-                      className="grid grid-cols-[110px_80px_100px_80px_80px_70px_minmax(220px,1fr)] items-center border-t border-white/10 px-3 py-3 text-sm text-white/70 transition hover:bg-white/[0.035]"
-                    >
-                      <div className="min-w-0">
-                        <div className="font-semibold text-white">
-                          {item.symbol}
-                        </div>
-                        <div className="truncate text-xs text-white/35">
-                          {item.exchange || "US"}
-                        </div>
-                      </div>
 
-                      <div>
-                        <span className="rounded-full border border-white/10 px-2 py-1 text-[11px] text-white/60">
-                          {item.assetType === "crypto"
-                            ? localText.crypto
-                            : localText.stocks}
-                        </span>
-                      </div>
-
-                      <div>
-                        <span
-                          className={`rounded-full px-2 py-1 text-[11px] ${
-                            item.signalType === "combined"
-                              ? "border border-emerald-300/25 bg-emerald-300/10 text-emerald-100"
-                              : item.signalType === "market"
-                                ? "border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"
-                                : "border border-violet-300/25 bg-violet-300/10 text-violet-100"
-                          }`}
-                        >
-                          {item.signalType === "combined"
-                            ? localText.combined
-                            : item.signalType === "market"
-                              ? localText.marketOnly
-                              : localText.socialOnly}
-                        </span>
-                      </div>
-
-                      <div className="font-semibold text-white">
-                        {item.combinedScore}
-                      </div>
-
-                      <div>
-                        <div className="font-semibold text-white">
-                          {formatMarketNumber(item.mentions24h)}
-                        </div>
-                        <div className="text-xs text-white/35">
-                          1h: {formatMarketNumber(item.mentions1h)}
-                        </div>
-                      </div>
-
-                      <div
-                        className={
-                          Number(item.changePercent || 0) >= 0
-                            ? "font-semibold text-emerald-100"
-                            : "font-semibold text-red-100"
-                        }
-                      >
-                        {item.changePercent === null
-                          ? "—"
-                          : `${Number(item.changePercent || 0) >= 0 ? "+" : ""}${Number(
-                              item.changePercent || 0
-                            ).toFixed(2)}%`}
-                      </div>
-
-                      <div className="text-xs leading-5 text-white/50">
-                        {item.reason}
-                      </div>
+                  {topRows.length === 0 ? (
+                    <div className="p-5 text-sm text-white/50">
+                      {localText.noData}
                     </div>
-                  ))
-                )}
+                  ) : (
+                    topRows.map((item) => (
+                      <div
+                        key={`${item.exchange || ""}-${item.symbol}-${item.signalType}`}
+                        className="grid min-w-[1040px] grid-cols-[96px_78px_112px_70px_76px_88px_minmax(440px,1fr)] items-center gap-x-3 border-t border-white/10 px-3 py-3 text-sm text-white/70 transition hover:bg-white/[0.035]">
+                        <div className="min-w-0">
+                          <div className="font-semibold text-white">
+                            {item.symbol}
+                          </div>
+                          <div className="truncate text-xs text-white/35">
+                            {item.exchange || "US"}
+                          </div>
+                        </div>
+
+                        <div>
+                          <span className="rounded-full border border-white/10 px-2 py-1 text-[11px] text-white/60">
+                            {item.assetType === "crypto"
+                              ? localText.crypto
+                              : localText.stocks}
+                          </span>
+                        </div>
+
+                        <div>
+                          <span
+                            className={`inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                              item.signalType === "combined"
+                                ? "border border-emerald-300/25 bg-emerald-300/10 text-emerald-100"
+                                : item.signalType === "market"
+                                  ? "border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"
+                                  : "border border-violet-300/25 bg-violet-300/10 text-violet-100"
+                            }`}
+                          >
+                            {item.signalType === "combined"
+                              ? localText.combined
+                              : item.signalType === "market"
+                                ? localText.marketOnly
+                                : localText.socialOnly}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1">
+  <div className="text-base font-semibold text-white">
+    {item.combinedScore}
+  </div>
+
+  <div className="flex flex-wrap gap-1 text-[10px] text-white/45">
+    <span className="rounded-full border border-cyan-300/15 bg-cyan-300/10 px-1.5 py-0.5 text-cyan-100/80">
+      M {item.marketScore}
+    </span>
+
+    <span className="rounded-full border border-violet-300/15 bg-violet-300/10 px-1.5 py-0.5 text-violet-100/80">
+      S {item.socialScore}
+    </span>
+  </div>
+</div>
+
+                        <div className="space-y-1">
+  <div className="font-semibold text-white">
+    {formatMarketNumber(item.mentions24h)}
+  </div>
+
+  <div className="flex flex-col gap-0.5 text-[11px] text-white/35">
+    <span>1h: {formatMarketNumber(item.mentions1h)}</span>
+
+    {item.mentionVelocity > 0 ? (
+      <span>
+        velocity: {(item.mentionVelocity * 100).toFixed(0)}%
+      </span>
+    ) : null}
+  </div>
+</div>
+
+                        <div>
+  {item.changePercent === null ? (
+    <span className="text-white/35">—</span>
+  ) : (
+    <span
+      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+        Number(item.changePercent || 0) >= 0
+          ? "bg-emerald-300/10 text-emerald-100"
+          : "bg-red-300/10 text-red-100"
+      }`}
+    >
+      {Number(item.changePercent || 0) >= 0 ? "+" : ""}
+      {Number(item.changePercent || 0).toFixed(2)}%
+    </span>
+  )}
+</div>
+
+                        <div className="text-xs leading-5 text-white/55">
+  <div className="min-w-0 text-xs leading-5 text-white/60">
+  <div className="line-clamp-2 break-words">
+    {item.reason}
+  </div>
+
+  {item.catalystTitle && item.catalystUrl ? (
+    <a
+      href={item.catalystUrl}
+      target="_blank"
+      rel="noreferrer"
+      className="mt-1 block truncate text-emerald-200/85 transition hover:text-emerald-100 hover:underline"
+      title={item.catalystTitle}
+    >
+      News: {item.catalystTitle}
+    </a>
+  ) : null}
+
+  {item.riskNote ? (
+    <div className="mt-1 line-clamp-2 break-words text-amber-100/75">
+      Risk: {item.riskNote}
+    </div>
+  ) : null}
+</div>
+
+</div>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="rounded-[1.4rem] border border-violet-300/20 bg-violet-400/10 p-4">
-                <div className="text-[11px] uppercase tracking-[0.22em] text-violet-100/65">
-                  {localText.aiSoon}
-                </div>
-                <p className="mt-3 text-sm leading-6 text-white/70">
-                  {localText.aiSoonText}
-                </p>
-              </div>
+            <div className="mt-4 grid gap-3 xl:grid-cols-3">
+  <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.03] p-4 shadow-[0_10px_40px_rgba(0,0,0,0.18)]">
+    <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+      DATA SOURCES
+    </div>
 
-              <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-4">
-                <div className="text-[11px] uppercase tracking-[0.22em] text-white/40">
-                  Premium data stack
-                </div>
-                <p className="mt-3 text-sm leading-6 text-white/55">
-                  {localText.dataNote}
-                </p>
-              </div>
+    <div className="mt-3 grid gap-2 md:grid-cols-2">
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/70">
+        <span>Reddit mentions</span>
+        <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2 py-1 text-xs text-emerald-100">
+          Active
+        </span>
+      </div>
 
-              <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.03] p-4 text-xs leading-6 text-white/45">
-                <div>
-                  {localText.source}: market {marketSource || "—"} · social{" "}
-                  {socialSource || "—"}
-                </div>
-                <div>
-                  {localText.scanned}:{" "}
-                  {scannedAt ? new Date(scannedAt).toLocaleString() : "—"} /{" "}
-                  {socialScannedAt
-                    ? new Date(socialScannedAt).toLocaleString()
-                    : "—"}
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/70">
+        <span>Binance universe</span>
+        <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2 py-1 text-xs text-emerald-100">
+          Active
+        </span>
+      </div>
 
-          <div className="mt-5">
-            <button
-              type="button"
-              onClick={() => setRawExpanded((current) => !current)}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/[0.08]"
-            >
-              {rawExpanded ? localText.hideRaw : localText.showRaw}
-            </button>
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/70">
+        <div>
+          <p className="text-xs font-semibold text-slate-100">News catalysts</p>
+          <p className="text-[11px] text-slate-500">
+            Fresh headlines / catalyst detection
+          </p>
+        </div>
+        <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-2 py-1 text-xs text-emerald-100">
+          Active
+        </span>
+      </div>
+
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white/70">
+        <div>
+          <p className="text-xs font-semibold text-slate-100">Stocktwits</p>
+          <p className="text-[11px] text-slate-500">
+            Trader sentiment / premium stream later
+          </p>
+        </div>
+        <span className="rounded-full border border-violet-300/20 bg-violet-300/10 px-2 py-1 text-xs text-violet-100">
+          Premium later
+        </span>
+      </div>
+    </div>
+  </div>
+
+<div className="rounded-[1.35rem] border border-white/10 bg-white/[0.03] p-4 shadow-[0_10px_40px_rgba(0,0,0,0.18)]">
+  <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+    {localText.coverageTitle}
+  </div>
+
+  <div className="mt-3 space-y-3 text-sm leading-6 text-white/70">
+    <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.04] p-3">
+      <div className="text-xs font-semibold text-cyan-100">
+        {localText.autoRefresh}: {localText.autoRefreshValue}
+      </div>
+      <div className="mt-1 text-xs text-white/45">
+        Client reads the latest cached Market Intelligence snapshot.
+      </div>
+    </div>
+
+    <p className="text-xs leading-5 text-white/50">
+      {localText.coverageText}
+    </p>
+  </div>
+</div>
+
+  <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.03] p-4 shadow-[0_10px_40px_rgba(0,0,0,0.18)]">
+    <div className="text-[11px] uppercase tracking-[0.22em] text-white/45">
+      SOURCE
+    </div>
+
+    <div className="mt-3 text-sm leading-6 text-white/70">
+  <div>
+    {localText.source}: intelligence{" "}
+    {marketIntelligenceItems.length > 0
+      ? "unified_market_intelligence"
+      : "—"}{" "}
+    · market {marketSource || "—"} · social {socialSource || "—"}
+  </div>
+
+  <div className="mt-1">
+    {localText.scanned}:{" "}
+    {marketIntelligenceScannedAt
+      ? new Date(marketIntelligenceScannedAt).toLocaleString()
+      : "—"}{" "}
+    / market {scannedAt ? new Date(scannedAt).toLocaleString() : "—"} / social{" "}
+    {socialScannedAt ? new Date(socialScannedAt).toLocaleString() : "—"}
+  </div>
+
+  <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/45">
+    Tracked mentions are source-specific and may undercount crypto-native ecosystems.
+  </div>
+</div>
+
+
+    <button
+      type="button"
+      onClick={() => setRawExpanded((current) => !current)}
+      className="mt-4 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-white transition hover:bg-white/[0.08]"
+    >
+      {rawExpanded ? localText.hideRaw : localText.showRaw}
+    </button>
+  </div>
+</div>
           </div>
 
           {rawExpanded && (
@@ -9571,7 +17256,86 @@ const [reportsUserId, setReportsUserId] = useState<string | null>(null);
     .slice(0, 5);
 
   const equityCurveData = buildEquityCurveData(filteredTrades);
-const selectedPeriodLabel =
+  const signalLinkedTrades = filteredTrades.filter((trade) =>
+  Boolean(trade.source_alert_id)
+);
+
+const signalPnlValues = signalLinkedTrades
+  .map((trade) => trade.pnl)
+  .filter((pnl): pnl is number => pnl !== null);
+
+const signalTotalPnl = signalPnlValues.reduce((sum, pnl) => sum + pnl, 0);
+
+const signalClosedTrades = signalLinkedTrades.filter(
+  (trade) => trade.result === "win" || trade.result === "loss"
+);
+
+const signalWins = signalLinkedTrades.filter(
+  (trade) => trade.result === "win"
+).length;
+
+const signalWinRate =
+  signalClosedTrades.length > 0
+    ? Math.round((signalWins / signalClosedTrades.length) * 100)
+    : null;
+
+const signalAveragePnl =
+  signalPnlValues.length > 0 ? signalTotalPnl / signalPnlValues.length : null;
+
+const signalLongTrades = signalLinkedTrades.filter(
+  (trade) => trade.direction === "long"
+);
+
+const signalShortTrades = signalLinkedTrades.filter(
+  (trade) => trade.direction === "short"
+);
+
+const signalLongPnl = signalLongTrades.reduce(
+  (sum, trade) => sum + (trade.pnl ?? 0),
+  0
+);
+
+const signalShortPnl = signalShortTrades.reduce(
+  (sum, trade) => sum + (trade.pnl ?? 0),
+  0
+);
+
+const signalSetupStats = Object.entries(
+  signalLinkedTrades.reduce<Record<string, { count: number; pnl: number }>>(
+    (acc, trade) => {
+      const key =
+        trade.source_setup_name ||
+        trade.source_setup_slug ||
+        trade.setup ||
+        "AI Signal";
+
+      if (!acc[key]) {
+        acc[key] = { count: 0, pnl: 0 };
+      }
+
+      acc[key].count += 1;
+      acc[key].pnl += trade.pnl ?? 0;
+
+      return acc;
+    },
+    {}
+  )
+)
+  .sort((a, b) => b[1].pnl - a[1].pnl)
+  .slice(0, 5);
+
+const signalBestSetup = signalSetupStats[0] || null;
+
+const signalWorstSetup =
+  signalSetupStats.length > 0
+    ? [...signalSetupStats].sort((a, b) => a[1].pnl - b[1].pnl)[0]
+    : null;
+
+const signalAdoptionRate =
+  filteredTrades.length > 0
+    ? Math.round((signalLinkedTrades.length / filteredTrades.length) * 100)
+    : null;
+  const selectedPeriodLabel =
   reportPeriod === "7d"
     ? t.reports.period7d
     : reportPeriod === "30d"
@@ -10384,6 +18148,181 @@ const handleDownloadAiReport = () => {
               </div>
             </div>
           </div>
+
+<div className="mt-6 rounded-[2rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
+  <div className="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div className="text-xs uppercase tracking-[0.25em] text-emerald-100/45">
+        SkillEdge AI Signal-to-Trade
+      </div>
+
+      <h3 className="mt-2 text-2xl font-semibold text-white">
+        Personal Alert Performance
+      </h3>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/55">
+        Shows how you personally execute SkillEdge AI alerts: adoption, PnL,
+        win rate, best setups, weak setups and long/short signal performance.
+      </p>
+    </div>
+
+    <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-sm font-semibold text-emerald-100">
+      {signalLinkedTrades.length} linked trades
+    </div>
+  </div>
+
+  {signalLinkedTrades.length === 0 ? (
+    <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
+      No signal-linked trades yet. Create a trade draft from an AI Alert and save
+      the trade to unlock personal signal analytics.
+    </div>
+  ) : (
+    <>
+      <div className="mt-5 grid gap-3 md:grid-cols-4 xl:grid-cols-8">
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            Linked
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalLinkedTrades.length}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            Adoption
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalAdoptionRate === null ? "—" : `${signalAdoptionRate}%`}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.045] p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-emerald-100/45">
+            Signal PnL
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            ${signalTotalPnl.toFixed(2)}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-cyan-100/45">
+            Win rate
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalWinRate === null ? "—" : `${signalWinRate}%`}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            Avg PnL
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalAveragePnl === null
+              ? "—"
+              : `$${signalAveragePnl.toFixed(2)}`}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            Long signals
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalLongTrades.length}
+          </div>
+          <div className="mt-1 text-xs text-white/45">
+            ${signalLongPnl.toFixed(2)}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            Short signals
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalShortTrades.length}
+          </div>
+          <div className="mt-1 text-xs text-white/45">
+            ${signalShortPnl.toFixed(2)}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-violet-300/15 bg-violet-300/[0.045] p-4">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-violet-100/45">
+            Best setup
+          </div>
+          <div className="mt-2 truncate text-sm font-semibold text-white">
+            {signalBestSetup ? signalBestSetup[0] : "—"}
+          </div>
+          <div className="mt-1 text-xs text-white/45">
+            {signalBestSetup
+              ? `${signalBestSetup[1].count} / $${signalBestSetup[1].pnl.toFixed(
+                  2
+                )}`
+              : "—"}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 lg:grid-cols-2">
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/35">
+            Best AI setups by PnL
+          </div>
+
+          <div className="mt-4 grid gap-2">
+            {signalSetupStats.length === 0 ? (
+              <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-sm text-white/45">
+                No setup data yet.
+              </div>
+            ) : (
+              signalSetupStats.map(([label, value]) => (
+                <div
+                  key={label}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3"
+                >
+                  <div className="min-w-0 truncate text-sm text-white/70">
+                    {label}
+                  </div>
+
+                  <div className="shrink-0 text-sm font-semibold text-white">
+                    {value.count} / ${value.pnl.toFixed(2)}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-xs uppercase tracking-[0.22em] text-white/35">
+            Execution insight
+          </div>
+
+          <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-white/60">
+            {signalWinRate !== null && signalWinRate >= 60
+              ? "You are currently executing AI-linked trades with a strong win rate. SkillEdge AI should keep tracking these setups as potential personal strengths."
+              : signalLinkedTrades.length >= 3
+                ? "Your signal-linked execution needs review. Compare entries, stops and targets in the Journal to see whether the issue is signal quality or execution discipline."
+                : "Add more signal-linked trades to build a reliable personal signal profile."}
+          </div>
+
+          <div className="mt-3 rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-4 text-sm leading-6 text-amber-50/75">
+            Worst setup:{" "}
+            {signalWorstSetup
+              ? `${signalWorstSetup[0]} · ${signalWorstSetup[1].count} / $${signalWorstSetup[1].pnl.toFixed(
+                  2
+                )}`
+              : "—"}
+          </div>
+        </div>
+      </div>
+    </>
+  )}
+</div>
 
           <div className="mt-6 grid gap-4 xl:grid-cols-3">
             <ReportListCard
