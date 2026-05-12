@@ -4,6 +4,7 @@ import "./globals.css";
 import SupportWidget from "@/components/SupportWidget";
 import SeoJsonLd from "@/components/marketing/SeoJsonLd";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import GlobalAlertsWidget from "@/components/GlobalAlertsWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,6 +65,10 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+  icon: "/icon",
+  apple: "/apple-icon",
+},
 };
 
 export default function RootLayout({
@@ -79,6 +84,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
   <SeoJsonLd />
   {children}
+  <GlobalAlertsWidget />
   <SupportWidget />
 </body>
     </html>

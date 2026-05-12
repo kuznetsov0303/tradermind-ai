@@ -681,7 +681,8 @@ loginRequiredForPayment: "Please log in before buying a plan.",
   supportAssistantAccess: "Support assistant",
   socialTickersAccess: "Social tickers",
   aiScannerAccess: "AI scanner",
-  premiumChartAccess: "Premium chart analysis",
+aiAlertsAccess: "AI alerts",
+premiumChartAccess: "Premium chart analysis",
   exportReportsAccess: "Export reports",
   included: "Included",
   locked: "Locked",
@@ -692,10 +693,10 @@ loginRequiredForPayment: "Please log in before buying a plan.",
   current: "Current",
   choosePlan: "Choose plan",
   planDescriptions: {
-    core: "Basic access for journaling, light AI support, and discipline control.",
-    edge: "Advanced plan for active traders: more AI, reports, and social market tools.",
-    elite:
-      "Maximum plan for serious work: higher limits, scanner, and premium AI.",
+    core: "Basic access for journaling, screenshots, AI Coach and discipline control.",
+edge: "Advanced plan for active traders: more AI, reports, Market Intelligence and AI Scanner.",
+elite:
+  "Maximum plan for serious work: AI Alerts, floating alerts widget, Signal-to-Journal workflow and full AI Trading Desk.",
   },
 },
     aiLimits: {
@@ -1273,7 +1274,8 @@ loginRequiredForPayment: "Войдите в аккаунт перед оплат
   supportAssistantAccess: "Support assistant",
   socialTickersAccess: "Social tickers",
   aiScannerAccess: "AI scanner",
-  premiumChartAccess: "Premium chart analysis",
+aiAlertsAccess: "AI alerts",
+premiumChartAccess: "Premium chart analysis",
   exportReportsAccess: "Export reports",
   included: "Включено",
   locked: "Закрыто",
@@ -1284,10 +1286,10 @@ loginRequiredForPayment: "Войдите в аккаунт перед оплат
   current: "Текущий",
   choosePlan: "Выбрать тариф",
   planDescriptions: {
-    core: "Базовый доступ для ведения журнала, базового AI и контроля дисциплины.",
-    edge: "Продвинутый тариф для активных трейдеров: больше AI, отчёты и social market tools.",
-    elite:
-      "Максимальный тариф для серьёзной работы: расширенные лимиты, scanner и premium AI.",
+    core: "Базовый доступ для журнала, скриншотов, AI Coach и контроля дисциплины.",
+edge: "Продвинутый тариф для активных трейдеров: больше AI, отчёты, Market Intelligence и AI Scanner.",
+elite:
+  "Максимальный тариф: AI Alerts, floating alerts widget, Signal-to-Journal workflow и полный AI Trading Desk.",
   },
 },
     aiLimits: {
@@ -1867,7 +1869,8 @@ loginRequiredForPayment: "Увійдіть в акаунт перед оплат
   supportAssistantAccess: "Support assistant",
   socialTickersAccess: "Social tickers",
   aiScannerAccess: "AI scanner",
-  premiumChartAccess: "Premium chart analysis",
+aiAlertsAccess: "AI alerts",
+premiumChartAccess: "Premium chart analysis",
   exportReportsAccess: "Export reports",
   included: "Увімкнено",
   locked: "Закрито",
@@ -1878,10 +1881,10 @@ loginRequiredForPayment: "Увійдіть в акаунт перед оплат
   current: "Поточний",
   choosePlan: "Обрати тариф",
   planDescriptions: {
-    core: "Базовий доступ для журналу, легкого AI та контролю дисципліни.",
-    edge: "Просунутий тариф для активних трейдерів: більше AI, звіти та social market tools.",
-    elite:
-      "Максимальний тариф для серйозної роботи: більші ліміти, scanner і premium AI.",
+    core: "Базовий доступ для журналу, скриншотів, AI Coach і контролю дисципліни.",
+edge: "Просунутий тариф для активних трейдерів: більше AI, звіти, Market Intelligence і AI Scanner.",
+elite:
+  "Максимальний тариф: AI Alerts, floating alerts widget, Signal-to-Journal workflow і повний AI Trading Desk.",
   },
 },
     aiLimits: {
@@ -2839,6 +2842,76 @@ setExpandedChartAnalysisTradeId(tradeId);
 
   const locked = !subscription.active;
 
+const activeFeatureLock =
+  !loading &&
+  subscription.active &&
+  activeTab !== "billing" &&
+  ((activeTab === "market" &&
+    !canUseFeature(subscription.plan, "ai_scanner")) ||
+    (activeTab === "alerts" &&
+      !canUseFeature(subscription.plan, "ai_alerts")));
+
+const featureLockCopy = (() => {
+  const isMarket = activeTab === "market";
+
+  if (language === "ua") {
+    return {
+      label: isMarket ? "Потрібен Edge" : "Потрібен Elite",
+      title: isMarket
+        ? "Market Intelligence відкривається з SkillEdge Edge."
+        : "AI Alerts доступні тільки на SkillEdge Elite.",
+      text: isMarket
+        ? "На Core доступний тільки preview. SkillEdge Edge та Elite відкривають AI Scanner, Market Intelligence, social/market context і AI Market Brief."
+        : "SkillEdge Edge відкриває AI Scanner / Market Intelligence, але real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow і outcome learning доступні тільки в Elite.",
+      button: isMarket ? "Оновити до Edge" : "Оновити до Elite",
+    };
+  }
+
+  if (language === "en") {
+    return {
+      label: isMarket ? "Edge required" : "Elite required",
+      title: isMarket
+        ? "Market Intelligence unlocks from SkillEdge Edge."
+        : "AI Alerts are available only on SkillEdge Elite.",
+      text: isMarket
+        ? "Core users can see the preview. SkillEdge Edge and Elite unlock AI Scanner, Market Intelligence, social/market context and AI Market Brief."
+        : "SkillEdge Edge unlocks AI Scanner / Market Intelligence, but real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow and outcome learning are reserved for Elite.",
+      button: isMarket ? "Upgrade to Edge" : "Upgrade to Elite",
+    };
+  }
+
+  return {
+    label: isMarket ? "Нужен Edge" : "Нужен Elite",
+    title: isMarket
+      ? "Market Intelligence открывается с SkillEdge Edge."
+      : "AI Alerts доступны только на SkillEdge Elite.",
+    text: isMarket
+      ? "На Core доступен только preview. SkillEdge Edge и Elite открывают AI Scanner, Market Intelligence, social/market context и AI Market Brief."
+      : "SkillEdge Edge открывает AI Scanner / Market Intelligence, но real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow и outcome learning доступны только в Elite.",
+    button: isMarket ? "Перейти на Edge" : "Перейти на Elite",
+  };
+})();
+
+const getTabRequiredPlanLabel = (tabId: TabId) => {
+  if (!subscription.active) return "";
+
+  if (
+    tabId === "market" &&
+    !canUseFeature(subscription.plan, "ai_scanner")
+  ) {
+    return "Edge";
+  }
+
+  if (
+    tabId === "alerts" &&
+    !canUseFeature(subscription.plan, "ai_alerts")
+  ) {
+    return "Elite";
+  }
+
+  return "";
+};
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#050813] px-4 py-6 text-white md:px-8">
       <BackgroundFX />
@@ -2909,7 +2982,21 @@ setExpandedChartAnalysisTradeId(tradeId);
                       }}
                     />
                   )}
-                  <span className="relative z-10">{t.tabs[tab.id]}</span>
+                  <span className="relative z-10 inline-flex items-center gap-2">
+  <span>{t.tabs[tab.id]}</span>
+
+  {getTabRequiredPlanLabel(tab.id) ? (
+    <span
+      className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${
+        activeTab === tab.id
+          ? "border-black/15 bg-black/10 text-black/65"
+          : "border-cyan-300/20 bg-cyan-300/10 text-cyan-100/75"
+      }`}
+    >
+      {getTabRequiredPlanLabel(tab.id)}
+    </span>
+  ) : null}
+</span>
                 </button>
               ))}
             </div>
@@ -2964,12 +3051,55 @@ setExpandedChartAnalysisTradeId(tradeId);
               </div>
             )}
 
+{activeFeatureLock && (
+  <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#050813]/55 backdrop-blur-[7px]">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96, y: 12 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      transition={{ duration: 0.35 }}
+      className="relative max-w-xl overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-[#101522]/92 p-8 text-center shadow-2xl shadow-cyan-950/40"
+    >
+      <div className="absolute -left-20 -top-20 h-40 w-40 rounded-full bg-cyan-500/20 blur-3xl" />
+      <div className="absolute -bottom-20 -right-20 h-40 w-40 rounded-full bg-indigo-500/15 blur-3xl" />
+
+      <div className="relative">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10">
+          <span className="text-xl font-semibold text-cyan-100">SE</span>
+        </div>
+
+        <p className="mt-5 text-xs uppercase tracking-[0.28em] text-cyan-100/45">
+          {featureLockCopy.label}
+        </p>
+
+        <h2 className="mt-3 text-3xl font-semibold text-white">
+          {featureLockCopy.title}
+        </h2>
+
+        <p className="mt-4 text-sm leading-7 text-white/62">
+          {featureLockCopy.text}
+        </p>
+
+        <a
+          href="/?page=pricing"
+          className="mt-7 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.03]"
+        >
+          {featureLockCopy.button}
+        </a>
+      </div>
+    </motion.div>
+  </div>
+)}
+
             <motion.div
               key={activeTab}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35 }}
-              className={!loading && locked && activeTab !== "billing" ? "blur-md" : ""}
+              className={
+  !loading && ((locked && activeTab !== "billing") || activeFeatureLock)
+    ? "blur-md"
+    : ""
+}
             >
               {activeTab === "overview" && <OverviewTab t={t} />}
              
@@ -6155,7 +6285,7 @@ quiet: "Чекаємо якісний setup",
   }[safeLanguage];
 
   const hasAccess =
-    subscription.active && canUseFeature(subscription.plan, "social_tickers");
+  subscription.active && canUseFeature(subscription.plan, "ai_alerts");
 
   const newAlerts = alerts.filter(
   (alert) =>
@@ -6629,7 +6759,7 @@ const [error, setError] = useState("");
 checkingOutcomes: "Проверяем...",
       empty: "Пока нет активных alerts. Запусти сканирование.",
       locked:
-        "AI Alerts доступны на SkillEdge Edge и SkillEdge Elite.",
+  "AI Alerts доступны только на SkillEdge Elite. На SkillEdge Edge открыт AI Scanner / Market Intelligence, но real-time AI Alerts, floating alerts widget и Signal-to-Journal workflow доступны только в Elite.",
       direction: "Направление",
 setup: "Сетап",
 entry: "Зона входа",
@@ -6950,7 +7080,7 @@ workedAlertsMissedSuffix: "рабочих alerts были пропущены в 
 checkingOutcomes: "Checking...",
       empty: "No active alerts yet. Run market scan.",
       locked:
-        "AI Alerts are available on SkillEdge Edge and SkillEdge Elite.",
+  "AI Alerts are available only on SkillEdge Elite. SkillEdge Edge includes AI Scanner / Market Intelligence, but real-time AI Alerts, floating alerts widget and Signal-to-Journal workflow are reserved for Elite.",
       direction: "Direction",
       setup: "Setup",
       entry: "Entry zone",
@@ -7276,7 +7406,7 @@ workedAlertsMissedSuffix: "worked alerts were missed in this setup group.",
 checkingOutcomes: "Перевіряємо...",
       empty: "Активних alerts поки немає. Запусти сканування.",
       locked:
-        "AI Alerts доступні на SkillEdge Edge та SkillEdge Elite.",
+  "AI Alerts доступні тільки на SkillEdge Elite. SkillEdge Edge відкриває AI Scanner / Market Intelligence, але real-time AI Alerts, floating alerts widget і Signal-to-Journal workflow доступні тільки в Elite.",
       direction: "Direction",
       setup: "Setup",
       entry: "Entry zone",
@@ -7592,7 +7722,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
   }[safeLanguage];
 
   const hasAccess =
-    subscription.active && canUseFeature(subscription.plan, "social_tickers");
+  subscription.active && canUseFeature(subscription.plan, "ai_alerts");
 
   const loadAlerts = async (generate = false) => {
     if (!hasAccess) return;
@@ -18460,13 +18590,17 @@ const [checkoutError, setCheckoutError] = useState("");
       enabled: canUseFeature(activePlan, "social_tickers"),
     },
     {
-      label: t.billing.aiScannerAccess,
-      enabled: canUseFeature(activePlan, "ai_scanner"),
-    },
-    {
-      label: t.billing.premiumChartAccess,
-      enabled: canUseFeature(activePlan, "premium_chart_analysis"),
-    },
+  label: t.billing.aiScannerAccess,
+  enabled: canUseFeature(activePlan, "ai_scanner"),
+},
+{
+  label: t.billing.aiAlertsAccess,
+  enabled: canUseFeature(activePlan, "ai_alerts"),
+},
+{
+  label: t.billing.premiumChartAccess,
+  enabled: canUseFeature(activePlan, "premium_chart_analysis"),
+},
     {
       label: t.billing.exportReportsAccess,
       enabled: canUseFeature(activePlan, "export_reports"),

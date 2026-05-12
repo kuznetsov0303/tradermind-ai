@@ -50,20 +50,26 @@ export default function OpenGraphImage() {
               }}
             >
               <div
-                style={{
-                  width: "70px",
-                  height: "70px",
-                  borderRadius: "24px",
-                  border: "1px solid rgba(255,255,255,0.16)",
-                  background: "rgba(255,255,255,0.06)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "34px",
-                }}
-              >
-                ✦
-              </div>
+  style={{
+    width: "70px",
+    height: "70px",
+    borderRadius: "24px",
+    border: "1px solid rgba(34,211,238,0.32)",
+    background:
+      "radial-gradient(circle at 30% 20%, rgba(34,211,238,0.28), transparent 40%), radial-gradient(circle at 75% 80%, rgba(99,102,241,0.28), transparent 42%), #08111f",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "22px",
+    fontWeight: 800,
+    letterSpacing: "-0.08em",
+    color: "white",
+    boxShadow: "0 0 34px rgba(34,211,238,0.18)",
+    position: "relative",
+  }}
+>
+  SE
+</div>
 
               <div style={{ display: "flex", flexDirection: "column" }}>
                 <div style={{ fontSize: "34px", fontWeight: 800 }}>

@@ -59,6 +59,14 @@ type MarketAlertDraft = {
   risk_note: string;
   scenario: string;
   setup_type: string;
+  setup_timeframe: string;
+confirmation_timeframe: string;
+confidence_tier: string;
+why_signal_fired: string;
+confirmation_checklist: string[];
+avoid_if: string[];
+lesson_summary: string;
+playbook_status: string;
 trigger_label: string;
 entry_zone_min: number | null;
 entry_zone_max: number | null;
@@ -329,6 +337,142 @@ function getSetupEducation(params: {
   };
 }
 
+function buildPremiumSignalPlaybook(params: {
+  alertType: AlertType;
+  direction: "upside" | "downside" | "neutral";
+  assetType: "stock" | "crypto";
+  catalyst: string | null;
+  changePercent: number;
+  marketScore: number;
+  socialScore: number;
+  mentions24h: number;
+  confidenceScore: number;
+}) {
+  const isShort = params.alertType === "dump" || params.direction === "downside";
+  const isCrypto = params.assetType === "crypto";
+
+  const confidenceTier =
+    params.confidenceScore >= 88
+      ? "A+"
+      : params.confidenceScore >= 80
+        ? "A"
+        : params.confidenceScore >= 70
+          ? "B"
+          : "Watchlist";
+
+  const moveText =
+    params.changePercent >= 0
+      ? `price is up ${params.changePercent.toFixed(2)}%`
+      : `price is down ${Math.abs(params.changePercent).toFixed(2)}%`;
+
+  const socialText =
+    params.mentions24h > 0
+      ? `tracked attention is active with ${params.mentions24h} mentions`
+      : "tracked social attention is limited in current sources";
+
+  const whySignalFired = [
+    `The signal fired because ${moveText}`,
+    `market score is ${Math.round(params.marketScore)}`,
+    `social score is ${Math.round(params.socialScore)}`,
+    socialText,
+    params.catalyst ? `fresh catalyst is present: ${params.catalyst}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  if (isCrypto && isShort) {
+    return {
+      setup_timeframe: "5m",
+      confirmation_timeframe: "10m",
+      confidence_tier: confidenceTier,
+      why_signal_fired: whySignalFired,
+      confirmation_checklist: [
+        "5m candle confirms weakness after failed reclaim",
+        "10m structure does not immediately reclaim the broken level",
+        "Bounce volume is weaker than sell pressure",
+        "Price forms lower high or accepts below key structure",
+      ],
+      avoid_if: [
+        "Price quickly reclaims the failed level with strong volume",
+        "Move is already deeply extended into sellside liquidity",
+        "There is no clear invalidation level",
+      ],
+      lesson_summary:
+        "This is a short-side continuation idea. The edge is not in chasing the first dump, but in waiting for failed recovery and continuation after sellers stay in control.",
+      playbook_status: "mvp_training_layer",
+    };
+  }
+
+  if (isCrypto && !isShort) {
+    return {
+      setup_timeframe: "5m",
+      confirmation_timeframe: "10m",
+      confidence_tier: confidenceTier,
+      why_signal_fired: whySignalFired,
+      confirmation_checklist: [
+        "5m candle reclaims liquidity or structure",
+        "10m confirms that price is holding above reclaim zone",
+        "Move shows displacement or strong continuation attempt",
+        "Pullback does not immediately lose the reclaimed level",
+      ],
+      avoid_if: [
+        "Reclaim candle is immediately rejected",
+        "Price is extended far above trigger zone",
+        "Volume disappears after the first impulse",
+      ],
+      lesson_summary:
+        "This is a crypto liquidity reclaim idea. The goal is to catch continuation after trapped sellers are forced out, not to buy the first green candle blindly.",
+      playbook_status: "mvp_training_layer",
+    };
+  }
+
+  if (isShort) {
+    return {
+      setup_timeframe: "5m",
+      confirmation_timeframe: "10m",
+      confidence_tier: confidenceTier,
+      why_signal_fired: whySignalFired,
+      confirmation_checklist: [
+        "5m confirms rejection or failed breakout",
+        "10m does not reclaim the failed level",
+        "Bounce forms lower high or weak recovery",
+        "Volume fades on bounce or increases on breakdown",
+      ],
+      avoid_if: [
+        "Stock is still on frontside momentum",
+        "Price reclaims HOD/VWAP with strength",
+        "Short entry is too close to obvious support",
+      ],
+      lesson_summary:
+        "This is a backside fade idea. The best version appears after a strong move fails, buyers lose control, and price starts accepting below the key level.",
+      playbook_status: "mvp_training_layer",
+    };
+  }
+
+  return {
+    setup_timeframe: "5m",
+    confirmation_timeframe: "10m",
+    confidence_tier: confidenceTier,
+    why_signal_fired: whySignalFired,
+    confirmation_checklist: [
+      "5m confirms pullback hold or reclaim",
+      "10m confirms continuation context",
+      "Volume supports the move",
+      "Price is not too extended from trigger zone",
+    ],
+    avoid_if: [
+      "Breakout candle is already extended",
+      "Pullback fails immediately",
+      "Volume fades after the initial move",
+      "Risk/reward becomes poor before entry",
+    ],
+    lesson_summary: params.catalyst
+      ? "This is a catalyst momentum continuation idea. The edge comes from fresh attention plus confirmation, not from chasing the first spike."
+      : "This is a momentum continuation idea. The edge comes from controlled continuation after volume expansion, with clear invalidation.",
+    playbook_status: "mvp_training_layer",
+  };
+}
+
 function buildActionableTradePlan(params: {
   alertType: AlertType;
   direction: "upside" | "downside" | "neutral";
@@ -484,6 +628,18 @@ const setupEducation = getSetupEducation({
   )
 );
 
+const signalPlaybook = buildPremiumSignalPlaybook({
+  alertType,
+  direction,
+  assetType,
+  catalyst,
+  changePercent,
+  marketScore,
+  socialScore,
+  mentions24h,
+  confidenceScore,
+});
+
   const hourlyKey = new Date().toISOString().slice(0, 13);
 
   const titleMap: Record<AlertType, string> = {
@@ -544,6 +700,14 @@ const setupEducation = getSetupEducation({
     risk_note: riskNote,
     scenario,
 setup_type: tradePlan.setup_type,
+setup_timeframe: signalPlaybook.setup_timeframe,
+confirmation_timeframe: signalPlaybook.confirmation_timeframe,
+confidence_tier: signalPlaybook.confidence_tier,
+why_signal_fired: signalPlaybook.why_signal_fired,
+confirmation_checklist: signalPlaybook.confirmation_checklist,
+avoid_if: signalPlaybook.avoid_if,
+lesson_summary: signalPlaybook.lesson_summary,
+playbook_status: signalPlaybook.playbook_status,
 setup_slug: setupEducation.setup_slug,
 setup_name: setupEducation.setup_name,
 setup_description: setupEducation.setup_description,
@@ -581,15 +745,18 @@ export async function GET(request: Request) {
 
     const planId = await getUserPlan(user.id);
 
-    if (!canUseFeature(planId, "social_tickers")) {
-      return NextResponse.json(
-        {
-          error: "Pump/Dump Alerts are available on SkillEdge Edge and Elite.",
-          locked: true,
-        },
-        { status: 403 }
-      );
-    }
+    if (!canUseFeature(planId, "ai_alerts")) {
+  return NextResponse.json(
+    {
+      error: "AI Alerts are available only on SkillEdge Elite.",
+      locked: true,
+      requiredPlan: "elite",
+      feature: "ai_alerts",
+      currentPlan: planId,
+    },
+    { status: 403 }
+  );
+}
 
     const { searchParams } = new URL(request.url);
     const limit = Math.max(1, Math.min(100, Number(searchParams.get("limit") || "20")));
@@ -652,15 +819,18 @@ export async function POST(request: Request) {
 
     const planId = await getUserPlan(user.id);
 
-    if (!canUseFeature(planId, "social_tickers")) {
-      return NextResponse.json(
-        {
-          error: "Pump/Dump Alerts are available on SkillEdge Edge and Elite.",
-          locked: true,
-        },
-        { status: 403 }
-      );
-    }
+    if (!canUseFeature(planId, "ai_alerts")) {
+  return NextResponse.json(
+    {
+      error: "AI Alerts are available only on SkillEdge Elite.",
+      locked: true,
+      requiredPlan: "elite",
+      feature: "ai_alerts",
+      currentPlan: planId,
+    },
+    { status: 403 }
+  );
+}
 
     const marketSince = new Date(Date.now() - 30 * 60 * 1000).toISOString();
     const socialSince = new Date(Date.now() - 45 * 60 * 1000).toISOString();

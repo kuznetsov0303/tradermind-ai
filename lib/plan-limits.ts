@@ -6,6 +6,15 @@ export type AiFeature =
   | "trade_chart_analysis"
   | "ai_report";
 
+export type PlanFeature =
+  | "ai_reports"
+  | "support_assistant"
+  | "social_tickers"
+  | "ai_scanner"
+  | "ai_alerts"
+  | "premium_chart_analysis"
+  | "export_reports";
+
 export type PlanLimits = {
   aiCoachMessagesPerMonth: number;
   journalAnalysesPerMonth: number;
@@ -19,6 +28,7 @@ export type PlanLimits = {
   canUseSupportAssistant: boolean;
   canUseSocialTickers: boolean;
   canUseAiScanner: boolean;
+  canUseAiAlerts: boolean;
   canUsePremiumChartAnalysis: boolean;
   canExportReports: boolean;
 };
@@ -37,6 +47,7 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     canUseSupportAssistant: true,
     canUseSocialTickers: false,
     canUseAiScanner: false,
+    canUseAiAlerts: false,
     canUsePremiumChartAnalysis: false,
     canExportReports: true,
   },
@@ -53,7 +64,8 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     canUseAiReports: true,
     canUseSupportAssistant: true,
     canUseSocialTickers: true,
-    canUseAiScanner: false,
+    canUseAiScanner: true,
+    canUseAiAlerts: false,
     canUsePremiumChartAnalysis: true,
     canExportReports: true,
   },
@@ -71,6 +83,7 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     canUseSupportAssistant: true,
     canUseSocialTickers: true,
     canUseAiScanner: true,
+    canUseAiAlerts: true,
     canUsePremiumChartAnalysis: true,
     canExportReports: true,
   },
@@ -119,13 +132,7 @@ export function getFeatureLimit(
 
 export function canUseFeature(
   planId: string | null | undefined,
-  feature:
-    | "ai_reports"
-    | "support_assistant"
-    | "social_tickers"
-    | "ai_scanner"
-    | "premium_chart_analysis"
-    | "export_reports"
+  feature: PlanFeature
 ): boolean {
   const limits = getPlanLimits(planId);
 
@@ -143,6 +150,10 @@ export function canUseFeature(
 
   if (feature === "ai_scanner") {
     return limits.canUseAiScanner;
+  }
+
+  if (feature === "ai_alerts") {
+    return limits.canUseAiAlerts;
   }
 
   if (feature === "premium_chart_analysis") {

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import CookieConsent from "@/components/marketing/CookieConsent";
+import BrandMark from "@/components/marketing/BrandMark";
+import LegalFooter from "@/components/marketing/LegalFooter";
 
 type LegalSection = {
   title: string;
@@ -26,9 +28,7 @@ export default function LegalPageShell({
 
       <header className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-6 md:px-8">
         <Link href="/" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05] text-xl">
-            ✦
-          </div>
+          <BrandMark size="sm" />
 
           <div>
             <div className="text-lg font-semibold">SkillEdge AI</div>
@@ -133,6 +133,7 @@ export default function LegalPageShell({
           </div>
         </div>
       </section>
+      <LegalFooter />
       <CookieConsent />
     </main>
   );

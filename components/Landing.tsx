@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 import CookieConsent from "@/components/marketing/CookieConsent";
+import BrandMark from "@/components/marketing/BrandMark";
 
 type Language = "en" | "ru" | "ua";
 type PageKey = "home" | "product" | "pricing" | "team";
@@ -751,9 +752,7 @@ closeAuthModal();
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070b16]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-3">
-  <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/5">
-    <Icon name="brain" className="h-6 w-6" />
-  </div>
+  <BrandMark size="sm" />
   <div className="text-left">
     <div className="text-lg font-semibold">SkillEdge AI</div>
     <div className="text-xs uppercase tracking-[0.2em] text-white/45">
@@ -1169,14 +1168,14 @@ function ProductPage({
       ],
     },
     {
-  title: "Support & Broker Onboarding",
-  text: "Paid clients do not just get access to the platform. They also get guidance around the trading infrastructure: support, payment flow and help with opening accounts at Interactive Brokers, Binance and Bybit.",
+  title: "Support & Operator Care",
+  text: "Clients get a site-wide support assistant and a clean operator request flow. If they need help with broker or exchange questions, they can contact support through chat instead of searching alone.",
   items: [
     "Site-wide support assistant",
     "Operator request flow",
-    "Crypto payment flow",
-    "Free IBKR / Binance / Bybit onboarding help for paid clients",
-    "Broker/exchange guide unlocked inside the dashboard after payment",
+    "Payment and access help",
+    "Product guidance",
+    "Help understanding broker/exchange questions through support chat",
   ],
 },
   ];
@@ -1232,7 +1231,7 @@ function ProductPage({
     "Outcome Learning and Missed Opportunity Coach",
     "Playbook, Learning Center and Reports",
     "Future personalization based on the client’s best trades",
-    "Free account-opening help for paid clients: Interactive Brokers, Binance and Bybit",
+    "Site-wide support assistant and operator request flow",
   ];
 
   return (
@@ -1736,7 +1735,7 @@ function PricingPage({
         "CSV/XLSX export foundation",
         "Learning and review workflow",
         "Support assistant access",
-        "Free IBKR / Binance / Bybit onboarding help after payment",
+        
       ],
       signalLayer: [
         "Build the data foundation for future Personal AI Alerts",
@@ -1763,7 +1762,7 @@ function PricingPage({
       promise:
         "Edge is the serious active-trader plan. It gives higher AI limits, AI reports, premium chart analysis, social/market context and more room to turn your trading history into a real performance system.",
       signalAccess:
-        "Edge is the intelligence layer: you get stronger market context, more AI analysis and the tools to understand which setups deserve attention before you scale up.",
+  "Edge is the intelligence layer: you unlock AI Scanner, AI Market Brief, stronger market context and more AI analysis — without real-time actionable AI Alerts.",
       bestFor:
         "Best for active traders who take many trades, review seriously and want SkillEdge to expose repeated mistakes, stronger setups and execution patterns.",
       clientFeels:
@@ -1775,16 +1774,18 @@ function PricingPage({
         "Social / market tickers layer",
         "Deeper journal AI review",
         "More screenshots and more AI usage",
+        "AI Scanner / Market Intelligence scanner access",
         "Better setup and mistake discovery",
-        "Free IBKR / Binance / Bybit onboarding help after payment",
+        
       ],
       signalLayer: [
-        "AI Market Brief foundation",
-        "Market and social context around active tickers",
-        "More chart analyses for setup preparation",
-        "Stronger journal feedback before using full AI scanner",
-        "Better base for future personal signal matching",
-      ],
+  "AI Scanner / Market Intelligence scanner access",
+  "AI Market Brief for top market opportunities",
+  "Market and social context around active tickers",
+  "More chart analyses for setup preparation",
+  "Stronger journal feedback before using real-time AI Alerts",
+  "Better base for future personal signal matching",
+],
       limits: [
         "Up to 2,000 trades in the journal",
         "Up to 5 screenshots per trade",
@@ -1812,6 +1813,7 @@ function PricingPage({
       unlocks: [
         "Everything in Edge",
         "AI Scanner access",
+        "Signal-to-Journal workflow",
         "AI Alerts / Trading Desk workflow",
         "Floating alerts widget",
         "Alert breakdown modal",
@@ -1820,7 +1822,7 @@ function PricingPage({
         "Outcome Learning Analytics",
         "Missed Opportunity Coach",
         "Maximum AI usage limits",
-        "Free IBKR / Binance / Bybit onboarding help after payment",
+        
       ],
       signalLayer: [
         "Structured AI alerts with setup, trigger, entry, stop and targets",
@@ -1891,7 +1893,8 @@ function PricingPage({
     ["AI Reports", "—", "30 / month", "150 / month"],
     ["Social / market tickers layer", "—", "Yes", "Yes"],
     ["Premium chart analysis", "—", "Yes", "Yes"],
-    ["AI Scanner / AI Alerts", "—", "—", "Yes"],
+    ["AI Scanner / Market Intelligence scanner", "—", "Yes", "Yes"],
+    ["Real-time AI Alerts", "—", "—", "Yes"],
     ["Signal-to-Journal workflow", "Foundation", "Advanced prep", "Full workflow"],
     ["Best for", "Discipline", "Active review", "AI Trading Desk"],
   ];
@@ -2058,49 +2061,7 @@ function PricingPage({
         </div>
       </section>
 
-<section className="relative overflow-hidden rounded-[2.5rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-6 md:p-8">
-  <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl" />
 
-  <div className="relative grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-    <div>
-      <div className="text-xs uppercase tracking-[0.24em] text-emerald-100/45">
-        Paid client bonus
-      </div>
-
-      <h2 className="mt-4 text-3xl font-semibold leading-tight text-white md:text-4xl">
-        We help paid clients open the trading accounts they need to start properly.
-      </h2>
-
-      <p className="mt-4 text-sm leading-7 text-white/62">
-        After payment, clients get access inside the dashboard to onboarding
-        help for Interactive Brokers, Binance and Bybit. The goal is simple:
-        make the start cleaner, faster and less confusing.
-      </p>
-    </div>
-
-    <div className="grid gap-3 md:grid-cols-3">
-      {[
-        ["Interactive Brokers", "Global market access for stocks and advanced traders"],
-        ["Binance", "Crypto exchange onboarding and account setup help"],
-        ["Bybit", "Crypto trading account setup help and onboarding"],
-      ].map(([title, text]) => (
-        <div
-          key={title}
-          className="rounded-3xl border border-white/10 bg-black/20 p-4"
-        >
-          <div className="text-sm font-semibold text-white">{title}</div>
-          <div className="mt-2 text-xs leading-5 text-white/50">{text}</div>
-        </div>
-      ))}
-    </div>
-  </div>
-
-  <div className="relative mt-5 rounded-2xl border border-white/10 bg-black/20 p-4 text-xs leading-6 text-white/45">
-    The detailed broker/exchange onboarding page is available only inside the
-    dashboard for paid clients. Referral programs and final partner links will
-    be connected before launch.
-  </div>
-</section>
 
       <section>
         <SectionTitle
@@ -2447,7 +2408,7 @@ function PricingPage({
             </div>
 
             <h2 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
-              If you want only a journal, choose Core. If you want a trading desk beside you, choose Elite.
+              If you want a journal, choose Core. If you want scanner intelligence, choose Edge. If you want real-time AI Alerts, choose Elite.
             </h2>
 
             <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">
@@ -2467,7 +2428,7 @@ function PricingPage({
               {[
                 "Choose Core if you need structure and clean journaling.",
                 "Choose Edge if you trade actively and want deeper AI review.",
-                "Choose Elite if you want AI Scanner, AI Alerts and the full signal-to-journal workflow.",
+                "Choose Elite if you want real-time AI Alerts, floating alert widget and the full signal-to-journal workflow.",
               ].map((item) => (
                 <div key={item} className="flex gap-3 text-sm text-white/70">
                   <Icon name="check" className="text-cyan-300" />
@@ -2887,27 +2848,25 @@ function PremiumFooter({
 ];
 
   const footerFeatureLinks = [
-    "AI Trading Desk",
-    "AI Alerts",
-    "Market Intelligence",
-    "Journal & Screenshots",
-    "Execution Coach",
-    "Outcome Learning",
-    "Playbook",
-    "Reports",
-    "Learning Center",
-    "Support Assistant",
-  ];
+  { label: "AI Trading Desk", href: "/product" },
+  { label: "AI Alerts", href: "/product" },
+  { label: "Market Intelligence", href: "/product" },
+  { label: "Journal & Screenshots", href: "/product" },
+  { label: "Execution Coach", href: "/product" },
+  { label: "Outcome Learning", href: "/product" },
+  { label: "Playbook", href: "/product" },
+  { label: "Reports", href: "/product" },
+  { label: "Learning Center", href: "/product" },
+  { label: "Support Assistant", href: "/product" },
+];
 
   const footerResourceLinks = [
-    "Getting Started",
-    "How SkillEdge Works",
-    "Trading Journal Guide",
-    "AI Alerts Guide",
-    "Broker / Exchange Onboarding",
-    "FAQ",
-    "Contact Support",
-  ];
+  { label: "Getting Started", href: "/product" },
+  { label: "How SkillEdge Works", href: "/product" },
+  { label: "Trading Journal Guide", href: "/product" },
+  { label: "AI Alerts Guide", href: "/product" },
+  { label: "Contact Support", href: "/team" },
+];
 
   const footerLegalLinks = [
   { label: "Privacy Policy", href: "/legal/privacy-policy" },
@@ -2927,9 +2886,7 @@ function PremiumFooter({
         <div className="grid gap-10 lg:grid-cols-[1.15fr_2fr]">
           <div>
             <Link href="/" className="flex items-center gap-3 text-left">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.05]">
-                <Icon name="brain" className="h-6 w-6" />
-              </div>
+              <BrandMark size="md" />
 
               <div>
                 <div className="text-xl font-semibold text-white">
@@ -2995,15 +2952,14 @@ function PremiumFooter({
 
               <div className="mt-4 space-y-3">
                 {footerFeatureLinks.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => setActive("product")}
-                    className="block text-left text-sm text-white/58 transition hover:text-white"
-                  >
-                    {item}
-                  </button>
-                ))}
+  <Link
+    key={item.label}
+    href={item.href}
+    className="block text-left text-sm text-white/58 transition hover:text-white"
+  >
+    {item.label}
+  </Link>
+))}
               </div>
             </div>
 
@@ -3014,15 +2970,14 @@ function PremiumFooter({
 
               <div className="mt-4 space-y-3">
                 {footerResourceLinks.map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    onClick={() => setActive(item === "Contact Support" ? "team" : "product")}
-                    className="block text-left text-sm text-white/58 transition hover:text-white"
-                  >
-                    {item}
-                  </button>
-                ))}
+  <Link
+    key={item.label}
+    href={item.href}
+    className="block text-left text-sm text-white/58 transition hover:text-white"
+  >
+    {item.label}
+  </Link>
+))}
               </div>
             </div>
 
