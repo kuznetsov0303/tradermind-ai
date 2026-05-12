@@ -258,11 +258,7 @@ function normalizeMessagesForDisplay(
   storedMessages: StoredSupportMessage[],
   language: SupportLanguage
 ): SupportMessage[] {
-  const mappedMessages = storedMessages
-    .map((message) => mapStoredMessage(message, language))
-    .filter((message) => !isIntroMessage(message.text));
-
-  return [createMessage("assistant", supportDict[language].intro), ...mappedMessages];
+  return storedMessages.map((message) => mapStoredMessage(message, language));
 }
 
 async function readJsonResponse(response: Response) {
@@ -395,56 +391,62 @@ export default function SupportWidget() {
   }, [messages, isOpen]);
 
   useEffect(() => {
-    if (!sessionId || !anonymousId) return;
+  if (!isOpen || supportMode !== "chat" || !sessionId || !anonymousId) {
+    return;
+  }
 
-    let isMounted = true;
+  let isMounted = true;
 
-    const loadLatestMessages = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
+  const loadLatestMessages = async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-        const response = await fetch(
-          `/api/support/messages?sessionId=${sessionId}`,
-          {
-            method: "GET",
-            headers: {
-              "x-support-anonymous-id": anonymousId,
-              ...(session?.access_token
-                ? { Authorization: `Bearer ${session.access_token}` }
-                : {}),
-            },
-          }
+      const response = await fetch(
+        `/api/support/messages?sessionId=${sessionId}`,
+        {
+          method: "GET",
+          headers: {
+            "x-support-anonymous-id": anonymousId,
+            ...(session?.access_token
+              ? { Authorization: `Bearer ${session.access_token}` }
+              : {}),
+          },
+        }
+      );
+
+      const data = await readJsonResponse(response);
+
+      if (!isMounted) {
+        return;
+      }
+
+      if (response.ok && Array.isArray(data?.messages)) {
+        const currentLanguage = detectLanguage();
+
+        setLanguage((previousLanguage) =>
+          previousLanguage === currentLanguage
+            ? previousLanguage
+            : currentLanguage
         );
 
-        const data = await readJsonResponse(response);
-
-        if (!isMounted) return;
-
-        if (response.ok && Array.isArray(data?.messages)) {
-          const currentLanguage = detectLanguage();
-
-          setLanguage((previousLanguage) =>
-            previousLanguage === currentLanguage
-              ? previousLanguage
-              : currentLanguage
-          );
-
-          setMessages(normalizeMessagesForDisplay(data.messages, currentLanguage));
-        }
-      } catch {
-        // Temporary network/dev errors are ignored.
+        setMessages(normalizeMessagesForDisplay(data.messages, currentLanguage));
       }
-    };
+    } catch {
+      // Temporary network/dev errors are ignored.
+    }
+  };
 
-    const interval = window.setInterval(loadLatestMessages, 3500);
+  loadLatestMessages();
 
-    return () => {
-      isMounted = false;
-      window.clearInterval(interval);
-    };
-  }, [sessionId, anonymousId]);
+  const interval = window.setInterval(loadLatestMessages, 3500);
+
+  return () => {
+    isMounted = false;
+    window.clearInterval(interval);
+  };
+}, [sessionId, anonymousId, isOpen, supportMode]);
 
   const saveMessages = async (
     messagesToSave: SupportMessage[],
@@ -818,6 +820,11 @@ export default function SupportWidget() {
           {supportMode === "chat" && (
             <>
               <div className="max-h-[320px] space-y-3 overflow-y-auto p-4">
+                {messages.length === 0 ? (
+  <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm leading-6 text-white/60">
+    {t.intro}
+  </div>
+) : null}
                 {messages.map((message) => (
                   <div
                     key={message.id}

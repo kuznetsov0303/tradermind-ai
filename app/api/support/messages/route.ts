@@ -3,15 +3,9 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export const runtime = "nodejs";
 
-type SupportMessagePayload = {
-  role: "user" | "assistant" | "operator" | "system";
-  text: string;
-};
-
-type PostMessagesBody = {
-  sessionId?: string;
-  anonymousId?: string;
-  messages?: SupportMessagePayload[];
+type SupportMessageInput = {
+  role?: "assistant" | "user" | "operator" | "system";
+  text?: string;
 };
 
 async function getRequestUser(request: Request) {
@@ -20,60 +14,57 @@ async function getRequestUser(request: Request) {
     ? authHeader.slice("Bearer ".length)
     : "";
 
-  if (!token) {
-    return null;
-  }
+  if (!token) return null;
 
   const { data, error } = await supabaseAdmin.auth.getUser(token);
 
-  if (error || !data.user) {
-    return null;
-  }
+  if (error || !data.user) return null;
 
   return data.user;
 }
 
-async function verifySessionAccess({
+async function canAccessSession({
+  request,
   sessionId,
-  userId,
-  anonymousId,
 }: {
+  request: Request;
   sessionId: string;
-  userId?: string | null;
-  anonymousId?: string | null;
 }) {
-  const { data: session, error } = await supabaseAdmin
+  const user = await getRequestUser(request);
+  const anonymousId = request.headers.get("x-support-anonymous-id") || "";
+
+  const { data: supportSession, error } = await supabaseAdmin
     .from("support_sessions")
     .select("*")
     .eq("id", sessionId)
     .maybeSingle();
 
-  if (error || !session) {
-    return null;
+  if (error || !supportSession) {
+    return {
+      allowed: false,
+      supportSession: null,
+      user,
+      anonymousId,
+    };
   }
 
-  if (userId && session.user_id === userId) {
-    return session;
-  }
+  const belongsToUser = user?.id && supportSession.user_id === user.id;
+  const belongsToAnonymous =
+    anonymousId && supportSession.anonymous_id === anonymousId;
 
-  if (!session.user_id && anonymousId && session.anonymous_id === anonymousId) {
-    return session;
-  }
-
-  if (anonymousId && session.anonymous_id === anonymousId) {
-    return session;
-  }
-
-  return null;
+  return {
+    allowed: Boolean(belongsToUser || belongsToAnonymous),
+    supportSession,
+    user,
+    anonymousId,
+  };
 }
 
 export async function GET(request: Request) {
   try {
-    const user = await getRequestUser(request);
     const { searchParams } = new URL(request.url);
-
-    const sessionId = searchParams.get("sessionId");
-    const anonymousId = request.headers.get("x-support-anonymous-id");
+    const sessionId =
+      searchParams.get("sessionId") || searchParams.get("session") || "";
 
     if (!sessionId) {
       return NextResponse.json(
@@ -82,17 +73,10 @@ export async function GET(request: Request) {
       );
     }
 
-    const session = await verifySessionAccess({
-      sessionId,
-      userId: user?.id,
-      anonymousId,
-    });
+    const access = await canAccessSession({ request, sessionId });
 
-    if (!session) {
-      return NextResponse.json(
-        { error: "Support session not found." },
-        { status: 404 }
-      );
+    if (!access.allowed) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     const { data: messages, error } = await supabaseAdmin
@@ -105,7 +89,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ session, messages: messages || [] });
+    return NextResponse.json({
+      messages: messages || [],
+    });
   } catch (error) {
     console.error("Support messages GET error:", error);
 
@@ -118,12 +104,13 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const user = await getRequestUser(request);
-    const body = (await request.json()) as PostMessagesBody;
+    const body = (await request.json()) as {
+      sessionId?: string;
+      anonymousId?: string;
+      messages?: SupportMessageInput[];
+    };
 
-    const sessionId = body.sessionId;
-    const anonymousId = body.anonymousId;
-    const messages = Array.isArray(body.messages) ? body.messages : [];
+    const sessionId = body.sessionId?.trim() || "";
 
     if (!sessionId) {
       return NextResponse.json(
@@ -132,71 +119,53 @@ export async function POST(request: Request) {
       );
     }
 
-    if (messages.length === 0) {
-      return NextResponse.json(
-        { error: "messages are required." },
-        { status: 400 }
-      );
+    const access = await canAccessSession({ request, sessionId });
+
+    if (!access.allowed) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
-    const session = await verifySessionAccess({
-      sessionId,
-      userId: user?.id,
-      anonymousId,
-    });
-
-    if (!session) {
-      return NextResponse.json(
-        { error: "Support session not found." },
-        { status: 404 }
-      );
-    }
-
-    const rows = messages
-      .filter((message) => message.text.trim())
+    const messagesToInsert = (body.messages || [])
       .map((message) => ({
         session_id: sessionId,
-        sender_type: message.role,
+        sender_type: message.role || "user",
         sender_name:
-          message.role === "user"
-            ? user?.email || "Visitor"
-            : message.role === "operator"
-              ? "Operator"
-              : "SkillEdge Support",
-        message_text: message.text.trim(),
-      }));
+          message.role === "operator"
+            ? "Operator"
+            : message.role === "system"
+              ? "SkillEdge Support"
+              : access.user?.email || "Client",
+        message_text: (message.text || "").trim(),
+      }))
+      .filter((message) => message.message_text.length > 0);
 
-    if (rows.length === 0) {
-      return NextResponse.json(
-        { error: "No valid messages." },
-        { status: 400 }
-      );
+    if (!messagesToInsert.length) {
+      return NextResponse.json({ ok: true, messages: [] });
     }
 
-    const { data: insertedMessages, error: insertError } = await supabaseAdmin
+    const { data: insertedMessages, error } = await supabaseAdmin
       .from("support_messages")
-      .insert(rows)
+      .insert(messagesToInsert)
       .select("*");
 
-    if (insertError) {
-      return NextResponse.json(
-        { error: insertError.message },
-        { status: 500 }
-      );
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const lastMessage = rows[rows.length - 1]?.message_text || "";
+    const lastMessage = messagesToInsert[messagesToInsert.length - 1];
 
     await supabaseAdmin
       .from("support_sessions")
       .update({
-        last_message: lastMessage,
-        customer_email: user?.email || session.customer_email,
+        last_message: lastMessage.message_text,
         updated_at: new Date().toISOString(),
       })
       .eq("id", sessionId);
 
-    return NextResponse.json({ messages: insertedMessages || [] });
+    return NextResponse.json({
+      ok: true,
+      messages: insertedMessages || [],
+    });
   } catch (error) {
     console.error("Support messages POST error:", error);
 

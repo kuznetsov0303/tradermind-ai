@@ -44,8 +44,8 @@ export async function POST(request: Request) {
 
     const body = (await request.json()) as ReplyBody;
 
-    const sessionId = body.sessionId?.trim();
-    const message = body.message?.trim();
+    const sessionId = body.sessionId?.trim() || "";
+    const message = body.message?.trim() || "";
 
     if (!sessionId) {
       return NextResponse.json(
