@@ -270,24 +270,38 @@ export async function POST(request: Request) {
 
     let emailSent = false;
 
-    try {
-      emailSent = await sendSmtpEmail({
-        email,
-        message,
-        pageUrl,
-        language,
-        sessionId,
-      });
-    } catch (smtpError) {
-      console.error("SMTP support email error:", smtpError);
-    }
+try {
+  emailSent = await sendSmtpEmail({
+    email,
+    message,
+    pageUrl,
+    language,
+    sessionId,
+  });
+} catch (smtpError) {
+  console.error("SMTP support email error:", smtpError);
+}
 
-    return NextResponse.json({
-      ok: true,
+if (!emailSent) {
+  return NextResponse.json(
+    {
+      ok: false,
       sessionId,
       telegramSent,
       emailSent,
-    });
+      error:
+        "Support request was saved, but SMTP email was not sent. Check SUPPORT_SMTP_* environment variables and Titan SMTP access.",
+    },
+    { status: 502 }
+  );
+}
+
+return NextResponse.json({
+  ok: true,
+  sessionId,
+  telegramSent,
+  emailSent,
+});
   } catch (error) {
     console.error("Email support request error:", error);
 

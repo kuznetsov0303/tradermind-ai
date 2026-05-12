@@ -258,7 +258,52 @@ function normalizeMessagesForDisplay(
   storedMessages: StoredSupportMessage[],
   language: SupportLanguage
 ): SupportMessage[] {
-  return storedMessages.map((message) => mapStoredMessage(message, language));
+  return storedMessages
+    .map((message) => mapStoredMessage(message, language))
+    .filter((message) => {
+      if (message.role !== "system") {
+        return true;
+      }
+
+      const text = message.text.toLowerCase();
+
+      if (text.includes("operator request sent")) {
+        return false;
+      }
+
+      if (text.includes("запрос оператору отправлен")) {
+        return false;
+      }
+
+      if (text.includes("запит оператору надіслано")) {
+        return false;
+      }
+
+      if (text.includes("email support request sent")) {
+        return false;
+      }
+
+      return false;
+    });
+}
+
+function areSameMessages(
+  previousMessages: SupportMessage[],
+  nextMessages: SupportMessage[]
+) {
+  if (previousMessages.length !== nextMessages.length) {
+    return false;
+  }
+
+  return previousMessages.every((message, index) => {
+    const nextMessage = nextMessages[index];
+
+    return (
+      message.id === nextMessage.id &&
+      message.role === nextMessage.role &&
+      message.text === nextMessage.text
+    );
+  });
 }
 
 async function readJsonResponse(response: Response) {
@@ -431,7 +476,16 @@ export default function SupportWidget() {
             : currentLanguage
         );
 
-        setMessages(normalizeMessagesForDisplay(data.messages, currentLanguage));
+        const nextMessages = normalizeMessagesForDisplay(
+  data.messages,
+  currentLanguage
+);
+
+setMessages((previousMessages) =>
+  areSameMessages(previousMessages, nextMessages)
+    ? previousMessages
+    : nextMessages
+);
       }
     } catch {
       // Temporary network/dev errors are ignored.
@@ -553,12 +607,7 @@ export default function SupportWidget() {
         currentLanguage,
       });
 
-      const systemMessage = createMessage(
-        "system",
-        supportDict[currentLanguage].operatorSuccess
-      );
-
-      setMessages((current) => [...current, systemMessage]);
+      
     } catch {
       const currentLanguage = detectLanguage();
 
