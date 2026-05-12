@@ -262,16 +262,27 @@ export default function AdminSupportPage() {
   }, [selectedSessionId]);
 
   useEffect(() => {
-    const interval = window.setInterval(() => {
-      loadSessions();
+  const interval = window.setInterval(() => {
+    const activeElement = document.activeElement;
 
-      if (selectedSessionId) {
-        loadMessages(selectedSessionId);
-      }
-    }, 4000);
+    const isTyping =
+      activeElement instanceof HTMLInputElement ||
+      activeElement instanceof HTMLTextAreaElement;
 
-    return () => window.clearInterval(interval);
-  }, [selectedSessionId]);
+    if (isTyping) {
+      return;
+    }
+
+    if (selectedSessionId) {
+      loadMessages(selectedSessionId);
+      return;
+    }
+
+    loadSessions();
+  }, 8000);
+
+  return () => window.clearInterval(interval);
+}, [selectedSessionId]);
 
   return (
     <main className="min-h-screen bg-[#050914] px-5 py-8 text-white">
