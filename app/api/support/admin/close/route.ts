@@ -69,12 +69,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    await supabaseAdmin.from("support_messages").insert({
-      session_id: body.sessionId,
-      sender_type: "system",
-      sender_name: "SkillEdge Support",
-      message_text: "Chat closed by operator.",
-    });
+    
 
     return NextResponse.json({ ok: true });
   } catch (error) {
