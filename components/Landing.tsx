@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
@@ -15,140 +15,283 @@ type AuthMode = "login" | "register" | null;
 
 const navKeys: PageKey[] = ["home", "product", "pricing", "team"];
 
+const pageHref: Record<PageKey, string> = {
+  home: "/",
+  product: "/product",
+  pricing: "/pricing",
+  team: "/about",
+};
+
 const dict = {
   en: {
     lang: "EN",
     switchLanguage: "Language",
     brandTag: "Performance intelligence",
     requestDemo: "Request demo",
+    choosePlan: "Choose plan",
+    viewProduct: "View product",
+    viewPricing: "View pricing",
+    viewAbout: "About us",
     nav: {
       home: "Home",
       product: "Product",
       pricing: "Pricing",
-      team: "Team",
+      team: "About us",
     },
-    heroBadge: "AI trading intelligence platform",
-    heroTitle: "Find your edge before the market punishes you again.",
+    heroBadge: "Premium AI trading workspace",
+    heroTitle: "Turn market noise, trade history and execution mistakes into a clearer trading process.",
     heroText:
-      "SkillEdge AI shows why you win, why you lose, what patterns are worth trading, and when your behavior is quietly destroying your PnL.",
-    start: "Request early access",
+      "SkillEdge AI connects your journal, screenshots, chart review, market intelligence, AI scanner, alerts, reports and learning workflow into one premium trading workspace — without promising profits or replacing your own judgment.",
+    start: "Start with a plan",
     tour: "View product flow",
     stats: [
-      ["50k+", "trades analyzed"],
-      ["82%", "users find recurring mistakes"],
-      ["6x", "faster review workflow"],
+      ["Private beta", "built for serious active traders"],
+      ["Journal-first", "your trades become the data source"],
+      ["Edge+", "scanner and market brief access"],
     ],
     problemEyebrow: "The problem",
-    problemTitle: "Most traders do not lack information. They lack self-knowledge.",
+    problemTitle: "Most traders do not need more noise. They need a cleaner process.",
     problemText:
-      "Screenshots, notes, watchlists and emotions are scattered everywhere. SkillEdge AI connects them into one operating system for execution, review and pattern discovery.",
-    product: {
-      eyebrow: "Product",
-      title: "One workspace for trading performance.",
-      text: "Journal trades, upload screenshots, ask the AI coach, review patterns and turn every session into measurable feedback.",
+      "Charts, screenshots, emotions, watchlists, notes and mistakes often live in different places. SkillEdge AI brings them into one workflow so the trader can review decisions, understand patterns and build a repeatable process.",
+    homeSections: {
+      whyTitle: "What SkillEdge AI helps you organize",
+      whyText:
+        "The platform is designed around the real trading loop: find what matters, plan the trade, execute with discipline, record the result and learn from the outcome.",
       cards: [
-        ["Trade journal", "Track ticker, setup, emotion, size, result and screenshots."],
-        ["AI review", "Get structured feedback on mistakes, risk, timing and execution."],
-        ["TradingView charts", "Use embedded charts for technical review and context."],
-        ["Learning hub", "Keep lessons, playbooks, checklists and trading materials in one place."],
-        ["Reports", "Generate weekly and monthly summaries for discipline and growth."],
-        ["Team layer", "Elite users can manage teams, compare traders and export reports."],
+        ["Journal & screenshots", "Track trades, screenshots, emotions, mistakes, risk and lessons in one place."],
+        ["AI Coach", "Get structured feedback on trade logic, risk, discipline and decision quality."],
+        ["Market Intelligence", "Edge and Elite unlock the scanner layer for stocks, crypto and in-play market context."],
+        ["AI Alerts", "Elite unlocks the premium alert workflow with setup, trigger, entry, stop, targets and outcome review."],
       ],
     },
-    pricing: {
-      eyebrow: "Pricing",
-      title: "Choose the plan that matches your trading ambition.",
-      text: "Start simple, then unlock deeper AI analytics, screenshot review, live matching and team workflows.",
-      demoNote:
-  "By clicking “Request demo”, you get 7 days of SkillEdge Core access with a limit of 10 AI requests for $11.99 to preview the dashboard and test basic features.",
-      most: "Most popular",
-      month: "/ month",
-      buy: "Buy plan",
+    productPage: {
+      heroBadge: "Product",
+      heroTitle: "One connected workspace for trading performance.",
+      heroText:
+        "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow.",
+      ctaPrimary: "Choose your plan",
+      ctaSecondary: "Why SkillEdge exists",
+      heroCards: [
+        ["AI Trading Desk", "Market intelligence, alerts, journal and coaching in one system."],
+        ["Signal-to-Journal", "Create a trade draft from an alert and compare the plan with your execution."],
+        ["Personal Edge", "The long-term architecture is built around the trader’s own best and worst patterns."],
+      ],
+      deskTitle: "A trading desk should give context, not blind calls.",
+      deskText:
+        "SkillEdge AI is designed to explain why an opportunity matters, what confirms it, what invalidates it and where the risk sits. The goal is better decision-making, not blind dependency.",
+      deskCards: [
+        ["Market Intelligence", "Find stocks and crypto that deserve attention before wasting time on dead charts."],
+        ["AI Scanner", "Edge and Elite receive AI Market Brief logic around the best in-play candidates."],
+        ["AI Alerts", "Elite receives structured signals with setup, direction, trigger, entry zone, stop and targets."],
+        ["Outcome Learning", "Track taken, skipped and missed alerts so every outcome becomes a learning point."],
+      ],
+      flowEyebrow: "Workflow",
+      flowTitle: "From market scan to personal improvement — one connected loop.",
+      flowText:
+        "Every serious trading idea should become data: what the market showed, what the trader planned, what was executed and what the outcome taught.",
+      flow: [
+        ["01", "Market moves", "SkillEdge watches active stocks, crypto, unusual movement, catalysts and market context."],
+        ["02", "AI filters noise", "The system ranks opportunities by quality, freshness, risk and setup clarity."],
+        ["03", "Plan appears", "The trader sees direction, trigger, entry zone, stop, targets, management and invalidation."],
+        ["04", "Journal connects", "A taken alert can become a journal trade with screenshots, notes and execution review."],
+        ["05", "Learning compounds", "Reports, outcome review and coaching turn repetition into a stronger process."],
+      ],
+      modulesEyebrow: "Modules",
+      modulesTitle: "Everything is designed to work together.",
+      modulesText:
+        "Each module can be useful alone. Together they create a premium workspace where the trader can discover opportunities, execute with structure and review performance.",
+      modules: [
+        ["Journal & Screenshots", "A serious journal that becomes the data source for analysis, reports and future personalization.", ["Trades and screenshots", "PnL and win rate", "CSV/XLSX export", "AI journal review"]],
+        ["Charts & Watchlists", "A chart workspace connected to tickers, watchlists, screenshots and future premium chart analysis.", ["TradingView workspace", "Ticker input", "Watchlist", "AI chart analysis foundation"]],
+        ["Market Intelligence", "A scanner layer for finding active stocks and crypto with clear source transparency.", ["Stocks and crypto candidates", "Market context", "Source labels", "AI Market Brief"]],
+        ["AI Alerts", "Elite-level actionable signals with structure, education and outcome review.", ["Floating alert widget", "Full Alerts Center", "Breakdown modal", "Signal-to-Journal"]],
+        ["Reports & Learning", "A review layer that turns trades into performance feedback and repeatable lessons.", ["AI reports", "Learning blocks", "Playbook foundation", "Execution focus"]],
+        ["Support", "A site-wide support assistant and operator flow for product, payment and access questions.", ["Support assistant", "Operator request", "Email support", "Admin reply flow"]],
+      ],
+      differentEyebrow: "Difference",
+      differentTitle: "This is not another signal service. It is a performance system.",
+      differentText:
+        "The best traders do not only search for entries. They build process, risk control, review, discipline and repeatable patterns. SkillEdge AI is being built around that reality.",
+      comparisons: [
+        ["Instead of a normal scanner", "You only see tickers and still have to guess what matters.", "SkillEdge explains why the ticker matters, what the setup is, what can go wrong and what confirms the idea."],
+        ["Instead of a simple journal", "You store trades but do not transform them into an edge.", "SkillEdge connects trades, screenshots, alerts, outcomes and mistakes into a personal improvement system."],
+        ["Instead of a generic chatbot", "You ask random questions and receive disconnected answers.", "SkillEdge works inside the workflow: alerts, journal, reports, execution, learning and playbook."],
+      ],
+      finalTitle: "Build a trading system around your real behavior.",
+      finalText:
+        "SkillEdge AI is for traders who are tired of scattered tools, emotional decisions and unclear reviews. The product helps the client see the market cleaner, execute with more structure and understand what to improve next.",
+      finalChecklist: [
+        "Journal, screenshots and analytics",
+        "AI Coach and chart review",
+        "Market Intelligence and AI Scanner for Edge+",
+        "AI Alerts and Signal-to-Journal for Elite",
+        "Reports, learning blocks and playbook foundation",
+        "Support assistant and operator request flow",
+      ],
+    },
+    pricingPage: {
+      heroBadge: "Pricing",
+      heroTitle: "Choose the level of intelligence around your trading process.",
+      heroText:
+        "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning.",
+      billingToggle: {
+        monthly: "1 month",
+        halfyear: "6 months",
+        yearly: "1 year",
+      },
+      period: {
+        monthly: "/ month",
+        halfyear: "/ 6 months",
+        yearly: "/ year",
+      },
+      cardPayment: "Card payment is being prepared",
+      cryptoNote: "* crypto payment through the available launch flow",
+      checkoutStatus: {
+        checking: "Checking your account...",
+        invoice: "Creating crypto invoice...",
+        noUrl: "Crypto invoice was created, but payment URL was not returned.",
+        unavailable: "Crypto payment is not available right now.",
+      },
+      planBadge: {
+        core: "Start with discipline",
+        edge: "Best active-trader value",
+        elite: "Full AI Trading Desk",
+      },
       plans: [
-  [
-    "starter",
-    "SkillEdge Core",
-    "$49",
-    "For traders who want to start tracking trades systematically and get basic AI feedback.",
-    [
-      "Up to 300 trades in the journal",
-      "Up to 3 screenshots per trade",
-      "50 AI Coach requests per month",
-      "10 journal AI analyses per month",
-      "20 trade chart AI analyses per month",
-      "Basic stats: PnL, win rate, average PnL",
-      "CSV/XLSX journal export",
-    ],
-  ],
-  [
-    "pro",
-    "SkillEdge Edge",
-    "$99",
-    "For active traders who need higher limits, deeper AI review and pattern work.",
-    [
-      "Up to 2,000 trades in the journal",
-      "Up to 5 screenshots per trade",
-      "200 AI Coach requests per month",
-      "50 journal AI analyses per month",
-      "100 trade chart AI analyses per month",
-      "Advanced stats and equity curve",
-      "Deeper AI review of mistakes, setups and discipline",
-    ],
-  ],
-  [
-    "elite",
-    "SkillEdge Elite",
-    "$149",
-    "For serious traders, mentors and prop teams that need maximum limits.",
-    [
-      "Up to 10,000 trades in the journal",
-      "Up to 10 screenshots per trade",
-      "1,000 AI Coach requests per month",
-      "300 journal AI analyses per month",
-      "500 trade chart AI analyses per month",
-      "Maximum limits for active trading",
-      "Suitable for mentors, teams and advanced traders",
-    ],
-  ],
-],
-      compareEyebrow: "Plan comparison",
-      compareTitle: "What changes between plans",
-      compareText:
-  "SkillEdge Core is the entry plan. SkillEdge Edge unlocks higher AI limits and deeper analysis. SkillEdge Elite is built for advanced traders, mentors and teams.",
-table: [
-  ["Feature", "SkillEdge Core", "SkillEdge Edge", "SkillEdge Elite"],
-  ["Trades in journal", "300", "2,000", "10,000"],
-  ["Screenshots per trade", "3", "5", "10"],
-  ["AI Coach requests / month", "50", "200", "1,000"],
-  ["Journal AI analyses / month", "10", "50", "300"],
-  ["Trade chart AI analyses / month", "20", "100", "500"],
-],
+        {
+          id: "starter",
+          name: "SkillEdge Core",
+          headline: "For traders who need structure first.",
+          text:
+            "Build the foundation: journal, screenshots, AI Coach, chart analysis foundation, exports and a cleaner review process.",
+          bestFor: "Best for building discipline, tracking trades and stopping reliance on memory.",
+          cta: "Start with Core",
+          features: ["Up to 300 trades", "3 screenshots per trade", "50 AI Coach requests / month", "10 journal AI analyses / month", "20 chart AI analyses / month", "CSV/XLSX export"],
+        },
+        {
+          id: "pro",
+          name: "SkillEdge Edge",
+          headline: "For active traders who need deeper review and market context.",
+          text:
+            "Unlock higher limits, AI reports, premium chart analysis, social/market context and the AI Scanner / AI Market Brief layer.",
+          bestFor: "Best for active traders who review seriously and want better setup and mistake discovery.",
+          cta: "Upgrade to Edge",
+          features: ["Everything in Core", "Up to 2,000 trades", "5 screenshots per trade", "200 AI Coach requests / month", "30 AI reports / month", "AI Scanner / Market Intelligence"],
+        },
+        {
+          id: "elite",
+          name: "SkillEdge Elite",
+          headline: "For serious traders who want the full AI Trading Desk.",
+          text:
+            "Unlock AI Alerts, floating alert widget, Signal-to-Journal workflow, decision tracking, outcome learning and maximum AI limits.",
+          bestFor: "Best for advanced traders who want structured signals and a complete feedback loop.",
+          cta: "Unlock Elite",
+          features: ["Everything in Edge", "Up to 10,000 trades", "10 screenshots per trade", "1,000 AI Coach requests / month", "150 AI reports / month", "AI Alerts + Signal-to-Journal"],
+        },
+      ],
+      signalEyebrow: "Why the signal layer matters",
+      signalTitle: "SkillEdge signals are built to educate, not to make the trader blindly click.",
+      signalText:
+        "A weak signal service creates dependency. A strong trading system creates clarity: setup, risk, confirmation, invalidation and the lesson after the outcome.",
+      signalCards: [
+        ["Not blind calls", "Signals are structured trade ideas with setup, direction, trigger, entry zone, stop, targets and risk."],
+        ["Breakdown before action", "Every serious alert explains why it appeared, what confirms it and what makes it dangerous."],
+        ["Signal-to-Journal", "A taken alert can become a journal trade so the plan and execution can be compared."],
+        ["Outcome coaching", "Taken, skipped and missed decisions show missed opportunities, good skips and weak execution."],
+      ],
+      comparisonTitle: "Plan comparison",
+      comparisonText: "Choose the plan that matches your current trading process.",
+      comparison: [
+        ["Feature", "Core", "Edge", "Elite"],
+        ["Journal + screenshots", "Yes", "Yes", "Yes"],
+        ["AI Coach", "50 / month", "200 / month", "1,000 / month"],
+        ["Journal AI analysis", "10 / month", "50 / month", "300 / month"],
+        ["Chart AI analysis", "20 / month", "100 / month", "500 / month"],
+        ["AI Reports", "—", "30 / month", "150 / month"],
+        ["AI Scanner", "—", "Yes", "Yes"],
+        ["AI Alerts", "—", "—", "Yes"],
+        ["Best for", "Discipline", "Active review", "AI Trading Desk"],
+      ],
+      finalTitle: "The clean recommendation",
+      finalText:
+        "Choose Core for structure, Edge for scanner intelligence and active review, Elite for real-time AI Alerts and the full signal-to-journal workflow.",
+      disclaimer:
+        "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
     },
-    team: {
-      eyebrow: "Team",
-      title: "Built for traders who want discipline, not noise.",
-      text: "SkillEdge AI is designed as a performance layer for solo traders, mentors and prop teams.",
+    teamPage: {
+      heroBadge: "About SkillEdge AI",
+      heroTitle: "We are building the AI trading system serious traders wish already existed.",
+      heroText:
+        "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement.",
+      ctaProduct: "Explore product",
+      ctaPricing: "View plans",
+      philosophyBadge: "Product philosophy",
+      philosophyTitle: "Process over prediction",
+      beliefs: [
+        "Signals without education create dependency.",
+        "A trade without a plan cannot be reviewed properly.",
+        "A journal without feedback becomes a graveyard of old trades.",
+        "The best product should make the trader calmer, sharper and more disciplined.",
+        "Personal AI alerts become powerful only when the trader builds clean historical data.",
+      ],
+      storyEyebrow: "Our story",
+      storyTitle: "SkillEdge AI is built for traders who want discipline, structure and measurable improvement.",
+      storyText:
+        "The product was born from the same problem many active traders face: the market gives too much information, but almost no honest feedback about execution. SkillEdge AI is designed to connect the trader’s decisions, screenshots, journal, alerts and outcomes into one serious review system.",
+      teamEyebrow: "Team structure",
+      teamTitle: "Built like a focused product team — trading, product, data and support.",
+      teamText:
+        "Use these cards as the About Us layout. Later you can insert real team photos, names and roles without changing the page structure.",
+      teamCards: [
+        ["Founder / Product Vision", "Owns the product direction, trader workflow, pricing logic and premium positioning."],
+        ["Trading Research", "Defines setups, alert logic, journal review criteria and educational playbooks."],
+        ["AI & Data Layer", "Builds scanner logic, AI prompts, data enrichment, usage limits and backend gates."],
+        ["Design & Experience", "Shapes the dashboard, public pages, locked states, loading states and premium interface."],
+        ["Support Operations", "Handles customer questions, operator flow, payments, access and product guidance."],
+        ["Security & Infrastructure", "Protects routes, API keys, Supabase access, rate limits and production deployment."],
+      ],
+      principlesEyebrow: "Principles",
+      principlesTitle: "A serious trading product must be honest about risk and serious about process.",
+      principles: [
+        ["No fake certainty", "Trading contains risk. SkillEdge AI must never pretend that any model or alert can guarantee profit."],
+        ["Transparent logic", "The client should understand why an alert appears, which sources are tracked and what part of the idea is strong or weak."],
+        ["Premium product mindset", "Every feature should feel useful, serious and connected to the trader’s real workflow."],
+      ],
+      roadmapEyebrow: "Roadmap",
+      roadmapTitle: "We are building toward a premium AI Trading Desk.",
+      roadmapText:
+        "The launch foundation is product-focused: journal, alerts, learning, reports, support, billing and market intelligence. The next layer is premium data, full market scanning and personal alerts based on the client’s own history.",
+      roadmap: [
+        ["01", "Launch foundation", "Journal, dashboard, screenshots, learning, reports, crypto access and support foundation."],
+        ["02", "Signals and behavior", "AI alerts, decision tracking, trade drafts, outcome learning and missed opportunity coaching."],
+        ["03", "Premium data", "Full ticker coverage, Binance universe, catalysts, heatmaps, halt screener and stronger scanner logic."],
+        ["04", "Personal edge", "AI learns from the client’s best setups, weak patterns, execution mistakes and journal history."],
+      ],
+      finalTitle: "Help traders stop operating from chaos and start operating from a system.",
+      finalText:
+        "SkillEdge AI is for traders who want to review harder, think cleaner, execute with more discipline and build a repeatable edge from real data instead of emotion and memory.",
     },
-    resultsEyebrow: "Results",
-    resultsTitle: "What traders gain after implementation",
-    results: [
-      [
-        "+18% execution quality",
-        "After 4 weeks of structured reviews, traders filter weak setups better and enter less impulsively.",
-      ],
-      [
-        "-32% recurring mistakes",
-        "The AI coach highlights revenge trades, late entries, stop violations and over-sizing before they become habits.",
-      ],
-      [
-        "2.4x faster session review",
-        "Instead of scattered screenshots, traders get a structured report by setup, risk and discipline.",
-      ],
-    ],
     footer: {
+      description:
+        "Premium AI trading workspace for serious traders: market intelligence, AI alerts, journal, execution review, playbook, reports and coaching in one connected system.",
+      product: "Product",
+      features: "Features",
+      resources: "Resources",
+      legal: "Legal",
+      productLinks: ["Home", "Product", "Pricing", "About us"],
+      featureLinks: ["AI Trading Desk", "AI Alerts", "Market Intelligence", "Journal & Screenshots", "Execution Coach", "Outcome Learning", "Playbook", "Reports", "Learning Center", "Support Assistant"],
+      resourceLinks: ["Getting Started", "How SkillEdge Works", "Trading Journal Guide", "AI Alerts Guide", "Contact Support"],
+      legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
+      cookieSettings: "Cookie settings",
+      choosePlan: "Choose plan",
+      requestDemo: "Request demo",
+      risk:
+        "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
       contact: "Contacts",
       location: "Dubai / Warsaw / Kyiv",
       demo: "Product demo by request",
+      rights: "© 2026 SkillEdge AI. All rights reserved.",
+      bottom: "Built for traders who want structure, discipline and measurable improvement.",
     },
     auth: {
       login: "Login",
@@ -165,156 +308,282 @@ table: [
       switchToLogin: "Already have an account? Login",
       switchToRegister: "No account? Sign up",
       checking: "Checking your account...",
-      creatingInvoice: "Creating NOWPayments invoice...",
+      creatingAccount: "Creating account...",
+      creatingInvoice: "Creating crypto invoice...",
       loginRequired: "Login or sign up to pay for a plan.",
       afterRegister: "Account created. Confirm your email if required.",
-    },
-    billing: {
-      monthly: "1 month",
-      halfyear: "6 months",
-      yearly: "1 year",
-      payCrypto: "Pay with USDT",
-      cardSoon: "Card payment — soon",
-      periodMonthly: "/ month",
-      periodHalfyear: "/ 6 months",
-      periodYearly: "/ year",
-      networkNote: "* payment on TRON TRC20 network",
+      authError: "Authorization error.",
     },
   },
-
   ru: {
     lang: "RU",
     switchLanguage: "Язык",
-    brandTag: "Performance intelligence",
+    brandTag: "Интеллект эффективности",
     requestDemo: "Запросить демо",
+    choosePlan: "Выбрать тариф",
+    viewProduct: "Посмотреть продукт",
+    viewPricing: "Посмотреть тарифы",
+    viewAbout: "О нас",
     nav: {
       home: "Главная",
       product: "Продукт",
       pricing: "Тарифы",
-      team: "Команда",
+      team: "О нас",
     },
-    heroBadge: "AI-платформа торгового интеллекта",
-    heroTitle: "Найди своё преимущество до того, как рынок снова тебя накажет.",
+    heroBadge: "Premium AI-платформа для трейдера",
+    heroTitle: "Преврати рыночный шум, историю сделок и ошибки исполнения в более понятный торговый процесс.",
     heroText:
-      "SkillEdge AI показывает, почему ты зарабатываешь, почему теряешь, какие паттерны стоит торговать и где поведение незаметно уничтожает твой PnL.",
-    start: "Получить ранний доступ",
+      "SkillEdge AI соединяет журнал, скриншоты, анализ графиков, рыночную разведку, AI-сканер, сигналы, отчёты и обучение в одно premium-пространство — без обещаний прибыли и без замены твоего собственного решения.",
+    start: "Выбрать тариф",
     tour: "Посмотреть продукт",
     stats: [
-      ["50k+", "сделок проанализировано"],
-      ["82%", "пользователей находят повторяющиеся ошибки"],
-      ["6x", "быстрее разбор сессии"],
+      ["Private beta", "создаётся для серьёзных активных трейдеров"],
+      ["Журнал в основе", "твои сделки становятся источником данных"],
+      ["Edge+", "доступ к сканеру и рыночной сводке"],
     ],
     problemEyebrow: "Проблема",
-    problemTitle: "Большинству трейдеров не не хватает информации. Им не хватает самопонимания.",
+    problemTitle: "Большинству трейдеров не нужен ещё больший шум. Им нужен более чистый процесс.",
     problemText:
-      "Скриншоты, заметки, вотчлисты и эмоции разбросаны повсюду. SkillEdge AI соединяет их в одну систему для исполнения, разбора и поиска паттернов.",
-    product: {
-      eyebrow: "Продукт",
-      title: "Единое рабочее пространство для торговой эффективности.",
-      text: "Веди журнал сделок, загружай скриншоты, спрашивай AI-коуча, разбирай паттерны и превращай каждую сессию в измеримую обратную связь.",
+      "Графики, скриншоты, эмоции, списки наблюдения, заметки и ошибки часто живут в разных местах. SkillEdge AI собирает их в один рабочий процесс, чтобы трейдер мог разбирать решения, понимать паттерны и строить повторяемую систему.",
+    homeSections: {
+      whyTitle: "Что помогает организовать SkillEdge AI",
+      whyText:
+        "Платформа построена вокруг реального торгового цикла: найти важное, спланировать сделку, исполнить дисциплинированно, записать результат и извлечь урок из исхода.",
       cards: [
-        ["Журнал сделок", "Фиксируй тикер, сетап, эмоции, объём, результат и скриншоты."],
-        ["AI-разбор", "Получай структурный фидбек по ошибкам, риску, таймингу и исполнению."],
-        ["Графики TradingView", "Используй встроенные графики для технического анализа и контекста."],
-        ["Обучение", "Храни уроки, плейбуки, чеклисты и материалы в одном месте."],
-        ["Отчёты", "Создавай недельные и месячные отчёты по дисциплине и росту."],
-        ["Командный слой", "Elite открывает команды, сравнение трейдеров и экспорт отчётов."],
+        ["Журнал и скриншоты", "Фиксируй сделки, скриншоты, эмоции, ошибки, риск и уроки в одном месте."],
+        ["AI-коуч", "Получай структурный разбор логики сделки, риска, дисциплины и качества решения."],
+        ["Рыночная разведка", "Edge и Elite открывают слой сканера для акций, крипты и актуального рыночного контекста."],
+        ["AI-сигналы", "Elite открывает premium-сигналы с сетапом, триггером, зоной входа, стопом, целями и разбором исхода."],
       ],
     },
-    pricing: {
-      eyebrow: "Тарифы",
-      title: "Выбери план под свой уровень амбиций в трейдинге.",
-      text: "Начни просто, затем открой глубокую AI-аналитику, разбор скриншотов, live-сопоставление и командные сценарии.",
-      demoNote:
-  "Нажимая «Запросить демо», вы за $11.99 получаете доступ на 7 дней к тарифу SkillEdge Core с лимитом 10 AI-запросов для просмотра личного кабинета и теста базовых функций.",
-      most: "Самый популярный",
-      month: "/ месяц",
-      buy: "Купить план",
+    productPage: {
+      heroBadge: "Продукт",
+      heroTitle: "Единое рабочее пространство для торговой эффективности.",
+      heroText:
+        "SkillEdge AI создаётся как premium trading operating system: журнал, скриншоты, AI-коуч, отчёты, графики, сканер, сигналы, плейбук и поддержка в одном чистом процессе.",
+      ctaPrimary: "Выбрать тариф",
+      ctaSecondary: "Зачем мы это строим",
+      heroCards: [
+        ["AI Trading Desk", "Рыночная разведка, сигналы, журнал и коучинг в одной системе."],
+        ["Сигнал → журнал", "Создавай черновик сделки из сигнала и сравнивай план с реальным исполнением."],
+        ["Личное преимущество", "Долгосрочная архитектура строится вокруг лучших и худших паттернов самого трейдера."],
+      ],
+      deskTitle: "Торговый desk должен давать контекст, а не слепые команды.",
+      deskText:
+        "SkillEdge AI должен объяснять, почему ситуация важна, что её подтверждает, что отменяет и где находится риск. Цель — лучшее качество решений, а не слепая зависимость от сигналов.",
+      deskCards: [
+        ["Рыночная разведка", "Находи акции и крипту, которые заслуживают внимания, не тратя время на мёртвые графики."],
+        ["AI-сканер", "Edge и Elite получают AI Market Brief по лучшим активным кандидатам рынка."],
+        ["AI-сигналы", "Elite получает структурированные сигналы: сетап, направление, триггер, зона входа, стоп и цели."],
+        ["Обучение на исходах", "Отмечай взятые, пропущенные и проигнорированные сигналы, чтобы каждый исход становился уроком."],
+      ],
+      flowEyebrow: "Процесс",
+      flowTitle: "От сканирования рынка до личного прогресса — один связанный цикл.",
+      flowText:
+        "Каждая серьёзная торговая идея должна становиться данными: что показал рынок, что планировал трейдер, что было исполнено и чему научил исход.",
+      flow: [
+        ["01", "Рынок начинает двигаться", "SkillEdge отслеживает активные акции, крипту, необычное движение, катализаторы и рыночный контекст."],
+        ["02", "AI фильтрует шум", "Система ранжирует ситуации по качеству, свежести, риску и ясности сетапа."],
+        ["03", "Появляется план", "Трейдер видит направление, триггер, зону входа, стоп, цели, сопровождение и отмену идеи."],
+        ["04", "Журнал подключается", "Взятый сигнал может стать сделкой в журнале со скриншотами, заметками и разбором исполнения."],
+        ["05", "Обучение накапливается", "Отчёты, разбор исходов и коучинг превращают повторение в более сильный процесс."],
+      ],
+      modulesEyebrow: "Модули",
+      modulesTitle: "Все части продукта должны работать вместе.",
+      modulesText:
+        "Каждый модуль полезен сам по себе. Вместе они создают premium-пространство, где трейдер находит ситуации, действует структурно и разбирает результат.",
+      modules: [
+        ["Журнал и скриншоты", "Серьёзный журнал, который становится источником данных для анализа, отчётов и будущей персонализации.", ["Сделки и скриншоты", "PnL и процент прибыльных сделок", "CSV/XLSX экспорт", "AI-анализ журнала"]],
+        ["Графики и списки наблюдения", "Рабочее пространство графиков, связанное с тикерами, списками, скриншотами и будущим premium-анализом.", ["TradingView workspace", "Ввод тикера", "Список наблюдения", "Основа AI-анализа графика"]],
+        ["Рыночная разведка", "Слой сканера для поиска активных акций и крипты с честным отображением источников.", ["Кандидаты по акциям и крипте", "Рыночный контекст", "Метки источников", "AI Market Brief"]],
+        ["AI-сигналы", "Elite-сигналы с планом, обучением и разбором исхода.", ["Плавающий виджет", "Центр сигналов", "Подробный разбор", "Связка сигнала с журналом"]],
+        ["Отчёты и обучение", "Слой разбора, который превращает сделки в обратную связь и повторяемые уроки.", ["AI-отчёты", "Учебные блоки", "Основа плейбука", "Фокус исполнения"]],
+        ["Поддержка", "Site-wide помощник и операторский поток для вопросов по продукту, оплате и доступу.", ["Помощник поддержки", "Запрос оператора", "Email-поддержка", "Ответы из админки"]],
+      ],
+      differentEyebrow: "Отличие",
+      differentTitle: "Это не очередной сервис сигналов. Это система эффективности.",
+      differentText:
+        "Сильные трейдеры не просто ищут входы. Они строят процесс, контроль риска, разбор, дисциплину и повторяемые паттерны. SkillEdge AI строится вокруг этой реальности.",
+      comparisons: [
+        ["Вместо обычного сканера", "Ты видишь только тикеры и всё равно должен угадывать, что важно.", "SkillEdge объясняет, почему тикер важен, какой сетап, где риск и что подтверждает идею."],
+        ["Вместо простого журнала", "Ты хранишь сделки, но не превращаешь их в преимущество.", "SkillEdge связывает сделки, скриншоты, сигналы, исходы и ошибки в систему улучшения."],
+        ["Вместо обычного чат-бота", "Ты задаёшь случайные вопросы и получаешь разрозненные ответы.", "SkillEdge работает внутри процесса: сигналы, журнал, отчёты, исполнение, обучение и плейбук."],
+      ],
+      finalTitle: "Построй торговую систему вокруг своего реального поведения.",
+      finalText:
+        "SkillEdge AI создан для трейдеров, которым надоели разрозненные инструменты, эмоциональные решения и непонятные разборы. Продукт помогает чище видеть рынок, действовать структурнее и понимать, что улучшать дальше.",
+      finalChecklist: [
+        "Журнал, скриншоты и аналитика",
+        "AI-коуч и разбор графиков",
+        "Рыночная разведка и AI-сканер для Edge+",
+        "AI-сигналы и Signal-to-Journal для Elite",
+        "Отчёты, обучение и основа плейбука",
+        "Помощник поддержки и запрос оператора",
+      ],
+    },
+    pricingPage: {
+      heroBadge: "Тарифы",
+      heroTitle: "Выбери уровень интеллекта вокруг своего торгового процесса.",
+      heroText:
+        "Core строит структуру. Edge добавляет рыночную разведку и AI-сканер. Elite открывает полный AI Trading Desk с сигналами, связкой с журналом и обучением на исходах.",
+      billingToggle: {
+        monthly: "1 месяц",
+        halfyear: "6 месяцев",
+        yearly: "1 год",
+      },
+      period: {
+        monthly: "/ месяц",
+        halfyear: "/ 6 месяцев",
+        yearly: "/ год",
+      },
+      cardPayment: "Оплата картой готовится",
+      cryptoNote: "* крипто-оплата через доступный launch-flow",
+      checkoutStatus: {
+        checking: "Проверяем аккаунт...",
+        invoice: "Создаём крипто-счёт...",
+        noUrl: "Крипто-счёт создан, но ссылка на оплату не вернулась.",
+        unavailable: "Крипто-оплата сейчас недоступна.",
+      },
+      planBadge: {
+        core: "Начни с дисциплины",
+        edge: "Лучший вариант для активного трейдера",
+        elite: "Полный AI Trading Desk",
+      },
       plans: [
-  [
-    "starter",
-    "SkillEdge Core",
-    "$49",
-    "Для трейдера, который хочет начать вести системный журнал и получать базовый AI-разбор.",
-    [
-      "До 300 сделок в журнале",
-      "До 3 скриншотов на одну сделку",
-      "50 AI Coach запросов в месяц",
-      "10 AI-анализов журнала в месяц",
-      "20 AI-разборов графиков сделок в месяц",
-      "Базовая статистика: PnL, win rate, average PnL",
-      "CSV/XLSX экспорт журнала",
-    ],
-  ],
-  [
-    "pro",
-    "SkillEdge Edge",
-    "$99",
-    "Для активного трейдера, которому нужны расширенные лимиты, AI-анализ и работа с паттернами.",
-    [
-      "До 2 000 сделок в журнале",
-      "До 5 скриншотов на одну сделку",
-      "200 AI Coach запросов в месяц",
-      "50 AI-анализов журнала в месяц",
-      "100 AI-разборов графиков сделок в месяц",
-      "Расширенная статистика и equity curve",
-      "Глубокий AI-разбор ошибок, сетапов и дисциплины",
-    ],
-  ],
-  [
-    "elite",
-    "SkillEdge Elite",
-    "$149",
-    "Для серьёзных трейдеров, менторов и проп-команд с максимальными лимитами.",
-    [
-      "До 10 000 сделок в журнале",
-      "До 10 скриншотов на одну сделку",
-      "1 000 AI Coach запросов в месяц",
-      "300 AI-анализов журнала в месяц",
-      "500 AI-разборов графиков сделок в месяц",
-      "Максимальные лимиты для активной торговли",
-      "Подходит для менторов, команд и продвинутых трейдеров",
-    ],
-  ],
-],
-      compareEyebrow: "Сравнение планов",
-      compareTitle: "Чем отличаются планы",
-      compareText:
-  "SkillEdge Core — стартовый план. SkillEdge Edge открывает повышенные AI-лимиты и более глубокий анализ. SkillEdge Elite создан для продвинутых трейдеров, менторов и команд.",
-table: [
-  ["Функция", "SkillEdge Core", "SkillEdge Edge", "SkillEdge Elite"],
-  ["Сделок в журнале", "300", "2 000", "10 000"],
-  ["Скриншотов на сделку", "3", "5", "10"],
-  ["AI Coach запросов / месяц", "50", "200", "1 000"],
-  ["AI-анализов журнала / месяц", "10", "50", "300"],
-  ["AI-разборов графиков / месяц", "20", "100", "500"],
-],
+        {
+          id: "starter",
+          name: "SkillEdge Core",
+          headline: "Для трейдера, которому сначала нужна структура.",
+          text:
+            "Построй основу: журнал, скриншоты, AI-коуч, базовый анализ графиков, экспорт и более чистый процесс разбора.",
+          bestFor: "Лучше всего для дисциплины, фиксации сделок и отказа от торговли по памяти.",
+          cta: "Начать с Core",
+          features: ["До 300 сделок", "3 скриншота на сделку", "50 запросов к AI-коучу / месяц", "10 AI-анализов журнала / месяц", "20 AI-анализов графика / месяц", "CSV/XLSX экспорт"],
+        },
+        {
+          id: "pro",
+          name: "SkillEdge Edge",
+          headline: "Для активного трейдера, которому нужен глубокий разбор и рыночный контекст.",
+          text:
+            "Открой повышенные лимиты, AI-отчёты, premium-анализ графиков, рыночный контекст и слой AI-сканера / AI Market Brief.",
+          bestFor: "Лучше всего для активных трейдеров, которые серьёзно разбирают сделки и ищут повторяющиеся ошибки и сетапы.",
+          cta: "Перейти на Edge",
+          features: ["Всё из Core", "До 2 000 сделок", "5 скриншотов на сделку", "200 запросов к AI-коучу / месяц", "30 AI-отчётов / месяц", "AI-сканер / рыночная разведка"],
+        },
+        {
+          id: "elite",
+          name: "SkillEdge Elite",
+          headline: "Для серьёзного трейдера, которому нужен полный AI Trading Desk.",
+          text:
+            "Открой AI-сигналы, плавающий виджет, Signal-to-Journal, отслеживание решений, обучение на исходах и максимальные AI-лимиты.",
+          bestFor: "Лучше всего для продвинутых трейдеров, которым нужны структурные сигналы и полный цикл обратной связи.",
+          cta: "Открыть Elite",
+          features: ["Всё из Edge", "До 10 000 сделок", "10 скриншотов на сделку", "1 000 запросов к AI-коучу / месяц", "150 AI-отчётов / месяц", "AI-сигналы + Signal-to-Journal"],
+        },
+      ],
+      signalEyebrow: "Зачем нужен слой сигналов",
+      signalTitle: "Сигналы SkillEdge должны обучать, а не заставлять трейдера слепо нажимать.",
+      signalText:
+        "Слабый сервис сигналов создаёт зависимость. Сильная торговая система создаёт ясность: сетап, риск, подтверждение, отмена идеи и урок после исхода.",
+      signalCards: [
+        ["Не слепые команды", "Сигналы — это структурные торговые идеи: сетап, направление, триггер, зона входа, стоп, цели и риск."],
+        ["Разбор до действия", "Каждый серьёзный сигнал объясняет, почему он появился, что его подтверждает и что делает его опасным."],
+        ["Сигнал → журнал", "Взятый сигнал может стать сделкой в журнале, чтобы сравнить план и реальное исполнение."],
+        ["Коучинг по исходу", "Взятые, пропущенные и проигнорированные решения показывают упущенные возможности, хорошие пропуски и слабое исполнение."],
+      ],
+      comparisonTitle: "Сравнение тарифов",
+      comparisonText: "Выбери тариф под текущий торговый процесс.",
+      comparison: [
+        ["Функция", "Core", "Edge", "Elite"],
+        ["Журнал + скриншоты", "Да", "Да", "Да"],
+        ["AI-коуч", "50 / месяц", "200 / месяц", "1 000 / месяц"],
+        ["AI-анализ журнала", "10 / месяц", "50 / месяц", "300 / месяц"],
+        ["AI-анализ графика", "20 / месяц", "100 / месяц", "500 / месяц"],
+        ["AI-отчёты", "—", "30 / месяц", "150 / месяц"],
+        ["AI-сканер", "—", "Да", "Да"],
+        ["AI-сигналы", "—", "—", "Да"],
+        ["Лучше всего для", "Дисциплины", "Активного разбора", "AI Trading Desk"],
+      ],
+      finalTitle: "Честная рекомендация",
+      finalText:
+        "Выбирай Core для структуры, Edge для рыночного интеллекта и активного разбора, Elite для AI-сигналов и полного workflow сигнал → журнал.",
+      disclaimer:
+        "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.",
     },
-    team: {
-      eyebrow: "Команда",
-      title: "Для трейдеров, которым нужна дисциплина, а не шум.",
-      text: "SkillEdge AI создаётся как слой эффективности для соло-трейдеров, менторов и проп-команд.",
+    teamPage: {
+      heroBadge: "О SkillEdge AI",
+      heroTitle: "Мы строим AI-систему для трейдинга, которую серьёзные трейдеры хотели бы иметь уже сейчас.",
+      heroText:
+        "SkillEdge AI создаётся вокруг одной идеи: трейдерам не нужен ещё больший шум. Им нужна система, которая соединяет рыночные возможности, журнал, дисциплину исполнения, обучение и личный прогресс.",
+      ctaProduct: "Посмотреть продукт",
+      ctaPricing: "Посмотреть тарифы",
+      philosophyBadge: "Философия продукта",
+      philosophyTitle: "Процесс важнее предсказаний",
+      beliefs: [
+        "Сигналы без обучения создают зависимость.",
+        "Сделку без плана невозможно нормально разобрать.",
+        "Журнал без обратной связи превращается в кладбище старых сделок.",
+        "Лучший продукт делает трейдера спокойнее, острее и дисциплинированнее.",
+        "Персональные AI-сигналы становятся сильными только тогда, когда трейдер собирает чистую историю сделок.",
+      ],
+      storyEyebrow: "Наша история",
+      storyTitle: "SkillEdge AI создаётся для трейдеров, которым нужны дисциплина, структура и измеримый прогресс.",
+      storyText:
+        "Продукт вырос из проблемы, с которой сталкиваются многие активные трейдеры: рынок даёт слишком много информации, но почти не даёт честной обратной связи по исполнению. SkillEdge AI должен связать решения трейдера, скриншоты, журнал, сигналы и исходы в одну серьёзную систему разбора.",
+      teamEyebrow: "Структура команды",
+      teamTitle: "Страница построена как команда продукта: трейдинг, продукт, данные и поддержка.",
+      teamText:
+        "Эти карточки — готовый макет About Us. Позже ты сможешь вставить реальные фото, имена и роли без изменения структуры страницы.",
+      teamCards: [
+        ["Основатель / видение продукта", "Отвечает за направление продукта, workflow трейдера, тарифную логику и premium-позиционирование."],
+        ["Trading Research", "Определяет сетапы, логику сигналов, критерии разбора журнала и образовательные плейбуки."],
+        ["AI и данные", "Строит логику сканера, AI-промпты, обогащение данных, лимиты и backend-gates."],
+        ["Дизайн и опыт", "Формирует dashboard, публичные страницы, locked states, loading states и premium-интерфейс."],
+        ["Support Operations", "Закрывает вопросы клиентов по продукту, оплате, доступу и операторскому потоку."],
+        ["Безопасность и инфраструктура", "Защищает routes, API-ключи, Supabase-доступ, rate limits и production-деплой."],
+      ],
+      principlesEyebrow: "Принципы",
+      principlesTitle: "Серьёзный trading-продукт должен честно говорить о риске и строиться вокруг процесса.",
+      principles: [
+        ["Никакой фальшивой уверенности", "В трейдинге есть риск. SkillEdge AI не должен делать вид, что модель или сигнал могут гарантировать прибыль."],
+        ["Прозрачная логика", "Клиент должен понимать, почему появился сигнал, какие источники отслеживаются и что в идее сильное или слабое."],
+        ["Premium-мышление", "Каждая функция должна быть полезной, серьёзной и связанной с реальным процессом трейдера."],
+      ],
+      roadmapEyebrow: "План развития",
+      roadmapTitle: "Мы строим продукт в сторону premium AI Trading Desk.",
+      roadmapText:
+        "Launch-основа уже продуктовая: журнал, сигналы, обучение, отчёты, поддержка, оплата и рыночная разведка. Следующий слой — premium data, полный market scan и персональные сигналы на базе истории клиента.",
+      roadmap: [
+        ["01", "Launch foundation", "Журнал, dashboard, скриншоты, обучение, отчёты, crypto-доступ и фундамент поддержки."],
+        ["02", "Сигналы и поведение", "AI-сигналы, отслеживание решений, черновики сделок, outcome learning и коучинг упущенных возможностей."],
+        ["03", "Premium data", "Полное покрытие тикеров, Binance universe, катализаторы, heatmaps, halt screener и более сильная логика сканера."],
+        ["04", "Личное преимущество", "AI учится на лучших сетапах клиента, слабых паттернах, ошибках исполнения и истории журнала."],
+      ],
+      finalTitle: "Помочь трейдерам выйти из хаоса и начать работать через систему.",
+      finalText:
+        "SkillEdge AI создан для трейдеров, которые хотят глубже разбирать, чище думать, дисциплинированнее исполнять и строить повторяемое преимущество на реальных данных, а не на эмоциях и памяти.",
     },
-    resultsEyebrow: "Результаты",
-    resultsTitle: "Что получает трейдер после внедрения",
-    results: [
-      [
-        "+18% к качеству исполнения",
-        "После 4 недель регулярного разбора сделок трейдеры лучше отсекают слабые сетапы и реже входят импульсивно.",
-      ],
-      [
-        "-32% повторяющихся ошибок",
-        "AI-коуч выделяет revenge trades, поздние входы, нарушения стопа и оверсайз до того, как это становится привычкой.",
-      ],
-      [
-        "2.4x быстрее разбор сессии",
-        "Вместо хаотичных скриншотов трейдер получает структурированный отчёт по сетапам, риску и дисциплине.",
-      ],
-    ],
     footer: {
+      description:
+        "Premium AI-пространство для серьёзных трейдеров: рыночная разведка, AI-сигналы, журнал, разбор исполнения, плейбук, отчёты и коучинг в одной системе.",
+      product: "Продукт",
+      features: "Функции",
+      resources: "Ресурсы",
+      legal: "Документы",
+      productLinks: ["Главная", "Продукт", "Тарифы", "О нас"],
+      featureLinks: ["AI Trading Desk", "AI-сигналы", "Рыночная разведка", "Журнал и скриншоты", "Коуч исполнения", "Обучение на исходах", "Плейбук", "Отчёты", "Центр обучения", "Помощник поддержки"],
+      resourceLinks: ["Начало работы", "Как работает SkillEdge", "Гайд по журналу сделок", "Гайд по AI-сигналам", "Связаться с поддержкой"],
+      legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
+      cookieSettings: "Настройки cookie",
+      choosePlan: "Выбрать тариф",
+      requestDemo: "Запросить демо",
+      risk:
+        "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.",
       contact: "Контакты",
       location: "Dubai / Warsaw / Kyiv",
       demo: "Демо продукта по запросу",
+      rights: "© 2026 SkillEdge AI. Все права защищены.",
+      bottom: "Создано для трейдеров, которым нужны структура, дисциплина и измеримый прогресс.",
     },
     auth: {
       login: "Вход",
@@ -331,156 +600,282 @@ table: [
       switchToLogin: "Уже есть аккаунт? Войти",
       switchToRegister: "Нет аккаунта? Зарегистрироваться",
       checking: "Проверяем аккаунт...",
-      creatingInvoice: "Создаём счёт NOWPayments...",
+      creatingAccount: "Создаём аккаунт...",
+      creatingInvoice: "Создаём крипто-счёт...",
       loginRequired: "Войдите или зарегистрируйтесь, чтобы оплатить тариф.",
       afterRegister: "Аккаунт создан. Если нужно, подтвердите email.",
-    },
-    billing: {
-      monthly: "1 месяц",
-      halfyear: "6 месяцев",
-      yearly: "1 год",
-      payCrypto: "Оплатить USDT",
-      cardSoon: "Оплата картой — скоро",
-      periodMonthly: "/ месяц",
-      periodHalfyear: "/ 6 месяцев",
-      periodYearly: "/ год",
-      networkNote: "* оплата в сети TRON TRC20",
+      authError: "Ошибка авторизации.",
     },
   },
-
   ua: {
     lang: "UA",
     switchLanguage: "Мова",
-    brandTag: "Performance intelligence",
+    brandTag: "Інтелект ефективності",
     requestDemo: "Запросити демо",
+    choosePlan: "Обрати тариф",
+    viewProduct: "Переглянути продукт",
+    viewPricing: "Переглянути тарифи",
+    viewAbout: "Про нас",
     nav: {
       home: "Головна",
       product: "Продукт",
       pricing: "Тарифи",
-      team: "Команда",
+      team: "Про нас",
     },
-    heroBadge: "AI-платформа торгового інтелекту",
-    heroTitle: "Знайди свою перевагу до того, як ринок знову тебе покарає.",
+    heroBadge: "Premium AI-платформа для трейдера",
+    heroTitle: "Перетвори ринковий шум, історію угод і помилки виконання на зрозуміліший торговий процес.",
     heroText:
-      "SkillEdge AI показує, чому ти заробляєш, чому втрачаєш, які патерни варто торгувати і де поведінка непомітно знищує твій PnL.",
-    start: "Отримати ранній доступ",
-    tour: "Подивитися продукт",
+      "SkillEdge AI поєднує журнал, скріншоти, аналіз графіків, ринкову розвідку, AI-сканер, сигнали, звіти та навчання в одному premium-просторі — без обіцянок прибутку і без заміни твого власного рішення.",
+    start: "Обрати тариф",
+    tour: "Переглянути продукт",
     stats: [
-      ["50k+", "угод проаналізовано"],
-      ["82%", "користувачів знаходять повторювані помилки"],
-      ["6x", "швидший розбір сесії"],
+      ["Private beta", "створюється для серйозних активних трейдерів"],
+      ["Журнал в основі", "твої угоди стають джерелом даних"],
+      ["Edge+", "доступ до сканера та ринкового брифу"],
     ],
     problemEyebrow: "Проблема",
-    problemTitle: "Більшості трейдерів не бракує інформації. Їм бракує саморозуміння.",
+    problemTitle: "Більшості трейдерів не потрібен ще більший шум. Їм потрібен чистіший процес.",
     problemText:
-      "Скриншоти, нотатки, вотчлисти й емоції розкидані всюди. SkillEdge AI поєднує їх в одну систему для виконання, розбору й пошуку патернів.",
-    product: {
-      eyebrow: "Продукт",
-      title: "Єдиний робочий простір для торгової ефективності.",
-      text: "Веди журнал угод, завантажуй скриншоти, запитуй AI-коуча, аналізуй патерни й перетворюй кожну сесію на вимірюваний зворотний зв’язок.",
+      "Графіки, скріншоти, емоції, списки спостереження, нотатки й помилки часто живуть у різних місцях. SkillEdge AI збирає їх в один робочий процес, щоб трейдер міг розбирати рішення, розуміти патерни та будувати повторювану систему.",
+    homeSections: {
+      whyTitle: "Що допомагає організувати SkillEdge AI",
+      whyText:
+        "Платформа побудована навколо реального торгового циклу: знайти важливе, спланувати угоду, виконати дисципліновано, записати результат і зробити висновок із результату.",
       cards: [
-        ["Журнал угод", "Фіксуй тикер, сетап, емоції, обсяг, результат і скриншоти."],
-        ["AI-розбір", "Отримуй структурний фідбек щодо помилок, ризику, таймінгу й виконання."],
-        ["Графіки TradingView", "Використовуй вбудовані графіки для технічного аналізу й контексту."],
-        ["Навчання", "Зберігай уроки, плейбуки, чеклисти й матеріали в одному місці."],
-        ["Звіти", "Створюй тижневі й місячні звіти щодо дисципліни та росту."],
-        ["Командний шар", "Elite відкриває команди, порівняння трейдерів і експорт звітів."],
+        ["Журнал і скріншоти", "Фіксуй угоди, скріншоти, емоції, помилки, ризик і уроки в одному місці."],
+        ["AI-коуч", "Отримуй структурний розбір логіки угоди, ризику, дисципліни та якості рішення."],
+        ["Ринкова розвідка", "Edge та Elite відкривають шар сканера для акцій, крипти й актуального ринкового контексту."],
+        ["AI-сигнали", "Elite відкриває premium-сигнали із сетапом, тригером, зоною входу, стопом, цілями та розбором результату."],
       ],
     },
-    pricing: {
-      eyebrow: "Тарифи",
-      title: "Обери план під свій рівень амбіцій у трейдингу.",
-      text: "Почни просто, а потім відкрий глибоку AI-аналітику, розбір скриншотів, live-зіставлення й командні сценарії.",
-      demoNote:
-  "Натискаючи «Запросити демо», ви за $11.99 отримуєте доступ на 7 днів до тарифу SkillEdge Core з лімітом 10 AI-запитів для перегляду кабінету та тесту базових функцій.",
-      most: "Найпопулярніший",
-      month: "/ місяць",
-      buy: "Купити план",
+    productPage: {
+      heroBadge: "Продукт",
+      heroTitle: "Єдиний робочий простір для торгової ефективності.",
+      heroText:
+        "SkillEdge AI створюється як premium trading operating system: журнал, скріншоти, AI-коуч, звіти, графіки, сканер, сигнали, плейбук і підтримка в одному чистому процесі.",
+      ctaPrimary: "Обрати тариф",
+      ctaSecondary: "Навіщо ми це будуємо",
+      heroCards: [
+        ["AI Trading Desk", "Ринкова розвідка, сигнали, журнал і коучинг в одній системі."],
+        ["Сигнал → журнал", "Створюй чернетку угоди із сигналу та порівнюй план із реальним виконанням."],
+        ["Особиста перевага", "Довгострокова архітектура будується навколо найкращих і найгірших патернів самого трейдера."],
+      ],
+      deskTitle: "Trading desk має давати контекст, а не сліпі команди.",
+      deskText:
+        "SkillEdge AI має пояснювати, чому ситуація важлива, що її підтверджує, що скасовує і де ризик. Мета — краща якість рішень, а не сліпа залежність від сигналів.",
+      deskCards: [
+        ["Ринкова розвідка", "Знаходь акції та крипту, які заслуговують уваги, не витрачаючи час на мертві графіки."],
+        ["AI-сканер", "Edge та Elite отримують AI Market Brief по найкращих активних кандидатах ринку."],
+        ["AI-сигнали", "Elite отримує структуровані сигнали: сетап, напрямок, тригер, зона входу, стоп і цілі."],
+        ["Навчання на результатах", "Позначай взяті, пропущені та проігноровані сигнали, щоб кожен результат ставав уроком."],
+      ],
+      flowEyebrow: "Процес",
+      flowTitle: "Від сканування ринку до особистого прогресу — один пов’язаний цикл.",
+      flowText:
+        "Кожна серйозна торгова ідея має ставати даними: що показав ринок, що планував трейдер, що було виконано і чому навчив результат.",
+      flow: [
+        ["01", "Ринок починає рухатися", "SkillEdge відстежує активні акції, крипту, незвичний рух, каталізатори та ринковий контекст."],
+        ["02", "AI фільтрує шум", "Система ранжує ситуації за якістю, свіжістю, ризиком і ясністю сетапу."],
+        ["03", "З’являється план", "Трейдер бачить напрямок, тригер, зону входу, стоп, цілі, супровід і скасування ідеї."],
+        ["04", "Журнал підключається", "Взятий сигнал може стати угодою в журналі зі скріншотами, нотатками та розбором виконання."],
+        ["05", "Навчання накопичується", "Звіти, розбір результатів і коучинг перетворюють повторення на сильніший процес."],
+      ],
+      modulesEyebrow: "Модулі",
+      modulesTitle: "Усі частини продукту мають працювати разом.",
+      modulesText:
+        "Кожен модуль корисний окремо. Разом вони створюють premium-простір, де трейдер знаходить ситуації, діє структурно і розбирає результат.",
+      modules: [
+        ["Журнал і скріншоти", "Серйозний журнал, який стає джерелом даних для аналізу, звітів і майбутньої персоналізації.", ["Угоди та скріншоти", "PnL і відсоток прибуткових угод", "CSV/XLSX експорт", "AI-аналіз журналу"]],
+        ["Графіки та списки спостереження", "Робочий простір графіків, пов’язаний із тикерами, списками, скріншотами та майбутнім premium-аналізом.", ["TradingView workspace", "Введення тикера", "Список спостереження", "Основа AI-аналізу графіка"]],
+        ["Ринкова розвідка", "Шар сканера для пошуку активних акцій і крипти з чесним відображенням джерел.", ["Кандидати по акціях і крипті", "Ринковий контекст", "Мітки джерел", "AI Market Brief"]],
+        ["AI-сигнали", "Elite-сигнали з планом, навчанням і розбором результату.", ["Плаваючий віджет", "Центр сигналів", "Детальний розбір", "Зв’язка сигналу з журналом"]],
+        ["Звіти та навчання", "Шар розбору, який перетворює угоди на зворотний зв’язок і повторювані уроки.", ["AI-звіти", "Навчальні блоки", "Основа плейбука", "Фокус виконання"]],
+        ["Підтримка", "Site-wide помічник і операторський потік для питань щодо продукту, оплати та доступу.", ["Помічник підтримки", "Запит оператора", "Email-підтримка", "Відповіді з адмінки"]],
+      ],
+      differentEyebrow: "Відмінність",
+      differentTitle: "Це не черговий сервіс сигналів. Це система ефективності.",
+      differentText:
+        "Сильні трейдери не просто шукають входи. Вони будують процес, контроль ризику, розбір, дисципліну та повторювані патерни. SkillEdge AI будується навколо цієї реальності.",
+      comparisons: [
+        ["Замість звичайного сканера", "Ти бачиш тільки тикери й усе одно маєш здогадуватися, що важливо.", "SkillEdge пояснює, чому тикер важливий, який сетап, де ризик і що підтверджує ідею."],
+        ["Замість простого журналу", "Ти зберігаєш угоди, але не перетворюєш їх на перевагу.", "SkillEdge пов’язує угоди, скріншоти, сигнали, результати й помилки в систему покращення."],
+        ["Замість звичайного чат-бота", "Ти ставиш випадкові питання й отримуєш розрізнені відповіді.", "SkillEdge працює всередині процесу: сигнали, журнал, звіти, виконання, навчання і плейбук."],
+      ],
+      finalTitle: "Побудуй торгову систему навколо своєї реальної поведінки.",
+      finalText:
+        "SkillEdge AI створений для трейдерів, яким набридли розрізнені інструменти, емоційні рішення та незрозумілі розбори. Продукт допомагає чистіше бачити ринок, діяти структурніше і розуміти, що покращувати далі.",
+      finalChecklist: [
+        "Журнал, скріншоти та аналітика",
+        "AI-коуч і розбір графіків",
+        "Ринкова розвідка та AI-сканер для Edge+",
+        "AI-сигнали та Signal-to-Journal для Elite",
+        "Звіти, навчання й основа плейбука",
+        "Помічник підтримки та запит оператора",
+      ],
+    },
+    pricingPage: {
+      heroBadge: "Тарифи",
+      heroTitle: "Обери рівень інтелекту навколо свого торгового процесу.",
+      heroText:
+        "Core будує структуру. Edge додає ринкову розвідку та AI-сканер. Elite відкриває повний AI Trading Desk із сигналами, зв’язкою з журналом і навчанням на результатах.",
+      billingToggle: {
+        monthly: "1 місяць",
+        halfyear: "6 місяців",
+        yearly: "1 рік",
+      },
+      period: {
+        monthly: "/ місяць",
+        halfyear: "/ 6 місяців",
+        yearly: "/ рік",
+      },
+      cardPayment: "Оплата карткою готується",
+      cryptoNote: "* крипто-оплата через доступний launch-flow",
+      checkoutStatus: {
+        checking: "Перевіряємо акаунт...",
+        invoice: "Створюємо крипто-рахунок...",
+        noUrl: "Крипто-рахунок створено, але посилання на оплату не повернулося.",
+        unavailable: "Крипто-оплата зараз недоступна.",
+      },
+      planBadge: {
+        core: "Почни з дисципліни",
+        edge: "Найкращий варіант для активного трейдера",
+        elite: "Повний AI Trading Desk",
+      },
       plans: [
-  [
-    "starter",
-    "SkillEdge Core",
-    "$49",
-    "Для трейдера, який хоче почати системно вести журнал і отримувати базовий AI-розбір.",
-    [
-      "До 300 угод у журналі",
-      "До 3 скріншотів на одну угоду",
-      "50 AI Coach запитів на місяць",
-      "10 AI-аналізів журналу на місяць",
-      "20 AI-розборів графіків угод на місяць",
-      "Базова статистика: PnL, win rate, average PnL",
-      "CSV/XLSX експорт журналу",
-    ],
-  ],
-  [
-    "pro",
-    "SkillEdge Edge",
-    "$99",
-    "Для активного трейдера, якому потрібні вищі ліміти, глибший AI-аналіз і робота з патернами.",
-    [
-      "До 2 000 угод у журналі",
-      "До 5 скріншотів на одну угоду",
-      "200 AI Coach запитів на місяць",
-      "50 AI-аналізів журналу на місяць",
-      "100 AI-розборів графіків угод на місяць",
-      "Розширена статистика та equity curve",
-      "Глибший AI-розбір помилок, сетапів і дисципліни",
-    ],
-  ],
-  [
-    "elite",
-    "SkillEdge Elite",
-    "$149",
-    "Для серйозних трейдерів, менторів і проп-команд з максимальними лімітами.",
-    [
-      "До 10 000 угод у журналі",
-      "До 10 скріншотів на одну угоду",
-      "1 000 AI Coach запитів на місяць",
-      "300 AI-аналізів журналу на місяць",
-      "500 AI-розборів графіків угод на місяць",
-      "Максимальні ліміти для активної торгівлі",
-      "Підходить для менторів, команд і просунутих трейдерів",
-    ],
-  ],
-],
-      compareEyebrow: "Порівняння планів",
-      compareTitle: "Чим відрізняються плани",
-     compareText:
-  "SkillEdge Core — стартовий план. SkillEdge Edge відкриває вищі AI-ліміти та глибший аналіз. SkillEdge Elite створений для просунутих трейдерів, менторів і команд.",
-table: [
-  ["Функція", "SkillEdge Core", "SkillEdge Edge", "SkillEdge Elite"],
-  ["Угод у журналі", "300", "2 000", "10 000"],
-  ["Скріншотів на угоду", "3", "5", "10"],
-  ["AI Coach запитів / місяць", "50", "200", "1 000"],
-  ["AI-аналізів журналу / місяць", "10", "50", "300"],
-  ["AI-розборів графіків / місяць", "20", "100", "500"],
-],
+        {
+          id: "starter",
+          name: "SkillEdge Core",
+          headline: "Для трейдера, якому спочатку потрібна структура.",
+          text:
+            "Побудуй основу: журнал, скріншоти, AI-коуч, базовий аналіз графіків, експорт і чистіший процес розбору.",
+          bestFor: "Найкраще для дисципліни, фіксації угод і відмови від торгівлі по пам’яті.",
+          cta: "Почати з Core",
+          features: ["До 300 угод", "3 скріншоти на угоду", "50 запитів до AI-коуча / місяць", "10 AI-аналізів журналу / місяць", "20 AI-аналізів графіка / місяць", "CSV/XLSX експорт"],
+        },
+        {
+          id: "pro",
+          name: "SkillEdge Edge",
+          headline: "Для активного трейдера, якому потрібен глибокий розбір і ринковий контекст.",
+          text:
+            "Відкрий вищі ліміти, AI-звіти, premium-аналіз графіків, ринковий контекст і шар AI-сканера / AI Market Brief.",
+          bestFor: "Найкраще для активних трейдерів, які серйозно розбирають угоди й шукають повторювані помилки та сетапи.",
+          cta: "Перейти на Edge",
+          features: ["Усе з Core", "До 2 000 угод", "5 скріншотів на угоду", "200 запитів до AI-коуча / місяць", "30 AI-звітів / місяць", "AI-сканер / ринкова розвідка"],
+        },
+        {
+          id: "elite",
+          name: "SkillEdge Elite",
+          headline: "Для серйозного трейдера, якому потрібен повний AI Trading Desk.",
+          text:
+            "Відкрий AI-сигнали, плаваючий віджет, Signal-to-Journal, відстеження рішень, навчання на результатах і максимальні AI-ліміти.",
+          bestFor: "Найкраще для просунутих трейдерів, яким потрібні структурні сигнали та повний цикл зворотного зв’язку.",
+          cta: "Відкрити Elite",
+          features: ["Усе з Edge", "До 10 000 угод", "10 скріншотів на угоду", "1 000 запитів до AI-коуча / місяць", "150 AI-звітів / місяць", "AI-сигнали + Signal-to-Journal"],
+        },
+      ],
+      signalEyebrow: "Навіщо потрібен шар сигналів",
+      signalTitle: "Сигнали SkillEdge мають навчати, а не змушувати трейдера сліпо натискати.",
+      signalText:
+        "Слабкий сервіс сигналів створює залежність. Сильна торгова система створює ясність: сетап, ризик, підтвердження, скасування ідеї та урок після результату.",
+      signalCards: [
+        ["Не сліпі команди", "Сигнали — це структурні торгові ідеї: сетап, напрямок, тригер, зона входу, стоп, цілі та ризик."],
+        ["Розбір до дії", "Кожен серйозний сигнал пояснює, чому він з’явився, що його підтверджує і що робить його небезпечним."],
+        ["Сигнал → журнал", "Взятий сигнал може стати угодою в журналі, щоб порівняти план і реальне виконання."],
+        ["Коучинг за результатом", "Взяті, пропущені та проігноровані рішення показують упущені можливості, хороші пропуски та слабке виконання."],
+      ],
+      comparisonTitle: "Порівняння тарифів",
+      comparisonText: "Обери тариф під поточний торговий процес.",
+      comparison: [
+        ["Функція", "Core", "Edge", "Elite"],
+        ["Журнал + скріншоти", "Так", "Так", "Так"],
+        ["AI-коуч", "50 / місяць", "200 / місяць", "1 000 / місяць"],
+        ["AI-аналіз журналу", "10 / місяць", "50 / місяць", "300 / місяць"],
+        ["AI-аналіз графіка", "20 / місяць", "100 / місяць", "500 / місяць"],
+        ["AI-звіти", "—", "30 / місяць", "150 / місяць"],
+        ["AI-сканер", "—", "Так", "Так"],
+        ["AI-сигнали", "—", "—", "Так"],
+        ["Найкраще для", "Дисципліни", "Активного розбору", "AI Trading Desk"],
+      ],
+      finalTitle: "Чесна рекомендація",
+      finalText:
+        "Обирай Core для структури, Edge для ринкового інтелекту та активного розбору, Elite для AI-сигналів і повного workflow сигнал → журнал.",
+      disclaimer:
+        "SkillEdge AI не є фінансовою рекомендацією і не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу.",
     },
-    team: {
-      eyebrow: "Команда",
-      title: "Для трейдерів, яким потрібна дисципліна, а не шум.",
-      text: "SkillEdge AI створюється як шар ефективності для соло-трейдерів, менторів і проп-команд.",
+    teamPage: {
+      heroBadge: "Про SkillEdge AI",
+      heroTitle: "Ми будуємо AI-систему для трейдингу, яку серйозні трейдери хотіли б мати вже зараз.",
+      heroText:
+        "SkillEdge AI створюється навколо однієї ідеї: трейдерам не потрібен ще більший шум. Їм потрібна система, яка поєднує ринкові можливості, журнал, дисципліну виконання, навчання та особистий прогрес.",
+      ctaProduct: "Переглянути продукт",
+      ctaPricing: "Переглянути тарифи",
+      philosophyBadge: "Філософія продукту",
+      philosophyTitle: "Процес важливіший за передбачення",
+      beliefs: [
+        "Сигнали без навчання створюють залежність.",
+        "Угоду без плану неможливо нормально розібрати.",
+        "Журнал без зворотного зв’язку перетворюється на кладовище старих угод.",
+        "Найкращий продукт робить трейдера спокійнішим, гострішим і дисциплінованішим.",
+        "Персональні AI-сигнали стають сильними тільки тоді, коли трейдер збирає чисту історію угод.",
+      ],
+      storyEyebrow: "Наша історія",
+      storyTitle: "SkillEdge AI створюється для трейдерів, яким потрібні дисципліна, структура та вимірюваний прогрес.",
+      storyText:
+        "Продукт виріс із проблеми, з якою стикаються багато активних трейдерів: ринок дає занадто багато інформації, але майже не дає чесного зворотного зв’язку щодо виконання. SkillEdge AI має зв’язати рішення трейдера, скріншоти, журнал, сигнали й результати в одну серйозну систему розбору.",
+      teamEyebrow: "Структура команди",
+      teamTitle: "Сторінка побудована як команда продукту: трейдинг, продукт, дані та підтримка.",
+      teamText:
+        "Ці картки — готовий макет About Us. Пізніше ти зможеш вставити реальні фото, імена та ролі без зміни структури сторінки.",
+      teamCards: [
+        ["Засновник / бачення продукту", "Відповідає за напрям продукту, workflow трейдера, тарифну логіку та premium-позиціонування."],
+        ["Trading Research", "Визначає сетапи, логіку сигналів, критерії розбору журналу та освітні плейбуки."],
+        ["AI і дані", "Будує логіку сканера, AI-промпти, збагачення даних, ліміти та backend-gates."],
+        ["Дизайн і досвід", "Формує dashboard, публічні сторінки, locked states, loading states і premium-інтерфейс."],
+        ["Support Operations", "Закриває питання клієнтів щодо продукту, оплати, доступу й операторського потоку."],
+        ["Безпека та інфраструктура", "Захищає routes, API-ключі, Supabase-доступ, rate limits і production-деплой."],
+      ],
+      principlesEyebrow: "Принципи",
+      principlesTitle: "Серйозний trading-продукт має чесно говорити про ризик і будуватися навколо процесу.",
+      principles: [
+        ["Жодної фальшивої впевненості", "У трейдингу є ризик. SkillEdge AI не має робити вигляд, що модель або сигнал можуть гарантувати прибуток."],
+        ["Прозора логіка", "Клієнт має розуміти, чому з’явився сигнал, які джерела відстежуються і що в ідеї сильне або слабке."],
+        ["Premium-мислення", "Кожна функція має бути корисною, серйозною та пов’язаною з реальним процесом трейдера."],
+      ],
+      roadmapEyebrow: "План розвитку",
+      roadmapTitle: "Ми будуємо продукт у напрямку premium AI Trading Desk.",
+      roadmapText:
+        "Launch-основа вже продуктова: журнал, сигнали, навчання, звіти, підтримка, оплата та ринкова розвідка. Наступний шар — premium data, повний market scan і персональні сигнали на основі історії клієнта.",
+      roadmap: [
+        ["01", "Launch foundation", "Журнал, dashboard, скріншоти, навчання, звіти, crypto-доступ і фундамент підтримки."],
+        ["02", "Сигнали та поведінка", "AI-сигнали, відстеження рішень, чернетки угод, outcome learning і коучинг упущених можливостей."],
+        ["03", "Premium data", "Повне покриття тикерів, Binance universe, каталізатори, heatmaps, halt screener і сильніша логіка сканера."],
+        ["04", "Особиста перевага", "AI навчається на найкращих сетапах клієнта, слабких патернах, помилках виконання та історії журналу."],
+      ],
+      finalTitle: "Допомогти трейдерам вийти з хаосу й почати працювати через систему.",
+      finalText:
+        "SkillEdge AI створений для трейдерів, які хочуть глибше розбирати, чистіше думати, дисциплінованіше виконувати й будувати повторювану перевагу на реальних даних, а не на емоціях і пам’яті.",
     },
-    resultsEyebrow: "Результати",
-    resultsTitle: "Що отримує трейдер після впровадження",
-    results: [
-      [
-        "+18% до якості виконання",
-        "Після 4 тижнів регулярного розбору угод трейдери краще відсікають слабкі сетапи й рідше входять імпульсивно.",
-      ],
-      [
-        "-32% повторюваних помилок",
-        "AI-коуч виділяє revenge trades, пізні входи, порушення стопа та оверсайз до того, як це стає звичкою.",
-      ],
-      [
-        "2.4x швидший розбір сесії",
-        "Замість хаотичних скриншотів трейдер отримує структурований звіт за сетапами, ризиком і дисципліною.",
-      ],
-    ],
     footer: {
+      description:
+        "Premium AI-простір для серйозних трейдерів: ринкова розвідка, AI-сигнали, журнал, розбір виконання, плейбук, звіти та коучинг в одній системі.",
+      product: "Продукт",
+      features: "Функції",
+      resources: "Ресурси",
+      legal: "Документи",
+      productLinks: ["Головна", "Продукт", "Тарифи", "Про нас"],
+      featureLinks: ["AI Trading Desk", "AI-сигнали", "Ринкова розвідка", "Журнал і скріншоти", "Коуч виконання", "Навчання на результатах", "Плейбук", "Звіти", "Центр навчання", "Помічник підтримки"],
+      resourceLinks: ["Початок роботи", "Як працює SkillEdge", "Гайд по журналу угод", "Гайд по AI-сигналах", "Зв’язатися з підтримкою"],
+      legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
+      cookieSettings: "Налаштування cookie",
+      choosePlan: "Обрати тариф",
+      requestDemo: "Запросити демо",
+      risk:
+        "SkillEdge AI не є фінансовою рекомендацією і не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу.",
       contact: "Контакти",
       location: "Dubai / Warsaw / Kyiv",
       demo: "Демо продукту за запитом",
+      rights: "© 2026 SkillEdge AI. Усі права захищено.",
+      bottom: "Створено для трейдерів, яким потрібні структура, дисципліна та вимірюваний прогрес.",
     },
     auth: {
       login: "Вхід",
@@ -497,22 +892,19 @@ table: [
       switchToLogin: "Вже є акаунт? Увійти",
       switchToRegister: "Немає акаунта? Зареєструватися",
       checking: "Перевіряємо акаунт...",
-      creatingInvoice: "Створюємо рахунок NOWPayments...",
+      creatingAccount: "Створюємо акаунт...",
+      creatingInvoice: "Створюємо крипто-рахунок...",
       loginRequired: "Увійдіть або зареєструйтеся, щоб оплатити тариф.",
       afterRegister: "Акаунт створено. Якщо потрібно, підтвердьте email.",
-    },
-    billing: {
-      monthly: "1 місяць",
-      halfyear: "6 місяців",
-      yearly: "1 рік",
-      payCrypto: "Оплатити USDT",
-      cardSoon: "Оплата карткою — скоро",
-      periodMonthly: "/ місяць",
-      periodHalfyear: "/ 6 місяців",
-      periodYearly: "/ рік",
-      networkNote: "* оплата в мережі TRON TRC20",
+      authError: "Помилка авторизації.",
     },
   },
+} as const;
+
+const priceMatrix = {
+  starter: { monthly: 49, halfyear: 249, yearly: 399 },
+  pro: { monthly: 99, halfyear: 499, yearly: 799 },
+  elite: { monthly: 149, halfyear: 749, yearly: 1249 },
 } as const;
 
 export default function Landing({
@@ -521,31 +913,7 @@ export default function Landing({
   initialPage?: PageKey;
 }) {
   const [language, setLanguage] = useState<Language>("en");
-  const router = useRouter();
-const pathname = usePathname();
-
-const pageHref: Record<PageKey, string> = {
-  home: "/",
-  product: "/product",
-  pricing: "/pricing",
-  team: "/team",
-};
-
-const [active, setActiveState] = useState<PageKey>(initialPage);
-
-useEffect(() => {
-  setActiveState(initialPage);
-}, [initialPage]);
-
-const setActive = (page: PageKey) => {
-  setActiveState(page);
-
-  const href = pageHref[page];
-
-  if (pathname !== href) {
-    router.push(href);
-  }
-};
+  const [active, setActiveState] = useState<PageKey>(initialPage);
   const [menuOpen, setMenuOpen] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [checkoutStatus, setCheckoutStatus] = useState("");
@@ -558,64 +926,78 @@ const setActive = (page: PageKey) => {
     billingPeriod: BillingPeriod;
   } | null>(null);
 
-useEffect(() => {
-  const savedLanguage = localStorage.getItem("skilledge_language");
-
-  if (
-    savedLanguage === "en" ||
-    savedLanguage === "ru" ||
-    savedLanguage === "ua"
-  ) {
-    setLanguage(savedLanguage);
-  }
-}, []);
-
-
+  const router = useRouter();
+  const pathname = usePathname();
   const t = dict[language];
   const authLabels = t.auth;
+
   useEffect(() => {
-  const loadSession = async () => {
-    const { data } = await supabase.auth.getSession();
-    setCurrentUserEmail(data.session?.user?.email ?? null);
-  };
+    setActiveState(initialPage);
+  }, [initialPage]);
 
-  loadSession();
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem("skilledge_language");
 
-  const {
-    data: { subscription },
-  } = supabase.auth.onAuthStateChange((_event, session) => {
-    setCurrentUserEmail(session?.user?.email ?? null);
-  });
+    if (savedLanguage === "en" || savedLanguage === "ru" || savedLanguage === "ua") {
+      setLanguage(savedLanguage);
+    }
+  }, []);
 
-  return () => {
-    subscription.unsubscribe();
-  };
-}, []);
+  useEffect(() => {
+    const loadSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setCurrentUserEmail(data.session?.user?.email ?? null);
+    };
+
+    loadSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setCurrentUserEmail(session?.user?.email ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const page = params.get("page");
 
     if (
-      page === "home" ||
-      page === "product" ||
-      page === "pricing" ||
-      page === "team"
-    ) {
-      setActive(page);
-    }
+  page === "home" ||
+  page === "product" ||
+  page === "pricing" ||
+  page === "team"
+) {
+  setActive(page);
+}
+
+if (page === "about") {
+  setActive("team");
+}
   }, []);
 
+  const setActive = (page: PageKey) => {
+    setActiveState(page);
+
+    const href = pageHref[page];
+
+    if (pathname !== href) {
+      router.push(href);
+    }
+  };
+
   const cycle = () => {
-  setLanguage((current) => {
-    const nextLanguage =
-      current === "en" ? "ru" : current === "ru" ? "ua" : "en";
-
-    localStorage.setItem("skilledge_language", nextLanguage);
-
-    return nextLanguage;
-  });
-};
+    setLanguage((current) => {
+      const nextLanguage = current === "en" ? "ru" : current === "ru" ? "ua" : "en";
+      localStorage.setItem("skilledge_language", nextLanguage);
+      window.dispatchEvent(new Event("skilledge:language-changed"));
+      return nextLanguage;
+    });
+  };
 
   const openAuthModal = (mode: "login" | "register") => {
     setAuthMode(mode);
@@ -629,20 +1011,18 @@ useEffect(() => {
     setAuthPassword("");
   };
 
-const handleLogout = async () => {
-  await supabase.auth.signOut();
-  setCurrentUserEmail(null);
-  setPendingCheckout(null);
-  setAuthStatus("");
-};
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setCurrentUserEmail(null);
+    setPendingCheckout(null);
+    setAuthStatus("");
+  };
 
   const handleAuthSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      setAuthStatus(
-        authMode === "login" ? authLabels.checking : "Creating account..."
-      );
+      setAuthStatus(authMode === "login" ? authLabels.checking : authLabels.creatingAccount);
 
       if (authMode === "register") {
         const { error } = await supabase.auth.signUp({
@@ -664,20 +1044,19 @@ const handleLogout = async () => {
       }
 
       const { data, error } = await supabase.auth.signInWithPassword({
-  email: authEmail,
-  password: authPassword,
-});
+        email: authEmail,
+        password: authPassword,
+      });
 
-if (error) {
-  setAuthStatus(error.message);
-  return;
-}
+      if (error) {
+        setAuthStatus(error.message);
+        return;
+      }
 
-setCurrentUserEmail(data.user?.email ?? authEmail);
+      setCurrentUserEmail(data.user?.email ?? authEmail);
 
-const checkout = pendingCheckout;
-
-closeAuthModal();
+      const checkout = pendingCheckout;
+      closeAuthModal();
 
       if (checkout) {
         setPendingCheckout(null);
@@ -686,16 +1065,13 @@ closeAuthModal();
         }, 300);
       }
     } catch (error) {
-      setAuthStatus(error instanceof Error ? error.message : "Auth error");
+      setAuthStatus(error instanceof Error ? error.message : authLabels.authError);
     }
   };
 
-  const handleCheckout = async (
-    id: string,
-    billingPeriod: BillingPeriod = "monthly"
-  ) => {
+  const handleCheckout = async (id: string, billingPeriod: BillingPeriod = "monthly") => {
     try {
-      setCheckoutStatus(authLabels.checking);
+      setCheckoutStatus(t.pricingPage.checkoutStatus.checking);
 
       const { data } = await supabase.auth.getSession();
       const token = data.session?.access_token;
@@ -707,9 +1083,9 @@ closeAuthModal();
         return;
       }
 
-      setCheckoutStatus(authLabels.creatingInvoice);
+      setCheckoutStatus(t.pricingPage.checkoutStatus.invoice);
 
-      const r = await fetch("/api/create-crypto-payment", {
+      const response = await fetch("/api/create-crypto-payment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -718,32 +1094,26 @@ closeAuthModal();
         body: JSON.stringify({ planId: id, billingPeriod }),
       });
 
-      const d = await r.json();
+      const result = await response.json();
 
-      if (!r.ok) {
-  throw new Error(
-    d?.details
-      ? `${d?.error}: ${d.details}`
-      : d?.error || "Crypto payment error"
-  );
-}
+      if (!response.ok) {
+        throw new Error(
+          result?.details
+            ? `${result?.error}: ${result.details}`
+            : result?.error || t.pricingPage.checkoutStatus.unavailable
+        );
+      }
 
-      if (d?.url) {
-        window.location.href = d.url;
+      if (result?.url) {
+        window.location.href = result.url;
         return;
       }
 
-      setCheckoutStatus(
-        "Crypto payment invoice created, but payment URL was not returned."
-      );
-    } catch (e) {
-      const message =
-        e instanceof Error
-          ? e.message
-          : "Crypto payment is not available right now.";
-
+      setCheckoutStatus(t.pricingPage.checkoutStatus.noUrl);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t.pricingPage.checkoutStatus.unavailable;
       setCheckoutStatus(message);
-      console.error(e);
+      console.error(error);
     }
   };
 
@@ -752,80 +1122,69 @@ closeAuthModal();
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070b16]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-3">
-  <BrandMark size="sm" />
-  <div className="text-left">
-    <div className="text-lg font-semibold">SkillEdge AI</div>
-    <div className="text-xs uppercase tracking-[0.2em] text-white/45">
-      {t.brandTag}
-    </div>
-  </div>
-</Link>
+            <BrandMark size="sm" />
+            <div className="text-left">
+              <div className="text-lg font-semibold">SkillEdge AI</div>
+              <div className="text-xs uppercase tracking-[0.2em] text-white/45">{t.brandTag}</div>
+            </div>
+          </Link>
 
           <nav className="hidden items-center gap-2 md:flex">
-  {navKeys.map((k) => (
-    <Link
-      key={k}
-      href={pageHref[k]}
-      className={`rounded-full px-4 py-2 text-sm transition ${
-        active === k
-          ? "bg-white text-black"
-          : "text-white/65 hover:bg-white/5 hover:text-white"
-      }`}
-    >
-      {t.nav[k]}
-    </Link>
-  ))}
-</nav>
+            {navKeys.map((key) => (
+              <Link
+                key={key}
+                href={pageHref[key]}
+                className={`rounded-full px-4 py-2 text-sm transition ${
+                  active === key ? "bg-white text-black" : "text-white/65 hover:bg-white/5 hover:text-white"
+                }`}
+              >
+                {t.nav[key]}
+              </Link>
+            ))}
+          </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-  <button
-    onClick={cycle}
-    className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
-  >
-    <Icon name="globe" className="mr-2 h-4 w-4" />
-    {t.lang}
-  </button>
+            <button
+              onClick={cycle}
+              className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
+            >
+              <Icon name="globe" className="mr-2 h-4 w-4" />
+              {t.lang}
+            </button>
 
-  <ButtonX onClick={() => handleCheckout("demo", "monthly")}>
-  {t.requestDemo}
-</ButtonX>
+            <ButtonX onClick={() => handleCheckout("demo", "monthly")}>{t.requestDemo}</ButtonX>
 
-  {currentUserEmail ? (
-    <>
-      <a
-        href="/dashboard"
-        className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
-      >
-        {authLabels.dashboard}
-      </a>
+            {currentUserEmail ? (
+              <>
+                <a href="/dashboard" className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]">
+                  {authLabels.dashboard}
+                </a>
+                <button
+                  onClick={handleLogout}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+                >
+                  {authLabels.logout}
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => openAuthModal("login")}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+                >
+                  {authLabels.login}
+                </button>
+                <button
+                  onClick={() => openAuthModal("register")}
+                  className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+                >
+                  {authLabels.register}
+                </button>
+              </>
+            )}
+          </div>
 
-      <button
-        onClick={handleLogout}
-        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-      >
-        {authLabels.logout}
-      </button>
-    </>
-  ) : (
-    <>
-      <button
-        onClick={() => openAuthModal("login")}
-        className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-      >
-        {authLabels.login}
-      </button>
-
-      <button
-        onClick={() => openAuthModal("register")}
-        className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
-      >
-        {authLabels.register}
-      </button>
-    </>
-  )}
-</div>
-
-          <button onClick={() => setMenuOpen((v) => !v)} className="md:hidden">
+          <button onClick={() => setMenuOpen((value) => !value)} className="md:hidden">
             <Icon name={menuOpen ? "close" : "menu"} className="h-6 w-6" />
           </button>
         </div>
@@ -839,71 +1198,58 @@ closeAuthModal();
               className="border-t border-white/10 bg-[#070b16]/95 px-4 pb-4 md:hidden"
             >
               <div className="flex flex-col gap-2 pt-4">
-                <button
-                  onClick={cycle}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
-                >
+                <button onClick={cycle} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75">
                   {t.switchLanguage}: {t.lang}
                 </button>
 
-                {navKeys.map((k) => (
-  <Link
-    key={k}
-    href={pageHref[k]}
-    onClick={() => setMenuOpen(false)}
-    className={`rounded-2xl px-4 py-3 text-left text-sm ${
-      active === k
-        ? "bg-white text-black"
-        : "bg-white/[0.04] text-white/75"
-    }`}
-  >
-    {t.nav[k]}
-  </Link>
-))}
+                {navKeys.map((key) => (
+                  <Link
+                    key={key}
+                    href={pageHref[key]}
+                    onClick={() => setMenuOpen(false)}
+                    className={`rounded-2xl px-4 py-3 text-left text-sm ${active === key ? "bg-white text-black" : "bg-white/[0.04] text-white/75"}`}
+                  >
+                    {t.nav[key]}
+                  </Link>
+                ))}
 
                 {currentUserEmail ? (
-  <>
-    <a
-      href="/dashboard"
-      onClick={() => setMenuOpen(false)}
-      className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black"
-    >
-      {authLabels.dashboard}
-    </a>
-
-    <button
-      onClick={() => {
-        setMenuOpen(false);
-        handleLogout();
-      }}
-      className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
-    >
-      {authLabels.logout}
-    </button>
-  </>
-) : (
-  <>
-    <button
-      onClick={() => {
-        setMenuOpen(false);
-        openAuthModal("login");
-      }}
-      className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
-    >
-      {authLabels.login}
-    </button>
-
-    <button
-      onClick={() => {
-        setMenuOpen(false);
-        openAuthModal("register");
-      }}
-      className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black"
-    >
-      {authLabels.register}
-    </button>
-  </>
-)}
+                  <>
+                    <a href="/dashboard" onClick={() => setMenuOpen(false)} className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black">
+                      {authLabels.dashboard}
+                    </a>
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
+                    >
+                      {authLabels.logout}
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        openAuthModal("login");
+                      }}
+                      className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
+                    >
+                      {authLabels.login}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setMenuOpen(false);
+                        openAuthModal("register");
+                      }}
+                      className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black"
+                    >
+                      {authLabels.register}
+                    </button>
+                  </>
+                )}
               </div>
             </motion.div>
           )}
@@ -913,30 +1259,14 @@ closeAuthModal();
       <main className="mx-auto max-w-7xl px-4 py-12 md:px-8">
         <AnimatePresence mode="wait">
           {active === "home" && <HomePage key="home" t={t} setActive={setActive} />}
-          {active === "product" && (
-  <ProductPage key="product" t={t} setActive={setActive} />
-)}
-          {active === "pricing" && (
-            <PricingPage
-              key="pricing"
-              t={t}
-              handleCheckout={handleCheckout}
-              checkoutStatus={checkoutStatus}
-            />
-          )}
-          {active === "team" && (
-  <TeamPage key="team" t={t} setActive={setActive} />
-)}
+          {active === "product" && <ProductPage key="product" t={t} setActive={setActive} />}
+          {active === "pricing" && <PricingPage key="pricing" t={t} handleCheckout={handleCheckout} checkoutStatus={checkoutStatus} />}
+          {active === "team" && <TeamPage key="team" t={t} setActive={setActive} />}
         </AnimatePresence>
       </main>
 
-      <PremiumFooter
-  t={t}
-  setActive={setActive}
-  handleCheckout={handleCheckout}
-/>
-
-<CookieConsent />
+      <PremiumFooter t={t} setActive={setActive} handleCheckout={handleCheckout} />
+      <CookieConsent />
 
       <AuthModal
         authMode={authMode}
@@ -955,7 +1285,7 @@ closeAuthModal();
   );
 }
 
-function HomePage({ t, setActive }: { t: any; setActive: (v: PageKey) => void }) {
+function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 18 }}
@@ -964,26 +1294,15 @@ function HomePage({ t, setActive }: { t: any; setActive: (v: PageKey) => void })
       transition={{ duration: 0.35 }}
       className="space-y-24"
     >
-      <section className="grid items-center gap-12 py-10 lg:grid-cols-[1.2fr_0.8fr]">
+      <section className="grid items-center gap-12 py-10 lg:grid-cols-[1.15fr_0.85fr]">
         <div>
           <Badge>{t.heroBadge}</Badge>
-          <h1 className="mt-8 max-w-3xl text-5xl font-semibold leading-[0.95] tracking-tight md:text-7xl">
-            {t.heroTitle}
-          </h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/70">
-            {t.heroText}
-          </p>
+          <h1 className="mt-8 max-w-5xl text-5xl font-semibold leading-[0.95] tracking-tight md:text-7xl">{t.heroTitle}</h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/70">{t.heroText}</p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <ButtonX onClick={() => setActive("pricing")}>
-              {t.start}
-              <span className="ml-2">→</span>
-            </ButtonX>
-
-            <button
-              onClick={() => setActive("product")}
-              className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-            >
+            <ButtonX onClick={() => setActive("pricing")}>{t.start}<span className="ml-2">→</span></ButtonX>
+            <button onClick={() => setActive("product")} className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white">
               {t.tour}
             </button>
           </div>
@@ -998,393 +1317,21 @@ function HomePage({ t, setActive }: { t: any; setActive: (v: PageKey) => void })
           </div>
         </div>
 
-        <HeroVisual />
+        <HeroVisual t={t} />
       </section>
 
       <section>
         <Badge>{t.problemEyebrow}</Badge>
-        <h2 className="mt-6 max-w-4xl text-4xl font-semibold leading-tight md:text-5xl">
-          {t.problemTitle}
-        </h2>
-        <p className="mt-5 max-w-3xl text-base leading-8 text-white/65">
-          {t.problemText}
-        </p>
-      </section>
-    </motion.div>
-  );
-}
-
-function ProductPage({
-  t,
-  setActive,
-}: {
-  t: any;
-  setActive: (v: PageKey) => void;
-}) {
-  const heroStats = [
-    ["AI Trading Desk", "market intelligence, alerts, journal and coaching in one system"],
-    ["Signal-to-Trade", "each alert can become a journal trade with execution review"],
-    ["Personal Edge", "the platform is built to learn from the trader’s own best patterns"],
-  ];
-
-  const tradingDeskCards = [
-    {
-      title: "AI Alerts",
-      text: "Structured market opportunities with setup, trigger, entry zone, stop, targets, risk, scenario and invalidation.",
-      badge: "Actionable",
-    },
-    {
-      title: "Breakdown Modal",
-      text: "A clean professional view of the whole idea: why it fired, what confirms it, what cancels it and how to manage it.",
-      badge: "Clarity",
-    },
-    {
-      title: "Decision Tracking",
-      text: "Mark every alert as Watching, Taken, Skipped or Missed so SkillEdge can understand your real behavior.",
-      badge: "Discipline",
-    },
-    {
-      title: "Outcome Learning",
-      text: "See whether your decision matched the real result: Taken + Worked, Taken + Failed, Missed Opportunity or Good Skip.",
-      badge: "Growth",
-    },
-  ];
-
-  const productFlow = [
-    {
-      step: "01",
-      title: "The market starts moving",
-      text: "SkillEdge watches stocks, crypto, unusual movement, catalysts and market context so the trader does not waste energy on dead tickers.",
-    },
-    {
-      step: "02",
-      title: "AI filters the noise",
-      text: "The system ranks opportunities by quality, freshness, confidence, risk, catalyst, journal relevance and setup clarity.",
-    },
-    {
-      step: "03",
-      title: "You get a real trading plan",
-      text: "Not a blind signal. The alert explains direction, trigger, entry zone, stop, targets, management, invalidation and trap risk.",
-    },
-    {
-      step: "04",
-      title: "The alert connects to your Journal",
-      text: "Create a trade draft from an alert and SkillEdge links the original plan with your real execution, screenshots and result.",
-    },
-    {
-      step: "05",
-      title: "SkillEdge turns the result into coaching",
-      text: "Outcome tracking, execution score, weakness map, personal focus and missed opportunity review turn every alert into feedback.",
-    },
-  ];
-
-  const coreModules = [
-    {
-      title: "AI Trading Desk",
-      text: "The heart of the product. A premium alert center that helps the trader understand what is in play, why it matters and how to think about the trade.",
-      items: [
-        "Floating AI Alerts widget",
-        "Full Alerts Center",
-        "Priority and confidence logic",
-        "Premium breakdown modal",
-        "Long and short opportunity structure",
-      ],
-    },
-    {
-      title: "Market Intelligence",
-      text: "A market scanner layer for finding stocks and crypto that deserve attention before the trader wastes time scrolling random charts.",
-      items: [
-        "Stocks and crypto opportunities",
-        "AI Market Brief",
-        "Catalyst and news context",
-        "Tracked source transparency",
-        "Built for full-market premium data expansion",
-      ],
-    },
-    {
-      title: "Journal & Screenshots",
-      text: "A serious trading journal that does more than store trades. It becomes the data source for improvement, reports and personal AI insights.",
-      items: [
-        "Trade journal",
-        "Screenshots per trade",
-        "PnL and win-rate stats",
-        "CSV/XLSX export foundation",
-        "Trade history for AI analysis",
-      ],
-    },
-    {
-      title: "Execution Coach",
-      text: "SkillEdge shows where the trader is actually weak: entries, stops, direction, targets, discipline and reaction speed.",
-      items: [
-        "Execution score",
-        "Weakness map",
-        "Personal execution focus",
-        "This Week Action Plan",
-        "Signal-to-trade review",
-      ],
-    },
-    {
-      title: "Outcome Learning System",
-      text: "This is where SkillEdge becomes different. The platform does not stop at the signal — it checks what the trader did and what happened after.",
-      items: [
-        "Taken + Worked",
-        "Taken + Failed",
-        "Missed Opportunity",
-        "Good Skip",
-        "Missed Opportunity Coach",
-      ],
-    },
-    {
-      title: "Playbook, Learning & Reports",
-      text: "The trader builds a repeatable system instead of chasing random trades. Alerts, setups, lessons and reports become one learning loop.",
-      items: [
-        "Save setup to Playbook",
-        "Setup education",
-        "Learning Center",
-        "AI reports foundation",
-        "Weekly and monthly review direction",
-      ],
-    },
-    {
-      title: "Charts & Watchlists",
-      text: "A chart workspace designed to connect ticker research, watchlists, screenshots, trade review and future AI chart analysis.",
-      items: [
-        "TradingView chart foundation",
-        "Ticker input",
-        "Watchlists",
-        "Last ticker memory",
-        "Prepared for premium chart analysis",
-      ],
-    },
-    {
-      title: "Personal AI Alerts",
-      text: "The future premium edge: SkillEdge is designed to learn from the client’s profitable and losing trades, then prioritize similar market situations.",
-      items: [
-        "Best trade pattern extraction",
-        "Journal pattern match",
-        "Personal priority",
-        "Risk warning layer",
-        "Setup fingerprint logic",
-      ],
-    },
-    {
-  title: "Support & Operator Care",
-  text: "Clients get a site-wide support assistant and a clean operator request flow. If they need help with broker or exchange questions, they can contact support through chat instead of searching alone.",
-  items: [
-    "Site-wide support assistant",
-    "Operator request flow",
-    "Payment and access help",
-    "Product guidance",
-    "Help understanding broker/exchange questions through support chat",
-  ],
-},
-  ];
-
-  const dashboardPreview = [
-    ["Live AI Alerts", "Fresh trading situations with priority and context"],
-    ["Journal Sync", "Every taken alert can become a tracked trade"],
-    ["Execution Score", "See whether the trade followed the plan"],
-    ["Outcome Coach", "Understand missed opportunities and good skips"],
-    ["Market Brief", "AI summary of the best in-play candidates"],
-  ];
-
-  const comparisonItems = [
-    {
-      title: "Instead of a normal scanner",
-      weak: "You only see tickers and still have to guess what matters.",
-      strong:
-        "SkillEdge explains why the ticker matters, what the setup is, what can go wrong and what confirms the idea.",
-    },
-    {
-      title: "Instead of a simple journal",
-      weak: "You store trades but do not transform them into an edge.",
-      strong:
-        "SkillEdge connects trades, screenshots, alerts, outcomes and mistakes into a personal improvement system.",
-    },
-    {
-      title: "Instead of a generic AI chatbot",
-      weak: "You ask random questions and receive disconnected answers.",
-      strong:
-        "SkillEdge works inside your trading workflow: alerts, journal, reports, execution, learning and playbook.",
-    },
-  ];
-
-  const clientOutcomes = [
-    {
-      value: "Trade with structure",
-      text: "No more random clicking. Every serious idea is organized around setup, trigger, entry, stop, targets and risk.",
-    },
-    {
-      value: "Review like a professional",
-      text: "The trader sees what was planned, what was executed and what needs to improve next session.",
-    },
-    {
-      value: "Build a personal edge",
-      text: "Over time, the journal becomes a pattern database for personal AI alerts and stronger decision-making.",
-    },
-  ];
-
-  const finalChecklist = [
-    "AI Trading Desk for high-quality market opportunities",
-    "Market Intelligence for stocks and crypto",
-    "Journal, screenshots and execution analytics",
-    "Outcome Learning and Missed Opportunity Coach",
-    "Playbook, Learning Center and Reports",
-    "Future personalization based on the client’s best trades",
-    "Site-wide support assistant and operator request flow",
-  ];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -18 }}
-      transition={{ duration: 0.35 }}
-      className="space-y-24 pt-8"
-    >
-      <section className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
-        <div className="absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
-        <div className="absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="absolute left-1/2 top-12 h-48 w-48 -translate-x-1/2 rounded-full bg-fuchsia-500/10 blur-3xl" />
-
-        <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 }}
-            >
-              <Badge>Premium AI trading operating system</Badge>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.12 }}
-              className="mt-7 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl"
-            >
-              SkillEdge AI turns market noise into a personal trading edge.
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.18 }}
-              className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg"
-            >
-              It is not just a journal, not just a scanner and not just an AI
-              chat. SkillEdge AI connects market intelligence, AI alerts,
-              journal analytics, execution review, outcome learning, playbook,
-              reports and coaching into one premium trading system.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.24 }}
-              className="mt-8 flex flex-wrap gap-3"
-            >
-              <ButtonX onClick={() => setActive("pricing")} className="shadow-[0_0_35px_rgba(255,255,255,0.18)]">
-                Choose your plan
-                <span className="ml-2">→</span>
-              </ButtonX>
-
-              <button
-                onClick={() => setActive("team")}
-                className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
-              >
-                Why this exists
-              </button>
-            </motion.div>
-
-            <div className="mt-8 grid gap-3 md:grid-cols-3">
-              {heroStats.map(([title, text], index) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 18 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.28 + index * 0.05 }}
-                  whileHover={{ y: -4, scale: 1.01 }}
-                  className="rounded-3xl border border-white/10 bg-black/20 p-4"
-                >
-                  <div className="text-sm font-semibold text-white">
-                    {title}
-                  </div>
-                  <div className="mt-2 text-xs leading-5 text-white/48">
-                    {text}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.18, duration: 0.45 }}
-            className="relative rounded-[2.25rem] border border-cyan-300/15 bg-[#0b1220]/90 p-5 shadow-[0_24px_110px_rgba(0,0,0,0.55)]"
-          >
-            <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-cyan-400/20 blur-2xl" />
-
-            <div className="relative flex items-center justify-between border-b border-white/10 pb-4">
-              <div>
-                <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">
-                  Live AI Trading Desk
-                </div>
-                <div className="mt-2 text-xl font-semibold text-white">
-                  Signal breakdown
-                </div>
-              </div>
-
-              <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
-                Priority 88
-              </div>
-            </div>
-
-            <div className="relative mt-5 grid gap-3">
-              {[
-                ["Ticker", "ZTS · NYSE"],
-                ["Setup", "Backside fade / weakness continuation"],
-                ["Trigger", "Lower high + failed reclaim"],
-                ["Plan", "Entry zone · stop · targets · invalidation"],
-              ].map(([label, value], index) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, x: 18 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.32 + index * 0.06 }}
-                  className="rounded-2xl border border-white/10 bg-white/[0.035] p-4"
-                >
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
-                    {label}
-                  </div>
-                  <div className="mt-2 text-sm font-semibold text-white/85">
-                    {value}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="relative mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/[0.04] p-4 text-sm leading-6 text-amber-50/72">
-              The trader does not receive a blind “buy” or “sell”. The trader
-              receives context, setup logic, risk, confirmation, invalidation
-              and the next lesson after the outcome.
-            </div>
-          </motion.div>
-        </div>
+        <h2 className="mt-6 max-w-4xl text-4xl font-semibold leading-tight md:text-5xl">{t.problemTitle}</h2>
+        <p className="mt-5 max-w-3xl text-base leading-8 text-white/65">{t.problemText}</p>
       </section>
 
       <section>
-        <SectionTitle
-          eyebrow="What you are really buying"
-          title="A complete system for finding opportunities, executing better and learning from every trade."
-          text="SkillEdge AI is built to make the trader more structured, faster, calmer and more self-aware. The value is not only in alerts — it is in the loop between market, decision, execution, journal and improvement."
-        />
-
+        <SectionTitle eyebrow={t.productPage.modulesEyebrow} title={t.homeSections.whyTitle} text={t.homeSections.whyText} />
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {tradingDeskCards.map((card, index) => (
+          {t.homeSections.cards.map(([title, text]: [string, string], index: number) => (
             <motion.div
-              key={card.title}
+              key={title}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -1392,264 +1339,74 @@ function ProductPage({
               whileHover={{ y: -5 }}
               className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20"
             >
-              <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
-                {card.badge}
-              </div>
-
-              <div className="mt-5 text-xl font-semibold text-white">
-                {card.title}
-              </div>
-
-              <p className="mt-3 text-sm leading-7 text-white/58">
-                {card.text}
-              </p>
+              <div className="text-xl font-semibold text-white">{title}</div>
+              <p className="mt-3 text-sm leading-7 text-white/60">{text}</p>
             </motion.div>
+          ))}
+        </div>
+      </section>
+    </motion.div>
+  );
+}
+
+function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
+  const p = t.productPage;
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} transition={{ duration: 0.35 }} className="space-y-24 pt-8">
+      <HeroSection
+        badge={p.heroBadge}
+        title={p.heroTitle}
+        text={p.heroText}
+        primary={p.ctaPrimary}
+        secondary={p.ctaSecondary}
+        onPrimary={() => setActive("pricing")}
+        onSecondary={() => setActive("team")}
+        cards={p.heroCards}
+      />
+
+      <section>
+        <SectionTitle eyebrow="AI Trading Desk" title={p.deskTitle} text={p.deskText} />
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {p.deskCards.map(([title, text]: [string, string], index: number) => (
+            <InfoCard key={title} title={title} text={text} index={index} />
           ))}
         </div>
       </section>
 
       <section className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
-          <Badge>How SkillEdge works</Badge>
-
-          <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl">
-            From market scan to personal improvement — one connected loop.
-          </h2>
-
-          <p className="mt-5 text-base leading-8 text-white/62">
-            Most traders lose time switching between scanners, charts, notes,
-            screenshots and emotions. SkillEdge brings the process into one
-            workflow so every serious opportunity can become data, feedback and
-            future edge.
-          </p>
+          <Badge>{p.flowEyebrow}</Badge>
+          <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl">{p.flowTitle}</h2>
+          <p className="mt-5 text-base leading-8 text-white/62">{p.flowText}</p>
         </div>
 
         <div className="space-y-4">
-          {productFlow.map((item, index) => (
-            <motion.div
-              key={item.step}
-              initial={{ opacity: 0, x: 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.05 }}
-              className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:grid-cols-[72px_1fr]"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-semibold text-cyan-100">
-                {item.step}
-              </div>
-
-              <div>
-                <div className="text-lg font-semibold text-white">
-                  {item.title}
-                </div>
-
-                <p className="mt-2 text-sm leading-7 text-white/58">
-                  {item.text}
-                </p>
-              </div>
-            </motion.div>
+          {p.flow.map(([step, title, text]: [string, string, string], index: number) => (
+            <StepCard key={step} step={step} title={title} text={text} index={index} />
           ))}
         </div>
       </section>
 
       <section>
-        <SectionTitle
-          eyebrow="Product modules"
-          title="Everything we are building is designed to work together."
-          text="Each module is useful alone. Together they create a premium trading workspace where the trader can discover opportunities, execute with a plan, review performance and build personal pattern intelligence."
-        />
-
+        <SectionTitle eyebrow={p.modulesEyebrow} title={p.modulesTitle} text={p.modulesText} />
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {coreModules.map((module, index) => (
-            <motion.div
-              key={module.title}
-              initial={{ opacity: 0, y: 22 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.035 }}
-              whileHover={{ y: -4 }}
-              className="h-full rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20"
-            >
-              <div className="text-xl font-semibold text-white">
-                {module.title}
-              </div>
-
-              <p className="mt-3 text-sm leading-7 text-white/60">
-                {module.text}
-              </p>
-
-              <div className="mt-5 space-y-3">
-                {module.items.map((item) => (
-                  <div key={item} className="flex gap-3 text-sm text-white/68">
-                    <Icon name="check" className="text-emerald-300" />
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </motion.div>
+          {p.modules.map(([title, text, items]: [string, string, string[]], index: number) => (
+            <ModuleCard key={title} title={title} text={text} items={items} index={index} />
           ))}
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#0b1020] p-6 md:p-10">
-        <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-cyan-500/10 blur-3xl" />
-
-        <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <Badge>Dashboard preview</Badge>
-
-            <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl">
-              The client should feel like a trading desk is open in front of him.
-            </h2>
-
-            <p className="mt-5 text-base leading-8 text-white/62">
-              Alerts are only the beginning. The real power is that SkillEdge
-              connects each idea with the trader’s actions, journal, outcomes,
-              execution quality and future learning.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <div>
-                <div className="text-xs uppercase tracking-[0.24em] text-white/35">
-                  SkillEdge cockpit
-                </div>
-                <div className="mt-2 text-2xl font-semibold text-white">
-                  One workflow. No scattered tools.
-                </div>
-              </div>
-
-              <div className="h-3 w-3 rounded-full bg-emerald-300 shadow-[0_0_22px_rgba(110,231,183,0.8)]" />
-            </div>
-
-            <div className="mt-5 grid gap-3">
-              {dashboardPreview.map(([title, text], index) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, x: 18 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="rounded-2xl border border-white/10 bg-white/[0.035] p-4"
-                >
-                  <div className="text-sm font-semibold text-white">
-                    {title}
-                  </div>
-                  <div className="mt-2 text-xs leading-5 text-white/48">
-                    {text}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section>
-        <SectionTitle
-          eyebrow="Why SkillEdge is different"
-          title="This is not another signal service. This is a performance system."
-          text="The strongest traders do not just look for entries. They build process, discipline, review and repeatable patterns. SkillEdge AI is being built around that reality."
-        />
-
+        <SectionTitle eyebrow={p.differentEyebrow} title={p.differentTitle} text={p.differentText} />
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
-          {comparisonItems.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.06 }}
-              whileHover={{ y: -4 }}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20"
-            >
-              <div className="text-xl font-semibold text-white">
-                {item.title}
-              </div>
-
-              <div className="mt-5 rounded-2xl border border-red-300/15 bg-red-300/[0.035] p-4 text-sm leading-6 text-red-50/65">
-                {item.weak}
-              </div>
-
-              <div className="mt-3 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.035] p-4 text-sm leading-6 text-emerald-50/72">
-                {item.strong}
-              </div>
-            </motion.div>
+          {p.comparisons.map(([title, weak, strong]: [string, string, string], index: number) => (
+            <ComparisonCard key={title} title={title} weak={weak} strong={strong} index={index} />
           ))}
         </div>
       </section>
 
-      <section>
-        <SectionTitle
-          eyebrow="Client outcomes"
-          title="The goal is simple: help the trader become harder to fool, harder to shake and harder to break."
-          text="SkillEdge is built for the trader who wants more than motivation. The client needs a system that exposes mistakes, rewards discipline and turns repetition into edge."
-        />
-
-        <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {clientOutcomes.map((item, index) => (
-            <motion.div
-              key={item.value}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.06 }}
-              className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.025] p-6"
-            >
-              <div className="text-2xl font-semibold text-white">
-                {item.value}
-              </div>
-
-              <p className="mt-4 text-sm leading-7 text-white/60">
-                {item.text}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section className="overflow-hidden rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-indigo-500/15 via-white/[0.04] to-cyan-500/10 p-6 md:p-10">
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
-          <div>
-            <div className="text-sm uppercase tracking-[0.24em] text-white/45">
-              Built for serious traders
-            </div>
-
-            <h2 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
-              Stop guessing. Start building a trading system around your real behavior.
-            </h2>
-
-            <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">
-              SkillEdge AI is for traders who are tired of scattered tools,
-              emotional decisions and unclear reviews. It helps the client see
-              the market cleaner, execute with more structure and understand
-              what to improve next.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-            <div className="text-lg font-semibold text-white">
-              What the client gets
-            </div>
-
-            <div className="mt-5 space-y-3">
-              {finalChecklist.map((item) => (
-                <div key={item} className="flex gap-3 text-sm text-white/70">
-                  <Icon name="check" className="text-cyan-300" />
-                  {item}
-                </div>
-              ))}
-            </div>
-
-            <ButtonX onClick={() => setActive("pricing")} className="mt-6 w-full">
-              Choose your plan
-              <span className="ml-2">→</span>
-            </ButtonX>
-          </div>
-        </div>
-      </section>
+      <FinalCta title={p.finalTitle} text={p.finalText} checklist={p.finalChecklist} button={p.ctaPrimary} onClick={() => setActive("pricing")} />
     </motion.div>
   );
 }
@@ -1664,439 +1421,46 @@ function PricingPage({
   checkoutStatus: string;
 }) {
   const [billing, setBilling] = useState<BillingPeriod>("monthly");
+  const p = t.pricingPage;
 
-  const priceMatrix = {
-    starter: { monthly: 49, halfyear: 249, yearly: 399 },
-    pro: { monthly: 99, halfyear: 499, yearly: 799 },
-    elite: { monthly: 149, halfyear: 749, yearly: 1249 },
-  };
+  const periodLabel = p.period[billing];
 
-  const billingLabels = t.billing;
-
-  const periodLabel =
-    billing === "monthly"
-      ? billingLabels.periodMonthly
-      : billing === "halfyear"
-        ? billingLabels.periodHalfyear
-        : billingLabels.periodYearly;
-
-  const signalFeatures = [
-    {
-      title: "Not blind buy/sell calls",
-      text: "SkillEdge signals are designed as structured trade ideas: setup, direction, trigger, entry zone, stop, targets, risk, invalidation and management.",
-    },
-    {
-      title: "Breakdown before action",
-      text: "Every serious alert should explain why it appeared, what confirms it, what makes it dangerous and what the trader must watch before entering.",
-    },
-    {
-      title: "Signal-to-Journal learning",
-      text: "When a client creates a trade from an alert, SkillEdge can compare the original plan with the real execution, PnL, screenshots and outcome.",
-    },
-    {
-      title: "Outcome coaching",
-      text: "The platform does not stop after the alert. It tracks Taken, Skipped and Missed decisions to show missed opportunities, good skips and weak execution.",
-    },
-  ];
-
-  const premiumPlans: {
-    id: "starter" | "pro" | "elite";
-    name: string;
-    badge: string;
-    headline: string;
-    promise: string;
-    signalAccess: string;
-    bestFor: string;
-    clientFeels: string;
-    unlocks: string[];
-    signalLayer: string[];
-    limits: string[];
-    accent: "core" | "edge" | "elite";
-    cta: string;
-  }[] = [
-    {
-      id: "starter",
-      name: "SkillEdge Core",
-      badge: "Start with discipline",
-      headline: "For traders who are tired of guessing and want structure.",
-      promise:
-        "Core gives you the foundation every serious trader needs: a clean journal, screenshots, AI Coach feedback, chart analysis, exports and a review workflow that shows what is actually happening in your trading.",
-      signalAccess:
-        "Core is the discipline layer: you build the journal, screenshots and review habits that later make AI signals and personal alerts much more powerful.",
-      bestFor:
-        "Best for traders who need structure first: track trades, review mistakes, stop relying on memory and start building a real trading database.",
-      clientFeels:
-        "The client finally feels control: every trade is recorded, every mistake can be reviewed, and every session becomes part of a bigger system.",
-      unlocks: [
-        "Trading journal with screenshots",
-        "Basic AI Coach feedback",
-        "Core performance stats",
-        "Trade chart AI analysis foundation",
-        "CSV/XLSX export foundation",
-        "Learning and review workflow",
-        "Support assistant access",
-        
-      ],
-      signalLayer: [
-        "Build the data foundation for future Personal AI Alerts",
-        "Save setups and screenshots for later review",
-        "Use AI Coach to understand trade logic and mistakes",
-        "Prepare your journal for signal-to-trade analytics",
-      ],
-      limits: [
-        "Up to 300 trades in the journal",
-        "Up to 3 screenshots per trade",
-        "50 AI Coach requests per month",
-        "10 journal AI analyses per month",
-        "20 trade chart AI analyses per month",
-        "Report export access",
-      ],
-      accent: "core",
-      cta: "Start building discipline",
-    },
-    {
-      id: "pro",
-      name: "SkillEdge Edge",
-      badge: "Best active-trader value",
-      headline: "For traders who want deeper review, stronger context and faster improvement.",
-      promise:
-        "Edge is the serious active-trader plan. It gives higher AI limits, AI reports, premium chart analysis, social/market context and more room to turn your trading history into a real performance system.",
-      signalAccess:
-  "Edge is the intelligence layer: you unlock AI Scanner, AI Market Brief, stronger market context and more AI analysis — without real-time actionable AI Alerts.",
-      bestFor:
-        "Best for active traders who take many trades, review seriously and want SkillEdge to expose repeated mistakes, stronger setups and execution patterns.",
-      clientFeels:
-        "The client stops feeling lost after the session. Edge makes it clear what worked, what failed, what repeats and what must be fixed next.",
-      unlocks: [
-        "Everything in Core",
-        "AI Reports access",
-        "Premium chart analysis",
-        "Social / market tickers layer",
-        "Deeper journal AI review",
-        "More screenshots and more AI usage",
-        "AI Scanner / Market Intelligence scanner access",
-        "Better setup and mistake discovery",
-        
-      ],
-      signalLayer: [
-  "AI Scanner / Market Intelligence scanner access",
-  "AI Market Brief for top market opportunities",
-  "Market and social context around active tickers",
-  "More chart analyses for setup preparation",
-  "Stronger journal feedback before using real-time AI Alerts",
-  "Better base for future personal signal matching",
-],
-      limits: [
-        "Up to 2,000 trades in the journal",
-        "Up to 5 screenshots per trade",
-        "200 AI Coach requests per month",
-        "50 journal AI analyses per month",
-        "100 trade chart AI analyses per month",
-        "30 AI reports per month",
-      ],
-      accent: "edge",
-      cta: "Upgrade to active review",
-    },
-    {
-      id: "elite",
-      name: "SkillEdge Elite",
-      badge: "Full AI Trading Desk",
-      headline: "For serious traders who want signals, scanner, journal sync and maximum AI power.",
-      promise:
-        "Elite is the flagship experience. This is where SkillEdge becomes a true AI Trading Desk: AI scanner access, full alert workflow, maximum AI limits, deep journal review, signal-to-trade analytics and the strongest path toward personal AI alerts.",
-      signalAccess:
-        "Elite is the signal layer: structured AI alerts, alert breakdown, trade draft from signal, decision tracking, outcome learning and missed opportunity coaching.",
-      bestFor:
-        "Best for serious traders, advanced users, mentors and prop-style workflows where speed, review quality, AI usage and signal structure matter every week.",
-      clientFeels:
-        "The client feels like he has a trading desk beside him: market opportunities are organized, signals have a plan, trades connect to the journal and every outcome becomes feedback.",
-      unlocks: [
-        "Everything in Edge",
-        "AI Scanner access",
-        "Signal-to-Journal workflow",
-        "AI Alerts / Trading Desk workflow",
-        "Floating alerts widget",
-        "Alert breakdown modal",
-        "Create trade draft from alert",
-        "Decision tracking: Watching / Taken / Skipped / Missed",
-        "Outcome Learning Analytics",
-        "Missed Opportunity Coach",
-        "Maximum AI usage limits",
-        
-      ],
-      signalLayer: [
-        "Structured AI alerts with setup, trigger, entry, stop and targets",
-        "Signal risk, scenario, invalidation and management plan",
-        "Save alert setup to Playbook",
-        "Connect alert to Journal trade",
-        "Track Taken + Worked, Taken + Failed, Missed Opportunity and Good Skip",
-        "Build the future base for Personal AI Alerts from the client’s best trades",
-      ],
-      limits: [
-        "Up to 10,000 trades in the journal",
-        "Up to 10 screenshots per trade",
-        "1,000 AI Coach requests per month",
-        "300 journal AI analyses per month",
-        "500 trade chart AI analyses per month",
-        "150 AI reports per month",
-      ],
-      accent: "elite",
-      cta: "Unlock the Trading Desk",
-    },
-  ];
-
-  const deskWorkflow = [
-    ["1", "Market moves", "SkillEdge watches active stocks, crypto, catalysts and opportunity flow."],
-    ["2", "AI ranks the idea", "The platform filters noise and highlights situations with stronger context."],
-    ["3", "Signal appears", "The client receives a structured alert, not a random ticker name."],
-    ["4", "Trade plan is clear", "Direction, trigger, entry zone, stop, targets, invalidation and risk are visible."],
-    ["5", "Journal sync", "A taken signal can become a trade draft and connect to real execution."],
-    ["6", "Outcome review", "SkillEdge shows what worked, what failed, what was missed and what to fix."],
-  ];
-
-  const whyPay = [
-    {
-      title: "You are paying for clarity",
-      text: "A trader does not need more noise. A trader needs to know what is in play, why it matters, where the risk is and what confirms the idea.",
-    },
-    {
-      title: "You are paying for discipline",
-      text: "SkillEdge forces the process: plan, decision, journal, screenshot, outcome, review. That is how random trading turns into a system.",
-    },
-    {
-      title: "You are paying for feedback",
-      text: "Every alert and every trade can become a lesson: did you enter late, skip the winner, move the stop, miss the target or follow the plan?",
-    },
-    {
-      title: "You are paying for future personalization",
-      text: "The more clean data the client builds, the more powerful personal AI alerts can become: patterns based on the trader’s own best and worst trades.",
-    },
-  ];
-
-  const signalComparison = [
-    [
-      "Typical signal service",
-      "Ticker + direction, little context, no journal connection, no learning loop.",
-    ],
-    [
-      "SkillEdge AI Trading Desk",
-      "Structured setup, trigger, plan, risk, journal sync, decision tracking, outcome review and coaching.",
-    ],
-  ];
-
-  const planComparison = [
-    ["Feature", "Core", "Edge", "Elite"],
-    ["Trade journal + screenshots", "Yes", "Yes", "Yes"],
-    ["AI Coach", "50 / month", "200 / month", "1,000 / month"],
-    ["Journal AI analysis", "10 / month", "50 / month", "300 / month"],
-    ["Trade chart AI analysis", "20 / month", "100 / month", "500 / month"],
-    ["AI Reports", "—", "30 / month", "150 / month"],
-    ["Social / market tickers layer", "—", "Yes", "Yes"],
-    ["Premium chart analysis", "—", "Yes", "Yes"],
-    ["AI Scanner / Market Intelligence scanner", "—", "Yes", "Yes"],
-    ["Real-time AI Alerts", "—", "—", "Yes"],
-    ["Signal-to-Journal workflow", "Foundation", "Advanced prep", "Full workflow"],
-    ["Best for", "Discipline", "Active review", "AI Trading Desk"],
-  ];
-
-  const getPlanClasses = (accent: "core" | "edge" | "elite") => {
-    if (accent === "edge") {
-      return "border-indigo-300/45 bg-gradient-to-b from-indigo-500/20 via-white/[0.05] to-white/[0.025] shadow-[0_24px_100px_rgba(79,70,229,0.2)]";
-    }
-
-    if (accent === "elite") {
-      return "border-cyan-300/45 bg-gradient-to-b from-cyan-500/20 via-white/[0.055] to-white/[0.025] shadow-[0_24px_120px_rgba(34,211,238,0.22)]";
-    }
-
-    return "border-white/10 bg-white/[0.035]";
-  };
-
-  const getBadgeClasses = (accent: "core" | "edge" | "elite") => {
-    if (accent === "edge") {
-      return "border-indigo-300/25 bg-indigo-300/10 text-indigo-100";
-    }
-
-    if (accent === "elite") {
-      return "border-cyan-300/25 bg-cyan-300/10 text-cyan-100";
-    }
-
-    return "border-white/10 bg-white/[0.05] text-white/65";
-  };
+  const plans = useMemo(
+    () =>
+      p.plans.map((plan: any) => ({
+        ...plan,
+        price: priceMatrix[plan.id as keyof typeof priceMatrix][billing],
+      })),
+    [p.plans, billing]
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -18 }}
-      transition={{ duration: 0.35 }}
-      className="space-y-24 pt-8"
-    >
+    <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} transition={{ duration: 0.35 }} className="space-y-24 pt-8">
       <section className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
-        <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="absolute left-1/2 top-0 h-52 w-52 -translate-x-1/2 rounded-full bg-fuchsia-500/10 blur-3xl" />
-
-        <div className="relative grid gap-10 lg:grid-cols-[1fr_0.85fr] lg:items-center">
-          <div>
-            <Badge>Choose your SkillEdge level</Badge>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08 }}
-              className="mt-6 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl"
-            >
-              Pick the plan that matches how serious you are about becoming a better trader.
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.16 }}
-              className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg"
-            >
-              SkillEdge is not priced as another dashboard. It is priced as a
-              trading operating system: journal, AI coach, reports, market
-              intelligence, signal workflow, execution review and the foundation
-              for personal AI alerts based on your own trading history.
-            </motion.p>
-
-            <div className="mt-8 grid gap-3 md:grid-cols-3">
-              {[
-                ["Core", "Build discipline and clean trading data"],
-                ["Edge", "Review deeper and understand patterns faster"],
-                ["Elite", "Unlock the full AI Trading Desk and signal workflow"],
-              ].map(([title, text], index) => (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.22 + index * 0.05 }}
-                  className="rounded-3xl border border-white/10 bg-black/20 p-4"
-                >
-                  <div className="text-sm font-semibold text-white">
-                    {title}
-                  </div>
-
-                  <div className="mt-2 text-xs leading-5 text-white/50">
-                    {text}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: 18 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ delay: 0.18 }}
-            className="rounded-[2.25rem] border border-cyan-300/15 bg-[#0b1220]/90 p-5 shadow-[0_24px_110px_rgba(0,0,0,0.55)]"
-          >
-            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-              <div>
-                <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">
-                  Elite signal preview
-                </div>
-                <div className="mt-2 text-xl font-semibold text-white">
-                  AI Trading Desk alert
-                </div>
-              </div>
-
-              <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
-                Priority 88
-              </div>
-            </div>
-
-            <div className="mt-5 grid gap-3">
-              {[
-                ["Setup", "Backside fade / weakness continuation"],
-                ["Trigger", "Lower high + failed reclaim"],
-                ["Entry plan", "Entry zone · stop · targets · invalidation"],
-                ["Learning loop", "Taken / Skipped / Missed → outcome review"],
-              ].map(([label, value], index) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 + index * 0.06 }}
-                  className="rounded-2xl border border-white/10 bg-white/[0.035] p-4"
-                >
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
-                    {label}
-                  </div>
-
-                  <div className="mt-2 text-sm font-semibold text-white/85">
-                    {value}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="mt-5 rounded-2xl border border-amber-300/15 bg-amber-300/[0.04] p-4 text-sm leading-6 text-amber-50/72">
-              The signal is only the beginning. SkillEdge connects the alert to
-              the journal, tracks the decision and turns the outcome into a
-              coaching point.
-            </div>
-          </motion.div>
+        <Glow />
+        <div className="relative max-w-5xl">
+          <Badge>{p.heroBadge}</Badge>
+          <h1 className="mt-6 text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl">{p.heroTitle}</h1>
+          <p className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg">{p.heroText}</p>
         </div>
 
         <div className="relative mt-8 inline-flex flex-wrap gap-2 rounded-full border border-white/10 bg-black/20 p-2">
-          {[
-            ["monthly", billingLabels.monthly],
-            ["halfyear", billingLabels.halfyear],
-            ["yearly", billingLabels.yearly],
-          ].map(([key, label]) => (
+          {(["monthly", "halfyear", "yearly"] as BillingPeriod[]).map((key) => (
             <button
               key={key}
-              onClick={() => setBilling(key as BillingPeriod)}
-              className={`rounded-full px-5 py-2 text-sm transition ${
-                billing === key
-                  ? "bg-white text-black"
-                  : "text-white/65 hover:bg-white/10 hover:text-white"
-              }`}
+              onClick={() => setBilling(key)}
+              className={`rounded-full px-5 py-2 text-sm transition ${billing === key ? "bg-white text-black" : "text-white/65 hover:bg-white/10 hover:text-white"}`}
             >
-              {label}
+              {p.billingToggle[key]}
             </button>
-          ))}
-        </div>
-      </section>
-
-
-
-      <section>
-        <SectionTitle
-          eyebrow="Why the signal layer matters"
-          title="SkillEdge signals are built to educate, not to make the trader blindly click."
-          text="A weak signal service creates dependency. A strong trading system creates clarity. SkillEdge is designed so the trader understands the setup, the risk, the confirmation and the lesson after the outcome."
-        />
-
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {signalFeatures.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.05 }}
-              whileHover={{ y: -5 }}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20"
-            >
-              <div className="text-xl font-semibold text-white">
-                {item.title}
-              </div>
-
-              <p className="mt-3 text-sm leading-7 text-white/60">
-                {item.text}
-              </p>
-            </motion.div>
           ))}
         </div>
       </section>
 
       <section>
         <div className="grid gap-6 xl:grid-cols-3">
-          {premiumPlans.map((plan, idx) => {
-            const currentPrice = priceMatrix[plan.id][billing];
+          {plans.map((plan: any, index: number) => {
+            const accent = plan.id === "starter" ? "core" : plan.id === "pro" ? "edge" : "elite";
 
             return (
               <motion.div
@@ -2104,133 +1468,40 @@ function PricingPage({
                 initial={{ opacity: 0, y: 22 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
-                transition={{ delay: idx * 0.06 }}
+                transition={{ delay: index * 0.06 }}
                 whileHover={{ y: -6, scale: 1.01 }}
-                className={`relative flex h-full flex-col overflow-hidden rounded-[2rem] border p-6 ${getPlanClasses(
-                  plan.accent
-                )}`}
+                className={`relative flex h-full flex-col overflow-hidden rounded-[2rem] border p-6 ${getPlanClasses(accent)}`}
               >
                 <div className="absolute -right-20 -top-20 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
-
-                {plan.accent === "elite" ? (
-                  <div className="absolute left-6 top-6 rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-cyan-100">
-                    Best for AI Signals
+                <div className="relative">
+                  <div className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${getBadgeClasses(accent)}`}>
+                    {accent === "core" ? p.planBadge.core : accent === "edge" ? p.planBadge.edge : p.planBadge.elite}
                   </div>
-                ) : null}
-
-                <div className={`relative ${plan.accent === "elite" ? "pt-10" : ""}`}>
-                  <div
-                    className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${getBadgeClasses(
-                      plan.accent
-                    )}`}
-                  >
-                    {plan.badge}
-                  </div>
-
-                  <div className="mt-5 text-2xl font-semibold text-white">
-                    {plan.name}
-                  </div>
-
-                  <div className="mt-3 text-lg font-semibold leading-7 text-white/90">
-                    {plan.headline}
-                  </div>
-
-                  <p className="mt-4 text-sm leading-7 text-white/60">
-                    {plan.promise}
-                  </p>
-
+                  <div className="mt-5 text-2xl font-semibold text-white">{plan.name}</div>
+                  <div className="mt-3 text-lg font-semibold leading-7 text-white/90">{plan.headline}</div>
+                  <p className="mt-4 text-sm leading-7 text-white/60">{plan.text}</p>
                   <div className="mt-7 flex items-end gap-2">
-                    <div className="text-5xl font-semibold text-white">
-                      ${currentPrice}
-                    </div>
-
-                    <div className="pb-2 text-sm text-white/45">
-                      {periodLabel}
-                    </div>
+                    <div className="text-5xl font-semibold text-white">${plan.price}</div>
+                    <div className="pb-2 text-sm text-white/45">{periodLabel}</div>
                   </div>
-
-                  <div className="mt-5 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.035] p-4 text-sm leading-6 text-cyan-50/75">
-                    <span className="font-semibold text-white">
-                      Signal layer:
-                    </span>{" "}
-                    {plan.signalAccess}
-                  </div>
-
-                  <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/58">
-                    <span className="font-semibold text-white/85">
-                      Best for:
-                    </span>{" "}
-                    {plan.bestFor}
-                  </div>
-
-                  <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.035] p-4 text-sm leading-6 text-emerald-50/70">
-                    {plan.clientFeels}
-                  </div>
-
-                  <div className="mt-6">
-                    <div className="text-xs uppercase tracking-[0.22em] text-white/35">
-                      What you unlock
-                    </div>
-
-                    <div className="mt-4 space-y-3">
-                      {plan.unlocks.map((item) => (
-                        <div key={item} className="flex gap-3 text-sm text-white/70">
-                          <Icon name="check" className="text-emerald-300" />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <div className="text-xs uppercase tracking-[0.22em] text-cyan-100/45">
-                      Signal / intelligence value
-                    </div>
-
-                    <div className="mt-4 space-y-3">
-                      {plan.signalLayer.map((item) => (
-                        <div key={item} className="flex gap-3 text-sm text-white/66">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-300/80" />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <div className="text-xs uppercase tracking-[0.22em] text-white/35">
-                      Plan limits
-                    </div>
-
-                    <div className="mt-4 space-y-3">
-                      {plan.limits.map((item) => (
-                        <div key={item} className="flex gap-3 text-sm text-white/58">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-white/35" />
-                          {item}
-                        </div>
-                      ))}
-                    </div>
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/62">{plan.bestFor}</div>
+                  <div className="mt-6 space-y-3">
+                    {plan.features.map((item: string) => (
+                      <div key={item} className="flex gap-3 text-sm text-white/70">
+                        <Icon name="check" className="text-emerald-300" />
+                        {item}
+                      </div>
+                    ))}
                   </div>
                 </div>
-
                 <div className="relative mt-auto pt-8">
-                  <ButtonX
-                    onClick={() => handleCheckout(plan.id, billing)}
-                    className="w-full"
-                  >
+                  <ButtonX onClick={() => handleCheckout(plan.id, billing)} className="w-full">
                     <Icon name="money" className="mr-2 h-4 w-4" />
                     {plan.cta}
                   </ButtonX>
-
-                  <p className="mt-3 text-center text-xs text-white/45">
-                    {billingLabels.networkNote}
-                  </p>
-
-                  <button
-                    disabled
-                    className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-medium text-white/35"
-                  >
-                    {billingLabels.cardSoon}
+                  <p className="mt-3 text-center text-xs text-white/45">{p.cryptoNote}</p>
+                  <button disabled className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-medium text-white/35">
+                    {p.cardPayment}
                   </button>
                 </div>
               </motion.div>
@@ -2238,220 +1509,41 @@ function PricingPage({
           })}
         </div>
 
-        {checkoutStatus ? (
-          <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-sm leading-7 text-white/70">
-            {checkoutStatus}
-          </div>
-        ) : null}
-      </section>
-
-      <section className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#0b1020] p-6 md:p-10">
-        <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
-
-        <div className="relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div>
-            <Badge>Elite workflow</Badge>
-
-            <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl">
-              What happens when a signal becomes a real trade?
-            </h2>
-
-            <p className="mt-5 text-base leading-8 text-white/62">
-              This is the part most signal services do not have. SkillEdge is
-              built to connect the alert with the trader’s decision, execution,
-              journal, screenshot, outcome and next coaching point.
-            </p>
-          </div>
-
-          <div className="grid gap-3">
-            {deskWorkflow.map(([step, title, text], index) => (
-              <motion.div
-                key={step}
-                initial={{ opacity: 0, x: 18 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ delay: index * 0.05 }}
-                className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-4 md:grid-cols-[56px_1fr]"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-semibold text-cyan-100">
-                  {step}
-                </div>
-
-                <div>
-                  <div className="text-lg font-semibold text-white">
-                    {title}
-                  </div>
-
-                  <p className="mt-2 text-sm leading-6 text-white/58">
-                    {text}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        {checkoutStatus ? <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-sm leading-7 text-white/70">{checkoutStatus}</div> : null}
       </section>
 
       <section>
-        <SectionTitle
-          eyebrow="Why pay for SkillEdge"
-          title="Because the trader does not need more screenshots of random PnL. The trader needs a process that can be repeated."
-          text="A serious product should help the client understand the market, himself and his execution. That is why SkillEdge connects signals, journal, reports, playbook and coaching in one system."
-        />
-
+        <SectionTitle eyebrow={p.signalEyebrow} title={p.signalTitle} text={p.signalText} />
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {whyPay.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.05 }}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6"
-            >
-              <div className="text-xl font-semibold text-white">
-                {item.title}
-              </div>
-
-              <p className="mt-3 text-sm leading-7 text-white/60">
-                {item.text}
-              </p>
-            </motion.div>
+          {p.signalCards.map(([title, text]: [string, string], index: number) => (
+            <InfoCard key={title} title={title} text={text} index={index} />
           ))}
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+      <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <CardBox>
-          <div className="text-sm uppercase tracking-[0.2em] text-white/45">
-            Signal service vs SkillEdge
-          </div>
-
-          <h3 className="mt-3 text-2xl font-semibold text-white">
-            The difference is the learning loop.
-          </h3>
-
-          <p className="mt-3 text-sm leading-7 text-white/60">
-            We are not building a product that makes traders blindly dependent
-            on alerts. We are building a system that helps the trader understand
-            why the alert exists and what the result teaches.
-          </p>
-
-          <div className="mt-6 space-y-3">
-            {signalComparison.map(([title, text], index) => (
-              <div
-                key={title}
-                className={`rounded-3xl border p-4 ${
-                  index === 0
-                    ? "border-red-300/15 bg-red-300/[0.035]"
-                    : "border-emerald-300/15 bg-emerald-300/[0.035]"
-                }`}
-              >
-                <div className="text-lg font-semibold text-white">
-                  {title}
-                </div>
-
-                <p className="mt-2 text-sm leading-6 text-white/62">
-                  {text}
-                </p>
-              </div>
-            ))}
-          </div>
+          <div className="text-sm uppercase tracking-[0.2em] text-white/45">{p.comparisonTitle}</div>
+          <h3 className="mt-3 text-2xl font-semibold text-white">{p.finalTitle}</h3>
+          <p className="mt-3 text-sm leading-7 text-white/60">{p.finalText}</p>
+          <div className="mt-6 rounded-3xl border border-amber-300/15 bg-amber-300/[0.035] p-4 text-xs leading-6 text-amber-50/65">{p.disclaimer}</div>
         </CardBox>
 
         <CardBox>
-          <div className="text-sm uppercase tracking-[0.2em] text-white/45">
-            Plan comparison
-          </div>
-
-          <h3 className="mt-3 text-2xl font-semibold text-white">
-            Choose the level of intelligence around your trading.
-          </h3>
-
-          <p className="mt-3 text-sm leading-7 text-white/60">
-            Core builds the base. Edge gives serious active-trader review.
-            Elite unlocks the full AI Trading Desk and signal workflow.
-          </p>
-
+          <div className="text-sm uppercase tracking-[0.2em] text-white/45">{p.comparisonTitle}</div>
+          <p className="mt-3 text-sm leading-7 text-white/60">{p.comparisonText}</p>
           <div className="mt-6 overflow-x-auto rounded-3xl border border-white/10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             <div className="min-w-[820px]">
-              {planComparison.map((row, rowIndex) => (
-                <div
-                  key={`pricing-row-${rowIndex}`}
-                  className={`grid grid-cols-4 ${
-                    rowIndex === 0
-                      ? "bg-white/5 text-white"
-                      : "border-t border-white/10 text-white/65"
-                  }`}
-                >
+              {p.comparison.map((row: string[], rowIndex: number) => (
+                <div key={`pricing-row-${rowIndex}`} className={`grid grid-cols-4 ${rowIndex === 0 ? "bg-white/5 text-white" : "border-t border-white/10 text-white/65"}`}>
                   {row.map((cell, cellIndex) => (
-                    <div
-                      key={`pricing-cell-${rowIndex}-${cellIndex}`}
-                      className="p-4 text-sm"
-                    >
-                      {cell}
-                    </div>
+                    <div key={`pricing-cell-${rowIndex}-${cellIndex}`} className="p-4 text-sm">{cell}</div>
                   ))}
                 </div>
               ))}
             </div>
           </div>
         </CardBox>
-      </section>
-
-      <section className="overflow-hidden rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-cyan-500/15 via-white/[0.04] to-indigo-500/10 p-6 md:p-10">
-        <div className="grid gap-8 lg:grid-cols-[1fr_0.82fr] lg:items-center">
-          <div>
-            <div className="text-sm uppercase tracking-[0.24em] text-white/45">
-              Final decision
-            </div>
-
-            <h2 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
-              If you want a journal, choose Core. If you want scanner intelligence, choose Edge. If you want real-time AI Alerts, choose Elite.
-            </h2>
-
-            <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">
-              SkillEdge is built for traders who want to stop operating from
-              memory, emotion and scattered tools. The more serious the trader
-              is about review, execution and signals, the more valuable the
-              higher plans become.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
-            <div className="text-lg font-semibold text-white">
-              The clean recommendation
-            </div>
-
-            <div className="mt-5 space-y-3">
-              {[
-                "Choose Core if you need structure and clean journaling.",
-                "Choose Edge if you trade actively and want deeper AI review.",
-                "Choose Elite if you want real-time AI Alerts, floating alert widget and the full signal-to-journal workflow.",
-              ].map((item) => (
-                <div key={item} className="flex gap-3 text-sm text-white/70">
-                  <Icon name="check" className="text-cyan-300" />
-                  {item}
-                </div>
-              ))}
-            </div>
-
-            <ButtonX
-              onClick={() => handleCheckout("elite", billing)}
-              className="mt-6 w-full shadow-[0_0_35px_rgba(34,211,238,0.25)]"
-            >
-              Unlock SkillEdge Elite
-              <span className="ml-2">→</span>
-            </ButtonX>
-
-            <p className="mt-4 text-xs leading-5 text-white/40">
-              SkillEdge is not financial advice and does not guarantee profits.
-              It is a premium trading workflow built to improve process,
-              structure, review and decision quality.
-            </p>
-          </div>
-        </div>
       </section>
     </motion.div>
   );
@@ -2464,85 +1556,175 @@ function TeamPage({
   t: any;
   setActive: (v: PageKey) => void;
 }) {
-  const principles = [
-    {
-      title: "Built for traders who want process, not hype",
-      text: "SkillEdge is not being built as a noisy signal room. The product is designed around structure: market context, trade plan, execution review, journal feedback and long-term improvement.",
-    },
-    {
-      title: "AI should explain, not replace thinking",
-      text: "The goal is not to make the trader blindly click. SkillEdge should help the trader understand why an idea matters, what confirms it, what invalidates it and what the outcome teaches.",
-    },
-    {
-      title: "The journal is the trader’s truth",
-      text: "Every trader says he knows his mistakes. The journal proves it. SkillEdge is built to turn real trades, screenshots and outcomes into measurable feedback.",
-    },
-  ];
+  const lang: Language =
+    t.lang === "RU" ? "ru" : t.lang === "UA" ? "ua" : "en";
 
-  const productBeliefs = [
-    "Signals without education create dependency.",
-    "A trade without a plan cannot be reviewed properly.",
-    "A journal without feedback becomes a graveyard of old trades.",
-    "The best product should make the trader calmer, sharper and more disciplined.",
-    "Personal AI alerts become powerful only when the trader builds clean historical data.",
-  ];
+  const copy = {
+    en: {
+      badge: "About SkillEdge AI",
+      title:
+        "We build trading software for traders who want structure, not noise.",
+      text:
+        "SkillEdge AI was created around a simple belief: a trader becomes stronger when every trade, screenshot, decision and mistake turns into clear feedback.",
+      productButton: "Explore product",
+      pricingButton: "View plans",
+      panelEyebrow: "Our approach",
+      panelTitle: "One loop: market → decision → journal → review",
+      panelItems: [
+        "Market opportunities should be filtered, not chased blindly.",
+        "Every serious trade needs a plan before the entry.",
+        "A journal becomes powerful only when it creates feedback.",
+        "AI should explain the logic, risk and lesson — not replace thinking.",
+      ],
+      missionEyebrow: "Mission",
+      missionTitle: "Help traders build a repeatable process.",
+      missionText:
+        "We are not building a hype signal room. SkillEdge AI is designed as a premium workspace where a trader can find opportunities, prepare a plan, track execution, review outcomes and slowly build a personal edge from real data.",
+      values: [
+        {
+          title: "Process over prediction",
+          text:
+            "No promise of guaranteed profit. The focus is structure, risk, discipline and better decision quality.",
+        },
+        {
+          title: "Feedback over memory",
+          text:
+            "Screenshots, trades and outcomes should become lessons — not forgotten files scattered across folders.",
+        },
+        {
+          title: "Clarity over noise",
+          text:
+            "The product should make the trader calmer, sharper and more prepared before making decisions.",
+        },
+      ],
+      teamEyebrow: "Team",
+      teamTitle: "Built by traders, product builders and AI operators.",
+      teamText:
+        "SkillEdge AI is being built as a focused premium SaaS product. The public team section is intentionally simple for launch — photos, names and roles can be added as the company structure is finalized.",
+      teamCards: [
+        ["Founder / Product Vision", "Trading workflow, product strategy and trader development."],
+        ["AI & Data Layer", "Market intelligence, AI review logic, alerts and automation."],
+        ["Design & Client Experience", "Premium interface, onboarding, support and user clarity."],
+      ],
+      trustEyebrow: "Trust",
+      trustTitle: "Serious trading tools must stay honest.",
+      trustText:
+        "SkillEdge AI is not financial advice and does not guarantee profits. The goal is to improve process, review, discipline and decision quality.",
+      ctaTitle: "Ready to see how SkillEdge works?",
+      ctaText:
+        "Explore the product or choose the plan that matches your trading process.",
+    },
 
-  const buildPillars = [
-    {
-      title: "Market Intelligence",
-      text: "Find what deserves attention across stocks, crypto, catalysts and unusual activity.",
+    ru: {
+      badge: "О SkillEdge AI",
+      title:
+        "Мы создаём торговый софт для трейдеров, которым нужна структура, а не шум.",
+      text:
+        "SkillEdge AI появился вокруг простой идеи: трейдер становится сильнее, когда каждая сделка, скриншот, решение и ошибка превращаются в понятную обратную связь.",
+      productButton: "Посмотреть продукт",
+      pricingButton: "Посмотреть тарифы",
+      panelEyebrow: "Наш подход",
+      panelTitle: "Один цикл: рынок → решение → журнал → разбор",
+      panelItems: [
+        "Рыночные возможности нужно фильтровать, а не слепо догонять.",
+        "У каждой серьёзной сделки должен быть план до входа.",
+        "Журнал становится сильным только тогда, когда даёт обратную связь.",
+        "AI должен объяснять логику, риск и урок — а не заменять мышление.",
+      ],
+      missionEyebrow: "Миссия",
+      missionTitle: "Помочь трейдерам построить повторяемый процесс.",
+      missionText:
+        "Мы не строим хайповую комнату сигналов. SkillEdge AI создаётся как premium workspace, где трейдер находит возможности, готовит план, отслеживает исполнение, разбирает результат и постепенно строит личное преимущество на реальных данных.",
+      values: [
+        {
+          title: "Процесс важнее предсказаний",
+          text:
+            "Никаких обещаний гарантированной прибыли. Фокус — структура, риск, дисциплина и качество решений.",
+        },
+        {
+          title: "Обратная связь важнее памяти",
+          text:
+            "Скриншоты, сделки и результаты должны становиться уроками, а не забытыми файлами в разных папках.",
+        },
+        {
+          title: "Ясность важнее шума",
+          text:
+            "Продукт должен делать трейдера спокойнее, точнее и лучше подготовленным к решениям.",
+        },
+      ],
+      teamEyebrow: "Команда",
+      teamTitle: "Создаётся трейдерами, продуктовой командой и AI-операторами.",
+      teamText:
+        "SkillEdge AI строится как сфокусированный premium SaaS-продукт. Публичный блок команды на запуске намеренно простой — фото, имена и роли можно добавить после финализации структуры компании.",
+      teamCards: [
+        ["Founder / Product Vision", "Торговый workflow, стратегия продукта и развитие трейдера."],
+        ["AI & Data Layer", "Рыночная разведка, AI-разбор, логика сигналов и автоматизация."],
+        ["Design & Client Experience", "Premium-интерфейс, onboarding, поддержка и понятность продукта."],
+      ],
+      trustEyebrow: "Доверие",
+      trustTitle: "Серьёзные торговые инструменты должны быть честными.",
+      trustText:
+        "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Цель продукта — улучшить процесс, разбор, дисциплину и качество решений.",
+      ctaTitle: "Готов посмотреть, как работает SkillEdge?",
+      ctaText:
+        "Изучи продукт или выбери тариф под свой торговый процесс.",
     },
-    {
-      title: "AI Trading Desk",
-      text: "Turn opportunities into structured alerts with setup, trigger, entry, stop, targets and invalidation.",
-    },
-    {
-      title: "Journal Intelligence",
-      text: "Connect every decision to real execution, screenshots, PnL, mistakes and improvement.",
-    },
-    {
-      title: "Personal Edge",
-      text: "Use the client’s own best and worst trades to build future personal alert logic.",
-    },
-  ];
 
-  const roadmap = [
-    {
-      step: "01",
-      title: "Build the foundation",
-      text: "Journal, dashboard, screenshots, learning, reports, billing and support foundation.",
+    ua: {
+      badge: "Про SkillEdge AI",
+      title:
+        "Ми створюємо торговий софт для трейдерів, яким потрібна структура, а не шум.",
+      text:
+        "SkillEdge AI зʼявився навколо простої ідеї: трейдер стає сильнішим, коли кожна угода, скріншот, рішення та помилка перетворюються на зрозумілий зворотний звʼязок.",
+      productButton: "Подивитися продукт",
+      pricingButton: "Подивитися тарифи",
+      panelEyebrow: "Наш підхід",
+      panelTitle: "Один цикл: ринок → рішення → журнал → розбір",
+      panelItems: [
+        "Ринкові можливості потрібно фільтрувати, а не сліпо наздоганяти.",
+        "У кожної серйозної угоди має бути план до входу.",
+        "Журнал стає сильним лише тоді, коли дає зворотний звʼязок.",
+        "AI має пояснювати логіку, ризик і урок — а не замінювати мислення.",
+      ],
+      missionEyebrow: "Місія",
+      missionTitle: "Допомогти трейдерам побудувати повторюваний процес.",
+      missionText:
+        "Ми не створюємо хайпову кімнату сигналів. SkillEdge AI будується як premium workspace, де трейдер знаходить можливості, готує план, відстежує виконання, розбирає результат і поступово будує власну перевагу на реальних даних.",
+      values: [
+        {
+          title: "Процес важливіший за передбачення",
+          text:
+            "Жодних обіцянок гарантованого прибутку. Фокус — структура, ризик, дисципліна та якість рішень.",
+        },
+        {
+          title: "Зворотний звʼязок важливіший за памʼять",
+          text:
+            "Скріншоти, угоди та результати мають ставати уроками, а не забутими файлами в різних папках.",
+        },
+        {
+          title: "Ясність важливіша за шум",
+          text:
+            "Продукт має робити трейдера спокійнішим, точнішим і краще підготовленим до рішень.",
+        },
+      ],
+      teamEyebrow: "Команда",
+      teamTitle: "Створюється трейдерами, продуктовою командою та AI-операторами.",
+      teamText:
+        "SkillEdge AI будується як сфокусований premium SaaS-продукт. Публічний блок команди на запуску навмисно простий — фото, імена та ролі можна додати після фіналізації структури компанії.",
+      teamCards: [
+        ["Founder / Product Vision", "Торговий workflow, стратегія продукту та розвиток трейдера."],
+        ["AI & Data Layer", "Ринкова розвідка, AI-розбір, логіка сигналів та автоматизація."],
+        ["Design & Client Experience", "Premium-інтерфейс, onboarding, підтримка та зрозумілість продукту."],
+      ],
+      trustEyebrow: "Довіра",
+      trustTitle: "Серйозні торгові інструменти мають бути чесними.",
+      trustText:
+        "SkillEdge AI не є фінансовою рекомендацією та не гарантує прибуток. Мета продукту — покращити процес, розбір, дисципліну та якість рішень.",
+      ctaTitle: "Готовий подивитися, як працює SkillEdge?",
+      ctaText:
+        "Вивчи продукт або обери тариф під свій торговий процес.",
     },
-    {
-      step: "02",
-      title: "Connect signals with behavior",
-      text: "AI alerts, decision tracking, trade draft creation, outcome learning and missed opportunity coaching.",
-    },
-    {
-      step: "03",
-      title: "Expand the intelligence layer",
-      text: "Premium market data, full ticker universe, Binance universe, halt screener, heatmaps and stronger scanner logic.",
-    },
-    {
-      step: "04",
-      title: "Personalize the edge",
-      text: "AI learns from the client’s best setups, weak patterns, execution mistakes and journal history.",
-    },
-  ];
-
-  const trustCards = [
-    {
-      title: "No fake certainty",
-      text: "Trading contains risk. SkillEdge should never pretend that any AI model can guarantee profit. The product is built for better process, not magic predictions.",
-    },
-    {
-      title: "Transparent logic",
-      text: "The client should understand why an alert appears, which sources are tracked and what part of the idea is strong or weak.",
-    },
-    {
-      title: "Premium product mindset",
-      text: "Every feature should feel useful, serious and connected to the trader’s real workflow — not like a random MVP feature added for decoration.",
-    },
-  ];
+  }[lang];
 
   return (
     <motion.div
@@ -2550,15 +1732,15 @@ function TeamPage({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
       transition={{ duration: 0.35 }}
-      className="space-y-24 pt-8"
+      className="space-y-16 pt-8"
     >
       <section className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
         <div className="absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
         <div className="absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
 
-        <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div className="relative grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
           <div>
-            <Badge>Behind SkillEdge AI</Badge>
+            <Badge>{copy.badge}</Badge>
 
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
@@ -2566,7 +1748,7 @@ function TeamPage({
               transition={{ delay: 0.08 }}
               className="mt-6 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl"
             >
-              We are building the AI trading system serious traders wish already existed.
+              {copy.title}
             </motion.h1>
 
             <motion.p
@@ -2575,24 +1757,21 @@ function TeamPage({
               transition={{ delay: 0.16 }}
               className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg"
             >
-              SkillEdge AI is being built with one clear idea: traders do not
-              need more noise. They need a system that connects market
-              opportunities, AI alerts, journal review, execution discipline,
-              learning and personal improvement.
+              {copy.text}
             </motion.p>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonX onClick={() => setActive("pricing")}>
-                View plans
+              <ButtonX onClick={() => setActive("product")}>
+                {copy.productButton}
                 <span className="ml-2">→</span>
               </ButtonX>
 
               <button
                 type="button"
-                onClick={() => setActive("product")}
+                onClick={() => setActive("pricing")}
                 className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
               >
-                Explore product
+                {copy.pricingButton}
               </button>
             </div>
           </div>
@@ -2606,11 +1785,11 @@ function TeamPage({
             <div className="flex items-start justify-between border-b border-white/10 pb-4">
               <div>
                 <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">
-                  Product philosophy
+                  {copy.panelEyebrow}
                 </div>
 
                 <div className="mt-2 text-2xl font-semibold text-white">
-                  Process over prediction
+                  {copy.panelTitle}
                 </div>
               </div>
 
@@ -2620,17 +1799,14 @@ function TeamPage({
             </div>
 
             <div className="mt-5 space-y-3">
-              {productBeliefs.map((item, index) => (
-                <motion.div
+              {copy.panelItems.map((item) => (
+                <div
                   key={item}
-                  initial={{ opacity: 0, x: 16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.28 + index * 0.05 }}
                   className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/65"
                 >
                   <Icon name="check" className="text-emerald-300" />
                   <span>{item}</span>
-                </motion.div>
+                </div>
               ))}
             </div>
           </motion.div>
@@ -2639,19 +1815,18 @@ function TeamPage({
 
       <section>
         <SectionTitle
-          eyebrow="What drives the product"
-          title="SkillEdge is designed around trader development, not empty hype."
-          text="The strongest traders are not strong because they clicked one perfect alert. They are strong because they have process, risk control, review, repetition and the ability to learn from their own behavior."
+          eyebrow={copy.missionEyebrow}
+          title={copy.missionTitle}
+          text={copy.missionText}
         />
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {principles.map((item, index) => (
+          {copy.values.map((item) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.06 }}
               whileHover={{ y: -5 }}
               className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20"
             >
@@ -2667,116 +1842,32 @@ function TeamPage({
         </div>
       </section>
 
-      <section className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
-        <div>
-          <Badge>What we are building</Badge>
-
-          <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl">
-            A connected system, not a collection of random tools.
-          </h2>
-
-          <p className="mt-5 text-base leading-8 text-white/62">
-            The product is built around one workflow: find opportunity,
-            understand the setup, make a decision, record execution, review the
-            outcome and build a stronger personal edge.
-          </p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {buildPillars.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.05 }}
-              className="rounded-3xl border border-white/10 bg-white/[0.035] p-5"
-            >
-              <div className="text-lg font-semibold text-white">
-                {item.title}
-              </div>
-
-              <p className="mt-3 text-sm leading-7 text-white/58">
-                {item.text}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-[#0b1020] p-6 md:p-10">
-        <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl" />
-        <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
-
-        <div className="relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
-          <div>
-            <Badge>Development roadmap</Badge>
-
-            <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl">
-              We are building toward a premium AI Trading Desk.
-            </h2>
-
-            <p className="mt-5 text-base leading-8 text-white/62">
-              The foundation is already product-focused: journal, alerts,
-              learning, reports, support, billing and market intelligence. The
-              next level is premium data, full market scanning and personal AI
-              alerts based on the client’s own trading history.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {roadmap.map((item, index) => (
-              <motion.div
-                key={item.step}
-                initial={{ opacity: 0, x: 18 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ delay: index * 0.05 }}
-                className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:grid-cols-[64px_1fr]"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-semibold text-cyan-100">
-                  {item.step}
-                </div>
-
-                <div>
-                  <div className="text-lg font-semibold text-white">
-                    {item.title}
-                  </div>
-
-                  <p className="mt-2 text-sm leading-7 text-white/58">
-                    {item.text}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section>
         <SectionTitle
-          eyebrow="Trust principles"
-          title="A serious trading product must be honest about risk and serious about process."
-          text="We want SkillEdge to feel premium not because it makes loud promises, but because the product is clear, useful, structured and built around real trader behavior."
+          eyebrow={copy.teamEyebrow}
+          title={copy.teamTitle}
+          text={copy.teamText}
         />
 
         <div className="mt-8 grid gap-5 md:grid-cols-3">
-          {trustCards.map((item, index) => (
+          {copy.teamCards.map(([role, text]) => (
             <motion.div
-              key={item.title}
+              key={role}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.06 }}
-              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6"
+              className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/20"
             >
-              <div className="text-xl font-semibold text-white">
-                {item.title}
+              <div className="flex aspect-[4/3] items-center justify-center border-b border-white/10 bg-gradient-to-br from-cyan-500/15 via-indigo-500/10 to-white/[0.03]">
+                <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/40">
+                  Photo
+                </div>
               </div>
 
-              <p className="mt-3 text-sm leading-7 text-white/60">
-                {item.text}
-              </p>
+              <div className="p-6">
+                <div className="text-xl font-semibold text-white">{role}</div>
+                <p className="mt-3 text-sm leading-7 text-white/60">{text}</p>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -2786,33 +1877,30 @@ function TeamPage({
         <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
           <div>
             <div className="text-sm uppercase tracking-[0.24em] text-white/45">
-              Built with one mission
+              {copy.trustEyebrow}
             </div>
 
             <h2 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
-              Help traders stop operating from chaos and start operating from a system.
+              {copy.trustTitle}
             </h2>
 
             <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">
-              SkillEdge AI is for traders who want to review harder, think
-              cleaner, execute with more discipline and build a repeatable edge
-              from real data instead of emotions and memory.
+              {copy.trustText}
             </p>
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
             <div className="text-lg font-semibold text-white">
-              Ready to see the product?
+              {copy.ctaTitle}
             </div>
 
             <p className="mt-3 text-sm leading-7 text-white/58">
-              Explore the product page or choose the plan that fits your current
-              trading level.
+              {copy.ctaText}
             </p>
 
             <div className="mt-6 grid gap-3">
               <ButtonX onClick={() => setActive("product")} className="w-full">
-                Explore SkillEdge
+                {copy.productButton}
                 <span className="ml-2">→</span>
               </ButtonX>
 
@@ -2821,7 +1909,7 @@ function TeamPage({
                 onClick={() => setActive("pricing")}
                 className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
               >
-                View pricing
+                {copy.pricingButton}
               </button>
             </div>
           </div>
@@ -2840,42 +1928,169 @@ function PremiumFooter({
   setActive: (v: PageKey) => void;
   handleCheckout: (id: string, billingPeriod: BillingPeriod) => void;
 }) {
-  const footerProductLinks: { label: string; page: PageKey; href: string }[] = [
-  { label: "Product", page: "product", href: "/product" },
-  { label: "Pricing", page: "pricing", href: "/pricing" },
-  { label: "Team", page: "team", href: "/team" },
-  { label: "Home", page: "home", href: "/" },
-];
+  const language: Language =
+    t.lang === "RU" ? "ru" : t.lang === "UA" ? "ua" : "en";
 
-  const footerFeatureLinks = [
-  { label: "AI Trading Desk", href: "/product" },
-  { label: "AI Alerts", href: "/product" },
-  { label: "Market Intelligence", href: "/product" },
-  { label: "Journal & Screenshots", href: "/product" },
-  { label: "Execution Coach", href: "/product" },
-  { label: "Outcome Learning", href: "/product" },
-  { label: "Playbook", href: "/product" },
-  { label: "Reports", href: "/product" },
-  { label: "Learning Center", href: "/product" },
-  { label: "Support Assistant", href: "/product" },
-];
+  const copy = {
+    en: {
+      productColumn: "Product",
+      featuresColumn: "Features",
+      resourcesColumn: "Resources",
+      legalColumn: "Legal",
+      description:
+        "Premium AI trading workspace for serious traders: market intelligence, AI signals, journal, execution review, playbook, reports and coaching in one connected system.",
+      choosePlan: "Choose plan",
+      requestDemo: "Request demo",
+      cookieSettings: "Cookie settings",
+      contact: "Contacts",
+      location: "Dubai / Warsaw / Kyiv",
+      demo: "Product demo by request",
+      rights: "© 2026 SkillEdge AI. All rights reserved.",
+      bottomNote:
+        "Built for traders who want structure, discipline and measurable improvement.",
+      disclaimer:
+        "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+      productLinks: [
+        { label: "Home", href: "/" },
+        { label: "Product", href: "/product" },
+        { label: "Pricing", href: "/pricing" },
+        { label: "About Us", href: "/about" },
+      ],
+      featureLinks: [
+        { label: "AI Trading Desk", href: "/product" },
+        { label: "AI Signals", href: "/product" },
+        { label: "Market Intelligence", href: "/product" },
+        { label: "Journal & Screenshots", href: "/product" },
+        { label: "Execution Coach", href: "/product" },
+        { label: "Outcome Learning", href: "/product" },
+        { label: "Playbook", href: "/product" },
+        { label: "Reports", href: "/product" },
+        { label: "Learning Center", href: "/product" },
+        { label: "Support Assistant", href: "/product" },
+      ],
+      resourceLinks: [
+        { label: "Getting Started", href: "/product" },
+        { label: "How SkillEdge Works", href: "/product" },
+        { label: "Trading Journal Guide", href: "/product" },
+        { label: "AI Signals Guide", href: "/product" },
+        { label: "Contact Support", href: "/about" },
+      ],
+      legalLinks: [
+        { label: "Privacy Policy", href: "/legal/privacy-policy" },
+        { label: "Terms & Conditions", href: "/legal/terms" },
+        { label: "Disclaimer", href: "/legal/disclaimer" },
+        { label: "EULA", href: "/legal/eula" },
+        { label: "Billing & Cancellation", href: "/legal/billing" },
+        { label: "Cookie Policy", href: "/legal/cookies" },
+      ],
+    },
 
-  const footerResourceLinks = [
-  { label: "Getting Started", href: "/product" },
-  { label: "How SkillEdge Works", href: "/product" },
-  { label: "Trading Journal Guide", href: "/product" },
-  { label: "AI Alerts Guide", href: "/product" },
-  { label: "Contact Support", href: "/team" },
-];
+    ru: {
+      productColumn: "Продукт",
+      featuresColumn: "Функции",
+      resourcesColumn: "Ресурсы",
+      legalColumn: "Документы",
+      description:
+        "Премиальное AI-пространство для серьёзных трейдеров: рыночная разведка, AI-сигналы, журнал, разбор исполнения, плейбук, отчёты и коучинг в одной системе.",
+      choosePlan: "Выбрать тариф",
+      requestDemo: "Запросить демо",
+      cookieSettings: "Настройки cookies",
+      contact: "Контакты",
+      location: "Dubai / Warsaw / Kyiv",
+      demo: "Демо продукта по запросу",
+      rights: "© 2026 SkillEdge AI. Все права защищены.",
+      bottomNote:
+        "Создано для трейдеров, которым нужны структура, дисциплина и измеримый прогресс.",
+      disclaimer:
+        "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.",
+      productLinks: [
+        { label: "Главная", href: "/" },
+        { label: "Продукт", href: "/product" },
+        { label: "Тарифы", href: "/pricing" },
+        { label: "О нас", href: "/about" },
+      ],
+      featureLinks: [
+        { label: "AI Trading Desk", href: "/product" },
+        { label: "AI-сигналы", href: "/product" },
+        { label: "Рыночная разведка", href: "/product" },
+        { label: "Журнал и скриншоты", href: "/product" },
+        { label: "Коуч исполнения", href: "/product" },
+        { label: "Обучение на результатах", href: "/product" },
+        { label: "Плейбук", href: "/product" },
+        { label: "Отчёты", href: "/product" },
+        { label: "Центр обучения", href: "/product" },
+        { label: "Помощник поддержки", href: "/product" },
+      ],
+      resourceLinks: [
+        { label: "Начало работы", href: "/product" },
+        { label: "Как работает SkillEdge", href: "/product" },
+        { label: "Гайд по журналу сделок", href: "/product" },
+        { label: "Гайд по AI-сигналам", href: "/product" },
+        { label: "Связаться с поддержкой", href: "/about" },
+      ],
+      legalLinks: [
+        { label: "Политика конфиденциальности", href: "/legal/privacy-policy" },
+        { label: "Условия использования", href: "/legal/terms" },
+        { label: "Дисклеймер", href: "/legal/disclaimer" },
+        { label: "Лицензионное соглашение", href: "/legal/eula" },
+        { label: "Оплата и отмена", href: "/legal/billing" },
+        { label: "Политика cookies", href: "/legal/cookies" },
+      ],
+    },
 
-  const footerLegalLinks = [
-  { label: "Privacy Policy", href: "/legal/privacy-policy" },
-  { label: "Terms & Conditions", href: "/legal/terms" },
-  { label: "Disclaimer Statement", href: "/legal/disclaimer" },
-  { label: "EULA", href: "/legal/eula" },
-  { label: "Billing & Cancellation", href: "/legal/billing" },
-  { label: "Cookie Policy", href: "/legal/cookies" },
-];
+    ua: {
+      productColumn: "Продукт",
+      featuresColumn: "Функції",
+      resourcesColumn: "Ресурси",
+      legalColumn: "Документи",
+      description:
+        "Преміальний AI-простір для серйозних трейдерів: ринкова розвідка, AI-сигнали, журнал, розбір виконання, плейбук, звіти та коучинг в одній системі.",
+      choosePlan: "Обрати тариф",
+      requestDemo: "Запросити демо",
+      cookieSettings: "Налаштування cookies",
+      contact: "Контакти",
+      location: "Dubai / Warsaw / Kyiv",
+      demo: "Демо продукту за запитом",
+      rights: "© 2026 SkillEdge AI. Усі права захищені.",
+      bottomNote:
+        "Створено для трейдерів, яким потрібні структура, дисципліна та вимірюваний прогрес.",
+      disclaimer:
+        "SkillEdge AI не є фінансовою рекомендацією та не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу.",
+      productLinks: [
+        { label: "Головна", href: "/" },
+        { label: "Продукт", href: "/product" },
+        { label: "Тарифи", href: "/pricing" },
+        { label: "Про нас", href: "/about" },
+      ],
+      featureLinks: [
+        { label: "AI Trading Desk", href: "/product" },
+        { label: "AI-сигнали", href: "/product" },
+        { label: "Ринкова розвідка", href: "/product" },
+        { label: "Журнал і скріншоти", href: "/product" },
+        { label: "Коуч виконання", href: "/product" },
+        { label: "Навчання на результатах", href: "/product" },
+        { label: "Плейбук", href: "/product" },
+        { label: "Звіти", href: "/product" },
+        { label: "Центр навчання", href: "/product" },
+        { label: "Помічник підтримки", href: "/product" },
+      ],
+      resourceLinks: [
+        { label: "Початок роботи", href: "/product" },
+        { label: "Як працює SkillEdge", href: "/product" },
+        { label: "Гайд по журналу угод", href: "/product" },
+        { label: "Гайд по AI-сигналах", href: "/product" },
+        { label: "Звʼязатися з підтримкою", href: "/about" },
+      ],
+      legalLinks: [
+        { label: "Політика конфіденційності", href: "/legal/privacy-policy" },
+        { label: "Умови використання", href: "/legal/terms" },
+        { label: "Дисклеймер", href: "/legal/disclaimer" },
+        { label: "Ліцензійна угода", href: "/legal/eula" },
+        { label: "Оплата та скасування", href: "/legal/billing" },
+        { label: "Політика cookies", href: "/legal/cookies" },
+      ],
+    },
+  }[language];
 
   return (
     <footer className="relative mt-20 overflow-hidden border-t border-white/10 bg-[#070b16]">
@@ -2899,14 +2114,12 @@ function PremiumFooter({
             </Link>
 
             <p className="mt-6 max-w-md text-sm leading-7 text-white/55">
-              Premium AI trading workspace for serious traders: market
-              intelligence, AI alerts, journal, execution review, playbook,
-              reports and coaching in one connected system.
+              {copy.description}
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <ButtonX onClick={() => setActive("pricing")}>
-                Choose plan
+                {copy.choosePlan}
                 <span className="ml-2">→</span>
               </ButtonX>
 
@@ -2915,96 +2128,47 @@ function PremiumFooter({
                 onClick={() => handleCheckout("demo", "monthly")}
                 className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
               >
-                Request demo
+                {copy.requestDemo}
               </button>
             </div>
 
             <div className="mt-6 rounded-3xl border border-amber-300/15 bg-amber-300/[0.035] p-4 text-xs leading-6 text-amber-50/65">
-              SkillEdge AI is not financial advice and does not guarantee
-              profits. The platform is built to improve structure, review,
-              decision quality and trading process.
+              {copy.disclaimer}
             </div>
           </div>
 
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
-                Product
-              </div>
-
-              <div className="mt-4 space-y-3">
-                {footerProductLinks.map((item) => (
-  <Link
-    key={item.label}
-    href={item.href}
-    className="block text-left text-sm text-white/58 transition hover:text-white"
-  >
-    {item.label}
-  </Link>
-))}
-              </div>
-            </div>
+            <FooterColumn title={copy.productColumn} links={copy.productLinks} />
+            <FooterColumn title={copy.featuresColumn} links={copy.featureLinks} />
+            <FooterColumn title={copy.resourcesColumn} links={copy.resourceLinks} />
 
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
-                Features
+                {copy.legalColumn}
               </div>
 
               <div className="mt-4 space-y-3">
-                {footerFeatureLinks.map((item) => (
-  <Link
-    key={item.label}
-    href={item.href}
-    className="block text-left text-sm text-white/58 transition hover:text-white"
-  >
-    {item.label}
-  </Link>
-))}
-              </div>
-            </div>
+                {copy.legalLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="block text-left text-sm text-white/58 transition hover:text-white"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
 
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
-                Resources
-              </div>
-
-              <div className="mt-4 space-y-3">
-                {footerResourceLinks.map((item) => (
-  <Link
-    key={item.label}
-    href={item.href}
-    className="block text-left text-sm text-white/58 transition hover:text-white"
-  >
-    {item.label}
-  </Link>
-))}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
-                Legal
-              </div>
-
-              <div className="mt-4 space-y-3">
-                {footerLegalLinks.map((item) => (
-  <Link
-    key={item.href}
-    href={item.href}
-    className="block text-left text-sm text-white/58 transition hover:text-white"
-  >
-    {item.label}
-  </Link>
-))}
-<button
-  type="button"
-  onClick={() => {
-    window.dispatchEvent(new Event("skilledge:open-cookie-settings"));
-  }}
-  className="block text-left text-sm text-cyan-100/70 transition hover:text-cyan-100"
->
-  Cookie settings
-</button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.dispatchEvent(
+                      new Event("skilledge:open-cookie-settings")
+                    );
+                  }}
+                  className="block text-left text-sm text-cyan-100/70 transition hover:text-cyan-100"
+                >
+                  {copy.cookieSettings}
+                </button>
               </div>
             </div>
           </div>
@@ -3013,26 +2177,53 @@ function PremiumFooter({
         <div className="mt-12 grid gap-6 border-t border-white/10 pt-8 text-sm text-white/45 md:grid-cols-[1fr_auto] md:items-center">
           <div>
             <div className="font-semibold text-white/70">
-              {t.footer.contact}
+              {copy.contact}
             </div>
 
             <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
               <span>support@upyourskills.site</span>
-              <span>{t.footer.location}</span>
-              <span>{t.footer.demo}</span>
+              <span>{copy.location}</span>
+              <span>{copy.demo}</span>
             </div>
           </div>
 
           <div className="md:text-right">
-            <div>© 2026 SkillEdge AI. All rights reserved.</div>
+            <div>{copy.rights}</div>
             <div className="mt-2 text-xs text-white/35">
-              Built for traders who want structure, discipline and measurable
-              improvement.
+              {copy.bottomNote}
             </div>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: { label: string; href: string }[];
+}) {
+  return (
+    <div>
+      <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
+        {title}
+      </div>
+
+      <div className="mt-4 space-y-3">
+        {links.map((item) => (
+          <Link
+            key={`${title}-${item.label}`}
+            href={item.href}
+            className="block text-left text-sm text-white/58 transition hover:text-white"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -3042,97 +2233,40 @@ function AuthModal(props: {
   authEmail: string;
   authPassword: string;
   authStatus: string;
-  setAuthEmail: (v: string) => void;
-  setAuthPassword: (v: string) => void;
+  setAuthEmail: (value: string) => void;
+  setAuthPassword: (value: string) => void;
   closeAuthModal: () => void;
-  handleAuthSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  setAuthMode: (v: AuthMode) => void;
-  setAuthStatus: (v: string) => void;
+  handleAuthSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  setAuthMode: (value: AuthMode) => void;
+  setAuthStatus: (value: string) => void;
 }) {
-  const {
-    authMode,
-    authLabels,
-    authEmail,
-    authPassword,
-    authStatus,
-    setAuthEmail,
-    setAuthPassword,
-    closeAuthModal,
-    handleAuthSubmit,
-    setAuthMode,
-    setAuthStatus,
-  } = props;
+  const { authMode, authLabels, authEmail, authPassword, authStatus, setAuthEmail, setAuthPassword, closeAuthModal, handleAuthSubmit, setAuthMode, setAuthStatus } = props;
 
   return (
     <AnimatePresence>
       {authMode && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4 backdrop-blur-xl"
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 18 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.94, y: 18 }}
-            transition={{ duration: 0.25 }}
-            className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-white/10 bg-[#101522] p-8 text-white shadow-2xl shadow-indigo-950/40"
-          >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4 backdrop-blur-xl">
+          <motion.div initial={{ opacity: 0, scale: 0.94, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.94, y: 18 }} transition={{ duration: 0.25 }} className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-white/10 bg-[#101522] p-8 text-white shadow-2xl shadow-indigo-950/40">
             <div className="absolute -left-20 -top-20 h-44 w-44 rounded-full bg-indigo-500/20 blur-3xl" />
             <div className="absolute -bottom-20 -right-20 h-44 w-44 rounded-full bg-cyan-500/10 blur-3xl" />
 
-            <button
-              onClick={closeAuthModal}
-              className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/60 transition hover:bg-white/10 hover:text-white"
-              aria-label={authLabels.close}
-            >
+            <button onClick={closeAuthModal} className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/60 transition hover:bg-white/10 hover:text-white" aria-label={authLabels.close}>
               ×
             </button>
 
             <div className="relative z-10">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/35">
-                SkillEdge AI
-              </p>
-
-              <h2 className="mt-4 text-3xl font-semibold">
-                {authMode === "login"
-                  ? authLabels.loginTitle
-                  : authLabels.registerTitle}
-              </h2>
+              <p className="text-xs uppercase tracking-[0.3em] text-white/35">SkillEdge AI</p>
+              <h2 className="mt-4 text-3xl font-semibold">{authMode === "login" ? authLabels.loginTitle : authLabels.registerTitle}</h2>
 
               <form onSubmit={handleAuthSubmit} className="mt-7 space-y-4">
-                <input
-                  type="email"
-                  placeholder={authLabels.email}
-                  value={authEmail}
-                  onChange={(e) => setAuthEmail(e.target.value)}
-                  required
-                  className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-white/25"
-                />
-
-                <input
-                  type="password"
-                  placeholder={authLabels.password}
-                  value={authPassword}
-                  onChange={(e) => setAuthPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-white/25"
-                />
-
+                <input type="email" placeholder={authLabels.email} value={authEmail} onChange={(event) => setAuthEmail(event.target.value)} required className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-white/25" />
+                <input type="password" placeholder={authLabels.password} value={authPassword} onChange={(event) => setAuthPassword(event.target.value)} required minLength={6} className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none transition placeholder:text-white/35 focus:border-white/25" />
                 <button className="w-full rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02]">
-                  {authMode === "login"
-                    ? authLabels.loginButton
-                    : authLabels.registerButton}
+                  {authMode === "login" ? authLabels.loginButton : authLabels.registerButton}
                 </button>
               </form>
 
-              {authStatus && (
-                <p className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-sm leading-6 text-white/65">
-                  {authStatus}
-                </p>
-              )}
+              {authStatus && <p className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-sm leading-6 text-white/65">{authStatus}</p>}
 
               <button
                 onClick={() => {
@@ -3141,9 +2275,7 @@ function AuthModal(props: {
                 }}
                 className="mt-5 text-sm text-white/50 transition hover:text-white"
               >
-                {authMode === "login"
-                  ? authLabels.switchToRegister
-                  : authLabels.switchToLogin}
+                {authMode === "login" ? authLabels.switchToRegister : authLabels.switchToLogin}
               </button>
             </div>
           </motion.div>
@@ -3153,70 +2285,157 @@ function AuthModal(props: {
   );
 }
 
-function SectionTitle({
-  eyebrow,
+function HeroSection({
+  badge,
   title,
   text,
+  primary,
+  secondary,
+  onPrimary,
+  onSecondary,
+  cards,
 }: {
-  eyebrow: string;
+  badge: string;
   title: string;
   text: string;
+  primary: string;
+  secondary: string;
+  onPrimary: () => void;
+  onSecondary: () => void;
+  cards: [string, string][];
 }) {
   return (
+    <section className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
+      <Glow />
+      <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div>
+          <Badge>{badge}</Badge>
+          <h1 className="mt-7 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl">{title}</h1>
+          <p className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg">{text}</p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <ButtonX onClick={onPrimary}>{primary}<span className="ml-2">→</span></ButtonX>
+            <button onClick={onSecondary} className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white">{secondary}</button>
+          </div>
+        </div>
+
+        <motion.div initial={{ opacity: 0, scale: 0.96, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.45 }} className="relative rounded-[2.25rem] border border-cyan-300/15 bg-[#0b1220]/90 p-5 shadow-[0_24px_110px_rgba(0,0,0,0.55)]">
+          <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-cyan-400/20 blur-2xl" />
+          <div className="relative flex items-center justify-between border-b border-white/10 pb-4">
+            <div>
+              <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">SkillEdge AI</div>
+              <div className="mt-2 text-xl font-semibold text-white">Trading workflow</div>
+            </div>
+            <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">Live</div>
+          </div>
+          <div className="relative mt-5 grid gap-3">
+            {cards.map(([label, value], index) => (
+              <motion.div key={label} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.32 + index * 0.06 }} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+                <div className="text-sm font-semibold text-white/85">{label}</div>
+                <div className="mt-2 text-xs leading-5 text-white/48">{value}</div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string; text: string }) {
+  return (
     <div>
-      <Badge>{eyebrow}</Badge>
-      <h2 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight md:text-5xl">
-        {title}
-      </h2>
-      <p className="mt-5 max-w-3xl text-base leading-8 text-white/65">{text}</p>
+      {eyebrow ? <Badge>{eyebrow}</Badge> : null}
+      <h2 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight md:text-5xl">{title}</h2>
+      {text ? <p className="mt-5 max-w-3xl text-base leading-8 text-white/65">{text}</p> : null}
     </div>
   );
 }
 
 function Badge({ children }: { children: React.ReactNode }) {
+  return <div className="inline-flex rounded-full border border-indigo-300/20 bg-indigo-300/10 px-4 py-1 text-xs uppercase tracking-[0.22em] text-indigo-100">✧ {children}</div>;
+}
+
+function CardBox({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 ${className}`}>{children}</div>;
+}
+
+function ButtonX({ children, onClick, className = "" }: { children: React.ReactNode; onClick?: () => void; className?: string }) {
+  return <button onClick={onClick} className={`inline-flex min-h-11 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] ${className}`}>{children}</button>;
+}
+
+function InfoCard({ title, text, index }: { title: string; text: string; index: number }) {
   return (
-    <div className="inline-flex rounded-full border border-indigo-300/20 bg-indigo-300/10 px-4 py-1 text-xs uppercase tracking-[0.22em] text-indigo-100">
-      ✧ {children}
-    </div>
+    <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.05 }} whileHover={{ y: -5 }} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20">
+      <div className="text-xl font-semibold text-white">{title}</div>
+      <p className="mt-3 text-sm leading-7 text-white/60">{text}</p>
+    </motion.div>
   );
 }
 
-function CardBox({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+function StepCard({ step, title, text, index }: { step: string; title: string; text: string; index: number }) {
   return (
-    <div
-      className={`rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 ${className}`}
-    >
-      {children}
-    </div>
+    <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.05 }} className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:grid-cols-[72px_1fr]">
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-semibold text-cyan-100">{step}</div>
+      <div>
+        <div className="text-lg font-semibold text-white">{title}</div>
+        <p className="mt-2 text-sm leading-7 text-white/58">{text}</p>
+      </div>
+    </motion.div>
   );
 }
 
-function ButtonX({
-  children,
-  onClick,
-  className = "",
-}: {
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-}) {
+function ModuleCard({ title, text, items, index }: { title: string; text: string; items: string[]; index: number }) {
   return (
-    <button
-      onClick={onClick}
-      className={`inline-flex min-h-11 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] ${className}`}
-    >
-      {children}
-    </button>
+    <motion.div initial={{ opacity: 0, y: 22 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.035 }} whileHover={{ y: -4 }} className="h-full rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20">
+      <div className="text-xl font-semibold text-white">{title}</div>
+      <p className="mt-3 text-sm leading-7 text-white/60">{text}</p>
+      <div className="mt-5 space-y-3">
+        {items.map((item) => (
+          <div key={item} className="flex gap-3 text-sm text-white/68">
+            <Icon name="check" className="text-emerald-300" />
+            {item}
+          </div>
+        ))}
+      </div>
+    </motion.div>
   );
 }
 
-function HeroVisual() {
+function ComparisonCard({ title, weak, strong, index }: { title: string; weak: string; strong: string; index: number }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.06 }} whileHover={{ y: -4 }} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20">
+      <div className="text-xl font-semibold text-white">{title}</div>
+      <div className="mt-5 rounded-2xl border border-red-300/15 bg-red-300/[0.035] p-4 text-sm leading-6 text-red-50/65">{weak}</div>
+      <div className="mt-3 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.035] p-4 text-sm leading-6 text-emerald-50/72">{strong}</div>
+    </motion.div>
+  );
+}
+
+function FinalCta({ title, text, checklist, button, onClick }: { title: string; text: string; checklist: string[]; button: string; onClick: () => void }) {
+  return (
+    <section className="overflow-hidden rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-indigo-500/15 via-white/[0.04] to-cyan-500/10 p-6 md:p-10">
+      <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
+        <div>
+          <h2 className="text-4xl font-semibold leading-tight text-white md:text-5xl">{title}</h2>
+          <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">{text}</p>
+        </div>
+        <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+          <div className="mt-1 space-y-3">
+            {checklist.map((item) => (
+              <div key={item} className="flex gap-3 text-sm text-white/70">
+                <Icon name="check" className="text-cyan-300" />
+                {item}
+              </div>
+            ))}
+          </div>
+          <ButtonX onClick={onClick} className="mt-6 w-full">{button}<span className="ml-2">→</span></ButtonX>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HeroVisual({ t }: { t: any }) {
   return (
     <div className="relative mx-auto w-full max-w-md">
       <div className="absolute inset-0 rounded-[2rem] bg-indigo-500/20 blur-3xl" />
@@ -3226,32 +2445,16 @@ function HeroVisual() {
             <span>SkillEdge AI</span>
             <span>Live</span>
           </div>
-
           <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-            <div className="text-sm text-white/45">This week</div>
+            <div className="text-sm text-white/45">{t.productPage.flowEyebrow}</div>
             <div className="mt-2 flex items-center justify-between">
-              <div className="text-2xl font-semibold">+$4,280</div>
-              <div className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs text-emerald-200">
-                Discipline 82
-              </div>
+              <div className="text-2xl font-semibold">AI Trading Desk</div>
+              <div className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs text-emerald-200">Process</div>
             </div>
-
             <div className="mt-5 h-28 rounded-2xl bg-gradient-to-br from-indigo-500/25 to-fuchsia-500/20 p-4">
               <svg viewBox="0 0 280 90" className="h-full w-full">
-                <path
-                  d="M0 70 C 45 60, 55 10, 100 35 S 170 85, 220 40 S 260 30, 280 35"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                  className="text-indigo-300"
-                />
-                <path
-                  d="M0 80 C 40 65, 70 70, 105 58 S 170 55, 220 48 S 255 45, 280 42"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  className="text-fuchsia-300"
-                />
+                <path d="M0 70 C 45 60, 55 10, 100 35 S 170 85, 220 40 S 260 30, 280 35" fill="none" stroke="currentColor" strokeWidth="4" className="text-indigo-300" />
+                <path d="M0 80 C 40 65, 70 70, 105 58 S 170 55, 220 48 S 255 45, 280 42" fill="none" stroke="currentColor" strokeWidth="3" className="text-fuchsia-300" />
               </svg>
             </div>
           </div>
@@ -3259,6 +2462,40 @@ function HeroVisual() {
       </div>
     </div>
   );
+}
+
+function Glow() {
+  return (
+    <>
+      <div className="absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
+      <div className="absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
+      <div className="absolute left-1/2 top-12 h-48 w-48 -translate-x-1/2 rounded-full bg-fuchsia-500/10 blur-3xl" />
+    </>
+  );
+}
+
+function getPlanClasses(accent: "core" | "edge" | "elite") {
+  if (accent === "edge") {
+    return "border-indigo-300/45 bg-gradient-to-b from-indigo-500/20 via-white/[0.05] to-white/[0.025] shadow-[0_24px_100px_rgba(79,70,229,0.2)]";
+  }
+
+  if (accent === "elite") {
+    return "border-cyan-300/45 bg-gradient-to-b from-cyan-500/20 via-white/[0.055] to-white/[0.025] shadow-[0_24px_120px_rgba(34,211,238,0.22)]";
+  }
+
+  return "border-white/10 bg-white/[0.035]";
+}
+
+function getBadgeClasses(accent: "core" | "edge" | "elite") {
+  if (accent === "edge") {
+    return "border-indigo-300/25 bg-indigo-300/10 text-indigo-100";
+  }
+
+  if (accent === "elite") {
+    return "border-cyan-300/25 bg-cyan-300/10 text-cyan-100";
+  }
+
+  return "border-white/10 bg-white/[0.05] text-white/65";
 }
 
 function Icon({ name, className = "" }: { name: string; className?: string }) {
@@ -3273,3 +2510,4 @@ function Icon({ name, className = "" }: { name: string; className?: string }) {
 
   return <span className={`inline-flex ${className}`}>{icons[name] || "•"}</span>;
 }
+

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { canUseFeature, normalizePlanId } from "@/lib/plan-limits";
+import { requireFeatureAccess } from "@/lib/security/feature-gate";
 
 export const runtime = "nodejs";
 
@@ -40,6 +41,14 @@ async function getUserPlan(userId: string) {
 }
 
 export async function POST(request: Request) {
+  const gate = await requireFeatureAccess(request, "ai_alerts", {
+    rateLimit: {
+      limit: 30,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!gate.ok) return gate.response;
   try {
     const user = await getRequestUser(request);
 
@@ -60,12 +69,17 @@ export async function POST(request: Request) {
     }
 
     const body = (await request.json().catch(() => null)) as {
-      alertId?: string;
-      decision?: string;
-    } | null;
+  alertId?: string;
+  decision?: string;
+  decisionNote?: string;
+} | null;
 
     const alertId = typeof body?.alertId === "string" ? body.alertId : "";
     const decision = typeof body?.decision === "string" ? body.decision : "";
+    const decisionNote =
+    typeof body?.decisionNote === "string"
+    ? body.decisionNote.trim().slice(0, 240)
+    : "";
 
     if (!alertId) {
       return NextResponse.json({ error: "alertId is required." }, { status: 400 });
@@ -103,19 +117,20 @@ export async function POST(request: Request) {
     const { data, error } = await supabaseAdmin
       .from("user_market_alert_states")
       .upsert(
-        {
-          user_id: user.id,
-          alert_id: alertId,
-          is_new: false,
-          viewed_at: now,
-          decision,
-          updated_at: now,
-        },
+  {
+    user_id: user.id,
+    alert_id: alertId,
+    is_new: false,
+    viewed_at: now,
+    decision,
+    decision_note: decisionNote || null,
+    updated_at: now,
+  },
         {
           onConflict: "user_id,alert_id",
         }
       )
-      .select("alert_id,is_new,viewed_at,decision")
+      .select("alert_id,is_new,viewed_at,decision,decision_note")
       .maybeSingle();
 
     if (error) {

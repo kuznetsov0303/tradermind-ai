@@ -3,6 +3,7 @@ import { ImageResponse } from "next/og";
 export const runtime = "edge";
 
 export const alt = "SkillEdge AI — Premium AI Trading Workspace";
+
 export const size = {
   width: 1200,
   height: 630,
@@ -21,9 +22,9 @@ export default function OpenGraphImage() {
           alignItems: "center",
           justifyContent: "center",
           background:
-            "radial-gradient(circle at 20% 20%, rgba(34,211,238,0.22), transparent 32%), radial-gradient(circle at 82% 18%, rgba(99,102,241,0.22), transparent 30%), radial-gradient(circle at 50% 100%, rgba(245,158,11,0.14), transparent 34%), #070b16",
+            "radial-gradient(circle at 18% 18%, rgba(34,211,238,0.23), transparent 32%), radial-gradient(circle at 84% 18%, rgba(99,102,241,0.22), transparent 31%), radial-gradient(circle at 54% 110%, rgba(16,185,129,0.14), transparent 34%), #070b16",
           color: "white",
-          padding: "58px",
+          padding: "56px",
           fontFamily: "Arial, sans-serif",
         }}
       >
@@ -36,43 +37,77 @@ export default function OpenGraphImage() {
             justifyContent: "space-between",
             border: "1px solid rgba(255,255,255,0.13)",
             borderRadius: "44px",
-            padding: "54px",
+            padding: "52px",
             background: "rgba(255,255,255,0.045)",
-            boxShadow: "0 30px 120px rgba(0,0,0,0.55)",
+            boxShadow: "0 30px 120px rgba(0,0,0,0.56)",
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "18px",
-              }}
-            >
+            <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
               <div
-  style={{
-    width: "70px",
-    height: "70px",
-    borderRadius: "24px",
-    border: "1px solid rgba(34,211,238,0.32)",
-    background:
-      "radial-gradient(circle at 30% 20%, rgba(34,211,238,0.28), transparent 40%), radial-gradient(circle at 75% 80%, rgba(99,102,241,0.28), transparent 42%), #08111f",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "22px",
-    fontWeight: 800,
-    letterSpacing: "-0.08em",
-    color: "white",
-    boxShadow: "0 0 34px rgba(34,211,238,0.18)",
-    position: "relative",
-  }}
->
-  SE
-</div>
+                style={{
+                  width: "72px",
+                  height: "72px",
+                  borderRadius: "24px",
+                  border: "1px solid rgba(34,211,238,0.36)",
+                  background:
+                    "radial-gradient(circle at 28% 18%, rgba(34,211,238,0.36), transparent 36%), radial-gradient(circle at 78% 82%, rgba(99,102,241,0.30), transparent 40%), #08111f",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "22px",
+                  fontWeight: 900,
+                  letterSpacing: "-0.11em",
+                  color: "white",
+                  boxShadow: "0 0 38px rgba(34,211,238,0.18)",
+                  position: "relative",
+                  overflow: "hidden",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "-18px",
+                    top: "35px",
+                    width: "108px",
+                    height: "1px",
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(207,250,254,0.75), transparent)",
+                    transform: "rotate(-45deg)",
+                  }}
+                />
+
+                <div
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "10px",
+                    width: "7px",
+                    height: "7px",
+                    borderRadius: "999px",
+                    background: "rgb(103,232,249)",
+                    boxShadow: "0 0 14px rgba(103,232,249,0.95)",
+                  }}
+                />
+
+                <div style={{ display: "flex", alignItems: "baseline" }}>
+                  <span>S</span>
+                  <span style={{ color: "rgb(207,250,254)" }}>E</span>
+                  <span
+                    style={{
+                      marginLeft: "3px",
+                      fontSize: "12px",
+                      letterSpacing: "-0.04em",
+                      color: "rgba(255,255,255,0.62)",
+                    }}
+                  >
+                    AI
+                  </span>
+                </div>
+              </div>
 
               <div style={{ display: "flex", flexDirection: "column" }}>
-                <div style={{ fontSize: "34px", fontWeight: 800 }}>
+                <div style={{ fontSize: "34px", fontWeight: 850 }}>
                   SkillEdge AI
                 </div>
                 <div
@@ -84,7 +119,7 @@ export default function OpenGraphImage() {
                     color: "rgba(255,255,255,0.48)",
                   }}
                 >
-                  Premium Trading Intelligence
+                  Premium Trading Workspace
                 </div>
               </div>
             </div>
@@ -98,7 +133,7 @@ export default function OpenGraphImage() {
                 background: "rgba(34,211,238,0.12)",
                 color: "rgba(207,250,254,0.96)",
                 fontSize: "17px",
-                fontWeight: 700,
+                fontWeight: 750,
                 display: "flex",
                 alignItems: "center",
               }}
@@ -111,51 +146,48 @@ export default function OpenGraphImage() {
             <div
               style={{
                 maxWidth: "980px",
-                fontSize: "74px",
-                lineHeight: 1.02,
-                fontWeight: 850,
-                letterSpacing: "-0.055em",
+                fontSize: "72px",
+                lineHeight: 1.03,
+                fontWeight: 900,
+                letterSpacing: "-0.058em",
               }}
             >
-              Turn market noise into a personal trading edge.
+              Structure, review and market intelligence for serious traders.
             </div>
 
             <div
               style={{
-                marginTop: "30px",
+                marginTop: "28px",
                 maxWidth: "920px",
-                fontSize: "28px",
+                fontSize: "27px",
                 lineHeight: 1.42,
                 color: "rgba(255,255,255,0.66)",
               }}
             >
-              Market intelligence, AI alerts, journal analytics, execution
-              review, reports, playbook and coaching in one premium workspace.
+              Journal analytics, AI signals, market scanner, execution review,
+              reports, playbook and coaching in one connected workspace.
             </div>
           </div>
 
           <div style={{ display: "flex", gap: "14px" }}>
-            {[
-              "AI Alerts",
-              "Journal",
-              "Market Intelligence",
-              "Execution Coach",
-            ].map((item) => (
-              <div
-                key={item}
-                style={{
-                  padding: "12px 18px",
-                  borderRadius: "999px",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  background: "rgba(0,0,0,0.24)",
-                  color: "rgba(255,255,255,0.72)",
-                  fontSize: "18px",
-                  fontWeight: 700,
-                }}
-              >
-                {item}
-              </div>
-            ))}
+            {["Journal", "Market Intelligence", "AI Signals", "Reports"].map(
+              (item) => (
+                <div
+                  key={item}
+                  style={{
+                    padding: "12px 18px",
+                    borderRadius: "999px",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    background: "rgba(0,0,0,0.24)",
+                    color: "rgba(255,255,255,0.72)",
+                    fontSize: "18px",
+                    fontWeight: 700,
+                  }}
+                >
+                  {item}
+                </div>
+              )
+            )}
           </div>
         </div>
       </div>

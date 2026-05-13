@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
 
 type AnalyzeCurrentChartBody = {
   symbol?: string;
@@ -534,6 +535,16 @@ Write exactly one short sentence:
 }
 
 export async function POST(request: Request) {
+    const aiGate = await requireAiRouteAccess(request, {
+    routeName: "analyze-current-chart",
+    requireActiveSubscription: true,
+    rateLimit: {
+      limit: 20,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!aiGate.ok) return aiGate.response;
   try {
     if (!FMP_API_KEY) {
       return NextResponse.json(
@@ -582,14 +593,14 @@ export async function POST(request: Request) {
     ]);
 
     if (!candles.length) {
-      return NextResponse.json(
-        {
-          error:
-            "No candle data returned from FMP. Try another symbol or interval.",
-        },
-        { status: 404 }
-      );
-    }
+  return NextResponse.json(
+    {
+      error:
+        "MARKET_DATA_UNAVAILABLE: Market data is unavailable for this symbol on the current data plan.",
+    },
+    { status: 404 }
+  );
+}
 
     const stats = calculateSimpleStats(candles);
 
@@ -612,14 +623,24 @@ export async function POST(request: Request) {
       candlesCount: candles.length,
     });
   } catch (error) {
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to analyze current chart.",
-      },
-      { status: 500 }
-    );
-  }
+  const message =
+    error instanceof Error ? error.message : "Failed to analyze current chart.";
+
+  const isMarketDataError =
+    message.includes("FMP") ||
+    message.includes("Premium Query") ||
+    message.includes("subscription") ||
+    message.includes("402") ||
+    message.includes("historical") ||
+    message.includes("quote");
+
+  return NextResponse.json(
+    {
+      error: isMarketDataError
+        ? "MARKET_DATA_UNAVAILABLE: Market data is unavailable for this symbol or timeframe on the current data plan."
+        : message,
+    },
+    { status: isMarketDataError ? 404 : 500 }
+  );
+}
 }

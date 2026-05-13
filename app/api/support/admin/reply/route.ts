@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { requireAdminRouteAccess } from "@/lib/security/admin-route-gate";
 
 export const runtime = "nodejs";
 
@@ -35,6 +36,15 @@ async function getAdminUser(request: Request) {
 }
 
 export async function POST(request: Request) {
+    const adminGate = await requireAdminRouteAccess(request, {
+    rateLimit: {
+      keyPrefix: "support-admin-reply",
+      limit: 60,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!adminGate.ok) return adminGate.response;
   try {
     const adminUser = await getAdminUser(request);
 

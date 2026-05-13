@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { authFetch } from "@/lib/security/client-auth-fetch";
+
+type Language = "en" | "ru" | "ua";
 
 type GlobalAlert = {
   id: string;
@@ -17,6 +20,68 @@ type GlobalAlert = {
   created_at?: string | null;
   timestamp?: string | null;
 };
+
+const globalAlertsCopy = {
+  en: {
+    eyebrow: "SkillEdge AI Alerts",
+    title: "Live trading desk",
+    checking: "Checking alerts...",
+    latestOpportunities: "Latest opportunities",
+    opensFullCenter: "Opens full Alerts Center",
+    openDashboard: "Open dashboard",
+    collapsedTitle: "AI Alerts",
+    latest: "latest",
+    defaultSetup: "AI alert",
+    defaultMarket: "Market",
+    defaultMeta: "New trading desk alert",
+    priority: "Priority",
+    confidence: "Confidence",
+  },
+  ru: {
+    eyebrow: "AI-сигналы SkillEdge",
+    title: "Живой торговый desk",
+    checking: "Проверяем сигналы...",
+    latestOpportunities: "Последние возможности",
+    opensFullCenter: "Открывает полный центр сигналов",
+    openDashboard: "Открыть кабинет",
+    collapsedTitle: "AI-сигналы",
+    latest: "последних",
+    defaultSetup: "AI-сигнал",
+    defaultMarket: "Рынок",
+    defaultMeta: "Новый сигнал торгового desk",
+    priority: "Приоритет",
+    confidence: "Уверенность",
+  },
+  ua: {
+    eyebrow: "AI-сигнали SkillEdge",
+    title: "Живий торговий desk",
+    checking: "Перевіряємо сигнали...",
+    latestOpportunities: "Останні можливості",
+    opensFullCenter: "Відкриває повний центр сигналів",
+    openDashboard: "Відкрити кабінет",
+    collapsedTitle: "AI-сигнали",
+    latest: "останніх",
+    defaultSetup: "AI-сигнал",
+    defaultMarket: "Ринок",
+    defaultMeta: "Новий сигнал торгового desk",
+    priority: "Пріоритет",
+    confidence: "Впевненість",
+  },
+} as const;
+
+function getStoredLanguage(): Language {
+  if (typeof window === "undefined") return "en";
+
+  const saved =
+    window.localStorage.getItem("skilledge_language") ||
+    window.localStorage.getItem("skilledge_dashboard_language");
+
+  if (saved === "ru" || saved === "ua" || saved === "en") {
+    return saved;
+  }
+
+  return "en";
+}
 
 function normalizeAlert(raw: any): GlobalAlert | null {
   if (!raw || typeof raw !== "object") return null;
@@ -71,28 +136,31 @@ function extractAlerts(payload: any): GlobalAlert[] {
     .slice(0, 3) as GlobalAlert[];
 }
 
-function getAlertTitle(alert: GlobalAlert) {
-  const ticker = alert.ticker || alert.symbol || "Market";
-  const setup = alert.setup || alert.setup_type || alert.title || "AI alert";
+function getAlertTitle(alert: GlobalAlert, copy: (typeof globalAlertsCopy)[Language]) {
+  const ticker = alert.ticker || alert.symbol || copy.defaultMarket;
+  const setup = alert.setup || alert.setup_type || alert.title || copy.defaultSetup;
 
   return `${ticker} · ${setup}`;
 }
 
-function getAlertMeta(alert: GlobalAlert) {
-  const parts = [];
+function getAlertMeta(alert: GlobalAlert, copy: (typeof globalAlertsCopy)[Language]) {
+  const parts: string[] = [];
 
-  if (alert.direction) parts.push(alert.direction.toUpperCase());
-
-  if (typeof alert.priority === "number") {
-    parts.push(`Priority ${Math.round(alert.priority)}`);
-  } else if (typeof alert.confidence === "number") {
-    parts.push(`Confidence ${Math.round(alert.confidence)}`);
+  if (alert.direction) {
+    parts.push(String(alert.direction).toUpperCase());
   }
 
-  return parts.length > 0 ? parts.join(" · ") : "New trading desk alert";
+  if (typeof alert.priority === "number") {
+    parts.push(`${copy.priority} ${Math.round(alert.priority)}`);
+  } else if (typeof alert.confidence === "number") {
+    parts.push(`${copy.confidence} ${Math.round(alert.confidence)}`);
+  }
+
+  return parts.length > 0 ? parts.join(" · ") : copy.defaultMeta;
 }
 
 function GlobalAlertsWidget() {
+  const [language, setLanguage] = useState<Language>("en");
   const [hasSession, setHasSession] = useState(false);
   const [alerts, setAlerts] = useState<GlobalAlert[]>([]);
   const [open, setOpen] = useState(false);
@@ -100,11 +168,28 @@ function GlobalAlertsWidget() {
   const [lastAlertId, setLastAlertId] = useState<string | null>(null);
   const firstLoadRef = useRef(true);
 
+  const copy = globalAlertsCopy[language];
   const newestAlertId = alerts[0]?.id ?? null;
 
   const hasNewAlert = useMemo(() => {
     return Boolean(newestAlertId && lastAlertId && newestAlertId !== lastAlertId);
   }, [newestAlertId, lastAlertId]);
+
+  useEffect(() => {
+    setLanguage(getStoredLanguage());
+
+    const handleStorage = () => {
+      setLanguage(getStoredLanguage());
+    };
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("skilledge:language-changed", handleStorage);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("skilledge:language-changed", handleStorage);
+    };
+  }, []);
 
   useEffect(() => {
     const loadSession = async () => {
@@ -148,7 +233,7 @@ function GlobalAlertsWidget() {
           return;
         }
 
-        const response = await fetch("/api/market/alerts?limit=3&scope=global", {
+        const response = await authFetch("/api/market/alerts?limit=3&scope=global", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -223,15 +308,15 @@ function GlobalAlertsWidget() {
           <div className="flex items-start justify-between gap-4 border-b border-white/10 p-4">
             <div>
               <div className="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-100/55">
-                SkillEdge AI Alerts
+                {copy.eyebrow}
               </div>
 
               <div className="mt-1 text-base font-semibold text-white">
-                Live trading desk
+                {copy.title}
               </div>
 
               <div className="mt-1 text-xs text-white/42">
-                {loading ? "Checking alerts..." : "Latest opportunities"}
+                {loading ? copy.checking : copy.latestOpportunities}
               </div>
             </div>
 
@@ -242,6 +327,7 @@ function GlobalAlertsWidget() {
                 setOpen(false);
               }}
               className="flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/55 transition hover:bg-white/10 hover:text-white"
+              aria-label="Close alerts widget"
             >
               ×
             </button>
@@ -258,11 +344,11 @@ function GlobalAlertsWidget() {
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <div className="truncate text-sm font-semibold text-white">
-                      {getAlertTitle(alert)}
+                      {getAlertTitle(alert, copy)}
                     </div>
 
                     <div className="mt-1 text-xs text-cyan-100/58">
-                      {getAlertMeta(alert)}
+                      {getAlertMeta(alert, copy)}
                     </div>
                   </div>
 
@@ -276,7 +362,7 @@ function GlobalAlertsWidget() {
 
           <div className="flex items-center justify-between border-t border-white/10 p-3">
             <div className="text-[11px] text-white/38">
-              Opens full Alerts Center
+              {copy.opensFullCenter}
             </div>
 
             <Link
@@ -284,7 +370,7 @@ function GlobalAlertsWidget() {
               onClick={markSeen}
               className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/15"
             >
-              Open dashboard
+              {copy.openDashboard}
             </Link>
           </div>
         </div>
@@ -316,10 +402,10 @@ function GlobalAlertsWidget() {
 
           <span>
             <span className="block text-xs font-semibold text-white">
-              AI Alerts
+              {copy.collapsedTitle}
             </span>
             <span className="block text-[11px] text-white/42">
-              {alerts.length} latest
+              {alerts.length} {copy.latest}
             </span>
           </span>
         </button>
@@ -327,5 +413,6 @@ function GlobalAlertsWidget() {
     </div>
   );
 }
+
 export { GlobalAlertsWidget };
 export default GlobalAlertsWidget;

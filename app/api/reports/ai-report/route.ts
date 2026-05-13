@@ -1,11 +1,14 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+
 import {
   canUseFeature,
   getFeatureLimit,
   normalizePlanId,
 } from "@/lib/plan-limits";
+
+import { requireFeatureAccess } from "@/lib/security/feature-gate";
 
 export const runtime = "nodejs";
 
@@ -45,6 +48,14 @@ function getMonthStartIso() {
 }
 
 export async function POST(request: Request) {
+    const gate = await requireFeatureAccess(request, "reports", {
+    rateLimit: {
+      limit: 20,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!gate.ok) return gate.response;
   try {
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(

@@ -6,15 +6,6 @@ export type AiFeature =
   | "trade_chart_analysis"
   | "ai_report";
 
-export type PlanFeature =
-  | "ai_reports"
-  | "support_assistant"
-  | "social_tickers"
-  | "ai_scanner"
-  | "ai_alerts"
-  | "premium_chart_analysis"
-  | "export_reports";
-
 export type PlanLimits = {
   aiCoachMessagesPerMonth: number;
   journalAnalysesPerMonth: number;
@@ -132,7 +123,14 @@ export function getFeatureLimit(
 
 export function canUseFeature(
   planId: string | null | undefined,
-  feature: PlanFeature
+  feature:
+    | "ai_reports"
+    | "support_assistant"
+    | "social_tickers"
+    | "ai_scanner"
+    | "ai_alerts"
+    | "premium_chart_analysis"
+    | "export_reports"
 ): boolean {
   const limits = getPlanLimits(planId);
 

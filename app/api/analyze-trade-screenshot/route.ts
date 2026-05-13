@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
+import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
 
 type Trade = {
   id: string;
@@ -82,6 +83,16 @@ async function storageFileToDataUrl(filePath: string, mimeType: string | null) {
 }
 
 export async function POST(req: Request) {
+    const aiGate = await requireAiRouteAccess(req, {
+    routeName: "analyze-trade-screenshot",
+    requireActiveSubscription: true,
+    rateLimit: {
+      limit: 15,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!aiGate.ok) return aiGate.response;
   try {
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(

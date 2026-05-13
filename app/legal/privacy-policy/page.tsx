@@ -2,59 +2,60 @@ import type { Metadata } from "next";
 import LegalPageShell from "@/components/marketing/LegalPageShell";
 
 export const metadata: Metadata = {
-  title: "Политика конфиденциальности — SkillEdge AI",
+  title: "Privacy Policy — SkillEdge AI",
   description:
-    "Черновик Политики конфиденциальности SkillEdge AI на русском языке для проверки юристом.",
+    "SkillEdge AI privacy policy: how account data, trading journal data, screenshots, support requests, payments, cookies and platform usage data may be processed.",
 };
 
 export default function PrivacyPolicyPage() {
   return (
     <LegalPageShell
-      title="Политика конфиденциальности"
-      description="Краткий и понятный черновик о том, какие данные может обрабатывать SkillEdge AI, зачем они нужны и как пользовательские данные должны защищаться."
-      updatedAt="Черновик перед запуском"
+      title="Privacy Policy"
+      description="How SkillEdge AI handles account data, trading journal content, screenshots, support requests, payment confirmations, cookies and platform usage data."
+      updatedAt="Last updated: May 2026"
       sections={[
         {
-          title: "Какие данные может собирать SkillEdge AI",
-          text: "SkillEdge AI может собирать данные аккаунта, email, язык интерфейса, выбранный тариф, статус подписки, платежные подтверждения или TXID при крипто-оплате, торговые записи в журнале, тикеры, PnL, заметки, скриншоты, AI-запросы, историю общения с AI Coach, обращения в поддержку, технические данные браузера, IP-адрес, cookies и данные об использовании платформы.",
+          title: "1. Data we may collect",
+          text: "SkillEdge AI may collect account information, email address, interface language, selected plan, subscription status, payment confirmations, transaction identifiers for crypto payments, trading journal entries, tickers, PnL, trade notes, screenshots, AI requests, support messages, technical browser data, IP address, cookies and platform usage data.",
         },
         {
-          title: "Зачем используются данные",
-          text: "Данные используются для регистрации и входа, работы личного кабинета, ведения журнала сделок, загрузки скриншотов, расчета статистики, генерации AI-ответов, AI Reports, AI Alerts, проверки лимитов тарифа, поддержки клиентов, обработки оплаты, защиты сервиса от злоупотреблений и улучшения продукта.",
+          title: "2. Why we use this data",
+          text: "We use data to create and secure accounts, operate the dashboard, maintain the trading journal, store screenshots, calculate analytics, generate AI-assisted reviews, enforce plan limits, provide support, process access requests, protect the service from abuse and improve the product experience.",
         },
         {
-          title: "Торговый журнал и скриншоты",
-          text: "Сделки, скриншоты, заметки, планы сделок, результаты и другие материалы пользователя предназначены для использования внутри его аккаунта. Эти данные не должны становиться публичными без согласия пользователя, кроме случаев, когда раскрытие требуется законом или необходимо для защиты прав и безопасности сервиса.",
+          title: "3. Trading journal and screenshots",
+          text: "Trades, screenshots, notes, trade plans, outcomes and other user materials are intended to remain inside the user account. We do not make this content public without the user’s consent, except where disclosure is required by law or needed to protect the rights, safety or security of the service.",
         },
         {
-          title: "AI-обработка",
-          text: "Для работы AI Coach, AI Reports, AI Alerts, анализа журнала, анализа графиков и других AI-функций часть пользовательских данных может передаваться AI-провайдерам или обрабатываться AI-моделями. AI-ответы могут быть неточными или неполными, поэтому пользователь обязан самостоятельно проверять любую информацию перед принятием решений.",
+          title: "4. AI-assisted processing",
+          text: "Some user data may be processed by AI systems to provide coaching, reports, chart review, journal review, market briefs, alerts, summaries and other product features. AI-generated output can be incomplete, inaccurate or unsuitable for a specific situation. Users must review all output independently before making any decision.",
         },
         {
-  title: "Платежи, подписки и платежные провайдеры",
-  text: "SkillEdge AI может хранить информацию о выбранном тарифе, сроке доступа, лимитах использования, статусе оплаты, подтверждении платежа, TXID при крипто-оплате и данных, необходимых для активации подписки.\n\nПри крипто-оплате пользователь несет ответственность за корректность сети, адреса, суммы и TXID. Если для оплаты картами, подписок или checkout будет использоваться Stripe или другой платежный провайдер, обработка платежных данных может выполняться таким провайдером по его собственным правилам и политике конфиденциальности.\n\nSkillEdge AI не должен самостоятельно хранить полные данные банковских карт, если обработка карт выполняется через Stripe или другого сертифицированного платежного провайдера.",
-},
-        {
-  title: "Передача данных третьим лицам",
-  text: "Данные могут передаваться только тем поставщикам, которые нужны для работы продукта: хостинг, база данных, AI-провайдеры, платежные сервисы, Stripe или другой checkout/subscription provider, аналитика, поддержка, безопасность, market data providers и техническая инфраструктура.\n\nТакая передача нужна для регистрации, оплаты, активации подписки, работы AI-функций, аналитики, поддержки, безопасности и стабильной работы платформы. SkillEdge AI не должен продавать персональные данные пользователей третьим лицам.",
-},
-        {
-          title: "Cookies и технические данные",
-          text: "Сайт и платформа могут использовать cookies для авторизации, безопасности, сохранения настроек, аналитики, улучшения интерфейса и работы личного кабинета. Подробные условия должны быть описаны в отдельной Cookie Policy.",
+          title: "5. Payments and subscription access",
+          text: "SkillEdge AI may store information about the selected plan, access period, usage limits, subscription status, payment status, payment confirmation and transaction identifiers needed to activate or manage access. For crypto payments, the user is responsible for selecting the correct network, address, asset, amount and transaction identifier. If card payments are processed through an approved merchant provider, payment data may be handled by that provider under its own privacy and security rules. SkillEdge AI does not intend to store full card numbers on its own servers.",
         },
         {
-          title: "Безопасность",
-          text: "SkillEdge AI должен применять разумные меры защиты: авторизацию, серверную проверку, ограничение доступа, защиту API, переменные окружения, политики базы данных, контроль доступа к пользовательским данным и мониторинг ошибок. При этом ни один онлайн-сервис не может гарантировать абсолютную безопасность.",
+          title: "6. Service providers",
+          text: "We may share limited data with providers that are necessary to operate the product, including hosting, database infrastructure, authentication, email delivery, support tools, payment processing, analytics, security, AI infrastructure and market data services. We do not sell personal data to third parties.",
         },
         {
-          title: "Права пользователя",
-          text: "В зависимости от применимого законодательства пользователь может иметь право запросить доступ к своим данным, исправление, удаление, ограничение обработки или отзыв согласия на отдельные виды обработки. Финальный порядок таких запросов должен быть согласован с юристом и добавлен перед запуском.",
+          title: "7. Cookies and technical data",
+          text: "SkillEdge AI may use cookies and similar technologies for authentication, security, saved preferences, interface language, dashboard state, analytics and product improvement. Details are described in the Cookie Policy.",
         },
         {
-          title: "Изменения и контакты",
-          text: "SkillEdge AI может обновлять эту Политику конфиденциальности при изменении продукта, провайдеров, платежей, AI-функций, cookies или законодательства. Перед запуском необходимо указать актуальный email, юридические реквизиты компании или владельца сервиса и порядок обработки privacy-запросов.",
+          title: "8. Security",
+          text: "We apply reasonable technical and organizational safeguards, including authentication, server-side access checks, database access rules, protected environment variables, API protection, usage controls and monitoring. No online service can guarantee absolute security.",
+        },
+        {
+          title: "9. User rights",
+          text: "Depending on applicable law, users may have the right to request access, correction, deletion, restriction of processing or withdrawal of consent for certain processing activities. Requests can be sent to support@upyourskills.site.",
+        },
+        {
+          title: "10. Updates and contact",
+          text: "We may update this Privacy Policy when the product, providers, payments, AI features, cookies or legal requirements change. Questions about privacy can be sent to support@upyourskills.site.",
         },
       ]}
     />
   );
 }
+

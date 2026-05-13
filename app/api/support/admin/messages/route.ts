@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { requireAdminRouteAccess } from "@/lib/security/admin-route-gate";
 
 export const runtime = "nodejs";
 
@@ -48,6 +49,15 @@ function buildFallbackMessage(session: any) {
 }
 
 export async function GET(request: Request) {
+    const adminGate = await requireAdminRouteAccess(request, {
+    rateLimit: {
+      keyPrefix: "support-admin-messages",
+      limit: 120,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!adminGate.ok) return adminGate.response;
   try {
     const adminUser = await getAdminUser(request);
 
@@ -80,10 +90,11 @@ export async function GET(request: Request) {
     }
 
     const { data: messages, error: messagesError } = await supabaseAdmin
-      .from("support_messages")
-      .select("*")
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: true });
+  .from("support_messages")
+  .select("*")
+  .eq("session_id", sessionId)
+  .neq("sender_type", "system")
+  .order("created_at", { ascending: true });
 
     if (messagesError) {
       return NextResponse.json(

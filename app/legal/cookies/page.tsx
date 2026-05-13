@@ -2,55 +2,56 @@ import type { Metadata } from "next";
 import LegalPageShell from "@/components/marketing/LegalPageShell";
 
 export const metadata: Metadata = {
-  title: "Политика cookies — SkillEdge AI",
+  title: "Cookie Policy — SkillEdge AI",
   description:
-    "Черновик политики cookies SkillEdge AI на русском языке для проверки юристом.",
+    "SkillEdge AI cookie policy covering essential cookies, functional cookies, analytics, payment security and user preferences.",
 };
 
 export default function CookiePolicyPage() {
   return (
     <LegalPageShell
-      title="Политика cookies"
-      description="Краткий черновик о том, как SkillEdge AI может использовать cookies и похожие технологии на сайте и внутри личного кабинета."
-      updatedAt="Черновик перед запуском"
+      title="Cookie Policy"
+      description="How SkillEdge AI may use cookies and similar technologies on the website and inside the dashboard."
+      updatedAt="Last updated: May 2026"
       sections={[
         {
-          title: "Что такое cookies",
-          text: "Cookies — это небольшие файлы или похожие технологии, которые могут сохраняться в браузере пользователя. Они помогают сайту и платформе работать корректно, сохранять настройки, поддерживать авторизацию, улучшать безопасность и анализировать использование продукта.",
+          title: "1. What cookies are",
+          text: "Cookies are small files or similar technologies that may be stored in a user’s browser. They help the website and platform work correctly, preserve preferences, maintain authentication, improve security and understand product usage.",
         },
         {
-          title: "Необходимые cookies",
-          text: "SkillEdge AI может использовать необходимые cookies для базовой работы сайта и личного кабинета: вход в аккаунт, безопасность, сессия, проверка доступа, сохранение статуса авторизации, защита от злоупотреблений, работа dashboard и доступ к платным функциям.",
+          title: "2. Essential cookies",
+          text: "SkillEdge AI may use essential cookies for core website and dashboard functionality, including account login, session management, security, access checks, paid feature access, abuse prevention and platform stability.",
         },
         {
-          title: "Функциональные cookies",
-          text: "Функциональные cookies могут использоваться для сохранения пользовательских настроек: язык интерфейса, выбранные вкладки, состояние dashboard, настройки отображения, последний выбранный раздел, watchlist, предпочтения интерфейса и другие элементы удобства.",
+          title: "3. Functional cookies",
+          text: "Functional cookies may be used to remember preferences such as interface language, selected tabs, dashboard state, display settings, recently used sections, watchlist preferences and other product settings.",
         },
         {
-          title: "Аналитические cookies",
-          text: "Аналитические cookies могут использоваться для понимания посещаемости сайта, поведения пользователей, конверсии, ошибок, скорости загрузки, качества страниц, эффективности pricing/product pages и улучшения продукта.\n\nПеред публичным запуском нужно указать фактические аналитические сервисы, если они будут подключены.",
+          title: "4. Analytics cookies",
+          text: "Analytics cookies may help SkillEdge AI understand page performance, user journeys, conversion, errors, loading speed, feature usage and product quality. Analytics data is used to improve the platform and user experience.",
         },
         {
-          title: "Платежные и security cookies",
-          text: "Если SkillEdge AI подключит Stripe или другого платежного провайдера, такие провайдеры могут использовать собственные cookies или аналогичные технологии для checkout, предотвращения мошенничества, безопасности платежей и обработки подписок.\n\nИспользование таких технологий может регулироваться политиками соответствующего платежного провайдера.",
+          title: "5. Payment and security technologies",
+          text: "If payments are processed through an approved merchant provider, that provider may use its own cookies or similar technologies for checkout, fraud prevention, payment security and subscription processing. Those technologies may be governed by the provider’s own policies.",
         },
         {
-          title: "Маркетинговые cookies",
-          text: "Если в будущем SkillEdge AI подключит рекламные пиксели, ретаргетинг, affiliate tracking, conversion tracking или другие маркетинговые инструменты, это должно быть отдельно отражено в финальной версии Cookie Policy и cookie banner.",
+          title: "6. Marketing cookies",
+          text: "If advertising pixels, retargeting, affiliate tracking, conversion tracking or similar marketing tools are used, they should be reflected in the cookie banner or consent settings where required by applicable law.",
         },
         {
-          title: "Cookie banner и выбор пользователя",
-          text: "Перед публичным запуском SkillEdge AI должен добавить cookie banner или механизм управления согласием, если это требуется применимым законодательством. Пользователь должен понимать, какие cookies являются необходимыми, а какие используются для аналитики или маркетинга.",
+          title: "7. Cookie choices",
+          text: "Where required, SkillEdge AI may provide a cookie banner or settings panel so users can manage consent for non-essential cookies. Essential cookies may remain necessary for authentication, security and core platform operation.",
         },
         {
-          title: "Отключение cookies",
-          text: "Пользователь может ограничить или отключить cookies через настройки браузера. При этом часть функций сайта или личного кабинета может работать некорректно: вход в аккаунт, сохранение настроек, доступ к dashboard, платежный checkout или некоторые элементы безопасности.",
+          title: "8. Browser controls",
+          text: "Users can restrict or disable cookies through browser settings. Some parts of the website or dashboard may not work correctly without cookies, including login, saved preferences, dashboard access, checkout or certain security features.",
         },
         {
-          title: "Обновление политики",
-          text: "SkillEdge AI может обновлять Cookie Policy при изменении продукта, аналитики, платежных провайдеров, рекламных инструментов, cookies, dashboard-функций или требований законодательства. Актуальная версия должна публиковаться на сайте.",
+          title: "9. Updates",
+          text: "SkillEdge AI may update this Cookie Policy when product functionality, analytics, payment processing, marketing tools, dashboard behavior or legal requirements change.",
         },
       ]}
     />
   );
 }
+

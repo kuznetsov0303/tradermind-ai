@@ -2,55 +2,60 @@ import type { Metadata } from "next";
 import LegalPageShell from "@/components/marketing/LegalPageShell";
 
 export const metadata: Metadata = {
-  title: "Лицензионное соглашение — SkillEdge AI",
+  title: "EULA — SkillEdge AI",
   description:
-    "Черновик пользовательского лицензионного соглашения SkillEdge AI на русском языке для проверки юристом.",
+    "SkillEdge AI end user license agreement covering platform access, software use, intellectual property, user content, AI features and restrictions.",
 };
 
 export default function EulaPage() {
   return (
     <LegalPageShell
-      title="Пользовательское лицензионное соглашение"
-      description="Краткий черновик о правилах использования программного обеспечения SkillEdge AI, интерфейса, AI-функций, закрытой логики, контента и ограничений доступа."
-      updatedAt="Черновик перед запуском"
+      title="End User License Agreement"
+      description="Rules for using the SkillEdge AI software platform, interface, AI-assisted features, proprietary workflows, content and account access."
+      updatedAt="Last updated: May 2026"
       sections={[
         {
-          title: "Предоставление доступа",
-          text: "При соблюдении условий использования и наличии активного доступа SkillEdge AI предоставляет пользователю ограниченное, неисключительное, непередаваемое и отзывное право использовать платформу, личный кабинет, AI Coach, Journal, Reports, AI Alerts, Market Intelligence, Playbook, Learning Center и другие функции сервиса.\n\nТакой доступ не означает передачу пользователю прав собственности на продукт, код, дизайн, бренд, структуру, AI-логику или другие материалы SkillEdge AI.",
+          title: "1. License grant",
+          text: "Subject to these terms and active access, SkillEdge AI grants the user a limited, non-exclusive, non-transferable and revocable right to use the platform, dashboard, trading journal, screenshots, AI Coach, reports, alerts, market intelligence, playbooks, learning materials and related features for the user’s own internal trading process.",
         },
         {
-          title: "Права собственности SkillEdge AI",
-          text: "Все права на SkillEdge AI, включая название, бренд, интерфейс, дизайн, визуальные элементы, программный код, архитектуру, тексты, workflows, AI-prompts, систему тарифов, логику AI Alerts, Journal, Reports, Playbook, Market Intelligence и другие элементы продукта, принадлежат владельцу SkillEdge AI или соответствующим правообладателям.\n\nПользователь не получает права копировать, перепродавать, воспроизводить или использовать эти материалы вне разрешенного доступа к платформе.",
+          title: "2. No ownership transfer",
+          text: "Access to SkillEdge AI does not transfer ownership of the product, code, design, brand, interface, workflows, AI logic, prompts, documentation, content structure, pricing architecture or other materials. All rights remain with the owner of SkillEdge AI or the relevant rights holders.",
         },
         {
-          title: "Ограничения использования",
-          text: "Пользователю запрещено копировать продукт, пытаться получить исходный код, обходить ограничения тарифа, взламывать систему, скрейпить данные, перегружать API, реверс-инжинирить закрытую логику, извлекать AI-prompts, перепродавать доступ, создавать конкурирующий продукт на основе SkillEdge AI или использовать платформу незаконным способом.\n\nТакже запрещено получать доступ к чужим данным, аккаунтам, журналам, скриншотам, отчетам или другим материалам пользователей.",
+          title: "3. Intellectual property",
+          text: "The SkillEdge AI name, visual identity, interface, software code, product architecture, text, workflows, AI-assisted review logic, alert workflow, journal analytics, reports, playbook structure, market intelligence logic and related materials are protected intellectual property. The user may not copy, reproduce, distribute, resell or use these materials outside the allowed platform access.",
         },
         {
-          title: "Пользовательский контент",
-          text: "Пользователь сохраняет ответственность за данные, которые он загружает или вводит в SkillEdge AI: сделки, скриншоты, заметки, PnL, тикеры, торговые планы, AI-запросы, комментарии и другие материалы.\n\nПользователь подтверждает, что имеет право использовать и загружать такой контент, а также понимает, что качество AI-аналитики и отчетов может зависеть от точности введенных данных.",
+          title: "4. Usage restrictions",
+          text: "The user must not copy the product, attempt to obtain source code, bypass plan limits, hack the system, scrape protected data, overload APIs, reverse engineer private workflows, extract internal prompts, resell access, create a competing product based on SkillEdge AI materials or use the platform unlawfully.",
         },
         {
-          title: "AI-функции",
-          text: "AI Coach, AI Reports, AI Alerts, анализ графиков, анализ журнала, Market Intelligence и другие AI-функции предоставляются как часть программного продукта. Их результаты могут быть неточными, неполными, устаревшими или неподходящими для конкретной ситуации.\n\nAI-функции не являются финансовой, инвестиционной, юридической или налоговой консультацией и не гарантируют торговый результат.",
+          title: "5. User content",
+          text: "The user remains responsible for trades, screenshots, notes, PnL, tickers, trade plans, AI requests, comments and other materials uploaded or entered into SkillEdge AI. The user confirms that the user has the right to use this content and understands that output quality may depend on the accuracy of the submitted information.",
         },
         {
-          title: "Обновления и изменения продукта",
-          text: "SkillEdge AI может обновлять платформу, изменять интерфейс, добавлять или удалять функции, менять тарифные лимиты, AI-модели, market data providers, платежных провайдеров, backend-архитектуру и другие элементы продукта.\n\nНа этапе pre-launch, beta и раннего запуска продукт может часто меняться, а отдельные функции могут работать в тестовом режиме или быть доступны только на определенных тарифах.",
+          title: "6. AI-assisted features",
+          text: "AI Coach, AI reports, AI alerts, chart review, journal review, market intelligence and related features are part of the software product. Results may be inaccurate, incomplete, delayed or unsuitable for a specific situation. AI-assisted features are not financial, investment, legal or tax advice and do not guarantee trading results.",
         },
         {
-          title: "Приостановка или прекращение доступа",
-          text: "Доступ пользователя может быть ограничен, приостановлен или прекращен при нарушении условий, неоплате, подозрении на злоупотребление, попытке взлома, обходе лимитов, нарушении прав SkillEdge AI, нарушении прав других пользователей или использовании сервиса не по назначению.",
+          title: "7. Updates and product changes",
+          text: "SkillEdge AI may update the platform, modify the interface, adjust features, change plan limits, replace providers, improve backend architecture or change product functionality as the service evolves. Access to some features may depend on plan level, provider availability and technical conditions.",
         },
         {
-          title: "Отказ от гарантий",
-          text: "SkillEdge AI предоставляется на условиях «как есть» и «по мере доступности», если иное не указано в финальных условиях. Платформа не гарантирует бесперебойную работу, отсутствие ошибок, постоянную доступность market data, точность AI-ответов, достижение торговых целей или получение прибыли.\n\nПользователь использует платформу на свой риск и самостоятельно принимает все торговые решения.",
+          title: "8. Suspension or termination",
+          text: "User access may be restricted, suspended or terminated for non-payment, abuse, attempted hacking, limit bypassing, violation of SkillEdge AI rights, violation of other users’ rights, illegal use or other misuse of the service.",
         },
         {
-          title: "Ограничение ответственности",
-          text: "В максимально допустимой законом степени SkillEdge AI не несет ответственности за торговые убытки, упущенную прибыль, ошибки пользователя, неверную интерпретацию AI-ответов, задержки данных, сбои брокеров, бирж, платежных провайдеров, market data providers или сторонних сервисов.\n\nФинальные формулировки ограничения ответственности должны быть согласованы с юристом перед публичным запуском.",
+          title: "9. Disclaimer of warranties",
+          text: "SkillEdge AI is provided on an “as is” and “as available” basis to the maximum extent permitted by law. The platform does not guarantee uninterrupted operation, error-free performance, continuous market data availability, AI accuracy, achievement of trading goals or profit.",
+        },
+        {
+          title: "10. Limitation of liability",
+          text: "To the maximum extent permitted by law, SkillEdge AI is not liable for trading losses, lost profits, user errors, incorrect interpretation of AI output, delayed data, broker or exchange issues, payment provider issues, market data provider issues, hosting outages or other third-party failures.",
         },
       ]}
     />
   );
 }
+

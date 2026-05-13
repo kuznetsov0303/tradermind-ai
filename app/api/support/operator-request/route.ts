@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  checkRateLimit,
+  getClientIp,
+  rateLimitResponse,
+} from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -42,6 +47,16 @@ function escapeTelegramHtml(text: string) {
 }
 
 export async function POST(request: Request) {
+    const ip = getClientIp(request);
+  const rate = checkRateLimit({
+    key: `support-operator:${ip}`,
+    limit: 10,
+    windowMs: 60_000,
+  });
+
+  if (!rate.ok) {
+    return rateLimitResponse(rate.resetAt);
+  }
   try {
     const user = await getRequestUser(request);
 

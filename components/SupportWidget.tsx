@@ -27,7 +27,7 @@ type LoadedSupportSession = {
 
 const supportDict = {
   ru: {
-    title: "SkillEdge Support",
+    title: "Поддержка SkillEdge",
     subtitle: "Выберите удобный способ связи",
     intro:
       "Добрый день. Напишите вопрос — после отправки он сразу уйдёт оператору.",
@@ -41,12 +41,12 @@ const supportDict = {
     chooseTitle: "Как вам удобнее связаться?",
     chooseSubtitle:
       "Выберите формат связи. Мы поможем спокойно, понятно и без лишнего давления.",
-    emailTitle: "Email",
+    emailTitle: "Почта",
     emailText:
       "Оставьте email и вопрос. Мы получим обращение и ответим как можно быстрее.",
     chatTitle: "Чат",
     chatText:
-      "Напишите сообщение в чат. После нажатия “Отправить” запрос сразу уйдёт оператору.",
+      "Напишите сообщение в чат. После нажатия «Отправить» запрос сразу уйдёт оператору.",
     emailHeading: "Отправьте нам вопрос",
     emailDescription:
       "Укажите email и коротко опишите ситуацию. Чем больше контекста — тем быстрее мы разберёмся.",
@@ -59,9 +59,14 @@ const supportDict = {
     emailError:
       "Не удалось отправить запрос. Проверьте email и попробуйте ещё раз.",
     back: "Назад",
+    emailSavedNotice:
+      "Заявка будет сохранена в системе поддержки и отправлена команде SkillEdge AI.",
+    chatOperatorNotice:
+      "После отправки сообщение сразу уйдёт оператору. Отвечать вам смогут прямо из support-панели.",
     disclaimer:
       "SkillEdge AI не является финансовым консультантом. Поддержка помогает с продуктом, доступом, оплатой и общими вопросами по платформе.",
   },
+
   en: {
     title: "SkillEdge Support",
     subtitle: "Choose the best contact option",
@@ -95,11 +100,16 @@ const supportDict = {
     emailError:
       "Could not send the request. Please check your email and try again.",
     back: "Back",
+    emailSavedNotice:
+      "The request will be saved in the support system and sent to the SkillEdge AI team.",
+    chatOperatorNotice:
+      "After sending, the message goes directly to an operator. The team can reply from the support panel.",
     disclaimer:
       "SkillEdge AI is not a financial advisor. Support helps with product, access, payment and general platform questions.",
   },
+
   ua: {
-    title: "SkillEdge Support",
+    title: "Підтримка SkillEdge",
     subtitle: "Оберіть зручний спосіб зв’язку",
     intro:
       "Добрий день. Напишіть питання — після відправки воно одразу піде оператору.",
@@ -112,13 +122,13 @@ const supportDict = {
     floatingLabel: "Підтримка",
     chooseTitle: "Який канал вам зручніший?",
     chooseSubtitle:
-      "Оберіть формат зв’язку. Ми допоможемо спокійно і без зайвого тиску.",
-    emailTitle: "Email",
+      "Оберіть формат зв’язку. Ми допоможемо спокійно, зрозуміло і без зайвого тиску.",
+    emailTitle: "Пошта",
     emailText:
       "Залиште email і питання. Ми отримаємо звернення і відповімо якнайшвидше.",
     chatTitle: "Чат",
     chatText:
-      "Напишіть повідомлення в чат. Після натискання “Надіслати” запит одразу піде оператору.",
+      "Напишіть повідомлення в чат. Після натискання «Надіслати» запит одразу піде оператору.",
     emailHeading: "Надішліть нам питання",
     emailDescription:
       "Вкажіть email і коротко опишіть ситуацію. Чим більше контексту — тим швидше ми розберемося.",
@@ -131,6 +141,10 @@ const supportDict = {
     emailError:
       "Не вдалося надіслати запит. Перевірте email і спробуйте ще раз.",
     back: "Назад",
+    emailSavedNotice:
+      "Заявку буде збережено в системі підтримки та відправлено команді SkillEdge AI.",
+    chatOperatorNotice:
+      "Після відправки повідомлення одразу піде оператору. Команда зможе відповісти вам із support-панелі.",
     disclaimer:
       "SkillEdge AI не є фінансовим консультантом. Підтримка допомагає з продуктом, доступом, оплатою і загальними питаннями платформи.",
   },
@@ -145,20 +159,42 @@ function createMessage(role: SupportMessage["role"], text: string): SupportMessa
   };
 }
 
+function getStoredSupportLanguage(): SupportLanguage | null {
+  if (typeof window === "undefined") return null;
+
+  const keys = [
+    "skilledge_language",
+    "skilledge_dashboard_language",
+    "language",
+    "locale",
+    "selectedLanguage",
+    "app_language",
+    "dashboard_language",
+    "site_language",
+  ];
+
+  for (const key of keys) {
+    const value = window.localStorage.getItem(key)?.toLowerCase();
+
+    if (value === "ru") return "ru";
+    if (value === "ua" || value === "uk") return "ua";
+    if (value === "en") return "en";
+  }
+
+  return null;
+}
+
 function detectLanguage(): SupportLanguage {
   if (typeof window === "undefined") return "ru";
 
+  const storedLanguage = getStoredSupportLanguage();
+
+  if (storedLanguage) {
+    return storedLanguage;
+  }
+
   const path = window.location.pathname.toLowerCase();
   const pageText = document.body.innerText.toLowerCase();
-
-  const storedLanguage =
-    window.localStorage.getItem("language")?.toLowerCase() ||
-    window.localStorage.getItem("locale")?.toLowerCase() ||
-    window.localStorage.getItem("selectedLanguage")?.toLowerCase() ||
-    window.localStorage.getItem("app_language")?.toLowerCase() ||
-    window.localStorage.getItem("dashboard_language")?.toLowerCase() ||
-    window.localStorage.getItem("site_language")?.toLowerCase() ||
-    "";
 
   if (path.includes("/ua") || path.includes("/uk")) return "ua";
   if (path.includes("/en")) return "en";
@@ -167,22 +203,31 @@ function detectLanguage(): SupportLanguage {
     pageText.includes("запросити демо") ||
     pageText.includes("кабінет") ||
     pageText.includes("вийти") ||
-    pageText.includes("тарифи")
+    pageText.includes("тарифи") ||
+    pageText.includes("про нас")
   ) {
     return "ua";
+  }
+
+  if (
+    pageText.includes("запросить демо") ||
+    pageText.includes("кабинет") ||
+    pageText.includes("выйти") ||
+    pageText.includes("тарифы") ||
+    pageText.includes("о нас")
+  ) {
+    return "ru";
   }
 
   if (
     pageText.includes("request demo") ||
     pageText.includes("dashboard") ||
     pageText.includes("logout") ||
-    pageText.includes("pricing")
+    pageText.includes("pricing") ||
+    pageText.includes("about us")
   ) {
     return "en";
   }
-
-  if (storedLanguage === "ua" || storedLanguage === "uk") return "ua";
-  if (storedLanguage === "en") return "en";
 
   return "ru";
 }
@@ -260,31 +305,7 @@ function normalizeMessagesForDisplay(
 ): SupportMessage[] {
   return storedMessages
     .map((message) => mapStoredMessage(message, language))
-    .filter((message) => {
-      if (message.role !== "system") {
-        return true;
-      }
-
-      const text = message.text.toLowerCase();
-
-      if (text.includes("operator request sent")) {
-        return false;
-      }
-
-      if (text.includes("запрос оператору отправлен")) {
-        return false;
-      }
-
-      if (text.includes("запит оператору надіслано")) {
-        return false;
-      }
-
-      if (text.includes("email support request sent")) {
-        return false;
-      }
-
-      return false;
-    });
+    .filter((message) => message.role !== "system");
 }
 
 function areSameMessages(
@@ -346,12 +367,14 @@ export default function SupportWidget() {
     const interval = window.setInterval(syncLanguage, 1000);
 
     window.addEventListener("focus", syncLanguage);
-    window.addEventListener("storage", syncLanguage);
+window.addEventListener("storage", syncLanguage);
+window.addEventListener("skilledge:language-changed", syncLanguage);
 
     return () => {
       window.clearInterval(interval);
       window.removeEventListener("focus", syncLanguage);
-      window.removeEventListener("storage", syncLanguage);
+window.removeEventListener("storage", syncLanguage);
+window.removeEventListener("skilledge:language-changed", syncLanguage);
     };
   }, []);
 
@@ -428,6 +451,27 @@ export default function SupportWidget() {
   useEffect(() => {
     createOrLoadSession();
   }, []);
+    useEffect(() => {
+    setMessages((currentMessages) =>
+      currentMessages.map((message) => {
+        if (isIntroMessage(message.text)) {
+          return {
+            ...message,
+            text: supportDict[language].intro,
+          };
+        }
+
+        if (message.role === "system") {
+          return {
+            ...message,
+            text: translateStoredMessageText(message.text, language),
+          };
+        }
+
+        return message;
+      })
+    );
+  }, [language]);
 
   useEffect(() => {
     if (isOpen) {
@@ -860,9 +904,8 @@ setMessages((previousMessages) =>
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-xs leading-6 text-white/50">
-                Заявка будет сохранена в support-системе и отправлена команде
-                SkillEdge AI.
-              </div>
+  {t.emailSavedNotice}
+</div>
             </div>
           )}
 
@@ -926,9 +969,8 @@ setMessages((previousMessages) =>
                 </div>
 
                 <div className="mt-3 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.045] p-3 text-xs leading-6 text-emerald-50/70">
-                  После отправки сообщение сразу уйдёт оператору. Отвечать вам
-                  смогут прямо из support-панели.
-                </div>
+  {t.chatOperatorNotice}
+</div>
               </div>
             </>
           )}

@@ -65,10 +65,10 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-  icons: {
-  icon: "/icon",
-  apple: "/apple-icon",
-},
+    icons: {
+    icon: "/icon",
+    apple: "/apple-icon",
+  },
 };
 
 export default function RootLayout({
@@ -81,12 +81,12 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-  <SeoJsonLd />
-  {children}
-  <GlobalAlertsWidget />
-  <SupportWidget />
-</body>
+            <body className="min-h-full flex flex-col">
+        <SeoJsonLd />
+        {children}
+        <GlobalAlertsWidget />
+        <SupportWidget />
+      </body>
     </html>
   );
 }

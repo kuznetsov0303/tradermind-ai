@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { authFetch } from "@/lib/security/client-auth-fetch";
 
 type SupportSession = {
   id: string;
@@ -84,7 +85,7 @@ export default function AdminSupportPage() {
         return;
       }
 
-      const response = await fetch("/api/support/admin/sessions", {
+      const response = await authFetch("/api/support/admin/sessions", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -179,7 +180,7 @@ export default function AdminSupportPage() {
         return;
       }
 
-      const response = await fetch("/api/support/admin/reply", {
+      const response = await authFetch("/api/support/admin/reply", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -224,7 +225,7 @@ export default function AdminSupportPage() {
         return;
       }
 
-      const response = await fetch("/api/support/admin/close", {
+      const response = await authFetch("/api/support/admin/close", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -261,28 +262,7 @@ export default function AdminSupportPage() {
     }
   }, [selectedSessionId]);
 
-  useEffect(() => {
-  const interval = window.setInterval(() => {
-    const activeElement = document.activeElement;
-
-    const isTyping =
-      activeElement instanceof HTMLInputElement ||
-      activeElement instanceof HTMLTextAreaElement;
-
-    if (isTyping) {
-      return;
-    }
-
-    if (selectedSessionId) {
-      loadMessages(selectedSessionId);
-      return;
-    }
-
-    loadSessions();
-  }, 8000);
-
-  return () => window.clearInterval(interval);
-}, [selectedSessionId]);
+  
 
   return (
     <main className="min-h-screen bg-[#050914] px-5 py-8 text-white">

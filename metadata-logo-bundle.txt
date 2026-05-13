@@ -1,0 +1,651 @@
+
+
+===== FILE: app\layout.tsx =====
+
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import SupportWidget from "@/components/SupportWidget";
+import SeoJsonLd from "@/components/marketing/SeoJsonLd";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
+import GlobalAlertsWidget from "@/components/GlobalAlertsWidget";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: "SkillEdge AI — Premium AI Trading Workspace",
+  description:
+    "SkillEdge AI is a premium trading workspace with market intelligence, AI alerts, journal analytics, execution review, reports, playbook and coaching.",
+  applicationName: SITE_NAME,
+  keywords: [
+    "SkillEdge AI",
+    "AI trading journal",
+    "AI trading alerts",
+    "trading journal",
+    "market intelligence",
+    "AI trading coach",
+    "trade review",
+    "execution coach",
+    "trading reports",
+    "AI Trading Desk",
+  ],
+  authors: [{ name: "SkillEdge AI" }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: "SkillEdge AI — Premium AI Trading Workspace",
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "SkillEdge AI — Premium AI Trading Workspace",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SkillEdge AI — Premium AI Trading Workspace",
+    description:
+      "Turn market noise into a personal trading edge with AI alerts, journal analytics, execution review and market intelligence.",
+    images: ["/twitter-image"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+  icon: "/icon",
+  apple: "/apple-icon",
+},
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+  <SeoJsonLd />
+  {children}
+  <GlobalAlertsWidget />
+  <SupportWidget />
+</body>
+    </html>
+  );
+}
+
+
+===== FILE: app\page.tsx =====
+
+import Landing from "@/components/Landing";
+
+export default function Home() {
+  return <Landing initialPage="home" />;
+}
+
+
+===== FILE: app\product\page.tsx =====
+
+import type { Metadata } from "next";
+import Landing from "@/components/Landing";
+
+export const metadata: Metadata = {
+  title: "Product — SkillEdge AI",
+  description:
+    "Explore SkillEdge AI: a premium trading workspace with journal analytics, screenshots, chart review, market intelligence, AI scanner, AI alerts, reports, learning blocks and execution coaching.",
+  alternates: {
+    canonical: "/product",
+  },
+  openGraph: {
+    title: "Product — SkillEdge AI",
+    description:
+      "Discover the SkillEdge AI trading workspace: journal, reports, chart analysis, market intelligence, AI scanner, alerts, playbooks and execution review.",
+    url: "/product",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "SkillEdge AI Product",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Product — SkillEdge AI",
+    description:
+      "Market intelligence, journal analytics, AI scanner, alerts and execution review in one premium trading workspace.",
+    images: ["/twitter-image"],
+  },
+};
+
+export default function ProductRoute() {
+  return <Landing initialPage="product" />;
+}
+
+
+===== FILE: app\pricing\page.tsx =====
+
+import type { Metadata } from "next";
+import Landing from "@/components/Landing";
+
+export const metadata: Metadata = {
+  title: "Pricing — SkillEdge AI",
+  description:
+    "Choose your SkillEdge AI plan: Core for structure, Edge for market intelligence and AI scanner, or Elite for the full AI trading desk and alert workflow.",
+  alternates: {
+    canonical: "/pricing",
+  },
+  openGraph: {
+    title: "Pricing — SkillEdge AI",
+    description:
+      "Choose Core, Edge or Elite and unlock the level of AI trading intelligence that matches your process.",
+    url: "/pricing",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "SkillEdge AI Pricing",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pricing — SkillEdge AI",
+    description:
+      "Core for structure, Edge for active market review, Elite for the full AI trading desk and signal workflow.",
+    images: ["/twitter-image"],
+  },
+};
+
+export default function PricingRoute() {
+  return <Landing initialPage="pricing" />;
+}
+
+
+===== FILE: app\about\page.tsx =====
+
+import type { Metadata } from "next";
+import Landing from "@/components/Landing";
+
+export const metadata: Metadata = {
+  title: "About Us — SkillEdge AI",
+  description:
+    "Learn why SkillEdge AI is being built as a premium trading workspace focused on process, discipline, market intelligence, execution review, AI signals and trader development.",
+  alternates: {
+    canonical: "/about",
+  },
+  openGraph: {
+    title: "About Us — SkillEdge AI",
+    description:
+      "SkillEdge AI is built for traders who want structure, discipline, review, market intelligence and measurable improvement — not hype or profit promises.",
+    url: "/about",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "About SkillEdge AI",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About Us — SkillEdge AI",
+    description:
+      "The philosophy behind SkillEdge AI: process over prediction, structure over chaos, discipline over hype.",
+    images: ["/twitter-image"],
+  },
+};
+
+export default function AboutRoute() {
+  return <Landing initialPage="team" />;
+}
+
+
+===== FILE: app\team\page.tsx =====
+
+import type { Metadata } from "next";
+import Landing from "@/components/Landing";
+
+export const metadata: Metadata = {
+  title: "Team — SkillEdge AI",
+  description:
+    "Learn why SkillEdge AI is being built as a serious AI trading system focused on process, discipline, market intelligence, AI alerts and trader development.",
+  alternates: {
+    canonical: "/team",
+  },
+  openGraph: {
+    title: "Team — SkillEdge AI",
+    description:
+      "SkillEdge AI is built for traders who want process, discipline, review and measurable improvement — not hype.",
+    url: "/team",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "SkillEdge AI Team",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Team — SkillEdge AI",
+    description:
+      "The philosophy behind SkillEdge AI: process over prediction, structure over chaos, discipline over hype.",
+    images: ["/twitter-image"],
+  },
+};
+
+export default function TeamRoute() {
+  return <Landing initialPage="team" />;
+}
+
+
+===== FILE: app\icon.tsx =====
+
+import { ImageResponse } from "next/og";
+
+export const runtime = "edge";
+
+export const size = {
+  width: 64,
+  height: 64,
+};
+
+export const contentType = "image/png";
+
+export default function AppIcon() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "64px",
+          height: "64px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background:
+            "radial-gradient(circle at 30% 20%, rgba(34,211,238,0.38), transparent 38%), radial-gradient(circle at 75% 80%, rgba(99,102,241,0.35), transparent 40%), #08111f",
+          borderRadius: "18px",
+          border: "1px solid rgba(34,211,238,0.34)",
+          color: "white",
+          fontSize: "20px",
+          fontWeight: 800,
+          letterSpacing: "-0.08em",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        SE
+      </div>
+    ),
+    size
+  );
+}
+
+
+===== FILE: app\apple-icon.tsx =====
+
+import { ImageResponse } from "next/og";
+
+export const runtime = "edge";
+
+export const size = {
+  width: 180,
+  height: 180,
+};
+
+export const contentType = "image/png";
+
+export default function AppleAppIcon() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "180px",
+          height: "180px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background:
+            "radial-gradient(circle at 30% 20%, rgba(34,211,238,0.38), transparent 38%), radial-gradient(circle at 75% 80%, rgba(99,102,241,0.35), transparent 40%), #08111f",
+          borderRadius: "44px",
+          border: "2px solid rgba(34,211,238,0.34)",
+          color: "white",
+          fontSize: "52px",
+          fontWeight: 800,
+          letterSpacing: "-0.08em",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        SE
+      </div>
+    ),
+    size
+  );
+}
+
+
+===== FILE: app\opengraph-image.tsx =====
+
+import { ImageResponse } from "next/og";
+
+export const runtime = "edge";
+
+export const alt = "SkillEdge AI — Premium AI Trading Workspace";
+export const size = {
+  width: 1200,
+  height: 630,
+};
+
+export const contentType = "image/png";
+
+export default function OpenGraphImage() {
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "1200px",
+          height: "630px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background:
+            "radial-gradient(circle at 20% 20%, rgba(34,211,238,0.22), transparent 32%), radial-gradient(circle at 82% 18%, rgba(99,102,241,0.22), transparent 30%), radial-gradient(circle at 50% 100%, rgba(245,158,11,0.14), transparent 34%), #070b16",
+          color: "white",
+          padding: "58px",
+          fontFamily: "Arial, sans-serif",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            border: "1px solid rgba(255,255,255,0.13)",
+            borderRadius: "44px",
+            padding: "54px",
+            background: "rgba(255,255,255,0.045)",
+            boxShadow: "0 30px 120px rgba(0,0,0,0.55)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "18px",
+              }}
+            >
+              <div
+  style={{
+    width: "70px",
+    height: "70px",
+    borderRadius: "24px",
+    border: "1px solid rgba(34,211,238,0.32)",
+    background:
+      "radial-gradient(circle at 30% 20%, rgba(34,211,238,0.28), transparent 40%), radial-gradient(circle at 75% 80%, rgba(99,102,241,0.28), transparent 42%), #08111f",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "22px",
+    fontWeight: 800,
+    letterSpacing: "-0.08em",
+    color: "white",
+    boxShadow: "0 0 34px rgba(34,211,238,0.18)",
+    position: "relative",
+  }}
+>
+  SE
+</div>
+
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <div style={{ fontSize: "34px", fontWeight: 800 }}>
+                  SkillEdge AI
+                </div>
+                <div
+                  style={{
+                    marginTop: "8px",
+                    fontSize: "15px",
+                    letterSpacing: "0.28em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.48)",
+                  }}
+                >
+                  Premium Trading Intelligence
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                height: "42px",
+                padding: "0 22px",
+                borderRadius: "999px",
+                border: "1px solid rgba(34,211,238,0.35)",
+                background: "rgba(34,211,238,0.12)",
+                color: "rgba(207,250,254,0.96)",
+                fontSize: "17px",
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              AI Trading Desk
+            </div>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div
+              style={{
+                maxWidth: "980px",
+                fontSize: "74px",
+                lineHeight: 1.02,
+                fontWeight: 850,
+                letterSpacing: "-0.055em",
+              }}
+            >
+              Turn market noise into a personal trading edge.
+            </div>
+
+            <div
+              style={{
+                marginTop: "30px",
+                maxWidth: "920px",
+                fontSize: "28px",
+                lineHeight: 1.42,
+                color: "rgba(255,255,255,0.66)",
+              }}
+            >
+              Market intelligence, AI alerts, journal analytics, execution
+              review, reports, playbook and coaching in one premium workspace.
+            </div>
+          </div>
+
+          <div style={{ display: "flex", gap: "14px" }}>
+            {[
+              "AI Alerts",
+              "Journal",
+              "Market Intelligence",
+              "Execution Coach",
+            ].map((item) => (
+              <div
+                key={item}
+                style={{
+                  padding: "12px 18px",
+                  borderRadius: "999px",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  background: "rgba(0,0,0,0.24)",
+                  color: "rgba(255,255,255,0.72)",
+                  fontSize: "18px",
+                  fontWeight: 700,
+                }}
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    ),
+    size
+  );
+}
+
+
+===== FILE: app\twitter-image.tsx =====
+
+import OpenGraphImage from "./opengraph-image";
+
+export const runtime = "edge";
+
+export const alt = "SkillEdge AI — Premium AI Trading Workspace";
+
+export const size = {
+  width: 1200,
+  height: 630,
+};
+
+export const contentType = "image/png";
+
+export default function TwitterImage() {
+  return OpenGraphImage();
+}
+
+
+===== FILE: app\robots.ts =====
+
+import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      {
+        userAgent: "*",
+        allow: [
+          "/",
+          "/product",
+          "/pricing",
+          "/team",
+          "/legal/privacy-policy",
+          "/legal/terms",
+          "/legal/disclaimer",
+          "/legal/eula",
+          "/legal/billing",
+          "/legal/cookies",
+        ],
+        disallow: ["/dashboard", "/admin", "/api", "/login", "/register"],
+      },
+    ],
+    sitemap: `${SITE_URL}/sitemap.xml`,
+  };
+}
+
+
+===== FILE: app\sitemap.ts =====
+
+import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const routes = [
+    "",
+    "/product",
+    "/pricing",
+    "/about",
+    "/legal/privacy-policy",
+    "/legal/terms",
+    "/legal/disclaimer",
+    "/legal/eula",
+    "/legal/billing",
+    "/legal/cookies",
+  ];
+
+  return routes.map((route) => ({
+    url: `${SITE_URL}${route}`,
+    lastModified: new Date(),
+    changeFrequency: route === "" ? "weekly" : "monthly",
+    priority:
+      route === ""
+        ? 1
+        : route === "/pricing"
+          ? 0.95
+          : route === "/product"
+            ? 0.9
+            : route === "/about"
+              ? 0.7
+              : 0.45,
+  }));
+}
+
+
+===== FILE: components\marketing\BrandMark.tsx =====
+
+type BrandMarkProps = {
+  size?: "sm" | "md" | "lg";
+  className?: string;
+};
+
+function BrandMark({
+  size = "md",
+  className = "",
+}: BrandMarkProps) {
+  const sizeClasses = {
+    sm: "h-9 w-9 rounded-xl",
+    md: "h-12 w-12 rounded-2xl",
+    lg: "h-16 w-16 rounded-[1.35rem]",
+  };
+
+  const textClasses = {
+    sm: "text-[11px]",
+    md: "text-sm",
+    lg: "text-base",
+  };
+
+  return (
+    <div
+      className={`relative inline-flex shrink-0 items-center justify-center overflow-hidden border border-cyan-300/25 bg-[#08111f] shadow-[0_0_34px_rgba(34,211,238,0.16)] ${sizeClasses[size]} ${className}`}
+      aria-label="SkillEdge AI logo"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(34,211,238,0.28),transparent_34%),radial-gradient(circle_at_75%_80%,rgba(99,102,241,0.24),transparent_36%)]" />
+      <div className="absolute inset-[1px] rounded-[inherit] border border-white/10" />
+      <div className="absolute left-1/2 top-[-20%] h-[140%] w-px -rotate-45 bg-gradient-to-b from-transparent via-cyan-200/55 to-transparent" />
+      <div className="absolute bottom-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_14px_rgba(110,231,183,0.9)]" />
+
+      <span
+        className={`relative font-semibold tracking-[-0.08em] text-white ${textClasses[size]}`}
+      >
+        SE
+      </span>
+    </div>
+  );
+}
+
+export { BrandMark };
+export default BrandMark;

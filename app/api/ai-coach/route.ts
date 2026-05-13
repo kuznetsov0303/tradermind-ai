@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
+import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
 
 type SubscriptionRow = {
   id: string;
@@ -52,6 +53,16 @@ function extractResponseText(openaiData: any) {
 }
 
 export async function POST(req: Request) {
+    const aiGate = await requireAiRouteAccess(req, {
+    routeName: "ai-coach",
+    requireActiveSubscription: true,
+    rateLimit: {
+      limit: 30,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!aiGate.ok) return aiGate.response;
   try {
     const openaiApiKey = process.env.OPENAI_API_KEY;
 

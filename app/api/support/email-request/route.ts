@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  checkRateLimit,
+  getClientIp,
+  rateLimitResponse,
+} from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -178,6 +183,16 @@ async function sendSmtpEmail({
 }
 
 export async function POST(request: Request) {
+    const ip = getClientIp(request);
+  const rate = checkRateLimit({
+    key: `email-request:${ip}`,
+    limit: 10,
+    windowMs: 60_000,
+  });
+
+  if (!rate.ok) {
+    return rateLimitResponse(rate.resetAt);
+  }
   try {
     const user = await getRequestUser(request);
     const body = (await request.json()) as EmailRequestBody;

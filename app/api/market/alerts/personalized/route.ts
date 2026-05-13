@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { canUseFeature, normalizePlanId } from "@/lib/plan-limits";
+import { requireFeatureAccess } from "@/lib/security/feature-gate";
 
 export const runtime = "nodejs";
 
@@ -443,6 +444,14 @@ function buildSignalMode(
 }
 
 export async function GET(request: Request) {
+  const gate = await requireFeatureAccess(request, "ai_alerts", {
+    rateLimit: {
+      limit: 30,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!gate.ok) return gate.response;
   try {
     const user = await getRequestUser(request);
 

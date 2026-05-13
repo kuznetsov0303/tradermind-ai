@@ -14,12 +14,14 @@ import {
 } from "recharts";
 import * as XLSX from "xlsx";
 import { supabase } from "@/lib/supabaseClient";
+import { authFetch } from "@/lib/security/client-auth-fetch";
 import {
   PLAN_LIMITS,
   canUseFeature,
   getPlanLimits,
   normalizePlanId,
 } from "@/lib/plan-limits";
+
 
 type Language = "en" | "ru" | "ua";
 
@@ -152,485 +154,485 @@ const dashboardDict = {
     quickActions: "Quick actions",
     addTrade: "Add trade",
     uploadScreenshot: "Upload screenshot",
-    askAI: "Ask AI",
+    askAI: "Ask AI Coach",
     createReport: "Create report",
     overview: {
-  title: "Performance overview",
-  text: "PnL summary, win rate, discipline score, best setups and main mistakes.",
-  pnlMonth: "Monthly PnL",
-  winRate: "Win rate",
-  discipline: "Discipline score",
-  weeklyAi: "Weekly AI summary",
-  weeklyAiText:
-    "This module will be connected to your trade database, plans and AI logic in the next stages.",
-},
-charts: {
-  title: "TradingView charts",
-  text: "Embedded TradingView chart for ticker analysis, levels and setups.",
-  placeholder: "TradingView widget will be added in the next stage.",
-  analyzeCurrentChart: "Analyze current chart",
-  workspaceText: "Trading workspace with chart, watchlist and market movers.",
-  watchlistExamples: "Watchlist examples: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  openWatchlist: "Open watchlist",
-  hideWatchlist: "Hide watchlist",
-  watchlistTitle: "Watchlist",
-  watchlistSubtitle: "Symbol / 24h % / volume",
-  addTickerButton: "Add",
-  addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
-  sortSymbol: "Symbol",
-  sortChange: "% 24h",
-  sortVolume: "Vol",
-  symbolColumn: "Symbol",
-  percentColumn: "%",
-  volumeColumn: "Volume",
-  loadingWatchlist: "Loading watchlist...",
-  emptyWatchlist: "Watchlist is empty. Click + and add a ticker.",
-  removeFromWatchlist: "Remove from watchlist",
-  loginFirst: "Please log in first.",
-  settingsLoadError: "Failed to load chart settings.",
-  addTickerError: "Failed to add ticker to watchlist.",
-  removeTickerError: "Failed to remove ticker from watchlist.",
-  moversStocks: "Stocks",
-  moversCrypto: "Crypto",
-  moversGainers: "Top Gainers",
-  moversLosers: "Top Losers",
-  moversCollapse: "Collapse",
-  moversExpand: "Expand",
-  moversName: "Name",
-  moversPercentChange: "% Change",
-  moversLoading: "Loading movers...",
-  moversEmpty: "No instruments for this filter.",
-  moversStocksNeedKey: "Stocks movers will work after adding NEXT_PUBLIC_FMP_API_KEY.",
-chartAnalysisTitle: "AI chart analysis",
-chartAnalysisText:
-  "SkillEdge AI analyzes the current symbol, timeframe, market data, candles, volume and risk context.",
-chartAnalysisLoading: "Analyzing current chart...",
-chartAnalysisError: "Failed to analyze current chart.",
-chartAnalysisEmpty: "Run AI analysis to see the current chart breakdown.",
-chartAnalysisClose: "Close",
-chartAnalysisSymbol: "Symbol",
-chartAnalysisInterval: "Interval",
-chartAnalysisReportLabel: "SkillEdge AI Report",
-chartAnalysisDataLabel: "Market structure report",
-chartAnalysisSectionsLabel: "Analysis sections",
-marketDataUnavailableTitle: "Market data unavailable",
-marketDataUnavailableText:
-  "SkillEdge AI could not load market data for this symbol on the current data plan. Try a more liquid ticker such as AAPL, TSLA, NVDA, SPY or QQQ.",
-marketDataPremiumTitle: "Premium market data required",
-marketDataPremiumText:
-  "This symbol, timeframe or data endpoint may require a higher market data plan. Before launch, SkillEdge AI will support broader premium market coverage.",
-marketDataGenericErrorTitle: "Analysis unavailable",
-marketDataGenericErrorText:
-  "We could not complete the chart analysis right now. Try another ticker, timeframe, or run the analysis again.",
-chartControlTickerLabel: "Ticker",
-chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
-chartControlIntervalLabel: "Timeframe",
-chartControlOpenChart: "Open chart",
-chartControlHint:
-  "Use this bar to control both TradingView and AI analysis. Changes made inside TradingView may not sync back to SkillEdge AI.",
-},
-learning: {
-  title: "Training center",
-  text: "Structured trading education, setups, risk management, psychology and playbook building.",
-  learningNoteTitle: "Learning Center currently works as a refresher base",
-learningNoteText:
-  "SkillEdge AI is primarily focused on trade journaling, chart analysis, AI review, and building a trading system. This section is not positioned as a full academy yet: it is designed as a compact knowledge base to refresh key concepts, so clients can better understand risk, setups, market structure, and AI analysis logic.",
-  overviewLabel: "Learning overview",
-  modulesLabel: "Modules",
-  lessonsLabel: "lessons",
-  progressLabel: "Progress",
-  totalProgressLabel: "Total progress",
-  startButton: "Start",
-  continueButton: "Continue",
-  reviewButton: "Review",
-  notStartedStatus: "Not started",
-  inProgressStatus: "In progress",
-  completedStatus: "Completed",
-  lockedLabel: "Coming soon",
-  estimatedTimeLabel: "Estimated time",
-  levelLabel: "Level",
-  beginnerLevel: "Beginner",
-  intermediateLevel: "Intermediate",
-  advancedLevel: "Advanced",
-  moduleOneTitle: "Market Basics",
-  moduleOneText:
-    "Understand how the market works, how orders interact, and why liquidity matters.",
-  moduleTwoTitle: "Technical Analysis",
-  moduleTwoText:
-    "Learn candles, levels, trend/range logic, volume and clean chart reading.",
-  moduleThreeTitle: "Risk Management",
-  moduleThreeText:
-    "Build rules for risk per trade, stop loss, position sizing and R/R.",
-  moduleFourTitle: "Intraday Momentum",
-  moduleFourText:
-    "Study momentum logic, breakout/reclaim, failed breakout and continuation setups.",
-  moduleFiveTitle: "Trading Psychology",
-  moduleFiveText:
-    "Control overtrading, revenge trading, fear, hesitation and impulsive entries.",
-  moduleSixTitle: "Playbook / Setups",
-  moduleSixText:
-    "Turn repeated patterns into a structured trading playbook with triggers and invalidation.",
-  lessonMarketStructure: "How the market works",
-  lessonOrderTypes: "Order types",
-  lessonBidAskSpread: "Bid / Ask / Spread",
-  lessonLiquidity: "Liquidity",
-  lessonCandles: "Candles",
-  lessonLevels: "Support and resistance",
-  lessonTrendRange: "Trend vs range",
-  lessonVolume: "Volume analysis",
-  lessonRiskPerTrade: "Risk per trade",
-  lessonStopLoss: "Stop loss",
-  lessonRiskReward: "Risk / Reward",
-  lessonPositionSizing: "Position sizing",
-  lessonMomentumLogic: "Momentum logic",
-  lessonBreakoutReclaim: "Breakout / reclaim",
-  lessonFailedBreakout: "Failed breakout",
-  lessonContinuation: "Continuation",
-  lessonDiscipline: "Discipline",
-  lessonOvertrading: "Overtrading",
-  lessonRevengeTrading: "Revenge trading",
-  lessonPatience: "Patience",
-  lessonSetupChecklist: "Setup checklist",
-  lessonEntryTrigger: "Entry trigger",
-  lessonInvalidation: "Invalidation",
-  lessonReviewProcess: "Review process",
-  advancedTracksLabel: "Advanced tracks",
-advancedTracksText:
-  "Additional specialized learning paths that will be unlocked in the next expansion of SkillEdge AI.",
-comingSoonButton: "Coming soon",
-activeModuleLabel: "Active module",
-openLessonButton: "Open lesson",
-selectedModuleHint:
-  "Select a module to see its lessons, progress and next learning step.",
-nextLessonLabel: "Next lesson",
-moduleDetailsLabel: "Module details",
-lessonViewerLabel: "Lesson viewer",
-lessonContentLabel: "Lesson content",
-lessonCloseButton: "Close lesson",
-lessonStartText:
-  "This lesson content will be expanded in the next stage. For now, use this structure as the lesson shell inside SkillEdge AI.",
-lessonKeyPointsLabel: "Key points",
-lessonPracticeLabel: "Practice task",
-lessonPracticeText:
-  "Review the concept, find one chart example, and write what confirms or invalidates the idea.",
-markLessonCompletedButton: "Mark lesson completed",
-lessonCompletedButton: "Lesson completed",
-frontendProgressNote:
-  "Progress is saved to your SkillEdge AI account and will stay available after reload.",
-learningProgressLoading: "Loading learning progress...",
-learningProgressSaving: "Saving progress...",
-learningProgressSaved: "Progress saved",
-lessonAutoAdvanced:
-  "Lesson saved. The next lesson has been opened automatically.",
-moduleCompletedMessage: "Module completed. Great work.",
-learningProgressError: "Failed to sync learning progress.",
-  extraModuleOneTitle: "Smart Money Concepts & Working Setups",
-extraModuleOneText:
-  "Market structure, liquidity, inducement, displacement, order blocks and practical setup logic.",
-extraModuleTwoTitle: "Order Book Scalping in CScalp",
-extraModuleTwoText:
-  "Platform training, order flow basics, level breakout and knife-catching setups for active scalping.",
-extraModuleThreeTitle: "Additional module 3",
-extraModuleThreeText:
-  "This module will be filled with the next specialized training block.",
-extraModuleFourTitle: "Additional module 4",
-extraModuleFourText:
-  "This module will be filled with the next specialized training block.",
-extraModuleOneLessonOne: "Market structure",
-extraModuleOneLessonTwo: "Liquidity zones",
-extraModuleOneLessonThree: "Order blocks",
-extraModuleOneLessonFour: "Working setups",
-extraModuleTwoLessonOne: "CScalp interface",
-extraModuleTwoLessonTwo: "DOM basics",
-extraModuleTwoLessonThree: "Level breakout",
-extraModuleTwoLessonFour: "Knife-catching setup",
-extraModuleThreeLessonOne: "Lesson 1",
-extraModuleThreeLessonTwo: "Lesson 2",
-extraModuleThreeLessonThree: "Lesson 3",
-extraModuleThreeLessonFour: "Lesson 4",
-extraModuleFourLessonOne: "Lesson 1",
-extraModuleFourLessonTwo: "Lesson 2",
-extraModuleFourLessonThree: "Lesson 3",
-extraModuleFourLessonFour: "Lesson 4",
-},
-reports: {
-  title: "Reports",
-  text: "Journal statistics, PnL dynamics, setup quality, mistakes and trading strengths.",
-  placeholder: "Advanced reports will be added in the next stage.",
-  emptyTitle: "Not enough data for a report yet",
-  emptyText:
-    "Add a few trades to your journal so SkillEdge AI can build a report on PnL, win rate, setups, mistakes and performance dynamics.",
-  totalTrades: "Total trades",
-  totalTradesHelper: "All trades from the journal",
-  totalPnl: "Total PnL",
-  totalPnlHelper: "Total result across closed trades",
-  winRate: "Win rate",
-  averagePnl: "Average PnL",
-  averagePnlHelper: "Average result per trade",
-  profitFactor: "Profit factor",
-  profitFactorHelper: "Gross profit / gross loss",
-  bestWorst: "Best / Worst",
-  bestWorstHelper: "Best and worst trade",
-  equityTitle: "Equity curve",
-  equitySubtitle: "Cumulative PnL dynamics",
-  points: "points",
-  directionTitle: "Long vs Short",
-  directionSubtitle: "Performance by direction",
-  marketBreakdown: "Markets",
-  setupBreakdown: "Setups",
-  mistakesBreakdown: "Mistakes",
-  noData: "No data yet.",
-    filtersTitle: "Report filters",
-  filtersText:
-    "Narrow statistics by period, market, direction and setup to see the real quality of your trading.",
-  resetFilters: "Reset filters",
-  periodFilter: "Period",
-  periodAll: "All time",
-  period7d: "7 days",
-  period30d: "30 days",
-  period90d: "90 days",
-  marketFilter: "Market",
-  allMarkets: "All markets",
-  directionFilter: "Direction",
-  allDirections: "All directions",
-  setupFilter: "Setup",
-  allSetups: "All setups",
-  filteredTrades: "Filtered trades",
-  noFilteredTradesTitle: "No trades match the selected filters",
-noFilteredTradesText:
-  "Try changing the period, market, direction or setup. Your journal has trades, but this filter combination did not match anything.",
-aiReportTitle: "AI report",
-aiReportSubtitle: "Summary for selected trades",
-aiReportText:
-  "Generate a short report for the current filter: what works, where the mistakes are, risk quality, best-performing setups and what to focus on next.",
-aiReportButton: "Generate report",
-aiReportLoading: "Generating...",
-aiReportError: "Failed to generate AI report.",
-aiReportLabel: "AI report",
-generateAiReport: "Generate report",
-aiReportGenerating: "Generating report...",
-aiReportPlaceholder:
-  "The AI report will appear here after generation. It will also be saved in history so the client can return to it later.",
-aiReportResultLabel: "Result",
-latestAiReportTitle: "Latest AI report",
-savedAiReportTitle: "Saved AI report",
-aiReportHistoryLabel: "History",
-aiReportHistoryTitle: "AI report history",
-aiReportHistoryText:
-  "Open previous AI summaries by filter and quickly return to the most important conclusions.",
-aiReportHistoryEmpty: "No saved AI reports yet.",
-currentSummaryLabel: "Current summary",
-allPeriods: "All periods",
-deleteAiReport: "Delete report",
-copyAiReport: "Copy",
-downloadAiReport: "Download .txt",
-aiReportCopied: "AI report copied.",
-aiReportCopyFailed: "Failed to copy report.",
-aiReportDownloaded: "AI report downloaded.",
-upgradeForAiReports: "Edge required",
-aiReportUpgradeRequired:
-  "AI reports are available on SkillEdge Edge and SkillEdge Elite.",
-aiReportLockedText:
-  "AI reports help review selected trades, find best setups, mistakes, and the next focus area. This feature is available on SkillEdge Edge and SkillEdge Elite.",
-aiReportPlanHint: "AI reports per month on current plan",
-},
-    
-journal: {
-  title: "Trade journal",
-  text: "Add trades, track risk, result, emotions, mistakes and lessons.",
-  locked: "An active plan or demo access is required to add trades.",
-  addTitle: "Add trade",
-  editTitle: "Edit trade",
-addModeText: "Add a new trade to your personal journal.",
-  addText:
-    "Fill in the basic data. Later we will connect screenshots and AI review for each trade.",
-  totalTrades: "Total trades",
-  totalPnl: "Total PnL",
-  winRate: "Win rate",
-  avgPnl: "Avg PnL",
-  grossProfit: "Gross Profit",
-grossLoss: "Gross Loss",
-bestTrade: "Best Trade",
-worstTrade: "Worst Trade",
-profitFactor: "Profit Factor",
-equityTitle: "Equity curve",
-equityText: "Cumulative PnL based on saved trades.",
-equityEmpty: "Add trades with PnL to build your equity curve.",
-equityPoints: "points",
-expand: "Expand",
-close: "Close",
-cardLabels: {
-  entry: "Entry",
-  exit: "Exit",
-  stop: "Stop",
-  risk: "Risk",
-  result: "Result",
-  setup: "Setup",
-  mistake: "Mistake",
-  lesson: "Lesson",
-  notes: "Notes",
-},
-fullTitle: "Full journal",
-fullText: "Complete trade list. Filters and export are available below.",
-downloadCsv: "Download CSV",
-downloadXlsx: "Download XLSX",
-deleteTradeButton: "Delete trade",
-editTradeButton: "Edit trade",
-openChartButton: "Open chart",
-cancelEditButton: "Cancel edit",
-editModeTitle: "Editing trade",
-editModeText: "Change the highlighted fields and save the trade.",
-actions: "Actions",
-deleteTradeConfirm: "Delete this trade? This action cannot be undone.",
-deleteTradeError: "Failed to delete trade.",
-uploadScreenshotTitle: "Upload trade screenshot",
-screenshotsColumn: "Screens",
-openScreenshots: "Open",
-noScreenshotsForTrade: "No screenshots uploaded for this trade.",
-screenshotViewerTitle: "Trade screenshots",
-loadingScreenshots: "Loading screenshots...",
-uploadScreenshotText:
-  "Attach chart screenshots to your saved trades. Later SkillEdge AI will use them to analyze entries, exits, stops and repeated chart mistakes.",
-screenshotsCount: "screenshots",
-screenshotTradeLabel: "Trade",
-screenshotFileLabel: "Screenshot",
-screenshotChoose: "Choose screenshot",
-screenshotNoFile: "No file selected",
-screenshotSelected: "Selected file",
-screenshotHint:
-  "Steps: 1) Select a trade  2) Click “Choose screenshot”  3) Click “Upload”",
-screenshotUploadHintCompact:
-  "Upload 1 to 3 screenshots with different timeframes for a deeper analysis.",
-  screenshotFormats: "Supported formats: PNG, JPG, WEBP",
-uploadButton: "Upload",
-uploadingButton: "Uploading...",
-selectTradePlaceholder: "Select trade",
-stepOne: "Step 1",
-stepTwo: "Step 2",
-stepThree: "Step 3",
-chartAnalyzeButton: "Analyze chart",
-chartAnalyzingButton: "Analyzing chart...",
-chartScreenshotsLabel: "screenshots",
-journalAnalysisTitle: "SkillEdge AI Journal Analysis",
-journalAnalysisText:
-  "AI will analyze your saved trades, repeated mistakes, setups, emotions, risk and execution quality.",
-journalAnalyzeButton: "Analyze journal",
-journalAnalyzingButton: "Analyzing...",
-savedChartAnalysis: "Saved AI chart analysis",
-showChartHistory: "Show AI history",
-hideChartHistory: "Hide AI history",
-noChartHistory: "No saved chart analyses yet.",
-searchTicker: "Search ticker",
-allMarkets: "All markets",
-allSides: "All sides",
-allResults: "All results",
-marketLabels: {
-  stocks: "Stocks",
-  crypto: "Crypto",
-  futures: "Futures",
-  forex: "Forex",
-  options: "Options",
-},
-directionLabels: {
-  long: "Long",
-  short: "Short",
-},
-resultLabels: {
-  win: "Win",
-  loss: "Loss",
-  breakeven: "Breakeven",
-  notSet: "Not set",
-},
-table: {
-  date: "Date",
-  ticker: "Ticker",
-  market: "Market",
-  side: "Side",
-  entry: "Entry",
-  exit: "Exit",
-  stop: "Stop",
-  risk: "Risk",
-  pnl: "PnL",
-  result: "Result",
-  setup: "Setup",
-},
-  recentTitle: "Recent trades",
-  recentText:
-    "Last 3 trades from your personal journal. Full table and export will be added next.",
-  empty:
-    "No trades yet. Add your first trade to start building your performance database.",
-  tradesCount: "trades",
-  saving: "Saving...",
-  save: "Save trade",
-  updateTradeButton: "Update trade",
-  updatingTradeButton: "Updating...",
-  tickerRequired: "Enter ticker.",
-  tradeLimitReached: "Trade limit reached for your current plan",
- tradeUsageTitle: "Trades used",
- tradesLeftLabel: "left",
-  screenshotLimitReached: "Screenshot limit reached for this trade",
- screenshotUsageTitle: "Screenshots used", 
- limitReached: "Trade limit reached for your current plan",
-  loginFirst: "Please log in first.",
-  saveFailed: "Failed to save trade.",
-  
-  fields: {
-    ticker: "Ticker",
-    date: "Date",
-    market: "Market",
-    direction: "Direction",
-    entry: "Entry",
-    exit: "Exit",
-    stop: "Stop",
-    size: "Size",
-    risk: "Risk $",
-    pnl: "PnL $",
-    result: "Result",
-    setup: "Setup",
-    emotion: "Emotion",
-    mistake: "Mistake",
-    lesson: "Lesson",
-    notes: "Notes",
-  },
-  placeholders: {
-    ticker: "AAPL / BTC / NQ",
-    entry: "100",
-    exit: "105",
-    stop: "98",
-    size: "Shares / contracts",
-    risk: "50",
-    pnl: "-25 / 120",
-    setup: "VWAP reclaim / gap fade",
-    emotion: "Calm / FOMO / fear",
-    mistake: "What did you do wrong?",
-    lesson: "What should you remember next time?",
-    notes: "Context, catalyst, tape, levels...",
-  },
-  options: {
-    notSet: "Not set",
-    win: "Win",
-    loss: "Loss",
-    breakeven: "Breakeven",
-  },
-},
-locked: {
+      title: "Performance overview",
+      text: "PnL summary, win rate, discipline score, best setups and main mistakes.",
+      pnlMonth: "Monthly PnL",
+      winRate: "Win rate",
+      discipline: "Discipline score",
+      weeklyAi: "Weekly AI summary",
+      weeklyAiText:
+        "SkillEdge AI summarizes your journal, risk behavior, discipline and recurring mistakes into a focused weekly review.",
+    },
+    charts: {
+      title: "TradingView charts",
+      text: "Embedded TradingView chart for ticker analysis, levels and setups.",
+      placeholder: "TradingView workspace is available inside the Charts module.",
+      analyzeCurrentChart: "Analyze current chart",
+      workspaceText: "Trading workspace with chart, watchlist and market movers.",
+      watchlistExamples: "Watchlist examples: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      openWatchlist: "Open watchlist",
+      hideWatchlist: "Hide watchlist",
+      watchlistTitle: "Watchlist",
+      watchlistSubtitle: "Symbol / 24h % / volume",
+      addTickerButton: "Add",
+      addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+      sortSymbol: "Symbol",
+      sortChange: "% 24h",
+      sortVolume: "Vol",
+      symbolColumn: "Symbol",
+      percentColumn: "%",
+      volumeColumn: "Volume",
+      loadingWatchlist: "Loading watchlist...",
+      emptyWatchlist: "Watchlist is empty. Click + and add a ticker.",
+      removeFromWatchlist: "Remove from watchlist",
+      loginFirst: "Please log in first.",
+      settingsLoadError: "Failed to load chart settings.",
+      addTickerError: "Failed to add ticker to watchlist.",
+      removeTickerError: "Failed to remove ticker from watchlist.",
+      moversStocks: "Stocks",
+      moversCrypto: "Crypto",
+      moversGainers: "Top gainers",
+      moversLosers: "Top losers",
+      moversCollapse: "Collapse",
+      moversExpand: "Expand",
+      moversName: "Name",
+      moversPercentChange: "% change",
+      moversLoading: "Loading movers...",
+      moversEmpty: "No instruments for this filter.",
+      moversStocksNeedKey:
+        "Stock movers are being prepared for premium market data coverage.",
+      chartAnalysisTitle: "AI chart analysis",
+      chartAnalysisText:
+        "SkillEdge AI analyzes the current symbol, timeframe, market data, candles, volume and risk context.",
+      chartAnalysisLoading: "Analyzing current chart...",
+      chartAnalysisError: "Failed to analyze current chart.",
+      chartAnalysisEmpty: "Run AI analysis to see the current chart breakdown.",
+      chartAnalysisClose: "Close",
+      chartAnalysisSymbol: "Symbol",
+      chartAnalysisInterval: "Timeframe",
+      chartAnalysisReportLabel: "SkillEdge AI Report",
+      chartAnalysisDataLabel: "Market structure report",
+      chartAnalysisSectionsLabel: "Analysis sections",
+      marketDataUnavailableTitle: "Market data unavailable",
+      marketDataUnavailableText:
+        "SkillEdge AI could not load market data for this symbol on the current data plan. Try a more liquid ticker such as AAPL, TSLA, NVDA, SPY or QQQ.",
+      marketDataPremiumTitle: "Premium market data required",
+      marketDataPremiumText:
+        "This symbol, timeframe or data endpoint may require a higher market data plan. Before launch, SkillEdge AI will support broader premium market coverage.",
+      marketDataGenericErrorTitle: "Analysis unavailable",
+      marketDataGenericErrorText:
+        "We could not complete the chart analysis right now. Try another ticker, timeframe, or run the analysis again.",
+      chartControlTickerLabel: "Ticker",
+      chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+      chartControlIntervalLabel: "Timeframe",
+      chartControlOpenChart: "Open chart",
+      chartControlHint:
+        "Use this bar to control both TradingView and AI analysis. Changes made inside TradingView may not sync back to SkillEdge AI.",
+    },
+    learning: {
+      title: "Training center",
+      text: "Structured trading education, setups, risk management, psychology and playbook building.",
+      learningNoteTitle: "Learning Center works as a refresher base",
+      learningNoteText:
+        "SkillEdge AI is primarily focused on trade journaling, chart analysis, AI review and building a trading system. This section is a compact knowledge base for refreshing key concepts so clients can better understand risk, setups, market structure and AI analysis logic.",
+      overviewLabel: "Learning overview",
+      modulesLabel: "Modules",
+      lessonsLabel: "lessons",
+      progressLabel: "Progress",
+      totalProgressLabel: "Total progress",
+      startButton: "Start",
+      continueButton: "Continue",
+      reviewButton: "Review",
+      notStartedStatus: "Not started",
+      inProgressStatus: "In progress",
+      completedStatus: "Completed",
+      lockedLabel: "Coming soon",
+      estimatedTimeLabel: "Estimated time",
+      levelLabel: "Level",
+      beginnerLevel: "Beginner",
+      intermediateLevel: "Intermediate",
+      advancedLevel: "Advanced",
+      moduleOneTitle: "Market Basics",
+      moduleOneText:
+        "Understand how the market works, how orders interact and why liquidity matters.",
+      moduleTwoTitle: "Technical Analysis",
+      moduleTwoText:
+        "Learn candles, levels, trend/range logic, volume and clean chart reading.",
+      moduleThreeTitle: "Risk Management",
+      moduleThreeText:
+        "Build rules for risk per trade, stop loss, position sizing and risk/reward.",
+      moduleFourTitle: "Intraday Momentum",
+      moduleFourText:
+        "Momentum logic, breakout, reclaim, failed breakout and continuation setups.",
+      moduleFiveTitle: "Trading Psychology",
+      moduleFiveText:
+        "Control overtrading, revenge trading, fear, hesitation and impulsive entries.",
+      moduleSixTitle: "Playbook / Setups",
+      moduleSixText:
+        "Turn repeated patterns into a structured trading playbook with entry triggers and invalidation rules.",
+      lessonMarketStructure: "How the market works",
+      lessonOrderTypes: "Order types",
+      lessonBidAskSpread: "Bid / Ask / Spread",
+      lessonLiquidity: "Liquidity",
+      lessonCandles: "Candles",
+      lessonLevels: "Support and resistance",
+      lessonTrendRange: "Trend vs range",
+      lessonVolume: "Volume analysis",
+      lessonRiskPerTrade: "Risk per trade",
+      lessonStopLoss: "Stop loss",
+      lessonRiskReward: "Risk / Reward",
+      lessonPositionSizing: "Position sizing",
+      lessonMomentumLogic: "Momentum logic",
+      lessonBreakoutReclaim: "Breakout / reclaim",
+      lessonFailedBreakout: "Failed breakout",
+      lessonContinuation: "Continuation",
+      lessonDiscipline: "Discipline",
+      lessonOvertrading: "Overtrading",
+      lessonRevengeTrading: "Revenge trading",
+      lessonPatience: "Patience",
+      lessonSetupChecklist: "Setup checklist",
+      lessonEntryTrigger: "Entry trigger",
+      lessonInvalidation: "Invalidation",
+      lessonReviewProcess: "Review process",
+      advancedTracksLabel: "Advanced tracks",
+      advancedTracksText:
+        "Additional specialized learning paths for deepening the trading system inside SkillEdge AI.",
+      comingSoonButton: "Coming soon",
+      activeModuleLabel: "Active module",
+      openLessonButton: "Open lesson",
+      selectedModuleHint:
+        "Select a module to see its lessons, progress and next learning step.",
+      nextLessonLabel: "Next lesson",
+      moduleDetailsLabel: "Module details",
+      lessonViewerLabel: "Lesson viewer",
+      lessonContentLabel: "Lesson content",
+      lessonCloseButton: "Close lesson",
+      lessonStartText:
+        "This lesson is structured as a focused SkillEdge AI knowledge block. Review the key ideas, complete the practice task and connect the concept with your own trades.",
+      lessonKeyPointsLabel: "Key points",
+      lessonPracticeLabel: "Practice task",
+      lessonPracticeText:
+        "Review the concept, find one chart example and write what confirms or invalidates the idea.",
+      markLessonCompletedButton: "Mark lesson completed",
+      lessonCompletedButton: "Lesson completed",
+      frontendProgressNote:
+        "Progress is saved to your SkillEdge AI account and will stay available after reload.",
+      learningProgressLoading: "Loading learning progress...",
+      learningProgressSaving: "Saving progress...",
+      learningProgressSaved: "Progress saved",
+      lessonAutoAdvanced:
+        "Lesson saved. The next lesson has been opened automatically.",
+      moduleCompletedMessage: "Module completed. Great work.",
+      learningProgressError: "Failed to sync learning progress.",
+      extraModuleOneTitle: "Smart Money Concepts & Working Setups",
+      extraModuleOneText:
+        "Market structure, liquidity, inducement, displacement, order blocks and practical setup logic.",
+      extraModuleTwoTitle: "Order Book Scalping in CScalp",
+      extraModuleTwoText:
+        "Platform training, order flow basics, level breakout and knife-catching setups for active scalping.",
+      extraModuleThreeTitle: "Advanced module 3",
+      extraModuleThreeText:
+        "This module is reserved for the next specialized training block.",
+      extraModuleFourTitle: "Advanced module 4",
+      extraModuleFourText:
+        "This module is reserved for the next specialized training block.",
+      extraModuleOneLessonOne: "Market structure",
+      extraModuleOneLessonTwo: "Liquidity zones",
+      extraModuleOneLessonThree: "Order blocks",
+      extraModuleOneLessonFour: "Working setups",
+      extraModuleTwoLessonOne: "CScalp interface",
+      extraModuleTwoLessonTwo: "DOM basics",
+      extraModuleTwoLessonThree: "Level breakout",
+      extraModuleTwoLessonFour: "Knife-catching setup",
+      extraModuleThreeLessonOne: "Lesson 1",
+      extraModuleThreeLessonTwo: "Lesson 2",
+      extraModuleThreeLessonThree: "Lesson 3",
+      extraModuleThreeLessonFour: "Lesson 4",
+      extraModuleFourLessonOne: "Lesson 1",
+      extraModuleFourLessonTwo: "Lesson 2",
+      extraModuleFourLessonThree: "Lesson 3",
+      extraModuleFourLessonFour: "Lesson 4",
+    },
+    reports: {
+      title: "Reports",
+      text: "Journal statistics, PnL dynamics, setup quality, mistakes and trading strengths.",
+      placeholder:
+        "Advanced performance reports are generated from your journal, filters and saved trade data.",
+      emptyTitle: "Not enough data for a report yet",
+      emptyText:
+        "Add a few trades to your journal so SkillEdge AI can build a report on PnL, win rate, setups, mistakes and performance dynamics.",
+      totalTrades: "Total trades",
+      totalTradesHelper: "All trades from the journal",
+      totalPnl: "Total PnL",
+      totalPnlHelper: "Total result across closed trades",
+      winRate: "Win rate",
+      averagePnl: "Average PnL",
+      averagePnlHelper: "Average result per trade",
+      profitFactor: "Profit Factor",
+      profitFactorHelper: "Gross profit / gross loss",
+      bestWorst: "Best / Worst",
+      bestWorstHelper: "Best and worst trade",
+      equityTitle: "Equity curve",
+      equitySubtitle: "Cumulative PnL dynamics",
+      points: "points",
+      directionTitle: "Long vs Short",
+      directionSubtitle: "Performance by direction",
+      marketBreakdown: "Markets",
+      setupBreakdown: "Setups",
+      mistakesBreakdown: "Mistakes",
+      noData: "No data yet.",
+      filtersTitle: "Report filters",
+      filtersText:
+        "Narrow statistics by period, market, direction and setup to see the real quality of your trading.",
+      resetFilters: "Reset filters",
+      periodFilter: "Period",
+      periodAll: "All time",
+      period7d: "7 days",
+      period30d: "30 days",
+      period90d: "90 days",
+      marketFilter: "Market",
+      allMarkets: "All markets",
+      directionFilter: "Direction",
+      allDirections: "All directions",
+      setupFilter: "Setup",
+      allSetups: "All setups",
+      filteredTrades: "Filtered trades",
+      noFilteredTradesTitle: "No trades match the selected filters",
+      noFilteredTradesText:
+        "Try changing the period, market, direction or setup. Your journal has trades, but this filter combination did not match anything.",
+      aiReportTitle: "AI report",
+      aiReportSubtitle: "Summary for selected trades",
+      aiReportText:
+        "Generate a short report for the current filter: what works, where the mistakes are, risk quality, best-performing setups and what to focus on next.",
+      aiReportButton: "Generate report",
+      aiReportLoading: "Generating...",
+      aiReportError: "Failed to generate AI report.",
+      aiReportLabel: "AI report",
+      generateAiReport: "Generate report",
+      aiReportGenerating: "Generating report...",
+      aiReportPlaceholder:
+        "The AI report will appear here after generation and stay saved in history for future review.",
+      aiReportResultLabel: "Result",
+      latestAiReportTitle: "Latest AI report",
+      savedAiReportTitle: "Saved AI report",
+      aiReportHistoryLabel: "History",
+      aiReportHistoryTitle: "AI report history",
+      aiReportHistoryText:
+        "Open previous AI summaries by filter and quickly return to the most important conclusions.",
+      aiReportHistoryEmpty: "No saved AI reports yet.",
+      currentSummaryLabel: "Current summary",
+      allPeriods: "All periods",
+      deleteAiReport: "Delete report",
+      copyAiReport: "Copy",
+      downloadAiReport: "Download .txt",
+      aiReportCopied: "AI report copied.",
+      aiReportCopyFailed: "Failed to copy report.",
+      aiReportDownloaded: "AI report downloaded.",
+      upgradeForAiReports: "Edge required",
+      aiReportUpgradeRequired:
+        "AI reports are available on SkillEdge Edge and SkillEdge Elite.",
+      aiReportLockedText:
+        "AI reports help review selected trades, find best setups, mistakes and the next focus area. This feature is available on SkillEdge Edge and SkillEdge Elite.",
+      aiReportPlanHint: "AI reports per month on current plan",
+    },
+    journal: {
+      title: "Trade journal",
+      text: "Add trades, track risk, result, emotions, mistakes and lessons.",
+      locked: "An active plan or demo access is required to add trades.",
+      addTitle: "Add trade",
+      editTitle: "Edit trade",
+      addModeText: "Add a new trade to your personal journal.",
+      addText:
+        "Fill in the basic data, add screenshots and use AI review to evaluate each trade.",
+      totalTrades: "Total trades",
+      totalPnl: "Total PnL",
+      winRate: "Win rate",
+      avgPnl: "Avg PnL",
+      grossProfit: "Gross profit",
+      grossLoss: "Gross loss",
+      bestTrade: "Best trade",
+      worstTrade: "Worst trade",
+      profitFactor: "Profit Factor",
+      equityTitle: "Equity curve",
+      equityText: "Cumulative PnL based on saved trades.",
+      equityEmpty: "Add trades with PnL to build your equity curve.",
+      equityPoints: "points",
+      expand: "Expand",
+      close: "Close",
+      cardLabels: {
+        entry: "Entry",
+        exit: "Exit",
+        stop: "Stop",
+        risk: "Risk",
+        result: "Result",
+        setup: "Setup",
+        mistake: "Mistake",
+        lesson: "Lesson",
+        notes: "Notes",
+      },
+      fullTitle: "Full journal",
+      fullText: "Complete trade list. Filters and export are available below.",
+      downloadCsv: "Download CSV",
+      downloadXlsx: "Download XLSX",
+      deleteTradeButton: "Delete trade",
+      editTradeButton: "Edit trade",
+      openChartButton: "Open chart",
+      cancelEditButton: "Cancel edit",
+      editModeTitle: "Editing trade",
+      editModeText: "Change the highlighted fields and save the trade.",
+      actions: "Actions",
+      deleteTradeConfirm: "Delete this trade? This action cannot be undone.",
+      deleteTradeError: "Failed to delete trade.",
+      uploadScreenshotTitle: "Upload trade screenshot",
+      uploadScreenshotText:
+        "Attach chart screenshots to your saved trades. SkillEdge AI uses them to analyze entries, exits, stops and repeated chart mistakes.",
+      screenshotsCount: "screenshots",
+      screenshotTradeLabel: "Trade",
+      screenshotFileLabel: "Screenshot",
+      screenshotChoose: "Choose screenshot",
+      screenshotNoFile: "No file selected",
+      screenshotSelected: "Selected file",
+      screenshotHint:
+        "Steps: 1) Select a trade  2) Click Choose screenshot  3) Click Upload",
+      screenshotUploadHintCompact:
+        "Upload 1 to 3 screenshots with different timeframes for a deeper analysis.",
+      screenshotFormats: "Supported formats: PNG, JPG, WEBP",
+      screenshotsColumn: "Screens",
+      openScreenshots: "Open",
+      noScreenshotsForTrade: "No screenshots uploaded for this trade.",
+      screenshotViewerTitle: "Trade screenshots",
+      loadingScreenshots: "Loading screenshots...",
+      uploadButton: "Upload",
+      uploadingButton: "Uploading...",
+      selectTradePlaceholder: "Select trade",
+      stepOne: "Step 1",
+      stepTwo: "Step 2",
+      stepThree: "Step 3",
+      chartAnalyzeButton: "Analyze chart",
+      chartAnalyzingButton: "Analyzing chart...",
+      chartScreenshotsLabel: "screenshots",
+      journalAnalysisTitle: "SkillEdge AI Journal Analysis",
+      journalAnalysisText:
+        "AI will analyze your saved trades, repeated mistakes, setups, emotions, risk and execution quality.",
+      journalAnalyzeButton: "Analyze journal",
+      journalAnalyzingButton: "Analyzing...",
+      savedChartAnalysis: "Saved AI chart analysis",
+      showChartHistory: "Show AI history",
+      hideChartHistory: "Hide AI history",
+      noChartHistory: "No saved chart analyses yet.",
+      searchTicker: "Search ticker",
+      allMarkets: "All markets",
+      allSides: "All sides",
+      allResults: "All results",
+      marketLabels: {
+        stocks: "Stocks",
+        crypto: "Crypto",
+        futures: "Futures",
+        forex: "Forex",
+        options: "Options",
+      },
+      directionLabels: {
+        long: "Long",
+        short: "Short",
+      },
+      resultLabels: {
+        win: "Win",
+        loss: "Loss",
+        breakeven: "Breakeven",
+        notSet: "Not set",
+      },
+      table: {
+        date: "Date",
+        ticker: "Ticker",
+        market: "Market",
+        side: "Side",
+        entry: "Entry",
+        exit: "Exit",
+        stop: "Stop",
+        risk: "Risk",
+        pnl: "PnL",
+        result: "Result",
+        setup: "Setup",
+      },
+      recentTitle: "Recent trades",
+      recentText:
+        "Last 3 trades from your personal journal. Full table, filters and export are available below.",
+      empty:
+        "No trades yet. Add your first trade to start building your performance database.",
+      tradesCount: "trades",
+      saving: "Saving...",
+      save: "Save trade",
+      updateTradeButton: "Update trade",
+      updatingTradeButton: "Updating...",
+      tickerRequired: "Enter ticker.",
+      tradeLimitReached: "Trade limit reached for your current plan",
+      tradeUsageTitle: "Trades used",
+      tradesLeftLabel: "left",
+      screenshotLimitReached: "Screenshot limit reached for this trade",
+      screenshotUsageTitle: "Screenshots used",
+      limitReached: "Trade limit reached for your current plan",
+      loginFirst: "Please log in first.",
+      saveFailed: "Failed to save trade.",
+      fields: {
+        ticker: "Ticker",
+        date: "Date",
+        market: "Market",
+        direction: "Direction",
+        entry: "Entry",
+        exit: "Exit",
+        stop: "Stop",
+        size: "Size",
+        risk: "Risk $",
+        pnl: "PnL $",
+        result: "Result",
+        setup: "Setup",
+        emotion: "Emotion",
+        mistake: "Mistake",
+        lesson: "Lesson",
+        notes: "Notes",
+      },
+      placeholders: {
+        ticker: "AAPL / BTC / NQ",
+        entry: "100",
+        exit: "105",
+        stop: "98",
+        size: "Shares / contracts",
+        risk: "50",
+        pnl: "-25 / 120",
+        setup: "VWAP reclaim / gap fade",
+        emotion: "Calm / FOMO / fear",
+        mistake: "What did you do wrong?",
+        lesson: "What should you remember next time?",
+        notes: "Context, catalyst, tape, levels...",
+      },
+      options: {
+        notSet: "Not set",
+        win: "Win",
+        loss: "Loss",
+        breakeven: "Breakeven",
+      },
+    },
+    locked: {
       title: "Activate your plan",
       label: "Access locked",
       text: "After payment, trade journal, SkillEdge AI Coach, TradingView charts, learning, reports and AI review history will be unlocked.",
       button: "Choose plan",
     },
-   tabs: {
-  overview: "Overview",
-  journal: "Trade journal",
-  charts: "Charts",
-  market: "Market",
-  alerts: "Alerts",
-  coach: "AI Coach",
-  learning: "Learning",
-  reports: "Reports",
-  billing: "Billing",
-},
+    tabs: {
+      overview: "Overview",
+      journal: "Trade journal",
+      charts: "Charts",
+      market: "Market",
+      alerts: "Signals",
+      coach: "AI Coach",
+      learning: "Learning",
+      reports: "Reports",
+      billing: "Billing",
+    },
     periods: {
       monthly: "1 month",
       halfyear: "6 months",
@@ -641,70 +643,70 @@ locked: {
       label: "Trial version",
       title: "Your 7-day demo access is active",
       text:
-  "This is a trial version of the SkillEdge Core plan with a limit of 10 AI requests. After the trial ends, access will be closed unless you choose a paid plan.",
+        "This is a trial version of the SkillEdge Core plan with a limit of 10 AI requests. After the trial ends, access will be closed unless you choose a paid plan.",
       short: "7-day trial. Limit: 10 AI requests.",
     },
     billing: {
-  title: "Plan & billing",
-  text: "Information about your current plan, payments, and subscription period.",
-  activePlan: "Active plan",
-  inactivePlan: "Plan is not active",
-  period: "Period",
-  validUntil: "Valid until",
-  empty:
-    "After payment, your plan, period, expiration date, and payment history will appear here.",
-  currentPlan: "Current plan",
-creatingCheckout: "Creating checkout...",
-checkoutError: "Failed to create crypto checkout. Please try again.",
-loginRequiredForPayment: "Please log in before buying a plan.",
-  currentPlanLabel: "Current plan",
-  activeSubscription:
-    "Subscription is active. Limits and access are applied automatically.",
-  inactiveSubscription:
-    "Subscription is not active. Some features may be unavailable.",
-  active: "Active",
-  inactive: "Inactive",
-  billingPeriod: "Period",
-  aiUsage: "AI usage",
-  billingNoteLabel: "Important",
-  billingNoteText:
-    "Billing currently works as an internal check for plans and limits. Before production, connect payment buttons to Stripe Checkout and webhook-based subscription updates.",
-  currentLimitsLabel: "Limits",
-  currentLimitsTitle: "What your current plan includes",
-  aiCoachLimit: "AI Coach / month",
-  journalAiLimit: "Journal AI / month",
-  chartAiLimit: "Chart analysis / month",
-  aiReportsLimit: "AI reports / month",
-  maxTradesLimit: "Max trades",
-  screenshotsLimit: "Screenshots per trade",
-  aiReportsAccess: "AI reports",
-  supportAssistantAccess: "Support assistant",
-  socialTickersAccess: "Social tickers",
-  aiScannerAccess: "AI scanner",
-aiAlertsAccess: "AI alerts",
-premiumChartAccess: "Premium chart analysis",
-  exportReportsAccess: "Export reports",
-  included: "Included",
-  locked: "Locked",
-  comparePlansLabel: "Comparison",
-  comparePlansTitle: "Plan comparison",
-  comparePlansText:
-    "Make sure customers clearly see the difference between Core, Edge, and Elite.",
-  current: "Current",
-  choosePlan: "Choose plan",
-  planDescriptions: {
-    core: "Basic access for journaling, screenshots, AI Coach and discipline control.",
-edge: "Advanced plan for active traders: more AI, reports, Market Intelligence and AI Scanner.",
-elite:
-  "Maximum plan for serious work: AI Alerts, floating alerts widget, Signal-to-Journal workflow and full AI Trading Desk.",
-  },
-},
+      title: "Plan & billing",
+      text: "Information about your current plan, payments and subscription period.",
+      activePlan: "Active plan",
+      inactivePlan: "Plan is not active",
+      period: "Period",
+      validUntil: "Valid until",
+      empty:
+        "After payment, your plan, period, expiration date and payment history will appear here.",
+      currentPlan: "Current plan",
+      creatingCheckout: "Creating checkout...",
+      checkoutError: "Failed to create crypto checkout. Please try again.",
+      loginRequiredForPayment: "Please log in before buying a plan.",
+      currentPlanLabel: "Current plan",
+      activeSubscription:
+        "Subscription is active. Limits and access are applied automatically.",
+      inactiveSubscription:
+        "Subscription is not active. Some features may be unavailable.",
+      active: "Active",
+      inactive: "Inactive",
+      billingPeriod: "Period",
+      aiUsage: "AI usage",
+      billingNoteLabel: "Important",
+      billingNoteText:
+        "Billing shows your current plan, limits, access level and subscription status. Card payments are being prepared through an approved merchant provider, while crypto access is available during launch.",
+      currentLimitsLabel: "Limits",
+      currentLimitsTitle: "What your current plan includes",
+      aiCoachLimit: "AI Coach / month",
+      journalAiLimit: "Journal AI / month",
+      chartAiLimit: "Chart analysis / month",
+      aiReportsLimit: "AI reports / month",
+      maxTradesLimit: "Max trades",
+      screenshotsLimit: "Screenshots per trade",
+      aiReportsAccess: "AI reports",
+      supportAssistantAccess: "Support assistant",
+      socialTickersAccess: "Social tickers",
+      aiScannerAccess: "AI scanner",
+      aiAlertsAccess: "AI signals",
+      premiumChartAccess: "Premium chart analysis",
+      exportReportsAccess: "Report export",
+      included: "Included",
+      locked: "Locked",
+      comparePlansLabel: "Comparison",
+      comparePlansTitle: "Plan comparison",
+      comparePlansText:
+        "Make sure customers clearly see the difference between Core, Edge and Elite.",
+      current: "Current",
+      choosePlan: "Choose plan",
+      planDescriptions: {
+        core: "Basic access for journaling, screenshots, AI Coach and discipline control.",
+        edge: "Advanced plan for active traders: more AI, reports, Market Intelligence and AI Scanner.",
+        elite:
+          "Maximum plan for serious work: AI signals, floating alerts widget, Signal-to-Journal workflow and full AI Trading Desk.",
+      },
+    },
     aiLimits: {
-  reachedTitle: "AI limit reached",
-  reachedText:
-    "You have used all AI requests available for your current plan this month. Upgrade your plan or wait until the next monthly reset.",
-  remainingPrefix: "Remaining AI requests",
-},
+      reachedTitle: "AI limit reached",
+      reachedText:
+        "You have used all AI requests available for your current plan this month. Upgrade your plan or wait until the next monthly reset.",
+      remainingPrefix: "Remaining AI requests",
+    },
     coach: {
       title: "AI Coach",
       text: "Describe a trade, emotion, mistake or market situation — the AI coach will analyze discipline, risk and decision quality.",
@@ -721,19 +723,21 @@ elite:
         "The review will appear here: what was good, where the mistake was, what lesson to write down and what to check before the next trade.",
       historyTitle: "AI review history",
       historyText: "Last 10 AI coach requests.",
-      historyEmpty: "History is empty. Your first review will appear here after AI responds.",
+      historyEmpty:
+        "History is empty. Your first review will appear here after AI responds.",
       loginFirst: "Please log in first.",
       messageRequired: "Enter a question or trade description.",
       coachError: "AI Coach error.",
       error: "AI coach request failed.",
       failed: "Failed to get AI Coach response.",
       needPlan: "AI Coach requires an active plan or demo access.",
-      limitReached: "AI request limit reached. Upgrade your plan or wait for the limit reset.",
+      limitReached:
+        "AI request limit reached. Upgrade your plan or wait for the limit reset.",
     },
   },
 
   ru: {
-    terminal: "SkillEdge AI Terminal",
+    terminal: "Терминал SkillEdge AI",
     dashboard: "Личный кабинет",
     user: "Пользователь",
     choosePlan: "Выбрать тариф",
@@ -743,487 +747,488 @@ elite:
     notActivated: "Не активирован",
     activatePlan: "Активируйте тариф, чтобы открыть функции кабинета.",
     aiUsage: "Использование AI",
-   quickActions: "Быстрые действия",
+    quickActions: "Быстрые действия",
     addTrade: "Добавить сделку",
-    uploadScreenshot: "Загрузить скрин",
-    askAI: "Спросить AI",
+    uploadScreenshot: "Загрузить скриншот",
+    askAI: "Спросить AI-коуча",
     createReport: "Создать отчёт",
     overview: {
-  title: "Обзор эффективности",
-  text: "Сводка PnL, win rate, discipline score, лучшие сетапы и главные ошибки.",
-  pnlMonth: "PnL за месяц",
-  winRate: "Win rate",
-  discipline: "Discipline score",
-  weeklyAi: "AI-сводка недели",
-  weeklyAiText:
-    "Этот модуль будет подключён к базе данных, тарифам и AI-логике на следующих этапах.",
-},
-charts: {
-  title: "Графики TradingView",
-  text: "Встроенный график TradingView для анализа тикеров, уровней и сетапов.",
-  placeholder: "TradingView widget будет добавлен на следующем этапе.",
-  analyzeCurrentChart: "Проанализировать график",
-  workspaceText: "Рабочая зона с графиком, watchlist и market movers.",
-  watchlistExamples: "Примеры watchlist: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  openWatchlist: "Открыть watchlist",
-  hideWatchlist: "Скрыть watchlist",
-  watchlistTitle: "Watchlist",
-  watchlistSubtitle: "Тикер / 24h % / объём",
-  addTickerButton: "Добавить",
-  addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  addTickerHint: "Пример: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
-  sortSymbol: "Тикер",
-  sortChange: "% 24h",
-  sortVolume: "Объём",
-  symbolColumn: "Тикер",
-  percentColumn: "%",
-  volumeColumn: "Объём",
-  loadingWatchlist: "Загружаем watchlist...",
-  emptyWatchlist: "Watchlist пуст. Нажми + и добавь тикер.",
-  removeFromWatchlist: "Удалить из watchlist",
-  loginFirst: "Сначала войдите в аккаунт.",
-  settingsLoadError: "Не удалось загрузить настройки графиков.",
-  addTickerError: "Не удалось добавить тикер в watchlist.",
-  removeTickerError: "Не удалось удалить тикер из watchlist.",
-  moversStocks: "Акции",
-  moversCrypto: "Крипто",
-  moversGainers: "Top Gainers",
-  moversLosers: "Top Losers",
-  moversCollapse: "Свернуть",
-  moversExpand: "Развернуть",
-  moversName: "Название",
-  moversPercentChange: "% Изменение",
-  moversLoading: "Загружаем movers...",
-  moversEmpty: "Нет инструментов под этот фильтр.",
-  moversStocksNeedKey: "Stocks movers заработают после добавления NEXT_PUBLIC_FMP_API_KEY.",
-chartAnalysisTitle: "AI-анализ графика",
-chartAnalysisText:
-  "SkillEdge AI анализирует текущий тикер, таймфрейм, рыночные данные, свечи, объём и контекст риска.",
-chartAnalysisLoading: "Анализируем текущий график...",
-chartAnalysisError: "Не удалось проанализировать текущий график.",
-chartAnalysisEmpty: "Запусти AI-анализ, чтобы увидеть разбор текущего графика.",
-chartAnalysisClose: "Закрыть",
-chartAnalysisSymbol: "Тикер",
-chartAnalysisInterval: "Таймфрейм",
-chartAnalysisReportLabel: "Отчёт SkillEdge AI",
-chartAnalysisDataLabel: "Разбор рыночной структуры",
-chartAnalysisSectionsLabel: "Секции анализа",
-marketDataUnavailableTitle: "Рыночные данные недоступны",
-marketDataUnavailableText:
-  "SkillEdge AI не смог загрузить рыночные данные по этому тикеру на текущем data-плане. Попробуй более ликвидный тикер: AAPL, TSLA, NVDA, SPY или QQQ.",
-marketDataPremiumTitle: "Нужен premium-доступ к market data",
-marketDataPremiumText:
-  "Этот тикер, таймфрейм или источник данных может требовать более высокий тариф market data. Перед запуском SkillEdge AI будет поддерживать более широкое premium-покрытие рынка.",
-marketDataGenericErrorTitle: "Анализ временно недоступен",
-marketDataGenericErrorText:
-  "Сейчас не удалось выполнить анализ графика. Попробуй другой тикер, таймфрейм или запусти анализ ещё раз.",
-chartControlTickerLabel: "Тикер",
-chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
-chartControlIntervalLabel: "Таймфрейм",
-chartControlOpenChart: "Открыть график",
-chartControlHint:
-  "Используй эту панель для управления TradingView и AI-анализом. Изменения внутри самого TradingView могут не синхронизироваться обратно в SkillEdge AI.",
-},
-learning: {
-  title: "Центр обучения",
-  text: "Структурное обучение трейдингу, сетапы, риск-менеджмент, психология и построение playbook.",
-  learningNoteTitle: "Learning Center сейчас работает как база повторения",
-learningNoteText:
-  "SkillEdge AI в первую очередь сфокусирован на журнале сделок, анализе графиков, AI-разборе и развитии торговой системы. Этот раздел пока не является полноценной академией: он создан как короткая база для восстановления ключевых понятий, чтобы клиент быстрее понимал риск, сетапы, структуру рынка и логику AI-анализа.",
-  overviewLabel: "Обзор обучения",
-  modulesLabel: "Модули",
-  lessonsLabel: "уроков",
-  progressLabel: "Прогресс",
-  totalProgressLabel: "Общий прогресс",
-  startButton: "Начать",
-  continueButton: "Продолжить",
-  reviewButton: "Повторить",
-  notStartedStatus: "Не начато",
-  inProgressStatus: "В процессе",
-  completedStatus: "Пройдено",
-  lockedLabel: "Скоро",
-  estimatedTimeLabel: "Время",
-  levelLabel: "Уровень",
-  beginnerLevel: "Начальный",
-  intermediateLevel: "Средний",
-  advancedLevel: "Продвинутый",
-  moduleOneTitle: "Основы рынка",
-  moduleOneText:
-    "Разберись, как работает рынок, как взаимодействуют ордера и почему ликвидность решает.",
-  moduleTwoTitle: "Технический анализ",
-  moduleTwoText:
-    "Свечи, уровни, тренд/ренж, объём и чистое чтение графика без лишнего шума.",
-  moduleThreeTitle: "Риск-менеджмент",
-  moduleThreeText:
-    "Правила риска на сделку, стоп-лосс, размер позиции и соотношение риск/прибыль.",
-  moduleFourTitle: "Intraday Momentum",
-  moduleFourText:
-    "Логика импульса, breakout/reclaim, failed breakout и continuation-сетапы.",
-  moduleFiveTitle: "Психология трейдинга",
-  moduleFiveText:
-    "Контроль overtrading, revenge trading, страха, сомнений и импульсивных входов.",
-  moduleSixTitle: "Playbook / Сетапы",
-  moduleSixText:
-    "Превращай повторяющиеся паттерны в торговый playbook с триггерами и invalidation.",
-  lessonMarketStructure: "Как работает рынок",
-  lessonOrderTypes: "Типы ордеров",
-  lessonBidAskSpread: "Bid / Ask / Spread",
-  lessonLiquidity: "Ликвидность",
-  lessonCandles: "Свечи",
-  lessonLevels: "Поддержка и сопротивление",
-  lessonTrendRange: "Тренд vs ренж",
-  lessonVolume: "Анализ объёма",
-  lessonRiskPerTrade: "Риск на сделку",
-  lessonStopLoss: "Стоп-лосс",
-  lessonRiskReward: "Risk / Reward",
-  lessonPositionSizing: "Размер позиции",
-  lessonMomentumLogic: "Логика momentum",
-  lessonBreakoutReclaim: "Breakout / reclaim",
-  lessonFailedBreakout: "Failed breakout",
-  lessonContinuation: "Continuation",
-  lessonDiscipline: "Дисциплина",
-  lessonOvertrading: "Overtrading",
-  lessonRevengeTrading: "Revenge trading",
-  lessonPatience: "Терпение",
-  lessonSetupChecklist: "Чеклист сетапа",
-  lessonEntryTrigger: "Триггер входа",
-  lessonInvalidation: "Invalidation",
-  lessonReviewProcess: "Процесс разбора",
-  advancedTracksLabel: "Дополнительные направления",
-advancedTracksText:
-  "Дополнительные специализированные обучающие направления, которые будут открыты в следующем расширении SkillEdge AI.",
-comingSoonButton: "Скоро",
-activeModuleLabel: "Активный модуль",
-openLessonButton: "Открыть урок",
-selectedModuleHint:
-  "Выбери модуль, чтобы увидеть уроки, прогресс и следующий шаг обучения.",
-nextLessonLabel: "Следующий урок",
-moduleDetailsLabel: "Детали модуля",
-lessonViewerLabel: "Просмотр урока",
-lessonContentLabel: "Содержание урока",
-lessonCloseButton: "Закрыть урок",
-lessonStartText:
-  "Содержание этого урока будет расширено на следующем этапе. Сейчас это рабочая оболочка урока внутри SkillEdge AI.",
-lessonKeyPointsLabel: "Ключевые идеи",
-lessonPracticeLabel: "Практическое задание",
-lessonPracticeText:
-  "Разбери концепцию, найди один пример на графике и запиши, что подтверждает или ломает идею.",
-markLessonCompletedButton: "Отметить урок пройденным",
-lessonCompletedButton: "Урок пройден",
-frontendProgressNote:
-  "Прогресс сохраняется в аккаунте SkillEdge AI и останется после перезагрузки.",
-learningProgressLoading: "Загружаем прогресс обучения...",
-learningProgressSaving: "Сохраняем прогресс...",
-learningProgressSaved: "Прогресс сохранён",
-lessonAutoAdvanced:
-  "Урок сохранён. Следующий урок открыт автоматически.",
-moduleCompletedMessage: "Модуль завершён. Отличная работа.",
-learningProgressError: "Не удалось синхронизировать прогресс обучения.",
-  extraModuleOneTitle: "Концепция Smart Money и рабочие сетапы",
-extraModuleOneText:
-  "Структура рынка, ликвидность, inducement, displacement, order blocks и практическая логика рабочих сетапов.",
-extraModuleTwoTitle: "Скальпинг стакана в CScalp",
-extraModuleTwoText:
-  "Обучение платформе, базовая работа с order flow, пробой уровня и сетапы “ножи” для активного скальпинга.",
-extraModuleThreeTitle: "Дополнительный модуль 3",
-extraModuleThreeText:
-  "Этот модуль будет заполнен следующим специализированным блоком обучения.",
-extraModuleFourTitle: "Дополнительный модуль 4",
-extraModuleFourText:
-  "Этот модуль будет заполнен следующим специализированным блоком обучения.",
-extraModuleOneLessonOne: "Структура рынка",
-extraModuleOneLessonTwo: "Зоны ликвидности",
-extraModuleOneLessonThree: "Order blocks",
-extraModuleOneLessonFour: "Рабочие сетапы",
-extraModuleTwoLessonOne: "Интерфейс CScalp",
-extraModuleTwoLessonTwo: "Основы DOM",
-extraModuleTwoLessonThree: "Пробой уровня",
-extraModuleTwoLessonFour: "Сетап “ножи”",
-extraModuleThreeLessonOne: "Урок 1",
-extraModuleThreeLessonTwo: "Урок 2",
-extraModuleThreeLessonThree: "Урок 3",
-extraModuleThreeLessonFour: "Урок 4",
-extraModuleFourLessonOne: "Урок 1",
-extraModuleFourLessonTwo: "Урок 2",
-extraModuleFourLessonThree: "Урок 3",
-extraModuleFourLessonFour: "Урок 4",
-},
-reports: {
-  title: "Отчёты",
-  text: "Статистика по журналу, динамика PnL, качество сетапов, ошибки и сильные стороны торговли.",
-  placeholder: "Расширенные отчёты будут добавлены на следующем этапе.",
-  emptyTitle: "Пока недостаточно данных для отчёта",
-  emptyText:
-    "Добавь несколько сделок в журнал, чтобы SkillEdge AI смог построить отчёт по PnL, win rate, сетапам, ошибкам и динамике результата.",
-  totalTrades: "Всего сделок",
-  totalTradesHelper: "Все сделки из журнала",
-  totalPnl: "Total PnL",
-  totalPnlHelper: "Суммарный результат по закрытым сделкам",
-  winRate: "Win rate",
-  averagePnl: "Average PnL",
-  averagePnlHelper: "Средний результат на сделку",
-  profitFactor: "Profit factor",
-  profitFactorHelper: "Gross profit / gross loss",
-  bestWorst: "Best / Worst",
-  bestWorstHelper: "Лучшая и худшая сделка",
-  equityTitle: "Equity curve",
-  equitySubtitle: "Динамика накопительного PnL",
-  points: "точек",
-  directionTitle: "Long vs Short",
-  directionSubtitle: "Результат по направлению",
-  marketBreakdown: "Рынки",
-  setupBreakdown: "Сетапы",
-  mistakesBreakdown: "Ошибки",
-  noData: "Пока нет данных.",
-    filtersTitle: "Фильтры отчёта",
-  filtersText:
-    "Сужай статистику по периоду, рынку, направлению и сетапу, чтобы видеть реальное качество торговли.",
-  resetFilters: "Сбросить фильтры",
-  periodFilter: "Период",
-  periodAll: "Всё время",
-  period7d: "7 дней",
-  period30d: "30 дней",
-  period90d: "90 дней",
-  marketFilter: "Рынок",
-  allMarkets: "Все рынки",
-  directionFilter: "Направление",
-  allDirections: "Все направления",
-  setupFilter: "Сетап",
-  allSetups: "Все сетапы",
-  filteredTrades: "Сделок в фильтре",
-  noFilteredTradesTitle: "Под выбранные фильтры сделок нет",
-noFilteredTradesText:
-  "Попробуй изменить период, рынок, направление или сетап. Сделки в журнале есть, но текущая комбинация фильтров ничего не нашла.",
-aiReportTitle: "AI-отчёт",
-aiReportSubtitle: "Сводка по выбранным сделкам",
-aiReportText:
-  "Сгенерируй краткий отчёт по текущему фильтру: что работает, где ошибки, какой риск, какие сетапы дают лучший результат и на что обратить внимание дальше.",
-aiReportButton: "Сгенерировать отчёт",
-aiReportLoading: "Генерируем...",
-aiReportError: "Не удалось сгенерировать AI-отчёт.",
-aiReportLabel: "AI-отчёт",
-generateAiReport: "Сгенерировать отчёт",
-aiReportGenerating: "Генерируем отчёт...",
-aiReportPlaceholder:
-  "AI-отчёт появится здесь после генерации. Он сохранится в истории, чтобы клиент мог вернуться к нему позже.",
-aiReportResultLabel: "Результат",
-latestAiReportTitle: "Последний AI-отчёт",
-savedAiReportTitle: "Сохранённый AI-отчёт",
-aiReportHistoryLabel: "История",
-aiReportHistoryTitle: "История AI-отчётов",
-aiReportHistoryText:
-  "Открывай прошлые AI-сводки по фильтрам и быстро возвращайся к важным выводам.",
-aiReportHistoryEmpty: "Пока сохранённых AI-отчётов нет.",
-currentSummaryLabel: "Текущая сводка",
-allPeriods: "Все периоды",
-deleteAiReport: "Удалить отчёт",
-copyAiReport: "Скопировать",
-downloadAiReport: "Скачать .txt",
-aiReportCopied: "AI-отчёт скопирован.",
-aiReportCopyFailed: "Не удалось скопировать отчёт.",
-aiReportDownloaded: "AI-отчёт скачан.",
-upgradeForAiReports: "Нужен Edge",
-aiReportUpgradeRequired:
-  "AI-отчёты доступны на тарифах SkillEdge Edge и SkillEdge Elite.",
-aiReportLockedText:
-  "AI-отчёты помогают разобрать выбранные сделки, найти лучшие сетапы, ошибки и следующий фокус. Эта функция доступна на тарифах SkillEdge Edge и SkillEdge Elite.",
-aiReportPlanHint: "AI-отчётов в месяц на текущем тарифе",
-}, 
-journal: {
-  title: "Журнал сделок",
-  text: "Добавляйте сделки, фиксируйте риск, результат, эмоции, ошибки и уроки.",
-  locked: "Для добавления сделок нужен активный тариф или demo-доступ.",
-  addTitle: "Добавить сделку",
-  editTitle: "Редактировать сделку",
-addModeText: "Добавь новую сделку в личный журнал.",
-  addText:
-    "Заполните базовые данные. Позже мы подключим скриншоты и AI-разбор конкретной сделки.",
-  totalTrades: "Всего сделок",
-  totalPnl: "Общий PnL",
-  winRate: "Win rate",
-  avgPnl: "Средний PnL",
-  grossProfit: "Gross profit",
-grossLoss: "Gross loss",
-bestTrade: "Лучшая сделка",
-worstTrade: "Худшая сделка",
-profitFactor: "Profit factor",
-equityTitle: "Кривая PnL",
-equityText: "Накопительный PnL на основе сохранённых сделок.",
-equityEmpty: "Добавьте сделки с PnL, чтобы построить кривую доходности.",
-equityPoints: "точек",
-expand: "Развернуть",
-close: "Закрыть",
-cardLabels: {
-  entry: "Вход",
-  exit: "Выход",
-  stop: "Стоп",
-  risk: "Риск",
-  result: "Результат",
-  setup: "Сетап",
-  mistake: "Ошибка",
-  lesson: "Урок",
-  notes: "Заметки",
-},
-fullTitle: "Полный журнал",
-fullText: "Полный список сделок. Ниже доступны фильтры и экспорт.",
-downloadCsv: "Скачать CSV",
-downloadXlsx: "Скачать XLSX",
-deleteTradeButton: "Удалить сделку",
-editTradeButton: "Редактировать",
-openChartButton: "Открыть график",
-cancelEditButton: "Отменить редактирование",
-editModeTitle: "Режим редактирования",
-editModeText: "Измени подсвеченные поля и сохрани сделку.",
-actions: "Действия",
-deleteTradeConfirm: "Удалить эту сделку? Это действие нельзя отменить.",
-deleteTradeError: "Не удалось удалить сделку.",
-uploadScreenshotTitle: "Загрузка скриншота сделки",
-
-uploadScreenshotText:
-  "Прикрепляйте скриншоты графиков к сохранённым сделкам. Позже SkillEdge AI будет использовать их для анализа входов, выходов, стопов и повторяющихся ошибок на графике.",
-screenshotsCount: "скриншотов",
-screenshotTradeLabel: "Сделка",
-screenshotFileLabel: "Скриншот",
-screenshotChoose: "Выбрать скриншот",
-screenshotNoFile: "Файл не выбран",
-screenshotSelected: "Выбранный файл",
-screenshotHint:
-  "Шаги: 1) Выберите сделку  2) Нажмите «Выбрать скриншот»  3) Нажмите «Загрузить»",
-screenshotUploadHintCompact:
-  "Загружай от одного до трёх скринов с разными таймфреймами для более глубокого анализа.",
-  screenshotFormats: "Поддерживаемые форматы: PNG, JPG, WEBP",
-screenshotsColumn: "Скрины",
-openScreenshots: "Открыть",
-noScreenshotsForTrade: "Для этой сделки скрины не загружены.",
-screenshotViewerTitle: "Скрины сделки",
-loadingScreenshots: "Загружаем скрины...",
-  uploadButton: "Загрузить",
-uploadingButton: "Загрузка...",
-selectTradePlaceholder: "Выберите сделку",
-stepOne: "Шаг 1",
-stepTwo: "Шаг 2",
-stepThree: "Шаг 3",
-chartAnalyzeButton: "Разобрать график",
-chartAnalyzingButton: "Анализ графика...",
-chartScreenshotsLabel: "скриншотов",
-journalAnalysisTitle: "AI-анализ журнала сделок",
-journalAnalysisText:
-  "AI проанализирует сохранённые сделки, повторяющиеся ошибки, сетапы, эмоции, риск и качество исполнения.",
-journalAnalyzeButton: "Разобрать журнал",
-journalAnalyzingButton: "Анализ...",
-savedChartAnalysis: "Сохранённый AI-разбор графика",
-showChartHistory: "Показать AI-разборы",
-hideChartHistory: "Скрыть AI-разборы",
-noChartHistory: "Сохранённых разборов графика пока нет.",
-searchTicker: "Поиск тикера",
-allMarkets: "Все рынки",
-allSides: "Все направления",
-allResults: "Все результаты",
-marketLabels: {
-  stocks: "Акции",
-  crypto: "Крипто",
-  futures: "Фьючерсы",
-  forex: "Форекс",
-  options: "Опционы",
-},
-directionLabels: {
-  long: "Лонг",
-  short: "Шорт",
-},
-resultLabels: {
-  win: "Прибыльная",
-  loss: "Убыточная",
-  breakeven: "Безубыток",
-  notSet: "Не задано",
-},
-table: {
-  date: "Дата",
-  ticker: "Тикер",
-  market: "Рынок",
-  side: "Сторона",
-  entry: "Вход",
-  exit: "Выход",
-  stop: "Стоп",
-  risk: "Риск",
-  pnl: "PnL",
-  result: "Результат",
-  setup: "Сетап",
-},
-  recentTitle: "Последние сделки",
-  recentText:
-    "Последние 3 сделки из личного журнала. Полную таблицу и экспорт добавим следующим шагом.",
-  empty:
-    "Сделок пока нет. Добавьте первую сделку, чтобы начать собирать базу своей статистики.",
-  tradesCount: "сделок",
-  saving: "Сохраняем...",
-  save: "Сохранить сделку",
-  updateTradeButton: "Обновить сделку",
-  updatingTradeButton: "Обновление...",
-  tickerRequired: "Введите тикер.",
-  tradeLimitReached: "Достигнут лимит сделок для вашего текущего тарифа",
-  tradeUsageTitle: "Использовано сделок",
-  tradesLeftLabel: "осталось",
-  screenshotLimitReached: "Достигнут лимит скриншотов для этой сделки",
-  screenshotUsageTitle: "Использовано скриншотов",
-  limitReached: "Достигнут лимит сделок для вашего текущего тарифа",
-  loginFirst: "Сначала войдите в аккаунт.",
-  saveFailed: "Не удалось сохранить сделку.",
-  fields: {
-    ticker: "Тикер",
-    date: "Дата",
-    market: "Рынок",
-    direction: "Направление",
-    entry: "Вход",
-    exit: "Выход",
-    stop: "Стоп",
-    size: "Размер позиции",
-    risk: "Риск $",
-    pnl: "PnL $",
-    result: "Результат",
-    setup: "Сетап",
-    emotion: "Эмоция",
-    mistake: "Ошибка",
-    lesson: "Урок",
-    notes: "Заметки",
-  },
-  placeholders: {
-    ticker: "AAPL / BTC / NQ",
-    entry: "100",
-    exit: "105",
-    stop: "98",
-    size: "Акции / контракты",
-    risk: "50",
-    pnl: "-25 / 120",
-    setup: "VWAP reclaim / gap fade",
-    emotion: "Спокойствие / FOMO / страх",
-    mistake: "Что было сделано неправильно?",
-    lesson: "Что нужно запомнить на следующую сделку?",
-    notes: "Контекст, катализатор, лента, уровни...",
-  },
-  options: {
-    notSet: "Не задано",
-    win: "Плюс",
-    loss: "Минус",
-    breakeven: "Безубыток",
-  },
-},
-locked: {
+      title: "Обзор эффективности",
+      text: "Сводка PnL, процент прибыльных сделок, оценка дисциплины, лучшие сетапы и главные ошибки.",
+      pnlMonth: "PnL за месяц",
+      winRate: "Процент прибыльных",
+      discipline: "Оценка дисциплины",
+      weeklyAi: "AI-сводка недели",
+      weeklyAiText:
+        "AI-сводка собирает ключевые выводы по журналу сделок, риску, дисциплине и повторяющимся ошибкам.",
+    },
+    charts: {
+      title: "Графики TradingView",
+      text: "Встроенный график TradingView для анализа тикеров, уровней и сетапов.",
+      placeholder: "Рабочее пространство TradingView доступно внутри модуля графиков.",
+      analyzeCurrentChart: "Проанализировать график",
+      workspaceText: "Рабочая зона с графиком, списком наблюдения и лидерами движения рынка.",
+      watchlistExamples: "Примеры списка наблюдения: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      openWatchlist: "Открыть список",
+      hideWatchlist: "Скрыть список",
+      watchlistTitle: "Список наблюдения",
+      watchlistSubtitle: "Тикер / 24h % / объём",
+      addTickerButton: "Добавить",
+      addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      addTickerHint: "Пример: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+      sortSymbol: "Тикер",
+      sortChange: "% 24h",
+      sortVolume: "Объём",
+      symbolColumn: "Тикер",
+      percentColumn: "%",
+      volumeColumn: "Объём",
+      loadingWatchlist: "Загружаем список наблюдения...",
+      emptyWatchlist: "Список пуст. Нажми + и добавь тикер.",
+      removeFromWatchlist: "Удалить из списка",
+      loginFirst: "Сначала войдите в аккаунт.",
+      settingsLoadError: "Не удалось загрузить настройки графиков.",
+      addTickerError: "Не удалось добавить тикер в список наблюдения.",
+      removeTickerError: "Не удалось удалить тикер из списка наблюдения.",
+      moversStocks: "Акции",
+      moversCrypto: "Крипто",
+      moversGainers: "Лидеры роста",
+      moversLosers: "Лидеры падения",
+      moversCollapse: "Свернуть",
+      moversExpand: "Развернуть",
+      moversName: "Название",
+      moversPercentChange: "% изменения",
+      moversLoading: "Загружаем лидеров движения...",
+      moversEmpty: "Нет инструментов под этот фильтр.",
+      moversStocksNeedKey:
+        "Лидеры движения по акциям готовятся к подключению премиального покрытия рыночных данных.",
+      chartAnalysisTitle: "AI-анализ графика",
+      chartAnalysisText:
+        "SkillEdge AI анализирует текущий тикер, таймфрейм, рыночные данные, свечи, объём и контекст риска.",
+      chartAnalysisLoading: "Анализируем текущий график...",
+      chartAnalysisError: "Не удалось проанализировать текущий график.",
+      chartAnalysisEmpty: "Запусти AI-анализ, чтобы увидеть разбор текущего графика.",
+      chartAnalysisClose: "Закрыть",
+      chartAnalysisSymbol: "Тикер",
+      chartAnalysisInterval: "Таймфрейм",
+      chartAnalysisReportLabel: "Отчёт SkillEdge AI",
+      chartAnalysisDataLabel: "Разбор рыночной структуры",
+      chartAnalysisSectionsLabel: "Разделы анализа",
+      marketDataUnavailableTitle: "Рыночные данные недоступны",
+      marketDataUnavailableText:
+        "SkillEdge AI не смог загрузить рыночные данные по этому тикеру на текущем тарифе данных. Попробуй более ликвидный тикер: AAPL, TSLA, NVDA, SPY или QQQ.",
+      marketDataPremiumTitle: "Нужен премиум-доступ к рыночным данным",
+      marketDataPremiumText:
+        "Этот тикер, таймфрейм или источник данных может требовать более высокий тариф рыночных данных. К запуску SkillEdge AI будет поддерживать более широкое премиальное покрытие рынка.",
+      marketDataGenericErrorTitle: "Анализ временно недоступен",
+      marketDataGenericErrorText:
+        "Сейчас не удалось выполнить анализ графика. Попробуй другой тикер, таймфрейм или запусти анализ ещё раз.",
+      chartControlTickerLabel: "Тикер",
+      chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+      chartControlIntervalLabel: "Таймфрейм",
+      chartControlOpenChart: "Открыть график",
+      chartControlHint:
+        "Используй эту панель для управления TradingView и AI-анализом. Изменения внутри самого TradingView могут не синхронизироваться обратно в SkillEdge AI.",
+    },
+    learning: {
+      title: "Центр обучения",
+      text: "Структурное обучение трейдингу, сетапы, риск-менеджмент, психология и построение торгового плейбука.",
+      learningNoteTitle: "Центр обучения работает как база повторения",
+      learningNoteText:
+        "SkillEdge AI в первую очередь сфокусирован на журнале сделок, анализе графиков, AI-разборе и развитии торговой системы. Этот раздел создан как короткая база для восстановления ключевых понятий, чтобы клиент быстрее понимал риск, сетапы, структуру рынка и логику AI-анализа.",
+      overviewLabel: "Обзор обучения",
+      modulesLabel: "Модули",
+      lessonsLabel: "уроков",
+      progressLabel: "Прогресс",
+      totalProgressLabel: "Общий прогресс",
+      startButton: "Начать",
+      continueButton: "Продолжить",
+      reviewButton: "Повторить",
+      notStartedStatus: "Не начато",
+      inProgressStatus: "В процессе",
+      completedStatus: "Пройдено",
+      lockedLabel: "Скоро",
+      estimatedTimeLabel: "Время",
+      levelLabel: "Уровень",
+      beginnerLevel: "Начальный",
+      intermediateLevel: "Средний",
+      advancedLevel: "Продвинутый",
+      moduleOneTitle: "Основы рынка",
+      moduleOneText:
+        "Разберись, как работает рынок, как взаимодействуют ордера и почему ликвидность решает.",
+      moduleTwoTitle: "Технический анализ",
+      moduleTwoText:
+        "Свечи, уровни, тренд/ренж, объём и чистое чтение графика без лишнего шума.",
+      moduleThreeTitle: "Риск-менеджмент",
+      moduleThreeText:
+        "Правила риска на сделку, стоп-лосс, размер позиции и соотношение риск/прибыль.",
+      moduleFourTitle: "Внутридневной импульс",
+      moduleFourText:
+        "Логика импульса, пробой, возврат уровня, ложный пробой и сетапы продолжения движения.",
+      moduleFiveTitle: "Психология трейдинга",
+      moduleFiveText:
+        "Контроль переторговки, торговли из мести, страха, сомнений и импульсивных входов.",
+      moduleSixTitle: "Плейбук / Сетапы",
+      moduleSixText:
+        "Превращай повторяющиеся паттерны в торговый плейбук с триггерами входа и условиями отмены идеи.",
+      lessonMarketStructure: "Как работает рынок",
+      lessonOrderTypes: "Типы ордеров",
+      lessonBidAskSpread: "Bid / Ask / Спред",
+      lessonLiquidity: "Ликвидность",
+      lessonCandles: "Свечи",
+      lessonLevels: "Поддержка и сопротивление",
+      lessonTrendRange: "Тренд или ренж",
+      lessonVolume: "Анализ объёма",
+      lessonRiskPerTrade: "Риск на сделку",
+      lessonStopLoss: "Стоп-лосс",
+      lessonRiskReward: "Риск / Потенциал",
+      lessonPositionSizing: "Размер позиции",
+      lessonMomentumLogic: "Логика импульса",
+      lessonBreakoutReclaim: "Пробой / возврат уровня",
+      lessonFailedBreakout: "Ложный пробой",
+      lessonContinuation: "Продолжение движения",
+      lessonDiscipline: "Дисциплина",
+      lessonOvertrading: "Переторговка",
+      lessonRevengeTrading: "Торговля из мести",
+      lessonPatience: "Терпение",
+      lessonSetupChecklist: "Чеклист сетапа",
+      lessonEntryTrigger: "Триггер входа",
+      lessonInvalidation: "Отмена идеи",
+      lessonReviewProcess: "Процесс разбора",
+      advancedTracksLabel: "Дополнительные направления",
+      advancedTracksText:
+        "Дополнительные специализированные направления обучения для углубления торговой системы внутри SkillEdge AI.",
+      comingSoonButton: "Скоро",
+      activeModuleLabel: "Активный модуль",
+      openLessonButton: "Открыть урок",
+      selectedModuleHint:
+        "Выбери модуль, чтобы увидеть уроки, прогресс и следующий шаг обучения.",
+      nextLessonLabel: "Следующий урок",
+      moduleDetailsLabel: "Детали модуля",
+      lessonViewerLabel: "Просмотр урока",
+      lessonContentLabel: "Содержание урока",
+      lessonCloseButton: "Закрыть урок",
+      lessonStartText:
+        "Этот урок оформлен как короткий практический блок SkillEdge AI. Изучи ключевые идеи, выполни задание и свяжи концепцию со своими сделками.",
+      lessonKeyPointsLabel: "Ключевые идеи",
+      lessonPracticeLabel: "Практическое задание",
+      lessonPracticeText:
+        "Разбери концепцию, найди один пример на графике и запиши, что подтверждает или ломает идею.",
+      markLessonCompletedButton: "Отметить урок пройденным",
+      lessonCompletedButton: "Урок пройден",
+      frontendProgressNote:
+        "Прогресс сохраняется в аккаунте SkillEdge AI и останется после перезагрузки.",
+      learningProgressLoading: "Загружаем прогресс обучения...",
+      learningProgressSaving: "Сохраняем прогресс...",
+      learningProgressSaved: "Прогресс сохранён",
+      lessonAutoAdvanced:
+        "Урок сохранён. Следующий урок открыт автоматически.",
+      moduleCompletedMessage: "Модуль завершён. Отличная работа.",
+      learningProgressError: "Не удалось синхронизировать прогресс обучения.",
+      extraModuleOneTitle: "Smart Money Concepts и рабочие сетапы",
+      extraModuleOneText:
+        "Структура рынка, ликвидность, провокации, импульсное смещение, ордер-блоки и практическая логика рабочих сетапов.",
+      extraModuleTwoTitle: "Скальпинг стакана в CScalp",
+      extraModuleTwoText:
+        "Обучение платформе, базовая работа с потоком ордеров, пробой уровня и сетапы «ножи» для активного скальпинга.",
+      extraModuleThreeTitle: "Дополнительный модуль 3",
+      extraModuleThreeText:
+        "Этот модуль зарезервирован под следующий специализированный блок обучения.",
+      extraModuleFourTitle: "Дополнительный модуль 4",
+      extraModuleFourText:
+        "Этот модуль зарезервирован под следующий специализированный блок обучения.",
+      extraModuleOneLessonOne: "Структура рынка",
+      extraModuleOneLessonTwo: "Зоны ликвидности",
+      extraModuleOneLessonThree: "Ордер-блоки",
+      extraModuleOneLessonFour: "Рабочие сетапы",
+      extraModuleTwoLessonOne: "Интерфейс CScalp",
+      extraModuleTwoLessonTwo: "Основы стакана",
+      extraModuleTwoLessonThree: "Пробой уровня",
+      extraModuleTwoLessonFour: "Сетап «ножи»",
+      extraModuleThreeLessonOne: "Урок 1",
+      extraModuleThreeLessonTwo: "Урок 2",
+      extraModuleThreeLessonThree: "Урок 3",
+      extraModuleThreeLessonFour: "Урок 4",
+      extraModuleFourLessonOne: "Урок 1",
+      extraModuleFourLessonTwo: "Урок 2",
+      extraModuleFourLessonThree: "Урок 3",
+      extraModuleFourLessonFour: "Урок 4",
+    },
+    reports: {
+      title: "Отчёты",
+      text: "Статистика по журналу, динамика PnL, качество сетапов, ошибки и сильные стороны торговли.",
+      placeholder:
+        "Расширенные отчёты формируются на основе журнала, фильтров и сохранённых сделок.",
+      emptyTitle: "Пока недостаточно данных для отчёта",
+      emptyText:
+        "Добавь несколько сделок в журнал, чтобы SkillEdge AI смог построить отчёт по PnL, проценту прибыльных сделок, сетапам, ошибкам и динамике результата.",
+      totalTrades: "Всего сделок",
+      totalTradesHelper: "Все сделки из журнала",
+      totalPnl: "Общий PnL",
+      totalPnlHelper: "Суммарный результат по закрытым сделкам",
+      winRate: "Процент прибыльных",
+      averagePnl: "Средний PnL",
+      averagePnlHelper: "Средний результат на сделку",
+      profitFactor: "Profit Factor",
+      profitFactorHelper: "Валовая прибыль / валовый убыток",
+      bestWorst: "Лучшая / худшая",
+      bestWorstHelper: "Лучшая и худшая сделка",
+      equityTitle: "Кривая доходности",
+      equitySubtitle: "Динамика накопительного PnL",
+      points: "точек",
+      directionTitle: "Лонг против шорта",
+      directionSubtitle: "Результат по направлению",
+      marketBreakdown: "Рынки",
+      setupBreakdown: "Сетапы",
+      mistakesBreakdown: "Ошибки",
+      noData: "Пока нет данных.",
+      filtersTitle: "Фильтры отчёта",
+      filtersText:
+        "Сужай статистику по периоду, рынку, направлению и сетапу, чтобы видеть реальное качество торговли.",
+      resetFilters: "Сбросить фильтры",
+      periodFilter: "Период",
+      periodAll: "Всё время",
+      period7d: "7 дней",
+      period30d: "30 дней",
+      period90d: "90 дней",
+      marketFilter: "Рынок",
+      allMarkets: "Все рынки",
+      directionFilter: "Направление",
+      allDirections: "Все направления",
+      setupFilter: "Сетап",
+      allSetups: "Все сетапы",
+      filteredTrades: "Сделок в фильтре",
+      noFilteredTradesTitle: "Под выбранные фильтры сделок нет",
+      noFilteredTradesText:
+        "Попробуй изменить период, рынок, направление или сетап. Сделки в журнале есть, но текущая комбинация фильтров ничего не нашла.",
+      aiReportTitle: "AI-отчёт",
+      aiReportSubtitle: "Сводка по выбранным сделкам",
+      aiReportText:
+        "Сгенерируй краткий отчёт по текущему фильтру: что работает, где ошибки, какой риск, какие сетапы дают лучший результат и на что обратить внимание дальше.",
+      aiReportButton: "Сгенерировать отчёт",
+      aiReportLoading: "Генерируем...",
+      aiReportError: "Не удалось сгенерировать AI-отчёт.",
+      aiReportLabel: "AI-отчёт",
+      generateAiReport: "Сгенерировать отчёт",
+      aiReportGenerating: "Генерируем отчёт...",
+      aiReportPlaceholder:
+        "AI-отчёт появится здесь после генерации. Он сохранится в истории, чтобы клиент мог вернуться к нему позже.",
+      aiReportResultLabel: "Результат",
+      latestAiReportTitle: "Последний AI-отчёт",
+      savedAiReportTitle: "Сохранённый AI-отчёт",
+      aiReportHistoryLabel: "История",
+      aiReportHistoryTitle: "История AI-отчётов",
+      aiReportHistoryText:
+        "Открывай прошлые AI-сводки по фильтрам и быстро возвращайся к важным выводам.",
+      aiReportHistoryEmpty: "Пока сохранённых AI-отчётов нет.",
+      currentSummaryLabel: "Текущая сводка",
+      allPeriods: "Все периоды",
+      deleteAiReport: "Удалить отчёт",
+      copyAiReport: "Скопировать",
+      downloadAiReport: "Скачать .txt",
+      aiReportCopied: "AI-отчёт скопирован.",
+      aiReportCopyFailed: "Не удалось скопировать отчёт.",
+      aiReportDownloaded: "AI-отчёт скачан.",
+      upgradeForAiReports: "Нужен Edge",
+      aiReportUpgradeRequired:
+        "AI-отчёты доступны на тарифах SkillEdge Edge и SkillEdge Elite.",
+      aiReportLockedText:
+        "AI-отчёты помогают разобрать выбранные сделки, найти лучшие сетапы, ошибки и следующий фокус. Эта функция доступна на тарифах SkillEdge Edge и SkillEdge Elite.",
+      aiReportPlanHint: "AI-отчётов в месяц на текущем тарифе",
+    },
+    journal: {
+      title: "Журнал сделок",
+      text: "Добавляйте сделки, фиксируйте риск, результат, эмоции, ошибки и уроки.",
+      locked: "Для добавления сделок нужен активный тариф или пробный доступ.",
+      addTitle: "Добавить сделку",
+      editTitle: "Редактировать сделку",
+      addModeText: "Добавь новую сделку в личный журнал.",
+      addText:
+        "Заполни базовые данные, добавь скриншоты и используй AI-разбор для оценки сделки.",
+      totalTrades: "Всего сделок",
+      totalPnl: "Общий PnL",
+      winRate: "Процент прибыльных",
+      avgPnl: "Средний PnL",
+      grossProfit: "Валовая прибыль",
+      grossLoss: "Валовый убыток",
+      bestTrade: "Лучшая сделка",
+      worstTrade: "Худшая сделка",
+      profitFactor: "Profit Factor",
+      equityTitle: "Кривая доходности",
+      equityText: "Накопительный PnL на основе сохранённых сделок.",
+      equityEmpty: "Добавьте сделки с PnL, чтобы построить кривую доходности.",
+      equityPoints: "точек",
+      expand: "Развернуть",
+      close: "Закрыть",
+      cardLabels: {
+        entry: "Вход",
+        exit: "Выход",
+        stop: "Стоп",
+        risk: "Риск",
+        result: "Результат",
+        setup: "Сетап",
+        mistake: "Ошибка",
+        lesson: "Урок",
+        notes: "Заметки",
+      },
+      fullTitle: "Полный журнал",
+      fullText: "Полный список сделок. Ниже доступны фильтры и экспорт.",
+      downloadCsv: "Скачать CSV",
+      downloadXlsx: "Скачать XLSX",
+      deleteTradeButton: "Удалить сделку",
+      editTradeButton: "Редактировать",
+      openChartButton: "Открыть график",
+      cancelEditButton: "Отменить редактирование",
+      editModeTitle: "Режим редактирования",
+      editModeText: "Измени подсвеченные поля и сохрани сделку.",
+      actions: "Действия",
+      deleteTradeConfirm: "Удалить эту сделку? Это действие нельзя отменить.",
+      deleteTradeError: "Не удалось удалить сделку.",
+      uploadScreenshotTitle: "Загрузка скриншота сделки",
+      uploadScreenshotText:
+        "Прикрепляйте скриншоты графиков к сохранённым сделкам. SkillEdge AI будет использовать их для анализа входов, выходов, стопов и повторяющихся ошибок на графике.",
+      screenshotsCount: "скриншотов",
+      screenshotTradeLabel: "Сделка",
+      screenshotFileLabel: "Скриншот",
+      screenshotChoose: "Выбрать скриншот",
+      screenshotNoFile: "Файл не выбран",
+      screenshotSelected: "Выбранный файл",
+      screenshotHint:
+        "Шаги: 1) Выберите сделку  2) Нажмите «Выбрать скриншот»  3) Нажмите «Загрузить»",
+      screenshotUploadHintCompact:
+        "Загружай от одного до трёх скринов с разными таймфреймами для более глубокого анализа.",
+      screenshotFormats: "Поддерживаемые форматы: PNG, JPG, WEBP",
+      screenshotsColumn: "Скрины",
+      openScreenshots: "Открыть",
+      noScreenshotsForTrade: "Для этой сделки скрины не загружены.",
+      screenshotViewerTitle: "Скрины сделки",
+      loadingScreenshots: "Загружаем скрины...",
+      uploadButton: "Загрузить",
+      uploadingButton: "Загрузка...",
+      selectTradePlaceholder: "Выберите сделку",
+      stepOne: "Шаг 1",
+      stepTwo: "Шаг 2",
+      stepThree: "Шаг 3",
+      chartAnalyzeButton: "Разобрать график",
+      chartAnalyzingButton: "Анализ графика...",
+      chartScreenshotsLabel: "скриншотов",
+      journalAnalysisTitle: "AI-анализ журнала сделок",
+      journalAnalysisText:
+        "AI проанализирует сохранённые сделки, повторяющиеся ошибки, сетапы, эмоции, риск и качество исполнения.",
+      journalAnalyzeButton: "Разобрать журнал",
+      journalAnalyzingButton: "Анализ...",
+      savedChartAnalysis: "Сохранённый AI-разбор графика",
+      showChartHistory: "Показать AI-разборы",
+      hideChartHistory: "Скрыть AI-разборы",
+      noChartHistory: "Сохранённых разборов графика пока нет.",
+      searchTicker: "Поиск тикера",
+      allMarkets: "Все рынки",
+      allSides: "Все направления",
+      allResults: "Все результаты",
+      marketLabels: {
+        stocks: "Акции",
+        crypto: "Крипто",
+        futures: "Фьючерсы",
+        forex: "Форекс",
+        options: "Опционы",
+      },
+      directionLabels: {
+        long: "Лонг",
+        short: "Шорт",
+      },
+      resultLabels: {
+        win: "Прибыльная",
+        loss: "Убыточная",
+        breakeven: "Безубыток",
+        notSet: "Не задано",
+      },
+      table: {
+        date: "Дата",
+        ticker: "Тикер",
+        market: "Рынок",
+        side: "Сторона",
+        entry: "Вход",
+        exit: "Выход",
+        stop: "Стоп",
+        risk: "Риск",
+        pnl: "PnL",
+        result: "Результат",
+        setup: "Сетап",
+      },
+      recentTitle: "Последние сделки",
+      recentText:
+        "Последние 3 сделки из личного журнала. Полная таблица, фильтры и экспорт доступны ниже.",
+      empty:
+        "Сделок пока нет. Добавьте первую сделку, чтобы начать собирать базу своей статистики.",
+      tradesCount: "сделок",
+      saving: "Сохраняем...",
+      save: "Сохранить сделку",
+      updateTradeButton: "Обновить сделку",
+      updatingTradeButton: "Обновление...",
+      tickerRequired: "Введите тикер.",
+      tradeLimitReached: "Достигнут лимит сделок для вашего текущего тарифа",
+      tradeUsageTitle: "Использовано сделок",
+      tradesLeftLabel: "осталось",
+      screenshotLimitReached: "Достигнут лимит скриншотов для этой сделки",
+      screenshotUsageTitle: "Использовано скриншотов",
+      limitReached: "Достигнут лимит сделок для вашего текущего тарифа",
+      loginFirst: "Сначала войдите в аккаунт.",
+      saveFailed: "Не удалось сохранить сделку.",
+      fields: {
+        ticker: "Тикер",
+        date: "Дата",
+        market: "Рынок",
+        direction: "Направление",
+        entry: "Вход",
+        exit: "Выход",
+        stop: "Стоп",
+        size: "Размер позиции",
+        risk: "Риск $",
+        pnl: "PnL $",
+        result: "Результат",
+        setup: "Сетап",
+        emotion: "Эмоция",
+        mistake: "Ошибка",
+        lesson: "Урок",
+        notes: "Заметки",
+      },
+      placeholders: {
+        ticker: "AAPL / BTC / NQ",
+        entry: "100",
+        exit: "105",
+        stop: "98",
+        size: "Акции / контракты",
+        risk: "50",
+        pnl: "-25 / 120",
+        setup: "возврат VWAP / затухание гэпа",
+        emotion: "Спокойствие / FOMO / страх",
+        mistake: "Что было сделано неправильно?",
+        lesson: "Что нужно запомнить на следующую сделку?",
+        notes: "Контекст, катализатор, лента, уровни...",
+      },
+      options: {
+        notSet: "Не задано",
+        win: "Плюс",
+        loss: "Минус",
+        breakeven: "Безубыток",
+      },
+    },
+    locked: {
       title: "Активируйте тариф",
       label: "Доступ закрыт",
       text: "После оплаты откроются журнал сделок, SkillEdge AI-коуч, графики TradingView, обучение, отчёты и история AI-разборов.",
       button: "Выбрать тариф",
     },
     tabs: {
-  overview: "Обзор",
-  journal: "Журнал сделок",
-  charts: "Графики",
-  market: "Рынок",
-  alerts: "Alerts",
-  coach: "AI Coach",
-  learning: "Обучение",
-  reports: "Отчёты",
-  billing: "Оплата",
-},
+      overview: "Обзор",
+      journal: "Журнал сделок",
+      charts: "Графики",
+      market: "Рынок",
+      alerts: "Сигналы",
+      coach: "AI-коуч",
+      learning: "Обучение",
+      reports: "Отчёты",
+      billing: "Оплата",
+    },
     periods: {
       monthly: "1 месяц",
       halfyear: "6 месяцев",
@@ -1232,72 +1237,72 @@ locked: {
     },
     demo: {
       label: "Пробная версия",
-      title: "У вас активирован 7-дневный demo-доступ",
+      title: "У вас активирован 7-дневный пробный доступ",
       text:
-  "Это пробная версия тарифа SkillEdge Core с лимитом 10 AI-запросов. После окончания срока доступ будет закрыт, если вы не выберете основной тариф.",
+        "Это пробная версия тарифа SkillEdge Core с лимитом 10 AI-запросов. После окончания срока доступ будет закрыт, если вы не выберете основной тариф.",
       short: "7-дневная пробная версия. Лимит: 10 AI-запросов.",
     },
     billing: {
-  title: "Тариф и оплата",
-  text: "Информация про текущий тариф, оплаты и срок действия подписки.",
-  activePlan: "Тариф активный",
-  inactivePlan: "Тариф не активирован",
-  period: "Период",
-  validUntil: "Действует до",
-  empty:
-    "После оплаты тут появятся план, период, дата завершения и история платежей.",
-  currentPlan: "Текущий тариф",
-creatingCheckout: "Создаём оплату...",
-checkoutError: "Не удалось создать crypto checkout. Попробуйте ещё раз.",
-loginRequiredForPayment: "Войдите в аккаунт перед оплатой тарифа.",
-  currentPlanLabel: "Текущий тариф",
-  activeSubscription:
-    "Подписка активна. Лимиты и доступы применяются автоматически.",
-  inactiveSubscription:
-    "Подписка не активна. Некоторые функции могут быть недоступны.",
-  active: "Активна",
-  inactive: "Неактивна",
-  billingPeriod: "Период",
-  aiUsage: "AI usage",
-  billingNoteLabel: "Важно",
-  billingNoteText:
-    "Billing сейчас работает как внутренняя проверка тарифов и лимитов. Перед production нужно финально связать кнопки оплаты со Stripe Checkout и webhook-обновлением подписок.",
-  currentLimitsLabel: "Лимиты",
-  currentLimitsTitle: "Что входит в текущий тариф",
-  aiCoachLimit: "AI Coach / месяц",
-  journalAiLimit: "Journal AI / месяц",
-  chartAiLimit: "Chart analysis / месяц",
-  aiReportsLimit: "AI reports / месяц",
-  maxTradesLimit: "Максимум сделок",
-  screenshotsLimit: "Скриншотов на сделку",
-  aiReportsAccess: "AI reports",
-  supportAssistantAccess: "Support assistant",
-  socialTickersAccess: "Social tickers",
-  aiScannerAccess: "AI scanner",
-aiAlertsAccess: "AI alerts",
-premiumChartAccess: "Premium chart analysis",
-  exportReportsAccess: "Export reports",
-  included: "Включено",
-  locked: "Закрыто",
-  comparePlansLabel: "Сравнение",
-  comparePlansTitle: "Сравнение тарифов",
-  comparePlansText:
-    "Проверь, что клиент видит разницу между Core, Edge и Elite.",
-  current: "Текущий",
-  choosePlan: "Выбрать тариф",
-  planDescriptions: {
-    core: "Базовый доступ для журнала, скриншотов, AI Coach и контроля дисциплины.",
-edge: "Продвинутый тариф для активных трейдеров: больше AI, отчёты, Market Intelligence и AI Scanner.",
-elite:
-  "Максимальный тариф: AI Alerts, floating alerts widget, Signal-to-Journal workflow и полный AI Trading Desk.",
-  },
-},
+      title: "Тариф и оплата",
+      text: "Информация про текущий тариф, оплаты и срок действия подписки.",
+      activePlan: "Тариф активный",
+      inactivePlan: "Тариф не активирован",
+      period: "Период",
+      validUntil: "Действует до",
+      empty:
+        "После оплаты тут появятся план, период, дата завершения и история платежей.",
+      currentPlan: "Текущий тариф",
+      creatingCheckout: "Создаём оплату...",
+      checkoutError: "Не удалось создать крипто-оплату. Попробуйте ещё раз.",
+      loginRequiredForPayment: "Войдите в аккаунт перед оплатой тарифа.",
+      currentPlanLabel: "Текущий тариф",
+      activeSubscription:
+        "Подписка активна. Лимиты и доступы применяются автоматически.",
+      inactiveSubscription:
+        "Подписка не активна. Некоторые функции могут быть недоступны.",
+      active: "Активна",
+      inactive: "Неактивна",
+      billingPeriod: "Период",
+      aiUsage: "Использование AI",
+      billingNoteLabel: "Важно",
+      billingNoteText:
+        "Раздел оплаты показывает текущий тариф, лимиты, уровень доступа и статус подписки. Оплата картой готовится через одобренного платёжного провайдера, а крипто-доступ доступен на этапе запуска.",
+      currentLimitsLabel: "Лимиты",
+      currentLimitsTitle: "Что входит в текущий тариф",
+      aiCoachLimit: "AI-коуч / месяц",
+      journalAiLimit: "AI-анализ журнала / месяц",
+      chartAiLimit: "AI-анализ графика / месяц",
+      aiReportsLimit: "AI-отчёты / месяц",
+      maxTradesLimit: "Максимум сделок",
+      screenshotsLimit: "Скриншотов на сделку",
+      aiReportsAccess: "AI-отчёты",
+      supportAssistantAccess: "Помощник поддержки",
+      socialTickersAccess: "Социальные тикеры",
+      aiScannerAccess: "AI-сканер",
+      aiAlertsAccess: "AI-сигналы",
+      premiumChartAccess: "Премиум-анализ графика",
+      exportReportsAccess: "Экспорт отчётов",
+      included: "Включено",
+      locked: "Закрыто",
+      comparePlansLabel: "Сравнение",
+      comparePlansTitle: "Сравнение тарифов",
+      comparePlansText:
+        "Проверь, что клиент видит разницу между Core, Edge и Elite.",
+      current: "Текущий",
+      choosePlan: "Выбрать тариф",
+      planDescriptions: {
+        core: "Базовый доступ для журнала сделок, скриншотов, AI-коуча и контроля дисциплины.",
+        edge: "Продвинутый тариф для активных трейдеров: больше AI-запросов, отчёты, рыночная разведка и AI-сканер.",
+        elite:
+          "Максимальный тариф: AI-сигналы, плавающий виджет сигналов, связка сигналов с журналом и полный AI Trading Desk.",
+      },
+    },
     aiLimits: {
-  reachedTitle: "Лимит AI исчерпан",
-  reachedText:
-    "Вы использовали все AI-запросы, доступные по вашему текущему тарифу в этом месяце. Обновите тариф или дождитесь следующего месячного сброса.",
-  remainingPrefix: "Осталось AI-запросов",
-},
+      reachedTitle: "Лимит AI исчерпан",
+      reachedText:
+        "Вы использовали все AI-запросы, доступные по вашему текущему тарифу в этом месяце. Обновите тариф или дождитесь следующего месячного сброса.",
+      remainingPrefix: "Осталось AI-запросов",
+    },
     coach: {
       title: "AI-коуч",
       text: "Опишите сделку, эмоции, ошибку или торговую ситуацию — AI-коуч даст разбор по дисциплине, риску и качеству решения.",
@@ -1305,7 +1310,7 @@ elite:
       reviewText:
         "Чем конкретнее описание, тем полезнее ответ. Укажи тикер, вход, стоп, причину входа, эмоции и результат.",
       placeholder:
-        "Пример: Сегодня зашёл в short после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка.",
+        "Пример: сегодня зашёл в шорт после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка.",
       ask: "Спросить AI",
       analyzing: "AI анализирует...",
       newReview: "Новый разбор",
@@ -1320,14 +1325,14 @@ elite:
       coachError: "Ошибка AI-коуча.",
       error: "Ошибка запроса к AI-коучу.",
       failed: "Не удалось получить ответ AI-коуча.",
-      needPlan: "Для AI-коуча нужен активный тариф или demo-доступ.",
+      needPlan: "Для AI-коуча нужен активный тариф или пробный доступ.",
       limitReached:
         "Лимит AI-запросов закончился. Выберите тариф выше или дождитесь обновления лимита.",
     },
   },
 
   ua: {
-    terminal: "SkillEdge AI Terminal",
+    terminal: "Термінал SkillEdge AI",
     dashboard: "Особистий кабінет",
     user: "Користувач",
     choosePlan: "Обрати тариф",
@@ -1340,485 +1345,485 @@ elite:
     quickActions: "Швидкі дії",
     addTrade: "Додати угоду",
     uploadScreenshot: "Завантажити скрин",
-    askAI: "Запитати AI",
+    askAI: "Запитати AI-коуча",
     createReport: "Створити звіт",
     overview: {
-  title: "Огляд ефективності",
-  text: "Зведення PnL, win rate, discipline score, найкращі сетапи та головні помилки.",
-  pnlMonth: "PnL за місяць",
-  winRate: "Win rate",
-  discipline: "Discipline score",
-  weeklyAi: "AI-зведення тижня",
-  weeklyAiText:
-    "Цей модуль буде підключено до бази даних, тарифів та AI-логіки на наступних етапах.",
-},
-charts: {
-  title: "Графіки TradingView",
-  text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
-  placeholder: "TradingView widget буде додано на наступному етапі.",
-  analyzeCurrentChart: "Проаналізувати графік",
-  workspaceText: "Робоча зона з графіком, watchlist і market movers.",
-  watchlistExamples: "Приклади watchlist: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  openWatchlist: "Відкрити watchlist",
-  hideWatchlist: "Сховати watchlist",
-  watchlistTitle: "Watchlist",
-  watchlistSubtitle: "Тикер / 24h % / обʼєм",
-  addTickerButton: "Додати",
-  addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  addTickerHint: "Приклад: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
-  sortSymbol: "Тикер",
-  sortChange: "% 24h",
-  sortVolume: "Обʼєм",
-  symbolColumn: "Тикер",
-  percentColumn: "%",
-  volumeColumn: "Обʼєм",
-  loadingWatchlist: "Завантажуємо watchlist...",
-  emptyWatchlist: "Watchlist порожній. Натисни + і додай тикер.",
-  removeFromWatchlist: "Видалити з watchlist",
-  loginFirst: "Спочатку увійдіть в акаунт.",
-  settingsLoadError: "Не вдалося завантажити налаштування графіків.",
-  addTickerError: "Не вдалося додати тикер до watchlist.",
-  removeTickerError: "Не вдалося видалити тикер з watchlist.",
-  moversStocks: "Акції",
-  moversCrypto: "Крипто",
-  moversGainers: "Top Gainers",
-  moversLosers: "Top Losers",
-  moversCollapse: "Згорнути",
-  moversExpand: "Розгорнути",
-  moversName: "Назва",
-  moversPercentChange: "% Зміна",
-  moversLoading: "Завантажуємо movers...",
-  moversEmpty: "Немає інструментів під цей фільтр.",
-  moversStocksNeedKey: "Stocks movers запрацюють після додавання NEXT_PUBLIC_FMP_API_KEY.",
-chartAnalysisTitle: "AI-аналіз графіка",
-chartAnalysisText:
-  "SkillEdge AI аналізує поточний тикер, таймфрейм, ринкові дані, свічки, обʼєм і контекст ризику.",
-chartAnalysisLoading: "Аналізуємо поточний графік...",
-chartAnalysisError: "Не вдалося проаналізувати поточний графік.",
-chartAnalysisEmpty: "Запусти AI-аналіз, щоб побачити розбір поточного графіка.",
-chartAnalysisClose: "Закрити",
-chartAnalysisSymbol: "Тікер",
-chartAnalysisInterval: "Таймфрейм",
-chartAnalysisReportLabel: "Звіт SkillEdge AI",
-chartAnalysisDataLabel: "Розбір ринкової структури",
-chartAnalysisSectionsLabel: "Секції аналізу",
-marketDataUnavailableTitle: "Ринкові дані недоступні",
-marketDataUnavailableText:
-  "SkillEdge AI не зміг завантажити ринкові дані по цьому тикеру на поточному data-плані. Спробуй більш ліквідний тикер: AAPL, TSLA, NVDA, SPY або QQQ.",
-marketDataPremiumTitle: "Потрібен premium-доступ до market data",
-marketDataPremiumText:
-  "Цей тикер, таймфрейм або джерело даних може вимагати вищий тариф market data. Перед запуском SkillEdge AI буде підтримувати ширше premium-покриття ринку.",
-marketDataGenericErrorTitle: "Аналіз тимчасово недоступний",
-marketDataGenericErrorText:
-  "Зараз не вдалося виконати аналіз графіка. Спробуй інший тикер, таймфрейм або запусти аналіз ще раз.",
-chartControlTickerLabel: "Тікер",
-chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
-chartControlIntervalLabel: "Таймфрейм",
-chartControlOpenChart: "Відкрити графік",
-chartControlHint:
-  "Використовуй цю панель для керування TradingView та AI-аналізом. Зміни всередині самого TradingView можуть не синхронізуватися назад у SkillEdge AI.",
-},
-learning: {
-  title: "Центр навчання",
-  text: "Структурне навчання трейдингу, сетапи, ризик-менеджмент, психологія та побудова playbook.",
-  learningNoteTitle: "Learning Center зараз працює як база повторення",
-learningNoteText:
-  "SkillEdge AI насамперед сфокусований на журналі угод, аналізі графіків, AI-розборі та розвитку торгової системи. Цей розділ поки не є повноцінною академією: він створений як коротка база для відновлення ключових понять, щоб клієнт швидше розумів ризик, сетапи, структуру ринку та логіку AI-аналізу.",
-  overviewLabel: "Огляд навчання",
-  modulesLabel: "Модулі",
-  lessonsLabel: "уроків",
-  progressLabel: "Прогрес",
-  totalProgressLabel: "Загальний прогрес",
-  startButton: "Почати",
-  continueButton: "Продовжити",
-  reviewButton: "Повторити",
-  notStartedStatus: "Не розпочато",
-  inProgressStatus: "У процесі",
-  completedStatus: "Пройдено",
-  lockedLabel: "Скоро",
-  estimatedTimeLabel: "Час",
-  levelLabel: "Рівень",
-  beginnerLevel: "Початковий",
-  intermediateLevel: "Середній",
-  advancedLevel: "Просунутий",
-  moduleOneTitle: "Основи ринку",
-  moduleOneText:
-    "Розберися, як працює ринок, як взаємодіють ордери і чому ліквідність має значення.",
-  moduleTwoTitle: "Технічний аналіз",
-  moduleTwoText:
-    "Свічки, рівні, тренд/ренж, обʼєм і чисте читання графіка без зайвого шуму.",
-  moduleThreeTitle: "Ризик-менеджмент",
-  moduleThreeText:
-    "Правила ризику на угоду, стоп-лосс, розмір позиції та співвідношення ризик/прибуток.",
-  moduleFourTitle: "Intraday Momentum",
-  moduleFourText:
-    "Логіка імпульсу, breakout/reclaim, failed breakout і continuation-сетапи.",
-  moduleFiveTitle: "Психологія трейдингу",
-  moduleFiveText:
-    "Контроль overtrading, revenge trading, страху, сумнівів та імпульсивних входів.",
-  moduleSixTitle: "Playbook / Сетапи",
-  moduleSixText:
-    "Перетворюй повторювані патерни на торговий playbook з тригерами та invalidation.",
-  lessonMarketStructure: "Як працює ринок",
-  lessonOrderTypes: "Типи ордерів",
-  lessonBidAskSpread: "Bid / Ask / Spread",
-  lessonLiquidity: "Ліквідність",
-  lessonCandles: "Свічки",
-  lessonLevels: "Підтримка і спротив",
-  lessonTrendRange: "Тренд vs ренж",
-  lessonVolume: "Аналіз обʼєму",
-  lessonRiskPerTrade: "Ризик на угоду",
-  lessonStopLoss: "Стоп-лосс",
-  lessonRiskReward: "Risk / Reward",
-  lessonPositionSizing: "Розмір позиції",
-  lessonMomentumLogic: "Логіка momentum",
-  lessonBreakoutReclaim: "Breakout / reclaim",
-  lessonFailedBreakout: "Failed breakout",
-  lessonContinuation: "Continuation",
-  lessonDiscipline: "Дисципліна",
-  lessonOvertrading: "Overtrading",
-  lessonRevengeTrading: "Revenge trading",
-  lessonPatience: "Терпіння",
-  lessonSetupChecklist: "Чеклист сетапу",
-  lessonEntryTrigger: "Тригер входу",
-  lessonInvalidation: "Invalidation",
-  lessonReviewProcess: "Процес розбору",
-  advancedTracksLabel: "Додаткові напрямки",
-advancedTracksText:
-  "Додаткові спеціалізовані навчальні напрямки, які будуть відкриті в наступному розширенні SkillEdge AI.",
-comingSoonButton: "Незабаром",
-activeModuleLabel: "Активний модуль",
-openLessonButton: "Відкрити урок",
-selectedModuleHint:
-  "Обери модуль, щоб побачити уроки, прогрес і наступний крок навчання.",
-nextLessonLabel: "Наступний урок",
-moduleDetailsLabel: "Деталі модуля",
-lessonViewerLabel: "Перегляд уроку",
-lessonContentLabel: "Зміст уроку",
-lessonCloseButton: "Закрити урок",
-lessonStartText:
-  "Зміст цього уроку буде розширено на наступному етапі. Зараз це робоча оболонка уроку всередині SkillEdge AI.",
-lessonKeyPointsLabel: "Ключові ідеї",
-lessonPracticeLabel: "Практичне завдання",
-lessonPracticeText:
-  "Розбери концепцію, знайди один приклад на графіку і запиши, що підтверджує або ламає ідею.",
-markLessonCompletedButton: "Позначити урок пройденим",
-lessonCompletedButton: "Урок пройдено",
-frontendProgressNote:
-  "Прогрес зберігається в акаунті SkillEdge AI і залишиться після перезавантаження.",
-learningProgressLoading: "Завантажуємо прогрес навчання...",
-learningProgressSaving: "Зберігаємо прогрес...",
-learningProgressSaved: "Прогрес збережено",
-lessonAutoAdvanced:
-  "Урок збережено. Наступний урок відкрито автоматично.",
-moduleCompletedMessage: "Модуль завершено. Чудова робота.",
-learningProgressError: "Не вдалося синхронізувати прогрес навчання.",
-  extraModuleOneTitle: "Концепція Smart Money та робочі сетапи",
-extraModuleOneText:
-  "Структура ринку, ліквідність, inducement, displacement, order blocks і практична логіка робочих сетапів.",
-extraModuleTwoTitle: "Скальпінг стакана в CScalp",
-extraModuleTwoText:
-  "Навчання платформі, базова робота з order flow, пробій рівня та сетапи “ножі” для активного скальпінгу.",
-extraModuleThreeTitle: "Додатковий модуль 3",
-extraModuleThreeText:
-  "Цей модуль буде заповнений наступним спеціалізованим навчальним блоком.",
-extraModuleFourTitle: "Додатковий модуль 4",
-extraModuleFourText:
-  "Цей модуль буде заповнений наступним спеціалізованим навчальним блоком.",
-extraModuleOneLessonOne: "Структура ринку",
-extraModuleOneLessonTwo: "Зони ліквідності",
-extraModuleOneLessonThree: "Order blocks",
-extraModuleOneLessonFour: "Робочі сетапи",
-extraModuleTwoLessonOne: "Інтерфейс CScalp",
-extraModuleTwoLessonTwo: "Основи DOM",
-extraModuleTwoLessonThree: "Пробій рівня",
-extraModuleTwoLessonFour: "Сетап “ножі”",
-extraModuleThreeLessonOne: "Урок 1",
-extraModuleThreeLessonTwo: "Урок 2",
-extraModuleThreeLessonThree: "Урок 3",
-extraModuleThreeLessonFour: "Урок 4",
-extraModuleFourLessonOne: "Урок 1",
-extraModuleFourLessonTwo: "Урок 2",
-extraModuleFourLessonThree: "Урок 3",
-extraModuleFourLessonFour: "Урок 4",
-},
-reports: {
-  title: "Звіти",
-  text: "Статистика журналу, динаміка PnL, якість сетапів, помилки та сильні сторони торгівлі.",
-  placeholder: "Розширені звіти буде додано на наступному етапі.",
-  emptyTitle: "Поки недостатньо даних для звіту",
-  emptyText:
-    "Додай кілька угод у журнал, щоб SkillEdge AI зміг побудувати звіт по PnL, win rate, сетапах, помилках і динаміці результату.",
-  totalTrades: "Усього угод",
-  totalTradesHelper: "Усі угоди з журналу",
-  totalPnl: "Total PnL",
-  totalPnlHelper: "Сумарний результат за закритими угодами",
-  winRate: "Win rate",
-  averagePnl: "Average PnL",
-  averagePnlHelper: "Середній результат на угоду",
-  profitFactor: "Profit factor",
-  profitFactorHelper: "Gross profit / gross loss",
-  bestWorst: "Best / Worst",
-  bestWorstHelper: "Найкраща та найгірша угода",
-  equityTitle: "Equity curve",
-  equitySubtitle: "Динаміка накопичувального PnL",
-  points: "точок",
-  directionTitle: "Long vs Short",
-  directionSubtitle: "Результат за напрямком",
-  marketBreakdown: "Ринки",
-  setupBreakdown: "Сетапи",
-  mistakesBreakdown: "Помилки",
-  noData: "Поки немає даних.",
-    filtersTitle: "Фільтри звіту",
-  filtersText:
-    "Звужуй статистику за періодом, ринком, напрямком і сетапом, щоб бачити реальну якість торгівлі.",
-  resetFilters: "Скинути фільтри",
-  periodFilter: "Період",
-  periodAll: "Увесь час",
-  period7d: "7 днів",
-  period30d: "30 днів",
-  period90d: "90 днів",
-  marketFilter: "Ринок",
-  allMarkets: "Усі ринки",
-  directionFilter: "Напрямок",
-  allDirections: "Усі напрямки",
-  setupFilter: "Сетап",
-  allSetups: "Усі сетапи",
-  filteredTrades: "Угод у фільтрі",
-  noFilteredTradesTitle: "За вибраними фільтрами угод немає",
-noFilteredTradesText:
-  "Спробуй змінити період, ринок, напрямок або сетап. У журналі є угоди, але поточна комбінація фільтрів нічого не знайшла.",
-aiReportTitle: "AI-звіт",
-aiReportSubtitle: "Зведення за вибраними угодами",
-aiReportText:
-  "Згенеруй короткий звіт за поточним фільтром: що працює, де помилки, якість ризику, найкращі сетапи та на чому сфокусуватися далі.",
-aiReportButton: "Згенерувати звіт",
-aiReportLoading: "Генеруємо...",
-aiReportError: "Не вдалося згенерувати AI-звіт.",
-aiReportLabel: "AI-звіт",
-generateAiReport: "Згенерувати звіт",
-aiReportGenerating: "Генеруємо звіт...",
-aiReportPlaceholder:
-  "AI-звіт з’явиться тут після генерації. Він також збережеться в історії, щоб клієнт міг повернутися до нього пізніше.",
-aiReportResultLabel: "Результат",
-latestAiReportTitle: "Останній AI-звіт",
-savedAiReportTitle: "Збережений AI-звіт",
-aiReportHistoryLabel: "Історія",
-aiReportHistoryTitle: "Історія AI-звітів",
-aiReportHistoryText:
-  "Відкривай попередні AI-зведення за фільтрами та швидко повертайся до найважливіших висновків.",
-aiReportHistoryEmpty: "Поки що збережених AI-звітів немає.",
-currentSummaryLabel: "Поточне зведення",
-allPeriods: "Усі періоди",
-deleteAiReport: "Видалити звіт",
-copyAiReport: "Скопіювати",
-downloadAiReport: "Завантажити .txt",
-aiReportCopied: "AI-звіт скопійовано.",
-aiReportCopyFailed: "Не вдалося скопіювати звіт.",
-aiReportDownloaded: "AI-звіт завантажено.",
-upgradeForAiReports: "Потрібен Edge",
-aiReportUpgradeRequired:
-  "AI-звіти доступні на тарифах SkillEdge Edge та SkillEdge Elite.",
-aiReportLockedText:
-  "AI-звіти допомагають розібрати вибрані угоди, знайти найкращі сетапи, помилки та наступний фокус. Ця функція доступна на тарифах SkillEdge Edge та SkillEdge Elite.",
-aiReportPlanHint: "AI-звітів на місяць на поточному тарифі",
-},
-    
-journal: {
-  title: "Журнал угод",
-  text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
-  locked: "Для додавання угод потрібен активний тариф або demo-доступ.",
-  addTitle: "Додати угоду",
-  editTitle: "Редагувати угоду",
-addModeText: "Додай нову угоду до особистого журналу.",
-  addText:
-    "Заповніть базові дані. Пізніше ми підключимо скриншоти та AI-розбір конкретної угоди.",
-  totalTrades: "Усього угод",
-  totalPnl: "Загальний PnL",
-  winRate: "Win rate",
-  avgPnl: "Середній PnL",
-  grossProfit: "Gross profit",
-grossLoss: "Gross loss",
-bestTrade: "Найкраща угода",
-worstTrade: "Найгірша угода",
-profitFactor: "Profit factor",
-equityTitle: "Крива PnL",
-equityText: "Накопичувальний PnL на основі збережених угод.",
-equityEmpty: "Додайте угоди з PnL, щоб побудувати криву дохідності.",
-equityPoints: "точок",
-expand: "Розгорнути",
-close: "Закрити",
-cardLabels: {
-  entry: "Вхід",
-  exit: "Вихід",
-  stop: "Стоп",
-  risk: "Ризик",
-  result: "Результат",
-  setup: "Сетап",
-  mistake: "Помилка",
-  lesson: "Урок",
-  notes: "Нотатки",
-},
-fullTitle: "Повний журнал",
-fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
-downloadCsv: "Завантажити CSV",
-downloadXlsx: "Завантажити XLSX",
-deleteTradeButton: "Видалити угоду",
-editTradeButton: "Редагувати",
-openChartButton: "Відкрити графік",
-cancelEditButton: "Скасувати редагування",
-editModeTitle: "Режим редагування",
-editModeText: "Зміни підсвічені поля та збережи угоду.",
-actions: "Дії",
-deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
-deleteTradeError: "Не вдалося видалити угоду.",
-uploadScreenshotTitle: "Завантаження скріншота угоди",
-
-uploadScreenshotText:
-  "Додавайте скріншоти графіків до збережених угод. Пізніше SkillEdge AI використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
-screenshotsCount: "скріншотів",
-screenshotTradeLabel: "Угода",
-screenshotFileLabel: "Скріншот",
-screenshotChoose: "Вибрати скріншот",
-screenshotNoFile: "Файл не вибрано",
-screenshotSelected: "Вибраний файл",
-screenshotHint:
-  "Кроки: 1) Оберіть угоду  2) Натисніть «Вибрати скріншот»  3) Натисніть «Завантажити»",
-screenshotUploadHintCompact:
-  "Завантажуй від одного до трьох скрінів з різними таймфреймами для глибшого аналізу.",
-  screenshotFormats: "Підтримувані формати: PNG, JPG, WEBP",
-screenshotsColumn: "Скріни",
-openScreenshots: "Відкрити",
-noScreenshotsForTrade: "Для цієї угоди скріни не завантажені.",
-screenshotViewerTitle: "Скріни угоди",
-loadingScreenshots: "Завантажуємо скріни...",
-  uploadButton: "Завантажити",
-uploadingButton: "Завантаження...",
-selectTradePlaceholder: "Оберіть угоду",
-stepOne: "Крок 1",
-stepTwo: "Крок 2",
-stepThree: "Крок 3",
-chartAnalyzeButton: "Розібрати графік",
-chartAnalyzingButton: "Аналіз графіка...",
-chartScreenshotsLabel: "скріншотів",
-journalAnalysisTitle: "AI-аналіз журналу угод",
-journalAnalysisText:
-  "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
-journalAnalyzeButton: "Розібрати журнал",
-journalAnalyzingButton: "Аналіз...",
-savedChartAnalysis: "Збережений AI-розбір графіка",
-showChartHistory: "Показати AI-розбори",
-hideChartHistory: "Сховати AI-розбори",
-noChartHistory: "Збережених розборів графіка ще немає.",
-searchTicker: "Пошук тикера",
-allMarkets: "Усі ринки",
-allSides: "Усі напрямки",
-allResults: "Усі результати",
-marketLabels: {
-  stocks: "Акції",
-  crypto: "Крипто",
-  futures: "Ф’ючерси",
-  forex: "Форекс",
-  options: "Опціони",
-},
-directionLabels: {
-  long: "Лонг",
-  short: "Шорт",
-},
-resultLabels: {
-  win: "Прибуткова",
-  loss: "Збиткова",
-  breakeven: "Беззбиткова",
-  notSet: "Не задано",
-},
-table: {
-  date: "Дата",
-  ticker: "Тикер",
-  market: "Ринок",
-  side: "Сторона",
-  entry: "Вхід",
-  exit: "Вихід",
-  stop: "Стоп",
-  risk: "Ризик",
-  pnl: "PnL",
-  result: "Результат",
-  setup: "Сетап",
-},
-  recentTitle: "Останні угоди",
-  recentText:
-    "Останні 3 угоди з особистого журналу. Повну таблицю та експорт додамо наступним кроком.",
-  empty:
-    "Угод поки немає. Додайте першу угоду, щоб почати збирати базу своєї статистики.",
-  tradesCount: "угод",
-  saving: "Зберігаємо...",
-  save: "Зберегти угоду",
-  updateTradeButton: "Оновити угоду",
-  updatingTradeButton: "Оновлення...",
-  tickerRequired: "Введіть тикер.",
-  tradeLimitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
-  tradeUsageTitle: "Використано угод",
-  tradesLeftLabel: "залишилось",
-  screenshotLimitReached: "Досягнуто ліміт скриншотів для цієї угоди",
-  screenshotUsageTitle: "Використано скриншотів",
-  limitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
-  loginFirst: "Спочатку увійдіть в акаунт.",
-  saveFailed: "Не вдалося зберегти угоду.",
-  fields: {
-    ticker: "Тикер",
-    date: "Дата",
-    market: "Ринок",
-    direction: "Напрямок",
-    entry: "Вхід",
-    exit: "Вихід",
-    stop: "Стоп",
-    size: "Розмір позиції",
-    risk: "Ризик $",
-    pnl: "PnL $",
-    result: "Результат",
-    setup: "Сетап",
-    emotion: "Емоція",
-    mistake: "Помилка",
-    lesson: "Урок",
-    notes: "Нотатки",
-  },
-  placeholders: {
-    ticker: "AAPL / BTC / NQ",
-    entry: "100",
-    exit: "105",
-    stop: "98",
-    size: "Акції / контракти",
-    risk: "50",
-    pnl: "-25 / 120",
-    setup: "VWAP reclaim / gap fade",
-    emotion: "Спокій / FOMO / страх",
-    mistake: "Що було зроблено неправильно?",
-    lesson: "Що потрібно запамʼятати на наступну угоду?",
-    notes: "Контекст, каталізатор, стрічка, рівні...",
-  },
-  options: {
-    notSet: "Не задано",
-    win: "Плюс",
-    loss: "Мінус",
-    breakeven: "Беззбиток",
-  },
-},
-locked: {
+      title: "Огляд ефективності",
+      text: "Зведення PnL, відсоток прибуткових угод, оцінка дисципліни, найкращі сетапи та головні помилки.",
+      pnlMonth: "PnL за місяць",
+      winRate: "Відсоток прибуткових",
+      discipline: "Оцінка дисципліни",
+      weeklyAi: "AI-зведення тижня",
+      weeklyAiText:
+        "AI-зведення збирає ключові висновки по журналу угод, ризику, дисципліні та повторюваних помилках.",
+    },
+    charts: {
+      title: "Графіки TradingView",
+      text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
+      placeholder: "Робочий простір TradingView доступний усередині модуля графіків.",
+      analyzeCurrentChart: "Проаналізувати графік",
+      workspaceText: "Робоча зона з графіком, списком спостереження та лідерами руху ринку.",
+      watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      openWatchlist: "Відкрити список",
+      hideWatchlist: "Сховати список",
+      watchlistTitle: "Список спостереження",
+      watchlistSubtitle: "Тикер / 24h % / обʼєм",
+      addTickerButton: "Додати",
+      addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      addTickerHint: "Приклад: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+      sortSymbol: "Тикер",
+      sortChange: "% 24h",
+      sortVolume: "Обʼєм",
+      symbolColumn: "Тикер",
+      percentColumn: "%",
+      volumeColumn: "Обʼєм",
+      loadingWatchlist: "Завантажуємо список спостереження...",
+      emptyWatchlist: "Список порожній. Натисни + і додай тикер.",
+      removeFromWatchlist: "Видалити зі списку",
+      loginFirst: "Спочатку увійдіть в акаунт.",
+      settingsLoadError: "Не вдалося завантажити налаштування графіків.",
+      addTickerError: "Не вдалося додати тикер до списку спостереження.",
+      removeTickerError: "Не вдалося видалити тикер зі списку спостереження.",
+      moversStocks: "Акції",
+      moversCrypto: "Крипто",
+      moversGainers: "Лідери росту",
+      moversLosers: "Лідери падіння",
+      moversCollapse: "Згорнути",
+      moversExpand: "Розгорнути",
+      moversName: "Назва",
+      moversPercentChange: "% зміни",
+      moversLoading: "Завантажуємо лідерів руху...",
+      moversEmpty: "Немає інструментів під цей фільтр.",
+      moversStocksNeedKey:
+        "Лідери руху по акціях готуються до підключення преміального покриття ринкових даних.",
+      chartAnalysisTitle: "AI-аналіз графіка",
+      chartAnalysisText:
+        "SkillEdge AI аналізує поточний тикер, таймфрейм, ринкові дані, свічки, обʼєм і контекст ризику.",
+      chartAnalysisLoading: "Аналізуємо поточний графік...",
+      chartAnalysisError: "Не вдалося проаналізувати поточний графік.",
+      chartAnalysisEmpty: "Запусти AI-аналіз, щоб побачити розбір поточного графіка.",
+      chartAnalysisClose: "Закрити",
+      chartAnalysisSymbol: "Тікер",
+      chartAnalysisInterval: "Таймфрейм",
+      chartAnalysisReportLabel: "Звіт SkillEdge AI",
+      chartAnalysisDataLabel: "Розбір ринкової структури",
+      chartAnalysisSectionsLabel: "Секції аналізу",
+      marketDataUnavailableTitle: "Ринкові дані недоступні",
+      marketDataUnavailableText:
+        "SkillEdge AI не зміг завантажити ринкові дані по цьому тикеру на поточному тарифі даних. Спробуй більш ліквідний тикер: AAPL, TSLA, NVDA, SPY або QQQ.",
+      marketDataPremiumTitle: "Потрібен преміум-доступ до ринкових даних",
+      marketDataPremiumText:
+        "Цей тикер, таймфрейм або джерело даних може вимагати вищий тариф ринкових даних. До запуску SkillEdge AI підтримуватиме ширше преміальне покриття ринку.",
+      marketDataGenericErrorTitle: "Аналіз тимчасово недоступний",
+      marketDataGenericErrorText:
+        "Зараз не вдалося виконати аналіз графіка. Спробуй інший тикер, таймфрейм або запусти аналіз ще раз.",
+      chartControlTickerLabel: "Тікер",
+      chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+      chartControlIntervalLabel: "Таймфрейм",
+      chartControlOpenChart: "Відкрити графік",
+      chartControlHint:
+        "Використовуй цю панель для керування TradingView та AI-аналізом. Зміни всередині самого TradingView можуть не синхронізуватися назад у SkillEdge AI.",
+    },
+    learning: {
+      title: "Центр навчання",
+      text: "Структурне навчання трейдингу, сетапи, ризик-менеджмент, психологія та побудова торгового плейбука.",
+      learningNoteTitle: "Центр навчання працює як база повторення",
+      learningNoteText:
+        "SkillEdge AI насамперед сфокусований на журналі угод, аналізі графіків, AI-розборі та розвитку торгової системи. Цей розділ створений як коротка база для відновлення ключових понять, щоб клієнт швидше розумів ризик, сетапи, структуру ринку та логіку AI-аналізу.",
+      overviewLabel: "Огляд навчання",
+      modulesLabel: "Модулі",
+      lessonsLabel: "уроків",
+      progressLabel: "Прогрес",
+      totalProgressLabel: "Загальний прогрес",
+      startButton: "Почати",
+      continueButton: "Продовжити",
+      reviewButton: "Повторити",
+      notStartedStatus: "Не розпочато",
+      inProgressStatus: "У процесі",
+      completedStatus: "Пройдено",
+      lockedLabel: "Скоро",
+      estimatedTimeLabel: "Час",
+      levelLabel: "Рівень",
+      beginnerLevel: "Початковий",
+      intermediateLevel: "Середній",
+      advancedLevel: "Просунутий",
+      moduleOneTitle: "Основи ринку",
+      moduleOneText:
+        "Розберися, як працює ринок, як взаємодіють ордери і чому ліквідність має значення.",
+      moduleTwoTitle: "Технічний аналіз",
+      moduleTwoText:
+        "Свічки, рівні, тренд/ренж, обʼєм і чисте читання графіка без зайвого шуму.",
+      moduleThreeTitle: "Ризик-менеджмент",
+      moduleThreeText:
+        "Правила ризику на угоду, стоп-лосс, розмір позиції та співвідношення ризик/прибуток.",
+      moduleFourTitle: "Внутрішньоденний імпульс",
+      moduleFourText:
+        "Логіка імпульсу, пробій, повернення рівня, хибний пробій і сетапи продовження руху.",
+      moduleFiveTitle: "Психологія трейдингу",
+      moduleFiveText:
+        "Контроль переторговки, торгівлі з помсти, страху, сумнівів та імпульсивних входів.",
+      moduleSixTitle: "Плейбук / Сетапи",
+      moduleSixText:
+        "Перетворюй повторювані патерни на торговий плейбук із тригерами входу та умовами скасування ідеї.",
+      lessonMarketStructure: "Як працює ринок",
+      lessonOrderTypes: "Типи ордерів",
+      lessonBidAskSpread: "Bid / Ask / Спред",
+      lessonLiquidity: "Ліквідність",
+      lessonCandles: "Свічки",
+      lessonLevels: "Підтримка і спротив",
+      lessonTrendRange: "Тренд або ренж",
+      lessonVolume: "Аналіз обʼєму",
+      lessonRiskPerTrade: "Ризик на угоду",
+      lessonStopLoss: "Стоп-лосс",
+      lessonRiskReward: "Ризик / Потенціал",
+      lessonPositionSizing: "Розмір позиції",
+      lessonMomentumLogic: "Логіка імпульсу",
+      lessonBreakoutReclaim: "Пробій / повернення рівня",
+      lessonFailedBreakout: "Хибний пробій",
+      lessonContinuation: "Продовження руху",
+      lessonDiscipline: "Дисципліна",
+      lessonOvertrading: "Переторговка",
+      lessonRevengeTrading: "Торгівля з помсти",
+      lessonPatience: "Терпіння",
+      lessonSetupChecklist: "Чеклист сетапу",
+      lessonEntryTrigger: "Тригер входу",
+      lessonInvalidation: "Скасування ідеї",
+      lessonReviewProcess: "Процес розбору",
+      advancedTracksLabel: "Додаткові напрямки",
+      advancedTracksText:
+        "Додаткові спеціалізовані напрями навчання для поглиблення торгової системи всередині SkillEdge AI.",
+      comingSoonButton: "Незабаром",
+      activeModuleLabel: "Активний модуль",
+      openLessonButton: "Відкрити урок",
+      selectedModuleHint:
+        "Обери модуль, щоб побачити уроки, прогрес і наступний крок навчання.",
+      nextLessonLabel: "Наступний урок",
+      moduleDetailsLabel: "Деталі модуля",
+      lessonViewerLabel: "Перегляд уроку",
+      lessonContentLabel: "Зміст уроку",
+      lessonCloseButton: "Закрити урок",
+      lessonStartText:
+        "Цей урок оформлено як короткий практичний блок SkillEdge AI. Вивчи ключові ідеї, виконай завдання та звʼяжи концепцію зі своїми угодами.",
+      lessonKeyPointsLabel: "Ключові ідеї",
+      lessonPracticeLabel: "Практичне завдання",
+      lessonPracticeText:
+        "Розбери концепцію, знайди один приклад на графіку і запиши, що підтверджує або ламає ідею.",
+      markLessonCompletedButton: "Позначити урок пройденим",
+      lessonCompletedButton: "Урок пройдено",
+      frontendProgressNote:
+        "Прогрес зберігається в акаунті SkillEdge AI і залишиться після перезавантаження.",
+      learningProgressLoading: "Завантажуємо прогрес навчання...",
+      learningProgressSaving: "Зберігаємо прогрес...",
+      learningProgressSaved: "Прогрес збережено",
+      lessonAutoAdvanced:
+        "Урок збережено. Наступний урок відкрито автоматично.",
+      moduleCompletedMessage: "Модуль завершено. Чудова робота.",
+      learningProgressError: "Не вдалося синхронізувати прогрес навчання.",
+      extraModuleOneTitle: "Концепція Smart Money та робочі сетапи",
+      extraModuleOneText:
+        "Структура ринку, ліквідність, провокації, імпульсне зміщення, ордер-блоки та практична логіка робочих сетапів.",
+      extraModuleTwoTitle: "Скальпінг стакана в CScalp",
+      extraModuleTwoText:
+        "Навчання платформі, базова робота з потоком ордерів, пробій рівня та сетапи «ножі» для активного скальпінгу.",
+      extraModuleThreeTitle: "Додатковий модуль 3",
+      extraModuleThreeText:
+        "Цей модуль зарезервовано під наступний спеціалізований навчальний блок.",
+      extraModuleFourTitle: "Додатковий модуль 4",
+      extraModuleFourText:
+        "Цей модуль зарезервовано під наступний спеціалізований навчальний блок.",
+      extraModuleOneLessonOne: "Структура ринку",
+      extraModuleOneLessonTwo: "Зони ліквідності",
+      extraModuleOneLessonThree: "Ордер-блоки",
+      extraModuleOneLessonFour: "Робочі сетапи",
+      extraModuleTwoLessonOne: "Інтерфейс CScalp",
+      extraModuleTwoLessonTwo: "Основи стакана",
+      extraModuleTwoLessonThree: "Пробій рівня",
+      extraModuleTwoLessonFour: "Сетап «ножі»",
+      extraModuleThreeLessonOne: "Урок 1",
+      extraModuleThreeLessonTwo: "Урок 2",
+      extraModuleThreeLessonThree: "Урок 3",
+      extraModuleThreeLessonFour: "Урок 4",
+      extraModuleFourLessonOne: "Урок 1",
+      extraModuleFourLessonTwo: "Урок 2",
+      extraModuleFourLessonThree: "Урок 3",
+      extraModuleFourLessonFour: "Урок 4",
+    },
+    reports: {
+      title: "Звіти",
+      text: "Статистика журналу, динаміка PnL, якість сетапів, помилки та сильні сторони торгівлі.",
+      placeholder:
+        "Розширені звіти формуються на основі журналу, фільтрів і збережених угод.",
+      emptyTitle: "Поки недостатньо даних для звіту",
+      emptyText:
+        "Додай кілька угод у журнал, щоб SkillEdge AI зміг побудувати звіт по PnL, відсотку прибуткових угод, сетапах, помилках і динаміці результату.",
+      totalTrades: "Усього угод",
+      totalTradesHelper: "Усі угоди з журналу",
+      totalPnl: "Загальний PnL",
+      totalPnlHelper: "Сумарний результат за закритими угодами",
+      winRate: "Відсоток прибуткових",
+      averagePnl: "Середній PnL",
+      averagePnlHelper: "Середній результат на угоду",
+      profitFactor: "Profit Factor",
+      profitFactorHelper: "Валовий прибуток / валовий збиток",
+      bestWorst: "Найкраща / найгірша",
+      bestWorstHelper: "Найкраща та найгірша угода",
+      equityTitle: "Крива дохідності",
+      equitySubtitle: "Динаміка накопичувального PnL",
+      points: "точок",
+      directionTitle: "Лонг проти шорта",
+      directionSubtitle: "Результат за напрямком",
+      marketBreakdown: "Ринки",
+      setupBreakdown: "Сетапи",
+      mistakesBreakdown: "Помилки",
+      noData: "Поки немає даних.",
+      filtersTitle: "Фільтри звіту",
+      filtersText:
+        "Звужуй статистику за періодом, ринком, напрямком і сетапом, щоб бачити реальну якість торгівлі.",
+      resetFilters: "Скинути фільтри",
+      periodFilter: "Період",
+      periodAll: "Увесь час",
+      period7d: "7 днів",
+      period30d: "30 днів",
+      period90d: "90 днів",
+      marketFilter: "Ринок",
+      allMarkets: "Усі ринки",
+      directionFilter: "Напрямок",
+      allDirections: "Усі напрямки",
+      setupFilter: "Сетап",
+      allSetups: "Усі сетапи",
+      filteredTrades: "Угод у фільтрі",
+      noFilteredTradesTitle: "За вибраними фільтрами угод немає",
+      noFilteredTradesText:
+        "Спробуй змінити період, ринок, напрямок або сетап. У журналі є угоди, але поточна комбінація фільтрів нічого не знайшла.",
+      aiReportTitle: "AI-звіт",
+      aiReportSubtitle: "Зведення за вибраними угодами",
+      aiReportText:
+        "Згенеруй короткий звіт за поточним фільтром: що працює, де помилки, якість ризику, найкращі сетапи та на чому сфокусуватися далі.",
+      aiReportButton: "Згенерувати звіт",
+      aiReportLoading: "Генеруємо...",
+      aiReportError: "Не вдалося згенерувати AI-звіт.",
+      aiReportLabel: "AI-звіт",
+      generateAiReport: "Згенерувати звіт",
+      aiReportGenerating: "Генеруємо звіт...",
+      aiReportPlaceholder:
+        "AI-звіт з’явиться тут після генерації. Він також збережеться в історії, щоб клієнт міг повернутися до нього пізніше.",
+      aiReportResultLabel: "Результат",
+      latestAiReportTitle: "Останній AI-звіт",
+      savedAiReportTitle: "Збережений AI-звіт",
+      aiReportHistoryLabel: "Історія",
+      aiReportHistoryTitle: "Історія AI-звітів",
+      aiReportHistoryText:
+        "Відкривай попередні AI-зведення за фільтрами та швидко повертайся до найважливіших висновків.",
+      aiReportHistoryEmpty: "Поки що збережених AI-звітів немає.",
+      currentSummaryLabel: "Поточне зведення",
+      allPeriods: "Усі періоди",
+      deleteAiReport: "Видалити звіт",
+      copyAiReport: "Скопіювати",
+      downloadAiReport: "Завантажити .txt",
+      aiReportCopied: "AI-звіт скопійовано.",
+      aiReportCopyFailed: "Не вдалося скопіювати звіт.",
+      aiReportDownloaded: "AI-звіт завантажено.",
+      upgradeForAiReports: "Потрібен Edge",
+      aiReportUpgradeRequired:
+        "AI-звіти доступні на тарифах SkillEdge Edge та SkillEdge Elite.",
+      aiReportLockedText:
+        "AI-звіти допомагають розібрати вибрані угоди, знайти найкращі сетапи, помилки та наступний фокус. Ця функція доступна на тарифах SkillEdge Edge та SkillEdge Elite.",
+      aiReportPlanHint: "AI-звітів на місяць на поточному тарифі",
+    },
+    journal: {
+      title: "Журнал угод",
+      text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
+      locked: "Для додавання угод потрібен активний тариф або пробний доступ.",
+      addTitle: "Додати угоду",
+      editTitle: "Редагувати угоду",
+      addModeText: "Додай нову угоду до особистого журналу.",
+      addText:
+        "Заповни базові дані, додай скріншоти та використовуй AI-розбір для оцінки угоди.",
+      totalTrades: "Усього угод",
+      totalPnl: "Загальний PnL",
+      winRate: "Відсоток прибуткових",
+      avgPnl: "Середній PnL",
+      grossProfit: "Валовий прибуток",
+      grossLoss: "Валовий збиток",
+      bestTrade: "Найкраща угода",
+      worstTrade: "Найгірша угода",
+      profitFactor: "Profit Factor",
+      equityTitle: "Крива дохідності",
+      equityText: "Накопичувальний PnL на основі збережених угод.",
+      equityEmpty: "Додайте угоди з PnL, щоб побудувати криву дохідності.",
+      equityPoints: "точок",
+      expand: "Розгорнути",
+      close: "Закрити",
+      cardLabels: {
+        entry: "Вхід",
+        exit: "Вихід",
+        stop: "Стоп",
+        risk: "Ризик",
+        result: "Результат",
+        setup: "Сетап",
+        mistake: "Помилка",
+        lesson: "Урок",
+        notes: "Нотатки",
+      },
+      fullTitle: "Повний журнал",
+      fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
+      downloadCsv: "Завантажити CSV",
+      downloadXlsx: "Завантажити XLSX",
+      deleteTradeButton: "Видалити угоду",
+      editTradeButton: "Редагувати",
+      openChartButton: "Відкрити графік",
+      cancelEditButton: "Скасувати редагування",
+      editModeTitle: "Режим редагування",
+      editModeText: "Зміни підсвічені поля та збережи угоду.",
+      actions: "Дії",
+      deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+      deleteTradeError: "Не вдалося видалити угоду.",
+      uploadScreenshotTitle: "Завантаження скріншота угоди",
+      uploadScreenshotText:
+        "Додавайте скріншоти графіків до збережених угод. SkillEdge AI використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+      screenshotsCount: "скріншотів",
+      screenshotTradeLabel: "Угода",
+      screenshotFileLabel: "Скріншот",
+      screenshotChoose: "Вибрати скріншот",
+      screenshotNoFile: "Файл не вибрано",
+      screenshotSelected: "Вибраний файл",
+      screenshotHint:
+        "Кроки: 1) Оберіть угоду  2) Натисніть «Вибрати скріншот»  3) Натисніть «Завантажити»",
+      screenshotUploadHintCompact:
+        "Завантажуй від одного до трьох скрінів з різними таймфреймами для глибшого аналізу.",
+      screenshotFormats: "Підтримувані формати: PNG, JPG, WEBP",
+      screenshotsColumn: "Скріни",
+      openScreenshots: "Відкрити",
+      noScreenshotsForTrade: "Для цієї угоди скріни не завантажені.",
+      screenshotViewerTitle: "Скріни угоди",
+      loadingScreenshots: "Завантажуємо скріни...",
+      uploadButton: "Завантажити",
+      uploadingButton: "Завантаження...",
+      selectTradePlaceholder: "Оберіть угоду",
+      stepOne: "Крок 1",
+      stepTwo: "Крок 2",
+      stepThree: "Крок 3",
+      chartAnalyzeButton: "Розібрати графік",
+      chartAnalyzingButton: "Аналіз графіка...",
+      chartScreenshotsLabel: "скріншотів",
+      journalAnalysisTitle: "AI-аналіз журналу угод",
+      journalAnalysisText:
+        "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+      journalAnalyzeButton: "Розібрати журнал",
+      journalAnalyzingButton: "Аналіз...",
+      savedChartAnalysis: "Збережений AI-розбір графіка",
+      showChartHistory: "Показати AI-розбори",
+      hideChartHistory: "Сховати AI-розбори",
+      noChartHistory: "Збережених розборів графіка ще немає.",
+      searchTicker: "Пошук тикера",
+      allMarkets: "Усі ринки",
+      allSides: "Усі напрямки",
+      allResults: "Усі результати",
+      marketLabels: {
+        stocks: "Акції",
+        crypto: "Крипто",
+        futures: "Ф’ючерси",
+        forex: "Форекс",
+        options: "Опціони",
+      },
+      directionLabels: {
+        long: "Лонг",
+        short: "Шорт",
+      },
+      resultLabels: {
+        win: "Прибуткова",
+        loss: "Збиткова",
+        breakeven: "Беззбиткова",
+        notSet: "Не задано",
+      },
+      table: {
+        date: "Дата",
+        ticker: "Тикер",
+        market: "Ринок",
+        side: "Сторона",
+        entry: "Вхід",
+        exit: "Вихід",
+        stop: "Стоп",
+        risk: "Ризик",
+        pnl: "PnL",
+        result: "Результат",
+        setup: "Сетап",
+      },
+      recentTitle: "Останні угоди",
+      recentText:
+        "Останні 3 угоди з особистого журналу. Повна таблиця, фільтри та експорт доступні нижче.",
+      empty:
+        "Угод поки немає. Додайте першу угоду, щоб почати збирати базу своєї статистики.",
+      tradesCount: "угод",
+      saving: "Зберігаємо...",
+      save: "Зберегти угоду",
+      updateTradeButton: "Оновити угоду",
+      updatingTradeButton: "Оновлення...",
+      tickerRequired: "Введіть тикер.",
+      tradeLimitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
+      tradeUsageTitle: "Використано угод",
+      tradesLeftLabel: "залишилось",
+      screenshotLimitReached: "Досягнуто ліміт скриншотів для цієї угоди",
+      screenshotUsageTitle: "Використано скриншотів",
+      limitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
+      loginFirst: "Спочатку увійдіть в акаунт.",
+      saveFailed: "Не вдалося зберегти угоду.",
+      fields: {
+        ticker: "Тикер",
+        date: "Дата",
+        market: "Ринок",
+        direction: "Напрямок",
+        entry: "Вхід",
+        exit: "Вихід",
+        stop: "Стоп",
+        size: "Розмір позиції",
+        risk: "Ризик $",
+        pnl: "PnL $",
+        result: "Результат",
+        setup: "Сетап",
+        emotion: "Емоція",
+        mistake: "Помилка",
+        lesson: "Урок",
+        notes: "Нотатки",
+      },
+      placeholders: {
+        ticker: "AAPL / BTC / NQ",
+        entry: "100",
+        exit: "105",
+        stop: "98",
+        size: "Акції / контракти",
+        risk: "50",
+        pnl: "-25 / 120",
+        setup: "повернення VWAP / згасання гепу",
+        emotion: "Спокій / FOMO / страх",
+        mistake: "Що було зроблено неправильно?",
+        lesson: "Що потрібно запамʼятати на наступну угоду?",
+        notes: "Контекст, каталізатор, стрічка, рівні...",
+      },
+      options: {
+        notSet: "Не задано",
+        win: "Плюс",
+        loss: "Мінус",
+        breakeven: "Беззбиток",
+      },
+    },
+    locked: {
       title: "Активуйте тариф",
       label: "Доступ закрито",
       text: "Після оплати відкриються журнал угод, SkillEdge AI-коуч, графіки TradingView, навчання, звіти та історія AI-розборів.",
       button: "Обрати тариф",
     },
     tabs: {
-  overview: "Огляд",
-  journal: "Журнал угод",
-  charts: "Графіки",
-  market: "Ринок",
-  alerts: "Alerts",
-  coach: "AI Coach",
-  learning: "Навчання",
-  reports: "Звіти",
-  billing: "Оплата",
-},
+      overview: "Огляд",
+      journal: "Журнал угод",
+      charts: "Графіки",
+      market: "Ринок",
+      alerts: "Сигнали",
+      coach: "AI-коуч",
+      learning: "Навчання",
+      reports: "Звіти",
+      billing: "Оплата",
+    },
     periods: {
       monthly: "1 місяць",
       halfyear: "6 місяців",
@@ -1827,72 +1832,72 @@ locked: {
     },
     demo: {
       label: "Пробна версія",
-      title: "У вас активовано 7-денний demo-доступ",
+      title: "У вас активовано 7-денний пробний доступ",
       text:
-  "Це пробна версія тарифу SkillEdge Core з лімітом 10 AI-запитів. Після завершення пробного періоду доступ буде закрито, якщо ви не оберете основний тариф.",
-      short: "7-денна пробна версія. Ліміт: 10 AI-запитів.",    
-},
+        "Це пробна версія тарифу SkillEdge Core з лімітом 10 AI-запитів. Після завершення пробного періоду доступ буде закрито, якщо ви не оберете основний тариф.",
+      short: "7-денна пробна версія. Ліміт: 10 AI-запитів.",
+    },
     billing: {
-  title: "Тариф і оплата",
-  text: "Інформація про поточний тариф, оплати та строк дії підписки.",
-  activePlan: "Тариф активний",
-  inactivePlan: "Тариф не активовано",
-  period: "Період",
-  validUntil: "Діє до",
-  empty:
-    "Після оплати тут зʼявляться план, період, дата завершення та історія платежів.",
-  currentPlan: "Поточний тариф",
-creatingCheckout: "Створюємо оплату...",
-checkoutError: "Не вдалося створити crypto checkout. Спробуйте ще раз.",
-loginRequiredForPayment: "Увійдіть в акаунт перед оплатою тарифу.",
-  currentPlanLabel: "Поточний тариф",
-  activeSubscription:
-    "Підписка активна. Ліміти та доступи застосовуються автоматично.",
-  inactiveSubscription:
-    "Підписка не активна. Деякі функції можуть бути недоступні.",
-  active: "Активна",
-  inactive: "Неактивна",
-  billingPeriod: "Період",
-  aiUsage: "AI usage",
-  billingNoteLabel: "Важливо",
-  billingNoteText:
-    "Billing зараз працює як внутрішня перевірка тарифів і лімітів. Перед production потрібно фінально зв’язати кнопки оплати зі Stripe Checkout та webhook-оновленням підписок.",
-  currentLimitsLabel: "Ліміти",
-  currentLimitsTitle: "Що входить у поточний тариф",
-  aiCoachLimit: "AI Coach / місяць",
-  journalAiLimit: "Journal AI / місяць",
-  chartAiLimit: "Chart analysis / місяць",
-  aiReportsLimit: "AI reports / місяць",
-  maxTradesLimit: "Максимум угод",
-  screenshotsLimit: "Скріншотів на угоду",
-  aiReportsAccess: "AI reports",
-  supportAssistantAccess: "Support assistant",
-  socialTickersAccess: "Social tickers",
-  aiScannerAccess: "AI scanner",
-aiAlertsAccess: "AI alerts",
-premiumChartAccess: "Premium chart analysis",
-  exportReportsAccess: "Export reports",
-  included: "Увімкнено",
-  locked: "Закрито",
-  comparePlansLabel: "Порівняння",
-  comparePlansTitle: "Порівняння тарифів",
-  comparePlansText:
-    "Перевір, що клієнт чітко бачить різницю між Core, Edge та Elite.",
-  current: "Поточний",
-  choosePlan: "Обрати тариф",
-  planDescriptions: {
-    core: "Базовий доступ для журналу, скриншотів, AI Coach і контролю дисципліни.",
-edge: "Просунутий тариф для активних трейдерів: більше AI, звіти, Market Intelligence і AI Scanner.",
-elite:
-  "Максимальний тариф: AI Alerts, floating alerts widget, Signal-to-Journal workflow і повний AI Trading Desk.",
-  },
-},
+      title: "Тариф і оплата",
+      text: "Інформація про поточний тариф, оплати та строк дії підписки.",
+      activePlan: "Тариф активний",
+      inactivePlan: "Тариф не активовано",
+      period: "Період",
+      validUntil: "Діє до",
+      empty:
+        "Після оплати тут зʼявляться план, період, дата завершення та історія платежів.",
+      currentPlan: "Поточний тариф",
+      creatingCheckout: "Створюємо оплату...",
+      checkoutError: "Не вдалося створити крипто-оплату. Спробуйте ще раз.",
+      loginRequiredForPayment: "Увійдіть в акаунт перед оплатою тарифу.",
+      currentPlanLabel: "Поточний тариф",
+      activeSubscription:
+        "Підписка активна. Ліміти та доступи застосовуються автоматично.",
+      inactiveSubscription:
+        "Підписка не активна. Деякі функції можуть бути недоступні.",
+      active: "Активна",
+      inactive: "Неактивна",
+      billingPeriod: "Період",
+      aiUsage: "Використання AI",
+      billingNoteLabel: "Важливо",
+      billingNoteText:
+        "Розділ оплати показує поточний тариф, ліміти, рівень доступу та статус підписки. Оплата карткою готується через погодженого платіжного провайдера, а крипто-доступ доступний на етапі запуску.",
+      currentLimitsLabel: "Ліміти",
+      currentLimitsTitle: "Що входить у поточний тариф",
+      aiCoachLimit: "AI-коуч / місяць",
+      journalAiLimit: "AI-аналіз журналу / місяць",
+      chartAiLimit: "AI-аналіз графіка / місяць",
+      aiReportsLimit: "AI-звіти / місяць",
+      maxTradesLimit: "Максимум угод",
+      screenshotsLimit: "Скріншотів на угоду",
+      aiReportsAccess: "AI-звіти",
+      supportAssistantAccess: "Помічник підтримки",
+      socialTickersAccess: "Соціальні тикери",
+      aiScannerAccess: "AI-сканер",
+      aiAlertsAccess: "AI-сигнали",
+      premiumChartAccess: "Преміум-аналіз графіка",
+      exportReportsAccess: "Експорт звітів",
+      included: "Увімкнено",
+      locked: "Закрито",
+      comparePlansLabel: "Порівняння",
+      comparePlansTitle: "Порівняння тарифів",
+      comparePlansText:
+        "Перевір, що клієнт чітко бачить різницю між Core, Edge та Elite.",
+      current: "Поточний",
+      choosePlan: "Обрати тариф",
+      planDescriptions: {
+        core: "Базовий доступ для журналу угод, скріншотів, AI-коуча та контролю дисципліни.",
+        edge: "Просунутий тариф для активних трейдерів: більше AI-запитів, звіти, ринкова розвідка та AI-сканер.",
+        elite:
+          "Максимальний тариф: AI-сигнали, плаваючий віджет сигналів, зв’язка сигналів із журналом і повний AI Trading Desk.",
+      },
+    },
     aiLimits: {
-  reachedTitle: "Ліміт AI вичерпано",
-  reachedText:
-    "Ви використали всі AI-запити, доступні у вашому поточному тарифі цього місяця. Оновіть тариф або дочекайтеся наступного місячного скидання.",
-  remainingPrefix: "Залишилось AI-запитів",
-},
+      reachedTitle: "Ліміт AI вичерпано",
+      reachedText:
+        "Ви використали всі AI-запити, доступні у вашому поточному тарифі цього місяця. Оновіть тариф або дочекайтеся наступного місячного скидання.",
+      remainingPrefix: "Залишилось AI-запитів",
+    },
     coach: {
       title: "AI-коуч",
       text: "Опишіть угоду, емоції, помилку або торгову ситуацію — AI-коуч зробить розбір дисципліни, ризику та якості рішення.",
@@ -1900,7 +1905,7 @@ elite:
       reviewText:
         "Чим конкретніший опис, тим корисніша відповідь. Вкажіть тикер, вхід, стоп, причину входу, емоції та результат.",
       placeholder:
-        "Приклад: Сьогодні зайшов у short після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
+        "Приклад: сьогодні зайшов у шорт після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
       ask: "Запитати AI",
       analyzing: "AI аналізує...",
       newReview: "Новий розбір",
@@ -1915,12 +1920,13 @@ elite:
       coachError: "Помилка AI-коуча.",
       error: "Помилка запиту до AI-коуча.",
       failed: "Не вдалося отримати відповідь AI-коуча.",
-      needPlan: "Для AI-коуча потрібен активний тариф або demo-доступ.",
+      needPlan: "Для AI-коуча потрібен активний тариф або пробний доступ.",
       limitReached:
         "Ліміт AI-запитів закінчився. Оберіть тариф вище або дочекайтеся оновлення ліміту.",
     },
   },
 } as const;
+
 
 const tabs: { id: TabId }[] = [
   { id: "overview" },
@@ -2858,12 +2864,12 @@ const featureLockCopy = (() => {
     return {
       label: isMarket ? "Потрібен Edge" : "Потрібен Elite",
       title: isMarket
-        ? "Market Intelligence відкривається з SkillEdge Edge."
-        : "AI Alerts доступні тільки на SkillEdge Elite.",
+        ? "Ринкова розвідка відкривається з SkillEdge Edge."
+        : "AI-сигнали доступні тільки на SkillEdge Elite.",
       text: isMarket
-        ? "На Core доступний тільки preview. SkillEdge Edge та Elite відкривають AI Scanner, Market Intelligence, social/market context і AI Market Brief."
-        : "SkillEdge Edge відкриває AI Scanner / Market Intelligence, але real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow і outcome learning доступні тільки в Elite.",
-      button: isMarket ? "Оновити до Edge" : "Оновити до Elite",
+        ? "На Core доступний лише попередній перегляд. SkillEdge Edge та Elite відкривають AI-сканер, ринкову розвідку, ринковий контекст, відстежувану увагу та AI-огляд ринку."
+        : "SkillEdge Edge відкриває AI-сканер і ринкову розвідку, але AI-сигнали в реальному часі, плаваючий віджет, зв’язка сигналів із журналом та навчання на результатах доступні тільки в Elite.",
+      button: isMarket ? "Перейти на Edge" : "Перейти на Elite",
     };
   }
 
@@ -2874,8 +2880,8 @@ const featureLockCopy = (() => {
         ? "Market Intelligence unlocks from SkillEdge Edge."
         : "AI Alerts are available only on SkillEdge Elite.",
       text: isMarket
-        ? "Core users can see the preview. SkillEdge Edge and Elite unlock AI Scanner, Market Intelligence, social/market context and AI Market Brief."
-        : "SkillEdge Edge unlocks AI Scanner / Market Intelligence, but real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow and outcome learning are reserved for Elite.",
+        ? "Core users can see the preview. SkillEdge Edge and Elite unlock AI Scanner, Market Intelligence, tracked attention, market context and AI Market Brief."
+        : "SkillEdge Edge unlocks AI Scanner and Market Intelligence, but real-time AI Alerts, the floating alerts widget, Signal-to-Journal workflow and outcome learning are reserved for Elite.",
       button: isMarket ? "Upgrade to Edge" : "Upgrade to Elite",
     };
   }
@@ -2883,11 +2889,11 @@ const featureLockCopy = (() => {
   return {
     label: isMarket ? "Нужен Edge" : "Нужен Elite",
     title: isMarket
-      ? "Market Intelligence открывается с SkillEdge Edge."
-      : "AI Alerts доступны только на SkillEdge Elite.",
+      ? "Рыночная разведка открывается с SkillEdge Edge."
+      : "AI-сигналы доступны только на SkillEdge Elite.",
     text: isMarket
-      ? "На Core доступен только preview. SkillEdge Edge и Elite открывают AI Scanner, Market Intelligence, social/market context и AI Market Brief."
-      : "SkillEdge Edge открывает AI Scanner / Market Intelligence, но real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow и outcome learning доступны только в Elite.",
+      ? "На Core доступен только предварительный просмотр. SkillEdge Edge и Elite открывают AI-сканер, рыночную разведку, рыночный контекст, отслеживаемое внимание и AI-обзор рынка."
+      : "SkillEdge Edge открывает AI-сканер и рыночную разведку, но AI-сигналы в реальном времени, плавающий виджет, связка сигналов с журналом и обучение на исходах доступны только в Elite.",
     button: isMarket ? "Перейти на Edge" : "Перейти на Elite",
   };
 })();
@@ -3405,7 +3411,7 @@ function getTargetHitFromTrade(trade: Trade) {
     }
   }
 
-  return "No TP";
+  return "NO_TARGET";
 }
 
 function getSignalExecutionReview(trade: Trade) {
@@ -3457,7 +3463,7 @@ function getSignalExecutionReview(trade: Trade) {
   if (entryInZone === false) adherenceScore -= 10;
   if (stopMatched === true) adherenceScore += 15;
   if (stopMatched === false) adherenceScore -= 10;
-  if (targetHit !== "—" && targetHit !== "No TP") adherenceScore += 15;
+  if (targetHit !== "—" && targetHit !== "NO_TARGET") adherenceScore += 15;
   if (trade.pnl !== null && trade.pnl > 0) adherenceScore += 10;
   if (trade.pnl !== null && trade.pnl < 0) adherenceScore -= 5;
 
@@ -3482,6 +3488,118 @@ function getSignalExecutionReview(trade: Trade) {
     adherenceScore,
     executionLabel,
   };
+}
+
+
+const signalLinkedTradeCopy = {
+  en: {
+    linkedTrade: "{signalCopy.linkedTrade}",
+    defaultSignal: "SkillEdge AI Signal",
+    alertConfidence: "Alert confidence",
+    entryQuality: "{signalCopy.entryQuality}",
+    noPlanZone: "No plan zone",
+    inZone: "In zone",
+    outsideZone: "Outside zone",
+    plan: "Plan",
+    stopAdherence: "{signalCopy.stopAdherence}",
+    noStopData: "No stop data",
+    matched: "Matched",
+    different: "Different",
+    targetResult: "{signalCopy.targetResult}",
+    direction: "Direction",
+    trade: "Trade",
+    strongExecution: "Strong execution",
+    acceptableExecution: "Acceptable execution",
+    weakExecution: "Weak execution",
+    planBroken: "Plan broken",
+    strongText:
+      "You followed the alert plan well. This is the type of execution SkillEdge AI should track as a personal strength.",
+    mediumText:
+      "Execution was acceptable, but review entry timing, stop placement and target management.",
+    weakText:
+      "Execution likely deviated from the original alert plan. Review whether you entered late, changed the stop, or ignored confirmation.",
+  },
+  ru: {
+    linkedTrade: "Сделка связана с сигналом",
+    defaultSignal: "Сигнал SkillEdge AI",
+    alertConfidence: "Уверенность сигнала",
+    entryQuality: "Качество входа",
+    noPlanZone: "Нет плановой зоны",
+    inZone: "В зоне",
+    outsideZone: "Вне зоны",
+    plan: "План",
+    stopAdherence: "Следование стопу",
+    noStopData: "Нет данных по стопу",
+    matched: "Совпадает",
+    different: "Отличается",
+    targetResult: "Результат по целям",
+    noTarget: "Цель не достигнута",
+    direction: "Направление",
+    trade: "Сделка",
+    strongExecution: "Сильное исполнение",
+    acceptableExecution: "Приемлемое исполнение",
+    weakExecution: "Слабое исполнение",
+    planBroken: "План нарушен",
+    strongText:
+      "Ты хорошо следовал плану сигнала. Такое исполнение SkillEdge AI должен отслеживать как личную сильную сторону.",
+    mediumText:
+      "Исполнение было приемлемым, но стоит разобрать тайминг входа, постановку стопа и сопровождение целей.",
+    weakText:
+      "Исполнение, вероятно, отклонилось от исходного плана сигнала. Проверь, не вошёл ли ты поздно, не изменил ли стоп или не проигнорировал подтверждение.",
+  },
+  ua: {
+    linkedTrade: "Угода пов’язана із сигналом",
+    defaultSignal: "Сигнал SkillEdge AI",
+    alertConfidence: "Впевненість сигналу",
+    entryQuality: "Якість входу",
+    noPlanZone: "Немає планової зони",
+    inZone: "У зоні",
+    outsideZone: "Поза зоною",
+    plan: "План",
+    stopAdherence: "Дотримання стопа",
+    noStopData: "Немає даних по стопу",
+    matched: "Збігається",
+    different: "Відрізняється",
+    targetResult: "Результат по цілях",
+    noTarget: "Ціль не досягнута",
+    direction: "Напрямок",
+    trade: "Угода",
+    strongExecution: "Сильне виконання",
+    acceptableExecution: "Прийнятне виконання",
+    weakExecution: "Слабке виконання",
+    planBroken: "План порушено",
+    strongText:
+      "Ти добре дотримався плану сигналу. Таке виконання SkillEdge AI має відстежувати як особисту сильну сторону.",
+    mediumText:
+      "Виконання було прийнятним, але варто розібрати таймінг входу, постановку стопа та супровід цілей.",
+    weakText:
+      "Виконання, ймовірно, відхилилося від початкового плану сигналу. Перевір, чи не увійшов ти пізно, чи не змінив стоп або не проігнорував підтвердження.",
+  },
+} as const;
+
+function getSignalExecutionLabelCopy(
+  label: string,
+  language: Language,
+) {
+  const copy = signalLinkedTradeCopy[language];
+
+  if (label === "Strong execution") return copy.strongExecution;
+  if (label === "Acceptable execution") return copy.acceptableExecution;
+  if (label === "Weak execution") return copy.weakExecution;
+  if (label === "Plan broken") return copy.planBroken;
+
+  return label;
+}
+
+function getSignalTargetHitCopy(
+  targetHit: string,
+  language: Language,
+) {
+  const copy = signalLinkedTradeCopy[language];
+
+  if (targetHit === "NO_TARGET") return copy.noTarget;
+
+  return targetHit;
 }
 
 function JournalTab({
@@ -3587,6 +3705,16 @@ onTradeFormChange: React.Dispatch<
     }>
   >;
 }) {
+
+const journalLanguage: Language =
+  t.dashboard === "Dashboard"
+    ? "en"
+    : t.dashboard === "Особистий кабінет"
+      ? "ua"
+      : "ru";
+
+const signalCopy = signalLinkedTradeCopy[journalLanguage];
+
 
 const [screenshotViewerTrade, setScreenshotViewerTrade] =
   useState<Trade | null>(null);
@@ -4586,15 +4714,15 @@ const downloadTradesXlsx = () => {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
-              Signal-linked trade
+              {signalCopy.linkedTrade}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/85">
-              {trade.source_setup_name || trade.setup || "SkillEdge AI Signal"}
+              {trade.source_setup_name || trade.setup || signalCopy.defaultSignal}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Alert confidence:{" "}
+              {signalCopy.alertConfidence}:{" "}
               {trade.alert_confidence_score ?? "—"}
               {trade.alert_confidence_tier
                 ? ` · ${trade.alert_confidence_tier}`
@@ -4604,26 +4732,26 @@ const downloadTradesXlsx = () => {
 
           <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
             {executionReview.adherenceScore}/100 ·{" "}
-            {executionReview.executionLabel}
+            {getSignalExecutionLabelCopy(executionReview.executionLabel, journalLanguage)}
           </div>
         </div>
 
         <div className="mt-4 grid gap-3 md:grid-cols-4">
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Entry quality
+              {signalCopy.entryQuality}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
               {executionReview.entryInZone === null
-                ? "No plan zone"
+                ? signalCopy.noPlanZone
                 : executionReview.entryInZone
-                  ? "In zone"
-                  : "Outside zone"}
+                  ? signalCopy.inZone
+                  : signalCopy.outsideZone}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Plan:{" "}
+              {signalCopy.plan}:{" "}
               {trade.alert_entry_zone_min && trade.alert_entry_zone_max
                 ? `${formatExecutionNumber(
                     trade.alert_entry_zone_min
@@ -4634,29 +4762,29 @@ const downloadTradesXlsx = () => {
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Stop adherence
+              {signalCopy.stopAdherence}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
               {executionReview.stopMatched === null
-                ? "No stop data"
+                ? signalCopy.noStopData
                 : executionReview.stopMatched
-                  ? "Matched"
-                  : "Different"}
+                  ? signalCopy.matched
+                  : signalCopy.different}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Plan: {formatExecutionNumber(trade.alert_stop_price)}
+              {signalCopy.plan}: {formatExecutionNumber(trade.alert_stop_price)}
             </div>
           </div>
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Target result
+              {signalCopy.targetResult}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
-              {executionReview.targetHit}
+              {getSignalTargetHitCopy(executionReview.targetHit, language)}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
@@ -4666,25 +4794,25 @@ const downloadTradesXlsx = () => {
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Direction
+              {signalCopy.direction}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
-              {executionReview.directionMatched ? "Matched" : "Different"}
+              {executionReview.directionMatched ? signalCopy.matched : signalCopy.different}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Trade: {trade.direction}
+              {signalCopy.trade}: {getDirectionLabel(trade.direction)}
             </div>
           </div>
         </div>
 
         <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/55">
           {executionReview.adherenceScore >= 80
-            ? "You followed the alert plan well. This is the type of execution SkillEdge AI should track as a personal strength."
+            ? signalCopy.strongText
             : executionReview.adherenceScore >= 60
-              ? "Execution was acceptable, but review entry timing, stop placement and target management."
-              : "Execution likely deviated from the original alert plan. Review whether you entered late, changed the stop, or ignored confirmation."}
+              ? signalCopy.mediumText
+              : signalCopy.weakText}
         </div>
       </div>
     );
@@ -5061,7 +5189,7 @@ useEffect(() => {
 >
         {!mounted ? (
   <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
-    Loading chart...
+    {t.loading}
   </div>
 ) : equityCurveData.length === 0 ? (
           <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
@@ -5446,16 +5574,16 @@ noSocialData: string;
 const marketScannerCopy: Record<Language, MarketScannerCopy> = {
   en: {
     title: "Market Intelligence Scanner",
-    text: "Full-market research across NYSE, NASDAQ and AMEX to find potential pump, dump, unusual volume and catalyst candidates before the move becomes obvious.",
-    lockedTitle: "Market Scanner is available on SkillEdge Edge and Elite.",
+    text: "A market intelligence layer for stocks and crypto: movers, unusual volume, catalysts, tracked social attention and opportunity ranking.",
+    lockedTitle: "Market Intelligence is available on SkillEdge Edge and Elite.",
     lockedText:
-      "Core users can see the module preview. Upgrade to unlock full-market scanner results, opportunity score and in-play ticker research.",
+      "Core users can view the module preview. Upgrade to unlock scanner results, opportunity scores, tracked attention data and in-play ticker research.",
     refresh: "Refresh scanner",
     refreshing: "Scanning...",
     source: "Source",
     scanned: "Scanned",
-    pumpWatch: "Pump candidates",
-    dumpWatch: "Dump candidates",
+    pumpWatch: "Pump watch",
+    dumpWatch: "Dump watch",
     unusualVolume: "Unusual volume",
     catalystWatch: "Catalysts",
     all: "All",
@@ -5467,23 +5595,23 @@ const marketScannerCopy: Record<Language, MarketScannerCopy> = {
     score: "Score",
     change: "Move",
     volume: "Volume",
-    mentions: "Mentions",
+    mentions: "Tracked mentions",
     sentiment: "Sentiment",
     risk: "Risk",
-    noData: "No scanner data yet. Press refresh or check your data provider.",
-    socialTitle: "Most mentioned stocks — 24H",
-socialText:
-  "Reddit attention scanner: tickers with unusual discussion activity over the last 24 hours.",
-socialRefresh: "Refresh social scanner",
-socialRefreshing: "Scanning Reddit...",
-socialScore: "Social score",
-mentions24h: "Mentions 24H",
-mentions1h: "Mentions 1H",
-velocity: "Velocity",
-provider: "Provider",
-topPosts: "Top posts",
-noSocialData:
-  "No social mention data yet. Press refresh or check the Reddit provider.",
+    noData: "No scanner data yet. Refresh the scanner or check the data source status.",
+    socialTitle: "Tracked attention — 24H",
+    socialText:
+      "Tracked social attention from connected sources. These numbers are not full internet coverage.",
+    socialRefresh: "Refresh attention data",
+    socialRefreshing: "Scanning tracked sources...",
+    socialScore: "Attention score",
+    mentions24h: "Tracked 24H",
+    mentions1h: "Tracked 1H",
+    velocity: "Velocity",
+    provider: "Source",
+    topPosts: "Top posts",
+    noSocialData:
+      "No tracked attention data yet. Refresh the scanner or check the source coverage.",
     openChart: "Open chart",
     bullish: "Bullish",
     bearish: "Bearish",
@@ -5491,93 +5619,95 @@ noSocialData:
     upside: "Upside",
     downside: "Downside",
   },
+
   ru: {
-    title: "Market Intelligence Scanner",
-    text: "Сканер всего рынка NYSE, NASDAQ и AMEX для поиска потенциальных пампов, дампов, аномального объёма и тикеров с катализатором до того, как движение станет очевидным.",
-    lockedTitle: "Market Scanner доступен на SkillEdge Edge и Elite.",
+    title: "Рыночная разведка",
+    text: "Слой анализа рынка для акций и крипты: лидеры движения, аномальный объём, катализаторы, отслеживаемое внимание и рейтинг возможностей.",
+    lockedTitle: "Рыночная разведка доступна на SkillEdge Edge и Elite.",
     lockedText:
-      "На Core доступен только preview. Edge и Elite открывают полный сканер рынка, opportunity score и поиск in-play тикеров.",
+      "На Core доступен только предварительный просмотр. Перейдите на Edge или Elite, чтобы открыть результаты сканера, рейтинг возможностей, данные по отслеживаемому вниманию и поиск активных тикеров.",
     refresh: "Обновить сканер",
     refreshing: "Сканируем...",
     source: "Источник",
-    scanned: "Скан",
-    pumpWatch: "Кандидаты на памп",
-    dumpWatch: "Кандидаты на дамп",
+    scanned: "Проверено",
+    pumpWatch: "Памп-кандидаты",
+    dumpWatch: "Дамп-кандидаты",
     unusualVolume: "Аномальный объём",
     catalystWatch: "Катализаторы",
     all: "Все",
     filters: "Фильтры",
     allBuckets: "Все категории",
     stocks: "Акции",
-    crypto: "Крипта",
+    crypto: "Крипто",
     search: "Поиск тикера...",
     score: "Рейтинг",
     change: "Движение",
     volume: "Объём",
-    mentions: "Упоминания",
-    sentiment: "Сентимент",
+    mentions: "Отслеживаемые упоминания",
+    sentiment: "Настроение",
     risk: "Риск",
-    noData: "Пока нет данных scanner. Нажми обновить или проверь provider.",
-    socialTitle: "Самые упоминаемые акции — 24 часа",
-socialText:
-  "Reddit scanner внимания: тикеры, которые необычно часто обсуждают за последние 24 часа.",
-socialRefresh: "Обновить social scanner",
-socialRefreshing: "Сканируем Reddit...",
-socialScore: "Social рейтинг",
-mentions24h: "Упоминания 24ч",
-mentions1h: "Упоминания 1ч",
-velocity: "Скорость",
-provider: "Источник",
-topPosts: "Топ посты",
-noSocialData:
-  "Пока нет social mentions. Нажми обновить или проверь Reddit provider.",
+    noData: "Данных сканера пока нет. Обновите сканер или проверьте статус источника данных.",
+    socialTitle: "Отслеживаемое внимание — 24ч",
+    socialText:
+      "Отслеживаемое внимание из подключённых источников. Эти цифры не являются полным охватом всего интернета.",
+    socialRefresh: "Обновить данные внимания",
+    socialRefreshing: "Сканируем источники...",
+    socialScore: "Рейтинг внимания",
+    mentions24h: "Отслежено за 24ч",
+    mentions1h: "Отслежено за 1ч",
+    velocity: "Скорость",
+    provider: "Источник",
+    topPosts: "Топ-посты",
+    noSocialData:
+      "Данных по отслеживаемому вниманию пока нет. Обновите сканер или проверьте покрытие источников.",
     openChart: "Открыть график",
-    bullish: "Бычий",
-    bearish: "Медвежий",
-    neutral: "Нейтральный",
+    bullish: "Бычье",
+    bearish: "Медвежье",
+    neutral: "Нейтральное",
     upside: "Вверх",
     downside: "Вниз",
   },
+
   ua: {
-    title: "Market Intelligence Scanner",
-    text: "Сканер усього ринку NYSE, NASDAQ і AMEX для пошуку потенційних пампів, дампів, аномального обʼєму та тикерів з каталізатором до того, як рух стане очевидним.",
-    lockedTitle: "Market Scanner доступний на SkillEdge Edge та Elite.",
+    title: "Ринкова розвідка",
+    text: "Шар аналізу ринку для акцій і крипти: лідери руху, аномальний обʼєм, каталізатори, відстежувана увага та рейтинг можливостей.",
+    lockedTitle: "Ринкова розвідка доступна на SkillEdge Edge та Elite.",
     lockedText:
-      "На Core доступний тільки preview. Edge та Elite відкривають повний сканер ринку, opportunity score і пошук in-play тикерів.",
+      "На Core доступний лише попередній перегляд. Перейдіть на Edge або Elite, щоб відкрити результати сканера, рейтинг можливостей, дані відстежуваної уваги та пошук активних тикерів.",
     refresh: "Оновити сканер",
     refreshing: "Скануємо...",
     source: "Джерело",
-    scanned: "Скан",
-    pumpWatch: "Кандидати на памп",
-    dumpWatch: "Кандидати на дамп",
+    scanned: "Перевірено",
+    pumpWatch: "Памп-кандидати",
+    dumpWatch: "Дамп-кандидати",
     unusualVolume: "Аномальний обʼєм",
     catalystWatch: "Каталізатори",
     all: "Усі",
     filters: "Фільтри",
     allBuckets: "Усі категорії",
     stocks: "Акції",
-    crypto: "Крипта",
+    crypto: "Крипто",
     search: "Пошук тикера...",
     score: "Рейтинг",
     change: "Рух",
     volume: "Обʼєм",
-    mentions: "Згадки",
-    sentiment: "Сентимент",
+    mentions: "Відстежувані згадки",
+    sentiment: "Настрій",
     risk: "Ризик",
-    noData: "Поки немає даних scanner. Натисни оновити або перевір provider.",
-    socialTitle: "Найбільш згадувані акції — 24 години",
-socialText:
-  "Reddit scanner уваги: тикери, які незвично часто обговорюють за останні 24 години.",
-socialRefresh: "Оновити social scanner",
-socialRefreshing: "Скануємо Reddit...",
-socialScore: "Social рейтинг",
-mentions24h: "Згадки 24г",
-mentions1h: "Згадки 1г",
-velocity: "Швидкість",
-provider: "Джерело",
-topPosts: "Топ пости",
-noSocialData:
-  "Поки немає social mentions. Натисни оновити або перевір Reddit provider.",
+    noData: "Даних сканера поки немає. Оновіть сканер або перевірте статус джерела даних.",
+    socialTitle: "Відстежувана увага — 24г",
+    socialText:
+      "Відстежувана увага з підключених джерел. Ці цифри не є повним охопленням усього інтернету.",
+    socialRefresh: "Оновити дані уваги",
+    socialRefreshing: "Скануємо джерела...",
+    socialScore: "Рейтинг уваги",
+    mentions24h: "Відстежено за 24г",
+    mentions1h: "Відстежено за 1г",
+    velocity: "Швидкість",
+    provider: "Джерело",
+    topPosts: "Топ-пости",
+    noSocialData:
+      "Даних щодо відстежуваної уваги поки немає. Оновіть сканер або перевірте покриття джерел.",
     openChart: "Відкрити графік",
     bullish: "Бичачий",
     bearish: "Ведмежий",
@@ -6328,7 +6458,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
       }
 
       if (generate) {
-        await fetch("/api/market/alerts", {
+        await authFetch("/api/market/alerts", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -6336,7 +6466,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
         });
       }
 
-      const response = await fetch("/api/market/alerts/personalized?limit=3", {
+      const response = await authFetch("/api/market/alerts/personalized?limit=3", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -6418,7 +6548,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
 
     if (!session?.access_token) return;
 
-    await fetch("/api/market/alerts/viewed", {
+    await authFetch("/api/market/alerts/viewed", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -6747,7 +6877,7 @@ const [error, setError] = useState("");
       ? language
       : "ru";
 
-  const copy = {
+  const rawCopy = {
     ru: {
       title: "AI Alerts Center",
       subtitle:
@@ -6890,7 +7020,7 @@ topReason: "Главная причина",
 allReasons: "Все причины",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "Ты отметил сигнал как Taken. Создай trade draft, чтобы SkillEdge позже сравнил план сигнала с твоим реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
+  "Ты отметил сигнал как Taken. Создай черновик сделки, чтобы SkillEdge сравнил план сигнала с твоим реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
 journalSyncAction: "Создать trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
@@ -7141,7 +7271,7 @@ rebuildTradePatterns: "Find my patterns",
 rebuildingTradePatterns: "Finding patterns...",
 tradePatternsTitle: "Independent Trade Pattern Profile",
 tradePatternsText:
-  "SkillEdge AI analyzes your independent profitable journal trades and finds repeated patterns that can later power Personal AI Alerts.",
+  "SkillEdge AI analyzes your independent profitable journal trades and finds repeated patterns for future Personal AI Alerts.",
 tradePatternsEmpty:
   "No patterns found yet. Add several independent profitable trades to the Journal.",
 tradePatternsLoading: "Loading trade patterns...",
@@ -7216,7 +7346,7 @@ topReason: "Top reason",
 allReasons: "All reasons",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "You marked this signal as Taken. Create a trade draft so SkillEdge can later compare the signal plan with your real execution: entry, stop, exit, PnL and trade quality.",
+  "You marked this signal as Taken. Create a trade draft so SkillEdge can compare the signal plan with your real execution: entry, stop, exit, PnL and trade quality.",
 journalSyncAction: "Create trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
@@ -7305,7 +7435,7 @@ targetActionTwo: "After TP1, do not exit randomly — manage the trade by the pr
 targetActionThree: "If price does not move toward target, evaluate invalidation instead of hoping.",
 strongActionOne: "Keep saving trades where you followed the alert plan.",
 strongActionTwo: "Look for repetition: which setups produce strong execution most often.",
-strongActionThree: "These trades will later become the base for Personal AI Alerts.",
+strongActionThree: "These trades become the base for Personal AI Alerts.",
 outcomeFollowupTitle: "Alert Outcome Follow-up",
 outcomeFollowupText:
   "SkillEdge compares the client’s decision with the actual signal outcome to detect missed opportunities, good skips and trades that need review.",
@@ -7314,7 +7444,7 @@ outcomeTakenWorked:
 outcomeTakenFailed:
   "You took the signal but it failed. Review confirmation, late entry risk and whether the stop followed the plan.",
 outcomeSkippedWorked:
-  "The signal was skipped but later worked. This is a missed opportunity — check why you did not enter: fear, not at desk or hesitation.",
+  "The signal was skipped and then worked. This is a missed opportunity — check why you did not enter: fear, not at desk or hesitation.",
 outcomeSkippedFailed:
   "The signal was skipped and failed. This was a good filter — save the reason why you avoided it.",
 outcomeMissedWorked:
@@ -7322,7 +7452,7 @@ outcomeMissedWorked:
 outcomeMissedFailed:
   "You marked the signal as Missed but it failed. The miss was safe, but still review whether the idea was high quality.",
 outcomePendingNote:
-  "Outcome is still pending. Later SkillEdge can compare your decision with the actual price path.",
+  "Outcome is still pending. SkillEdge can compare your decision with the actual price path once enough market data is available.",
 outcomeNeutralNote:
   "Outcome is neutral. The signal did not give clean follow-through, so focus on decision quality rather than PnL only.",
 outcomeLearningLabel: "Learning note",
@@ -7336,7 +7466,7 @@ filterMissedOpportunity: "Missed opportunity",
 filterGoodSkip: "Good skip",
 takenWorkedText: "Signals the client took and that worked.",
 takenFailedText: "Signals the client took but they failed.",
-missedOpportunityText: "Signals the client skipped or missed, but they later worked.",
+missedOpportunityText: "Signals the client skipped or missed, but they eventually worked.",
 goodSkipText: "Signals the client skipped or missed, and they failed.",
 outcomeLearningFocusTitle: "Outcome Learning Focus",
 outcomeLearningFocusText:
@@ -7346,7 +7476,7 @@ outcomeFocusTakenWorked:
 outcomeFocusTakenFailed:
   "Main focus: taken failed. The client takes signals that fail. Review confirmation, entry timing, risk and quality filters.",
 outcomeFocusMissedOpportunity:
-  "Main focus: missed opportunities. The client skips or misses signals that later work. Identify the cause: fear, hesitation, not at desk or late reaction.",
+  "Main focus: missed opportunities. The client skips or misses signals that eventually work. Identify the cause: fear, hesitation, not at desk or late reaction.",
 outcomeFocusGoodSkip:
   "Strong filtering zone: the client skips signals that fail. Save the reasons behind these decisions into the playbook.",
 outcomeFocusEmpty:
@@ -7540,7 +7670,7 @@ topReason: "Top reason",
 allReasons: "Усі причини",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "Ти відмітив сигнал як Taken. Створи trade draft, щоб SkillEdge пізніше порівняв план сигналу з твоїм реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
+  "Ти відмітив сигнал як Taken. Створи чернетку угоди, щоб SkillEdge порівняв план сигналу з твоїм реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
 journalSyncAction: "Створити trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
@@ -7719,7 +7849,382 @@ missedOpportunitiesLabel: "missed opportunities",
 noMissedOpportunityPatternTitle: "Патерн missed opportunities ще не сформований",
 workedAlertsMissedSuffix: "робочих alerts були пропущені в цій групі setup.",
 },
-  }[safeLanguage];
+  }
+[safeLanguage];
+
+  const alertCopyOverrides = {
+    en: {
+      commonMistakeLabel: "Common mistake:",
+      scoreDisclaimer:
+        "Score is not a guarantee. Trade only after confirmation, valid risk/reward and your own execution checklist.",
+      closeBreakdownHint: "or click outside the window to close this breakdown.",
+    },
+    ru: {
+      title: "Центр AI-сигналов",
+      subtitle:
+        "Сигналы за последние дни: направление, сетап, зона входа, стоп, цели, риск и план сопровождения.",
+      empty: "Пока нет активных сигналов. Запусти сканирование рынка.",
+      locked:
+        "AI-сигналы доступны только на SkillEdge Elite. SkillEdge Edge открывает AI-сканер и рыночную разведку, но real-time AI-сигналы, плавающий виджет, связка сигналов с журналом и обучение на исходах доступны только в Elite.",
+      saveToPlaybook: "Сохранить в плейбук",
+      openPlaybook: "Открыть плейбук",
+      hidePlaybook: "Скрыть плейбук",
+      playbookTitle: "Личный плейбук сигналов",
+      playbookText:
+        "Личная база сохранённых сетапов: логика, подтверждение, ошибки и примеры сигналов.",
+      playbookEmpty:
+        "Пока нет сохранённых сетапов. Нажми «Сохранить в плейбук» на любом сигнале.",
+      playbookLoading: "Загружаем плейбук...",
+      lastExample: "Последний пример",
+      openSignalProfile: "Открыть профиль сигналов",
+      hideSignalProfile: "Скрыть профиль сигналов",
+      signalProfileTitle: "Персональный профиль сигналов",
+      signalProfileText:
+        "SkillEdge AI показывает, какие AI-сетапы ты торгуешь лучше, где теряешь деньги и какие сигналы стоит приоритезировать.",
+      signalProfileEmpty:
+        "Профиль пока пустой. Создай сделки из AI-сигналов и сохрани их в журнал.",
+      signalProfileLoading: "Загружаем профиль сигналов...",
+      personalStrength: "Сильная сторона",
+      riskZone: "Зона риска",
+      learningProfile: "Обучение",
+      neutralProfile: "Нейтрально",
+      strengthScore: "Оценка силы",
+      planAdherence: "Следование плану",
+      aiNote: "AI-заметка",
+      openTradePatterns: "Открыть паттерны сделок",
+      hideTradePatterns: "Скрыть паттерны сделок",
+      tradePatternsTitle: "Профиль самостоятельных торговых паттернов",
+      tradePatternsText:
+        "SkillEdge AI анализирует твои самостоятельные прибыльные сделки и ищет повторяющиеся паттерны для будущих персональных AI-сигналов.",
+      tradePatternsEmpty:
+        "Пока нет найденных паттернов. Добавь в журнал несколько самостоятельных прибыльных сделок.",
+      tradePatternsLoading: "Загружаем торговые паттерны...",
+      patternStrength: "Сила паттерна",
+      examples: "Примеры",
+      keywords: "Ключевые слова",
+      filterActionable: "Готовые к действию",
+      filterWatchlist: "Список наблюдения",
+      filterLong: "Лонг",
+      filterShort: "Шорт",
+      decisionAnalyticsTitle: "Решения по сигналам",
+      decisionAnalyticsText:
+        "Здесь видно, как клиент работает с сигналами: наблюдает, берёт, пропускает или отмечает упущенную возможность. Это база будущей статистики качества сигналов и исполнения.",
+      filterEmpty: "Нет сигналов под выбранный фильтр.",
+      liveDesk: "Живой AI Trading Desk",
+      autoRefreshNote:
+        "Сигналы обновляются автоматически. Сканирование рынка работает в фоне, список обновляется каждые 60 секунд.",
+      smartTopFive:
+        "Первые 5 сигналов отсортированы по важности: приоритет, совпадение с журналом, AI-сила, уверенность и свежесть сигнала.",
+      emptyDeskTitle: "AI Trading Desk ждёт качественный сетап",
+      emptyDeskText:
+        "Сейчас нет активных сигналов под выбранный фильтр. Это нормально: SkillEdge AI не должен стрелять шумом. Система ждёт high-confidence ситуацию с понятным триггером, стопом, целями и заметкой по риску.",
+      confidenceTransparency: "Прозрачность оценки",
+      confidenceTransparencyText:
+        "Почему SkillEdge AI выделил этот сигнал и какие факторы усиливают или ослабляют идею.",
+      breakdownTitle: "Разбор сигнала SkillEdge AI",
+      journalSyncTitle: "Связка с журналом",
+      journalSyncText:
+        "Ты отметил сигнал как «Взял». Создай черновик сделки, чтобы SkillEdge позже сравнил план сигнала с реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
+      journalSyncAction: "Создать черновик сделки",
+      linkedJournalTitle: "Связанная сделка в журнале",
+      linkedJournalText:
+        "Эта сделка уже связана с сигналом. SkillEdge сможет сравнить план сигнала с реальным исполнением клиента.",
+      linkedJournalEmpty:
+        "Пока нет сохранённой сделки в журнале, связанной с этим сигналом.",
+      linkedTrades: "Связанные сделки",
+      linkedPnl: "PnL связанных сделок",
+      linkedResult: "Результат",
+      journalLinkAnalyticsTitle: "Сигналы ↔ Журнал",
+      journalLinkAnalyticsText:
+        "SkillEdge отслеживает, какие сигналы превратились в реальные сделки в журнале. Это база для анализа исполнения, PnL по сигналам и упущенных возможностей.",
+      takenWithoutJournal: "Взято без журнала",
+      linkedAlertsCount: "Связанные сигналы",
+      linkedTradesPnl: "PnL связанных сделок",
+      avgExecutionScore: "Средняя оценка исполнения",
+      takenWithoutJournalFilter: "Взято без журнала",
+      takenWithoutJournalTitle: "Сигнал взят, но сделки в журнале нет",
+      takenWithoutJournalText:
+        "Клиент отметил сигнал как «Взял», но ещё не сохранил сделку в журнал. Создай черновик сделки, чтобы SkillEdge смог сравнить план сигнала с реальным исполнением.",
+      executionScore: "Оценка исполнения",
+      executionReview: "Разбор исполнения",
+      filterJournalLinked: "Связано с журналом",
+      filterExecutionStrong: "Сильное исполнение",
+      filterExecutionReview: "Нужен разбор",
+      executionQualityTitle: "Качество исполнения",
+      executionQualityText:
+        "SkillEdge показывает, какие AI-сигналы уже привели к сделкам в журнале и где исполнение было сильным или требует разбора.",
+      executionCoachTitle: "AI-коуч исполнения",
+      executionCoachText:
+        "SkillEdge разбирает исполнение клиента относительно плана сигнала: вход, стоп, направление, цели и дисциплину.",
+      executionCoachEntryIssue:
+        "Проблема входа: вход был вне плановой зоны или слишком поздно относительно сигнала.",
+      executionCoachStopIssue:
+        "Проблема стопа: стоп отличается от плана сигнала. Это может ломать статистику и риск/потенциал.",
+      executionCoachDirectionIssue:
+        "Проблема направления: направление сделки отличается от направления сигнала.",
+      executionCoachTargetIssue:
+        "Проблема целей: сделка не дошла до TP или выход был не по плану.",
+      executionWeaknessTitle: "Карта слабых мест исполнения",
+      entryIssueFilter: "Проблемы входа",
+      stopIssueFilter: "Проблемы стопа",
+      directionIssueFilter: "Проблемы направления",
+      targetIssueFilter: "Проблемы целей",
+      executionFocusTitle: "Персональный фокус исполнения",
+      openFocusAlerts: "Открыть сигналы с этим фокусом",
+      executionActionPlanTitle: "План действий на неделю",
+      executionActionPlanText:
+        "SkillEdge превращает главный фокус исполнения в конкретные правила для следующей торговой недели.",
+      outcomeFollowupTitle: "Разбор исхода сигнала",
+      outcomeFollowupText:
+        "SkillEdge сравнивает решение клиента с фактическим результатом сигнала, чтобы находить упущенные возможности, хорошие пропуски и сделки, которые требуют разбора.",
+      outcomeLearningLabel: "Учебная заметка",
+      outcomeStatsLabel: "Статистика исходов",
+      outcomeLearningAnalyticsTitle: "Аналитика обучения на исходах",
+      outcomeLearningAnalyticsText:
+        "SkillEdge группирует сигналы по решению клиента и фактическому результату: что было взято, что не сработало, что стало упущенной возможностью и где клиент правильно отфильтровал слабую идею.",
+      outcomeLearningFocusTitle: "Фокус обучения на исходах",
+      missedOpportunityCoachTitle: "Коуч упущенных возможностей",
+      missedOpportunityCoachText:
+        "SkillEdge разбирает рабочие сигналы, которые клиент пропустил, чтобы найти повторяющуюся причину: страх, отсутствие у экрана, поздняя реакция или слабое доверие к сетапу.",
+      missedOpportunityTopSetup: "Главный пропущенный сетап",
+      missedOpportunityActionPlan: "План действий по упущенным возможностям",
+      alertsStateLoadingTitle: "SkillEdge AI сканирует рынок",
+      alertsStateLoadingText:
+        "Загружаем последние сигналы, проверяем персональный приоритет, контекст журнала, исходы и свежесть сигналов.",
+      alertsStateErrorTitle: "Не удалось загрузить AI-сигналы",
+      alertsStateErrorText:
+        "Проверь подключение, авторизацию или повтори запрос. Если ошибка повторяется, нужно проверить backend/API-логи.",
+      alertsStateEmptyTitle: "AI Trading Desk ждёт качественный сетап",
+      alertsStateEmptyText:
+        "Сейчас нет активных сигналов. Это нормально: SkillEdge не должен стрелять шумом. Лучше меньше сигналов, но выше качество.",
+      alertsStateFilterEmptyTitle: "Для этого фильтра сигналов нет",
+      alertsStateFilterEmptyText:
+        "Список работает, но текущий фильтр не нашёл подходящих сигналов. Сбрось фильтр или дождись новой high-confidence ситуации.",
+      alertsStateRunScan: "Запустить сканирование",
+      alertsStateLiveNote: "Фоновый мониторинг работает",
+      selectedFilter: "Выбранный фильтр",
+      totalAlerts: "Всего сигналов",
+      alertsStateLiveMonitoringLabel: "Фоновый мониторинг",
+      decisionVsOutcomeLabel: "Решение / исход",
+      nextLearningFocus: "Следующий фокус обучения",
+      outcomeProfileStillForming: "Профиль обучения на исходах ещё формируется",
+      missedOpportunitiesLabel: "упущенных возможностей",
+      noMissedOpportunityPatternTitle: "Паттерн упущенных возможностей ещё не сформирован",
+      workedAlertsMissedSuffix: "рабочих сигналов были пропущены в этой группе сетапов.",
+      commonMistakeLabel: "Типичная ошибка:",
+      scoreDisclaimer:
+        "Оценка не является гарантией. Торгуй только после подтверждения, адекватного соотношения риска к потенциалу и собственного чеклиста исполнения.",
+      closeBreakdownHint: "или нажми вне окна, чтобы закрыть этот разбор.",
+    },
+    ua: {
+      title: "Центр AI-сигналів",
+      subtitle:
+        "Останні сигнали: напрямок, сетап, зона входу, стоп, цілі, ризик і план супроводу.",
+      empty: "Активних сигналів поки немає. Запусти сканування ринку.",
+      locked:
+        "AI-сигнали доступні тільки на SkillEdge Elite. SkillEdge Edge відкриває AI-сканер і ринкову розвідку, але real-time AI-сигнали, плаваючий віджет, зв’язка сигналів із журналом і навчання на результатах доступні тільки в Elite.",
+      direction: "Напрямок",
+      setup: "Сетап",
+      entry: "Зона входу",
+      stop: "Стоп",
+      targets: "Цілі",
+      trigger: "Тригер",
+      reason: "Причина",
+      risk: "Ризик",
+      scenario: "Сценарій",
+      invalidation: "Скасування ідеї",
+      management: "Супровід",
+      confidence: "Впевненість",
+      status: "Статус",
+      outcome: "Результат",
+      time: "Час",
+      worked: "Відпрацював",
+      failed: "Не відпрацював",
+      pending: "Очікується",
+      neutral: "Нейтрально",
+      quality: "Якість",
+      saveToPlaybook: "Зберегти в плейбук",
+      openPlaybook: "Відкрити плейбук",
+      hidePlaybook: "Сховати плейбук",
+      playbookTitle: "Особистий плейбук сигналів",
+      playbookText:
+        "Особиста база збережених сетапів: логіка, підтвердження, помилки та приклади сигналів.",
+      playbookEmpty:
+        "Поки немає збережених сетапів. Натисни «Зберегти в плейбук» на будь-якому сигналі.",
+      playbookLoading: "Завантажуємо плейбук...",
+      lastExample: "Останній приклад",
+      openSignalProfile: "Відкрити профіль сигналів",
+      hideSignalProfile: "Сховати профіль сигналів",
+      signalProfileTitle: "Персональний профіль сигналів",
+      signalProfileText:
+        "SkillEdge AI показує, які AI-сетапи ти торгуєш краще, де втрачаєш гроші та які сигнали варто пріоритезувати.",
+      signalProfileEmpty:
+        "Профіль поки порожній. Створи угоди з AI-сигналів і збережи їх у журнал.",
+      signalProfileLoading: "Завантажуємо профіль сигналів...",
+      personalStrength: "Сильна сторона",
+      riskZone: "Зона ризику",
+      learningProfile: "Навчання",
+      neutralProfile: "Нейтрально",
+      strengthScore: "Оцінка сили",
+      planAdherence: "Дотримання плану",
+      aiNote: "AI-замітка",
+      openTradePatterns: "Відкрити патерни угод",
+      hideTradePatterns: "Сховати патерни угод",
+      tradePatternsTitle: "Профіль самостійних торгових патернів",
+      tradePatternsText:
+        "SkillEdge AI аналізує твої самостійні прибуткові угоди та шукає повторювані патерни для майбутніх персональних AI-сигналів.",
+      tradePatternsEmpty:
+        "Поки немає знайдених патернів. Додай у журнал кілька самостійних прибуткових угод.",
+      tradePatternsLoading: "Завантажуємо торгові патерни...",
+      patternStrength: "Сила патерну",
+      examples: "Приклади",
+      keywords: "Ключові слова",
+      filterAll: "Усі",
+      filterActionable: "Готові до дії",
+      filterWatchlist: "Список спостереження",
+      filterPriority: "Пріоритет",
+      filterCaution: "Обережно",
+      filterJournalMatch: "Збіг із журналом",
+      filterAiStrength: "AI-сила",
+      filterLong: "Лонг",
+      filterShort: "Шорт",
+      filterCrypto: "Крипто",
+      filterStocks: "Акції",
+      filterDecisionWatching: "Спостерігаю",
+      filterDecisionTaken: "Взяв",
+      filterDecisionSkipped: "Пропустив",
+      filterDecisionMissed: "Упустив",
+      decisionAnalyticsTitle: "Рішення по сигналах",
+      decisionAnalyticsText:
+        "Тут видно, як клієнт працює з сигналами: спостерігає, бере, пропускає або відмічає упущену можливість. Це база майбутньої статистики якості сигналів і виконання.",
+      filterEmpty: "Немає сигналів під вибраний фільтр.",
+      openAlertDetails: "Відкрити розбір",
+      hideAlertDetails: "Сховати розбір",
+      liveDesk: "Живий AI Trading Desk",
+      lastChecked: "Остання перевірка",
+      autoRefreshNote:
+        "Сигнали оновлюються автоматично. Сканування ринку працює у фоні, список оновлюється кожні 60 секунд.",
+      showMoreAlerts: "Показати ще 10",
+      collapseAlerts: "Згорнути все",
+      smartTopFive:
+        "Перші 5 сигналів відсортовані за важливістю: пріоритет, збіг із журналом, AI-сила, впевненість і свіжість сигналу.",
+      emptyDeskTitle: "AI Trading Desk чекає якісний сетап",
+      emptyDeskText:
+        "Зараз немає активних сигналів під вибраний фільтр. Це нормально: SkillEdge AI не має стріляти шумом. Система чекає high-confidence ситуацію з чітким тригером, стопом, цілями та нотаткою по ризику.",
+      emptyDeskAction:
+        "Залиш сторінку відкритою — список оновлюється автоматично кожні 60 секунд.",
+      confidenceTransparency: "Прозорість оцінки",
+      confidenceTransparencyText:
+        "Чому SkillEdge AI виділив цей сигнал і які фактори посилюють або послаблюють ідею.",
+      breakdownTitle: "Розбір сигналу SkillEdge AI",
+      traderDecision: "Рішення трейдера",
+      tradePlan: "План угоди",
+      whyNow: "Чому зараз",
+      confirmationChecklist: "Чеклист підтвердження",
+      avoidThisTradeIf: "Не торгувати, якщо",
+      learningLayer: "Навчальний шар",
+      journalSyncTitle: "Зв’язка з журналом",
+      journalSyncText:
+        "Ти відмітив сигнал як «Взяв». Створи чернетку угоди, щоб SkillEdge пізніше порівняв план сигналу з реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
+      journalSyncAction: "Створити чернетку угоди",
+      linkedJournalTitle: "Пов’язана угода в журналі",
+      linkedJournalText:
+        "Ця угода вже пов’язана із сигналом. SkillEdge зможе порівняти план сигналу з реальним виконанням клієнта.",
+      linkedJournalEmpty:
+        "Поки немає збереженої угоди в журналі, пов’язаної з цим сигналом.",
+      linkedTrades: "Пов’язані угоди",
+      linkedPnl: "PnL пов’язаних угод",
+      linkedResult: "Результат",
+      journalLinkAnalyticsTitle: "Сигнали ↔ Журнал",
+      journalLinkAnalyticsText:
+        "SkillEdge відстежує, які сигнали стали реальними угодами в журналі. Це база для аналізу виконання, PnL по сигналах і упущених можливостей.",
+      takenWithoutJournal: "Взято без журналу",
+      linkedAlertsCount: "Пов’язані сигнали",
+      linkedTradesPnl: "PnL пов’язаних угод",
+      avgExecutionScore: "Середня оцінка виконання",
+      takenWithoutJournalFilter: "Взято без журналу",
+      takenWithoutJournalTitle: "Сигнал взято, але угоди в журналі немає",
+      takenWithoutJournalText:
+        "Клієнт відмітив сигнал як «Взяв», але ще не зберіг угоду в журнал. Створи чернетку угоди, щоб SkillEdge зміг порівняти план сигналу з реальним виконанням.",
+      executionScore: "Оцінка виконання",
+      executionReview: "Розбір виконання",
+      executionStrong: "Сильне виконання",
+      executionMedium: "Нормально, але є що покращити",
+      executionWeak: "Потрібен розбір виконання",
+      filterJournalLinked: "Пов’язано з журналом",
+      filterExecutionStrong: "Сильне виконання",
+      filterExecutionReview: "Потрібен розбір",
+      executionQualityTitle: "Якість виконання",
+      executionQualityText:
+        "SkillEdge показує, які AI-сигнали вже стали угодами в журналі і де виконання було сильним або потребує розбору.",
+      executionCoachTitle: "AI-коуч виконання",
+      executionCoachText:
+        "SkillEdge розбирає виконання клієнта відносно плану сигналу: вхід, стоп, напрямок, цілі та дисципліну.",
+      executionCoachEntryIssue:
+        "Проблема входу: вхід був поза плановою зоною або занадто пізно після сигналу.",
+      executionCoachStopIssue:
+        "Проблема стопа: стоп відрізняється від плану сигналу. Це може ламати статистику і ризик/потенціал.",
+      executionCoachDirectionIssue:
+        "Проблема напрямку: напрямок угоди відрізняється від напрямку сигналу.",
+      executionCoachTargetIssue:
+        "Проблема цілей: угода не дійшла до TP або вихід був не за планом.",
+      executionWeaknessTitle: "Карта слабких місць виконання",
+      entryIssueFilter: "Проблеми входу",
+      stopIssueFilter: "Проблеми стопа",
+      directionIssueFilter: "Проблеми напрямку",
+      targetIssueFilter: "Проблеми цілей",
+      executionFocusTitle: "Персональний фокус виконання",
+      openFocusAlerts: "Відкрити сигнали з цим фокусом",
+      executionActionPlanTitle: "План дій на тиждень",
+      executionActionPlanText:
+        "SkillEdge перетворює головний фокус виконання на конкретні правила для наступного торгового тижня.",
+      outcomeFollowupTitle: "Розбір результату сигналу",
+      outcomeFollowupText:
+        "SkillEdge порівнює рішення клієнта з фактичним результатом сигналу, щоб знаходити упущені можливості, хороші пропуски та угоди, які потребують розбору.",
+      outcomeLearningLabel: "Навчальна нотатка",
+      outcomeStatsLabel: "Статистика результатів",
+      outcomeLearningAnalyticsTitle: "Аналітика навчання на результатах",
+      outcomeLearningFocusTitle: "Фокус навчання на результатах",
+      missedOpportunityCoachTitle: "Коуч упущених можливостей",
+      missedOpportunityCoachText:
+        "SkillEdge розбирає робочі сигнали, які клієнт пропустив, щоб знайти повторювану причину: страх, відсутність біля екрана, пізня реакція або слабка довіра до сетапу.",
+      missedOpportunityTopSetup: "Головний пропущений сетап",
+      missedOpportunityActionPlan: "План дій по упущених можливостях",
+      alertsStateLoadingTitle: "SkillEdge AI сканує ринок",
+      alertsStateLoadingText:
+        "Завантажуємо останні сигнали, перевіряємо персональний пріоритет, контекст журналу, результати й свіжість сигналів.",
+      alertsStateErrorTitle: "Не вдалося завантажити AI-сигнали",
+      alertsStateErrorText:
+        "Перевір підключення, авторизацію або повтори запит. Якщо помилка повторюється — потрібно перевірити backend/API-логи.",
+      alertsStateEmptyTitle: "AI Trading Desk чекає якісний сетап",
+      alertsStateEmptyText:
+        "Зараз немає активних сигналів. Це нормально: SkillEdge не має стріляти шумом. Краще менше сигналів, але вища якість.",
+      alertsStateFilterEmptyTitle: "Для цього фільтра сигналів немає",
+      alertsStateFilterEmptyText:
+        "Список працює, але поточний фільтр не знайшов відповідних сигналів. Скинь фільтр або дочекайся нової high-confidence ситуації.",
+      alertsStateRunScan: "Запустити сканування",
+      alertsStateLiveNote: "Фоновий моніторинг працює",
+      selectedFilter: "Вибраний фільтр",
+      totalAlerts: "Усього сигналів",
+      alertsStateLiveMonitoringLabel: "Фоновий моніторинг",
+      decisionVsOutcomeLabel: "Рішення / результат",
+      nextLearningFocus: "Наступний фокус навчання",
+      outcomeProfileStillForming: "Профіль навчання на результатах ще формується",
+      missedOpportunitiesLabel: "упущених можливостей",
+      noMissedOpportunityPatternTitle: "Патерн упущених можливостей ще не сформований",
+      workedAlertsMissedSuffix: "робочих сигналів були пропущені в цій групі сетапів.",
+      commonMistakeLabel: "Типова помилка:",
+      scoreDisclaimer:
+        "Оцінка не є гарантією. Торгуй тільки після підтвердження, адекватного співвідношення ризику до потенціалу та власного чеклиста виконання.",
+      closeBreakdownHint: "або натисни поза вікном, щоб закрити цей розбір.",
+    },
+  };
+
+  const copy = {
+    ...rawCopy,
+    ...alertCopyOverrides[safeLanguage],
+  };
+
 
   const hasAccess =
   subscription.active && canUseFeature(subscription.plan, "ai_alerts");
@@ -7746,7 +8251,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
       }
 
       if (generate) {
-        const generateResponse = await fetch("/api/market/alerts", {
+        const generateResponse = await authFetch("/api/market/alerts", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -7760,7 +8265,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
         }
       }
 
-      const response = await fetch("/api/market/alerts/personalized?limit=100&period=7d", {
+      const response = await authFetch("/api/market/alerts/personalized?limit=100&period=7d", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -7804,7 +8309,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
       return;
     }
 
-    const response = await fetch("/api/market/alerts/outcomes", {
+    const response = await authFetch("/api/market/alerts/outcomes", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -8045,7 +8550,7 @@ const markSingleAlertViewed = async (alertId: string) => {
 
     if (!session?.access_token) return;
 
-    await fetch("/api/market/alerts/viewed", {
+    await authFetch("/api/market/alerts/viewed", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -8080,7 +8585,7 @@ const saveAlertDecision = async (
 
     if (!session?.access_token) return;
 
-    const response = await fetch("/api/market/alerts/decision", {
+    const response = await authFetch("/api/market/alerts/decision", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -8623,7 +9128,7 @@ const hasTargetExecutionIssue = (alert: DashboardMarketAlert) => {
   return getLinkedTradesForAlert(alert.id).some((trade) => {
     const review = getSignalExecutionReview(trade);
 
-    return review?.targetHit === "No TP";
+    return review?.targetHit === "NO_TARGET";
   });
 };
 
@@ -8676,7 +9181,7 @@ const getAlertExecutionCoachNotes = (alert: DashboardMarketAlert) => {
   ).length;
 
   const targetIssues = reviews.filter(
-    (review) => review.targetHit === "No TP"
+    (review) => review.targetHit === "NO_TARGET"
   ).length;
 
   if (entryIssues > 0) {
@@ -10001,7 +10506,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 {Array.isArray(setup.avoid_if) && setup.avoid_if.length > 0 ? (
                   <div className="rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-3">
                     <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
-                      Avoid this trade if
+                      {copy.avoidThisTradeIf}
                     </div>
 
                     <div className="mt-2 grid gap-2 md:grid-cols-2">
@@ -10020,7 +10525,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 {setup.setup_common_mistake ? (
                   <div className="rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3 text-xs leading-5 text-red-50/75">
                     <span className="font-semibold text-red-100">
-                      Common mistake:
+                      {copy.commonMistakeLabel}
                     </span>{" "}
                     {setup.setup_common_mistake}
                   </div>
@@ -11905,8 +12410,19 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               TP / Stop
             </div>
             <div className="mt-1 text-sm font-semibold text-white">
-              {breakdownAlert.hit_target || "No TP"} /{" "}
-              {breakdownAlert.hit_stop ? "Stop hit" : "No stop"}
+              {breakdownAlert.hit_target ||
+                (safeLanguage === "ua"
+                  ? "TP не досягнуто"
+                  : safeLanguage === "en"
+                    ? "Target not reached"
+                    : "TP не достигнут")} /{" "}
+              {breakdownAlert.hit_stop
+                ? copy.stopHit
+                : safeLanguage === "ua"
+                  ? "Стоп не зачеплено"
+                  : safeLanguage === "en"
+                    ? "Stop not hit"
+                    : "Стоп не задет"}
             </div>
           </div>
         </div>
@@ -12142,7 +12658,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               {breakdownAlert.setup_common_mistake ? (
                 <div className="mt-3 rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3 text-xs leading-5 text-red-50/75">
                   <span className="font-semibold text-red-100">
-                    Common mistake:
+                    {copy.commonMistakeLabel}
                   </span>{" "}
                   {breakdownAlert.setup_common_mistake}
                 </div>
@@ -12151,14 +12667,13 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
           ) : null}
 
           <div className="mt-4 rounded-2xl border border-red-300/15 bg-red-300/[0.03] p-4 text-xs leading-5 text-red-50/70">
-  Score is not a guarantee. Trade only after confirmation, valid
-  risk/reward and your own execution checklist.
+  {copy.scoreDisclaimer}
 
   <div className="mt-3 flex flex-wrap items-center gap-2 text-white/35">
     <span className="rounded-full border border-white/10 bg-black/20 px-2 py-1">
       Esc
     </span>
-    <span>or click outside the window to close this breakdown.</span>
+    <span>{copy.closeBreakdownHint}</span>
   </div>
 </div>
         </div>
@@ -12303,39 +12818,39 @@ type MarketAIBriefHistoryResponse = {
 
   const localText = {
     ru: {
-      title: "Market Intelligence Center",
+      title: "Центр рыночной разведки",
       subtitle:
-        "Единый центр поиска in-play тикеров: рыночное движение + social mentions + будущий AI-анализ сигналов.",
-      topTitle: "Top Opportunities Now",
+        "Единый центр поиска активных тикеров: движение рынка, отслеживаемое внимание, новостные катализаторы и AI-разбор лучших кандидатов.",
+      topTitle: "Лучшие возможности сейчас",
       topText:
-        "Один список вместо отдельных сканеров. Система объединяет market activity, Reddit mentions, news catalysts, Binance crypto universe и готовит тикеры для дальнейшего AI-разбора.",
-      aiSoon: "AI Layer Soon",
+        "Один список вместо отдельных сканеров. Система объединяет рыночную активность, Reddit-упоминания, новостные катализаторы, крипто-активность Binance и готовит тикеры для AI-разбора.",
+      aiSoon: "AI-слой",
       aiSoonText:
-        "Дальше сюда добавим AI-сценарии, confluence score, risk notes, сигналы и персональные alerts под стиль клиента.",
+        "AI-слой помогает разобрать сценарий, совпадения факторов, риск ловушки, условия отмены идеи и дальнейший план наблюдения.",
       dataNote:
-        "MVP использует доступные источники. Перед релизом подключаем premium full-data providers, intraday 1m/5m/15m и полный universe.",
+        "Сейчас используются подключённые источники данных. Перед запуском расширяем покрытие рынка, внутридневные таймфреймы и полный universe акций/крипто через premium data stack.",
       refreshAll: "Обновить всё",
-      aiAnalyzeTop: "AI Market Brief",
-aiAnalyzeTitle: "AI Market Brief по топ-10 возможностям",
-aiAnalyzeText:
-  "SkillEdge AI разбирает топ-10 кандидатов из Market Intelligence: почему тикер in-play, какой сетап формируется, где риск ловушки, какой сценарий смотреть и где идея ломается.",
-aiAnalyzeEmpty: "Сначала обнови scanner, чтобы появились тикеры для AI-разбора.",
-aiAnalyzePreview: "AI preview",
-aiAnalyzeClose: "Закрыть",
-aiHistory: "History",
-aiHistoryTitle: "История AI Market Brief",
-aiHistoryText: "Последние сохранённые AI-брифы по рынку.",
-aiHistoryEmpty: "Истории пока нет. Запусти AI Market Brief, чтобы сохранить первый разбор.",
-aiHistoryLoading: "Загружаем историю...",
-aiOpenBrief: "Открыть brief",
-aiCloseBrief: "Закрыть brief",
-aiSavedAnalysis: "Сохранённый AI-разбор",
-aiStocks: "Акции",
-aiCrypto: "Крипта",
-aiShowMore: "Показать ещё",
-aiShowLess: "Свернуть",
-aiNoItemsForTab: "Нет кандидатов для этого рынка.",
-aiAnalyzeError: "Не удалось получить AI-разбор. Проверь backend env и попробуй ещё раз.",
+      aiAnalyzeTop: "AI-обзор рынка",
+      aiAnalyzeTitle: "AI-обзор топ-10 возможностей",
+      aiAnalyzeText:
+        "SkillEdge AI разбирает топ-10 кандидатов из рыночной разведки: почему тикер активен, какой сетап формируется, где риск ловушки, какой сценарий смотреть и где идея ломается.",
+      aiAnalyzeEmpty: "Сначала обнови сканер, чтобы появились тикеры для AI-разбора.",
+      aiAnalyzePreview: "AI-предпросмотр",
+      aiAnalyzeClose: "Закрыть",
+      aiHistory: "История",
+      aiHistoryTitle: "История AI-обзоров рынка",
+      aiHistoryText: "Последние сохранённые AI-обзоры рынка.",
+      aiHistoryEmpty: "Истории пока нет. Запусти AI-обзор рынка, чтобы сохранить первый разбор.",
+      aiHistoryLoading: "Загружаем историю...",
+      aiOpenBrief: "Открыть обзор",
+      aiCloseBrief: "Закрыть обзор",
+      aiSavedAnalysis: "Сохранённый AI-разбор",
+      aiStocks: "Акции",
+      aiCrypto: "Крипто",
+      aiShowMore: "Показать ещё",
+      aiShowLess: "Свернуть",
+      aiNoItemsForTab: "Нет кандидатов для этого рынка.",
+      aiAnalyzeError: "Не удалось получить AI-разбор. Проверь серверные настройки и попробуй ещё раз.",
       refreshing: "Обновляем...",
       search: "Поиск тикера...",
       asset: "Актив",
@@ -12343,70 +12858,70 @@ aiAnalyzeError: "Не удалось получить AI-разбор. Пров�
       sort: "Сортировка",
       allAssets: "Все активы",
       stocks: "Акции",
-      crypto: "Крипта",
+      crypto: "Крипто",
       allSignals: "Все сигналы",
-      combined: "Combined",
-      marketOnly: "Market only",
-      socialOnly: "Social only",
-      sortScore: "Combined score",
-      sortMentions: "Mentions 24H",
-      sortMove: "Move %",
-      sortSocial: "Social score",
+      combined: "Комбинированный",
+      marketOnly: "Только рынок",
+      socialOnly: "Только внимание",
+      sortScore: "Общий рейтинг",
+      sortMentions: "Упоминания 24ч",
+      sortMove: "Движение %",
+      sortSocial: "Рейтинг внимания",
       ticker: "Тикер",
-      combinedScore: "Score",
-      mentions24h: "Tracked 24H",
-      move: "Move",
+      combinedScore: "Рейтинг",
+      mentions24h: "Отслежено за 24ч",
+      move: "Движение",
       reason: "Почему важно",
-      noData: "Пока нет данных. Нажми “Обновить всё”.",
-      rawMarket: "Raw market movers",
-      rawSocial: "Raw social mentions",
-      showRaw: "Показать raw data",
-      hideRaw: "Скрыть raw data",
+      noData: "Пока нет данных. Нажми «Обновить всё».",
+      rawMarket: "Исходные рыночные данные",
+      rawSocial: "Исходные данные внимания",
+      showRaw: "Показать исходные данные",
+      hideRaw: "Скрыть исходные данные",
       source: "Источник",
-      autoRefresh: "Auto-refresh",
-autoRefreshValue: "каждые 15 минут",
-coverageTitle: "Data coverage",
-coverageText:
-  "Mentions показывают только подключённые источники: Reddit сейчас, Stocktwits и crypto-native sources позже. Это не полный интернет-охват.",
-      scanned: "Скан",
-      lockedTitle: "Market Intelligence доступен на SkillEdge Edge и Elite.",
+      autoRefresh: "Автообновление",
+      autoRefreshValue: "каждые 15 минут",
+      coverageTitle: "Покрытие данных",
+      coverageText:
+        "Упоминания показывают только подключённые источники: сейчас Reddit; дополнительные источники готовятся к расширению покрытия. Это не полный охват всего интернета.",
+      scanned: "Сканирование",
+      lockedTitle: "Рыночная разведка доступна на SkillEdge Edge и Elite.",
       lockedText:
-        "На Core доступен preview. Edge и Elite открывают market/social scanner, combined opportunities и будущие AI-сигналы.",
+        "На Core доступен только предпросмотр. Edge и Elite открывают рыночный сканер, отслеживаемое внимание, комбинированные возможности и AI-обзор рынка.",
     },
     en: {
       title: "Market Intelligence Center",
       subtitle:
-        "Unified in-play ticker research: market movement + social mentions + future AI signal analysis.",
+        "Unified in-play ticker research: market movement, tracked attention, news catalysts and AI review of the best candidates.",
       topTitle: "Top Opportunities Now",
       topText:
-        "One list instead of separate scanners. The system combines market activity, Reddit mentions, news catalysts, Binance crypto universe and prepares tickers for AI analysis.",
-      aiSoon: "AI Layer Soon",
+        "One list instead of separate scanners. The system combines market activity, Reddit mentions, news catalysts, Binance crypto activity and prepares tickers for AI review.",
+      aiSoon: "AI Layer",
       aiSoonText:
-        "Next we add AI scenarios, confluence score, risk notes, signals and personalized alerts based on the client’s trading style.",
+        "The AI layer helps review scenarios, confluence, trap risk, invalidation and the next observation plan.",
       dataNote:
-        "MVP uses available sources. Before launch we connect premium full-data providers, intraday 1m/5m/15m and full universe coverage.",
+        "Connected data sources are used now. Before launch we expand market coverage, intraday timeframes and full stock/crypto universe through a premium data stack.",
       refreshAll: "Refresh all",
       aiAnalyzeTop: "AI Market Brief",
-aiAnalyzeTitle: "AI Market Brief for top 10 opportunities",
-aiAnalyzeText:
-  "SkillEdge AI breaks down the top 10 Market Intelligence candidates: why the ticker is in-play, what setup is forming, where the trap risk is, what scenario to watch and where the idea breaks.",
-aiAnalyzeEmpty: "Refresh the scanner first to load tickers for AI analysis.",
-aiAnalyzePreview: "AI preview",
-aiAnalyzeClose: "Close",
-aiHistory: "History",
-aiHistoryTitle: "AI Market Brief History",
-aiHistoryText: "Latest saved AI market briefs.",
-aiHistoryEmpty: "No history yet. Run AI Market Brief to save the first brief.",
-aiHistoryLoading: "Loading history...",
-aiOpenBrief: "Open brief",
-aiCloseBrief: "Close brief",
-aiSavedAnalysis: "Saved AI analysis",
-aiStocks: "Stocks",
-aiCrypto: "Crypto",
-aiShowMore: "Show more",
-aiShowLess: "Collapse",
-aiNoItemsForTab: "No candidates for this market.",
-aiAnalyzeError: "Failed to load AI analysis. Check backend env and try again.",
+      aiAnalyzeTitle: "AI Market Brief for top 10 opportunities",
+      aiAnalyzeText:
+        "SkillEdge AI reviews the top 10 Market Intelligence candidates: why the ticker is active, what setup is forming, where the trap risk is, what scenario to watch and where the idea breaks.",
+      aiAnalyzeEmpty: "Refresh the scanner first to load tickers for AI review.",
+      aiAnalyzePreview: "AI preview",
+      aiAnalyzeClose: "Close",
+      aiHistory: "History",
+      aiHistoryTitle: "AI Market Brief History",
+      aiHistoryText: "Latest saved AI market briefs.",
+      aiHistoryEmpty: "No history yet. Run AI Market Brief to save the first review.",
+      aiHistoryLoading: "Loading history...",
+      aiOpenBrief: "Open brief",
+      aiCloseBrief: "Close brief",
+      aiSavedAnalysis: "Saved AI review",
+      aiStocks: "Stocks",
+      aiCrypto: "Crypto",
+      aiShowMore: "Show more",
+      aiShowLess: "Collapse",
+      aiNoItemsForTab: "No candidates for this market.",
+      aiAnalyzeError: "Failed to load AI review. Check server settings and try again.",
       refreshing: "Refreshing...",
       search: "Search ticker...",
       asset: "Asset",
@@ -12418,66 +12933,66 @@ aiAnalyzeError: "Failed to load AI analysis. Check backend env and try again.",
       allSignals: "All signals",
       combined: "Combined",
       marketOnly: "Market only",
-      socialOnly: "Social only",
+      socialOnly: "Attention only",
       sortScore: "Combined score",
       sortMentions: "Mentions 24H",
       sortMove: "Move %",
-      sortSocial: "Social score",
+      sortSocial: "Attention score",
       ticker: "Ticker",
       combinedScore: "Score",
       mentions24h: "Tracked 24H",
       move: "Move",
       reason: "Why it matters",
       noData: "No data yet. Click “Refresh all”.",
-      rawMarket: "Raw market movers",
-      rawSocial: "Raw social mentions",
+      rawMarket: "Raw market data",
+      rawSocial: "Raw attention data",
       showRaw: "Show raw data",
       hideRaw: "Hide raw data",
       source: "Source",
       autoRefresh: "Auto-refresh",
-autoRefreshValue: "every 15 minutes",
-coverageTitle: "Data coverage",
-coverageText:
-  "Mentions show tracked sources only: Reddit now, Stocktwits and crypto-native sources later. This is not full internet coverage.",
+      autoRefreshValue: "every 15 minutes",
+      coverageTitle: "Data coverage",
+      coverageText:
+        "Mentions show tracked sources only: connected Reddit coverage now, with additional tracked sources prepared for expansion. This is not full internet coverage.",
       scanned: "Scanned",
       lockedTitle: "Market Intelligence is available on SkillEdge Edge and Elite.",
       lockedText:
-        "Core users can see the preview. Edge and Elite unlock market/social scanner, combined opportunities and future AI signals.",
+        "Core users can see the preview. Edge and Elite unlock market scanner, tracked attention, combined opportunities and AI Market Brief.",
     },
     ua: {
-      title: "Market Intelligence Center",
+      title: "Центр ринкової розвідки",
       subtitle:
-        "Єдиний центр пошуку in-play тикерів: рух ринку + social mentions + майбутній AI-аналіз сигналів.",
-      topTitle: "Top Opportunities Now",
+        "Єдиний центр пошуку активних тикерів: рух ринку, відстежувана увага, новинні каталізатори та AI-розбір найкращих кандидатів.",
+      topTitle: "Найкращі можливості зараз",
       topText:
-        "Один список замість окремих сканерів. Система поєднує market activity, Reddit mentions, news catalysts, Binance crypto universe і готує тикери для AI-аналізу.",
-      aiSoon: "AI Layer Soon",
+        "Один список замість окремих сканерів. Система поєднує ринкову активність, Reddit-згадки, новинні каталізатори, крипто-активність Binance і готує тикери для AI-розбору.",
+      aiSoon: "AI-шар",
       aiSoonText:
-        "Далі додамо AI-сценарії, confluence score, risk notes, сигнали та персональні alerts під стиль клієнта.",
+        "AI-шар допомагає розібрати сценарій, збіг факторів, ризик пастки, умови скасування ідеї та подальший план спостереження.",
       dataNote:
-        "MVP використовує доступні джерела. Перед релізом підключаємо premium full-data providers, intraday 1m/5m/15m і повний universe.",
+        "Зараз використовуються підключені джерела даних. Перед запуском розширюємо покриття ринку, внутрішньоденні таймфрейми та повний universe акцій/крипто через premium data stack.",
       refreshAll: "Оновити все",
-      aiAnalyzeTop: "AI Market Brief",
-aiAnalyzeTitle: "AI Market Brief по топ-10 можливостям",
-aiAnalyzeText:
-  "SkillEdge AI розбирає топ-10 кандидатів із Market Intelligence: чому тикер in-play, який сетап формується, де ризик пастки, який сценарій дивитися і де ідея ламається.",
-aiAnalyzeEmpty: "Спочатку онови scanner, щоб зʼявилися тикери для AI-розбору.",
-aiAnalyzePreview: "AI preview",
-aiAnalyzeClose: "Закрити",
-aiHistory: "History",
-aiHistoryTitle: "Історія AI Market Brief",
-aiHistoryText: "Останні збережені AI-брифи по ринку.",
-aiHistoryEmpty: "Історії ще немає. Запусти AI Market Brief, щоб зберегти перший розбір.",
-aiHistoryLoading: "Завантажуємо історію...",
-aiOpenBrief: "Відкрити brief",
-aiCloseBrief: "Закрити brief",
-aiSavedAnalysis: "Збережений AI-розбір",
-aiStocks: "Акції",
-aiCrypto: "Крипта",
-aiShowMore: "Показати ще",
-aiShowLess: "Згорнути",
-aiNoItemsForTab: "Немає кандидатів для цього ринку.",
-aiAnalyzeError: "Не вдалося отримати AI-розбір. Перевір backend env і спробуй ще раз.",
+      aiAnalyzeTop: "AI-огляд ринку",
+      aiAnalyzeTitle: "AI-огляд топ-10 можливостей",
+      aiAnalyzeText:
+        "SkillEdge AI розбирає топ-10 кандидатів із ринкової розвідки: чому тикер активний, який сетап формується, де ризик пастки, який сценарій дивитися і де ідея ламається.",
+      aiAnalyzeEmpty: "Спочатку онови сканер, щоб зʼявилися тикери для AI-розбору.",
+      aiAnalyzePreview: "AI-перегляд",
+      aiAnalyzeClose: "Закрити",
+      aiHistory: "Історія",
+      aiHistoryTitle: "Історія AI-оглядів ринку",
+      aiHistoryText: "Останні збережені AI-огляди ринку.",
+      aiHistoryEmpty: "Історії ще немає. Запусти AI-огляд ринку, щоб зберегти перший розбір.",
+      aiHistoryLoading: "Завантажуємо історію...",
+      aiOpenBrief: "Відкрити огляд",
+      aiCloseBrief: "Закрити огляд",
+      aiSavedAnalysis: "Збережений AI-розбір",
+      aiStocks: "Акції",
+      aiCrypto: "Крипто",
+      aiShowMore: "Показати ще",
+      aiShowLess: "Згорнути",
+      aiNoItemsForTab: "Немає кандидатів для цього ринку.",
+      aiAnalyzeError: "Не вдалося отримати AI-розбір. Перевір серверні налаштування і спробуй ще раз.",
       refreshing: "Оновлюємо...",
       search: "Пошук тикера...",
       asset: "Актив",
@@ -12485,35 +13000,35 @@ aiAnalyzeError: "Не вдалося отримати AI-розбір. Пере�
       sort: "Сортування",
       allAssets: "Усі активи",
       stocks: "Акції",
-      crypto: "Крипта",
+      crypto: "Крипто",
       allSignals: "Усі сигнали",
-      combined: "Combined",
-      marketOnly: "Market only",
-      socialOnly: "Social only",
-      sortScore: "Combined score",
-      sortMentions: "Mentions 24H",
-      sortMove: "Move %",
-      sortSocial: "Social score",
+      combined: "Комбінований",
+      marketOnly: "Тільки ринок",
+      socialOnly: "Тільки увага",
+      sortScore: "Загальний рейтинг",
+      sortMentions: "Згадки 24г",
+      sortMove: "Рух %",
+      sortSocial: "Рейтинг уваги",
       ticker: "Тикер",
-      combinedScore: "Score",
-      mentions24h: "24г",
-      move: "Move",
+      combinedScore: "Рейтинг",
+      mentions24h: "Відстежено за 24г",
+      move: "Рух",
       reason: "Чому важливо",
-      noData: "Поки немає даних. Натисни “Оновити все”.",
-      rawMarket: "Raw market movers",
-      rawSocial: "Raw social mentions",
-      showRaw: "Показати raw data",
-      hideRaw: "Сховати raw data",
+      noData: "Поки немає даних. Натисни «Оновити все».",
+      rawMarket: "Вихідні ринкові дані",
+      rawSocial: "Вихідні дані уваги",
+      showRaw: "Показати вихідні дані",
+      hideRaw: "Сховати вихідні дані",
       source: "Джерело",
-      autoRefresh: "Auto-refresh",
-autoRefreshValue: "кожні 15 хвилин",
-coverageTitle: "Data coverage",
-coverageText:
-  "Mentions показують лише підключені джерела: Reddit зараз, Stocktwits і crypto-native sources пізніше. Це не повне покриття всього інтернету.",
-      scanned: "Скан",
-      lockedTitle: "Market Intelligence доступний на SkillEdge Edge та Elite.",
+      autoRefresh: "Автооновлення",
+      autoRefreshValue: "кожні 15 хвилин",
+      coverageTitle: "Покриття даних",
+      coverageText:
+        "Згадки показують лише підключені джерела: зараз Reddit, пізніше Stocktwits і crypto-native джерела. Це не повне покриття всього інтернету.",
+      scanned: "Сканування",
+      lockedTitle: "Ринкова розвідка доступна на SkillEdge Edge та Elite.",
       lockedText:
-        "На Core доступний preview. Edge та Elite відкривають market/social scanner, combined opportunities і майбутні AI-сигнали.",
+        "На Core доступний лише попередній перегляд. Edge та Elite відкривають ринковий сканер, відстежувану увагу, комбіновані можливості та AI-огляд ринку.",
     },
   }[safeLanguage];
 
@@ -12607,8 +13122,8 @@ const handleTableWheel = (event: React.WheelEvent<HTMLDivElement>) => {
         return;
       }
 
-      const response = await fetch(
-        `/api/market/scanner${refresh ? "?refresh=true" : ""}`,
+      const response = await authFetch(
+  `/api/market/scanner${refresh ? "?refresh=true" : ""}`,
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -12652,8 +13167,8 @@ const handleTableWheel = (event: React.WheelEvent<HTMLDivElement>) => {
         return;
       }
 
-      const response = await fetch(
-        `/api/market/social-mentions${refresh ? "?refresh=true" : ""}`,
+      const response = await authFetch(
+  `/api/market/social-mentions${refresh ? "?refresh=true" : ""}`,
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -12711,7 +13226,7 @@ const handleTableWheel = (event: React.WheelEvent<HTMLDivElement>) => {
         return;
       }
 
-      const response = await fetch("/api/market/intelligence", {
+      const response = await authFetch("/api/market/intelligence", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -12800,7 +13315,7 @@ setAiBriefExpanded({
       return;
     }
 
-    const response = await fetch("/api/market/ai-analysis", {
+    const response = await authFetch("/api/market/ai-analysis", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${session.access_token}`,
@@ -12871,7 +13386,7 @@ const loadAiBriefHistory = async () => {
       return;
     }
 
-    const response = await fetch("/api/market/ai-briefs?limit=10", {
+    const response = await authFetch("/api/market/ai-briefs?limit=10", {
       headers: {
         Authorization: `Bearer ${session.access_token}`,
       },
@@ -13804,11 +14319,11 @@ const hiddenAiCount = Math.max(
         <div>
           <p className="text-xs font-semibold text-slate-100">Stocktwits</p>
           <p className="text-[11px] text-slate-500">
-            Trader sentiment / premium stream later
+            Trader sentiment stream
           </p>
         </div>
         <span className="rounded-full border border-violet-300/20 bg-violet-300/10 px-2 py-1 text-xs text-violet-100">
-          Premium later
+          Planned
         </span>
       </div>
     </div>
@@ -14886,7 +15401,11 @@ function MoversPanel({
         if (!cancelled) {
           setItems([]);
           setError(
-            err instanceof Error ? err.message : "Failed to load movers."
+            market === "stocks"
+              ? t.charts.moversStocksNeedKey
+              : err instanceof Error
+                ? err.message
+                : t.charts.moversLoading
           );
         }
       } finally {
@@ -15097,85 +15616,9 @@ async function fetchCryptoMovers(
 }
 
 async function fetchStockMovers(
-  side: ChartsMoverSide
+  _side: ChartsMoverSide
 ): Promise<ChartsMoverItem[]> {
-  const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY;
-
-  if (!apiKey) {
-    throw new Error(
-      "Для stocks movers добавь NEXT_PUBLIC_FMP_API_KEY в .env.local"
-    );
-  }
-
-  const endpoint =
-    side === "gainers"
-      ? `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${apiKey}`
-      : `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${apiKey}`;
-
-  const response = await fetch(endpoint);
-
-  if (!response.ok) {
-    throw new Error("Stocks movers are unavailable right now.");
-  }
-
-  const data = await response.json();
-
-  if (!Array.isArray(data)) {
-    throw new Error("Stocks movers returned invalid data.");
-  }
-
-  const mapped: ChartsMoverItem[] = data
-    .map((item: any) => {
-      const changePct = parseChangePct(
-        item.changesPercentage ??
-          item.changePercentage ??
-          item.percentageChange ??
-          item.change ??
-          0
-      );
-
-      const rawVolume = Number(item.volume ?? 0);
-
-      return {
-        symbol: item.symbol || "—",
-        name: item.name || item.companyName || item.symbol || "—",
-        price:
-          typeof item.price === "number"
-            ? item.price
-            : typeof item.lastPrice === "number"
-            ? item.lastPrice
-            : null,
-        changePct,
-        volume: formatCompactNumber(rawVolume),
-        rawVolume,
-      };
-    })
-    .filter((item: ChartsMoverItem & { rawVolume?: number }) => {
-      const volume = item.rawVolume ?? 0;
-
-      if (!Number.isFinite(item.changePct) || !Number.isFinite(volume)) {
-        return false;
-      }
-
-      if (volume < 50000) {
-        return false;
-      }
-
-      if (side === "gainers") {
-        return item.changePct >= 10;
-      }
-
-      return item.changePct <= -10;
-    })
-    .sort((a, b) =>
-      side === "gainers"
-        ? b.changePct - a.changePct
-        : a.changePct - b.changePct
-    )
-    .slice(0, 25)
-    .map(({ rawVolume, ...item }) => item);
-
-  return mapped;
+  throw new Error("Stock movers are routed through the premium market data layer.");
 }
 
 function parseChangePct(value: unknown): number {
@@ -15371,47 +15814,12 @@ async function fetchWatchlistTickerMeta(
   }
 
   if (market === "stocks") {
-    const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY;
-
-    if (!apiKey) {
-      return {
-        name: formatChartSymbol(symbol),
-        volume24h: null,
-        change24h: null,
-      };
-    }
-
     const cleanSymbol = formatChartSymbol(symbol);
 
-    const response = await fetch(
-      `https://financialmodelingprep.com/api/v3/quote/${cleanSymbol}?apikey=${apiKey}`
-    );
-
-    if (!response.ok) {
-      return {
-        name: cleanSymbol,
-        volume24h: null,
-        change24h: null,
-      };
-    }
-
-    const data = await response.json();
-    const item = Array.isArray(data) ? data[0] : null;
-
-    if (!item) {
-      return {
-        name: cleanSymbol,
-        volume24h: null,
-        change24h: null,
-      };
-    }
-
     return {
-      name: item.name ?? cleanSymbol,
-      volume24h: Number(item.volume ?? 0),
-      change24h: parseChangePct(
-        item.changesPercentage ?? item.changePercentage ?? 0
-      ),
+      name: cleanSymbol,
+      volume24h: null,
+      change24h: null,
     };
   }
 
@@ -17523,7 +17931,7 @@ const handleGenerateAiReport = async () => {
   data: { session },
 } = await supabase.auth.getSession();
 
-const response = await fetch("/api/reports/ai-report", {
+const response = await authFetch("/api/reports/ai-report", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

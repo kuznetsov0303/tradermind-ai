@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  checkRateLimit,
+  getClientIp,
+  rateLimitResponse,
+} from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -61,6 +66,16 @@ async function canAccessSession({
 }
 
 export async function GET(request: Request) {
+    const ip = getClientIp(request);
+  const rate = checkRateLimit({
+    key: `support-messages-get:${ip}`,
+    limit: 120,
+    windowMs: 60_000,
+  });
+
+  if (!rate.ok) {
+    return rateLimitResponse(rate.resetAt);
+  }
   try {
     const { searchParams } = new URL(request.url);
     const sessionId =
@@ -80,10 +95,11 @@ export async function GET(request: Request) {
     }
 
     const { data: messages, error } = await supabaseAdmin
-      .from("support_messages")
-      .select("*")
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: true });
+  .from("support_messages")
+  .select("*")
+  .eq("session_id", sessionId)
+  .neq("sender_type", "system")
+  .order("created_at", { ascending: true });
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -103,6 +119,16 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+    const ip = getClientIp(request);
+  const rate = checkRateLimit({
+    key: `support-messages-post:${ip}`,
+    limit: 30,
+    windowMs: 60_000,
+  });
+
+  if (!rate.ok) {
+    return rateLimitResponse(rate.resetAt);
+  }
   try {
     const body = (await request.json()) as {
       sessionId?: string;

@@ -6,7 +6,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/product",
     "/pricing",
-    "/team",
+    "/about",
     "/legal/privacy-policy",
     "/legal/terms",
     "/legal/disclaimer",
@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
           ? 0.95
           : route === "/product"
             ? 0.9
-            : route === "/team"
+            : route === "/about"
               ? 0.7
               : 0.45,
   }));

@@ -2,75 +2,76 @@ import type { Metadata } from "next";
 import LegalPageShell from "@/components/marketing/LegalPageShell";
 
 export const metadata: Metadata = {
-  title: "Условия использования — SkillEdge AI",
+  title: "Terms & Conditions — SkillEdge AI",
   description:
-    "Черновик Условий использования SkillEdge AI на русском языке для проверки юристом.",
+    "SkillEdge AI terms of use covering account access, subscriptions, AI features, trading journal, market data, support, restrictions and liability limits.",
 };
 
 export default function TermsPage() {
   return (
     <LegalPageShell
-      title="Условия использования"
-      description="Краткий черновик правил использования SkillEdge AI: доступ, подписки, AI-функции, сигналы, journal, market data, ограничения ответственности и обязанности пользователя."
-      updatedAt="Черновик перед запуском"
+      title="Terms & Conditions"
+      description="Rules for using SkillEdge AI: account access, subscriptions, AI-assisted features, journal data, market intelligence, alerts, support and user responsibilities."
+      updatedAt="Last updated: May 2026"
       sections={[
         {
-          title: "Принятие условий",
-          text: "Используя сайт, личный кабинет, AI Coach, Journal, Reports, AI Alerts, Market Intelligence, Playbook, Learning Center, Support Assistant или другие функции SkillEdge AI, пользователь подтверждает, что ознакомился с настоящими Условиями использования и согласен их соблюдать.\n\nЕсли пользователь не согласен с этими условиями, он не должен использовать сайт и платформу.",
+          title: "1. Acceptance of these terms",
+          text: "By using the SkillEdge AI website, dashboard, trading journal, screenshots, AI Coach, reports, alerts, market intelligence, learning materials, support tools or any other product feature, the user agrees to follow these Terms & Conditions. If the user does not agree, the user should not use the platform.",
         },
         {
-          title: "Что такое SkillEdge AI",
-          text: "SkillEdge AI — это программная платформа для трейдеров, которая может включать торговый журнал, загрузку скриншотов, AI Coach, AI Reports, AI Alerts, Market Intelligence, графики, watchlists, playbook, обучение, поддержку, аналитику исполнения, outcome learning и другие функции.\n\nСервис предназначен для информационных, образовательных, аналитических и организационных целей. SkillEdge AI не управляет капиталом пользователя и не принимает торговые решения за пользователя.",
+          title: "2. What SkillEdge AI is",
+          text: "SkillEdge AI is a software platform for traders. It may include a trading journal, screenshot storage, analytics, AI-assisted coaching, chart review, market intelligence, alerts, reports, playbooks, learning blocks, support and execution review tools. The platform is built for informational, educational, analytical and organizational purposes. SkillEdge AI does not manage user funds and does not make trading decisions for the user.",
         },
         {
-          title: "Нет финансового совета",
-          text: "SkillEdge AI не предоставляет финансовые, инвестиционные, юридические или налоговые консультации. Любые AI-ответы, сигналы, рыночные данные, отчеты, setup breakdown, entry zone, stop, targets, confidence score, сценарии, risk notes и обучающие материалы не являются индивидуальной рекомендацией купить, продать, удерживать или шортить какой-либо актив.\n\nПользователь самостоятельно принимает все торговые и инвестиционные решения.",
+          title: "3. No financial advice",
+          text: "SkillEdge AI does not provide financial, investment, legal or tax advice. AI output, alerts, market data, reports, setup breakdowns, entry zones, stops, targets, scores, scenarios, risk notes and educational content are not individual recommendations to buy, sell, hold or short any asset. The user is solely responsible for all trading and investment decisions.",
         },
         {
-          title: "Аккаунт и ответственность пользователя",
-          text: "Пользователь отвечает за безопасность своего аккаунта, корректность введенных данных, соблюдение законодательства, правил брокеров, бирж, налоговых требований и собственный риск-менеджмент.\n\nПользователь не должен передавать доступ к аккаунту третьим лицам, пытаться получить доступ к чужим данным, обходить ограничения тарифа или использовать платформу незаконным способом.",
+          title: "4. Account responsibility",
+          text: "The user is responsible for account security, accurate information, compliance with law, broker rules, exchange rules, tax requirements and personal risk management. The user must not share account access, access another user’s data, bypass plan limits, overload the service or use the platform for unlawful activity.",
         },
         {
-          title: "Подписки, тарифы и доступ",
-          text: "Доступ к функциям SkillEdge AI может зависеть от выбранного тарифа, статуса оплаты, срока подписки, лимитов использования и технической доступности сервиса. Разные тарифы могут иметь разные лимиты по сделкам, скриншотам, AI-запросам, отчетам, alert-функциям, scanner-функциям, market data и другим возможностям.\n\nSkillEdge AI может изменять состав тарифов, цены, лимиты и доступные функции. Финальный порядок уведомления пользователей о таких изменениях должен быть согласован перед запуском.",
+          title: "5. Plans, subscriptions and access",
+          text: "Access to features may depend on the selected plan, payment status, access period, usage limits and technical availability. Core, Edge and Elite may include different limits for trades, screenshots, AI requests, reports, market intelligence, scanner features, alerts and other functionality. SkillEdge AI may update prices, limits and plan composition with reasonable notice when required.",
         },
         {
-          title: "Оплата через crypto и Stripe",
-          text: "На текущем этапе SkillEdge AI может использовать crypto payment flow: пользователь выбирает тариф, получает инструкцию, отправляет оплату, передает TXID или подтверждение платежа, после чего доступ активируется вручную или через backend-процесс.\n\nПеред релизом SkillEdge AI может подключить Stripe или другого платежного провайдера для оплаты картами, checkout, подписок, invoices, webhooks и управления платежами. В таком случае обработка платежных данных может регулироваться правилами и политиками самого провайдера.",
+          title: "6. Payments",
+          text: "SkillEdge AI may support crypto payments and, when available, card payments through an approved merchant provider. For crypto payments, the user selects a plan, follows the payment instructions, sends payment and provides the transaction identifier or confirmation. Access is activated after payment verification. Card payments, when enabled, may be processed by a third-party payment provider under its own rules.",
         },
         {
-          title: "AI-функции и сигналы",
-          text: "AI Coach, AI Reports, AI Alerts, Market Intelligence, AI Market Brief, анализ графиков, анализ журнала и другие AI-функции могут помогать пользователю структурировать торговый процесс, находить идеи, анализировать ошибки и готовить отчеты.\n\nAI-функции могут быть неточными, неполными, устаревшими или неподходящими для конкретной ситуации. AI Alerts не являются приказом к действию. Пользователь обязан самостоятельно проверять контекст, ликвидность, новости, риск/прибыль, размер позиции и собственный торговый план.",
+          title: "7. AI-assisted features and alerts",
+          text: "AI Coach, AI reports, AI alerts, market briefs, chart analysis, journal analysis and related features are designed to help users structure their process, review mistakes, prepare scenarios and organize information. AI output may be inaccurate, incomplete, delayed or unsuitable for a specific context. Alerts are not orders to trade. The user must verify market context, liquidity, news, risk/reward, position size and personal trading rules.",
         },
         {
-          title: "Market data и внешние источники",
-          text: "SkillEdge AI может использовать данные по акциям, криптовалютам, тикерам, объемам, новостям, catalyst data, social mentions, halt data, heatmaps и другим источникам. Такие данные могут быть задержанными, неполными, недоступными или содержать ошибки.\n\nФинальная версия условий должна соответствовать фактическим market data providers, лицензиям, тарифным ограничениям и архитектуре продукта перед запуском.",
+          title: "8. Market data and external sources",
+          text: "SkillEdge AI may display or process market data, prices, charts, volume, tickers, news, catalysts, social attention, halt data, heatmaps and other external information. Such information may be delayed, incomplete, unavailable or incorrect. The user should verify important data through independent sources before acting.",
         },
         {
-          title: "Журнал, скриншоты и пользовательские данные",
-          text: "Пользователь может вводить в платформу сделки, тикеры, PnL, заметки, скриншоты, планы сделок, AI-запросы и другие материалы. Пользователь отвечает за точность таких данных и подтверждает, что имеет право их использовать.\n\nSkillEdge AI может использовать эти данные для отображения статистики, AI-анализа, отчетов, execution review, outcome learning, missed opportunity coach, personal priority и других функций внутри аккаунта пользователя.",
+          title: "9. Journal, screenshots and user content",
+          text: "The user may upload or enter trades, screenshots, tickers, PnL, notes, trade plans, AI requests and other materials. The user is responsible for the accuracy and legality of this content and confirms that the user has the right to use it. SkillEdge AI may process this content to display analytics, generate reports, review execution, detect patterns and provide account-specific feedback.",
         },
         {
-  title: "Брокеры, биржи и сторонние сервисы",
-  text: "SkillEdge AI не предоставляет брокерские, биржевые, платежные или финансово-посреднические услуги и не открывает счета от имени пользователей.\n\nПользователь самостоятельно выбирает брокера, биржу или иной сторонний сервис и обязан соблюдать правила выбранной платформы и своей юрисдикции. Любые подсказки поддержки по сторонним платформам являются общей информацией и не являются рекомендацией, гарантией открытия счета, гарантией бонусов или гарантией одобрения со стороны брокера или биржи.",
-},
-        {
-          title: "Запрещенное использование",
-          text: "Пользователю запрещено взламывать сервис, обходить ограничения тарифа, перегружать API, скрейпить закрытую часть платформы, копировать интерфейс или логику продукта, реверс-инжинирить AI-prompts, перепродавать доступ, использовать сервис для незаконной деятельности или нарушать права SkillEdge AI и других пользователей.",
+          title: "10. Brokers, exchanges and third-party platforms",
+          text: "SkillEdge AI does not provide brokerage, exchange, payment-intermediary or financial-intermediary services and does not open accounts on behalf of users. The user independently chooses any broker, exchange or third-party platform and must follow the rules of that provider and the user’s jurisdiction. Support may provide general information only and does not guarantee account approval, bonuses, fees, market access, order execution or withdrawals.",
         },
         {
-          title: "Изменения сервиса",
-          text: "SkillEdge AI может обновлять, улучшать, ограничивать, временно отключать, заменять или удалять функции, особенно на этапе pre-launch, beta и раннего production. Некоторые функции могут быть тестовыми, доступными только на отдельных тарифах или подключаться позже.",
+          title: "11. Prohibited use",
+          text: "The user must not hack the service, bypass plan limits, overload APIs, scrape protected areas, copy the interface or product logic, reverse engineer private workflows, extract internal prompts, resell access, build a competing product from SkillEdge AI materials or use the platform unlawfully.",
         },
         {
-          title: "Ограничение ответственности",
-          text: "В максимально допустимой законом степени SkillEdge AI не несет ответственности за торговые убытки, упущенную прибыль, ошибки пользователя, решения на основе AI-ответов, задержки market data, сбои брокеров, бирж, платежных провайдеров, AI-провайдеров, хостинга, API или других сторонних сервисов.\n\nПользователь использует платформу на свой риск и самостоятельно отвечает за все торговые решения.",
+          title: "12. Service changes",
+          text: "SkillEdge AI may update, improve, restrict, replace or remove features as the product evolves. Some features may be available only on specific plans, subject to usage limits, or dependent on external providers and technical availability.",
         },
         {
-          title: "Контакты и финальная проверка",
-          text: "По вопросам использования сервиса пользователь может обратиться в поддержку SkillEdge AI через контакты, указанные на сайте. Перед публичным запуском необходимо добавить актуальные юридические реквизиты, email, условия поддержки, политику возвратов и финальные формулировки после проверки юристом.",
+          title: "13. Limitation of liability",
+          text: "To the maximum extent permitted by law, SkillEdge AI is not responsible for trading losses, lost profits, user errors, decisions based on AI output, delayed or incorrect market data, broker or exchange issues, payment provider issues, hosting outages, third-party API problems or other external service failures. The user uses the platform at the user’s own risk.",
+        },
+        {
+          title: "14. Contact",
+          text: "Questions about these Terms & Conditions can be sent to support@upyourskills.site.",
         },
       ]}
     />
   );
 }
+

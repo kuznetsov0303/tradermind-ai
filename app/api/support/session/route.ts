@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  checkRateLimit,
+  getClientIp,
+  rateLimitResponse,
+} from "@/lib/security/rate-limit";
 
 export const runtime = "nodejs";
 
@@ -29,6 +34,16 @@ async function getRequestUser(request: Request) {
 }
 
 export async function POST(request: Request) {
+    const ip = getClientIp(request);
+  const rate = checkRateLimit({
+    key: `support-session:${ip}`,
+    limit: 20,
+    windowMs: 60_000,
+  });
+
+  if (!rate.ok) {
+    return rateLimitResponse(rate.resetAt);
+  }
   try {
     const user = await getRequestUser(request);
     const body = (await request.json()) as SessionRequestBody;
