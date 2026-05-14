@@ -179,7 +179,7 @@ function extractJson(text: string) {
 function fallbackAnalysis(items: MarketAIInputItem[]): MarketAIAnalysisResponse {
   return {
     summary:
-      "SkillEdge AI preview is temporarily using fallback analysis. Real AI output was not parsed correctly.",
+      "SkillEdge AI fallback analysis is active because the AI response could not be parsed correctly.",
     items: items.map((item) => ({
       symbol: item.symbol,
       verdict: "Watchlist candidate",
@@ -245,7 +245,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "SkillEdge AI is not configured yet. Add OPENAI_API_KEY to backend environment variables.",
+            "SkillEdge AI analysis is not available right now. Please try again later or contact support.",
         },
         { status: 500 }
       );

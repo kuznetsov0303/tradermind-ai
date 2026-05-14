@@ -532,7 +532,7 @@ setMessages((previousMessages) =>
 );
       }
     } catch {
-      // Temporary network/dev errors are ignored.
+      // Network errors are ignored here to keep the support widget stable.
     }
   };
 

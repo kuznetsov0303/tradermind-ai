@@ -194,7 +194,7 @@ const dict = {
       signalText:
         "A weak signal service creates dependency. A strong trading system creates clarity: setup, risk, confirmation, invalidation and the lesson after the outcome.",
       signalCards: [
-        ["Not blind calls", "Signals are structured trade ideas with setup, direction, trigger, entry zone, stop, targets and risk."],
+        ["Structured signals", "Signals are structured setups with direction, trigger, entry zone, stop, targets and risk."],
         ["Breakdown before action", "Every serious alert explains why it appeared, what confirms it and what makes it dangerous."],
         ["Signal-to-Journal", "A taken alert can become a journal trade so the plan and execution can be compared."],
         ["Outcome coaching", "Taken, skipped and missed decisions show missed opportunities, good skips and weak execution."],
@@ -248,7 +248,7 @@ const dict = {
         ["AI & Data Layer", "Builds scanner logic, AI prompts, data enrichment, usage limits and backend gates."],
         ["Design & Experience", "Shapes the dashboard, public pages, locked states, loading states and premium interface."],
         ["Support Operations", "Handles customer questions, operator flow, payments, access and product guidance."],
-        ["Security & Infrastructure", "Protects routes, API keys, Supabase access, rate limits and production deployment."],
+        ["Security & Infrastructure", "Protects private access, platform data, rate limits and client workflows."],
       ],
       principlesEyebrow: "Principles",
       principlesTitle: "A serious trading product must be honest about risk and serious about process.",
@@ -365,7 +365,7 @@ const dict = {
       ctaSecondary: "Зачем мы это строим",
       heroCards: [
         ["AI Trading Desk", "Рыночная разведка, сигналы, журнал и коучинг в одной системе."],
-        ["Сигнал → журнал", "Создавай черновик сделки из сигнала и сравнивай план с реальным исполнением."],
+        ["Сигнал → журнал", "Создавай сделку из сигнала и сравнивай план с реальным исполнением."],
         ["Личное преимущество", "Долгосрочная архитектура строится вокруг лучших и худших паттернов самого трейдера."],
       ],
       deskTitle: "Торговый desk должен давать контекст, а не слепые команды.",
@@ -555,7 +555,7 @@ const dict = {
         "Launch-основа уже продуктовая: журнал, сигналы, обучение, отчёты, поддержка, оплата и рыночная разведка. Следующий слой — premium data, полный market scan и персональные сигналы на базе истории клиента.",
       roadmap: [
         ["01", "Launch foundation", "Журнал, dashboard, скриншоты, обучение, отчёты, crypto-доступ и фундамент поддержки."],
-        ["02", "Сигналы и поведение", "AI-сигналы, отслеживание решений, черновики сделок, outcome learning и коучинг упущенных возможностей."],
+        ["02", "Сигналы и поведение", "AI-сигналы, отслеживание решений, подготовка сделок, обучение на исходах и коучинг упущенных возможностей."],
         ["03", "Premium data", "Полное покрытие тикеров, Binance universe, катализаторы, heatmaps, halt screener и более сильная логика сканера."],
         ["04", "Личное преимущество", "AI учится на лучших сетапах клиента, слабых паттернах, ошибках исполнения и истории журнала."],
       ],
@@ -657,7 +657,7 @@ const dict = {
       ctaSecondary: "Навіщо ми це будуємо",
       heroCards: [
         ["AI Trading Desk", "Ринкова розвідка, сигнали, журнал і коучинг в одній системі."],
-        ["Сигнал → журнал", "Створюй чернетку угоди із сигналу та порівнюй план із реальним виконанням."],
+        ["Сигнал → журнал", "Створюй угоди із сигналів та порівнюй план із реальним виконанням."],
         ["Особиста перевага", "Довгострокова архітектура будується навколо найкращих і найгірших патернів самого трейдера."],
       ],
       deskTitle: "Trading desk має давати контекст, а не сліпі команди.",
@@ -847,7 +847,7 @@ const dict = {
         "Launch-основа вже продуктова: журнал, сигнали, навчання, звіти, підтримка, оплата та ринкова розвідка. Наступний шар — premium data, повний market scan і персональні сигнали на основі історії клієнта.",
       roadmap: [
         ["01", "Launch foundation", "Журнал, dashboard, скріншоти, навчання, звіти, crypto-доступ і фундамент підтримки."],
-        ["02", "Сигнали та поведінка", "AI-сигнали, відстеження рішень, чернетки угод, outcome learning і коучинг упущених можливостей."],
+        ["02", "Сигнали та поведінка", "AI-сигнали, відстеження рішень, підготовка угод, навчання на результатах і коучинг упущених можливостей."],
         ["03", "Premium data", "Повне покриття тикерів, Binance universe, каталізатори, heatmaps, halt screener і сильніша логіка сканера."],
         ["04", "Особиста перевага", "AI навчається на найкращих сетапах клієнта, слабких патернах, помилках виконання та історії журналу."],
       ],

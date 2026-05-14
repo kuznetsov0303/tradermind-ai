@@ -68,7 +68,7 @@ export async function POST(req: Request) {
 
     if (!openaiApiKey) {
       return NextResponse.json(
-        { error: "Missing OPENAI_API_KEY" },
+        { error: "SkillEdge AI coach is not available right now." },
         { status: 500 }
       );
     }
@@ -212,7 +212,7 @@ User's current plan:
     const openaiData = await response.json();
 
     if (!response.ok) {
-  console.error("OPENAI ERROR:", JSON.stringify(openaiData, null, 2));
+  console.error("AI COACH ERROR:", JSON.stringify(openaiData, null, 2));
 
   return NextResponse.json(
     {

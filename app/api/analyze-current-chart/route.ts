@@ -258,7 +258,7 @@ async function createAiAnalysis({
   stats: ReturnType<typeof calculateSimpleStats>;
 }) {
   if (!OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is missing.");
+    throw new Error("SkillEdge AI chart analysis is not available right now.");
   }
 
   const compactCandles = candles.slice(-40).map((candle) => ({
@@ -521,7 +521,7 @@ Write exactly one short sentence:
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(errorText || "OpenAI request failed.");
+    throw new Error(errorText || "SkillEdge AI analysis request failed.");
   }
 
   const data = await response.json();
@@ -560,7 +560,7 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error:
-            "OPENAI_API_KEY is missing. Add OPENAI_API_KEY to .env.local and restart the dev server.",
+            "SkillEdge AI chart analysis is not available right now. Please try again later or contact support.",
         },
         { status: 500 }
       );

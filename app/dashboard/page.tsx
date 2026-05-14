@@ -222,7 +222,7 @@ const dashboardDict = {
         "SkillEdge AI could not load market data for this symbol on the current data plan. Try a more liquid ticker such as AAPL, TSLA, NVDA, SPY or QQQ.",
       marketDataPremiumTitle: "Premium market data required",
       marketDataPremiumText:
-        "This symbol, timeframe or data endpoint may require a higher market data plan. Before launch, SkillEdge AI will support broader premium market coverage.",
+  "This symbol, timeframe or data endpoint may require a higher market data plan. SkillEdge AI uses premium market coverage where available.",
       marketDataGenericErrorTitle: "Analysis unavailable",
       marketDataGenericErrorText:
         "We could not complete the chart analysis right now. Try another ticker, timeframe, or run the analysis again.",
@@ -250,7 +250,7 @@ const dashboardDict = {
       notStartedStatus: "Not started",
       inProgressStatus: "In progress",
       completedStatus: "Completed",
-      lockedLabel: "Coming soon",
+      lockedLabel: "Requires access",
       estimatedTimeLabel: "Estimated time",
       levelLabel: "Level",
       beginnerLevel: "Beginner",
@@ -301,7 +301,7 @@ const dashboardDict = {
       advancedTracksLabel: "Advanced tracks",
       advancedTracksText:
         "Additional specialized learning paths for deepening the trading system inside SkillEdge AI.",
-      comingSoonButton: "Coming soon",
+      comingSoonButton: "Requires access",
       activeModuleLabel: "Active module",
       openLessonButton: "Open lesson",
       selectedModuleHint:
@@ -818,7 +818,7 @@ const dashboardDict = {
         "SkillEdge AI не смог загрузить рыночные данные по этому тикеру на текущем тарифе данных. Попробуй более ликвидный тикер: AAPL, TSLA, NVDA, SPY или QQQ.",
       marketDataPremiumTitle: "Нужен премиум-доступ к рыночным данным",
       marketDataPremiumText:
-        "Этот тикер, таймфрейм или источник данных может требовать более высокий тариф рыночных данных. К запуску SkillEdge AI будет поддерживать более широкое премиальное покрытие рынка.",
+  "Этот тикер, таймфрейм или источник данных может требовать более высокий тариф рыночных данных. SkillEdge AI использует премиальное рыночное покрытие там, где оно доступно.",
       marketDataGenericErrorTitle: "Анализ временно недоступен",
       marketDataGenericErrorText:
         "Сейчас не удалось выполнить анализ графика. Попробуй другой тикер, таймфрейм или запусти анализ ещё раз.",
@@ -1413,7 +1413,7 @@ const dashboardDict = {
         "SkillEdge AI не зміг завантажити ринкові дані по цьому тикеру на поточному тарифі даних. Спробуй більш ліквідний тикер: AAPL, TSLA, NVDA, SPY або QQQ.",
       marketDataPremiumTitle: "Потрібен преміум-доступ до ринкових даних",
       marketDataPremiumText:
-        "Цей тикер, таймфрейм або джерело даних може вимагати вищий тариф ринкових даних. До запуску SkillEdge AI підтримуватиме ширше преміальне покриття ринку.",
+  "Цей тикер, таймфрейм або джерело даних може вимагати вищий тариф ринкових даних. SkillEdge AI використовує преміальне ринкове покриття там, де воно доступне.",
       marketDataGenericErrorTitle: "Аналіз тимчасово недоступний",
       marketDataGenericErrorText:
         "Зараз не вдалося виконати аналіз графіка. Спробуй інший тикер, таймфрейм або запусти аналіз ще раз.",
@@ -2217,7 +2217,7 @@ const handleCoachSubmit = async () => {
       return;
     }
 
-    const response = await fetch("/api/ai-coach", {
+    const response = await authFetch("/api/ai-coach", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -2666,7 +2666,7 @@ const handleJournalAnalysis = async () => {
       return;
     }
 
-    const response = await fetch("/api/journal-analysis", {
+    const response = await authFetch("/api/journal-analysis", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -2794,7 +2794,7 @@ const handleTradeChartAnalysis = async (tradeId: string) => {
       return;
     }
 
-    const response = await fetch("/api/analyze-trade-screenshot", {
+    const response = await authFetch("/api/analyze-trade-screenshot", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -3493,19 +3493,20 @@ function getSignalExecutionReview(trade: Trade) {
 
 const signalLinkedTradeCopy = {
   en: {
-    linkedTrade: "{signalCopy.linkedTrade}",
+    linkedTrade: "Signal-linked trade",
     defaultSignal: "SkillEdge AI Signal",
     alertConfidence: "Alert confidence",
-    entryQuality: "{signalCopy.entryQuality}",
+    entryQuality: "Entry quality",
     noPlanZone: "No plan zone",
     inZone: "In zone",
     outsideZone: "Outside zone",
     plan: "Plan",
-    stopAdherence: "{signalCopy.stopAdherence}",
+    stopAdherence: "Stop adherence",
     noStopData: "No stop data",
     matched: "Matched",
     different: "Different",
-    targetResult: "{signalCopy.targetResult}",
+    targetResult: "Target result",
+    noTarget: "Target not reached",
     direction: "Direction",
     trade: "Trade",
     strongExecution: "Strong execution",
@@ -3513,12 +3514,13 @@ const signalLinkedTradeCopy = {
     weakExecution: "Weak execution",
     planBroken: "Plan broken",
     strongText:
-      "You followed the alert plan well. This is the type of execution SkillEdge AI should track as a personal strength.",
+      "You followed the signal plan well. This execution should be tracked as a personal strength.",
     mediumText:
       "Execution was acceptable, but review entry timing, stop placement and target management.",
     weakText:
-      "Execution likely deviated from the original alert plan. Review whether you entered late, changed the stop, or ignored confirmation.",
+      "Execution likely deviated from the original signal plan. Check whether you entered late, changed the stop or ignored confirmation.",
   },
+
   ru: {
     linkedTrade: "Сделка связана с сигналом",
     defaultSignal: "Сигнал SkillEdge AI",
@@ -3547,6 +3549,7 @@ const signalLinkedTradeCopy = {
     weakText:
       "Исполнение, вероятно, отклонилось от исходного плана сигнала. Проверь, не вошёл ли ты поздно, не изменил ли стоп или не проигнорировал подтверждение.",
   },
+
   ua: {
     linkedTrade: "Угода пов’язана із сигналом",
     defaultSignal: "Сигнал SkillEdge AI",
@@ -4784,7 +4787,7 @@ const downloadTradesXlsx = () => {
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
-              {getSignalTargetHitCopy(executionReview.targetHit, language)}
+              {getSignalTargetHitCopy(executionReview.targetHit, journalLanguage)}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
@@ -6917,7 +6920,7 @@ quality: "Качество",
 saveToPlaybook: "Сохранить в Playbook",
 savingToPlaybook: "Сохраняем...",
 savedToPlaybook: "Сохранено",
-createTradeDraft: "Создать черновик сделки",
+createTradeDraft: "Создать сделку из сигнала",
 openPlaybook: "Открыть Playbook",
 hidePlaybook: "Скрыть Playbook",
 playbookTitle: "Personal Signal Playbook",
@@ -7015,12 +7018,12 @@ reasonTooLate: "Слишком поздно",
 reasonRiskHigh: "Риск слишком высокий",
 reasonLiquidity: "Спред / ликвидность",
 reasonNotAtDesk: "Не был у экрана",
-reasonTradeDraftCreated: "Черновик сделки создан",
+reasonTradeDraftCreated: "Сделка из сигнала создана",
 topReason: "Главная причина",
 allReasons: "Все причины",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "Ты отметил сигнал как Taken. Создай черновик сделки, чтобы SkillEdge сравнил план сигнала с твоим реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
+  "Ты отметил сигнал как Taken. Создай сделку из сигнала, чтобы SkillEdge сравнил план сигнала с твоим реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
 journalSyncAction: "Создать trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
@@ -7080,7 +7083,7 @@ executionFocusTitle: "Personal Execution Focus",
 executionFocusText:
   "SkillEdge выбирает главный фокус на основе связанных Journal-сделок и отклонений от плана сигнала.",
 executionFocusEmpty:
-  "Пока недостаточно linked trades для персонального фокуса. Создай сделки из alerts, чтобы SkillEdge начал находить повторяющиеся слабые места.",
+  "Пока недостаточно linked trades для персонального фокуса. Создай сделки из сигналов, чтобы SkillEdge начал находить повторяющиеся слабые места.",
 focusEntryText:
   "Главный фокус — entry timing. Проверь, не входишь ли ты поздно или вне плановой зоны сигнала.",
 focusStopText:
@@ -7670,7 +7673,7 @@ topReason: "Top reason",
 allReasons: "Усі причини",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "Ти відмітив сигнал як Taken. Створи чернетку угоди, щоб SkillEdge порівняв план сигналу з твоїм реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
+  "Ти відмітив сигнал як Taken. Створи угоду із сигналу, щоб SkillEdge порівняв план сигналу з твоїм реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
 journalSyncAction: "Створити trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
@@ -7924,8 +7927,8 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
       breakdownTitle: "Разбор сигнала SkillEdge AI",
       journalSyncTitle: "Связка с журналом",
       journalSyncText:
-        "Ты отметил сигнал как «Взял». Создай черновик сделки, чтобы SkillEdge позже сравнил план сигнала с реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
-      journalSyncAction: "Создать черновик сделки",
+        "Ты отметил сигнал как «Взял». Создай сделку из сигнала, чтобы SkillEdge позже сравнил план сигнала с реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
+      journalSyncAction: "Создать сделку из сигнала",
       linkedJournalTitle: "Связанная сделка в журнале",
       linkedJournalText:
         "Эта сделка уже связана с сигналом. SkillEdge сможет сравнить план сигнала с реальным исполнением клиента.",
@@ -7944,7 +7947,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
       takenWithoutJournalFilter: "Взято без журнала",
       takenWithoutJournalTitle: "Сигнал взят, но сделки в журнале нет",
       takenWithoutJournalText:
-        "Клиент отметил сигнал как «Взял», но ещё не сохранил сделку в журнал. Создай черновик сделки, чтобы SkillEdge смог сравнить план сигнала с реальным исполнением.",
+        "Клиент отметил сигнал как «Взял», но ещё не сохранил сделку в журнал. Создай сделку из сигнала, чтобы SkillEdge смог сравнить план сигнала с реальным исполнением.",
       executionScore: "Оценка исполнения",
       executionReview: "Разбор исполнения",
       filterJournalLinked: "Связано с журналом",
@@ -8125,8 +8128,8 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
       learningLayer: "Навчальний шар",
       journalSyncTitle: "Зв’язка з журналом",
       journalSyncText:
-        "Ти відмітив сигнал як «Взяв». Створи чернетку угоди, щоб SkillEdge пізніше порівняв план сигналу з реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
-      journalSyncAction: "Створити чернетку угоди",
+        "Ти відмітив сигнал як «Взяв». Створи угоду із сигналу, щоб SkillEdge пізніше порівняв план сигналу з реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
+      journalSyncAction: "Створити угоду із сигналу",
       linkedJournalTitle: "Пов’язана угода в журналі",
       linkedJournalText:
         "Ця угода вже пов’язана із сигналом. SkillEdge зможе порівняти план сигналу з реальним виконанням клієнта.",
@@ -8145,7 +8148,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
       takenWithoutJournalFilter: "Взято без журналу",
       takenWithoutJournalTitle: "Сигнал взято, але угоди в журналі немає",
       takenWithoutJournalText:
-        "Клієнт відмітив сигнал як «Взяв», але ще не зберіг угоду в журнал. Створи чернетку угоди, щоб SkillEdge зміг порівняти план сигналу з реальним виконанням.",
+        "Клієнт відмітив сигнал як «Взяв», але ще не зберіг угоду в журнал. Створи угоду із сигналу, щоб SkillEdge зміг порівняти план сигналу з реальним виконанням.",
       executionScore: "Оцінка виконання",
       executionReview: "Розбір виконання",
       executionStrong: "Сильне виконання",
@@ -12828,7 +12831,7 @@ type MarketAIBriefHistoryResponse = {
       aiSoonText:
         "AI-слой помогает разобрать сценарий, совпадения факторов, риск ловушки, условия отмены идеи и дальнейший план наблюдения.",
       dataNote:
-        "Сейчас используются подключённые источники данных. Перед запуском расширяем покрытие рынка, внутридневные таймфреймы и полный universe акций/крипто через premium data stack.",
+        "Сейчас используются подключённые источники данных. Production data stack расширит покрытие рынка, внутридневные таймфреймы и полный universe акций/крипто.",
       refreshAll: "Обновить всё",
       aiAnalyzeTop: "AI-обзор рынка",
       aiAnalyzeTitle: "AI-обзор топ-10 возможностей",
@@ -12899,7 +12902,7 @@ type MarketAIBriefHistoryResponse = {
       aiSoonText:
         "The AI layer helps review scenarios, confluence, trap risk, invalidation and the next observation plan.",
       dataNote:
-        "Connected data sources are used now. Before launch we expand market coverage, intraday timeframes and full stock/crypto universe through a premium data stack.",
+        "Connected data sources are used now. The production data stack expands market coverage, intraday timeframes and the full stock/crypto universe through premium market infrastructure.",
       refreshAll: "Refresh all",
       aiAnalyzeTop: "AI Market Brief",
       aiAnalyzeTitle: "AI Market Brief for top 10 opportunities",
@@ -12970,7 +12973,7 @@ type MarketAIBriefHistoryResponse = {
       aiSoonText:
         "AI-шар допомагає розібрати сценарій, збіг факторів, ризик пастки, умови скасування ідеї та подальший план спостереження.",
       dataNote:
-        "Зараз використовуються підключені джерела даних. Перед запуском розширюємо покриття ринку, внутрішньоденні таймфрейми та повний universe акцій/крипто через premium data stack.",
+        "Зараз використовуються підключені джерела даних. Production data stack розширить покриття ринку, внутрішньоденні таймфрейми та повний universe акцій/крипто.",
       refreshAll: "Оновити все",
       aiAnalyzeTop: "AI-огляд ринку",
       aiAnalyzeTitle: "AI-огляд топ-10 можливостей",

@@ -400,7 +400,7 @@ function buildPremiumSignalPlaybook(params: {
       ],
       lesson_summary:
         "This is a short-side continuation idea. The edge is not in chasing the first dump, but in waiting for failed recovery and continuation after sellers stay in control.",
-      playbook_status: "mvp_training_layer",
+      playbook_status: "training_layer",
     };
   }
 
@@ -423,7 +423,7 @@ function buildPremiumSignalPlaybook(params: {
       ],
       lesson_summary:
         "This is a crypto liquidity reclaim idea. The goal is to catch continuation after trapped sellers are forced out, not to buy the first green candle blindly.",
-      playbook_status: "mvp_training_layer",
+      playbook_status: "training_layer",
     };
   }
 
@@ -446,7 +446,7 @@ function buildPremiumSignalPlaybook(params: {
       ],
       lesson_summary:
         "This is a backside fade idea. The best version appears after a strong move fails, buyers lose control, and price starts accepting below the key level.",
-      playbook_status: "mvp_training_layer",
+      playbook_status: "training_layer",
     };
   }
 
@@ -470,7 +470,7 @@ function buildPremiumSignalPlaybook(params: {
     lesson_summary: params.catalyst
       ? "This is a catalyst momentum continuation idea. The edge comes from fresh attention plus confirmation, not from chasing the first spike."
       : "This is a momentum continuation idea. The edge comes from controlled continuation after volume expansion, with clear invalidation.",
-    playbook_status: "mvp_training_layer",
+    playbook_status: "training_layer",
   };
 }
 
