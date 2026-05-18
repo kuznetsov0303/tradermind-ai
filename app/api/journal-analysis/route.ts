@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
 import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
+import {
+  getSkillEdgeJournalAnalysisPrompt,
+  getSkillEdgeConciseOutputRules,
+} from "@/lib/ai/skill-edge-prompts";
 
 type Trade = {
   id: string;
@@ -25,11 +29,17 @@ type Trade = {
 };
 
 function getOpenAIModel(planId: string | null) {
-  if (planId === "starter") return "gpt-4o-mini";
-  if (planId === "pro") return "gpt-4o-mini";
-  if (planId === "elite") return "gpt-4o-mini";
+  const normalizedPlanId = String(planId || "").toLowerCase();
 
-  return "gpt-4o-mini";
+  if (normalizedPlanId.includes("elite")) {
+    return process.env.SKILLEDGE_ELITE_AI_MODEL || "gpt-5.1";
+  }
+
+  if (normalizedPlanId.includes("edge") || normalizedPlanId.includes("pro")) {
+    return process.env.SKILLEDGE_EDGE_AI_MODEL || "gpt-5-mini";
+  }
+
+  return process.env.SKILLEDGE_CORE_AI_MODEL || "gpt-4.1-mini";
 }
 
 function getPublicPlanName(planId: string | null) {
@@ -209,6 +219,21 @@ if (!usage.allowed) {
   );
 }
 
+const systemPrompt = [
+  getSkillEdgeJournalAnalysisPrompt({
+    language,
+    plan: planId,
+    userContext: [
+      `Public AI brand: ${publicPlanName}`,
+      `Plan ID: ${planId}`,
+      `AI usage this month: ${usage.used}/${usage.limit}`,
+      `Closed trades analyzed: ${safeTrades.length}`,
+      `Trade summary: ${summary}`,
+    ].join("\n"),
+  }),
+  getSkillEdgeConciseOutputRules(),
+].join("\n\n");
+
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -221,17 +246,17 @@ if (!usage.allowed) {
         max_tokens: 1200,
         messages: [
           {
-            role: "system",
-            content:
-  `You are SkillEdge AI, a professional trading journal analyst. Do not mention OpenAI, GPT, or model names. Analyze trading performance with discipline, risk, setup quality, execution mistakes, psychology, and improvement priorities. ${getOutputLanguageInstruction(language)}`,
-          },
+  role: "system",
+  content: systemPrompt,
+},
           {
             role: "user",
             content: JSON.stringify(
               {
   plan: publicPlanName,
 language,
-outputLanguageInstruction: getOutputLanguageInstruction(language),
+analysisStyle:
+  "SkillEdge desk review: desk verdict, what is working, what is leaking money, best repeatable setup, worst behavior, next 3 rules.",
 aiUsageThisMonth: {
   used: usage.used,
   limit: usage.limit,

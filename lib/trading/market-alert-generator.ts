@@ -1,23 +1,10 @@
-import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
-import { canUseFeature, normalizePlanId } from "@/lib/plan-limits";
-import { requireFeatureAccess } from "@/lib/security/feature-gate";
 import { buildSkillEdgeAlertFromCandidate } from "@/lib/trading/skill-edge-alert-engine";
-import {
-  buildSkillEdgeStructureTradePlan,
-  type SkillEdgeCandle,
-} from "@/lib/trading/market-structure";
+import { buildSkillEdgeStructureTradePlan } from "@/lib/trading/market-structure";
+import type { SkillEdgeCandle } from "@/lib/trading/market-structure";
 import { fetchSkillEdgeCandles } from "@/lib/trading/market-candles-provider";
-import {
-  analyzeSkillEdgePriceActionPatterns,
-  type SkillEdgePriceActionPatternAnalysis,
-} from "@/lib/trading/price-action-patterns";
-import { generateMarketAlertsInternal } from "@/lib/trading/market-alert-generator";
-import { deliverLatestPersistedSignalsToTelegram } from "@/lib/trading/signal-delivery";
-import { loadMarketAlertFeed } from "@/lib/trading/market-alert-feed";
-
-export const runtime = "nodejs";
-
+import { analyzeSkillEdgePriceActionPatterns } from "@/lib/trading/price-action-patterns";
+import type { SkillEdgePriceActionPatternAnalysis } from "@/lib/trading/price-action-patterns";
 type MarketScannerRow = {
   symbol: string;
   exchange: string | null;
@@ -104,39 +91,6 @@ setup_description: string;
 setup_confirmation: string;
 setup_common_mistake: string;
 };
-
-async function getRequestUser(request: Request) {
-  const authHeader = request.headers.get("authorization") || "";
-  const token = authHeader.startsWith("Bearer ")
-    ? authHeader.slice("Bearer ".length)
-    : "";
-
-  if (!token) return null;
-
-  const { data, error } = await supabaseAdmin.auth.getUser(token);
-
-  if (error || !data.user) return null;
-
-  return data.user;
-}
-
-async function getUserPlan(userId: string) {
-  const { data } = await supabaseAdmin
-    .from("subscriptions")
-    .select("plan_id, status, expires_at")
-    .eq("user_id", userId)
-    .eq("status", "active")
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  const expiresAt = data?.expires_at ? new Date(data.expires_at).getTime() : null;
-  const isExpired = expiresAt ? expiresAt < Date.now() : false;
-
-  if (!data || isExpired) return "core";
-
-  return normalizePlanId(data.plan_id);
-}
 
 function normalizeSymbol(symbol: string) {
   return symbol.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
@@ -291,6 +245,456 @@ function buildSignalVolumeGate(row: MarketScannerRow, assetType: "stock" | "cryp
         ? `volume ${formatSignalVolume(tradedVolume)} USD >= ${formatSignalVolume(minVolume)} USD`
         : `volume ${formatSignalVolume(tradedVolume)} shares >= ${formatSignalVolume(minVolume)} shares`,
   };
+}
+
+type FmpSignalMover = {
+  symbol?: string | null;
+  ticker?: string | null;
+  name?: string | null;
+  companyName?: string | null;
+  price?: number | string | null;
+  changesPercentage?: number | string | null;
+  changePercentage?: number | string | null;
+  change?: number | string | null;
+  changes?: number | string | null;
+  volume?: number | string | null;
+  avgVolume?: number | string | null;
+  marketCap?: number | string | null;
+  exchange?: string | null;
+  exchangeShortName?: string | null;
+};
+
+type StockSeedResult = {
+  enabled: boolean;
+  loaded: number;
+  inserted: number;
+  error: string | null;
+};
+
+function getFmpSignalApiKey() {
+  return (
+    process.env.FMP_API_KEY ||
+    process.env.NEXT_PUBLIC_FMP_API_KEY ||
+    ""
+  ).trim();
+}
+
+function getFmpSignalBaseUrl() {
+  return (process.env.FMP_STABLE_BASE_URL || "https://financialmodelingprep.com/stable")
+    .replace(/\/+$/g, "");
+}
+
+function isStockSignalSeedEnabled() {
+  const value = String(process.env.FMP_ENABLED ?? process.env.SIGNAL_STOCK_SEED_ENABLED ?? "true")
+    .trim()
+    .toLowerCase();
+
+  return !["false", "0", "off", "no"].includes(value);
+}
+
+function getStockSeedMinChangePct() {
+  return parseFiniteSignalNumber(process.env.SIGNAL_STOCK_SEED_MIN_CHANGE_PCT) ?? 5;
+}
+
+function getStockSeedLimitPerEndpoint() {
+  return Math.max(
+    10,
+    Math.min(150, parseFiniteSignalNumber(process.env.SIGNAL_STOCK_SEED_LIMIT_PER_ENDPOINT) ?? 100)
+  );
+}
+
+function isProbablyTradeableUsStock(symbol: string) {
+  const normalized = normalizeSymbol(symbol);
+
+  if (!normalized) return false;
+  if (!/^[A-Z]{1,5}$/.test(normalized)) return false;
+
+  return true;
+}
+
+function getFmpSignalApiError(payload: unknown): string | null {
+  if (!payload || typeof payload !== "object") return null;
+
+  const record = payload as Record<string, unknown>;
+
+  return (
+    String(
+      record["Error Message"] ||
+        record["Error"] ||
+        record["error"] ||
+        record["message"] ||
+        ""
+    ).trim() || null
+  );
+}
+
+function buildFmpSignalUrl(path: string, baseUrl: string, apiKey: string) {
+  const cleanBase = baseUrl.replace(/\/+$/g, "");
+  const cleanPath = path.replace(/^\/+/g, "");
+  const separator = cleanPath.includes("?") ? "&" : "?";
+
+  return `${cleanBase}/${cleanPath}${separator}apikey=${encodeURIComponent(apiKey)}`;
+}
+
+async function fetchFmpSignalArray(
+  stablePath: string,
+  legacyPath?: string
+): Promise<FmpSignalMover[]> {
+  const apiKey = getFmpSignalApiKey();
+
+  if (!apiKey) {
+    throw new Error("FMP_API_KEY is missing.");
+  }
+
+  const attempts = [
+    {
+      label: "stable",
+      url: buildFmpSignalUrl(stablePath, getFmpSignalBaseUrl(), apiKey),
+    },
+    legacyPath
+      ? {
+          label: "legacy",
+          url: buildFmpSignalUrl(
+            legacyPath,
+            process.env.FMP_LEGACY_BASE_URL || "https://financialmodelingprep.com/api/v3",
+            apiKey
+          ),
+        }
+      : null,
+  ].filter(Boolean) as Array<{ label: string; url: string }>;
+
+  const errors: string[] = [];
+
+  for (const attempt of attempts) {
+    try {
+      const response = await fetch(attempt.url, {
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+        },
+      });
+
+      const text = await response.text();
+      let payload: unknown = null;
+
+      try {
+        payload = JSON.parse(text);
+      } catch {
+        payload = text;
+      }
+
+      if (!response.ok) {
+        errors.push(`${attempt.label}: HTTP ${response.status} ${text.slice(0, 180)}`);
+        continue;
+      }
+
+      const apiError = getFmpSignalApiError(payload);
+
+      if (apiError) {
+        errors.push(`${attempt.label}: ${apiError}`);
+        continue;
+      }
+
+      if (!Array.isArray(payload)) {
+        errors.push(
+          `${attempt.label}: expected array, got ${typeof payload}. Payload preview: ${text.slice(
+            0,
+            180
+          )}`
+        );
+        continue;
+      }
+
+      const rows = payload as FmpSignalMover[];
+
+      // Важно: stable quote иногда может вернуть [].
+      // Тогда не считаем это успехом, а пробуем legacy fallback.
+      if (rows.length === 0 && legacyPath) {
+        errors.push(`${attempt.label}: empty array`);
+        continue;
+      }
+
+      return rows;
+    } catch (error) {
+      errors.push(
+        `${attempt.label}: ${error instanceof Error ? error.message : "Unknown FMP fetch error"}`
+      );
+    }
+  }
+
+  throw new Error(`FMP seed failed. ${errors.join(" | ")}`);
+}
+
+function mergeFmpMoverWithQuote(item: FmpSignalMover, quote: FmpSignalMover | null): FmpSignalMover {
+  if (!quote) return item;
+
+  return {
+    ...item,
+    symbol: item.symbol || quote.symbol || quote.ticker,
+    ticker: item.ticker || quote.ticker || quote.symbol,
+    name: item.name || quote.name || quote.companyName,
+    companyName: item.companyName || quote.companyName || quote.name,
+    price: firstFiniteSignalNumber(item.price) ?? quote.price ?? item.price,
+    changesPercentage:
+      firstFiniteSignalNumber(item.changesPercentage) ??
+      firstFiniteSignalNumber(item.changePercentage) ??
+      quote.changesPercentage ??
+      quote.changePercentage ??
+      item.changesPercentage,
+    changePercentage:
+      firstFiniteSignalNumber(item.changePercentage) ??
+      firstFiniteSignalNumber(item.changesPercentage) ??
+      quote.changePercentage ??
+      quote.changesPercentage ??
+      item.changePercentage,
+    change: firstFiniteSignalNumber(item.change) ?? quote.change ?? item.change,
+    changes: firstFiniteSignalNumber(item.changes) ?? quote.changes ?? item.changes,
+    volume: firstFiniteSignalNumber(item.volume) ?? quote.volume ?? item.volume,
+    avgVolume: firstFiniteSignalNumber(item.avgVolume) ?? quote.avgVolume ?? item.avgVolume,
+    marketCap: firstFiniteSignalNumber(item.marketCap) ?? quote.marketCap ?? item.marketCap,
+    exchange: item.exchange || quote.exchange,
+    exchangeShortName: item.exchangeShortName || quote.exchangeShortName,
+  };
+}
+
+async function fetchFmpQuotesForSignalSymbols(symbols: string[]): Promise<Map<string, FmpSignalMover>> {
+  const uniqueSymbols = Array.from(
+    new Set(symbols.map((symbol) => normalizeSymbol(symbol)).filter(Boolean))
+  ).slice(0, 200);
+
+  const result = new Map<string, FmpSignalMover>();
+
+  if (uniqueSymbols.length === 0) return result;
+
+  for (let index = 0; index < uniqueSymbols.length; index += 50) {
+    const batch = uniqueSymbols.slice(index, index + 50);
+    const joinedSymbols = batch.join(",");
+
+    try {
+      const quotes = await fetchFmpSignalArray(
+        `quote?symbol=${encodeURIComponent(joinedSymbols)}`,
+        `quote/${joinedSymbols}`
+      );
+
+      for (const quote of quotes) {
+        const symbol = normalizeSymbol(String(quote.symbol || quote.ticker || ""));
+
+        if (symbol) {
+          result.set(symbol, quote);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "FMP batch quote enrichment failed:",
+        error instanceof Error ? error.message : error
+      );
+
+      // Fallback: если batch quote не сработал, пробуем по одному тикеру.
+      for (const symbol of batch) {
+        try {
+          const quotes = await fetchFmpSignalArray(
+            `quote?symbol=${encodeURIComponent(symbol)}`,
+            `quote/${symbol}`
+          );
+
+          const quote = quotes[0];
+
+          if (quote) {
+            const normalized = normalizeSymbol(String(quote.symbol || quote.ticker || symbol));
+
+            if (normalized) {
+              result.set(normalized, quote);
+            }
+          }
+        } catch (singleError) {
+          console.error(
+            `FMP single quote enrichment failed for ${symbol}:`,
+            singleError instanceof Error ? singleError.message : singleError
+          );
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+function parseFmpChangePct(item: FmpSignalMover) {
+  return firstFiniteSignalNumber(
+    item.changesPercentage,
+    item.changePercentage,
+    item.change,
+    item.changes
+  ) ?? 0;
+}
+
+function buildStockSeedRow(
+  item: FmpSignalMover,
+  bucket: "pump_watch" | "dump_watch" | "unusual_volume"
+): MarketScannerRow | null {
+  const symbol = normalizeSymbol(String(item.symbol || item.ticker || ""));
+
+  if (!isProbablyTradeableUsStock(symbol)) return null;
+
+  const price = firstFiniteSignalNumber(item.price);
+  const volume = firstFiniteSignalNumber(item.volume);
+  const changePercent = parseFmpChangePct(item);
+  const minVolume = getSignalMinimumVolume("stock");
+  const minChangePct = getStockSeedMinChangePct();
+
+  if (volume === null || volume < minVolume) return null;
+
+  if (Math.abs(changePercent) < minChangePct && bucket !== "unusual_volume") {
+    return null;
+  }
+
+  if (bucket === "unusual_volume" && Math.abs(changePercent) < 2) {
+    return null;
+  }
+
+  const direction = changePercent >= 0 ? "upside" : "downside";
+  const volumeScore = Math.min(20, Math.log10(Math.max(volume, 1) / minVolume) * 8);
+  const changeScore = Math.min(35, Math.abs(changePercent) * 2.5);
+  const bucketBoost = bucket === "pump_watch" || bucket === "dump_watch" ? 12 : 6;
+  const opportunityScore = clamp(45 + volumeScore + changeScore + bucketBoost, 0, 100);
+  const exchange = item.exchangeShortName || item.exchange || "US";
+
+  return {
+    symbol,
+    exchange,
+    name: item.name || item.companyName || symbol,
+    asset_type: "stock",
+    scan_bucket: bucket,
+    direction_bias: direction,
+    price,
+    change_percent: Number(changePercent.toFixed(2)),
+    volume,
+    mentions: 0,
+    mention_velocity: 0,
+    catalyst: null,
+    risk_label:
+      bucket === "pump_watch"
+        ? "Premarket/active stock pump candidate"
+        : bucket === "dump_watch"
+          ? "Active stock fade candidate"
+          : "Unusual volume stock candidate",
+    opportunity_score: Math.round(opportunityScore),
+    source: "fmp_signal_seed",
+    scanned_at: new Date().toISOString(),
+    raw_data: {
+      provider: "fmp",
+      signalSeed: true,
+      bucket,
+      minVolume,
+      minChangePct,
+      source_breakdown: {
+        market: "fmp",
+        news: null,
+        social: [],
+      },
+      raw: item,
+    },
+  };
+}
+
+async function refreshStockScannerSnapshotsForSignals(): Promise<StockSeedResult> {
+  if (!isStockSignalSeedEnabled()) {
+    return {
+      enabled: false,
+      loaded: 0,
+      inserted: 0,
+      error: "Stock signal seed is disabled.",
+    };
+  }
+
+  const limit = getStockSeedLimitPerEndpoint();
+
+  try {
+    const [gainers, losers, active] = await Promise.all([
+  fetchFmpSignalArray("biggest-gainers", "stock_market/gainers"),
+  fetchFmpSignalArray("biggest-losers", "stock_market/losers"),
+  fetchFmpSignalArray("most-actives", "stock_market/actives"),
+]);
+
+    const fetchedTotal = gainers.length + losers.length + active.length;
+
+const seedItems = [
+  ...gainers.slice(0, limit).map((item) => ({ item, bucket: "pump_watch" as const })),
+  ...losers.slice(0, limit).map((item) => ({ item, bucket: "dump_watch" as const })),
+  ...active.slice(0, limit).map((item) => ({ item, bucket: "unusual_volume" as const })),
+];
+
+const quoteMap = await fetchFmpQuotesForSignalSymbols(
+  seedItems.map(({ item }) => String(item.symbol || item.ticker || ""))
+);
+
+const enrichedSeedItems = seedItems.map(({ item, bucket }) => {
+  const symbol = normalizeSymbol(String(item.symbol || item.ticker || ""));
+  const quote = symbol ? quoteMap.get(symbol) || null : null;
+
+  return {
+    item: mergeFmpMoverWithQuote(item, quote),
+    bucket,
+  };
+});
+
+const rows = enrichedSeedItems
+  .map(({ item, bucket }) => buildStockSeedRow(item, bucket))
+  .filter((row): row is MarketScannerRow => Boolean(row));
+
+    const bestBySymbol = new Map<string, MarketScannerRow>();
+
+    for (const row of rows) {
+      const current = bestBySymbol.get(row.symbol);
+      const currentScore = current?.opportunity_score ?? 0;
+      const nextScore = row.opportunity_score ?? 0;
+
+      if (!current || nextScore > currentScore) {
+        bestBySymbol.set(row.symbol, row);
+      }
+    }
+
+    const maxRows = Math.max(10, Math.min(250, Number(process.env.SIGNAL_STOCK_SEED_MAX_ROWS || "80")));
+    const finalRows = Array.from(bestBySymbol.values())
+      .sort((a, b) => (b.opportunity_score ?? 0) - (a.opportunity_score ?? 0))
+      .slice(0, maxRows);
+
+    if (finalRows.length === 0) {
+      return {
+        enabled: true,
+        loaded: fetchedTotal,
+        inserted: 0,
+        error: null,
+      };
+    }
+
+    const { error } = await supabaseAdmin
+      .from("market_scanner_snapshots")
+      .insert(finalRows);
+
+    if (error) {
+      return {
+        enabled: true,
+        loaded: rows.length,
+        inserted: 0,
+        error: error.message,
+      };
+    }
+
+    return {
+      enabled: true,
+      loaded: rows.length,
+      inserted: finalRows.length,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      enabled: true,
+      loaded: 0,
+      inserted: 0,
+      error: error instanceof Error ? error.message : "Stock signal seed failed.",
+    };
+  }
 }
 
 type CryptoSignalVenue = "binance" | "hyperliquid" | "blocked" | "unknown";
@@ -693,7 +1097,6 @@ function getAssetType(row: MarketScannerRow) {
   return "stock";
 }
 
-
 type AlertAssetTypeFilter = "all" | "stock" | "crypto";
 
 function normalizeAssetTypeFilter(value: string | null): AlertAssetTypeFilter {
@@ -1017,7 +1420,6 @@ function roundPrice(value: number | null) {
 
   return Number(value.toFixed(8));
 }
-
 
 function capSignalScoreForLifecycle(
   score: number,
@@ -1694,7 +2096,6 @@ function validateDirectionalTradePlan(params: {
     reason: "Trade plan direction, stop distance and RR passed.",
   };
 }
-
 
 type SignalDirection = "upside" | "downside";
 
@@ -2933,65 +3334,6 @@ if (tradePlan.source === "structure") {
   };
 }
 
-export async function GET(request: Request) {
-  const gate = await requireFeatureAccess(request, "ai_alerts", {
-    rateLimit: {
-      limit: 60,
-      windowMs: 60_000,
-    },
-  });
-
-  if (!gate.ok) return gate.response;
-
-  try {
-    const user = await getRequestUser(request);
-
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
-
-    const planId = await getUserPlan(user.id);
-
-    if (!canUseFeature(planId, "ai_alerts")) {
-      return NextResponse.json(
-        {
-          error: "AI Alerts are available only on SkillEdge Elite.",
-          locked: true,
-          requiredPlan: "elite",
-          feature: "ai_alerts",
-          currentPlan: planId,
-        },
-        { status: 403 }
-      );
-    }
-
-    const { searchParams } = new URL(request.url);
-    const limit = Math.max(1, Math.min(200, Number(searchParams.get("limit") || "100")));
-    const period = searchParams.get("period") || "24h";
-    const assetTypeFilter = normalizeAssetTypeFilter(searchParams.get("assetType"));
-    const statusFilter = searchParams.get("status") || searchParams.get("mode") || "all";
-
-    const feed = await loadMarketAlertFeed({
-      userId: user.id,
-      assetType: assetTypeFilter,
-      status: statusFilter,
-      period,
-      limit,
-      includeExpired: false,
-    });
-
-    return NextResponse.json(feed);
-  } catch (error) {
-    console.error("Market alerts GET error:", error);
-
-    return NextResponse.json(
-      { error: "Failed to load market alerts." },
-      { status: 500 }
-    );
-  }
-}
-
-
 type AlertGenerationDiagnostics = {
   requestedAssetType: AlertAssetTypeFilter;
   marketWindowMinutes: number;
@@ -3021,14 +3363,22 @@ function countDraftStatuses(drafts: MarketAlertDraft[]) {
 async function loadRecentOrLatestMarketRows({
   marketSince,
   limit,
+  assetTypeFilter,
 }: {
   marketSince: string;
   limit: number;
+  assetTypeFilter: AlertAssetTypeFilter;
 }) {
-  const recentResult = await supabaseAdmin
+  let recentQuery = supabaseAdmin
     .from("market_scanner_snapshots")
     .select("*")
-    .gte("scanned_at", marketSince)
+    .gte("scanned_at", marketSince);
+
+  if (assetTypeFilter !== "all") {
+    recentQuery = recentQuery.eq("asset_type", assetTypeFilter);
+  }
+
+  const recentResult = await recentQuery
     .order("opportunity_score", { ascending: false })
     .limit(limit);
 
@@ -3054,9 +3404,15 @@ async function loadRecentOrLatestMarketRows({
     };
   }
 
-  const latestResult = await supabaseAdmin
+  let latestQuery = supabaseAdmin
     .from("market_scanner_snapshots")
-    .select("*")
+    .select("*");
+
+  if (assetTypeFilter !== "all") {
+    latestQuery = latestQuery.eq("asset_type", assetTypeFilter);
+  }
+
+  const latestResult = await latestQuery
     .order("scanned_at", { ascending: false })
     .order("opportunity_score", { ascending: false })
     .limit(limit);
@@ -3071,86 +3427,174 @@ async function loadRecentOrLatestMarketRows({
     };
   }
 
-  const fallbackRows = (latestResult.data || []) as MarketScannerRow[];
+  const latestRows = (latestResult.data || []) as MarketScannerRow[];
 
   return {
-    rows: fallbackRows,
+    rows: latestRows,
     recentRowsLoaded: 0,
-    fallbackRowsLoaded: fallbackRows.length,
-    usedFallback: fallbackRows.length > 0,
+    fallbackRowsLoaded: latestRows.length,
+    usedFallback: true,
     error: null,
   };
 }
 
-export async function POST(request: Request) {
-  const gate = await requireFeatureAccess(request, "ai_alerts", {
-    rateLimit: {
-      limit: 20,
-      windowMs: 60_000,
-    },
-  });
+export type MarketAlertGenerationSource = "manual" | "cron" | "internal";
 
-  if (!gate.ok) return gate.response;
+export type MarketAlertGenerationResult = {
+  source: string;
+  generatedAt: string;
+  assetType: AlertAssetTypeFilter;
+  count: number;
+  diagnostics: AlertGenerationDiagnostics;
+  metrics: ReturnType<typeof buildAlertResponseMetrics>;
+  sourceCoverage: string[];
+  cache: {
+    ttl: number;
+    cachedAt: string;
+  };
+  items: MarketAlertDraft[];
+};
 
-  try {
-    const user = await getRequestUser(request);
+export async function generateMarketAlertsInternal(params: {
+  assetType?: AlertAssetTypeFilter;
+  planId?: string;
+  source?: MarketAlertGenerationSource;
+}): Promise<MarketAlertGenerationResult> {
+  const assetTypeFilter = params.assetType || "all";
+  const planId = params.planId || "elite";
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
-    }
+  const marketWindowMinutes = readEnvNumber("SIGNAL_MARKET_LOOKBACK_MINUTES", 30);
+  const socialWindowMinutes = readEnvNumber("SIGNAL_SOCIAL_LOOKBACK_MINUTES", 45);
+  const loadLimit = readEnvNumber("SIGNAL_ENGINE_SOURCE_ROWS_LIMIT", 250);
+  const marketSince = new Date(Date.now() - marketWindowMinutes * 60 * 1000).toISOString();
+  const socialSince = new Date(Date.now() - socialWindowMinutes * 60 * 1000).toISOString();
 
-    const planId = await getUserPlan(user.id);
+  const preGenerationNotes: string[] = [];
 
-    if (!canUseFeature(planId, "ai_alerts")) {
-      return NextResponse.json(
-        {
-          error: "AI Alerts are available only on SkillEdge Elite.",
-          locked: true,
-          requiredPlan: "elite",
-          feature: "ai_alerts",
-          currentPlan: planId,
-        },
-        { status: 403 }
-      );
-    }
+  if (
+    params.source === "cron" &&
+    (assetTypeFilter === "stock" || assetTypeFilter === "all")
+  ) {
+    const stockSeed = await refreshStockScannerSnapshotsForSignals();
 
-    const { searchParams } = new URL(request.url);
-    const assetTypeFilter = normalizeAssetTypeFilter(searchParams.get("assetType"));
-    const deliverySince = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-
-    const generation = await generateMarketAlertsInternal({
-      assetType: assetTypeFilter,
-      planId,
-      source: "manual",
-    });
-
-    const telegram = await deliverLatestPersistedSignalsToTelegram({
-      assetType: assetTypeFilter,
-      createdSince: deliverySince,
-      limit: 120,
-    });
-
-    const feed = await loadMarketAlertFeed({
-      userId: user.id,
-      assetType: assetTypeFilter,
-      status: "all",
-      period: "24h",
-      limit: 200,
-      includeExpired: false,
-    });
-
-    return NextResponse.json({
-      ...feed,
-      generation,
-      telegram,
-    });
-  } catch (error) {
-    console.error("Market alerts POST error:", error);
-
-    return NextResponse.json(
-      { error: "Failed to generate market alerts." },
-      { status: 500 }
+    preGenerationNotes.push(
+      `Stock signal seed: enabled=${stockSeed.enabled}, loaded=${stockSeed.loaded}, inserted=${stockSeed.inserted}${
+        stockSeed.error ? `, error=${stockSeed.error}` : ""
+      }`
     );
   }
+
+  const [marketLoad, socialResult] = await Promise.all([
+    loadRecentOrLatestMarketRows({
+      marketSince,
+      limit: loadLimit,
+      assetTypeFilter,
+    }),
+    supabaseAdmin
+      .from("market_social_mentions")
+      .select("*")
+      .gte("scanned_at", socialSince)
+      .order("social_score", { ascending: false })
+      .limit(loadLimit),
+  ]);
+
+  const diagnosticNotes: string[] = [...preGenerationNotes];
+
+  if (marketLoad.error) {
+    console.error("Alert generator market load error:", marketLoad.error);
+    diagnosticNotes.push("market_scanner_snapshots load failed");
+  }
+
+  if (marketLoad.usedFallback) {
+    diagnosticNotes.push("No fresh market scanner rows in lookback window; used latest available scanner snapshot fallback.");
+  }
+
+  if (socialResult.error) {
+    console.error("Alert generator social load error:", socialResult.error);
+    diagnosticNotes.push("market_social_mentions load failed or unavailable");
+  }
+
+  const marketRowsDeduped = pickBestMarketRows(
+    marketLoad.rows.filter((row) => normalizeSymbol(row.symbol || ""))
+  );
+
+  const marketRows = marketRowsDeduped.filter((row) =>
+    matchesAssetTypeFilter(getAssetType(row), assetTypeFilter)
+  );
+
+  const socialRows = ((socialResult.data || []) as SocialMentionRow[]).filter((row) =>
+    normalizeSymbol(row.symbol || "")
+  );
+
+  const socialBySymbol = aggregateSocial(socialRows);
+
+  const rawDrafts = (
+    await Promise.all(
+      marketRows.map((row) =>
+        buildAlertDraft({
+          row,
+          social: socialBySymbol.get(normalizeSymbol(row.symbol || "")),
+          planId,
+        })
+      )
+    )
+  ).filter((draft): draft is MarketAlertDraft => Boolean(draft));
+
+  if (marketRows.length > 0 && rawDrafts.length === 0) {
+    diagnosticNotes.push(
+      "No drafts survived the premium filter. Lower SIGNAL_WATCH_MIN_CONFIDENCE or inspect rejection reasons if this repeats."
+    );
+  }
+
+  const drafts = limitSignalLifecycleBatch(rawDrafts);
+  const statusCounts = countDraftStatuses(drafts);
+  const diagnostics: AlertGenerationDiagnostics = {
+    requestedAssetType: assetTypeFilter,
+    marketWindowMinutes,
+    socialWindowMinutes,
+    recentMarketRowsLoaded: marketLoad.recentRowsLoaded,
+    fallbackMarketRowsLoaded: marketLoad.fallbackRowsLoaded,
+    marketRowsAfterDedup: marketRowsDeduped.length,
+    marketRowsAfterAssetFilter: marketRows.length,
+    socialRowsLoaded: socialRows.length,
+    rawDraftsBuilt: rawDrafts.length,
+    draftsAfterLifecycleLimit: drafts.length,
+    active: statusCounts.active,
+    armed: statusCounts.armed,
+    watch: statusCounts.watch,
+    usedLatestMarketFallback: marketLoad.usedFallback,
+    notes: diagnosticNotes,
+  };
+
+  if (drafts.length > 0) {
+    const { error: upsertError } = await supabaseAdmin
+      .from("market_alerts")
+      .upsert(drafts, { onConflict: "alert_key" });
+
+    if (upsertError) {
+      console.error("Failed to upsert market alerts:", upsertError);
+      throw new Error("Failed to save generated alerts.");
+    }
+  }
+
+  const responseItems = drafts
+    .filter((item) => matchesAssetTypeFilter(item.asset_type, assetTypeFilter))
+    .filter(isPersistedAllowedCryptoAlert);
+
+  return {
+    source: params.source === "cron" ? "market_alert_generator_cron" : "market_alert_generator",
+    generatedAt: new Date().toISOString(),
+    assetType: assetTypeFilter,
+    count: responseItems.length,
+    diagnostics,
+    metrics: buildAlertResponseMetrics(responseItems),
+    sourceCoverage: buildAlertSourceCoverage(responseItems),
+    cache: {
+      ttl: Number(process.env.MARKET_ALERTS_CACHE_TTL_SECONDS || "10"),
+      cachedAt: new Date().toISOString(),
+    },
+    items: responseItems,
+  };
 }
+
 

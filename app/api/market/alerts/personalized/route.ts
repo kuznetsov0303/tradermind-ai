@@ -61,6 +61,88 @@ type UserAlertStateRow = {
   decision_note: string | null;
 };
 
+
+type AlertAssetTypeFilter = "all" | "stock" | "crypto";
+
+function normalizeAssetTypeFilter(value: string | null): AlertAssetTypeFilter {
+  const normalized = (value || "all").toLowerCase();
+
+  if (["crypto", "coin", "coins"].includes(normalized)) return "crypto";
+  if (["stock", "stocks", "equity", "equities"].includes(normalized)) return "stock";
+
+  return "all";
+}
+
+function matchesAssetTypeFilter(
+  assetType: string | null | undefined,
+  filter: AlertAssetTypeFilter
+) {
+  if (filter === "all") return true;
+  return filter === "crypto" ? assetType === "crypto" : assetType !== "crypto";
+}
+
+
+function getAlertPeriodSince(period: string) {
+  const normalized = (period || "24h").toLowerCase();
+
+  if (normalized === "all") return null;
+
+  if (normalized === "7d" || normalized === "week") {
+    return new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  }
+
+  if (normalized.endsWith("h")) {
+    const hours = Number(normalized.replace("h", ""));
+    if (Number.isFinite(hours) && hours > 0) {
+      return new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+    }
+  }
+
+  if (normalized.endsWith("d")) {
+    const days = Number(normalized.replace("d", ""));
+    if (Number.isFinite(days) && days > 0) {
+      return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+    }
+  }
+
+  return new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+}
+
+function buildAlertResponseMetrics(items: Array<{ asset_type?: string | null; status?: string | null; confidence_score?: number | null; score?: number | null; signal_mode?: string | null }>) {
+  const stocks = items.filter((item) => item.asset_type !== "crypto").length;
+  const crypto = items.filter((item) => item.asset_type === "crypto").length;
+  const active = items.filter((item) => item.status === "active").length;
+  const armed = items.filter((item) => item.status === "armed").length;
+  const watch = items.filter((item) => item.status === "watch").length;
+  const actionable = items.filter((item) => item.signal_mode === "actionable").length;
+  const confidenceValues = items
+    .map((item) =>
+      typeof item.confidence_score === "number"
+        ? item.confidence_score
+        : typeof item.score === "number"
+          ? item.score
+          : null
+    )
+    .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+
+  return {
+    total: items.length,
+    stocks,
+    crypto,
+    active,
+    armed,
+    watch,
+    actionable,
+    avgConfidence:
+      confidenceValues.length > 0
+        ? Math.round(
+            confidenceValues.reduce((sum, value) => sum + value, 0) /
+              confidenceValues.length
+          )
+        : null,
+  };
+}
+
 async function getRequestUser(request: Request) {
   const authHeader = request.headers.get("authorization") || "";
   const token = authHeader.startsWith("Bearer ")
@@ -362,6 +444,16 @@ function buildPersonalPriority(
     reasons.push("strong journal pattern match score");
   }
 
+  const alertStatus = normalizeText(alert.status);
+
+  if (alertStatus === "active") {
+    priorityScore = Math.min(priorityScore, 96);
+  } else if (alertStatus === "armed") {
+    priorityScore = Math.min(priorityScore, 87);
+  } else {
+    priorityScore = Math.min(priorityScore, 75);
+  }
+
   priorityScore = Math.max(0, Math.min(100, Math.round(priorityScore)));
 
   const priorityType =
@@ -408,6 +500,8 @@ function buildSignalMode(
       ? personalPriority.personal_priority_type
       : "";
 
+  const alertStatus = normalizeText(alert.status);
+
   if (priorityType === "caution") {
     return {
       signal_mode: "caution",
@@ -417,7 +511,7 @@ function buildSignalMode(
     };
   }
 
-  if (priorityScore >= 85 && baseConfidence >= 75) {
+  if (alertStatus === "active" && baseConfidence >= 88) {
     return {
       signal_mode: "actionable",
       signal_mode_label: "Actionable after confirmation",
@@ -426,10 +520,10 @@ function buildSignalMode(
     };
   }
 
-  if (priorityScore >= 70 || baseConfidence >= 70) {
+  if (alertStatus === "armed" || alertStatus === "watch" || priorityScore >= 70 || baseConfidence >= 70) {
     return {
-      signal_mode: "watchlist",
-      signal_mode_label: "Setup forming",
+      signal_mode: alertStatus === "armed" ? "armed" : "watchlist",
+      signal_mode_label: alertStatus === "armed" ? "Armed setup" : "Setup forming",
       signal_mode_note:
         "This setup is worth watching, but it is not a full actionable signal until confirmation appears.",
     };
@@ -461,38 +555,43 @@ export async function GET(request: Request) {
 
     const planId = await getUserPlan(user.id);
 
-    if (!canUseFeature(planId, "social_tickers")) {
+    if (!canUseFeature(planId, "ai_alerts")) {
       return NextResponse.json(
         {
-          error: "Personalized alerts are available on SkillEdge Edge and Elite.",
+          error: "AI Alerts are available only on SkillEdge Elite.",
           locked: true,
+          requiredPlan: "elite",
+          feature: "ai_alerts",
+          currentPlan: planId,
         },
         { status: 403 }
       );
     }
 
     const { searchParams } = new URL(request.url);
-    const limit = Math.max(1, Math.min(100, Number(searchParams.get("limit") || "20")));
-    const period = searchParams.get("period") || "active";
+    const limit = Math.max(1, Math.min(200, Number(searchParams.get("limit") || "100")));
+    const period = searchParams.get("period") || "24h";
+    const assetTypeFilter = normalizeAssetTypeFilter(searchParams.get("assetType"));
+    const periodSince = period === "active" ? null : getAlertPeriodSince(period);
 
-    const alertsQuery = supabaseAdmin
+    let alertsQuery = supabaseAdmin
       .from("market_alerts")
       .select("*")
       .or(`user_id.is.null,user_id.eq.${user.id}`)
       .order("created_at", { ascending: false })
       .limit(limit);
 
-    if (period === "7d") {
-      const sevenDaysAgo = new Date(
-        Date.now() - 7 * 24 * 60 * 60 * 1000
-      ).toISOString();
+    if (assetTypeFilter !== "all") {
+      alertsQuery = alertsQuery.eq("asset_type", assetTypeFilter);
+    }
 
-      alertsQuery.gte("created_at", sevenDaysAgo);
-    } else {
-      alertsQuery
-        .eq("status", "active")
+    if (period === "active") {
+      alertsQuery = alertsQuery
+        .in("status", ["active", "armed", "watch"])
         .gt("expires_at", new Date().toISOString())
         .order("score", { ascending: false });
+    } else if (periodSince) {
+      alertsQuery = alertsQuery.gte("created_at", periodSince);
     }
 
     const [alertsResult, profilesResult, tradePatternsResult] = await Promise.all([
@@ -570,6 +669,7 @@ const tradePatterns =
   (tradePatternsResult.data || []) as unknown as TradePatternProfileRow[];
 
 const items = alertRows
+  .filter((alert) => matchesAssetTypeFilter(alert.asset_type, assetTypeFilter))
   .map((alert) => {
     const setupSlug =
       typeof alert.setup_slug === "string" ? alert.setup_slug : "";
@@ -611,12 +711,20 @@ return {
     typeof a.created_at === "string" ? a.created_at : "1970-01-01T00:00:00.000Z";
 
   return new Date(bCreatedAt).getTime() - new Date(aCreatedAt).getTime();
-});
+})
+.slice(0, limit);
 
     return NextResponse.json({
       source: "personalized_market_alerts",
       period,
+      assetType: assetTypeFilter,
       count: items.length,
+      metrics: buildAlertResponseMetrics(items),
+      scannedAt: new Date().toISOString(),
+      cache: {
+        ttl: Number(process.env.MARKET_ALERTS_CACHE_TTL_SECONDS || "10"),
+        cachedAt: new Date().toISOString(),
+      },
       items,
     });
   } catch (error) {
@@ -628,3 +736,4 @@ return {
     );
   }
 }
+

@@ -992,20 +992,13 @@ if (page === "about") {
   };
 
   const cycle = () => {
-  const nextLanguage =
-    language === "en" ? "ru" : language === "ru" ? "ua" : "en";
-
-  setLanguage(nextLanguage);
-  localStorage.setItem("skilledge_language", nextLanguage);
-
-  window.setTimeout(() => {
-    window.dispatchEvent(
-      new CustomEvent("skilledge:language-changed", {
-        detail: { language: nextLanguage },
-      })
-    );
-  }, 0);
-};
+    setLanguage((current) => {
+      const nextLanguage = current === "en" ? "ru" : current === "ru" ? "ua" : "en";
+      localStorage.setItem("skilledge_language", nextLanguage);
+      window.dispatchEvent(new Event("skilledge:language-changed"));
+      return nextLanguage;
+    });
+  };
 
   const openAuthModal = (mode: "login" | "register") => {
     setAuthMode(mode);
@@ -1126,8 +1119,7 @@ if (page === "about") {
   };
 
   return (
-  <div className="relative isolate min-h-screen overflow-hidden bg-[#070b16] text-white">
-    <TradingBackground variant={active} />
+    <div className="min-h-screen bg-[#070b16] text-white">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070b16]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-3">
@@ -1265,7 +1257,8 @@ if (page === "about") {
         </AnimatePresence>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-7xl px-4 py-12 md:px-8">
+      <main className="relative isolate min-h-screen overflow-hidden bg-[#07111d] text-white">
+      <TradingBackground variant={active === "team" ? "about" : active} />
         <AnimatePresence mode="wait">
           {active === "home" && <HomePage key="home" t={t} setActive={setActive} />}
           {active === "product" && <ProductPage key="product" t={t} setActive={setActive} />}
@@ -1274,9 +1267,7 @@ if (page === "about") {
         </AnimatePresence>
       </main>
 
-     <div className="relative z-10">
-  <PremiumFooter t={t} setActive={setActive} handleCheckout={handleCheckout} />
-</div>
+      <PremiumFooter t={t} setActive={setActive} handleCheckout={handleCheckout} />
       <CookieConsent />
 
       <AuthModal
@@ -1296,998 +1287,69 @@ if (page === "about") {
   );
 }
 
-type ClientResultCard = {
-  id: string;
-  name: string;
-  accountSize: string;
-  netProfit: string;
-  netProfitValue: string;
-  winRate: string;
-  trades: string;
-  avgR: string;
-  drawdown: string;
-  period: string;
-  trend: string;
-  stability: string;
-  weeklyValue: string;
-  points: number[];
-};
-
-function getHomePremiumCopy(lang: string) {
-  const normalizedLang = String(lang || "").toLowerCase();
-
-  if (normalizedLang === "en") {
-    return {
-      badge: "Built by traders for traders",
-      title: "Trade structure, not noise.",
-      text:
-        "SkillEdge AI connects signals, journal, execution review and market intelligence in one premium trading workspace.",
-      accent: "Structure. Discipline. Advantage.",
-      primary: "Open product",
-      secondary: "View pricing",
-      how: "How it works",
-      proofTitle: "Professional-grade trust",
-      trustItems: [
-        ["Protected data", "Your journal and stats stay private."],
-        ["Transparent methodology", "Every setup needs context, risk and invalidation."],
-        ["Built for traders", "Designed around real execution and review."],
-      ],
-      features: [
-        [
-          "AI Signals",
-          "Structured setups with entry logic, stop, targets and risk context.",
-          "Open signals",
-        ],
-        [
-          "Trading Journal",
-          "Track trades, screenshots, emotions, mistakes and performance metrics.",
-          "Open journal",
-        ],
-        [
-          "Execution Review",
-          "Review every trade and understand what improved or damaged the result.",
-          "Review trades",
-        ],
-        [
-          "Market Intelligence",
-          "Scanner, market context and in-play opportunities in one workspace.",
-          "View analytics",
-        ],
-      ],
-    };
-  }
-
-  if (normalizedLang === "ua") {
-    return {
-      badge: "Створено трейдерами для трейдерів",
-      title: "Торгуй не на шумі, а по структурі.",
-      text:
-        "SkillEdge AI обʼєднує сигнали, журнал, розбір угод і ринкову аналітику в одному преміальному робочому просторі.",
-      accent: "Структура. Дисципліна. Перевага.",
-      primary: "Відкрити продукт",
-      secondary: "Дивитися тарифи",
-      how: "Як це працює",
-      proofTitle: "Довіра професійного рівня",
-      trustItems: [
-        ["Дані під захистом", "Журнал і статистика клієнта залишаються приватними."],
-        ["Прозора методологія", "Кожен сетап має контекст, ризик та invalidation."],
-        ["Створено для трейдерів", "Продукт побудований навколо виконання і review."],
-      ],
-      features: [
-        [
-          "AI Signals",
-          "Структуровані сетапи з логікою входу, стопом, цілями та risk context.",
-          "Відкрити сигнали",
-        ],
-        [
-          "Trading Journal",
-          "Фіксуй угоди, скріншоти, емоції, помилки та performance metrics.",
-          "Вести журнал",
-        ],
-        [
-          "Execution Review",
-          "Розбирай кожну угоду і бач, що посилило або зламало результат.",
-          "Розбір угод",
-        ],
-        [
-          "Market Intelligence",
-          "Сканер, ринковий контекст і in-play можливості в одному workspace.",
-          "Дивитися аналітику",
-        ],
-      ],
-    };
-  }
-
-  return {
-    badge: "Сделано трейдерами для трейдеров",
-    title: "Торгуй не на шуме, а по структуре.",
-    text:
-      "SkillEdge AI объединяет сигналы, журнал, разбор сделок и рыночную аналитику в едином премиальном рабочем пространстве.",
-    accent: "Структура. Дисциплина. Преимущество.",
-    primary: "Открыть продукт",
-    secondary: "Смотреть тарифы",
-    how: "Как это работает",
-    proofTitle: "Доверие профессионального уровня",
-    trustItems: [
-      ["Данные под защитой", "Журнал и статистика клиента остаются приватными."],
-      ["Прозрачная методология", "Каждый сетап требует контекст, риск и invalidation."],
-      ["Сделано для трейдеров", "Продукт построен вокруг исполнения и review."],
-    ],
-    features: [
-      [
-        "AI Signals",
-        "Структурные сетапы с логикой входа, стопом, целями и risk context.",
-        "Открыть сигналы",
-      ],
-      [
-        "Trading Journal",
-        "Фиксируй сделки, скриншоты, эмоции, ошибки и performance metrics.",
-        "Вести журнал",
-      ],
-      [
-        "Execution Review",
-        "Разбирай каждую сделку и понимай, что усилило или сломало результат.",
-        "Разбор сделок",
-      ],
-      [
-        "Market Intelligence",
-        "Сканер, рыночный контекст и in-play возможности в одном workspace.",
-        "Смотреть аналитику",
-      ],
-    ],
-  };
-}
-
-function getClientResultsShowcaseCopy(lang: string) {
-  const normalizedLang = String(lang || "").toLowerCase();
-
-  if (normalizedLang === "en") {
-    return {
-      eyebrow: "Client performance examples",
-      title:
-        "Different starting capital. One principle: discipline, journaling and execution review.",
-      subtitle:
-        "Clients start with different account sizes, trading styles and growth speeds. But when a trader journals consistently, tracks trades and reviews execution, the process usually becomes cleaner, stronger and more stable.",
-      note:
-        "These are product examples, not a profit promise. Trading involves risk. SkillEdge AI helps traders build structure, review decisions and improve execution discipline.",
-      cta: "Open product",
-      secondaryCta: "View pricing",
-      periodLabel: "Period",
-      trendLabel: "Trend",
-      stabilityLabel: "Stability",
-      capitalLabel: "Starting capital",
-      pnlLabel: "Net profit",
-      winRateLabel: "Win rate",
-      avgRLabel: "Average R",
-      drawdownLabel: "Max drawdown",
-      weeksLabel: "Last 8 weeks",
-      chartLabel: "Cumulative Net PnL",
-      clickHint: "Click the card to open the product",
-      trustTitle: "Why this matters",
-      trustBlocks: [
-        [
-          "Not a blind signal feed",
-          "The system is built around context, setup, trigger, stop, targets and invalidation.",
-        ],
-        [
-          "Journal becomes your edge",
-          "The better the trader tracks decisions, the stronger the feedback loop becomes.",
-        ],
-        [
-          "Different account. Same process.",
-          "Whether the account is $5K or $100K+, the foundation is discipline, risk and structure.",
-        ],
-      ],
-    };
-  }
-
-  if (normalizedLang === "ua") {
-    return {
-      eyebrow: "Приклади результатів клієнтів",
-      title:
-        "Різний стартовий капітал. Один принцип: дисципліна, журнал і розбір виконання.",
-      subtitle:
-        "Клієнти мають різний розмір рахунку, стиль торгівлі та темп росту. Але коли трейдер системно веде журнал, відстежує угоди та розбирає виконання, процес зазвичай стає чистішим, сильнішим і стабільнішим.",
-      note:
-        "Це приклади продукту, а не обіцянка прибутку. Трейдинг має ризики. SkillEdge AI допомагає будувати структуру, аналізувати рішення та покращувати дисципліну виконання.",
-      cta: "Відкрити продукт",
-      secondaryCta: "Дивитися тарифи",
-      periodLabel: "Період",
-      trendLabel: "Тренд",
-      stabilityLabel: "Стабільність",
-      capitalLabel: "Стартовий капітал",
-      pnlLabel: "Чистий прибуток",
-      winRateLabel: "Вінрейт",
-      avgRLabel: "Середній R",
-      drawdownLabel: "Макс. просадка",
-      weeksLabel: "Останні 8 тижнів",
-      chartLabel: "Кумулятивний чистий PnL",
-      clickHint: "Натисни на картку, щоб відкрити продукт",
-      trustTitle: "Чому це важливо",
-      trustBlocks: [
-        [
-          "Не сліпа стрічка сигналів",
-          "Система будується навколо контексту, сетапу, тригера, стопа, цілей та invalidation.",
-        ],
-        [
-          "Журнал стає твоїм edge",
-          "Чим краще трейдер фіксує рішення, тим сильнішим стає feedback loop.",
-        ],
-        [
-          "Різний рахунок. Один процес.",
-          "Неважливо, $5K на рахунку чи $100K+. Основа — дисципліна, ризик і структура.",
-        ],
-      ],
-    };
-  }
-
-  return {
-    eyebrow: "Примеры результатов клиентов",
-    title:
-      "Разный стартовый капитал. Один принцип: дисциплина, журнал и разбор исполнения.",
-    subtitle:
-      "У клиентов разный размер счёта, стиль торговли и темп роста. Но когда трейдер системно ведёт журнал, отслеживает сделки и разбирает исполнение, процесс обычно становится чище, сильнее и стабильнее.",
-    note:
-      "Это примеры продукта, а не обещание прибыли. Трейдинг связан с риском. SkillEdge AI помогает выстроить структуру, разбирать решения и улучшать дисциплину исполнения.",
-    cta: "Открыть продукт",
-    secondaryCta: "Смотреть тарифы",
-    periodLabel: "Период",
-    trendLabel: "Тренд",
-    stabilityLabel: "Стабильность",
-    capitalLabel: "Стартовый капитал",
-    pnlLabel: "Чистая прибыль",
-    winRateLabel: "Винрейт",
-    avgRLabel: "Средний R",
-    drawdownLabel: "Макс. просадка",
-    weeksLabel: "Последние 8 недель",
-    chartLabel: "Кумулятивный чистый PnL",
-    clickHint: "Нажми на карточку, чтобы открыть продукт",
-    trustTitle: "Почему это важно",
-    trustBlocks: [
-      [
-        "Не слепая лента сигналов",
-        "Система строится вокруг контекста, сетапа, триггера, стопа, целей и invalidation.",
-      ],
-      [
-        "Журнал становится твоим edge",
-        "Чем лучше трейдер фиксирует решения, тем сильнее становится feedback loop.",
-      ],
-      [
-        "Разный счёт. Единый процесс.",
-        "Неважно, $5K на счёте или $100K+. Основа — дисциплина, риск и структура.",
-      ],
-    ],
-  };
-}
-
-function getClientResultsCards(lang: string): ClientResultCard[] {
-  const normalizedLang = String(lang || "").toLowerCase();
-  const isEn = normalizedLang === "en";
-  const isUa = normalizedLang === "ua";
-
-  return [
-    {
-      id: "client-1",
-      name: isEn ? "Client A" : isUa ? "Клієнт A" : "Клиент A",
-      accountSize: "$8,000",
-      netProfit: "+$5.2K",
-      netProfitValue: "+$5,200",
-      winRate: "58%",
-      trades: "74 / 128",
-      avgR: "1.6",
-      drawdown: "-$620",
-      period: isEn ? "2 months" : isUa ? "2 місяці" : "2 месяца",
-      trend: isEn ? "Bullish" : isUa ? "Бичачий" : "Бычий",
-      stability: isEn ? "High" : isUa ? "Висока" : "Высокая",
-      weeklyValue: "+$5,200",
-      points: [18, 26, 35, 44, 40, 52, 49, 60, 57, 66, 63, 70, 68, 75],
-    },
-    {
-      id: "client-2",
-      name: isEn ? "Client B" : isUa ? "Клієнт B" : "Клиент B",
-      accountSize: "$15,000",
-      netProfit: "+$12.4K",
-      netProfitValue: "+$12,400",
-      winRate: "63%",
-      trades: "146 / 232",
-      avgR: "1.9",
-      drawdown: "-$1.1K",
-      period: isEn ? "2 months" : isUa ? "2 місяці" : "2 месяца",
-      trend: isEn ? "Bullish" : isUa ? "Бичачий" : "Бычий",
-      stability: isEn ? "High" : isUa ? "Висока" : "Высокая",
-      weeklyValue: "+$12,400",
-      points: [12, 22, 34, 48, 41, 57, 50, 68, 59, 70, 65, 78, 75, 86],
-    },
-    {
-      id: "client-3",
-      name: isEn ? "Client C" : isUa ? "Клієнт C" : "Клиент C",
-      accountSize: "$30,000",
-      netProfit: "+$24.8K",
-      netProfitValue: "+$24,800",
-      winRate: "61%",
-      trades: "119 / 195",
-      avgR: "2.1",
-      drawdown: "-$2.4K",
-      period: isEn ? "2 months" : isUa ? "2 місяці" : "2 месяца",
-      trend: isEn ? "Steady" : isUa ? "Стійкий" : "Устойчивый",
-      stability: isEn ? "Strong" : isUa ? "Сильна" : "Сильная",
-      weeklyValue: "+$24,800",
-      points: [10, 18, 29, 42, 38, 51, 47, 63, 58, 72, 68, 79, 83, 91],
-    },
-    {
-      id: "client-4",
-      name: isEn ? "Client D" : isUa ? "Клієнт D" : "Клиент D",
-      accountSize: "$75,000",
-      netProfit: "+$61.3K",
-      netProfitValue: "+$61,300",
-      winRate: "66%",
-      trades: "171 / 259",
-      avgR: "2.4",
-      drawdown: "-$4.9K",
-      period: isEn ? "2 months" : isUa ? "2 місяці" : "2 месяца",
-      trend: isEn ? "Bullish" : isUa ? "Бичачий" : "Бычий",
-      stability: isEn ? "Strong" : isUa ? "Сильна" : "Сильная",
-      weeklyValue: "+$61,300",
-      points: [9, 17, 28, 41, 39, 55, 51, 67, 62, 74, 71, 84, 89, 97],
-    },
-    {
-      id: "client-5",
-      name: isEn ? "Client E" : isUa ? "Клієнт E" : "Клиент E",
-      accountSize: "$120,000",
-      netProfit: "+$104.8K",
-      netProfitValue: "+$104,800",
-      winRate: "68%",
-      trades: "214 / 315",
-      avgR: "2.7",
-      drawdown: "-$7.8K",
-      period: isEn ? "2 months" : isUa ? "2 місяці" : "2 месяца",
-      trend: isEn ? "Bullish" : isUa ? "Бичачий" : "Бычий",
-      stability: isEn ? "Strong" : isUa ? "Сильна" : "Сильная",
-      weeklyValue: "+$104,800",
-      points: [8, 16, 27, 39, 36, 52, 49, 66, 61, 76, 73, 88, 93, 100],
-    },
-  ];
-}
-
-function ClientResultLineChart({ points }: { points: number[] }) {
-  const width = 456;
-  const height = 230;
-  const paddingX = 28;
-  const paddingY = 24;
-
-  const max = Math.max(...points);
-  const min = Math.min(...points);
-
-  const toX = (index: number) =>
-    paddingX + (index / (points.length - 1)) * (width - paddingX * 2);
-
-  const toY = (value: number) =>
-    height -
-    paddingY -
-    ((value - min) / (max - min || 1)) * (height - paddingY * 2);
-
-  const linePoints = points.map((point, index) => `${toX(index)},${toY(point)}`).join(" ");
-  const areaPoints = `${paddingX},${height - paddingY} ${linePoints} ${
-    width - paddingX
-  },${height - paddingY}`;
-
-  return (
-    <div className="mt-5 overflow-hidden rounded-[1.75rem] border border-cyan-300/15 bg-[#071321]/90 p-4">
-      <svg viewBox={`0 0 ${width} ${height}`} className="h-[300px] w-full">
-        <defs>
-          <linearGradient id="clientChartLine" x1="0" x2="1" y1="0" y2="0">
-            <stop offset="0%" stopColor="#38d6ff" />
-            <stop offset="100%" stopColor="#34d399" />
-          </linearGradient>
-
-          <linearGradient id="clientChartFill" x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0%" stopColor="#38d6ff" stopOpacity="0.28" />
-            <stop offset="100%" stopColor="#38d6ff" stopOpacity="0" />
-          </linearGradient>
-        </defs>
-
-        {[0, 1, 2, 3, 4, 5].map((row) => {
-          const y = paddingY + ((height - paddingY * 2) / 5) * row;
-
-          return (
-            <line
-              key={row}
-              x1={paddingX}
-              x2={width - paddingX}
-              y1={y}
-              y2={y}
-              stroke="rgba(255,255,255,0.08)"
-              strokeDasharray="5 7"
-            />
-          );
-        })}
-
-        <polygon points={areaPoints} fill="url(#clientChartFill)" />
-
-        <motion.polyline
-          points={linePoints}
-          fill="none"
-          stroke="url(#clientChartLine)"
-          strokeWidth="5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 1 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-        />
-
-        <circle
-          cx={toX(points.length - 1)}
-          cy={toY(points[points.length - 1])}
-          r="7"
-          fill="#07111d"
-          stroke="#67e8f9"
-          strokeWidth="3"
-        />
-
-        <circle
-          cx={toX(points.length - 1)}
-          cy={toY(points[points.length - 1])}
-          r="13"
-          fill="rgba(56,214,255,0.16)"
-        />
-
-        {["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"].map(
-          (label, index) => (
-            <text
-              key={label}
-              x={paddingX + index * ((width - paddingX * 2) / 7)}
-              y={height - 4}
-              textAnchor="middle"
-              fill="rgba(255,255,255,0.45)"
-              fontSize="10"
-              fontWeight="800"
-            >
-              {label}
-            </text>
-          )
-        )}
-      </svg>
-    </div>
-  );
-}
-
-function HomeClientPnlVisual({ lang }: { lang: string }) {
-  const normalizedLang = String(lang || "").toLowerCase();
-  const isEn = normalizedLang === "en";
-  const isUa = normalizedLang === "ua";
-
-  const copy = isEn
-    ? {
-        badge: "Desk standard",
-        title: "SkillEdge Trading Desk",
-        subtitle: "A structured workflow for serious traders.",
-        main: "From market noise to a clear execution plan.",
-        note:
-          "Every idea must pass context, setup, risk, entry logic, invalidation and journal review.",
-        status: "Risk-first",
-        cards: [
-          ["01", "Market scan", "Find in-play stocks and crypto with real activity."],
-          ["02", "Setup validation", "Filter hype and keep only structured opportunities."],
-          ["03", "Risk plan", "Entry zone, stop, targets, RR and invalidation before action."],
-          ["04", "Journal review", "Every decision becomes feedback for the next trade."],
-        ],
-        bottom: [
-          ["No blind signals", "Setup + trigger + risk"],
-          ["Personal edge", "Journal-based improvement"],
-          ["Execution quality", "Plan vs real trade"],
-        ],
-      }
-    : isUa
-      ? {
-          badge: "Desk standard",
-          title: "SkillEdge Trading Desk",
-          subtitle: "Структурований workflow для серйозних трейдерів.",
-          main: "Від ринкового шуму — до чіткого плану виконання.",
-          note:
-            "Кожна ідея проходить контекст, сетап, ризик, логіку входу, invalidation і review журналу.",
-          status: "Risk-first",
-          cards: [
-            ["01", "Market scan", "Знайти in-play акції та крипту з реальною активністю."],
-            ["02", "Setup validation", "Відсіяти хайп і залишити тільки структурні можливості."],
-            ["03", "Risk plan", "Зона входу, стоп, цілі, RR та invalidation до дії."],
-            ["04", "Journal review", "Кожне рішення стає feedback для наступної угоди."],
-          ],
-          bottom: [
-            ["Без сліпих сигналів", "Сетап + тригер + ризик"],
-            ["Personal edge", "Розвиток на базі журналу"],
-            ["Якість виконання", "План проти реальної угоди"],
-          ],
-        }
-      : {
-          badge: "Desk standard",
-          title: "SkillEdge Trading Desk",
-          subtitle: "Структурированный workflow для серьёзных трейдеров.",
-          main: "От рыночного шума — к чёткому плану исполнения.",
-          note:
-            "Каждая идея проходит контекст, сетап, риск, логику входа, invalidation и разбор в журнале.",
-          status: "Risk-first",
-          cards: [
-            ["01", "Market scan", "Найти in-play акции и крипту с реальной активностью."],
-            ["02", "Setup validation", "Отсеять хайп и оставить только структурные возможности."],
-            ["03", "Risk plan", "Зона входа, стоп, цели, RR и invalidation до действия."],
-            ["04", "Journal review", "Каждое решение становится feedback для следующей сделки."],
-          ],
-          bottom: [
-            ["Без слепых сигналов", "Сетап + триггер + риск"],
-            ["Personal edge", "Рост на базе журнала"],
-            ["Качество исполнения", "План против реальной сделки"],
-          ],
-        };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 28, scale: 0.98 }}
-      animate={{ opacity: 1, x: 0, scale: 1 }}
-      transition={{ delay: 0.12, duration: 0.65 }}
-      className="relative z-10 w-full"
-    >
-      <div className="absolute -inset-10 rounded-[3.4rem] bg-cyan-300/12 blur-3xl" />
-
-      <div className="relative w-full overflow-hidden rounded-[2.6rem] border border-cyan-100/18 bg-[#0d1b2b]/86 p-5 shadow-[0_44px_170px_rgba(8,47,73,0.36)] backdrop-blur-2xl md:p-6 xl:p-7">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(56,214,255,0.22),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(52,211,153,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_44%)]" />
-
-        <div className="relative z-10 flex items-center justify-between">
-          <div className="text-sm font-black text-white/82">SkillEdge AI</div>
-
-          <div className="flex items-center gap-2 rounded-full border border-emerald-300/18 bg-emerald-300/[0.08] px-3 py-1 text-xs font-black text-emerald-100/80">
-            {copy.status}
-            <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.9)]" />
-          </div>
-        </div>
-
-        <div className="relative z-10 mt-5 rounded-[1.8rem] border border-white/10 bg-black/20 p-5">
-          <div className="inline-flex rounded-full border border-cyan-300/18 bg-cyan-300/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-50/68">
-            {copy.badge}
-          </div>
-
-          <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
-            {copy.title}
-          </h2>
-
-          <p className="mt-3 text-sm font-black text-cyan-100/74">
-            {copy.subtitle}
-          </p>
-
-          <div className="mt-6 rounded-[1.6rem] border border-cyan-200/16 bg-cyan-200/[0.06] p-5">
-            <div className="text-2xl font-black leading-tight tracking-[-0.04em] text-white">
-              {copy.main}
-            </div>
-
-            <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
-              {copy.note}
-            </p>
-          </div>
-
-          <div className="mt-5 grid gap-3">
-            {copy.cards.map(([number, title, text], index) => (
-              <motion.div
-                key={title}
-                initial={{ opacity: 0, x: 18 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.22 + index * 0.08, duration: 0.45 }}
-                className="grid grid-cols-[58px_1fr] gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3"
-              >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.08] text-xs font-black text-cyan-50">
-                  {number}
-                </div>
-
-                <div>
-                  <div className="text-sm font-black text-white">{title}</div>
-                  <p className="mt-1 text-xs font-semibold leading-5 text-white/48">
-                    {text}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
-            {copy.bottom.map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-2xl border border-white/10 bg-black/22 p-4"
-              >
-                <div className="text-sm font-black text-white">{title}</div>
-                <div className="mt-1 text-xs font-semibold leading-5 text-white/45">
-                  {text}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-function ClientResultsCarousel({
-  lang,
-  setActive,
-}: {
-  lang: string;
-  setActive: (value: PageKey) => void;
-}) {
-  const copy = getClientResultsShowcaseCopy(lang);
-  const cards = getClientResultsCards(lang);
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % cards.length);
-    }, 8000);
-
-    return () => window.clearInterval(timer);
-  }, [cards.length]);
-
-  const activeCard = cards[activeIndex];
-
-  const goPrev = () => {
-    setActiveIndex((current) => (current - 1 + cards.length) % cards.length);
-  };
-
-  const goNext = () => {
-    setActiveIndex((current) => (current + 1) % cards.length);
-  };
-
-  const openProduct = () => {
-    setActive("product");
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
-  return (
-    <section className="relative overflow-hidden rounded-[2.6rem] border border-cyan-200/14 bg-[#0d1b2b]/82 p-5 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-2xl md:p-6 lg:p-7">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.16),transparent_30%),radial-gradient(circle_at_88%_20%,rgba(52,211,153,0.12),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
-
-      <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-stretch">
-        <div className="flex flex-col justify-between">
-          <div>
-            <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-50/76">
-              {copy.eyebrow}
-            </div>
-
-            <h2 className="mt-5 max-w-3xl text-3xl font-black leading-[1.02] tracking-[-0.05em] text-white md:text-4xl">
-              {copy.title}
-            </h2>
-
-            <p className="mt-4 text-sm font-semibold leading-7 text-white/64">
-              {copy.subtitle}
-            </p>
-
-            <p className="mt-4 rounded-2xl border border-amber-300/16 bg-amber-300/[0.055] p-4 text-xs font-semibold leading-6 text-amber-50/68">
-              {copy.note}
-            </p>
-          </div>
-
-          <div className="mt-6 grid gap-3">
-            {copy.trustBlocks.map((item, index) => (
-              <button
-                key={item[0]}
-                type="button"
-                onClick={() => setActive("product")}
-                className="group rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-3 text-left backdrop-blur-xl transition hover:border-cyan-200/24 hover:bg-cyan-200/[0.07]"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-cyan-200/16 bg-cyan-200/[0.08] text-[10px] font-black text-cyan-50">
-                    0{index + 1}
-                  </div>
-
-                  <div>
-                    <div className="text-sm font-black text-white">{item[0]}</div>
-                    <p className="mt-1 text-xs font-semibold leading-5 text-white/48">
-                      {item[1]}
-                    </p>
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <motion.button
-          key={activeCard.id}
-          type="button"
-          initial={{ opacity: 0, x: 26, scale: 0.98 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          transition={{ duration: 0.45 }}
-          onClick={openProduct}
-          className="relative cursor-pointer overflow-hidden rounded-[2.25rem] border border-cyan-100/18 bg-[#0b1928]/92 p-5 text-left shadow-[0_34px_140px_rgba(8,47,73,0.34)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-cyan-100/30 md:p-6"
-        >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(56,214,255,0.18),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(52,211,153,0.14),transparent_30%)]" />
-
-          <div className="relative z-10 flex items-center justify-between">
-            <div className="text-sm font-black text-white/82">SkillEdge AI</div>
-
-            <div className="flex items-center gap-2 text-xs font-bold text-white/62">
-              Live
-              <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.9)]" />
-            </div>
-          </div>
-
-          <div className="relative z-10 mt-5 rounded-[1.65rem] border border-white/10 bg-black/20 p-4">
-            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
-                <div className="text-xl font-black tracking-[-0.025em] text-white">
-                  {activeCard.name}
-                  <span className="text-white/38"> · {activeCard.period}</span>
-                </div>
-
-                <div className="mt-2 text-sm font-semibold text-white/48">
-                  {copy.capitalLabel}:{" "}
-                  <span className="text-cyan-100/90">{activeCard.accountSize}</span>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-cyan-200/18 bg-cyan-200/[0.08] px-4 py-2 text-xs font-black text-cyan-50">
-                {copy.weeksLabel}
-              </div>
-            </div>
-
-            <div className="mt-5 grid gap-3 md:grid-cols-4">
-              {[
-                [copy.pnlLabel, activeCard.netProfit, activeCard.netProfitValue, "text-emerald-300"],
-                [copy.winRateLabel, activeCard.winRate, activeCard.trades, "text-white"],
-                [copy.avgRLabel, activeCard.avgR, "", "text-white"],
-                [copy.drawdownLabel, activeCard.drawdown, "", "text-rose-300"],
-              ].map(([label, value, sub, color]) => (
-                <div
-                  key={label}
-                  className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
-                >
-                  <div className="text-xs font-bold text-white/46">{label}</div>
-                  <div className={`mt-2 text-3xl font-black tracking-[-0.04em] ${color}`}>
-                    {value}
-                  </div>
-                  {sub ? (
-                    <div className="mt-1 text-xs font-semibold text-white/42">
-                      {sub}
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 flex items-center justify-between">
-              <div className="text-sm font-black text-white/76">
-                {copy.chartLabel}
-              </div>
-
-              <div className="rounded-xl border border-cyan-200/18 bg-cyan-200/[0.08] px-3 py-1 text-xs font-black text-cyan-50">
-                Week 8 · {activeCard.weeklyValue}
-              </div>
-            </div>
-
-            <ClientResultLineChart points={activeCard.points} />
-
-            <div className="mt-5 grid gap-3 md:grid-cols-3">
-              {[
-                [copy.trendLabel, activeCard.trend],
-                [copy.stabilityLabel, activeCard.stability],
-                [copy.periodLabel, activeCard.period],
-              ].map(([label, value]) => (
-                <div
-                  key={label}
-                  className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
-                >
-                  <div className="text-xs font-bold text-white/42">{label}</div>
-                  <div className="mt-1 text-sm font-black text-emerald-200">
-                    {value}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 flex flex-wrap items-center justify-between gap-4">
-              <div className="text-sm font-semibold text-white/45">
-                {copy.clickHint}
-              </div>
-
-              <div className="rounded-full border border-cyan-200/22 bg-cyan-200/[0.08] px-5 py-3 text-sm font-black text-cyan-50">
-                {copy.cta}
-                <span className="ml-2">→</span>
-              </div>
-            </div>
-          </div>
-        </motion.button>
-      </div>
-
-      <div className="relative mt-6 flex items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          {cards.map((card, index) => (
-            <button
-              key={card.id}
-              type="button"
-              onClick={() => setActiveIndex(index)}
-              className={`h-2.5 rounded-full transition-all ${
-                index === activeIndex
-                  ? "w-9 bg-cyan-200"
-                  : "w-2.5 bg-white/20 hover:bg-white/35"
-              }`}
-              aria-label={`Show client result ${index + 1}`}
-            />
-          ))}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={goPrev}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.045] text-lg font-black text-white/70 transition hover:border-cyan-200/28 hover:bg-cyan-200/[0.09]"
-            aria-label="Previous client result"
-          >
-            ←
-          </button>
-
-          <button
-            type="button"
-            onClick={goNext}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-200/20 bg-cyan-200/[0.09] text-lg font-black text-cyan-50 transition hover:bg-cyan-200/[0.14]"
-            aria-label="Next client result"
-          >
-            →
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
-  const copy = getHomePremiumCopy(t.lang);
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
       transition={{ duration: 0.35 }}
-      className="mx-auto w-full max-w-[1760px] space-y-14 px-4 pb-24 pt-8 sm:px-6 lg:px-10 xl:px-14 2xl:px-16"
+      className="space-y-24"
     >
-      <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[3.4rem] border border-cyan-100/14 bg-[#0d1b2b]/82 p-6 shadow-[0_44px_170px_rgba(8,47,73,0.34)] backdrop-blur-2xl md:p-8 lg:p-12 xl:p-14">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(56,214,255,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(52,211,153,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
+      <section className="grid items-center gap-12 py-10 lg:grid-cols-[1.15fr_0.85fr]">
+        <div>
+          <Badge>{t.heroBadge}</Badge>
+          <h1 className="mt-8 max-w-5xl text-5xl font-semibold leading-[0.95] tracking-tight md:text-7xl">{t.heroTitle}</h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/70">{t.heroText}</p>
 
-        <div className="relative grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
-          <div>
-            <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-cyan-50/76">
-              {copy.badge}
-            </div>
-
-            <h1 className="mt-7 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.065em] text-white md:text-7xl xl:text-8xl">
-              {copy.title.split("по структуре.")[0]}
-              <span className="bg-gradient-to-r from-cyan-200 via-cyan-300 to-emerald-300 bg-clip-text text-transparent">
-                {copy.title.includes("по структуре.") ? "по структуре." : ""}
-              </span>
-            </h1>
-
-            <p className="mt-6 max-w-2xl text-base font-semibold leading-8 text-white/70 md:text-lg">
-              {copy.text}
-            </p>
-
-            <p className="mt-2 text-lg font-black text-emerald-200">
-              {copy.accent}
-            </p>
-
-            <div className="mt-9 flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => setActive("product")}
-                className="rounded-full bg-white px-7 py-3.5 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(56,214,255,0.25)]"
-              >
-                {copy.primary}
-                <span className="ml-2">→</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActive("pricing")}
-                className="rounded-full border border-cyan-200/22 bg-cyan-200/[0.07] px-7 py-3.5 text-sm font-black text-cyan-50 transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-200/[0.12]"
-              >
-                {copy.secondary}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActive("product")}
-                className="rounded-full border border-white/12 bg-white/[0.04] px-7 py-3.5 text-sm font-black text-white/78 transition duration-300 hover:-translate-y-0.5 hover:bg-white/[0.075]"
-              >
-                {copy.how}
-                <span className="ml-2">↗</span>
-              </button>
-            </div>
-
-            <div className="mt-10 grid gap-4 md:grid-cols-3">
-              {copy.trustItems.map((item) => (
-                <button
-                  key={item[0]}
-                  type="button"
-                  onClick={() => setActive("product")}
-                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-cyan-200/24 hover:bg-cyan-200/[0.07]"
-                >
-                  <div className="text-sm font-black text-white">{item[0]}</div>
-                  <p className="mt-2 text-xs font-semibold leading-5 text-white/48">
-                    {item[1]}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <HomeClientPnlVisual lang={t.lang} />
-        </div>
-
-        <div className="relative mt-9 grid gap-4 lg:grid-cols-4">
-          {copy.features.map((feature, index) => (
-            <button
-              key={feature[0]}
-              type="button"
-              onClick={() =>
-                setActive(index === 0 ? "pricing" : index === 3 ? "product" : "product")
-              }
-              className="group rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-left shadow-[0_18px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/24 hover:bg-cyan-200/[0.075]"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/16 bg-cyan-200/[0.08] text-sm font-black text-cyan-50">
-                0{index + 1}
-              </div>
-
-              <div className="mt-5 text-lg font-black text-white">{feature[0]}</div>
-
-              <p className="mt-3 text-sm font-semibold leading-7 text-white/56">
-                {feature[1]}
-              </p>
-
-              <div className="mt-5 inline-flex rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-black text-white/66 transition group-hover:border-cyan-200/28 group-hover:text-cyan-50">
-                {feature[2]}
-                <span className="ml-2">→</span>
-              </div>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <ButtonX onClick={() => setActive("pricing")}>{t.start}<span className="ml-2">→</span></ButtonX>
+            <button onClick={() => setActive("product")} className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white">
+              {t.tour}
             </button>
-          ))}
-        </div>
-      </section>
-
-      <ClientResultsCarousel lang={t.lang} setActive={setActive} />
-
-      <section className="relative overflow-hidden rounded-[2.7rem] border border-white/10 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.12),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(52,211,153,0.1),transparent_30%)]" />
-
-        <div className="relative">
-          <div className="text-center text-[11px] font-black uppercase tracking-[0.28em] text-white/38">
-            {copy.proofTitle}
           </div>
 
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {copy.trustItems.map((item, index) => (
-              <button
-                key={`${item[0]}-bottom`}
-                type="button"
-                onClick={() => setActive("product")}
-                className="rounded-[1.6rem] border border-white/10 bg-black/18 p-5 text-left transition hover:border-cyan-200/24 hover:bg-cyan-200/[0.07]"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-xs font-black text-cyan-50">
-                  0{index + 1}
-                </div>
-
-                <div className="mt-4 text-lg font-black text-white">{item[0]}</div>
-
-                <p className="mt-2 text-sm font-semibold leading-7 text-white/55">
-                  {item[1]}
-                </p>
-              </button>
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
+            {t.stats.map(([value, label]: [string, string]) => (
+              <CardBox key={value}>
+                <div className="text-2xl font-semibold">{value}</div>
+                <div className="mt-2 text-sm leading-6 text-white/50">{label}</div>
+              </CardBox>
             ))}
           </div>
+        </div>
+
+        <HeroVisual t={t} />
+      </section>
+
+      <section>
+        <Badge>{t.problemEyebrow}</Badge>
+        <h2 className="mt-6 max-w-4xl text-4xl font-semibold leading-tight md:text-5xl">{t.problemTitle}</h2>
+        <p className="mt-5 max-w-3xl text-base leading-8 text-white/65">{t.problemText}</p>
+      </section>
+
+      <section>
+        <SectionTitle eyebrow={t.productPage.modulesEyebrow} title={t.homeSections.whyTitle} text={t.homeSections.whyText} />
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {t.homeSections.cards.map(([title, text]: [string, string], index: number) => (
+            <motion.div
+              key={title}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ delay: index * 0.05 }}
+              whileHover={{ y: -5 }}
+              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20"
+            >
+              <div className="text-xl font-semibold text-white">{title}</div>
+              <p className="mt-3 text-sm leading-7 text-white/60">{text}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
     </motion.div>
   );
 }
-
 
 function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
   const p = t.productPage;
@@ -2351,1347 +1413,320 @@ function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => 
   );
 }
 
-
-function getPricingShowcaseCopy(lang: string) {
-  if (lang === "EN") {
-    return {
-      heroBadge: "Premium access board",
-      heroTitle: "Choose the SkillEdge AI level that matches your trading process.",
-      heroText:
-        "Core gives structure. Edge adds market intelligence. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome review.",
-      billingTitle: "Choose billing period",
-      billingText:
-        "Monthly is flexible. Longer periods are better for building a real review habit and tracking progress over time.",
-      paymentNotes: [
-        "Card payment is being prepared",
-        "Crypto payment is available during launch",
-      ],
-      period: {
-        monthly: "/ month",
-        halfyear: "/ 6 months",
-        yearly: "/ year",
-      },
-      billingOptions: [
-        ["monthly", "1 month", "flexible"],
-        ["halfyear", "6 months", "commit"],
-        ["yearly", "1 year", "best value"],
-      ],
-      plans: [
-        {
-          id: "starter",
-          name: "SkillEdge Core",
-          badge: "Start with discipline",
-          price: { monthly: 49, halfyear: 249, yearly: 399 },
-          headline: "For traders who need structure first.",
-          text:
-            "Build the foundation: journal, screenshots, AI Coach, exports and a cleaner review process.",
-          bestFor: "Best for journaling discipline and basic AI review.",
-          cta: "Start with Core",
-          features: [
-            "Trade journal",
-            "Screenshots",
-            "AI Coach",
-            "Basic journal analysis",
-            "Chart analysis foundation",
-            "CSV / XLSX export",
-          ],
-        },
-        {
-          id: "pro",
-          name: "SkillEdge Edge",
-          badge: "Active trader",
-          price: { monthly: 99, halfyear: 499, yearly: 799 },
-          headline: "For active traders who need market context.",
-          text:
-            "Add market intelligence, AI Scanner, deeper reports and stronger review for active trading.",
-          bestFor: "Best for traders who actively review setups and mistakes.",
-          cta: "Upgrade to Edge",
-          features: [
-            "Everything in Core",
-            "Market Intelligence",
-            "AI Scanner",
-            "AI Market Brief",
-            "Advanced reports",
-            "Higher AI limits",
-          ],
-        },
-        {
-          id: "elite",
-          name: "SkillEdge Elite",
-          badge: "Full AI Trading Desk",
-          price: { monthly: 149, halfyear: 749, yearly: 1249 },
-          headline: "For serious traders who want the full signal workflow.",
-          text:
-            "Unlock AI Alerts, floating alert widget, Signal-to-Journal, decision tracking and outcome learning.",
-          bestFor: "Best for traders who want alerts, journal sync and outcome review.",
-          cta: "Unlock Elite",
-          features: [
-            "Everything in Edge",
-            "AI Alerts",
-            "Floating alerts widget",
-            "Signal-to-Journal",
-            "Outcome tracking",
-            "Maximum AI limits",
-          ],
-        },
-      ],
-      elite: {
-        eyebrow: "Elite spotlight",
-        title: "The full AI Trading Desk.",
-        text:
-          "Elite is built for traders who want actionable alerts, structured risk, signal-to-journal workflow and measurable outcome review.",
-        button: "Unlock Elite",
-        bullets: [
-          "Real-time AI Alerts",
-          "Setup + trigger + invalidation",
-          "Signal-to-Journal workflow",
-          "Outcome learning",
-        ],
-      },
-      signal: {
-        eyebrow: "Signal quality",
-        title: "Signals should teach the trader, not make them click blindly.",
-        text:
-          "SkillEdge alerts are structured trade ideas: setup, trigger, entry zone, stop, targets, RR, risk and invalidation.",
-        cards: [
-          [
-            "No blind calls",
-            "A ticker is not a trade until setup, trigger, stop and RR are clear.",
-          ],
-          [
-            "No chase",
-            "If the move is extended and entry is late, the idea must be downgraded.",
-          ],
-          [
-            "Signal-to-Journal",
-            "A taken alert can become a trade draft for plan vs execution review.",
-          ],
-          [
-            "Outcome learning",
-            "Taken, missed and skipped alerts become feedback for the trader.",
-          ],
-        ],
-      },
-      comparison: {
-        eyebrow: "Access matrix",
-        title: "Compare plans by workflow depth.",
-        text:
-          "Each plan adds a deeper layer: structure, market intelligence, then the full signal workflow.",
-        headers: ["Feature", "Core", "Edge", "Elite"],
-        rows: [
-          ["Journal + screenshots", "Yes", "Yes", "Yes"],
-          ["AI Coach", "Basic", "Advanced", "Elite"],
-          ["Journal analysis", "Limited", "Expanded", "Maximum"],
-          ["Chart analysis", "Foundation", "Advanced", "Premium"],
-          ["AI Reports", "Basic", "Advanced", "Elite"],
-          ["Market Intelligence", "—", "Yes", "Yes"],
-          ["AI Scanner", "—", "Yes", "Yes"],
-          ["AI Alerts", "—", "—", "Yes"],
-          ["Signal-to-Journal", "—", "—", "Yes"],
-          ["Outcome tracking", "—", "—", "Yes"],
-        ],
-      },
-      recommendation: {
-        eyebrow: "Clean recommendation",
-        title: "Choose by process depth, not hype.",
-        text:
-          "Start where your workflow is today. Upgrade when you are ready for market intelligence and the full alert loop.",
-        disclaimer:
-          "SkillEdge AI is not financial advice and does not guarantee profits. It is built to improve structure, review, decision quality and trading process.",
-        items: [
-          ["Choose Core", "You need structure, journal discipline and basic AI review."],
-          ["Choose Edge", "You actively trade and need scanner intelligence plus deeper analysis."],
-          ["Choose Elite", "You want AI Alerts, Signal-to-Journal and outcome learning."],
-        ],
-      },
-      labels: {
-        bestFor: "Best for",
-        included: "Included",
-        checkout: "Checkout status",
-      },
-    };
-  }
-
-  if (lang === "UA") {
-    return {
-      heroBadge: "Premium access board",
-      heroTitle: "Обери рівень SkillEdge AI під свій торговий процес.",
-      heroText:
-        "Core дає структуру. Edge додає market intelligence. Elite відкриває повний AI Trading Desk із сигналами, журналом і розбором результатів.",
-      billingTitle: "Обери період оплати",
-      billingText:
-        "Місячна оплата гнучка. Довші періоди краще підходять для звички review і відстеження прогресу.",
-      paymentNotes: [
-        "Оплата карткою: скоро",
-        "Crypto payment доступний на етапі запуску",
-      ],
-      period: {
-        monthly: "/ місяць",
-        halfyear: "/ 6 місяців",
-        yearly: "/ рік",
-      },
-      billingOptions: [
-        ["monthly", "1 місяць", "гнучко"],
-        ["halfyear", "6 місяців", "дисципліна"],
-        ["yearly", "1 рік", "краща цінність"],
-      ],
-      plans: [
-        {
-          id: "starter",
-          name: "SkillEdge Core",
-          badge: "Почни з дисципліни",
-          price: { monthly: 49, halfyear: 249, yearly: 399 },
-          headline: "Для трейдера, якому спочатку потрібна структура.",
-          text:
-            "Побудуй основу: журнал, скріншоти, AI Coach, експорт і чистіший процес розбору.",
-          bestFor: "Найкраще для дисципліни журналу та базового AI review.",
-          cta: "Почати з Core",
-          features: [
-            "Журнал угод",
-            "Скріншоти",
-            "AI Coach",
-            "Базовий аналіз журналу",
-            "Базовий аналіз графіків",
-            "CSV / XLSX експорт",
-          ],
-        },
-        {
-          id: "pro",
-          name: "SkillEdge Edge",
-          badge: "Активний трейдер",
-          price: { monthly: 99, halfyear: 499, yearly: 799 },
-          headline: "Для активного трейдера, якому потрібен ринковий контекст.",
-          text:
-            "Додає market intelligence, AI Scanner, глибші звіти та сильніший review для активної торгівлі.",
-          bestFor: "Найкраще для трейдерів, які серйозно розбирають сетапи й помилки.",
-          cta: "Перейти на Edge",
-          features: [
-            "Усе з Core",
-            "Market Intelligence",
-            "AI Scanner",
-            "AI Market Brief",
-            "Advanced reports",
-            "Вищі AI-ліміти",
-          ],
-        },
-        {
-          id: "elite",
-          name: "SkillEdge Elite",
-          badge: "Повний AI Trading Desk",
-          price: { monthly: 149, halfyear: 749, yearly: 1249 },
-          headline: "Для серйозних трейдерів, яким потрібен повний signal workflow.",
-          text:
-            "Відкриває AI Alerts, floating alert widget, Signal-to-Journal, decision tracking і outcome learning.",
-          bestFor: "Найкраще для сигналів, синхронізації з журналом і розбору результатів.",
-          cta: "Відкрити Elite",
-          features: [
-            "Усе з Edge",
-            "AI Alerts",
-            "Floating alerts widget",
-            "Signal-to-Journal",
-            "Outcome tracking",
-            "Максимальні AI-ліміти",
-          ],
-        },
-      ],
-      elite: {
-        eyebrow: "Elite spotlight",
-        title: "Повний AI Trading Desk.",
-        text:
-          "Elite створений для трейдерів, яким потрібні actionable alerts, структурований ризик, Signal-to-Journal і вимірюваний outcome review.",
-        button: "Відкрити Elite",
-        bullets: [
-          "Real-time AI Alerts",
-          "Сетап + тригер + invalidation",
-          "Signal-to-Journal workflow",
-          "Outcome learning",
-        ],
-      },
-      signal: {
-        eyebrow: "Якість сигналів",
-        title: "Сигнали мають навчати трейдера, а не змушувати сліпо клікати.",
-        text:
-          "SkillEdge alerts — це структуровані торгові ідеї: сетап, тригер, зона входу, стоп, цілі, RR, ризик та invalidation.",
-        cards: [
-          [
-            "Не сліпі команди",
-            "Тікер не стає угодою, поки немає сетапу, тригера, стопа й RR.",
-          ],
-          [
-            "No chase",
-            "Якщо рух розтягнутий і вхід пізній, ідея має бути знижена в якості.",
-          ],
-          [
-            "Signal-to-Journal",
-            "Взятий alert може стати чернеткою угоди для розбору плану й виконання.",
-          ],
-          [
-            "Outcome learning",
-            "Взяті, пропущені та missed alerts стають feedback для трейдера.",
-          ],
-        ],
-      },
-      comparison: {
-        eyebrow: "Матриця доступу",
-        title: "Порівняй тарифи за глибиною workflow.",
-        text:
-          "Кожен тариф додає глибший шар: структура, market intelligence, потім повний signal workflow.",
-        headers: ["Функція", "Core", "Edge", "Elite"],
-        rows: [
-          ["Журнал + скріншоти", "Так", "Так", "Так"],
-          ["AI Coach", "Базовий", "Advanced", "Elite"],
-          ["Аналіз журналу", "Лімітований", "Розширений", "Максимальний"],
-          ["Аналіз графіків", "Базовий", "Advanced", "Premium"],
-          ["AI Reports", "Базові", "Advanced", "Elite"],
-          ["Market Intelligence", "—", "Так", "Так"],
-          ["AI Scanner", "—", "Так", "Так"],
-          ["AI Alerts", "—", "—", "Так"],
-          ["Signal-to-Journal", "—", "—", "Так"],
-          ["Outcome tracking", "—", "—", "Так"],
-        ],
-      },
-      recommendation: {
-        eyebrow: "Чиста рекомендація",
-        title: "Обирай за глибиною процесу, а не за хайпом.",
-        text:
-          "Почни з того рівня, де зараз твій workflow. Підвищуй тариф, коли потрібні market intelligence і повний alert loop.",
-        disclaimer:
-          "SkillEdge AI не є фінансовою порадою і не гарантує прибуток. Платформа створена для покращення структури, review, якості рішень і торгового процесу.",
-        items: [
-          ["Обирай Core", "Потрібна структура, дисципліна журналу та базовий AI review."],
-          ["Обирай Edge", "Ти активно торгуєш і хочеш scanner intelligence та глибший аналіз."],
-          ["Обирай Elite", "Потрібні AI Alerts, Signal-to-Journal і outcome learning."],
-        ],
-      },
-      labels: {
-        bestFor: "Кому підходить",
-        included: "Що входить",
-        checkout: "Статус оплати",
-      },
-    };
-  }
-
-  return {
-    heroBadge: "Premium access board",
-    heroTitle: "Выбери уровень SkillEdge AI под свой торговый процесс.",
-    heroText:
-      "Core даёт структуру. Edge добавляет market intelligence. Elite открывает полный AI Trading Desk с сигналами, журналом и разбором результатов.",
-    billingTitle: "Выбери период оплаты",
-    billingText:
-      "Месячная оплата гибкая. Длинные периоды лучше подходят для привычки review и отслеживания прогресса.",
-    paymentNotes: [
-      "Оплата картой: скоро",
-      "Crypto payment доступен на этапе запуска",
-    ],
-    period: {
-      monthly: "/ месяц",
-      halfyear: "/ 6 месяцев",
-      yearly: "/ год",
-    },
-    billingOptions: [
-      ["monthly", "1 месяц", "гибко"],
-      ["halfyear", "6 месяцев", "дисциплина"],
-      ["yearly", "1 год", "лучшая ценность"],
-    ],
-    plans: [
-      {
-        id: "starter",
-        name: "SkillEdge Core",
-        badge: "Начни с дисциплины",
-        price: { monthly: 49, halfyear: 249, yearly: 399 },
-        headline: "Для трейдера, которому сначала нужна структура.",
-        text:
-          "Построй основу: журнал, скриншоты, AI Coach, экспорт и более чистый процесс разбора.",
-        bestFor: "Лучше всего для дисциплины журнала и базового AI review.",
-        cta: "Начать с Core",
-        features: [
-          "Журнал сделок",
-          "Скриншоты",
-          "AI Coach",
-          "Базовый анализ журнала",
-          "Базовый анализ графиков",
-          "CSV / XLSX экспорт",
-        ],
-      },
-      {
-        id: "pro",
-        name: "SkillEdge Edge",
-        badge: "Активный трейдер",
-        price: { monthly: 99, halfyear: 499, yearly: 799 },
-        headline: "Для активного трейдера, которому нужен рыночный контекст.",
-        text:
-          "Добавляет market intelligence, AI Scanner, более глубокие отчёты и сильный review для активной торговли.",
-        bestFor: "Лучше всего для трейдеров, которые серьёзно разбирают сетапы и ошибки.",
-        cta: "Перейти на Edge",
-        features: [
-          "Всё из Core",
-          "Market Intelligence",
-          "AI Scanner",
-          "AI Market Brief",
-          "Advanced reports",
-          "Повышенные AI-лимиты",
-        ],
-      },
-      {
-        id: "elite",
-        name: "SkillEdge Elite",
-        badge: "Полный AI Trading Desk",
-        price: { monthly: 149, halfyear: 749, yearly: 1249 },
-        headline: "Для серьёзных трейдеров, которым нужен полный signal workflow.",
-        text:
-          "Открывает AI Alerts, floating alert widget, Signal-to-Journal, decision tracking и outcome learning.",
-        bestFor: "Лучше всего для сигналов, синхронизации с журналом и разбора результатов.",
-        cta: "Открыть Elite",
-        features: [
-          "Всё из Edge",
-          "AI Alerts",
-          "Floating alerts widget",
-          "Signal-to-Journal",
-          "Outcome tracking",
-          "Максимальные AI-лимиты",
-        ],
-      },
-    ],
-    elite: {
-      eyebrow: "Elite spotlight",
-      title: "Полный AI Trading Desk.",
-      text:
-        "Elite создан для трейдеров, которым нужны actionable alerts, структурированный риск, Signal-to-Journal и измеримый outcome review.",
-      button: "Открыть Elite",
-      bullets: [
-        "Real-time AI Alerts",
-        "Сетап + триггер + invalidation",
-        "Signal-to-Journal workflow",
-        "Outcome learning",
-      ],
-    },
-    signal: {
-      eyebrow: "Качество сигналов",
-      title: "Сигналы должны обучать трейдера, а не заставлять слепо кликать.",
-      text:
-        "SkillEdge alerts — это структурированные торговые идеи: сетап, триггер, зона входа, стоп, цели, RR, риск и invalidation.",
-      cards: [
-        [
-          "Не слепые команды",
-          "Тикер не становится сделкой, пока нет сетапа, триггера, стопа и RR.",
-        ],
-        [
-          "No chase",
-          "Если движение растянуто и вход поздний, идея должна быть снижена в качестве.",
-        ],
-        [
-          "Signal-to-Journal",
-          "Взятый alert может стать черновиком сделки для разбора плана и исполнения.",
-        ],
-        [
-          "Outcome learning",
-          "Взятые, пропущенные и missed alerts становятся feedback для трейдера.",
-        ],
-      ],
-    },
-    comparison: {
-      eyebrow: "Матрица доступа",
-      title: "Сравни тарифы по глубине workflow.",
-      text:
-        "Каждый тариф добавляет более глубокий слой: структура, market intelligence, затем полный signal workflow.",
-      headers: ["Функция", "Core", "Edge", "Elite"],
-      rows: [
-        ["Журнал + скриншоты", "Да", "Да", "Да"],
-        ["AI Coach", "Базовый", "Advanced", "Elite"],
-        ["Анализ журнала", "Лимитированный", "Расширенный", "Максимальный"],
-        ["Анализ графиков", "Базовый", "Advanced", "Premium"],
-        ["AI Reports", "Базовые", "Advanced", "Elite"],
-        ["Market Intelligence", "—", "Да", "Да"],
-        ["AI Scanner", "—", "Да", "Да"],
-        ["AI Alerts", "—", "—", "Да"],
-        ["Signal-to-Journal", "—", "—", "Да"],
-        ["Outcome tracking", "—", "—", "Да"],
-      ],
-    },
-    recommendation: {
-      eyebrow: "Чистая рекомендация",
-      title: "Выбирай по глубине процесса, а не по хайпу.",
-      text:
-        "Начни с того уровня, где сейчас твой workflow. Повышай тариф, когда нужны market intelligence и полный alert loop.",
-      disclaimer:
-        "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, review, качества решений и торгового процесса.",
-      items: [
-        ["Выбирай Core", "Нужна структура, дисциплина журнала и базовый AI review."],
-        ["Выбирай Edge", "Ты активно торгуешь и хочешь scanner intelligence и более глубокий анализ."],
-        ["Выбирай Elite", "Нужны AI Alerts, Signal-to-Journal и outcome learning."],
-      ],
-    },
-    labels: {
-      bestFor: "Кому подходит",
-      included: "Что входит",
-      checkout: "Статус оплаты",
-    },
-  };
-}
-
 function PricingPage({
   t,
   handleCheckout,
   checkoutStatus,
 }: {
   t: any;
-  handleCheckout: (planId: string, billing: BillingPeriod) => void;
+  handleCheckout: (id: string, billingPeriod: BillingPeriod) => void;
   checkoutStatus: string;
 }) {
   const [billing, setBilling] = useState<BillingPeriod>("monthly");
-  const copy = getPricingShowcaseCopy(t.lang);
-  const elitePlan = copy.plans.find((plan: any) => plan.id === "elite") ?? copy.plans[2];
+  const p = t.pricingPage;
 
-  const getPlanPrice = (plan: any) => {
-    const price = plan.price?.[billing];
+  const periodLabel = p.period[billing];
 
-    return typeof price === "number" ? `$${price}` : "—";
-  };
-
-  const getPlanAccent = (planId: string) => {
-    if (planId === "elite") {
-      return "border-cyan-200/30 bg-cyan-200/[0.085] shadow-[0_34px_150px_rgba(34,211,238,0.2)] lg:-mt-8";
-    }
-
-    if (planId === "pro") {
-      return "border-emerald-200/18 bg-emerald-200/[0.055]";
-    }
-
-    return "border-white/10 bg-white/[0.04]";
-  };
+  const plans = useMemo(
+    () =>
+      p.plans.map((plan: any) => ({
+        ...plan,
+        price: priceMatrix[plan.id as keyof typeof priceMatrix][billing],
+      })),
+    [p.plans, billing]
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -18 }}
-      transition={{ duration: 0.35 }}
-      className="mx-auto w-full max-w-[1600px] space-y-16 px-4 pb-28 pt-10 sm:px-6 lg:px-8 xl:px-10"
-    >
-      <section className="relative overflow-hidden rounded-[3.2rem] border border-white/10 bg-[#06111d]/88 p-6 shadow-[0_45px_180px_rgba(8,47,73,0.32)] backdrop-blur-2xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(34,211,238,0.16),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(16,185,129,0.15),transparent_30%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.12),transparent_36%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.024)_1px,transparent_1px)] bg-[size:62px_62px] opacity-30" />
-
-        <div className="relative grid min-h-[calc(100vh-220px)] gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
-          <div>
-            <Badge>{copy.heroBadge}</Badge>
-
-            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.98] tracking-[-0.06em] text-white md:text-6xl xl:text-7xl">
-              {copy.heroTitle}
-            </h1>
-
-            <p className="mt-6 max-w-3xl text-base font-semibold leading-8 text-white/68 md:text-lg">
-              {copy.heroText}
-            </p>
-
-            <div className="mt-8 rounded-[2rem] border border-white/10 bg-black/24 p-3 backdrop-blur-xl">
-              <div className="px-2 pb-3">
-                <div className="text-sm font-black text-white">{copy.billingTitle}</div>
-                <div className="mt-1 text-xs font-semibold leading-5 text-white/45">
-                  {copy.billingText}
-                </div>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                {copy.billingOptions.map((option: string[]) => {
-                  const key = option[0] as BillingPeriod;
-                  const label = option[1] ?? "";
-                  const note = option[2] ?? "";
-
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => setBilling(key)}
-                      className={`rounded-[1.35rem] border px-4 py-4 text-left transition duration-300 ${
-                        billing === key
-                          ? "border-cyan-200/35 bg-cyan-200/[0.12] shadow-[0_0_40px_rgba(34,211,238,0.14)]"
-                          : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.06]"
-                      }`}
-                    >
-                      <div className="text-sm font-black text-white">{label}</div>
-                      <div className="mt-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/38">
-                        {note}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {copy.paymentNotes.map((note: string, index: number) => (
-                <span
-                  key={note}
-                  className={`rounded-full border px-3 py-2 text-xs font-bold ${
-                    index === 0
-                      ? "border-amber-300/20 bg-amber-300/[0.07] text-amber-50/70"
-                      : "border-emerald-300/20 bg-emerald-300/[0.07] text-emerald-50/70"
-                  }`}
-                >
-                  {note}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 24, scale: 0.98 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ delay: 0.12, duration: 0.6 }}
-            className="relative"
-          >
-            <div className="absolute -inset-10 rounded-[3rem] bg-cyan-300/12 blur-3xl" />
-
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-200/20 bg-cyan-200/[0.075] p-5 shadow-[0_40px_150px_rgba(8,47,73,0.35)] backdrop-blur-2xl">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(34,211,238,0.22),transparent_34%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.15),transparent_30%)]" />
-
-              <div className="relative z-10">
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan-50/55">
-                    {copy.elite.eyebrow}
-                  </div>
-
-                  <div className="rounded-full border border-white/15 bg-white/[0.08] px-3 py-1 text-[10px] font-black text-white/70">
-                    {getPlanPrice(elitePlan)} {copy.period[billing]}
-                  </div>
-                </div>
-
-                <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
-                  {copy.elite.title}
-                </h2>
-
-                <p className="mt-5 text-sm font-semibold leading-7 text-white/62">
-                  {copy.elite.text}
-                </p>
-
-                <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                  {copy.elite.bullets.map((item: string) => (
-                    <div
-                      key={item}
-                      className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm font-black text-white"
-                    >
-                      ✓ {item}
-                    </div>
-                  ))}
-                </div>
-
-                {checkoutStatus ? (
-                  <div className="mt-6 rounded-2xl border border-white/10 bg-black/22 p-4">
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
-                      {copy.labels.checkout}
-                    </div>
-                    <div className="mt-2 text-sm font-semibold leading-6 text-white/62">
-                      {checkoutStatus}
-                    </div>
-                  </div>
-                ) : null}
-
-                <button
-                  type="button"
-                  onClick={() => handleCheckout("elite", billing)}
-                  className="mt-7 w-full rounded-2xl bg-white px-5 py-4 text-sm font-black text-[#06111d] shadow-[0_22px_90px_rgba(255,255,255,0.22)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_26px_100px_rgba(34,211,238,0.3)]"
-                >
-                  {copy.elite.button}
-                  <span className="ml-2">→</span>
-                </button>
-              </div>
-            </div>
-          </motion.div>
+    <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -18 }} transition={{ duration: 0.35 }} className="space-y-24 pt-8">
+      <section className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
+        <Glow />
+        <div className="relative max-w-5xl">
+          <Badge>{p.heroBadge}</Badge>
+          <h1 className="mt-6 text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl">{p.heroTitle}</h1>
+          <p className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg">{p.heroText}</p>
         </div>
-      </section>
 
-      <section className="grid gap-6 lg:grid-cols-3">
-        {copy.plans.map((plan: any, index: number) => (
-          <motion.div
-            key={plan.id}
-            initial={{ opacity: 0, y: plan.id === "elite" ? 8 : 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ delay: index * 0.07, duration: 0.45 }}
-            whileHover={{ y: -8 }}
-            className={`relative overflow-hidden rounded-[2.5rem] border p-6 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-xl transition duration-300 md:p-7 ${getPlanAccent(
-              plan.id
-            )}`}
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.10),transparent_30%)]" />
-
-            <div className="relative">
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/50">
-                {plan.badge}
-              </div>
-
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.045em] text-white">
-                {plan.name}
-              </h2>
-
-              <p className="mt-4 min-h-[88px] text-sm font-semibold leading-7 text-white/58">
-                {plan.headline}
-              </p>
-
-              <div className="mt-7 flex items-end gap-2">
-                <span className="text-5xl font-black tracking-[-0.06em] text-white">
-                  {getPlanPrice(plan)}
-                </span>
-                <span className="pb-2 text-sm font-bold text-white/45">
-                  {copy.period[billing]}
-                </span>
-              </div>
-
-              <p className="mt-5 text-sm font-semibold leading-7 text-white/56">
-                {plan.text}
-              </p>
-
-              <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-black/20 p-4">
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">
-                  {copy.labels.bestFor}
-                </div>
-                <div className="mt-2 text-sm font-black leading-6 text-white">
-                  {plan.bestFor}
-                </div>
-              </div>
-
-              <div className="mt-6">
-                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
-                  {copy.labels.included}
-                </div>
-
-                <div className="mt-3 grid gap-2">
-                  {plan.features.map((feature: string) => (
-                    <div
-                      key={feature}
-                      className="rounded-xl border border-white/10 bg-black/18 px-3 py-2 text-xs font-bold leading-5 text-white/58"
-                    >
-                      ✓ {feature}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => handleCheckout(plan.id, billing)}
-                className={`mt-7 w-full rounded-2xl px-5 py-4 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
-                  plan.id === "elite"
-                    ? "bg-white text-[#06111d] shadow-[0_20px_80px_rgba(255,255,255,0.2)] hover:shadow-[0_24px_90px_rgba(34,211,238,0.25)]"
-                    : "border border-white/12 bg-white/[0.055] text-white hover:border-cyan-200/30 hover:bg-cyan-200/[0.09]"
-                }`}
-              >
-                {plan.cta}
-                <span className="ml-2">→</span>
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </section>
-
-      <section className="relative overflow-hidden rounded-[2.8rem] border border-cyan-200/12 bg-[#081522]/78 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_10%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
-
-        <div className="relative">
-          <SectionTitle
-            eyebrow={copy.signal.eyebrow}
-            title={copy.signal.title}
-            text={copy.signal.text}
-          />
-
-          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {copy.signal.cards.map((item: string[], index: number) => {
-              const title = item[0] ?? "";
-              const text = item[1] ?? "";
-
-              return (
-                <motion.div
-                  key={title}
-                  initial={{ opacity: 0, y: 18 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ delay: index * 0.06, duration: 0.45 }}
-                  whileHover={{ y: -6 }}
-                  className="rounded-[1.6rem] border border-white/10 bg-white/[0.045] p-5 backdrop-blur-xl"
-                >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-sm font-black text-cyan-50">
-                    0{index + 1}
-                  </div>
-
-                  <div className="mt-5 text-xl font-black tracking-[-0.025em] text-white">
-                    {title}
-                  </div>
-
-                  <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
-                    {text}
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden rounded-[2.8rem] border border-white/10 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(34,211,238,0.12),transparent_30%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.13),transparent_32%)]" />
-
-        <div className="relative">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <Badge>{copy.comparison.eyebrow}</Badge>
-
-              <h2 className="mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
-                {copy.comparison.title}
-              </h2>
-            </div>
-
-            <p className="max-w-xl text-sm font-semibold leading-7 text-white/58">
-              {copy.comparison.text}
-            </p>
-          </div>
-
-          <div className="mt-9 overflow-x-auto rounded-[2rem] border border-white/10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-            <div className="min-w-[860px]">
-              <div className="grid grid-cols-[1.1fr_0.8fr_0.8fr_0.8fr] bg-white/[0.065] px-5 py-4 text-xs font-black uppercase tracking-[0.18em] text-white/50">
-                {copy.comparison.headers.map((header: string) => (
-                  <div key={header}>{header}</div>
-                ))}
-              </div>
-
-              {copy.comparison.rows.map((row: string[], rowIndex: number) => (
-                <motion.div
-                  key={`pricing-row-${rowIndex}`}
-                  initial={{ opacity: 0, y: 14 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ delay: rowIndex * 0.025, duration: 0.35 }}
-                  className="grid grid-cols-[1.1fr_0.8fr_0.8fr_0.8fr] border-t border-white/10 text-sm font-semibold text-white/62"
-                >
-                  {row.map((cell: string, cellIndex: number) => (
-                    <div
-                      key={`pricing-cell-${rowIndex}-${cellIndex}`}
-                      className={`p-4 ${
-                        cellIndex === 3
-                          ? "bg-cyan-200/[0.045] text-white/76"
-                          : cellIndex === 0
-                            ? "bg-white/[0.03] font-black text-white"
-                            : ""
-                      }`}
-                    >
-                      {cell}
-                    </div>
-                  ))}
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-        <motion.div
-          initial={{ opacity: 0, x: -24 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
-          className="relative overflow-hidden rounded-[2.6rem] border border-emerald-200/14 bg-emerald-200/[0.055] p-6 shadow-[0_34px_140px_rgba(6,78,59,0.22)] backdrop-blur-xl md:p-8"
-        >
-          <Badge>{copy.recommendation.eyebrow}</Badge>
-
-          <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
-            {copy.recommendation.title}
-          </h2>
-
-          <p className="mt-5 text-sm font-semibold leading-7 text-white/62">
-            {copy.recommendation.text}
-          </p>
-
-          <div className="mt-6 rounded-2xl border border-amber-300/15 bg-amber-300/[0.045] p-4 text-xs font-semibold leading-6 text-amber-50/65">
-            {copy.recommendation.disclaimer}
-          </div>
-        </motion.div>
-
-        <div className="grid gap-4">
-          {copy.recommendation.items.map((item: string[], index: number) => (
-            <motion.div
-              key={item[0]}
-              initial={{ opacity: 0, x: 24 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ delay: index * 0.06, duration: 0.45 }}
-              className="rounded-[1.7rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl"
+        <div className="relative mt-8 inline-flex flex-wrap gap-2 rounded-full border border-white/10 bg-black/20 p-2">
+          {(["monthly", "halfyear", "yearly"] as BillingPeriod[]).map((key) => (
+            <button
+              key={key}
+              onClick={() => setBilling(key)}
+              className={`rounded-full px-5 py-2 text-sm transition ${billing === key ? "bg-white text-black" : "text-white/65 hover:bg-white/10 hover:text-white"}`}
             >
-              <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-xs font-black text-cyan-50">
-                  0{index + 1}
-                </div>
-
-                <div>
-                  <div className="text-lg font-black text-white">{item[0]}</div>
-                  <p className="mt-2 text-sm font-semibold leading-7 text-white/56">
-                    {item[1]}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
+              {p.billingToggle[key]}
+            </button>
           ))}
-
-          <button
-            type="button"
-            onClick={() => handleCheckout("elite", billing)}
-            className="rounded-[1.7rem] border border-cyan-200/24 bg-cyan-200/[0.09] p-5 text-left text-sm font-black text-cyan-50 shadow-[0_26px_100px_rgba(34,211,238,0.18)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-200/[0.13]"
-          >
-            {copy.elite.button}
-            <span className="ml-2">→</span>
-          </button>
         </div>
+      </section>
+
+      <section>
+        <div className="grid gap-6 xl:grid-cols-3">
+          {plans.map((plan: any, index: number) => {
+            const accent = plan.id === "starter" ? "core" : plan.id === "pro" ? "edge" : "elite";
+
+            return (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: index * 0.06 }}
+                whileHover={{ y: -6, scale: 1.01 }}
+                className={`relative flex h-full flex-col overflow-hidden rounded-[2rem] border p-6 ${getPlanClasses(accent)}`}
+              >
+                <div className="absolute -right-20 -top-20 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
+                <div className="relative">
+                  <div className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ${getBadgeClasses(accent)}`}>
+                    {accent === "core" ? p.planBadge.core : accent === "edge" ? p.planBadge.edge : p.planBadge.elite}
+                  </div>
+                  <div className="mt-5 text-2xl font-semibold text-white">{plan.name}</div>
+                  <div className="mt-3 text-lg font-semibold leading-7 text-white/90">{plan.headline}</div>
+                  <p className="mt-4 text-sm leading-7 text-white/60">{plan.text}</p>
+                  <div className="mt-7 flex items-end gap-2">
+                    <div className="text-5xl font-semibold text-white">${plan.price}</div>
+                    <div className="pb-2 text-sm text-white/45">{periodLabel}</div>
+                  </div>
+                  <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/62">{plan.bestFor}</div>
+                  <div className="mt-6 space-y-3">
+                    {plan.features.map((item: string) => (
+                      <div key={item} className="flex gap-3 text-sm text-white/70">
+                        <Icon name="check" className="text-emerald-300" />
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="relative mt-auto pt-8">
+                  <ButtonX onClick={() => handleCheckout(plan.id, billing)} className="w-full">
+                    <Icon name="money" className="mr-2 h-4 w-4" />
+                    {plan.cta}
+                  </ButtonX>
+                  <p className="mt-3 text-center text-xs text-white/45">{p.cryptoNote}</p>
+                  <button disabled className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-full border border-white/10 bg-white/[0.04] px-6 text-sm font-medium text-white/35">
+                    {p.cardPayment}
+                  </button>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {checkoutStatus ? <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-5 text-sm leading-7 text-white/70">{checkoutStatus}</div> : null}
+      </section>
+
+      <section>
+        <SectionTitle eyebrow={p.signalEyebrow} title={p.signalTitle} text={p.signalText} />
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          {p.signalCards.map(([title, text]: [string, string], index: number) => (
+            <InfoCard key={title} title={title} text={text} index={index} />
+          ))}
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+        <CardBox>
+          <div className="text-sm uppercase tracking-[0.2em] text-white/45">{p.comparisonTitle}</div>
+          <h3 className="mt-3 text-2xl font-semibold text-white">{p.finalTitle}</h3>
+          <p className="mt-3 text-sm leading-7 text-white/60">{p.finalText}</p>
+          <div className="mt-6 rounded-3xl border border-amber-300/15 bg-amber-300/[0.035] p-4 text-xs leading-6 text-amber-50/65">{p.disclaimer}</div>
+        </CardBox>
+
+        <CardBox>
+          <div className="text-sm uppercase tracking-[0.2em] text-white/45">{p.comparisonTitle}</div>
+          <p className="mt-3 text-sm leading-7 text-white/60">{p.comparisonText}</p>
+          <div className="mt-6 overflow-x-auto rounded-3xl border border-white/10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="min-w-[820px]">
+              {p.comparison.map((row: string[], rowIndex: number) => (
+                <div key={`pricing-row-${rowIndex}`} className={`grid grid-cols-4 ${rowIndex === 0 ? "bg-white/5 text-white" : "border-t border-white/10 text-white/65"}`}>
+                  {row.map((cell, cellIndex) => (
+                    <div key={`pricing-cell-${rowIndex}-${cellIndex}`} className="p-4 text-sm">{cell}</div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardBox>
       </section>
     </motion.div>
   );
 }
 
-
-type LandingTeamMember = {
-  name: string;
-  country: string;
-  role: string;
-  story: string;
-  focus: string[];
-  initials: string;
-  gradient: string;
-};
-
-function getTeamPageCopy(lang: string) {
-  if (lang === "EN") {
-    return {
-      badge: "Team manifesto",
-      title: "Built by traders, product people and risk-first operators.",
-      text:
-        "SkillEdge AI is not built as another signal feed. It is built like a trading desk: market intelligence, setup logic, journal feedback, execution review and a process that makes the trader sharper over time.",
-      primary: "Choose access",
-      secondary: "View product",
-      carouselBadge: "Global desk team",
-      carouselTitle: "Seven people, one mission: turn trading into a repeatable process.",
-      principlesEyebrow: "Operating principles",
-      principlesTitle: "What this team is building.",
-      refuseTitle: "What we refuse to build",
-      buildTitle: "What SkillEdge is built for",
-      principles: [
-        ["Risk before excitement", "A trade idea is not serious until entry, invalidation and RR are clear."],
-        ["Signals must teach", "Every alert should explain setup, trigger, risk and what cancels the idea."],
-        ["Journal is the truth", "PnL alone is not enough. The system must show execution quality and repeated mistakes."],
-        ["Personalization comes from data", "The better the journal, the better the system can identify strong and weak patterns."],
-      ],
-      refuse: [
-        "Blind buy/sell calls",
-        "Fake profit promises",
-        "No-context pump alerts",
-        "Pretty dashboards with no trading process",
-      ],
-      build: [
-        "AI Trading Desk workflow",
-        "Setup-based alerts",
-        "Signal-to-Journal analytics",
-        "Outcome tracking and trader improvement",
-      ],
-      finalTitle: "A premium trading process, not another noisy tool.",
-      finalText:
-        "SkillEdge AI is being built for traders who want structure, discipline, market context and a serious feedback loop.",
-    };
-  }
-
-  if (lang === "UA") {
-    return {
-      badge: "Маніфест команди",
-      title: "Створюємо продукт як trading desk: з ризиком, структурою і дисципліною.",
-      text:
-        "SkillEdge AI — це не чергова стрічка сигналів. Це система для трейдера: ринкова розвідка, логіка сетапів, журнал, розбір виконання і процес, який робить рішення сильнішими з часом.",
-      primary: "Обрати доступ",
-      secondary: "Подивитись продукт",
-      carouselBadge: "Глобальна desk-команда",
-      carouselTitle: "Сім людей, одна місія: перетворити трейдинг на повторюваний процес.",
-      principlesEyebrow: "Принципи роботи",
-      principlesTitle: "Що будує ця команда.",
-      refuseTitle: "Що ми не будуємо",
-      buildTitle: "Для чого створений SkillEdge",
-      principles: [
-        ["Ризик перед емоцією", "Ідея не є серйозною, поки не зрозумілі entry, invalidation і RR."],
-        ["Сигнал має навчати", "Кожен alert повинен пояснювати сетап, тригер, ризик і що скасовує ідею."],
-        ["Журнал — джерело правди", "PnL недостатньо. Система має показувати якість виконання та повторювані помилки."],
-        ["Персоналізація йде з даних", "Чим сильніший журнал, тим краще система бачить сильні й слабкі патерни трейдера."],
-      ],
-      refuse: [
-        "Сліпі buy/sell команди",
-        "Фейкові обіцянки прибутку",
-        "Pump alerts без контексту",
-        "Красиві dashboard без торгового процесу",
-      ],
-      build: [
-        "AI Trading Desk workflow",
-        "Сигнали на базі сетапів",
-        "Signal-to-Journal analytics",
-        "Outcome tracking і розвиток трейдера",
-      ],
-      finalTitle: "Преміальний торговий процес, а не ще один шумний інструмент.",
-      finalText:
-        "SkillEdge AI створюється для трейдерів, яким потрібні структура, дисципліна, ринковий контекст і серйозний feedback loop.",
-    };
-  }
-
-  return {
-    badge: "Манифест команды",
-    title: "Мы строим продукт как trading desk: через риск, структуру и дисциплину.",
-    text:
-      "SkillEdge AI — это не очередная лента сигналов. Это система для трейдера: рыночная разведка, логика сетапов, журнал, разбор исполнения и процесс, который делает решения сильнее со временем.",
-    primary: "Выбрать доступ",
-    secondary: "Посмотреть продукт",
-    carouselBadge: "Глобальная desk-команда",
-    carouselTitle: "Семь человек, одна миссия: превратить трейдинг в повторяемый процесс.",
-    principlesEyebrow: "Принципы работы",
-    principlesTitle: "Что строит эта команда.",
-    refuseTitle: "Что мы не строим",
-    buildTitle: "Для чего создан SkillEdge",
-    principles: [
-      ["Риск перед эмоцией", "Идея не серьёзная, пока не понятны entry, invalidation и RR."],
-      ["Сигнал должен обучать", "Каждый alert должен объяснять сетап, триггер, риск и что отменяет идею."],
-      ["Журнал — источник правды", "PnL недостаточно. Система должна показывать качество исполнения и повторяющиеся ошибки."],
-      ["Персонализация идёт из данных", "Чем сильнее журнал, тем лучше система видит сильные и слабые паттерны трейдера."],
-    ],
-    refuse: [
-      "Слепые buy/sell команды",
-      "Фейковые обещания прибыли",
-      "Pump alerts без контекста",
-      "Красивые dashboard без торгового процесса",
-    ],
-    build: [
-      "AI Trading Desk workflow",
-      "Сигналы на базе сетапов",
-      "Signal-to-Journal analytics",
-      "Outcome tracking и развитие трейдера",
-    ],
-    finalTitle: "Премиальный торговый процесс, а не ещё один шумный инструмент.",
-    finalText:
-      "SkillEdge AI строится для трейдеров, которым нужны структура, дисциплина, рыночный контекст и серьёзный feedback loop.",
-  };
-}
-
-function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
-  const isEn = lang === "EN";
-  const isUa = lang === "UA";
-
-  return [
-    {
-      name: "Aida Sarynova",
-      country: isEn ? "Kazakhstan" : isUa ? "Казахстан" : "Казахстан",
-      role: isEn ? "Head of Market Intelligence" : isUa ? "Head of Market Intelligence" : "Head of Market Intelligence",
-      story: isEn
-        ? "Aida grew from Almaty fintech research into market data design. She owns the logic that turns noisy tickers into a usable trader shortlist."
-        : isUa
-          ? "Аїда виросла з fintech-досліджень в Алмати до market data design. Вона відповідає за логіку, яка перетворює шумні тикери на короткий список для трейдера."
-          : "Аида выросла из fintech-исследований в Алматы до market data design. Она отвечает за логику, которая превращает шумные тикеры в короткий список для трейдера.",
-      focus: ["Scanner", "Market context", "In-play filters"],
-      initials: "AS",
-      gradient: "linear-gradient(135deg, rgba(34,211,238,0.36), rgba(15,23,42,0.92) 48%, rgba(16,185,129,0.26))",
-    },
-    {
-      name: "Niamh O’Connor",
-      country: isEn ? "Ireland" : isUa ? "Ірландія" : "Ирландия",
-      role: isEn ? "Product Education Lead" : isUa ? "Product Education Lead" : "Product Education Lead",
-      story: isEn
-        ? "Niamh builds the learning layer: simple explanations, playbooks and trader workflows that make signals educational instead of blind."
-        : isUa
-          ? "Нів будує навчальний шар: прості пояснення, playbook і workflow, щоб сигнали навчали, а не просто давали команду."
-          : "Нив строит обучающий слой: простые объяснения, playbook и workflow, чтобы сигналы обучали, а не просто давали команду.",
-      focus: ["Learning", "Playbooks", "Signal education"],
-      initials: "NO",
-      gradient: "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(59,130,246,0.28))",
-    },
-    {
-      name: "Oliver Reed",
-      country: isEn ? "England" : isUa ? "Англія" : "Англия",
-      role: isEn ? "Setup Engine Lead" : isUa ? "Setup Engine Lead" : "Setup Engine Lead",
-      story: isEn
-        ? "Oliver focuses on US equities, momentum behavior and the rules that separate a real setup from a late chase."
-        : isUa
-          ? "Олівер фокусується на US equities, momentum-поведінці та правилах, які відділяють реальний сетап від пізнього chase."
-          : "Оливер фокусируется на US equities, momentum-поведении и правилах, которые отделяют реальный сетап от позднего chase.",
-      focus: ["Momentum", "VWAP", "No chase logic"],
-      initials: "OR",
-      gradient: "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 50%, rgba(34,211,238,0.26))",
-    },
-    {
-      name: "James Whitfield",
-      country: isEn ? "England" : isUa ? "Англія" : "Англия",
-      role: isEn ? "Risk & Execution Analyst" : isUa ? "Risk & Execution Analyst" : "Risk & Execution Analyst",
-      story: isEn
-        ? "James designs the discipline layer: RR filters, invalidation logic, execution scoring and the feedback that shows where a trader leaks money."
-        : isUa
-          ? "Джеймс будує дисципліну: RR-фільтри, invalidation logic, execution score і feedback, який показує, де трейдер втрачає гроші."
-          : "Джеймс строит дисциплину: RR-фильтры, invalidation logic, execution score и feedback, который показывает, где трейдер теряет деньги.",
-      focus: ["Risk", "Execution score", "RR quality"],
-      initials: "JW",
-      gradient: "linear-gradient(135deg, rgba(14,165,233,0.32), rgba(15,23,42,0.92) 50%, rgba(244,114,182,0.18))",
-    },
-    {
-      name: "Lukas Schneider",
-      country: isEn ? "Germany" : isUa ? "Німеччина" : "Германия",
-      role: isEn ? "Data Infrastructure Lead" : isUa ? "Data Infrastructure Lead" : "Data Infrastructure Lead",
-      story: isEn
-        ? "Lukas owns reliability: backend data pipelines, alert delivery, caching, rate limits and the architecture that keeps the desk fast."
-        : isUa
-          ? "Лукас відповідає за надійність: backend data pipelines, alert delivery, кешування, rate limits і швидку архітектуру desk."
-          : "Лукас отвечает за надёжность: backend data pipelines, alert delivery, кеширование, rate limits и быструю архитектуру desk.",
-      focus: ["Backend", "Market data", "Alerts delivery"],
-      initials: "LS",
-      gradient: "linear-gradient(135deg, rgba(6,182,212,0.28), rgba(15,23,42,0.92) 52%, rgba(251,191,36,0.2))",
-    },
-    {
-      name: "Marcus Hayes",
-      country: isEn ? "United States" : isUa ? "США" : "США",
-      role: isEn ? "Trading Desk Strategy" : isUa ? "Trading Desk Strategy" : "Trading Desk Strategy",
-      story: isEn
-        ? "Marcus brings prop-desk thinking: structure first, risk first, no blind calls and every decision reviewed after the outcome."
-        : isUa
-          ? "Маркус приносить prop-desk мислення: спочатку структура, спочатку ризик, без сліпих сигналів і з review після результату."
-          : "Маркус приносит prop-desk мышление: сначала структура, сначала риск, без слепых сигналов и с review после результата.",
-      focus: ["Desk logic", "Trade plans", "Outcome review"],
-      initials: "MH",
-      gradient: "linear-gradient(135deg, rgba(37,99,235,0.32), rgba(15,23,42,0.92) 52%, rgba(16,185,129,0.23))",
-    },
-    {
-  name: "Michał Nowak",
-  country: isEn ? "Poland" : isUa ? "Польща" : "Польша",
-  role: isEn
-    ? "Quant Alert Scoring Engineer"
-    : isUa
-      ? "Quant Alert Scoring Engineer"
-      : "Quant Alert Scoring Engineer",
-  story: isEn
-    ? "Michał builds the scoring layer behind SkillEdge alerts: confluence, freshness, RR quality, volatility and confidence thresholds before an idea reaches the trader."
-    : isUa
-      ? "Міхал будує scoring-шар для SkillEdge alerts: confluence, свіжість, якість RR, волатильність і confidence thresholds до того, як ідея потрапить до трейдера."
-      : "Михал строит scoring-слой для SkillEdge alerts: confluence, свежесть, качество RR, волатильность и confidence thresholds до того, как идея попадёт к трейдеру.",
-  focus: ["Alert scoring", "Confluence", "Confidence filters"],
-  initials: "MN",
-  gradient:
-    "linear-gradient(135deg, rgba(34,211,238,0.32), rgba(15,23,42,0.92) 48%, rgba(248,113,113,0.22))",
-},
-{
-  name: "Jakub Zieliński",
-  country: isEn ? "Poland" : isUa ? "Польща" : "Польша",
-  role: isEn
-    ? "Professional Trader Playbook Analyst"
-    : isUa
-      ? "Professional Trader Playbook Analyst"
-      : "Professional Trader Playbook Analyst",
-  story: isEn
-    ? "Jakub translates professional trading behavior into playbooks: VWAP reactions, failed breakouts, momentum continuation, liquidity traps and no-chase execution rules."
-    : isUa
-      ? "Якуб перетворює професійну поведінку трейдера на playbook: VWAP reactions, failed breakouts, momentum continuation, liquidity traps і no-chase правила виконання."
-      : "Якуб превращает профессиональное поведение трейдера в playbook: VWAP reactions, failed breakouts, momentum continuation, liquidity traps и no-chase правила исполнения.",
-  focus: ["Playbooks", "VWAP logic", "Liquidity traps"],
-  initials: "JZ",
-  gradient:
-    "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 48%, rgba(34,197,94,0.22))",
-},
-{
-  name: "Dilnoza Karimova",
-  country: isEn ? "Uzbekistan" : isUa ? "Узбекистан" : "Узбекистан",
-  role: isEn
-    ? "Journal Intelligence & Personalization Lead"
-    : isUa
-      ? "Journal Intelligence & Personalization Lead"
-      : "Journal Intelligence & Personalization Lead",
-  story: isEn
-    ? "Dilnoza owns the journal intelligence layer: finding the trader’s best patterns, repeated mistakes, emotional leaks and the data that powers personal AI alerts."
-    : isUa
-      ? "Дільноза відповідає за journal intelligence: найкращі патерни трейдера, повторювані помилки, емоційні витоки і дані для personal AI alerts."
-      : "Дильноза отвечает за journal intelligence: лучшие паттерны трейдера, повторяющиеся ошибки, эмоциональные утечки и данные для personal AI alerts.",
-  focus: ["Journal patterns", "Personal alerts", "Outcome learning"],
-  initials: "DK",
-  gradient:
-    "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(217,70,239,0.2))",
-},
-    {
-      name: "Kenji Watanabe",
-      country: isEn ? "Japan" : isUa ? "Японія" : "Япония",
-      role: isEn ? "Behavioral UX Architect" : isUa ? "Behavioral UX Architect" : "Behavioral UX Architect",
-      story: isEn
-        ? "Kenji designs the interface around calm decisions: less panic, clearer next action and fewer emotional clicks."
-        : isUa
-          ? "Кенджі проєктує інтерфейс навколо спокійних рішень: менше паніки, чіткіша наступна дія і менше емоційних кліків."
-          : "Кенджи проектирует интерфейс вокруг спокойных решений: меньше паники, яснее следующее действие и меньше эмоциональных кликов.",
-      focus: ["UX", "Decision clarity", "Trader behavior"],
-      initials: "KW",
-      gradient: "linear-gradient(135deg, rgba(45,212,191,0.3), rgba(15,23,42,0.92) 52%, rgba(248,113,113,0.18))",
-    },
-  ];
-}
-
-function TeamPhotoCarousel({
-  members,
-  copy,
+function TeamPage({
+  t,
+  setActive,
 }: {
-  members: LandingTeamMember[];
-  copy: ReturnType<typeof getTeamPageCopy>;
+  t: any;
+  setActive: (v: PageKey) => void;
 }) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const lang: Language =
+    t.lang === "RU" ? "ru" : t.lang === "UA" ? "ua" : "en";
 
-  const goNext = () => {
-    setActiveIndex((current) => (current + 1) % members.length);
-  };
+  const copy = {
+    en: {
+      badge: "About SkillEdge AI",
+      title:
+        "We build trading software for traders who want structure, not noise.",
+      text:
+        "SkillEdge AI was created around a simple belief: a trader becomes stronger when every trade, screenshot, decision and mistake turns into clear feedback.",
+      productButton: "Explore product",
+      pricingButton: "View plans",
+      panelEyebrow: "Our approach",
+      panelTitle: "One loop: market → decision → journal → review",
+      panelItems: [
+        "Market opportunities should be filtered, not chased blindly.",
+        "Every serious trade needs a plan before the entry.",
+        "A journal becomes powerful only when it creates feedback.",
+        "AI should explain the logic, risk and lesson — not replace thinking.",
+      ],
+      missionEyebrow: "Mission",
+      missionTitle: "Help traders build a repeatable process.",
+      missionText:
+        "We are not building a hype signal room. SkillEdge AI is designed as a premium workspace where a trader can find opportunities, prepare a plan, track execution, review outcomes and slowly build a personal edge from real data.",
+      values: [
+        {
+          title: "Process over prediction",
+          text:
+            "No promise of guaranteed profit. The focus is structure, risk, discipline and better decision quality.",
+        },
+        {
+          title: "Feedback over memory",
+          text:
+            "Screenshots, trades and outcomes should become lessons — not forgotten files scattered across folders.",
+        },
+        {
+          title: "Clarity over noise",
+          text:
+            "The product should make the trader calmer, sharper and more prepared before making decisions.",
+        },
+      ],
+      teamEyebrow: "Team",
+      teamTitle: "Built by traders, product builders and AI operators.",
+      teamText:
+        "SkillEdge AI is being built as a focused premium SaaS product. The public team section is intentionally simple for launch — photos, names and roles can be added as the company structure is finalized.",
+      teamCards: [
+        ["Founder / Product Vision", "Trading workflow, product strategy and trader development."],
+        ["AI & Data Layer", "Market intelligence, AI review logic, alerts and automation."],
+        ["Design & Client Experience", "Premium interface, onboarding, support and user clarity."],
+      ],
+      trustEyebrow: "Trust",
+      trustTitle: "Serious trading tools must stay honest.",
+      trustText:
+        "SkillEdge AI is not financial advice and does not guarantee profits. The goal is to improve process, review, discipline and decision quality.",
+      ctaTitle: "Ready to see how SkillEdge works?",
+      ctaText:
+        "Explore the product or choose the plan that matches your trading process.",
+    },
 
-  const goPrev = () => {
-    setActiveIndex((current) =>
-      current === 0 ? members.length - 1 : current - 1
-    );
-  };
+    ru: {
+      badge: "О SkillEdge AI",
+      title:
+        "Мы создаём торговый софт для трейдеров, которым нужна структура, а не шум.",
+      text:
+        "SkillEdge AI появился вокруг простой идеи: трейдер становится сильнее, когда каждая сделка, скриншот, решение и ошибка превращаются в понятную обратную связь.",
+      productButton: "Посмотреть продукт",
+      pricingButton: "Посмотреть тарифы",
+      panelEyebrow: "Наш подход",
+      panelTitle: "Один цикл: рынок → решение → журнал → разбор",
+      panelItems: [
+        "Рыночные возможности нужно фильтровать, а не слепо догонять.",
+        "У каждой серьёзной сделки должен быть план до входа.",
+        "Журнал становится сильным только тогда, когда даёт обратную связь.",
+        "AI должен объяснять логику, риск и урок — а не заменять мышление.",
+      ],
+      missionEyebrow: "Миссия",
+      missionTitle: "Помочь трейдерам построить повторяемый процесс.",
+      missionText:
+        "Мы не строим хайповую комнату сигналов. SkillEdge AI создаётся как premium workspace, где трейдер находит возможности, готовит план, отслеживает исполнение, разбирает результат и постепенно строит личное преимущество на реальных данных.",
+      values: [
+        {
+          title: "Процесс важнее предсказаний",
+          text:
+            "Никаких обещаний гарантированной прибыли. Фокус — структура, риск, дисциплина и качество решений.",
+        },
+        {
+          title: "Обратная связь важнее памяти",
+          text:
+            "Скриншоты, сделки и результаты должны становиться уроками, а не забытыми файлами в разных папках.",
+        },
+        {
+          title: "Ясность важнее шума",
+          text:
+            "Продукт должен делать трейдера спокойнее, точнее и лучше подготовленным к решениям.",
+        },
+      ],
+      teamEyebrow: "Команда",
+      teamTitle: "Создаётся трейдерами, продуктовой командой и AI-операторами.",
+      teamText:
+        "SkillEdge AI строится как сфокусированный premium SaaS-продукт. Публичный блок команды на запуске намеренно простой — фото, имена и роли можно добавить после финализации структуры компании.",
+      teamCards: [
+        ["Founder / Product Vision", "Торговый workflow, стратегия продукта и развитие трейдера."],
+        ["AI & Data Layer", "Рыночная разведка, AI-разбор, логика сигналов и автоматизация."],
+        ["Design & Client Experience", "Premium-интерфейс, onboarding, поддержка и понятность продукта."],
+      ],
+      trustEyebrow: "Доверие",
+      trustTitle: "Серьёзные торговые инструменты должны быть честными.",
+      trustText:
+        "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Цель продукта — улучшить процесс, разбор, дисциплину и качество решений.",
+      ctaTitle: "Готов посмотреть, как работает SkillEdge?",
+      ctaText:
+        "Изучи продукт или выбери тариф под свой торговый процесс.",
+    },
 
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      goNext();
-    }, 8000);
-
-    return () => window.clearInterval(timer);
-  }, [members.length]);
-
-  const visibleMembers = [0, 1].map((offset) => {
-    const memberIndex = (activeIndex + offset) % members.length;
-
-    return {
-      member: members[memberIndex],
-      memberIndex,
-    };
-  });
-
-  return (
-    <div className="relative overflow-hidden rounded-[2.7rem] border border-cyan-200/14 bg-[#06131f]/82 p-4 shadow-[0_40px_160px_rgba(8,47,73,0.32)] backdrop-blur-2xl md:p-5">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.16),transparent_30%),radial-gradient(circle_at_92%_22%,rgba(16,185,129,0.13),transparent_34%)]" />
-
-      <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
-        <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan-50/50">
-            {copy.carouselBadge}
-          </div>
-
-          <div className="mt-2 max-w-xl text-xl font-black leading-tight text-white">
-            {copy.carouselTitle}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={goPrev}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] text-lg font-black text-white/70 transition hover:border-cyan-200/30 hover:bg-cyan-200/[0.09] hover:text-white"
-            aria-label="Previous team members"
-          >
-            ←
-          </button>
-
-          <button
-            type="button"
-            onClick={goNext}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-200/20 bg-cyan-200/[0.09] text-lg font-black text-cyan-50 transition hover:bg-cyan-200/[0.14]"
-            aria-label="Next team members"
-          >
-            →
-          </button>
-        </div>
-      </div>
-
-      <div className="relative z-10 mt-6 grid gap-4 lg:grid-cols-2">
-        {visibleMembers.map(({ member, memberIndex }, index) => (
-          <motion.div
-            key={`${member.name}-${activeIndex}`}
-            initial={{ opacity: 0, x: 54, scale: 0.96 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ delay: index * 0.08, duration: 0.5 }}
-          >
-            <TeamPhotoCard
-              member={member}
-              index={memberIndex}
-            />
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="relative z-10 mt-5 flex flex-wrap items-center justify-center gap-2">
-        {members.map((member, index) => (
-          <button
-            key={member.name}
-            type="button"
-            onClick={() => setActiveIndex(index)}
-            className={`h-2 rounded-full transition-all ${
-              index === activeIndex
-                ? "w-8 bg-cyan-200"
-                : "w-2 bg-white/20 hover:bg-white/35"
-            }`}
-            aria-label={`Show ${member.name}`}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TeamPhotoCard({
-  member,
-  index,
-}: {
-  member: LandingTeamMember;
-  index: number;
-}) {
-  return (
-    <div className="group relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_28px_110px_rgba(0,0,0,0.26)] backdrop-blur-xl transition duration-300 hover:-translate-y-2 hover:border-cyan-200/28 hover:bg-white/[0.065]">
-      <div
-        className="relative h-72 overflow-hidden"
-        style={{ background: member.gradient }}
-      >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_18%,rgba(255,255,255,0.34),transparent_22%),linear-gradient(180deg,transparent,rgba(0,0,0,0.42))]" />
-
-        <div className="absolute left-1/2 top-16 h-24 w-24 -translate-x-1/2 rounded-full border border-white/20 bg-white/22 shadow-[0_0_60px_rgba(255,255,255,0.22)] backdrop-blur-md" />
-        <div className="absolute bottom-0 left-1/2 h-40 w-52 -translate-x-1/2 rounded-t-[5rem] border border-white/10 bg-black/28 backdrop-blur-sm" />
-
-        <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/22 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/70">
-          {String(index + 1).padStart(2, "0")}
-        </div>
-
-        <div className="absolute right-5 top-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.08] text-sm font-black text-white">
-          {member.initials}
-        </div>
-
-        <div className="absolute bottom-5 left-5 right-5">
-          <div className="text-2xl font-black tracking-[-0.035em] text-white">
-            {member.name}
-          </div>
-          <div className="mt-1 text-xs font-black uppercase tracking-[0.18em] text-cyan-50/65">
-            {member.country}
-          </div>
-        </div>
-      </div>
-
-      <div className="p-5">
-        <div className="text-sm font-black text-cyan-50">{member.role}</div>
-
-        <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
-          {member.story}
-        </p>
-
-        <div className="mt-5 grid gap-2">
-          {member.focus.map((item) => (
-            <div
-              key={item}
-              className="rounded-xl border border-white/10 bg-black/18 px-3 py-2 text-xs font-bold text-white/55"
-            >
-              ✓ {item}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
-  const copy = getTeamPageCopy(t.lang);
-  const members = getSkillEdgeTeamMembers(t.lang);
+    ua: {
+      badge: "Про SkillEdge AI",
+      title:
+        "Ми створюємо торговий софт для трейдерів, яким потрібна структура, а не шум.",
+      text:
+        "SkillEdge AI зʼявився навколо простої ідеї: трейдер стає сильнішим, коли кожна угода, скріншот, рішення та помилка перетворюються на зрозумілий зворотний звʼязок.",
+      productButton: "Подивитися продукт",
+      pricingButton: "Подивитися тарифи",
+      panelEyebrow: "Наш підхід",
+      panelTitle: "Один цикл: ринок → рішення → журнал → розбір",
+      panelItems: [
+        "Ринкові можливості потрібно фільтрувати, а не сліпо наздоганяти.",
+        "У кожної серйозної угоди має бути план до входу.",
+        "Журнал стає сильним лише тоді, коли дає зворотний звʼязок.",
+        "AI має пояснювати логіку, ризик і урок — а не замінювати мислення.",
+      ],
+      missionEyebrow: "Місія",
+      missionTitle: "Допомогти трейдерам побудувати повторюваний процес.",
+      missionText:
+        "Ми не створюємо хайпову кімнату сигналів. SkillEdge AI будується як premium workspace, де трейдер знаходить можливості, готує план, відстежує виконання, розбирає результат і поступово будує власну перевагу на реальних даних.",
+      values: [
+        {
+          title: "Процес важливіший за передбачення",
+          text:
+            "Жодних обіцянок гарантованого прибутку. Фокус — структура, ризик, дисципліна та якість рішень.",
+        },
+        {
+          title: "Зворотний звʼязок важливіший за памʼять",
+          text:
+            "Скріншоти, угоди та результати мають ставати уроками, а не забутими файлами в різних папках.",
+        },
+        {
+          title: "Ясність важливіша за шум",
+          text:
+            "Продукт має робити трейдера спокійнішим, точнішим і краще підготовленим до рішень.",
+        },
+      ],
+      teamEyebrow: "Команда",
+      teamTitle: "Створюється трейдерами, продуктовою командою та AI-операторами.",
+      teamText:
+        "SkillEdge AI будується як сфокусований premium SaaS-продукт. Публічний блок команди на запуску навмисно простий — фото, імена та ролі можна додати після фіналізації структури компанії.",
+      teamCards: [
+        ["Founder / Product Vision", "Торговий workflow, стратегія продукту та розвиток трейдера."],
+        ["AI & Data Layer", "Ринкова розвідка, AI-розбір, логіка сигналів та автоматизація."],
+        ["Design & Client Experience", "Premium-інтерфейс, onboarding, підтримка та зрозумілість продукту."],
+      ],
+      trustEyebrow: "Довіра",
+      trustTitle: "Серйозні торгові інструменти мають бути чесними.",
+      trustText:
+        "SkillEdge AI не є фінансовою рекомендацією та не гарантує прибуток. Мета продукту — покращити процес, розбір, дисципліну та якість рішень.",
+      ctaTitle: "Готовий подивитися, як працює SkillEdge?",
+      ctaText:
+        "Вивчи продукт або обери тариф під свій торговий процес.",
+    },
+  }[lang];
 
   return (
     <motion.div
@@ -3699,156 +1734,187 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
       transition={{ duration: 0.35 }}
-      className="mx-auto w-full max-w-[1600px] space-y-16 px-4 pb-28 pt-10 sm:px-6 lg:px-8 xl:px-10"
+      className="space-y-16 pt-8"
     >
-      <section className="relative overflow-hidden rounded-[3.4rem] border border-white/10 bg-[#06111d]/88 p-6 shadow-[0_45px_180px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(34,211,238,0.16),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(16,185,129,0.13),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]" />
+      <section className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
+        <div className="absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
+        <div className="absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
 
-        <div className="relative grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
+        <div className="relative grid gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
           <div>
             <Badge>{copy.badge}</Badge>
 
-            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.96] tracking-[-0.065em] text-white md:text-6xl xl:text-7xl">
+            <motion.h1
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08 }}
+              className="mt-6 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl"
+            >
               {copy.title}
-            </h1>
+            </motion.h1>
 
-            <p className="mt-6 max-w-3xl text-base font-semibold leading-8 text-white/68 md:text-lg">
+            <motion.p
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.16 }}
+              className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg"
+            >
               {copy.text}
-            </p>
+            </motion.p>
 
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
+              <ButtonX onClick={() => setActive("product")}>
+                {copy.productButton}
+                <span className="ml-2">→</span>
+              </ButtonX>
+
               <button
                 type="button"
                 onClick={() => setActive("pricing")}
-                className="group relative overflow-hidden rounded-full border border-white/20 bg-white px-7 py-3.5 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(34,211,238,0.25)]"
+                className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
               >
-                <span className="absolute inset-0 bg-gradient-to-r from-white via-cyan-100 to-emerald-100 opacity-0 transition group-hover:opacity-100" />
-                <span className="relative">
-                  {copy.primary}
-                  <span className="ml-2">→</span>
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActive("product")}
-                className="rounded-full border border-cyan-200/20 bg-cyan-200/[0.06] px-7 py-3.5 text-sm font-black text-cyan-50/82 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-100/45 hover:bg-cyan-100/[0.12] hover:text-white"
-              >
-                {copy.secondary}
-                <span className="ml-2 opacity-70">↗</span>
+                {copy.pricingButton}
               </button>
             </div>
           </div>
 
-          <TeamPhotoCarousel members={members} copy={copy} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 18 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ delay: 0.18 }}
+            className="rounded-[2.25rem] border border-cyan-300/15 bg-[#0b1220]/90 p-5 shadow-[0_24px_110px_rgba(0,0,0,0.55)]"
+          >
+            <div className="flex items-start justify-between border-b border-white/10 pb-4">
+              <div>
+                <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">
+                  {copy.panelEyebrow}
+                </div>
+
+                <div className="mt-2 text-2xl font-semibold text-white">
+                  {copy.panelTitle}
+                </div>
+              </div>
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] text-xl">
+                <Icon name="brain" />
+              </div>
+            </div>
+
+            <div className="mt-5 space-y-3">
+              {copy.panelItems.map((item) => (
+                <div
+                  key={item}
+                  className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-sm leading-6 text-white/65"
+                >
+                  <Icon name="check" className="text-emerald-300" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[3rem] border border-cyan-200/12 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(34,211,238,0.13),transparent_32%),radial-gradient(circle_at_12%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
+      <section>
+        <SectionTitle
+          eyebrow={copy.missionEyebrow}
+          title={copy.missionTitle}
+          text={copy.missionText}
+        />
 
-        <div className="relative grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
-          <div>
-            <Badge>{copy.principlesEyebrow}</Badge>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {copy.values.map((item) => (
+            <motion.div
+              key={item.title}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              whileHover={{ y: -5 }}
+              className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20"
+            >
+              <div className="text-xl font-semibold text-white">
+                {item.title}
+              </div>
 
-            <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
-              {copy.principlesTitle}
-            </h2>
-          </div>
-
-          <div className="grid gap-4 md:grid-cols-2">
-            {copy.principles.map((item, index) => (
-              <motion.div
-                key={item[0]}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ delay: index * 0.06, duration: 0.45 }}
-                className="rounded-[1.7rem] border border-white/10 bg-black/20 p-5 backdrop-blur-xl"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-sm font-black text-cyan-50">
-                  0{index + 1}
-                </div>
-
-                <div className="mt-5 text-xl font-black tracking-[-0.025em] text-white">
-                  {item[0]}
-                </div>
-
-                <p className="mt-3 text-sm font-semibold leading-7 text-white/56">
-                  {item[1]}
-                </p>
-              </motion.div>
-            ))}
-          </div>
+              <p className="mt-3 text-sm leading-7 text-white/60">
+                {item.text}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <motion.div
-          initial={{ opacity: 0, x: -24 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
-          className="relative overflow-hidden rounded-[2.8rem] border border-rose-300/14 bg-rose-300/[0.045] p-6 shadow-[0_34px_140px_rgba(127,29,29,0.18)] backdrop-blur-xl md:p-8"
-        >
-          <Badge>{copy.refuseTitle}</Badge>
+      <section>
+        <SectionTitle
+          eyebrow={copy.teamEyebrow}
+          title={copy.teamTitle}
+          text={copy.teamText}
+        />
 
-          <div className="mt-7 grid gap-3">
-            {copy.refuse.map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm font-black text-white/68"
-              >
-                ✕ {item}
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {copy.teamCards.map(([role, text]) => (
+            <motion.div
+              key={role}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/20"
+            >
+              <div className="flex aspect-[4/3] items-center justify-center border-b border-white/10 bg-gradient-to-br from-cyan-500/15 via-indigo-500/10 to-white/[0.03]">
+                <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/40">
+                  Photo
+                </div>
               </div>
-            ))}
-          </div>
-        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, x: 24 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.45 }}
-          className="relative overflow-hidden rounded-[2.8rem] border border-emerald-300/14 bg-emerald-300/[0.055] p-6 shadow-[0_34px_140px_rgba(6,78,59,0.2)] backdrop-blur-xl md:p-8"
-        >
-          <Badge>{copy.buildTitle}</Badge>
-
-          <div className="mt-7 grid gap-3">
-            {copy.build.map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm font-black text-white/72"
-              >
-                ✓ {item}
+              <div className="p-6">
+                <div className="text-xl font-semibold text-white">{role}</div>
+                <p className="mt-3 text-sm leading-7 text-white/60">{text}</p>
               </div>
-            ))}
-          </div>
-        </motion.div>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-[#06131f]/86 p-6 shadow-[0_40px_160px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_90%_90%,rgba(16,185,129,0.13),transparent_36%)]" />
-
-        <div className="relative grid gap-8 lg:grid-cols-[1fr_0.7fr] lg:items-center">
+      <section className="overflow-hidden rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-cyan-500/15 via-white/[0.04] to-indigo-500/10 p-6 md:p-10">
+        <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
           <div>
-            <h2 className="text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
-              {copy.finalTitle}
+            <div className="text-sm uppercase tracking-[0.24em] text-white/45">
+              {copy.trustEyebrow}
+            </div>
+
+            <h2 className="mt-4 text-4xl font-semibold leading-tight text-white md:text-5xl">
+              {copy.trustTitle}
             </h2>
 
-            <p className="mt-5 max-w-3xl text-base font-semibold leading-8 text-white/64">
-              {copy.finalText}
+            <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">
+              {copy.trustText}
             </p>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setActive("pricing")}
-            className="rounded-[1.7rem] border border-cyan-200/24 bg-cyan-200/[0.09] p-5 text-left text-sm font-black text-cyan-50 shadow-[0_26px_100px_rgba(34,211,238,0.18)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-200/[0.13]"
-          >
-            {copy.primary}
-            <span className="ml-2">→</span>
-          </button>
+          <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
+            <div className="text-lg font-semibold text-white">
+              {copy.ctaTitle}
+            </div>
+
+            <p className="mt-3 text-sm leading-7 text-white/58">
+              {copy.ctaText}
+            </p>
+
+            <div className="mt-6 grid gap-3">
+              <ButtonX onClick={() => setActive("product")} className="w-full">
+                {copy.productButton}
+                <span className="ml-2">→</span>
+              </ButtonX>
+
+              <button
+                type="button"
+                onClick={() => setActive("pricing")}
+                className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+              >
+                {copy.pricingButton}
+              </button>
+            </div>
+          </div>
         </div>
       </section>
     </motion.div>

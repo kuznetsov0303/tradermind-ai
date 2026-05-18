@@ -151,3 +151,260 @@
 .learning-scroll::-webkit-scrollbar {
   display: none;
 }
+
+/* SkillEdge Premium Typography Upgrade */
+:root {
+  --skilledge-font: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+html {
+  font-size: 16.5px;
+  text-rendering: optimizeLegibility;
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+body {
+  font-family: var(--skilledge-font);
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  font-family: var(--skilledge-font);
+}
+
+button,
+a {
+  font-weight: 650;
+}
+
+input,
+textarea,
+select {
+  font-size: 0.98rem;
+  font-weight: 560;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+p,
+li {
+  font-weight: 520;
+}
+
+/* AI answers / chat text / reports */
+.whitespace-pre-wrap,
+.prose,
+[data-ai-message],
+[data-skill-edge-message],
+[data-skill-edge-ai],
+[data-chat-message] {
+  font-size: 0.98rem;
+  line-height: 1.72;
+  font-weight: 580;
+  letter-spacing: -0.015em;
+}
+
+/* Premium readable cards */
+.rounded-xl,
+.rounded-2xl,
+.rounded-\[1\.5rem\],
+.rounded-\[2rem\],
+.rounded-\[2\.5rem\] {
+  font-weight: 520;
+}
+
+/* Small labels should stay premium but readable */
+.text-\[10px\],
+.text-\[11px\],
+.text-xs {
+  font-weight: 650;
+  letter-spacing: 0.045em;
+}
+
+/* Main trading numbers */
+.font-mono {
+  font-weight: 650;
+}
+:root {
+  --se-bg: #0e1724;
+  --se-bg-soft: #132438;
+  --se-panel: #172a3d;
+  --se-panel-raised: #1d344a;
+  --se-card: #20384f;
+
+  --se-border: rgba(198, 226, 255, 0.18);
+  --se-border-strong: rgba(198, 226, 255, 0.28);
+
+  --se-text: #f4faff;
+  --se-muted: #afc4d8;
+  --se-muted-soft: #7890a8;
+
+  --se-cyan: #38d6ff;
+  --se-emerald: #34d399;
+  --se-gold: #f7c948;
+  --se-risk: #fb7185;
+
+  --se-shadow-soft: 0 28px 120px rgba(8, 47, 73, 0.22);
+  --se-shadow-premium: 0 40px 180px rgba(8, 47, 73, 0.32);
+}
+
+html {
+  background: var(--se-bg);
+}
+
+body {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 214, 255, 0.13), transparent 30%),
+    radial-gradient(circle at 88% 8%, rgba(52, 211, 153, 0.11), transparent 28%),
+    linear-gradient(135deg, #0e1724 0%, #132438 44%, #0f1d2d 100%);
+  color: var(--se-text);
+}
+
+.se-premium-shell {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 214, 255, 0.12), transparent 32%),
+    radial-gradient(circle at 88% 12%, rgba(52, 211, 153, 0.1), transparent 30%),
+    linear-gradient(135deg, #132438 0%, #0e1724 48%, #172a3d 100%);
+}
+
+.se-premium-panel {
+  border: 1px solid var(--se-border);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035)),
+    rgba(29, 52, 74, 0.72);
+  box-shadow: var(--se-shadow-soft);
+  backdrop-filter: blur(22px);
+}
+
+.se-premium-card {
+  border: 1px solid var(--se-border);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.035)),
+    rgba(32, 56, 79, 0.74);
+  box-shadow: 0 20px 80px rgba(8, 47, 73, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.se-premium-button {
+  background: linear-gradient(135deg, #ffffff 0%, #dff7ff 48%, #d8ffef 100%);
+  color: #07111d;
+  box-shadow: 0 18px 70px rgba(56, 214, 255, 0.22);
+}
+
+.se-premium-button-dark {
+  border: 1px solid rgba(56, 214, 255, 0.28);
+  background: rgba(56, 214, 255, 0.09);
+  color: #e8fbff;
+  box-shadow: 0 18px 70px rgba(8, 47, 73, 0.24);
+}
+
+/* SkillEdge AI — premium dashboard polish */
+
+::selection {
+  background: rgba(56, 214, 255, 0.32);
+  color: #f4faff;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(56, 214, 255, 0.28) rgba(14, 23, 36, 0.72);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(14, 23, 36, 0.72);
+}
+
+*::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(14, 23, 36, 0.72);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(56, 214, 255, 0.5), rgba(52, 211, 153, 0.4));
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(56, 214, 255, 0.72), rgba(52, 211, 153, 0.58));
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(56, 214, 255, 0.12), transparent 30%),
+    radial-gradient(circle at 86% 8%, rgba(52, 211, 153, 0.1), transparent 28%),
+    linear-gradient(135deg, #0e1724 0%, #132438 45%, #0d1928 100%);
+}
+
+.se-dashboard-bg {
+  background:
+    radial-gradient(circle at 14% 0%, rgba(56, 214, 255, 0.13), transparent 32%),
+    radial-gradient(circle at 88% 12%, rgba(52, 211, 153, 0.11), transparent 30%),
+    linear-gradient(135deg, #0e1724 0%, #132438 42%, #0f1d2d 100%);
+}
+
+.se-dashboard-panel {
+  border: 1px solid rgba(198, 226, 255, 0.16);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035)),
+    rgba(23, 42, 61, 0.78);
+  box-shadow: 0 28px 120px rgba(8, 47, 73, 0.22);
+  backdrop-filter: blur(22px);
+}
+
+.se-dashboard-card {
+  border: 1px solid rgba(198, 226, 255, 0.14);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.032)),
+    rgba(32, 56, 79, 0.7);
+  box-shadow: 0 20px 80px rgba(8, 47, 73, 0.16);
+  backdrop-filter: blur(18px);
+}
+
+.se-dashboard-card-soft {
+  border: 1px solid rgba(198, 226, 255, 0.12);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
+    rgba(29, 52, 74, 0.58);
+  backdrop-filter: blur(16px);
+}
+
+.se-dashboard-button-primary {
+  background: linear-gradient(135deg, #ffffff 0%, #dff7ff 48%, #d8ffef 100%);
+  color: #07111d;
+  box-shadow: 0 18px 70px rgba(56, 214, 255, 0.22);
+}
+
+.se-dashboard-button-secondary {
+  border: 1px solid rgba(56, 214, 255, 0.28);
+  background: rgba(56, 214, 255, 0.09);
+  color: #e8fbff;
+  box-shadow: 0 18px 70px rgba(8, 47, 73, 0.2);
+}
+
+.se-premium-focus:focus-visible {
+  outline: 2px solid rgba(56, 214, 255, 0.72);
+  outline-offset: 3px;
+}

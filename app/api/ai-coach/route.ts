@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
 import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
+import {
+  getSkillEdgeAiCoachPrompt,
+  getSkillEdgeConciseOutputRules,
+} from "@/lib/ai/skill-edge-prompts";
 
 type SubscriptionRow = {
   id: string;
@@ -23,11 +27,17 @@ function getPublicPlanName(planId: string) {
 }
 
 function getOpenAIModel(planId: string) {
-  if (planId === "starter") return "gpt-4o-mini";
-  if (planId === "pro") return "gpt-4o-mini";
-  if (planId === "elite") return "gpt-4o-mini";
+  const normalizedPlanId = planId.toLowerCase();
 
-  return "gpt-4o-mini";
+  if (normalizedPlanId.includes("elite")) {
+    return process.env.SKILLEDGE_ELITE_AI_MODEL || "gpt-5.1";
+  }
+
+  if (normalizedPlanId.includes("edge") || normalizedPlanId.includes("pro")) {
+    return process.env.SKILLEDGE_EDGE_AI_MODEL || "gpt-5-mini";
+  }
+
+  return process.env.SKILLEDGE_CORE_AI_MODEL || "gpt-4.1-mini";
 }
 
 function extractResponseText(openaiData: any) {
@@ -169,24 +179,26 @@ if (!usage.allowed) {
 
     const publicPlanName = getPublicPlanName(subscription.plan_id);
 
-    const systemPrompt = `
-You are ${publicPlanName}, a trading performance AI coach inside SkillEdge AI.
+    const messageLanguage =
+  /[іїєґ]/i.test(message)
+    ? "ua"
+    : /[а-яё]/i.test(message)
+      ? "ru"
+      : "en";
 
-Your job:
-- help traders analyze discipline, execution, risk, emotions, and patterns;
-- do not claim certainty about future market direction;
-- do not give guaranteed financial advice;
-- focus on process, risk, journaling, and decision quality;
-- answer clearly, practically, and in the user's language;
-- if the user writes in Russian, answer in Russian;
-- if the user writes in Ukrainian, answer in Ukrainian;
-- if the user writes in English, answer in English.
-
-User's current plan:
-- plan_id: ${subscription.plan_id}
-- demo: ${subscription.is_demo ? "yes" : "no"}
-- AI usage this month: ${usage.used}/${usage.limit}
-`.trim();
+const systemPrompt = [
+  getSkillEdgeAiCoachPrompt({
+    language: messageLanguage,
+    plan: subscription.plan_id,
+    userContext: [
+      `Public AI brand: ${publicPlanName}`,
+      `Plan ID: ${subscription.plan_id}`,
+      `Demo mode: ${subscription.is_demo ? "yes" : "no"}`,
+      `AI usage this month: ${usage.used}/${usage.limit}`,
+    ].join("\n"),
+  }),
+  getSkillEdgeConciseOutputRules(),
+].join("\n\n");
 
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",

@@ -1,0 +1,931 @@
+import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { canUseFeature, normalizePlanId } from "@/lib/plan-limits";
+import { requireFeatureAccess } from "@/lib/security/feature-gate";
+
+export const runtime = "nodejs";
+
+type MarketScannerRow = {
+  symbol: string;
+  exchange: string | null;
+  name: string | null;
+  asset_type?: string | null;
+  scan_bucket?: string | null;
+  direction_bias?: string | null;
+  price?: number | null;
+  change_percent?: number | null;
+  volume?: number | null;
+  mentions?: number | null;
+  mention_velocity?: number | null;
+  catalyst?: string | null;
+  risk_label?: string | null;
+  opportunity_score?: number | null;
+  raw_data?: Record<string, unknown> | null;
+  source?: string | null;
+  scanned_at?: string | null;
+};
+
+type SocialMentionRow = {
+  symbol: string;
+  source?: string | null;
+  mentions_24h?: number | null;
+  mentions_1h?: number | null;
+  mention_velocity?: number | null;
+  sentiment?: string | null;
+  social_score?: number | null;
+  scanned_at?: string | null;
+};
+
+type AlertType =
+  | "pump"
+  | "dump"
+  | "social_spike"
+  | "crypto_momentum"
+  | "news_catalyst";
+
+type MarketAlertDraft = {
+  alert_key: string;
+  user_id: string | null;
+  plan_id: string;
+  alert_scope: "global" | "personal";
+  symbol: string;
+  name: string | null;
+  exchange: string | null;
+  asset_type: "stock" | "crypto";
+  alert_type: AlertType;
+  direction: "upside" | "downside" | "neutral";
+  score: number;
+  title: string;
+  reason: string;
+  risk_note: string;
+  scenario: string;
+  setup_type: string;
+  setup_timeframe: string;
+confirmation_timeframe: string;
+confidence_tier: string;
+why_signal_fired: string;
+confirmation_checklist: string[];
+avoid_if: string[];
+lesson_summary: string;
+playbook_status: string;
+trigger_label: string;
+entry_zone_min: number | null;
+entry_zone_max: number | null;
+stop_price: number | null;
+target_1: number | null;
+target_2: number | null;
+target_3: number | null;
+invalidation: string;
+management_plan: string;
+confidence_score: number;
+timeframe: string;
+is_new: boolean;
+outcome_status: "pending";
+  status: "active";
+  source_data: Record<string, unknown>;
+  expires_at: string;
+  setup_slug: string;
+setup_name: string;
+setup_description: string;
+setup_confirmation: string;
+setup_common_mistake: string;
+};
+
+async function getRequestUser(request: Request) {
+  const authHeader = request.headers.get("authorization") || "";
+  const token = authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length)
+    : "";
+
+  if (!token) return null;
+
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+
+  if (error || !data.user) return null;
+
+  return data.user;
+}
+
+async function getUserPlan(userId: string) {
+  const { data } = await supabaseAdmin
+    .from("subscriptions")
+    .select("plan_id, status, expires_at")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const expiresAt = data?.expires_at ? new Date(data.expires_at).getTime() : null;
+  const isExpired = expiresAt ? expiresAt < Date.now() : false;
+
+  if (!data || isExpired) return "core";
+
+  return normalizePlanId(data.plan_id);
+}
+
+function normalizeSymbol(symbol: string) {
+  return symbol.trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+}
+
+function toNumber(value: unknown, fallback = 0) {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+
+  if (typeof value === "string") {
+    const parsed = Number(value.replace("%", ""));
+    if (Number.isFinite(parsed)) return parsed;
+  }
+
+  return fallback;
+}
+
+function clamp(value: number, min = 0, max = 100) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function getAssetType(row: MarketScannerRow) {
+  const exchange = (row.exchange || "").toUpperCase();
+  const assetType = (row.asset_type || "").toLowerCase();
+
+  if (assetType === "crypto" || exchange === "BINANCE") return "crypto";
+
+  return "stock";
+}
+
+function pickBestMarketRows(rows: MarketScannerRow[]) {
+  const map = new Map<string, MarketScannerRow>();
+
+  for (const row of rows) {
+    const symbol = normalizeSymbol(row.symbol || "");
+    if (!symbol) continue;
+
+    const existing = map.get(symbol);
+    const score = toNumber(row.opportunity_score);
+    const existingScore = toNumber(existing?.opportunity_score);
+
+    if (!existing || score > existingScore) {
+      map.set(symbol, { ...row, symbol });
+    }
+  }
+
+  return Array.from(map.values());
+}
+
+function aggregateSocial(rows: SocialMentionRow[]) {
+  const map = new Map<
+    string,
+    {
+      sources: string[];
+      mentions24h: number;
+      mentions1h: number;
+      mentionVelocity: number;
+      socialScore: number;
+      sentiment: string;
+    }
+  >();
+
+  for (const row of rows) {
+    const symbol = normalizeSymbol(row.symbol || "");
+    if (!symbol) continue;
+
+    const existing =
+      map.get(symbol) ||
+      {
+        sources: [],
+        mentions24h: 0,
+        mentions1h: 0,
+        mentionVelocity: 0,
+        socialScore: 0,
+        sentiment: "neutral",
+      };
+
+    const source = row.source || "unknown";
+
+    if (!existing.sources.includes(source)) {
+      existing.sources.push(source);
+    }
+
+    existing.mentions24h += toNumber(row.mentions_24h);
+    existing.mentions1h += toNumber(row.mentions_1h);
+    existing.mentionVelocity = Math.max(
+      existing.mentionVelocity,
+      toNumber(row.mention_velocity)
+    );
+    existing.socialScore = Math.max(existing.socialScore, toNumber(row.social_score));
+    existing.sentiment = row.sentiment || existing.sentiment;
+
+    map.set(symbol, existing);
+  }
+
+  return map;
+}
+
+function getAlertType(params: {
+  assetType: "stock" | "crypto";
+  changePercent: number;
+  marketScore: number;
+  socialScore: number;
+  mentions24h: number;
+  catalyst: string | null;
+}): AlertType | null {
+  if (params.changePercent >= 10 && params.marketScore >= 45) {
+    return "pump";
+  }
+
+  if (params.changePercent <= -8 && params.marketScore >= 45) {
+    return "dump";
+  }
+
+  if (
+    params.assetType === "crypto" &&
+    Math.abs(params.changePercent) >= 5 &&
+    params.marketScore >= 40
+  ) {
+    return "crypto_momentum";
+  }
+
+  if (params.socialScore >= 70 && params.mentions24h >= 10) {
+    return "social_spike";
+  }
+
+  if (params.catalyst && Math.abs(params.changePercent) >= 4) {
+    return "news_catalyst";
+  }
+
+  return null;
+}
+
+function roundPrice(value: number | null) {
+  if (value === null || !Number.isFinite(value)) return null;
+
+  if (value >= 100) return Number(value.toFixed(2));
+  if (value >= 10) return Number(value.toFixed(2));
+  if (value >= 1) return Number(value.toFixed(3));
+
+  return Number(value.toFixed(5));
+}
+
+function getSetupEducation(params: {
+  alertType: AlertType;
+  direction: "upside" | "downside" | "neutral";
+  assetType: "stock" | "crypto";
+  catalyst: string | null;
+}) {
+  const isShort = params.alertType === "dump" || params.direction === "downside";
+  const isCrypto = params.assetType === "crypto";
+
+  if (isCrypto && isShort) {
+    return {
+      setup_slug: "crypto-smc-sellside-continuation",
+      setup_name: "Crypto SMC Sellside Continuation",
+      setup_description:
+        "Short-side crypto setup where price shows weakness after a failed reclaim or liquidity sweep. The idea is not to chase the dump, but to wait for failed recovery and continuation toward sellside liquidity.",
+      setup_confirmation:
+        "Confirmation: failed reclaim, lower high, weak bounce, loss of structure, or continuation after displacement. Best when volume/attention supports the move.",
+      setup_common_mistake:
+        "Common mistake: shorting the first vertical dump after liquidity is already swept, instead of waiting for failed reclaim or lower-high confirmation.",
+    };
+  }
+
+  if (isCrypto && !isShort) {
+    return {
+      setup_slug: "crypto-smc-liquidity-reclaim",
+      setup_name: "Crypto SMC Liquidity Reclaim",
+      setup_description:
+        "Long-side crypto setup where price sweeps liquidity, reclaims the level, and starts showing displacement or continuation. The goal is to catch continuation after trapped sellers are forced out.",
+      setup_confirmation:
+        "Confirmation: sweep + reclaim, strong close back above liquidity, displacement candle, higher low, or continuation after imbalance.",
+      setup_common_mistake:
+        "Common mistake: buying the first green candle without reclaim confirmation or entering after the move is already extended.",
+    };
+  }
+
+  if (isShort) {
+    return {
+      setup_slug: "backside-fade-weakness-continuation",
+      setup_name: "Backside Fade / Weakness Continuation",
+      setup_description:
+        "Short setup after a strong move fails to continue. Price rejects, forms a lower high, loses momentum, and starts moving toward VWAP/support/liquidity below.",
+      setup_confirmation:
+        "Confirmation: failed breakout, rejection under key level, lower high, VWAP loss, volume fading on bounce, or breakdown continuation.",
+      setup_common_mistake:
+        "Common mistake: shorting too early into frontside strength before the backside is confirmed.",
+    };
+  }
+
+  if (params.catalyst) {
+    return {
+      setup_slug: "catalyst-momentum-continuation",
+      setup_name: "Catalyst Momentum Continuation",
+      setup_description:
+        "Long setup driven by fresh catalyst, strong volume and continuation pressure. The signal looks for a cleaner continuation attempt instead of random chasing.",
+      setup_confirmation:
+        "Confirmation: pullback holds, VWAP reclaim/hold, high-volume continuation, break of intraday high, or strong bid after catalyst.",
+      setup_common_mistake:
+        "Common mistake: chasing the first spike without waiting for pullback quality, reclaim, or volume confirmation.",
+    };
+  }
+
+  return {
+    setup_slug: "momentum-continuation-volume-expansion",
+    setup_name: "Momentum Continuation / Volume Expansion",
+    setup_description:
+      "Long setup where price is moving with unusual activity and volume expansion. The idea is to participate only if the move confirms continuation instead of fading immediately.",
+    setup_confirmation:
+      "Confirmation: pullback hold, VWAP reclaim, strong relative volume, break-and-hold above key level, or continuation after consolidation.",
+    setup_common_mistake:
+      "Common mistake: entering after a large extension without defined invalidation or buying into exhaustion.",
+  };
+}
+
+function buildPremiumSignalPlaybook(params: {
+  alertType: AlertType;
+  direction: "upside" | "downside" | "neutral";
+  assetType: "stock" | "crypto";
+  catalyst: string | null;
+  changePercent: number;
+  marketScore: number;
+  socialScore: number;
+  mentions24h: number;
+  confidenceScore: number;
+}) {
+  const isShort = params.alertType === "dump" || params.direction === "downside";
+  const isCrypto = params.assetType === "crypto";
+
+  const confidenceTier =
+    params.confidenceScore >= 88
+      ? "A+"
+      : params.confidenceScore >= 80
+        ? "A"
+        : params.confidenceScore >= 70
+          ? "B"
+          : "Watchlist";
+
+  const moveText =
+    params.changePercent >= 0
+      ? `price is up ${params.changePercent.toFixed(2)}%`
+      : `price is down ${Math.abs(params.changePercent).toFixed(2)}%`;
+
+  const socialText =
+    params.mentions24h > 0
+      ? `tracked attention is active with ${params.mentions24h} mentions`
+      : "tracked social attention is limited in current sources";
+
+  const whySignalFired = [
+    `The signal fired because ${moveText}`,
+    `market score is ${Math.round(params.marketScore)}`,
+    `social score is ${Math.round(params.socialScore)}`,
+    socialText,
+    params.catalyst ? `fresh catalyst is present: ${params.catalyst}` : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  if (isCrypto && isShort) {
+    return {
+      setup_timeframe: "5m",
+      confirmation_timeframe: "10m",
+      confidence_tier: confidenceTier,
+      why_signal_fired: whySignalFired,
+      confirmation_checklist: [
+        "5m candle confirms weakness after failed reclaim",
+        "10m structure does not immediately reclaim the broken level",
+        "Bounce volume is weaker than sell pressure",
+        "Price forms lower high or accepts below key structure",
+      ],
+      avoid_if: [
+        "Price quickly reclaims the failed level with strong volume",
+        "Move is already deeply extended into sellside liquidity",
+        "There is no clear invalidation level",
+      ],
+      lesson_summary:
+        "This is a short-side continuation idea. The edge is not in chasing the first dump, but in waiting for failed recovery and continuation after sellers stay in control.",
+      playbook_status: "training_layer",
+    };
+  }
+
+  if (isCrypto && !isShort) {
+    return {
+      setup_timeframe: "5m",
+      confirmation_timeframe: "10m",
+      confidence_tier: confidenceTier,
+      why_signal_fired: whySignalFired,
+      confirmation_checklist: [
+        "5m candle reclaims liquidity or structure",
+        "10m confirms that price is holding above reclaim zone",
+        "Move shows displacement or strong continuation attempt",
+        "Pullback does not immediately lose the reclaimed level",
+      ],
+      avoid_if: [
+        "Reclaim candle is immediately rejected",
+        "Price is extended far above trigger zone",
+        "Volume disappears after the first impulse",
+      ],
+      lesson_summary:
+        "This is a crypto liquidity reclaim idea. The goal is to catch continuation after trapped sellers are forced out, not to buy the first green candle blindly.",
+      playbook_status: "training_layer",
+    };
+  }
+
+  if (isShort) {
+    return {
+      setup_timeframe: "5m",
+      confirmation_timeframe: "10m",
+      confidence_tier: confidenceTier,
+      why_signal_fired: whySignalFired,
+      confirmation_checklist: [
+        "5m confirms rejection or failed breakout",
+        "10m does not reclaim the failed level",
+        "Bounce forms lower high or weak recovery",
+        "Volume fades on bounce or increases on breakdown",
+      ],
+      avoid_if: [
+        "Stock is still on frontside momentum",
+        "Price reclaims HOD/VWAP with strength",
+        "Short entry is too close to obvious support",
+      ],
+      lesson_summary:
+        "This is a backside fade idea. The best version appears after a strong move fails, buyers lose control, and price starts accepting below the key level.",
+      playbook_status: "training_layer",
+    };
+  }
+
+  return {
+    setup_timeframe: "5m",
+    confirmation_timeframe: "10m",
+    confidence_tier: confidenceTier,
+    why_signal_fired: whySignalFired,
+    confirmation_checklist: [
+      "5m confirms pullback hold or reclaim",
+      "10m confirms continuation context",
+      "Volume supports the move",
+      "Price is not too extended from trigger zone",
+    ],
+    avoid_if: [
+      "Breakout candle is already extended",
+      "Pullback fails immediately",
+      "Volume fades after the initial move",
+      "Risk/reward becomes poor before entry",
+    ],
+    lesson_summary: params.catalyst
+      ? "This is a catalyst momentum continuation idea. The edge comes from fresh attention plus confirmation, not from chasing the first spike."
+      : "This is a momentum continuation idea. The edge comes from controlled continuation after volume expansion, with clear invalidation.",
+    playbook_status: "training_layer",
+  };
+}
+
+function buildActionableTradePlan(params: {
+  alertType: AlertType;
+  direction: "upside" | "downside" | "neutral";
+  price: number | null;
+  changePercent: number;
+  assetType: "stock" | "crypto";
+  catalyst: string | null;
+}) {
+  const price = params.price && params.price > 0 ? params.price : null;
+
+  const isShort =
+    params.alertType === "dump" || params.direction === "downside";
+
+  const isCrypto = params.assetType === "crypto";
+
+  const setupType = isCrypto
+    ? isShort
+      ? "Crypto SMC weakness / sellside continuation watch"
+      : "Crypto SMC momentum / liquidity reclaim watch"
+    : isShort
+      ? "Backside fade / weakness continuation"
+      : params.catalyst
+        ? "Catalyst momentum continuation"
+        : "Momentum continuation / volume expansion";
+
+  if (!price) {
+    return {
+      setup_type: setupType,
+      trigger_label: isShort
+        ? "Trigger: failed reclaim / lower high confirmation"
+        : "Trigger: reclaim / hold above key intraday level",
+      entry_zone_min: null,
+      entry_zone_max: null,
+      stop_price: null,
+      target_1: null,
+      target_2: null,
+      target_3: null,
+      invalidation: isShort
+        ? "Invalid if price reclaims key resistance with volume and holds above it."
+        : "Invalid if price fails to hold reclaim level or volume disappears.",
+      management_plan: isShort
+        ? "Scale only after confirmation. Cover into flushes, avoid shorting into first capitulation candle."
+        : "Do not chase first extension. Wait for pullback/reclaim, scale into strength, protect after TP1.",
+    };
+  }
+
+  const entryMin = isShort ? price * 0.985 : price * 0.995;
+  const entryMax = isShort ? price * 1.005 : price * 1.015;
+
+  const stop = isShort ? price * 1.035 : price * 0.965;
+
+  const target1 = isShort ? price * 0.965 : price * 1.035;
+  const target2 = isShort ? price * 0.93 : price * 1.07;
+  const target3 = isShort ? price * 0.88 : price * 1.12;
+
+  return {
+    setup_type: setupType,
+    trigger_label: isShort
+      ? "Trigger: rejection / lower high / failed reclaim with volume weakness"
+      : isCrypto
+        ? "Trigger: liquidity sweep + reclaim or displacement continuation"
+        : "Trigger: pullback hold / VWAP reclaim / high-volume continuation",
+    entry_zone_min: roundPrice(Math.min(entryMin, entryMax)),
+    entry_zone_max: roundPrice(Math.max(entryMin, entryMax)),
+    stop_price: roundPrice(stop),
+    target_1: roundPrice(target1),
+    target_2: roundPrice(target2),
+    target_3: roundPrice(target3),
+    invalidation: isShort
+      ? "Invalid if price reclaims the failed level and holds above it with increasing volume."
+      : isCrypto
+        ? "Invalid if reclaim fails and price accepts back below the swept liquidity / structure level."
+        : "Invalid if VWAP/reclaim fails, volume dies, or price forms a lower high after trigger.",
+    management_plan: isShort
+      ? "Take partial into first flush. Move stop down after TP1. Avoid holding through reclaim strength."
+      : "Take partial at TP1. Move stop toward breakeven after confirmation. Trail only if volume expands.",
+  };
+}
+
+function buildAlertDraft(params: {
+  row: MarketScannerRow;
+  social:
+    | {
+        sources: string[];
+        mentions24h: number;
+        mentions1h: number;
+        mentionVelocity: number;
+        socialScore: number;
+        sentiment: string;
+      }
+    | undefined;
+  planId: string;
+}): MarketAlertDraft | null {
+  const symbol = normalizeSymbol(params.row.symbol || "");
+  if (!symbol) return null;
+
+  const assetType = getAssetType(params.row);
+  const changePercent = toNumber(params.row.change_percent);
+  const price = toNumber(params.row.price, 0) || null;
+  const marketScore = toNumber(params.row.opportunity_score);
+  const socialScore = params.social?.socialScore || 0;
+  const mentions24h = params.social?.mentions24h || toNumber(params.row.mentions);
+  const catalyst = params.row.catalyst || null;
+
+  const alertType = getAlertType({
+    assetType,
+    changePercent,
+    marketScore,
+    socialScore,
+    mentions24h,
+    catalyst,
+  });
+
+  if (!alertType) return null;
+
+  const direction =
+    alertType === "dump"
+      ? "downside"
+      : alertType === "social_spike" || alertType === "news_catalyst"
+        ? "neutral"
+        : "upside";
+
+        const tradePlan = buildActionableTradePlan({
+  alertType,
+  direction,
+  price,
+  changePercent,
+  assetType,
+  catalyst,
+});
+
+const setupEducation = getSetupEducation({
+  alertType,
+  direction,
+  assetType,
+  catalyst,
+});
+
+  const catalystBoost = catalyst ? 8 : 0;
+  const socialBoost = Math.min(socialScore * 0.25, 18);
+  const movementBoost = Math.min(Math.abs(changePercent), 18);
+
+  const score = Math.round(
+    clamp(marketScore * 0.68 + socialBoost + movementBoost + catalystBoost)
+  );
+
+  const confidenceScore = Math.round(
+  clamp(
+    score * 0.72 +
+      Math.min(Math.abs(changePercent), 15) +
+      (catalyst ? 6 : 0) +
+      (params.social?.sources?.length ? 4 : 0)
+  )
+);
+
+const signalPlaybook = buildPremiumSignalPlaybook({
+  alertType,
+  direction,
+  assetType,
+  catalyst,
+  changePercent,
+  marketScore,
+  socialScore,
+  mentions24h,
+  confidenceScore,
+});
+
+  const hourlyKey = new Date().toISOString().slice(0, 13);
+
+  const titleMap: Record<AlertType, string> = {
+    pump: `${symbol} pump / momentum expansion`,
+    dump: `${symbol} dump / weakness expansion`,
+    social_spike: `${symbol} social attention spike`,
+    crypto_momentum: `${symbol} crypto momentum alert`,
+    news_catalyst: `${symbol} fresh catalyst alert`,
+  };
+
+  const moveLabel =
+    changePercent > 0 ? `+${changePercent.toFixed(2)}%` : `${changePercent.toFixed(2)}%`;
+
+  const reasonParts = [
+    `Move ${moveLabel}`,
+    `market score ${marketScore}`,
+  ];
+
+  if (mentions24h > 0) {
+    reasonParts.push(`tracked mentions ${mentions24h}/24H`);
+  }
+
+  if (params.social?.sources?.length) {
+    reasonParts.push(`sources: ${params.social.sources.join(", ")}`);
+  }
+
+  if (catalyst) {
+    reasonParts.push(`catalyst: ${catalyst}`);
+  }
+
+  const riskNote =
+    params.row.risk_label ||
+    (alertType === "dump"
+      ? "Downside momentum can reverse fast after capitulation. Wait for confirmation."
+      : "Momentum alert can be extended. Avoid chasing without structure confirmation.");
+
+  const scenario =
+    alertType === "dump"
+      ? "Watch for failed reclaim, weak bounce, lower high, or breakdown continuation."
+      : alertType === "crypto_momentum"
+        ? "Watch liquidity sweep/reclaim behavior, continuation after displacement, and invalidation around structure."
+        : "Watch VWAP/previous high reaction, pullback quality, volume continuation, and failed breakout risk.";
+
+  return {
+    alert_key: `${alertType}:${symbol}:${hourlyKey}`,
+    user_id: null,
+    plan_id: params.planId,
+    alert_scope: "global",
+    symbol,
+    name: params.row.name || symbol,
+    exchange: params.row.exchange || null,
+    asset_type: assetType,
+    alert_type: alertType,
+    direction,
+    score,
+    title: titleMap[alertType],
+    reason: reasonParts.join(" · "),
+    risk_note: riskNote,
+    scenario,
+setup_type: tradePlan.setup_type,
+setup_timeframe: signalPlaybook.setup_timeframe,
+confirmation_timeframe: signalPlaybook.confirmation_timeframe,
+confidence_tier: signalPlaybook.confidence_tier,
+why_signal_fired: signalPlaybook.why_signal_fired,
+confirmation_checklist: signalPlaybook.confirmation_checklist,
+avoid_if: signalPlaybook.avoid_if,
+lesson_summary: signalPlaybook.lesson_summary,
+playbook_status: signalPlaybook.playbook_status,
+setup_slug: setupEducation.setup_slug,
+setup_name: setupEducation.setup_name,
+setup_description: setupEducation.setup_description,
+setup_confirmation: setupEducation.setup_confirmation,
+setup_common_mistake: setupEducation.setup_common_mistake,
+trigger_label: tradePlan.trigger_label,
+entry_zone_min: tradePlan.entry_zone_min,
+entry_zone_max: tradePlan.entry_zone_max,
+stop_price: tradePlan.stop_price,
+target_1: tradePlan.target_1,
+target_2: tradePlan.target_2,
+target_3: tradePlan.target_3,
+invalidation: tradePlan.invalidation,
+management_plan: tradePlan.management_plan,
+confidence_score: confidenceScore,
+timeframe: assetType === "crypto" ? "intraday / crypto 24-7" : "intraday",
+is_new: true,
+outcome_status: "pending",
+status: "active",
+    source_data: {
+      market: params.row,
+      social: params.social || null,
+    },
+    expires_at: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+  };
+}
+
+export async function GET(request: Request) {
+  const gate = await requireFeatureAccess(request, "ai_alerts", {
+    rateLimit: {
+      limit: 30,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!gate.ok) return gate.response;
+  try {
+    const user = await getRequestUser(request);
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
+
+    const planId = await getUserPlan(user.id);
+
+    if (!canUseFeature(planId, "ai_alerts")) {
+  return NextResponse.json(
+    {
+      error: "AI Alerts are available only on SkillEdge Elite.",
+      locked: true,
+      requiredPlan: "elite",
+      feature: "ai_alerts",
+      currentPlan: planId,
+    },
+    { status: 403 }
+  );
+}
+
+    const { searchParams } = new URL(request.url);
+    const limit = Math.max(1, Math.min(100, Number(searchParams.get("limit") || "20")));
+    const period = searchParams.get("period") || "active";
+
+    const query = supabaseAdmin
+      .from("market_alerts")
+      .select("*")
+      .or(`user_id.is.null,user_id.eq.${user.id}`)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (period === "7d") {
+      const sevenDaysAgo = new Date(
+        Date.now() - 7 * 24 * 60 * 60 * 1000
+      ).toISOString();
+
+      query.gte("created_at", sevenDaysAgo);
+    } else {
+      query
+        .eq("status", "active")
+        .gt("expires_at", new Date().toISOString())
+        .order("score", { ascending: false });
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Failed to load market alerts:", error);
+
+      return NextResponse.json(
+        { error: "Failed to load market alerts." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      source: period === "7d" ? "market_alerts_7d" : "market_alerts",
+      period,
+      count: data?.length || 0,
+      items: data || [],
+    });
+  } catch (error) {
+    console.error("Market alerts GET error:", error);
+
+    return NextResponse.json(
+      { error: "Failed to load market alerts." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+   const gate = await requireFeatureAccess(request, "ai_alerts", {
+    rateLimit: {
+      limit: 30,
+      windowMs: 60_000,
+    },
+  });
+
+  if (!gate.ok) return gate.response;
+  try {
+    const user = await getRequestUser(request);
+
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+    }
+
+    const planId = await getUserPlan(user.id);
+
+    if (!canUseFeature(planId, "ai_alerts")) {
+  return NextResponse.json(
+    {
+      error: "AI Alerts are available only on SkillEdge Elite.",
+      locked: true,
+      requiredPlan: "elite",
+      feature: "ai_alerts",
+      currentPlan: planId,
+    },
+    { status: 403 }
+  );
+}
+
+    const marketSince = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    const socialSince = new Date(Date.now() - 45 * 60 * 1000).toISOString();
+
+    const [marketResult, socialResult] = await Promise.all([
+      supabaseAdmin
+        .from("market_scanner_snapshots")
+        .select("*")
+        .gte("scanned_at", marketSince)
+        .order("opportunity_score", { ascending: false })
+        .limit(250),
+      supabaseAdmin
+        .from("market_social_mentions")
+        .select("*")
+        .gte("scanned_at", socialSince)
+        .order("social_score", { ascending: false })
+        .limit(250),
+    ]);
+
+    if (marketResult.error) {
+      console.error("Alert generator market load error:", marketResult.error);
+    }
+
+    if (socialResult.error) {
+      console.error("Alert generator social load error:", socialResult.error);
+    }
+
+    const marketRows = pickBestMarketRows(
+      ((marketResult.data || []) as MarketScannerRow[]).filter((row) =>
+        normalizeSymbol(row.symbol || "")
+      )
+    );
+
+    const socialBySymbol = aggregateSocial(
+      ((socialResult.data || []) as SocialMentionRow[]).filter((row) =>
+        normalizeSymbol(row.symbol || "")
+      )
+    );
+
+    const drafts = marketRows
+      .map((row) =>
+        buildAlertDraft({
+          row,
+          social: socialBySymbol.get(normalizeSymbol(row.symbol || "")),
+          planId,
+        })
+      )
+      .filter((item): item is MarketAlertDraft => Boolean(item))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 30);
+
+    if (drafts.length > 0) {
+      const { error: upsertError } = await supabaseAdmin
+        .from("market_alerts")
+        .upsert(drafts, { onConflict: "alert_key" });
+
+      if (upsertError) {
+        console.error("Failed to upsert market alerts:", upsertError);
+
+        return NextResponse.json(
+          { error: "Failed to save generated alerts." },
+          { status: 500 }
+        );
+      }
+    }
+
+    return NextResponse.json({
+      source: "market_alert_generator",
+      generatedAt: new Date().toISOString(),
+      count: drafts.length,
+      items: drafts,
+    });
+  } catch (error) {
+    console.error("Market alerts POST error:", error);
+
+    return NextResponse.json(
+      { error: "Failed to generate market alerts." },
+      { status: 500 }
+    );
+  }
+}

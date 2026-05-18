@@ -10,11 +10,30 @@ import {
 
 import { requireFeatureAccess } from "@/lib/security/feature-gate";
 
+import {
+  getSkillEdgeAiReportPrompt,
+  getSkillEdgeConciseOutputRules,
+} from "@/lib/ai/skill-edge-prompts";
+
 export const runtime = "nodejs";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+function getOpenAIModel(planId: string | null) {
+  const normalizedPlanId = String(planId || "").toLowerCase();
+
+  if (normalizedPlanId.includes("elite")) {
+    return process.env.SKILLEDGE_ELITE_AI_MODEL || "gpt-5.1";
+  }
+
+  if (normalizedPlanId.includes("edge") || normalizedPlanId.includes("pro")) {
+    return process.env.SKILLEDGE_EDGE_AI_MODEL || "gpt-5-mini";
+  }
+
+  return process.env.SKILLEDGE_CORE_AI_MODEL || "gpt-4.1-mini";
+}
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || "",
@@ -178,15 +197,28 @@ export async function POST(request: Request) {
       trade_date: trade.trade_date ?? "N/A",
     }));
 
+const systemPrompt = [
+  getSkillEdgeAiReportPrompt({
+    language: "ru",
+    plan: planId,
+    userContext: [
+      `Plan ID: ${planId}`,
+      `Report module: trading performance report`,
+      `Trades included: ${trades.length}`,
+      `Report style: professional prop-desk performance review`,
+    ].join("\n"),
+  }),
+  getSkillEdgeConciseOutputRules(),
+].join("\n\n");
+
     const completion = await openai.chat.completions.create({
-      model: process.env.OPENAI_REPORT_MODEL || "gpt-4o-mini",
+      model: getOpenAIModel(planId),
       temperature: 0.35,
       messages: [
         {
-          role: "system",
-          content:
-            "You are SkillEdge AI, a premium trading performance analyst. Write in Russian. Analyze trading journal data like a prop trading mentor. Be specific, practical, risk-focused, and concise. Do not mention OpenAI, GPT, models, or internal implementation.",
-        },
+  role: "system",
+  content: systemPrompt,
+},
         {
           role: "user",
           content: JSON.stringify(

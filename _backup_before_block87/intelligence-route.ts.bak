@@ -597,15 +597,8 @@ export async function GET(request: Request) {
       );
     }
 
-    const marketCacheSeconds = Number(process.env.MARKET_DATA_CACHE_TTL_SECONDS || "60");
-    const socialCacheSeconds = Number(process.env.MARKET_SOCIAL_CACHE_TTL_SECONDS || "600");
-
-    const marketSince = new Date(
-      Date.now() - Math.max(marketCacheSeconds * 5, 20 * 60) * 1000
-    ).toISOString();
-    const socialSince = new Date(
-      Date.now() - Math.max(socialCacheSeconds * 3, 30 * 60) * 1000
-    ).toISOString();
+    const marketSince = new Date(Date.now() - 20 * 60 * 1000).toISOString();
+    const socialSince = new Date(Date.now() - 30 * 60 * 1000).toISOString();
 
     const [marketResult, socialResult] = await Promise.all([
       supabaseAdmin
@@ -684,7 +677,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       source: "unified_market_intelligence",
-      provider: "fmp_finnhub_marketaux_coingecko_binance_hyperliquid_cache",
+      provider: "market_reddit_news",
       scannedAt,
       metrics,
       items,

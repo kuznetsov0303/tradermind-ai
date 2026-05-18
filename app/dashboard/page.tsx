@@ -22,6 +22,7 @@ import {
   normalizePlanId,
 } from "@/lib/plan-limits";
 
+import TelegramSignalsConnectButton from "@/components/dashboard/TelegramSignalsConnectButton";
 
 type Language = "en" | "ru" | "ua";
 
@@ -38,6 +39,25 @@ type TabId =
 
 type PlanId = "core" | "edge" | "elite";
 type BillingPeriod = "monthly" | "halfyear" | "yearly";
+type AlertAssetFilter = "all" | "stock" | "crypto";
+
+function normalizeAlertAssetFilter(value: string | null | undefined): AlertAssetFilter {
+  const normalized = (value || "all").toLowerCase();
+
+  if (["crypto", "coin", "coins"].includes(normalized)) return "crypto";
+  if (["stock", "stocks", "equity", "equities"].includes(normalized)) return "stock";
+
+  return "all";
+}
+
+function getAlertAssetFilterUrlValue(filter: AlertAssetFilter) {
+  return filter === "all" ? "all" : filter;
+}
+
+function isAlertInAssetFilter(alert: DashboardMarketAlert, filter: AlertAssetFilter) {
+  if (filter === "all") return true;
+  return filter === "crypto" ? alert.asset_type === "crypto" : alert.asset_type !== "crypto";
+}
 
 type Subscription = {
   active: boolean;
@@ -2019,6 +2039,27 @@ function buildEquityCurveData(trades: Trade[]) {
 export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+  const [requestedAlertAssetFilter, setRequestedAlertAssetFilter] =
+    useState<AlertAssetFilter>("all");
+  useEffect(() => {
+  if (typeof window === "undefined") return;
+
+  const params = new URLSearchParams(window.location.search);
+  const requestedTab = params.get("tab");
+  const requestedAssetType = normalizeAlertAssetFilter(
+    params.get("assetType") || params.get("market") || params.get("asset")
+  );
+
+  setRequestedAlertAssetFilter(requestedAssetType);
+
+  if (
+    requestedTab === "alerts" ||
+    requestedTab === "signals" ||
+    requestedTab === "ai-alerts"
+  ) {
+    setActiveTab("alerts");
+  }
+}, []);
   const [chartSymbolFromJournal, setChartSymbolFromJournal] = useState("");
   const [loading, setLoading] = useState(true);
   const [coachMessage, setCoachMessage] = useState("");
@@ -2344,6 +2385,26 @@ const handleOpenTradeChart = (trade: Trade) => {
 
   setChartSymbolFromJournal(normalizedSymbol);
   setActiveTab("charts");
+};
+
+
+const handleOpenAlertsFromWidget = (assetFilter: AlertAssetFilter = "all") => {
+  setRequestedAlertAssetFilter(assetFilter);
+  setActiveTab("alerts");
+
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    params.set("tab", "signals");
+
+    if (assetFilter === "all") {
+      params.delete("assetType");
+    } else {
+      params.set("assetType", getAlertAssetFilterUrlValue(assetFilter));
+    }
+
+    window.history.pushState({}, "", `/dashboard?${params.toString()}`);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 };
 
 const handleCreateTradeFromAlert = (alert: DashboardMarketAlert) => {
@@ -2919,95 +2980,96 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
 };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#050813] px-4 py-6 text-white md:px-8">
+    <main className="se-dashboard-bg relative min-h-screen overflow-hidden text-white">
       <BackgroundFX />
-      <DashboardAlertsWidget
-  subscription={subscription}
-  language={language}
-  onOpenAlerts={() => setActiveTab("alerts")}
-/>
+      
 
-      <div className="relative z-10 mx-auto max-w-7xl">
+      <div className="relative z-10 mx-auto w-full max-w-[1760px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
         <motion.header
-          initial={{ opacity: 0, y: -18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-          className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-2xl shadow-indigo-950/20 backdrop-blur-xl"
+  initial={{ opacity: 0, y: -18 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.55 }}
+  className="se-dashboard-panel rounded-[2.25rem] p-5 md:p-6"
+>
+  <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
+    <div className="max-w-3xl">
+      <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-xs font-black uppercase tracking-[0.28em] text-cyan-50/65">
+        {t.terminal}
+      </div>
+
+      <h1 className="mt-4 text-4xl font-black tracking-[-0.045em] text-white md:text-6xl">
+        {t.dashboard}
+      </h1>
+
+      <p className="mt-3 text-sm font-semibold text-white/58">
+        {t.user}:{" "}
+        <span className="text-white/82">{email || t.loading}</span>
+      </p>
+    </div>
+
+    <div className="flex flex-wrap gap-3">
+      <a
+        href="/?page=pricing"
+        className="se-dashboard-button-primary rounded-full px-5 py-3 text-sm font-black transition hover:-translate-y-0.5"
+      >
+        {t.choosePlan}
+      </a>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="se-dashboard-button-secondary rounded-full px-5 py-3 text-sm font-black transition hover:-translate-y-0.5"
+      >
+        {t.logout}
+      </button>
+    </div>
+  </div>
+
+  <div className="mt-7 overflow-x-auto pb-1">
+    <div className="flex min-w-max gap-2 rounded-full border border-[rgba(198,226,255,0.16)] bg-[rgba(14,23,36,0.34)] p-1.5 shadow-inner shadow-black/20">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          onClick={() => setActiveTab(tab.id)}
+          className={`relative rounded-full px-5 py-3 text-sm font-black transition ${
+            activeTab === tab.id
+              ? "text-[#07111d]"
+              : "text-white/58 hover:bg-cyan-200/[0.07] hover:text-white"
+          }`}
         >
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-[0.28em] text-white/45">
-  {t.terminal}
-</div>
+          {activeTab === tab.id && (
+            <motion.span
+              layoutId="active-dashboard-tab"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-white via-cyan-50 to-emerald-50 shadow-[0_12px_40px_rgba(255,255,255,0.18)]"
+              transition={{
+                type: "spring",
+                stiffness: 420,
+                damping: 32,
+              }}
+            />
+          )}
 
-<h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">
-  {t.dashboard}
-</h1>
+          <span className="relative z-10 inline-flex items-center gap-2">
+            <span>{t.tabs[tab.id]}</span>
 
-<p className="mt-3 text-sm text-white/55">
-  {t.user}:{" "}
-  <span className="text-white/75">{email || t.loading}</span>
-</p>
-
-<a
-  href="/?page=pricing"
-  className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
->
-  {t.choosePlan}
-</a>
-
-<button
-  onClick={handleLogout}
-  className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
->
-  {t.logout}
-</button>
-            </div>
-          </div>
-
-          <div className="mt-7 overflow-x-auto">
-            <div className="flex min-w-max gap-2 rounded-full border border-white/10 bg-black/20 p-2">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative rounded-full px-5 py-3 text-sm transition ${
-                    activeTab === tab.id
-                      ? "text-black"
-                      : "text-white/55 hover:bg-white/10 hover:text-white"
-                  }`}
-                >
-                  {activeTab === tab.id && (
-                    <motion.span
-                      layoutId="active-dashboard-tab"
-                      className="absolute inset-0 rounded-full bg-white shadow-lg shadow-white/10"
-                      transition={{
-                        type: "spring",
-                        stiffness: 420,
-                        damping: 32,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10 inline-flex items-center gap-2">
-  <span>{t.tabs[tab.id]}</span>
-
-  {getTabRequiredPlanLabel(tab.id) ? (
-    <span
-      className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${
-        activeTab === tab.id
-          ? "border-black/15 bg-black/10 text-black/65"
-          : "border-cyan-300/20 bg-cyan-300/10 text-cyan-100/75"
-      }`}
-    >
-      {getTabRequiredPlanLabel(tab.id)}
-    </span>
-  ) : null}
-</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </motion.header>
+            {getTabRequiredPlanLabel(tab.id) ? (
+              <span
+                className={`rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] ${
+                  activeTab === tab.id
+                    ? "border-black/15 bg-black/10 text-black/65"
+                    : "border-cyan-300/20 bg-cyan-300/10 text-cyan-100/75"
+                }`}
+              >
+                {getTabRequiredPlanLabel(tab.id)}
+              </span>
+            ) : null}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+</motion.header>
 
         <motion.section
           initial={{ opacity: 0, y: 22 }}
@@ -3015,7 +3077,7 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
           transition={{ duration: 0.55, delay: 0.08 }}
           className="mt-6 grid gap-6 lg:grid-cols-[1fr_330px]"
         >
-          <section className="relative min-h-[650px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
+          <section className="se-dashboard-panel relative min-h-[650px] overflow-hidden rounded-[2.25rem] p-6">
             <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-indigo-300/40 to-transparent" />
 
             {!loading && locked && activeTab !== "billing" && (
@@ -3031,7 +3093,7 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
 
                   <div className="relative">
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06]">
-                      <span className="text-2xl">✦</span>
+                      <span className="text-2xl">вњ¦</span>
                     </div>
 
                     <p className="mt-5 text-xs uppercase tracking-[0.28em] text-white/40">
@@ -3157,6 +3219,8 @@ onTradeEditCancel={handleTradeEditCancel}
     subscription={subscription}
     language={language}
     trades={trades}
+    requestedAssetFilter={requestedAlertAssetFilter}
+    onRequestedAssetFilterChange={setRequestedAlertAssetFilter}
     onCreateTradeFromAlert={handleCreateTradeFromAlert}
   />
 )}
@@ -3193,7 +3257,7 @@ onTradeEditCancel={handleTradeEditCancel}
               initial={{ opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.55, delay: 0.15 }}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl"
+              className="se-dashboard-panel rounded-[2rem] p-6"
             >
               <p className="text-xs uppercase tracking-[0.28em] text-white/35">
   {t.currentPlan}
@@ -3221,7 +3285,7 @@ onTradeEditCancel={handleTradeEditCancel}
   </div>
 )}
 
-              <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="se-dashboard-card-soft mt-5 rounded-2xl p-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-white/45">{t.aiUsage}</span>
                   <span className="text-white/70">
@@ -3230,9 +3294,9 @@ onTradeEditCancel={handleTradeEditCancel}
                       : "0%"}
                   </span>
                 </div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/12">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-indigo-300 to-cyan-300"
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-amber-200 shadow-[0_0_18px_rgba(56,214,255,0.35)]"
                     style={{
                       width:
                         subscription.aiLimit > 0
@@ -3252,7 +3316,7 @@ onTradeEditCancel={handleTradeEditCancel}
               initial={{ opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.55, delay: 0.2 }}
-              className="rounded-[2rem] border border-white/10 bg-gradient-to-b from-indigo-500/10 to-white/[0.035] p-6 backdrop-blur-xl"
+              className="se-dashboard-card rounded-[2rem] p-6"
             >
               <p className="text-xs uppercase tracking-[0.28em] text-white/35">
   {t.quickActions}
@@ -3294,13 +3358,23 @@ onTradeEditCancel={handleTradeEditCancel}
         onClick={() => setEquityExpanded(false)}
         className="absolute -right-2 -top-14 rounded-full border border-white/10 bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.03]"
       >
-        ✕ {t.journal.close}
+        вњ• {t.journal.close}
       </button>
 
       <EquityCurveCard trades={trades} t={t} />
     </div>
   </div>
 )}
+
+{/* The site-wide GlobalAlertsWidget is the only floating alerts widget.
+    Keep the local dashboard widget disabled to avoid duplicate AI Alerts bubbles. */}
+{false ? (
+  <DashboardAlertsWidget
+    subscription={subscription}
+    language={language}
+    onOpenAlerts={handleOpenAlertsFromWidget}
+  />
+) : null}
 
     </main>
   );
@@ -3320,22 +3394,25 @@ function BackgroundFX() {
   return (
     <>
       <motion.div
-        className="absolute left-[-10%] top-[-10%] h-[420px] w-[420px] rounded-full bg-indigo-500/15 blur-3xl"
-        animate={{ x: [0, 40, 0], y: [0, 30, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute left-[-10%] top-[-10%] h-[520px] w-[520px] rounded-full bg-cyan-400/14 blur-3xl"
+        animate={{ x: [0, 42, 0], y: [0, 28, 0], opacity: [0.45, 0.72, 0.45] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
+
       <motion.div
-        className="absolute right-[-8%] top-[15%] h-[380px] w-[380px] rounded-full bg-cyan-500/10 blur-3xl"
-        animate={{ x: [0, -35, 0], y: [0, 25, 0] }}
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-[-15%] left-[35%] h-[460px] w-[460px] rounded-full bg-fuchsia-500/10 blur-3xl"
-        animate={{ x: [0, 25, 0], y: [0, -35, 0] }}
+        className="absolute right-[-8%] top-[12%] h-[460px] w-[460px] rounded-full bg-emerald-400/12 blur-3xl"
+        animate={{ x: [0, -38, 0], y: [0, 26, 0], opacity: [0.36, 0.64, 0.36] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_35%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:56px_56px] opacity-20" />
+
+      <motion.div
+        className="absolute bottom-[-16%] left-[34%] h-[540px] w-[540px] rounded-full bg-blue-400/10 blur-3xl"
+        animate={{ x: [0, 28, 0], y: [0, -36, 0], opacity: [0.28, 0.52, 0.28] }}
+        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.075),transparent_35%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.028)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.024)_1px,transparent_1px)] bg-[size:58px_58px] opacity-24" />
     </>
   );
 }
@@ -3349,14 +3426,20 @@ function ActionButton({
 }) {
   return (
     <button
+      type="button"
       disabled={disabled}
-      className={`w-full rounded-2xl border border-white/10 px-4 py-3 text-left text-sm transition ${
+      className={`group w-full rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${
         disabled
-          ? "cursor-not-allowed bg-white/[0.025] text-white/25"
-          : "bg-white/[0.04] text-white/65 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+          ? "cursor-not-allowed border-white/8 bg-white/[0.025] text-white/25"
+          : "border-[rgba(198,226,255,0.14)] bg-white/[0.055] text-white/76 hover:-translate-y-0.5 hover:border-cyan-200/28 hover:bg-cyan-200/[0.08] hover:text-white"
       }`}
     >
-      {label}
+      <span className="flex items-center justify-between gap-3">
+        <span>{label}</span>
+        <span className="text-white/30 transition group-hover:text-cyan-100">
+          в†’
+        </span>
+      </span>
     </button>
   );
 }
@@ -3717,6 +3800,61 @@ const journalLanguage: Language =
       : "ru";
 
 const signalCopy = signalLinkedTradeCopy[journalLanguage];
+
+const journalDeskCopy =
+  journalLanguage === "en"
+    ? {
+        heroBadge: "Journal is your edge",
+        heroTitle: "Every trade becomes data. Every mistake becomes a system upgrade.",
+        heroText:
+          "The journal is not a notebook. It is the core dataset for AI review, personal alerts, execution quality and trader improvement.",
+        usageHint: "Trade capacity",
+        focusItems: [
+          ["Plan", "Ticker, direction, setup and reason before entry."],
+          ["Risk", "Stop, size, risk amount and invalidation before action."],
+          ["Review", "Mistake, emotion, lesson and chart screenshot after the trade."],
+        ],
+        aiBadge: "AI journal review",
+        formBadge: "Trade ticket",
+        formText: "Log the trade like a desk ticket: context, execution, risk, emotion and lesson.",
+        recentBadge: "Recent execution",
+        tableBadge: "Full trade database",
+      }
+    : journalLanguage === "ua"
+      ? {
+          heroBadge: "Журнал — твій edge",
+          heroTitle: "Кожна угода стає даними. Кожна помилка — покращенням системи.",
+          heroText:
+            "Журнал — це не нотатник. Це головна база даних для AI review, персональних alerts, якості виконання та розвитку трейдера.",
+          usageHint: "Ліміт угод",
+          focusItems: [
+            ["План", "Тикер, напрямок, сетап і причина до входу."],
+            ["Ризик", "Стоп, розмір, risk amount та invalidation до дії."],
+            ["Review", "Помилка, емоція, урок і скрін графіка після угоди."],
+          ],
+          aiBadge: "AI journal review",
+          formBadge: "Trade ticket",
+          formText: "Фіксуй угоду як desk ticket: контекст, виконання, ризик, емоцію та урок.",
+          recentBadge: "Останнє виконання",
+          tableBadge: "Повна база угод",
+        }
+      : {
+          heroBadge: "Журнал — твой edge",
+          heroTitle: "Каждая сделка становится данными. Каждая ошибка — апгрейдом системы.",
+          heroText:
+            "Журнал — это не блокнот. Это главная база данных для AI-review, персональных alerts, качества исполнения и роста трейдера.",
+          usageHint: "Лимит сделок",
+          focusItems: [
+            ["План", "Тикер, направление, сетап и причина до входа."],
+            ["Риск", "Стоп, размер, risk amount и invalidation до действия."],
+            ["Review", "Ошибка, эмоция, урок и скрин графика после сделки."],
+          ],
+          aiBadge: "AI journal review",
+          formBadge: "Trade ticket",
+          formText: "Записывай сделку как desk ticket: контекст, исполнение, риск, эмоцию и урок.",
+          recentBadge: "Последнее исполнение",
+          tableBadge: "Полная база сделок",
+        };
 
 
 const [screenshotViewerTrade, setScreenshotViewerTrade] =
@@ -4130,8 +4268,50 @@ const downloadTradesXlsx = () => {
 };
 
   return (
-    <div>
+    <div className="space-y-6">
       <SectionHeader title={t.journal.title} text={t.journal.text} />
+
+      <div className="se-dashboard-panel relative overflow-hidden rounded-[2.25rem] p-6">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(56,214,255,0.15),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(52,211,153,0.11),transparent_30%)]" />
+
+        <div className="relative grid gap-6 xl:grid-cols-[1fr_0.82fr] xl:items-center">
+          <div>
+            <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/72">
+              {journalDeskCopy.heroBadge}
+            </div>
+
+            <h2 className="mt-5 max-w-4xl text-3xl font-black leading-[1.03] tracking-[-0.045em] text-white md:text-5xl">
+              {journalDeskCopy.heroTitle}
+            </h2>
+
+            <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-white/60">
+              {journalDeskCopy.heroText}
+            </p>
+          </div>
+
+          <div className="grid gap-3">
+            {journalDeskCopy.focusItems.map(([title, text], index) => (
+              <div
+                key={title}
+                className="rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-200/16 bg-cyan-200/[0.08] text-[10px] font-black text-cyan-50">
+                    0{index + 1}
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-black text-white">{title}</div>
+                    <p className="mt-1 text-xs font-semibold leading-5 text-white/48">
+                      {text}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
 {screenshotViewerTrade && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
@@ -4197,7 +4377,7 @@ const downloadTradesXlsx = () => {
   </div>
 )}
 
-<div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+<div className="se-dashboard-card-soft mt-6 rounded-3xl p-5">
   <div className="flex flex-wrap items-end justify-between gap-4">
     <div>
       <div className="text-xs uppercase tracking-[0.25em] text-white/35">
@@ -4215,7 +4395,7 @@ const downloadTradesXlsx = () => {
   </div>
 </div>
 
-<div className="mt-8 grid gap-4 md:grid-cols-4 xl:grid-cols-4">
+<div className="mt-8 grid gap-4 md:grid-cols-3 xl:grid-cols-5">
   <MetricCard label={t.journal.totalTrades} value={String(totalTrades)} />
 
   <MetricCard
@@ -4269,7 +4449,7 @@ const downloadTradesXlsx = () => {
 
 
 
-<div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+<div className="se-dashboard-panel mt-6 rounded-3xl p-6">
   <div className="flex flex-wrap items-center justify-between gap-4">
     <div>
       <h3 className="text-2xl font-semibold">
@@ -4285,7 +4465,7 @@ const downloadTradesXlsx = () => {
       type="button"
       onClick={onJournalAnalysis}
       disabled={locked || journalAnalysisLoading || trades.length === 0}
-      className="rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+      className="se-dashboard-button-primary rounded-full px-6 py-3 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
     >
       {journalAnalysisLoading
   ? t.journal.journalAnalyzingButton
@@ -4300,14 +4480,14 @@ const downloadTradesXlsx = () => {
   )}
 
   {journalAnalysis && (
-  <div className="mt-5 rounded-3xl border border-white/10 bg-black/20 p-5">
+  <div className="se-dashboard-card-soft mt-5 rounded-3xl p-5">
     <AiReport text={journalAnalysis} />
   </div>
 )}
 </div>
 
       {locked && (
-        <div className="mt-6 rounded-3xl border border-amber-300/25 bg-amber-300/10 p-5 text-sm leading-7 text-amber-50/85">
+        <div className="mt-6 rounded-3xl border border-amber-300/25 bg-amber-300/[0.08] p-5 text-sm font-semibold leading-7 text-amber-50/85">
          {t.journal.locked}
         </div>
       )}
@@ -4316,13 +4496,21 @@ const downloadTradesXlsx = () => {
         <div
   className={`rounded-[2rem] border p-6 transition ${
     editingTradeId
-      ? "border-cyan-300/40 bg-cyan-300/[0.04] shadow-[0_0_40px_rgba(103,232,249,0.08)] [&_.field-input]:border-cyan-300/45 [&_.field-input]:bg-cyan-300/[0.05]"
-      : "border-white/10 bg-white/[0.03]"
+      ? "border-cyan-300/40 bg-cyan-300/[0.06] shadow-[0_0_48px_rgba(103,232,249,0.12)] [&_.field-input]:border-cyan-300/45 [&_.field-input]:bg-cyan-300/[0.06]"
+      : "border-[rgba(198,226,255,0.14)] bg-white/[0.045] shadow-[0_20px_80px_rgba(8,47,73,0.14)] backdrop-blur-xl"
   }`}
 >
-          <h2 className="text-2xl font-semibold text-white">
+          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">
+  {journalDeskCopy.formBadge}
+</div>
+
+<h2 className="mt-4 text-2xl font-black tracking-[-0.03em] text-white">
   {editingTradeId ? t.journal.editTitle : t.journal.addTitle}
 </h2>
+
+<p className="mt-2 text-sm font-semibold leading-6 text-white/50">
+  {journalDeskCopy.formText}
+</p>
 
 {editingTradeId && (
   <div className="mt-4 rounded-2xl border border-cyan-300/25 bg-cyan-300/10 p-4">
@@ -4523,7 +4711,7 @@ const downloadTradesXlsx = () => {
               />
             </Field>
             
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-5">
+        <div className="rounded-[2rem] border border-cyan-200/14 bg-cyan-200/[0.045] p-5">
   <input
     id="trade-form-screenshot-file"
     type="file"
@@ -4544,7 +4732,7 @@ const downloadTradesXlsx = () => {
     className={`inline-flex cursor-pointer items-center justify-center rounded-full px-5 py-3 text-sm font-medium transition ${
       locked || tradeSaving || screenshotUploading
         ? "cursor-not-allowed bg-white/10 text-white/35"
-        : "bg-white text-black hover:scale-[1.02]"
+        : "se-dashboard-button-primary hover:-translate-y-0.5"
     }`}
   >
     {t.journal.screenshotChoose}
@@ -4576,7 +4764,7 @@ const downloadTradesXlsx = () => {
           <button
             onClick={onTradeSubmit}
             disabled={locked || tradeSaving}
-            className="mt-6 inline-flex rounded-full bg-white px-7 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+            className="se-dashboard-button-primary mt-6 inline-flex rounded-full px-7 py-3 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {tradeSaving
   ? editingTradeId
@@ -4590,7 +4778,7 @@ const downloadTradesXlsx = () => {
   <button
     type="button"
     onClick={onTradeEditCancel}
-    className="mt-3 rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+    className="mt-3 rounded-full border border-white/10 bg-white/[0.055] px-5 py-3 text-sm font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
   >
     {t.journal.cancelEditButton}
   </button>
@@ -4598,10 +4786,11 @@ const downloadTradesXlsx = () => {
         </div>
       </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+        <div className="se-dashboard-card rounded-3xl p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-2xl font-semibold">{t.journal.recentTitle}</h3>
+              <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">{journalDeskCopy.recentBadge}</div>
+              <h3 className="mt-4 text-2xl font-black tracking-[-0.03em]">{t.journal.recentTitle}</h3>
               <p className="mt-2 text-sm text-white/45">
                 {t.journal.recentText}
               </p>
@@ -4614,14 +4803,14 @@ const downloadTradesXlsx = () => {
 
           <div className="mt-6 space-y-3">
             {trades.length === 0 ? (
-              <div className="rounded-3xl border border-white/10 bg-black/20 p-6 text-sm leading-7 text-white/50">
+              <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-sm font-semibold leading-7 text-white/50">
                 {t.journal.empty}
               </div>
             ) : (
               recentTrades.map((trade) => (
                 <div
                   key={trade.id}
-                  className="rounded-3xl border border-white/10 bg-black/20 p-5"
+                  className="rounded-3xl border border-white/10 bg-white/[0.045] p-5 transition hover:border-cyan-200/20 hover:bg-cyan-200/[0.055]"
                 >
                   <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_170px] md:items-start">
   <div className="min-w-0">
@@ -4845,7 +5034,7 @@ const downloadTradesXlsx = () => {
 </div>
 
                   {(trade.mistake || trade.lesson || trade.notes) && (
-  <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/55">
+  <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm font-semibold leading-6 text-white/55">
     {trade.mistake && (
       <p>
         {t.journal.cardLabels.mistake}: {trade.mistake}
@@ -4890,7 +5079,7 @@ const downloadTradesXlsx = () => {
           )
         }
         disabled={tradeChartHistory.length === 0}
-        className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+        className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
       >
         {isHistoryOpen
           ? t.journal.hideChartHistory
@@ -4935,10 +5124,11 @@ const downloadTradesXlsx = () => {
             
             
 
-            <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+            <div className="se-dashboard-panel mt-8 rounded-3xl p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
   <div>
-    <h3 className="text-2xl font-semibold">{t.journal.fullTitle}</h3>
+    <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">{journalDeskCopy.tableBadge}</div>
+    <h3 className="mt-4 text-2xl font-black tracking-[-0.03em]">{t.journal.fullTitle}</h3>
 <p className="mt-2 text-sm text-white/45">{t.journal.fullText}</p>
   </div>
 
@@ -4947,7 +5137,7 @@ const downloadTradesXlsx = () => {
     type="button"
     onClick={downloadTradesCsv}
     disabled={filteredTrades.length === 0}
-    className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm font-medium text-white/75 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+    className="rounded-full border border-[rgba(198,226,255,0.14)] bg-white/[0.055] px-5 py-3 text-sm font-black text-white/76 transition hover:border-cyan-200/28 hover:bg-cyan-200/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
   >
     {t.journal.downloadCsv}
   </button>
@@ -4956,7 +5146,7 @@ const downloadTradesXlsx = () => {
     type="button"
     onClick={downloadTradesXlsx}
     disabled={filteredTrades.length === 0}
-    className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+    className="se-dashboard-button-primary rounded-full px-5 py-3 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
   >
     {t.journal.downloadXlsx}
   </button>
@@ -5022,9 +5212,9 @@ const downloadTradesXlsx = () => {
   </Field>
 </div>
 
-        <div className="mt-6 overflow-x-auto">
+        <div className="mt-6 overflow-x-auto rounded-[1.5rem] border border-white/10 bg-black/14">
           <table className="w-full min-w-[1120px] text-left text-sm">
-            <thead className="text-xs uppercase tracking-[0.18em] text-white/35">
+            <thead className="bg-white/[0.035] text-xs uppercase tracking-[0.18em] text-white/42">
               <tr className="border-b border-white/10">
                 <th className="py-3 pr-4">{t.journal.table.date}</th>
 <th className="py-3 pr-4">{t.journal.table.ticker}</th>
@@ -5042,7 +5232,7 @@ const downloadTradesXlsx = () => {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-white/10 text-white/65">
+            <tbody className="divide-y divide-white/10 text-white/68">
               {filteredTrades.length === 0 ? (
                 <tr>
                   <td colSpan={13} className="py-8 text-center text-white/45">
@@ -5051,7 +5241,7 @@ const downloadTradesXlsx = () => {
                 </tr>
               ) : (
                 filteredTrades.map((trade) => (
-                  <tr key={trade.id} className="transition hover:bg-white/[0.03]">
+                  <tr key={trade.id} className="transition hover:bg-cyan-200/[0.045]">
                     <td className="py-4 pr-4">{trade.trade_date}</td>
                     <td className="py-4 pr-4 font-semibold text-white">
                       {trade.ticker}
@@ -5083,7 +5273,7 @@ const downloadTradesXlsx = () => {
       <button
         type="button"
         onClick={() => handleOpenTradeScreenshots(trade)}
-        className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+        className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
       >
         {t.journal.openScreenshots} {screenshotsCount}
       </button>
@@ -5094,7 +5284,7 @@ const downloadTradesXlsx = () => {
                     <button
   type="button"
   onClick={() => onOpenTradeChart(trade)}
-  className="mr-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-medium text-cyan-100 transition hover:bg-cyan-300/15"
+  className="mr-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-300/15"
 >
   {t.journal.openChartButton}
 </button>
@@ -5102,7 +5292,7 @@ const downloadTradesXlsx = () => {
 <button
   type="button"
   onClick={() => onTradeEditStart(trade)}
-  className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+  className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
 >
   {t.journal.editTradeButton}
 </button>
@@ -5110,7 +5300,7 @@ const downloadTradesXlsx = () => {
   <button
     type="button"
     onClick={() => onTradeDelete(trade.id)}
-    className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-medium text-red-200 transition hover:bg-red-400/15"
+    className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-black text-red-200 transition hover:bg-red-400/15"
   >
     {t.journal.deleteTradeButton}
   </button>
@@ -5148,8 +5338,8 @@ useEffect(() => {
     <div
       className={
         compact
-          ? "rounded-3xl border border-white/10 bg-white/[0.04] p-5 overflow-hidden"
-          : "rounded-3xl border border-white/10 bg-[#111621] p-6 shadow-2xl"
+          ? "se-dashboard-card rounded-3xl p-5 overflow-hidden"
+          : "se-dashboard-panel rounded-3xl p-6"
       }
     >
       <div className="flex items-center justify-between gap-4">
@@ -5219,7 +5409,7 @@ useEffect(() => {
   />
   <Tooltip
     contentStyle={{
-      background: "#080c16",
+      background: "#0d1b2b",
       border: "1px solid rgba(255,255,255,0.12)",
       borderRadius: "16px",
       color: "#fff",
@@ -5979,6 +6169,38 @@ function MarketScannerRow({
   );
 }
 
+type MarketAlertStructureLevel = {
+  price?: number | null;
+  label?: string | null;
+  type?: string | null;
+};
+
+type MarketAlertSourceData = {
+  marketStructure?: {
+    source?: "structure" | "fallback" | string | null;
+    candlesProvider?: string | null;
+    candlesInterval?: string | null;
+    candlesCount?: number | null;
+    candlesError?: string | null;
+    vwap?: number | null;
+    atr?: number | null;
+    nearestSupport?: MarketAlertStructureLevel | null;
+    nearestResistance?: MarketAlertStructureLevel | null;
+    structureNotes?: string[] | null;
+    missingStructureData?: string[] | null;
+  } | null;
+  skillEdgeEngine?: {
+    setupSlug?: string | null;
+    setupName?: string | null;
+    globalConfidence?: number | null;
+    riskRewardRatio?: number | null;
+    tier?: string | null;
+    reasons?: string[] | null;
+    riskNotes?: string[] | null;
+    rejectionReasons?: string[] | null;
+  } | null;
+};
+
 type DashboardMarketAlert = {
   id: string;
   symbol: string;
@@ -6015,6 +6237,7 @@ type DashboardMarketAlert = {
   target_2?: number | null;
   target_3?: number | null;
   invalidation?: string | null;
+  source_data?: MarketAlertSourceData | null;
   management_plan?: string | null;
   is_new?: boolean;
   viewed_at?: string | null;
@@ -6054,6 +6277,163 @@ signal_mode_note?: string | null;
 user_alert_decision?: string | null;
 user_alert_decision_note?: string | null;
 };
+
+function formatAlertPrice(value?: number | null) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
+
+  if (Math.abs(value) >= 100) return value.toFixed(2);
+  if (Math.abs(value) >= 10) return value.toFixed(3);
+
+  return value.toFixed(4);
+}
+
+function getAlertSourceData(alert: DashboardMarketAlert): MarketAlertSourceData {
+  return alert.source_data || {};
+}
+
+function getAlertMarketStructure(alert: DashboardMarketAlert) {
+  return getAlertSourceData(alert).marketStructure || null;
+}
+
+function getAlertRiskReward(alert: DashboardMarketAlert) {
+  const sourceData = getAlertSourceData(alert);
+  const engineRR = sourceData.skillEdgeEngine?.riskRewardRatio;
+
+  if (typeof engineRR === "number" && Number.isFinite(engineRR)) {
+    return engineRR;
+  }
+
+  const entryMin =
+    typeof alert.entry_zone_min === "number" ? alert.entry_zone_min : null;
+  const entryMax =
+    typeof alert.entry_zone_max === "number" ? alert.entry_zone_max : null;
+  const stop = typeof alert.stop_price === "number" ? alert.stop_price : null;
+  const target =
+    typeof alert.target_3 === "number"
+      ? alert.target_3
+      : typeof alert.target_2 === "number"
+        ? alert.target_2
+        : typeof alert.target_1 === "number"
+          ? alert.target_1
+          : null;
+
+  if (entryMin === null || entryMax === null || stop === null || target === null) {
+    return null;
+  }
+
+  const entry = (entryMin + entryMax) / 2;
+  const direction = alert.direction === "downside" ? "downside" : "upside";
+
+  const risk = direction === "upside" ? entry - stop : stop - entry;
+  const reward = direction === "upside" ? target - entry : entry - target;
+
+  if (risk <= 0 || reward <= 0) return null;
+
+  return Number((reward / risk).toFixed(2));
+}
+
+function AlertStructurePanel({
+  alert,
+  copy,
+}: {
+  alert: DashboardMarketAlert;
+  copy: {
+    structureTitle: string;
+    structureBased: string;
+    fallbackBased: string;
+    rr: string;
+    vwap: string;
+    atr: string;
+    support: string;
+    resistance: string;
+    candles: string;
+    missingData: string;
+  };
+}) {
+  const structure = getAlertMarketStructure(alert);
+  const rr = getAlertRiskReward(alert);
+
+  if (!structure && rr === null) return null;
+
+  const isStructure = structure?.source === "structure";
+  const nearestSupport = structure?.nearestSupport;
+  const nearestResistance = structure?.nearestResistance;
+
+  return (
+    <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.035] p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-100/45">
+            {copy.structureTitle}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {isStructure ? copy.structureBased : copy.fallbackBased}
+          </div>
+        </div>
+
+        <div className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs font-semibold text-white/75">
+          {copy.rr}: {rr !== null ? `${rr}R` : "—"}
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.vwap}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {formatAlertPrice(structure?.vwap)}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.atr}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {formatAlertPrice(structure?.atr)}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.support}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {nearestSupport?.label
+              ? `${nearestSupport.label}: ${formatAlertPrice(nearestSupport.price)}`
+              : "—"}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.resistance}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {nearestResistance?.label
+              ? `${nearestResistance.label}: ${formatAlertPrice(nearestResistance.price)}`
+              : "—"}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-white/45">
+        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+          {copy.candles}: {structure?.candlesProvider || "—"} ·{" "}
+          {structure?.candlesCount ?? 0}
+        </span>
+
+        {Array.isArray(structure?.missingStructureData) &&
+        structure.missingStructureData.length > 0 ? (
+          <span className="rounded-full border border-amber-300/15 bg-amber-300/[0.06] px-3 py-1 text-amber-100/70">
+            {copy.missingData}: {structure.missingStructureData.join(", ")}
+          </span>
+        ) : null}
+      </div>
+    </div>
+  );
+}
 
 type UserSignalPlaybookItem = {
   id: string;
@@ -6195,6 +6575,80 @@ type AlertFilter =
   return score;
 }
 
+type AlertLifecycleBucket = "active" | "armed" | "watch";
+
+function getAlertLifecycleBucket(alert: DashboardMarketAlert): AlertLifecycleBucket {
+  const status = String(alert.status || "").toLowerCase();
+
+  if (status === "active") return "active";
+  if (status === "armed") return "armed";
+
+  return "watch";
+}
+
+function getAlertLifecycleRankValue(alert: DashboardMarketAlert) {
+  const bucket = getAlertLifecycleBucket(alert);
+
+  if (bucket === "active") return 3;
+  if (bucket === "armed") return 2;
+
+  return 1;
+}
+
+function getAlertLifecycleLabel(alert: DashboardMarketAlert) {
+  const bucket = getAlertLifecycleBucket(alert);
+
+  if (bucket === "active") return "ACTIVE";
+  if (bucket === "armed") return "ARMED";
+
+  return "WATCH";
+}
+
+function getAlertLifecycleTitle(bucket: AlertLifecycleBucket) {
+  if (bucket === "active") return "Active Signals";
+  if (bucket === "armed") return "Armed Setups";
+
+  return "Watch Radar";
+}
+
+function getAlertLifecycleDescription(bucket: AlertLifecycleBucket) {
+  if (bucket === "active") {
+    return "Structured trade plans with trigger, entry zone, stop, targets and risk note. Still confirm before execution.";
+  }
+
+  if (bucket === "armed") {
+    return "Setups are close, but SkillEdge is still waiting for trigger/confirmation before calling them active.";
+  }
+
+  return "In-play tickers/coins worth tracking. No actionable entry yet.";
+}
+
+function getAlertLifecycleClass(bucket: AlertLifecycleBucket) {
+  if (bucket === "active") {
+    return "border-emerald-300/20 bg-emerald-300/[0.06] text-emerald-100";
+  }
+
+  if (bucket === "armed") {
+    return "border-cyan-300/20 bg-cyan-300/[0.06] text-cyan-100";
+  }
+
+  return "border-white/10 bg-white/[0.045] text-white/65";
+}
+
+function getAlertLifecycleNote(alert: DashboardMarketAlert) {
+  const bucket = getAlertLifecycleBucket(alert);
+
+  if (bucket === "active") {
+    return "Trade plan is active, but execution still requires confirmation and valid risk/reward.";
+  }
+
+  if (bucket === "armed") {
+    return "Setup is armed. Wait for trigger, confirmation and no-chase conditions.";
+  }
+
+  return "Radar only. Track the ticker, but do not treat it as a buy/sell signal yet.";
+}
+
 function getAlertTransparencyItems(alert: DashboardMarketAlert) {
   const confidence = alert.confidence_score ?? alert.score ?? null;
   const priority = alert.personal_priority_score ?? null;
@@ -6330,9 +6784,10 @@ function DashboardAlertsWidget({
 }: {
   subscription: Subscription;
   language: Language;
-  onOpenAlerts: () => void;
+  onOpenAlerts: (assetFilter?: AlertAssetFilter) => void;
 }) {
   const [alerts, setAlerts] = useState<DashboardMarketAlert[]>([]);
+const [assetFilter, setAssetFilter] = useState<AlertAssetFilter>("all");
 const [open, setOpen] = useState(false);
 const [loading, setLoading] = useState(false);
 const [generating, setGenerating] = useState(false);
@@ -6357,18 +6812,31 @@ const [error, setError] = useState("");
       close: "Свернуть",
       expand: "Развернуть",
       direction: "Направление",
-      entry: "Entry",
-      stop: "Stop",
-      targets: "Targets",
-      risk: "Risk",
+      entry: "Зона входа",
+      stop: "Стоп",
+      targets: "Цели",
+      structureTitle: "Структура рынка",
+      structureBased: "План построен по свечам / VWAP / уровням",
+      fallbackBased: "Fallback-план: не хватает свечей/уровней",
+      rr: "RR",
+      vwap: "VWAP",
+      atr: "ATR",
+      support: "Ближайшая поддержка",
+      resistance: "Ближайшее сопротивление",
+      candles: "Свечи",
+      missingData: "Не хватает данных",
+      risk: "Риск",
       newLabel: "new",
       live: "Live",
-lastChecked: "Проверено",
-autoRefresh: "Auto-refresh 60s / scan 5m",
-priority: "priority",
-latest: "Последний",
-openCenter: "Открыть центр",
-quiet: "Ждём качественный setup",
+      lastChecked: "Проверено",
+      autoRefresh: "Auto-refresh 60s / scan 5m",
+      priority: "priority",
+      latest: "Последний",
+      openCenter: "Открыть центр",
+      quiet: "Ждём качественный setup",
+      filterAll: "Все",
+      filterStocks: "Акции",
+      filterCrypto: "Крипто",
     },
     en: {
       title: "AI Alerts",
@@ -6383,6 +6851,16 @@ quiet: "Ждём качественный setup",
       entry: "Entry",
       stop: "Stop",
       targets: "Targets",
+      structureTitle: "Market structure",
+      structureBased: "Plan built from candles / VWAP / levels",
+      fallbackBased: "Fallback plan: candles/levels are missing",
+      rr: "RR",
+      vwap: "VWAP",
+      atr: "ATR",
+      support: "Nearest support",
+      resistance: "Nearest resistance",
+      candles: "Candles",
+      missingData: "Missing data",
       risk: "Risk",
       newLabel: "new",live: "Live",
 lastChecked: "Checked",
@@ -6391,6 +6869,9 @@ priority: "priority",
 latest: "Latest",
 openCenter: "Open center",
 quiet: "Waiting for quality setup",
+      filterAll: "All",
+      filterStocks: "Stocks",
+      filterCrypto: "Crypto",
     },
     ua: {
       title: "AI Alerts",
@@ -6402,32 +6883,51 @@ quiet: "Waiting for quality setup",
       close: "Згорнути",
       expand: "Розгорнути",
       direction: "Напрямок",
-      entry: "Entry",
-      stop: "Stop",
-      targets: "Targets",
-      risk: "Risk",
+      entry: "Зона входу",
+      stop: "Стоп",
+      targets: "Цілі",
+      structureTitle: "Структура ринку",
+      structureBased: "План побудовано за свічками / VWAP / рівнями",
+      fallbackBased: "Fallback-план: бракує свічок/рівнів",
+      rr: "RR",
+      vwap: "VWAP",
+      atr: "ATR",
+      support: "Найближча підтримка",
+      resistance: "Найближчий опір",
+      candles: "Свічки",
+      missingData: "Бракує даних",
+      risk: "Ризик",
       newLabel: "new",
       live: "Live",
-lastChecked: "Перевірено",
-autoRefresh: "Auto-refresh 60s / scan 5m",
-priority: "priority",
-latest: "Останній",
-openCenter: "Відкрити центр",
-quiet: "Чекаємо якісний setup",
+      lastChecked: "Перевірено",
+      autoRefresh: "Auto-refresh 60s / scan 5m",
+      priority: "priority",
+      latest: "Останній",
+      openCenter: "Відкрити центр",
+      quiet: "Чекаємо якісний setup",
+      filterAll: "Усі",
+      filterStocks: "Акції",
+      filterCrypto: "Крипто",
     },
   }[safeLanguage];
 
   const hasAccess =
   subscription.active && canUseFeature(subscription.plan, "ai_alerts");
 
-  const newAlerts = alerts.filter(
+  const filteredWidgetAlerts = alerts.filter((alert) =>
+    isAlertInAssetFilter(alert, assetFilter)
+  );
+  const stockAlertsCount = alerts.filter((alert) => alert.asset_type !== "crypto").length;
+  const cryptoAlertsCount = alerts.filter((alert) => alert.asset_type === "crypto").length;
+
+  const newAlerts = filteredWidgetAlerts.filter(
   (alert) =>
     alert.is_new !== false &&
     !alert.viewed_at &&
     !seenAlertIds.includes(alert.id)
 );
 
-const priorityAlerts = alerts.filter((alert) => {
+const priorityAlerts = filteredWidgetAlerts.filter((alert) => {
   const score = alert.confidence_score ?? alert.score ?? 0;
 
   return (
@@ -6437,7 +6937,7 @@ const priorityAlerts = alerts.filter((alert) => {
   );
 });
 
-const latestAlert = alerts[0] || null;
+const latestAlert = filteredWidgetAlerts[0] || null;
 const shouldPulse = newAlerts.length > 0 && !open;
 
   const loadAlerts = async (generate = false) => {
@@ -6461,7 +6961,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
       }
 
       if (generate) {
-        await authFetch("/api/market/alerts", {
+        await authFetch(`/api/market/alerts?assetType=${getAlertAssetFilterUrlValue(assetFilter)}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -6469,7 +6969,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
         });
       }
 
-      const response = await authFetch("/api/market/alerts/personalized?limit=3", {
+      const response = await authFetch("/api/market/alerts?limit=50&period=24h&status=tradable&assetType=all", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -6523,23 +7023,36 @@ const shouldPulse = newAlerts.length > 0 && !open;
 
 
     
-    loadAlerts(true);
-
-    
+    loadAlerts(false);
 
     const readInterval = window.setInterval(() => {
       loadAlerts(false);
-    }, 60000);
-
-    const generateInterval = window.setInterval(() => {
-      loadAlerts(true);
-    }, 300000);
+    }, 30000);
 
     return () => {
       window.clearInterval(readInterval);
-      window.clearInterval(generateInterval);
     };
-  }, [hasAccess]);
+  }, [hasAccess, assetFilter]);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("skilledge_alert_widget_asset_filter");
+      const normalized = normalizeAlertAssetFilter(saved);
+      setAssetFilter(normalized);
+    } catch {
+      // ignore localStorage errors
+    }
+  }, []);
+
+  const handleWidgetAssetFilterChange = (nextFilter: AlertAssetFilter) => {
+    setAssetFilter(nextFilter);
+
+    try {
+      window.localStorage.setItem("skilledge_alert_widget_asset_filter", nextFilter);
+    } catch {
+      // ignore localStorage errors
+    }
+  };
 
   const markAlertsViewed = async (alertIds: string[]) => {
   if (alertIds.length === 0) return;
@@ -6628,7 +7141,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
   {shouldPulse ? (
     <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(103,232,249,0.9)]" />
   ) : null}
-  ⚡
+  вљЎ
 </div>
 
             <div>
@@ -6681,6 +7194,28 @@ const shouldPulse = newAlerts.length > 0 && !open;
     {lastCheckedAt ? new Date(lastCheckedAt).toLocaleTimeString() : "—"}
   </div>
 </div>
+
+            <div className="mb-3 grid grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-black/20 p-1">
+              {([
+                { id: "all", label: copy.filterAll, count: alerts.length },
+                { id: "stock", label: copy.filterStocks, count: stockAlertsCount },
+                { id: "crypto", label: copy.filterCrypto, count: cryptoAlertsCount },
+              ] as { id: AlertAssetFilter; label: string; count: number }[]).map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleWidgetAssetFilterChange(item.id)}
+                  className={`rounded-xl px-2 py-2 text-[11px] font-semibold transition ${
+                    assetFilter === item.id
+                      ? "bg-cyan-300 text-black shadow-[0_0_22px_rgba(103,232,249,0.25)]"
+                      : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                  }`}
+                >
+                  {item.label} <span className="opacity-70">{item.count}</span>
+                </button>
+              ))}
+            </div>
+
             <div className="flex items-center justify-between gap-2">
               <button
                 type="button"
@@ -6695,7 +7230,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
   type="button"
   onClick={() => {
     setOpen(false);
-    onOpenAlerts();
+    onOpenAlerts(assetFilter);
   }}
   className="mt-3 w-full rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/15"
 >
@@ -6714,12 +7249,12 @@ const shouldPulse = newAlerts.length > 0 && !open;
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-xs text-white/45">
                   Loading alerts...
                 </div>
-              ) : alerts.length === 0 ? (
+              ) : filteredWidgetAlerts.length === 0 ? (
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-3 text-xs text-white/45">
                   {copy.empty}
                 </div>
               ) : (
-                alerts.map((alert) => (
+                filteredWidgetAlerts.slice(0, 3).map((alert) => (
                   <div
                     key={alert.id}
                     className="rounded-2xl border border-white/10 bg-black/20 p-3"
@@ -6816,6 +7351,8 @@ const shouldPulse = newAlerts.length > 0 && !open;
                       </div>
                     </div>
 
+                    <AlertStructurePanel alert={alert} copy={copy} />
+
                     {alert.risk_note ? (
                       <div className="mt-2 rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-2 text-[11px] leading-4 text-amber-50/70">
                         {copy.risk}: {alert.risk_note}
@@ -6836,15 +7373,21 @@ function AlertsTab({
   subscription,
   language,
   trades,
+  requestedAssetFilter,
+  onRequestedAssetFilterChange,
   onCreateTradeFromAlert,
 }: {
   subscription: Subscription;
   language: Language;
   trades: Trade[];
+  requestedAssetFilter: AlertAssetFilter;
+  onRequestedAssetFilterChange: (assetFilter: AlertAssetFilter) => void;
   onCreateTradeFromAlert: (alert: DashboardMarketAlert) => void;
 }) {
 const [alerts, setAlerts] = useState<DashboardMarketAlert[]>([]);
+const [signalAssetFilter, setSignalAssetFilter] = useState<AlertAssetFilter>(requestedAssetFilter);
 const [alertFilter, setAlertFilter] = useState<AlertFilter>("all");
+const [signalsControlPanelOpen, setSignalsControlPanelOpen] = useState(false);
 const [decisionReasonFilter, setDecisionReasonFilter] = useState<string | null>(
   null
 );
@@ -6894,7 +7437,17 @@ checkingOutcomes: "Проверяем...",
       locked:
   "AI Alerts доступны только на SkillEdge Elite. На SkillEdge Edge открыт AI Scanner / Market Intelligence, но real-time AI Alerts, floating alerts widget и Signal-to-Journal workflow доступны только в Elite.",
       direction: "Направление",
-setup: "Сетап",
+structureTitle: "Структура рынка",
+structureBased: "План построен по свечам / VWAP / уровням",
+fallbackBased: "Fallback-план: не хватает свечей/уровней",
+rr: "RR",
+vwap: "VWAP",
+atr: "ATR",
+support: "Ближайшая поддержка",
+resistance: "Ближайшее сопротивление",
+candles: "Свечи",
+missingData: "Не хватает данных",
+      setup: "Сетап",
 entry: "Зона входа",
 stop: "Стоп",
 targets: "Цели",
@@ -6971,6 +7524,10 @@ filterLong: "Long",
 filterShort: "Short",
 filterCrypto: "Крипто",
 filterStocks: "Акции",
+assetFilterAll: "Все рынки",
+assetFilterStocks: "Акции",
+assetFilterCrypto: "Крипто",
+assetFilterText: "Выбери поток сигналов: акции, крипто или общий desk.",
 filterDecisionWatching: "Наблюдаю",
 filterDecisionTaken: "Взял",
 filterDecisionSkipped: "Пропустил",
@@ -7033,7 +7590,7 @@ linkedJournalEmpty:
 linkedTrades: "Linked trades",
 linkedPnl: "Linked PnL",
 linkedResult: "Result",
-journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsTitle: "Signal в†” Journal Sync",
 journalLinkAnalyticsText:
   "SkillEdge отслеживает, какие alerts превратились в реальные сделки в Journal. Это база для анализа исполнения, PnL по сигналам и пропущенных возможностей.",
 takenWithoutJournal: "Taken без Journal",
@@ -7215,6 +7772,16 @@ checkingOutcomes: "Checking...",
       locked:
   "AI Alerts are available only on SkillEdge Elite. SkillEdge Edge includes AI Scanner / Market Intelligence, but real-time AI Alerts, floating alerts widget and Signal-to-Journal workflow are reserved for Elite.",
       direction: "Direction",
+      structureTitle: "Market structure",
+structureBased: "Plan built from candles / VWAP / levels",
+fallbackBased: "Fallback plan: candles/levels are missing",
+rr: "RR",
+vwap: "VWAP",
+atr: "ATR",
+support: "Nearest support",
+resistance: "Nearest resistance",
+candles: "Candles",
+missingData: "Missing data",
       setup: "Setup",
       entry: "Entry zone",
       stop: "Stop",
@@ -7292,6 +7859,10 @@ filterLong: "Long",
 filterShort: "Short",
 filterCrypto: "Crypto",
 filterStocks: "Stocks",
+assetFilterAll: "All markets",
+assetFilterStocks: "Stocks",
+assetFilterCrypto: "Crypto",
+assetFilterText: "Choose the signal stream: stocks, crypto or the full desk.",
 filterDecisionWatching: "Watching",
 filterDecisionTaken: "Taken",
 filterDecisionSkipped: "Skipped",
@@ -7359,7 +7930,7 @@ linkedJournalEmpty:
 linkedTrades: "Linked trades",
 linkedPnl: "Linked PnL",
 linkedResult: "Result",
-journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsTitle: "Signal в†” Journal Sync",
 journalLinkAnalyticsText:
   "SkillEdge tracks which alerts became real Journal trades. This is the base for execution analysis, signal PnL and missed opportunity analytics.",
 takenWithoutJournal: "Taken without Journal",
@@ -7541,6 +8112,16 @@ checkingOutcomes: "Перевіряємо...",
       locked:
   "AI Alerts доступні тільки на SkillEdge Elite. SkillEdge Edge відкриває AI Scanner / Market Intelligence, але real-time AI Alerts, floating alerts widget і Signal-to-Journal workflow доступні тільки в Elite.",
       direction: "Direction",
+      structureTitle: "Структура ринку",
+structureBased: "План побудовано за свічками / VWAP / рівнями",
+fallbackBased: "Fallback-план: бракує свічок/рівнів",
+rr: "RR",
+vwap: "VWAP",
+atr: "ATR",
+support: "Найближча підтримка",
+resistance: "Найближчий опір",
+candles: "Свічки",
+missingData: "Бракує даних",
       setup: "Setup",
       entry: "Entry zone",
       stop: "Stop",
@@ -7615,13 +8196,17 @@ filterCaution: "Caution",
 filterJournalMatch: "Journal Match",
 filterAiStrength: "AI Strength",
 filterLong: "Long",
-filterShort: "Short",
-filterCrypto: "Crypto",
-filterStocks: "Stocks",
-filterDecisionWatching: "Watching",
-filterDecisionTaken: "Taken",
-filterDecisionSkipped: "Skipped",
-filterDecisionMissed: "Missed",
+filterShort: "Шорт",
+filterCrypto: "Крипто",
+filterStocks: "Акції",
+assetFilterAll: "Усі ринки",
+assetFilterStocks: "Акції",
+assetFilterCrypto: "Крипто",
+assetFilterText: "Обери потік сигналів: акції, крипто або повний desk.",
+filterDecisionWatching: "Спостерігаю",
+filterDecisionTaken: "Взяв",
+filterDecisionSkipped: "Пропустив",
+filterDecisionMissed: "Упустив",
 decisionAnalyticsTitle: "Signal-to-Trade Decisions",
 decisionAnalyticsText:
   "Тут видно, як клієнт працює з сигналами: спостерігає, бере, пропускає або відмічає missed. Це база майбутньої статистики якості сигналів і виконання.",
@@ -7683,7 +8268,7 @@ linkedJournalEmpty:
 linkedTrades: "Linked trades",
 linkedPnl: "Linked PnL",
 linkedResult: "Result",
-journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsTitle: "Signal в†” Journal Sync",
 journalLinkAnalyticsText:
   "SkillEdge відстежує, які alerts стали реальними угодами в Journal. Це база для аналізу виконання, PnL по сигналах і пропущених можливостей.",
 takenWithoutJournal: "Taken без Journal",
@@ -8228,6 +8813,32 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
     ...alertCopyOverrides[safeLanguage],
   };
 
+  const signalsControlPanelTitle =
+    safeLanguage === "en"
+      ? "Desk control panel"
+      : safeLanguage === "ua"
+        ? "Панель сигналів"
+        : "Панель сигналов";
+
+  const signalsControlPanelText =
+    safeLanguage === "en"
+      ? "Filters, outcome stats, playbook, journal sync and learning blocks. Collapse it to keep active signals closer to the top."
+      : safeLanguage === "ua"
+        ? "Фільтри, статистика, playbook, зв’язка з журналом і навчальні блоки. Згорни панель, щоб активні сигнали були ближче до верху."
+        : "Фильтры, статистика, playbook, связка с журналом и обучающие блоки. Сверни панель, чтобы активные сигналы были ближе к верху.";
+
+  const signalsControlPanelToggle = signalsControlPanelOpen
+    ? safeLanguage === "en"
+      ? "Collapse"
+      : safeLanguage === "ua"
+        ? "Згорнути"
+        : "Свернуть"
+    : safeLanguage === "en"
+      ? "Expand"
+      : safeLanguage === "ua"
+        ? "Розгорнути"
+        : "Развернуть";
+
 
   const hasAccess =
   subscription.active && canUseFeature(subscription.plan, "ai_alerts");
@@ -8254,7 +8865,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
       }
 
       if (generate) {
-        const generateResponse = await authFetch("/api/market/alerts", {
+        const generateResponse = await authFetch(`/api/market/alerts?assetType=${getAlertAssetFilterUrlValue(signalAssetFilter)}`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -8268,7 +8879,7 @@ workedAlertsMissedSuffix: "робочих alerts були пропущені в 
         }
       }
 
-      const response = await authFetch("/api/market/alerts/personalized?limit=100&period=7d", {
+      const response = await authFetch("/api/market/alerts?limit=200&period=24h&status=all&assetType=all", {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -8668,6 +9279,49 @@ const saveAlertToPlaybook = async (alert: DashboardMarketAlert) => {
   }
 };
 
+useEffect(() => {
+  setSignalAssetFilter(requestedAssetFilter);
+}, [requestedAssetFilter]);
+
+const handleSignalAssetFilterChange = (nextFilter: AlertAssetFilter) => {
+  setSignalAssetFilter(nextFilter);
+  onRequestedAssetFilterChange(nextFilter);
+  setAlertFilter("all");
+
+  try {
+    window.localStorage.setItem("skilledge_alert_asset_filter", nextFilter);
+
+    const params = new URLSearchParams(window.location.search);
+    params.set("tab", "signals");
+
+    if (nextFilter === "all") {
+      params.delete("assetType");
+    } else {
+      params.set("assetType", getAlertAssetFilterUrlValue(nextFilter));
+    }
+
+    window.history.replaceState({}, "", `/dashboard?${params.toString()}`);
+  } catch {
+    // keep UI usable if URL/localStorage are unavailable
+  }
+};
+
+useEffect(() => {
+  if (requestedAssetFilter !== "all") return;
+
+  try {
+    const saved = window.localStorage.getItem("skilledge_alert_asset_filter");
+    const normalized = normalizeAlertAssetFilter(saved);
+
+    if (normalized !== "all") {
+      setSignalAssetFilter(normalized);
+      onRequestedAssetFilterChange(normalized);
+    }
+  } catch {
+    // ignore localStorage errors
+  }
+}, [requestedAssetFilter, onRequestedAssetFilterChange]);
+
   useEffect(() => {
   if (!hasAccess) return;
 
@@ -8675,12 +9329,12 @@ const saveAlertToPlaybook = async (alert: DashboardMarketAlert) => {
 
   const interval = window.setInterval(() => {
     loadAlerts(false);
-  }, 60000);
+  }, 30000);
 
   return () => {
     window.clearInterval(interval);
   };
-}, [hasAccess]);
+}, [hasAccess, signalAssetFilter]);
 
 useEffect(() => {
   if (!expandedAlertId) return;
@@ -8706,21 +9360,39 @@ useEffect(() => {
   setVisibleAlertsCount(5);
   setExpandedAlertId(null);
   setDecisionReasonFilter(null);
-}, [alertFilter]);
+}, [alertFilter, signalAssetFilter]);
 
-const workedCount = alerts.filter(
+const assetFilteredAlerts = alerts.filter((alert) =>
+  isAlertInAssetFilter(alert, signalAssetFilter)
+);
+const stocksSignalCount = alerts.filter((alert) => alert.asset_type !== "crypto").length;
+const cryptoSignalCount = alerts.filter((alert) => alert.asset_type === "crypto").length;
+
+const signalLifecycleCounts = {
+  active: assetFilteredAlerts.filter((alert) => getAlertLifecycleBucket(alert) === "active").length,
+  armed: assetFilteredAlerts.filter((alert) => getAlertLifecycleBucket(alert) === "armed").length,
+  watch: assetFilteredAlerts.filter((alert) => getAlertLifecycleBucket(alert) === "watch").length,
+};
+
+const allSignalLifecycleCounts = {
+  active: alerts.filter((alert) => getAlertLifecycleBucket(alert) === "active").length,
+  armed: alerts.filter((alert) => getAlertLifecycleBucket(alert) === "armed").length,
+  watch: alerts.filter((alert) => getAlertLifecycleBucket(alert) === "watch").length,
+};
+
+const workedCount = assetFilteredAlerts.filter(
   (alert) => alert.outcome_status === "worked"
 ).length;
 
-const failedCount = alerts.filter(
+const failedCount = assetFilteredAlerts.filter(
   (alert) => alert.outcome_status === "failed"
 ).length;
 
-const neutralCount = alerts.filter(
+const neutralCount = assetFilteredAlerts.filter(
   (alert) => alert.outcome_status === "neutral"
 ).length;
 
-const pendingCount = alerts.filter(
+const pendingCount = assetFilteredAlerts.filter(
   (alert) => !alert.outcome_status || alert.outcome_status === "pending"
 ).length;
 
@@ -8729,11 +9401,11 @@ const resolvedCount = workedCount + failedCount + neutralCount;
 const qualityRate =
   resolvedCount > 0 ? Math.round((workedCount / resolvedCount) * 100) : null;
 
-const mfeValues = alerts
+const mfeValues = assetFilteredAlerts
   .map((alert) => alert.mfe)
   .filter((value): value is number => typeof value === "number");
 
-const maeValues = alerts
+const maeValues = assetFilteredAlerts
   .map((alert) => alert.mae)
   .filter((value): value is number => typeof value === "number");
 
@@ -8747,9 +9419,9 @@ const avgMae =
     ? maeValues.reduce((sum, value) => sum + value, 0) / maeValues.length
     : null;
 
-const tpHitCount = alerts.filter((alert) => Boolean(alert.hit_target)).length;
+const tpHitCount = assetFilteredAlerts.filter((alert) => Boolean(alert.hit_target)).length;
 
-const stopHitCount = alerts.filter((alert) => Boolean(alert.hit_stop)).length;
+const stopHitCount = assetFilteredAlerts.filter((alert) => Boolean(alert.hit_stop)).length;
 const personalStrengthProfiles = signalProfileItems.filter(
   (profile) => profile.profile_label === "personal_strength"
 );
@@ -8788,7 +9460,7 @@ function isAlertTakenWithoutJournal(alert: DashboardMarketAlert) {
   return !trades.some((trade) => trade.source_alert_id === alert.id);
 }
 
-const visibleAlerts = alerts.filter((alert) => {
+const visibleAlerts = assetFilteredAlerts.filter((alert) => {
   if (
     decisionReasonFilter &&
     alert.user_alert_decision_note !== decisionReasonFilter
@@ -8799,11 +9471,16 @@ const visibleAlerts = alerts.filter((alert) => {
   if (alertFilter === "all") return true;
 
 if (alertFilter === "actionable") {
-  return alert.signal_mode === "actionable";
+  return getAlertLifecycleBucket(alert) === "active" || alert.signal_mode === "actionable";
 }
 
 if (alertFilter === "watchlist") {
-  return alert.signal_mode === "watchlist";
+  return (
+    getAlertLifecycleBucket(alert) === "armed" ||
+    getAlertLifecycleBucket(alert) === "watch" ||
+    alert.signal_mode === "armed" ||
+    alert.signal_mode === "watchlist"
+  );
 }
 
 if (alertFilter === "decision_watching") {
@@ -8910,15 +9587,15 @@ return true;
 });
 
 const decisionCounts = {
-  watching: alerts.filter(
+  watching: assetFilteredAlerts.filter(
     (alert) => alert.user_alert_decision === "watching"
   ).length,
-  taken: alerts.filter((alert) => alert.user_alert_decision === "taken")
+  taken: assetFilteredAlerts.filter((alert) => alert.user_alert_decision === "taken")
     .length,
-  skipped: alerts.filter(
+  skipped: assetFilteredAlerts.filter(
     (alert) => alert.user_alert_decision === "skipped"
   ).length,
-  missed: alerts.filter((alert) => alert.user_alert_decision === "missed")
+  missed: assetFilteredAlerts.filter((alert) => alert.user_alert_decision === "missed")
     .length,
 };
 
@@ -8943,7 +9620,7 @@ const takenRate =
 
     return acc;
   },
-  {}
+  {} as Record<string, number>
 );
 
 const decisionReasonItems = Object.entries(decisionReasonCounts)
@@ -8951,11 +9628,15 @@ const decisionReasonItems = Object.entries(decisionReasonCounts)
     reason,
     count,
   }))
-  .sort((a, b) => b.count - a.count);
+  .sort((a, b) => Number(b.count) - Number(a.count));
 
 const topDecisionReason = decisionReasonItems[0] || null;
 
 const rankedVisibleAlerts = [...visibleAlerts].sort((a, b) => {
+  const lifecycleDiff = getAlertLifecycleRankValue(b) - getAlertLifecycleRankValue(a);
+
+  if (lifecycleDiff !== 0) return lifecycleDiff;
+
   const importanceDiff =
     getAlertImportanceScore(b) - getAlertImportanceScore(a);
 
@@ -9509,7 +10190,7 @@ const missedOpportunitySetupCounts = missedOpportunityAlerts.reduce<
 }, {});
 
 const topMissedOpportunitySetup =
-  Object.entries(missedOpportunitySetupCounts).sort((a, b) => b[1] - a[1])[0] ||
+  Object.entries(missedOpportunitySetupCounts).sort((a, b) => Number(b[1]) - Number(a[1]))[0] ||
   null;
 
 const missedOpportunityActionPlan = [
@@ -9523,12 +10204,12 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   {
   id: "actionable",
   label: copy.filterActionable,
-  count: alerts.filter((alert) => alert.signal_mode === "actionable").length,
+  count: alerts.filter((alert) => getAlertLifecycleBucket(alert) === "active" || alert.signal_mode === "actionable").length,
 },
 {
   id: "watchlist",
   label: copy.filterWatchlist,
-  count: alerts.filter((alert) => alert.signal_mode === "watchlist").length,
+  count: alerts.filter((alert) => getAlertLifecycleBucket(alert) === "armed" || getAlertLifecycleBucket(alert) === "watch" || alert.signal_mode === "armed" || alert.signal_mode === "watchlist").length,
 },
 {
   id: "decision_watching",
@@ -9664,7 +10345,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
   if (!hasAccess) {
     return (
-      <section className="rounded-[1.5rem] border border-white/10 bg-white/[0.03] p-6">
+      <section className="se-dashboard-panel rounded-[2rem] p-6">
         <div className="text-[11px] uppercase tracking-[0.24em] text-white/35">
           SkillEdge AI Trading Desk
         </div>
@@ -9681,7 +10362,41 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   }
 
   return (
-    <section className="rounded-[1.6rem] border border-white/10 bg-white/[0.03] p-4 shadow-[0_18px_70px_rgba(0,0,0,0.22)] sm:p-5">
+    <section className="se-dashboard-panel rounded-[2.25rem] p-5 sm:p-6">
+      <PremiumDashboardTabHero tab="alerts" />
+
+      <div className="mb-5 rounded-[1.5rem] border border-white/10 bg-black/20 p-3">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="text-[10px] uppercase tracking-[0.24em] text-white/35">
+              Signal stream
+            </div>
+            <p className="mt-1 text-xs text-white/50">{copy.assetFilterText}</p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-white/[0.035] p-1 sm:min-w-[360px]">
+            {([
+              { id: "all", label: copy.assetFilterAll, count: alerts.length },
+              { id: "stock", label: copy.assetFilterStocks, count: stocksSignalCount },
+              { id: "crypto", label: copy.assetFilterCrypto, count: cryptoSignalCount },
+            ] as { id: AlertAssetFilter; label: string; count: number }[]).map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => handleSignalAssetFilterChange(item.id)}
+                className={`rounded-xl px-3 py-2 text-xs font-semibold transition ${
+                  signalAssetFilter === item.id
+                    ? "bg-cyan-300 text-black shadow-[0_0_24px_rgba(103,232,249,0.25)]"
+                    : "text-white/55 hover:bg-white/[0.06] hover:text-white"
+                }`}
+              >
+                {item.label} <span className="opacity-70">{item.count}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
           <div className="text-[11px] uppercase tracking-[0.24em] text-cyan-100/40">
@@ -9775,13 +10490,104 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
         </div>
       </div>
 
+<div className="mt-5">
+        <TelegramSignalsConnectButton />
+      </div>
+
       {error ? (
         <div className="mt-5 rounded-2xl border border-red-400/20 bg-red-500/10 p-4 text-sm text-red-100/80">
           {error}
         </div>
       ) : null}
 
-<div className="mt-5 rounded-[1.25rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-4">
+      <div className="mt-5 grid gap-3 md:grid-cols-4">
+        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+            Latest 24H
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {assetFilteredAlerts.length}
+          </div>
+          <div className="mt-1 text-[11px] text-white/35">
+            {signalAssetFilter === "all" ? "All markets" : signalAssetFilter === "crypto" ? "Crypto stream" : "Stocks stream"}
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.045] p-4">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-emerald-100/45">
+            Active
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalLifecycleCounts.active}
+          </div>
+          <div className="mt-1 text-[11px] text-emerald-50/45">
+            Trade plans to review
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.045] p-4">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-cyan-100/45">
+            Armed
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalLifecycleCounts.armed}
+          </div>
+          <div className="mt-1 text-[11px] text-cyan-50/45">
+            Waiting confirmation
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-white/35">
+            Watch
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-white">
+            {signalLifecycleCounts.watch}
+          </div>
+          <div className="mt-1 text-[11px] text-white/35">
+            Radar only
+          </div>
+        </div>
+      </div>
+
+<div className="mt-5 overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20">
+  <button
+    type="button"
+    onClick={() => setSignalsControlPanelOpen((current) => !current)}
+    className="flex w-full flex-col gap-4 p-4 text-left transition hover:bg-white/[0.035] sm:flex-row sm:items-center sm:justify-between"
+    aria-expanded={signalsControlPanelOpen}
+  >
+    <div>
+      <div className="text-[10px] uppercase tracking-[0.24em] text-cyan-100/40">
+        Signal workspace
+      </div>
+      <div className="mt-1 text-lg font-semibold text-white">
+        {signalsControlPanelTitle}
+      </div>
+      <p className="mt-1 max-w-3xl text-xs leading-5 text-white/45">
+        {signalsControlPanelText}
+      </p>
+    </div>
+
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="rounded-full border border-emerald-300/15 bg-emerald-300/[0.045] px-3 py-1.5 text-xs font-semibold text-emerald-100/75">
+        Active {allSignalLifecycleCounts.active}
+      </span>
+      <span className="rounded-full border border-cyan-300/15 bg-cyan-300/[0.045] px-3 py-1.5 text-xs font-semibold text-cyan-100/75">
+        Armed {allSignalLifecycleCounts.armed}
+      </span>
+      <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-white/65">
+        Watch {allSignalLifecycleCounts.watch}
+      </span>
+      <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold text-white/75">
+        {signalsControlPanelToggle} {signalsControlPanelOpen ? "↑" : "↓"}
+      </span>
+    </div>
+  </button>
+
+  {signalsControlPanelOpen ? (
+    <div className="border-t border-white/10 p-4">
+<div className="rounded-[1.25rem] border border-emerald-300/15 bg-emerald-300/[0.035] p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
     <div>
       <div className="flex items-center gap-2 text-sm font-semibold text-white/85">
@@ -9826,7 +10632,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   </div>
 
   <div className="mt-3 text-xs text-white/35">
-    Showing {visibleAlerts.length} of {alerts.length} alerts
+    Showing {visibleAlerts.length} of {assetFilteredAlerts.length} alerts in the selected stream · Active {signalLifecycleCounts.active} / Armed {signalLifecycleCounts.armed} / Watch {signalLifecycleCounts.watch}
 {decisionReasonFilter ? ` · Reason: ${decisionReasonFilter}` : ""}
   </div>
 </div>
@@ -10518,7 +11324,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                           key={`${setup.id}-avoid-${index}`}
                           className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs leading-5 text-amber-50/75"
                         >
-                          ⚠ {item}
+                          вљ  {item}
                         </div>
                       ))}
                     </div>
@@ -11401,6 +12207,10 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   </div>
 ) : null}
 
+    </div>
+  ) : null}
+</div>
+
       <div className="mt-5 space-y-3">
        {error ? (
   <div className="rounded-[1.5rem] border border-red-300/15 bg-red-300/[0.035] p-6 shadow-[0_18px_70px_rgba(0,0,0,0.22)]">
@@ -11579,7 +12389,36 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
     </div>
   </div>
 ) : (
-  displayedAlerts.map((alert) => (
+  displayedAlerts.map((alert, index) => {
+    const lifecycleBucket = getAlertLifecycleBucket(alert);
+    const previousLifecycleBucket =
+      index > 0 ? getAlertLifecycleBucket(displayedAlerts[index - 1]) : null;
+    const showLifecycleHeader = lifecycleBucket !== previousLifecycleBucket;
+
+    return (
+      <div key={alert.id} className="space-y-3">
+        {showLifecycleHeader ? (
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.025] p-4 first:mt-0">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.24em] text-white/35">
+                  {getAlertLifecycleTitle(lifecycleBucket)}
+                </div>
+                <p className="mt-1 max-w-3xl text-xs leading-5 text-white/45">
+                  {getAlertLifecycleDescription(lifecycleBucket)}
+                </p>
+              </div>
+              <span className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${getAlertLifecycleClass(lifecycleBucket)}`}>
+                {lifecycleBucket === "active"
+                  ? signalLifecycleCounts.active
+                  : lifecycleBucket === "armed"
+                    ? signalLifecycleCounts.armed
+                    : signalLifecycleCounts.watch}
+              </span>
+            </div>
+          </div>
+        ) : null}
+
             <div
               key={alert.id}
               className="rounded-2xl border border-white/10 bg-black/20 p-4"
@@ -11597,6 +12436,14 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                   <div className="mt-2 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
                     {copy.confidence}: {alert.confidence_score || alert.score}
 {alert.confidence_tier ? ` · ${alert.confidence_tier}` : ""}
+                  </div>
+
+                  <div className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-bold tracking-[0.14em] ${getAlertLifecycleClass(getAlertLifecycleBucket(alert))}`}>
+                    {getAlertLifecycleLabel(alert)}
+                  </div>
+
+                  <div className="mt-2 text-[11px] leading-4 text-white/42">
+                    {getAlertLifecycleNote(alert)}
                   </div>
 
                   <div className="mt-3 text-xs leading-5 text-white/40">
@@ -11675,6 +12522,8 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       </span>
                     </div>
                   </div>
+
+                  <AlertStructurePanel alert={alert} copy={copy} />
                 </div>
 
                 <div className="grid gap-3 lg:grid-cols-2">
@@ -11876,7 +12725,9 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   </div>
 ) : null}
             </div>
-          ))
+      </div>
+    );
+  })
         )}
       </div>
       {visibleAlerts.length > 5 ? (
@@ -12525,6 +13376,8 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                   </div>
                 </div>
 
+                <AlertStructurePanel alert={breakdownAlert} copy={copy} />
+
                 {breakdownAlert.management_plan ? (
                   <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.035] p-3 text-sm leading-6 text-white/65">
                     <span className="font-semibold text-white/85">
@@ -12629,7 +13482,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         key={`${breakdownAlert.id}-modal-avoid-${index}`}
                         className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs leading-5 text-amber-50/75"
                       >
-                        ⚠ {item}
+                        вљ  {item}
                       </div>
                     ))}
                   </div>
@@ -13566,6 +14419,7 @@ const hiddenAiCount = Math.max(
 
   return (
     <div className="space-y-5">
+      <PremiumDashboardTabHero tab="market" />
       {!hasAccess && (
         <div className="rounded-[1.5rem] border border-amber-300/20 bg-amber-400/5 p-5">
           <div className="text-xs uppercase tracking-[0.24em] text-amber-100/80">
@@ -13621,7 +14475,7 @@ const hiddenAiCount = Math.max(
     type="button"
     onClick={refreshAll}
     disabled={marketLoading || socialLoading || marketIntelligenceLoading}
-    className="rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-40"
+    className="se-dashboard-button-primary rounded-full px-6 py-3 text-sm font-black transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
   >
     {marketLoading || socialLoading || marketIntelligenceLoading
       ? localText.refreshing
@@ -14456,21 +15310,333 @@ const hiddenAiCount = Math.max(
 
 
 function OverviewTab({ t }: { t: (typeof dashboardDict)[Language] }) {
+  const isRu = t.dashboard === "Личный кабинет";
+  const isUa = t.dashboard === "Особистий кабінет";
+
+  const copy = isRu
+    ? {
+        badge: "Trading cockpit",
+        title: "Контроль процесса перед результатом.",
+        text:
+          "Overview показывает не просто цифры, а состояние твоей торговой системы: PnL, винрейт, дисциплина, повторяемость и качество решений.",
+        sessionTitle: "Состояние торгового процесса",
+        sessionText:
+          "Сначала журнал и дисциплина. Потом статистика. Потом персональные выводы и улучшение.",
+        focusTitle: "На что смотреть сегодня",
+        focusItems: [
+          ["Риск", "Не превышать лимит риска на сделку."],
+          ["Дисциплина", "Входить только после подтверждения сетапа."],
+          ["Журнал", "Фиксировать причину входа, эмоцию и ошибку."],
+          ["Review", "После сессии разобрать лучшие и худшие решения."],
+        ],
+        weeklyLabel: "AI review layer",
+        qualityTitle: "Качество процесса",
+        qualityItems: [
+          "Нет статистики — нет системы.",
+          "Нет журнала — нет персонализации.",
+          "Нет review — ошибки повторяются.",
+        ],
+      }
+    : isUa
+      ? {
+          badge: "Trading cockpit",
+          title: "Контроль процесу перед результатом.",
+          text:
+            "Overview показує не просто цифри, а стан твоєї торгової системи: PnL, вінрейт, дисципліну, повторюваність і якість рішень.",
+          sessionTitle: "Стан торгового процесу",
+          sessionText:
+            "Спочатку журнал і дисципліна. Потім статистика. Потім персональні висновки та покращення.",
+          focusTitle: "На що дивитись сьогодні",
+          focusItems: [
+            ["Ризик", "Не перевищувати ліміт ризику на угоду."],
+            ["Дисципліна", "Входити тільки після підтвердження сетапу."],
+            ["Журнал", "Фіксувати причину входу, емоцію та помилку."],
+            ["Review", "Після сесії розібрати найкращі й найгірші рішення."],
+          ],
+          weeklyLabel: "AI review layer",
+          qualityTitle: "Якість процесу",
+          qualityItems: [
+            "Немає статистики — немає системи.",
+            "Немає журналу — немає персоналізації.",
+            "Немає review — помилки повторюються.",
+          ],
+        }
+      : {
+          badge: "Trading cockpit",
+          title: "Control the process before the result.",
+          text:
+            "Overview is not just numbers. It shows the state of your trading system: PnL, win rate, discipline, repeatability and decision quality.",
+          sessionTitle: "Trading process state",
+          sessionText:
+            "First journal and discipline. Then statistics. Then personal conclusions and improvement.",
+          focusTitle: "What to watch today",
+          focusItems: [
+            ["Risk", "Do not exceed risk limit per trade."],
+            ["Discipline", "Enter only after setup confirmation."],
+            ["Journal", "Log entry reason, emotion and mistake."],
+            ["Review", "After the session, review best and worst decisions."],
+          ],
+          weeklyLabel: "AI review layer",
+          qualityTitle: "Process quality",
+          qualityItems: [
+            "No statistics — no system.",
+            "No journal — no personalization.",
+            "No review — mistakes repeat.",
+          ],
+        };
+
   return (
-    <div>
+    <div className="space-y-6">
       <SectionHeader title={t.overview.title} text={t.overview.text} />
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <MetricCard label={t.overview.pnlMonth} value="$0" />
-        <MetricCard label={t.overview.winRate} value="—" />
-        <MetricCard label={t.overview.discipline} value="—" />
+      <div className="grid gap-5 xl:grid-cols-[1.12fr_0.88fr]">
+        <div className="se-dashboard-panel relative overflow-hidden rounded-[2.2rem] p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(56,214,255,0.13),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(52,211,153,0.1),transparent_30%)]" />
+
+          <div className="relative">
+            <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">
+              {copy.badge}
+            </div>
+
+            <h3 className="mt-5 max-w-3xl text-3xl font-black leading-[1.05] tracking-[-0.045em] text-white md:text-4xl">
+              {copy.title}
+            </h3>
+
+            <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-white/60">
+              {copy.text}
+            </p>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-4">
+              {copy.focusItems.map(([title, text], index) => (
+                <div
+                  key={title}
+                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4"
+                >
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-200/16 bg-cyan-200/[0.08] text-[10px] font-black text-cyan-50">
+                    0{index + 1}
+                  </div>
+
+                  <div className="mt-4 text-sm font-black text-white">
+                    {title}
+                  </div>
+
+                  <p className="mt-2 text-xs font-semibold leading-5 text-white/48">
+                    {text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="se-dashboard-card relative overflow-hidden rounded-[2.2rem] p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_0%,rgba(247,201,72,0.12),transparent_30%),radial-gradient(circle_at_16%_90%,rgba(56,214,255,0.11),transparent_32%)]" />
+
+          <div className="relative">
+            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/38">
+              {copy.sessionTitle}
+            </div>
+
+            <p className="mt-4 text-sm font-semibold leading-7 text-white/60">
+              {copy.sessionText}
+            </p>
+
+            <div className="mt-6 grid gap-3">
+              {copy.qualityItems.map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-black/18 p-4 text-sm font-bold leading-6 text-white/65"
+                >
+                  ✓ {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-6 rounded-3xl border border-white/10 bg-black/20 p-6">
-        <h3 className="text-xl font-semibold">{t.overview.weeklyAi}</h3>
-        <p className="mt-3 text-sm leading-7 text-white/55">
-          {t.overview.weeklyAiText}
-        </p>
+      <div className="grid gap-4 md:grid-cols-3">
+        <MetricCard
+          label={t.overview.pnlMonth}
+          value="$0"
+          helper={isRu ? "Появится после сделок" : isUa ? "Зʼявиться після угод" : "Appears after trades"}
+          accent="positive"
+        />
+
+        <MetricCard
+          label={t.overview.winRate}
+          value="—"
+          helper={isRu ? "Нужна история сделок" : isUa ? "Потрібна історія угод" : "Needs trade history"}
+          accent="neutral"
+        />
+
+        <MetricCard
+          label={t.overview.discipline}
+          value="—"
+          helper={isRu ? "Строится из журнала" : isUa ? "Будується з журналу" : "Built from journal"}
+          accent="warning"
+        />
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="se-dashboard-panel rounded-[2rem] p-6">
+          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">
+            {copy.weeklyLabel}
+          </div>
+
+          <h3 className="mt-5 text-2xl font-black tracking-[-0.03em] text-white">
+            {t.overview.weeklyAi}
+          </h3>
+
+          <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
+            {t.overview.weeklyAiText}
+          </p>
+        </div>
+
+        <div className="se-dashboard-card rounded-[2rem] p-6">
+          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/38">
+            {copy.qualityTitle}
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {[
+              isRu ? "PnL динамика" : isUa ? "PnL динаміка" : "PnL dynamics",
+              isRu ? "Лучшие сетапы" : isUa ? "Найкращі сетапи" : "Best setups",
+              isRu ? "Главные ошибки" : isUa ? "Головні помилки" : "Main mistakes",
+            ].map((item) => (
+              <div
+                key={item}
+                className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
+              >
+                <div className="text-sm font-black text-white">{item}</div>
+                <div className="mt-2 text-xs font-semibold leading-5 text-white/45">
+                  {isRu
+                    ? "Появится после заполнения журнала."
+                    : isUa
+                      ? "Зʼявиться після заповнення журналу."
+                      : "Appears after journal data is added."}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+function getPremiumDashboardTabCopy(tab: TabId) {
+  const copy: Record<string, {
+    badge: string;
+    title: string;
+    text: string;
+    points: string[];
+  }> = {
+    charts: {
+      badge: "Chart command center",
+      title: "Графики как рабочий терминал, а не просто виджет.",
+      text:
+        "Открой тикер, проверь контекст, таймфрейм, watchlist, movers и AI-разбор текущего графика в одном премиальном рабочем месте.",
+      points: ["TradingView terminal", "Watchlist", "AI chart review"],
+    },
+    market: {
+      badge: "Market intelligence desk",
+      title: "Рынок, катализаторы и внимание трейдеров — в одном shortlist.",
+      text:
+        "Market Intelligence собирает движение, активность, social/news layer и готовит лучшие in-play кандидаты для AI Market Brief.",
+      points: ["Market scan", "Social/news context", "AI shortlist"],
+    },
+    alerts: {
+      badge: "AI Trading Desk",
+      title: "Сигналы должны быть планом сделки, а не шумной кнопкой buy/sell.",
+      text:
+        "Каждый alert строится вокруг setup, trigger, entry zone, stop, targets, invalidation, risk note и последующего outcome review.",
+      points: ["Setup", "Risk plan", "Outcome tracking"],
+    },
+    coach: {
+      badge: "Desk coach",
+      title: "AI-коуч говорит как трейдерский mentor, а не как обычный чат.",
+      text:
+        "Отправь сделку, мысль или проблему — SkillEdge AI вернёт краткий, дисциплинированный разбор по риску, контексту и исполнению.",
+      points: ["Risk-first", "Execution review", "No fluff"],
+    },
+    learning: {
+      badge: "Playbook academy",
+      title: "Обучение должно превращаться в playbook, а не в набор случайных уроков.",
+      text:
+        "Learning Center связывает базу рынка, сетапы, риск, психологию и будущие стратегии в последовательную систему роста трейдера.",
+      points: ["Market basics", "Setup library", "Progress tracking"],
+    },
+    reports: {
+      badge: "Performance review",
+      title: "Отчёты показывают не только PnL, а качество торгового процесса.",
+      text:
+        "Reports превращают журнал в review: динамика, ошибки, сильные сетапы, слабые места, profit factor и план улучшения.",
+      points: ["PnL review", "Mistake map", "Process metrics"],
+    },
+    billing: {
+      badge: "Access center",
+      title: "Оплата и доступ должны ощущаться как premium SaaS, а не как временный MVP.",
+      text:
+        "Billing показывает тариф, лимиты, AI usage, crypto payment flow и готовит продукт к будущей оплате картами/Stripe.",
+      points: ["Plan access", "AI usage", "Crypto flow"],
+    },
+    overview: {
+      badge: "Trading cockpit",
+      title: "Контроль процесса перед результатом.",
+      text:
+        "Overview показывает состояние торговой системы: PnL, дисциплина, повторяемость, качество решений и главный фокус на сегодня.",
+      points: ["Process", "Discipline", "Review"],
+    },
+    journal: {
+      badge: "Journal desk",
+      title: "Журнал — это источник edge, а не просто таблица сделок.",
+      text:
+        "Каждая сделка, скриншот, эмоция и ошибка превращаются в данные для review, отчётов и будущих персональных сигналов.",
+      points: ["Trade ticket", "Screenshots", "AI review"],
+    },
+  };
+
+  return copy[tab] ?? copy.overview;
+}
+
+function PremiumDashboardTabHero({ tab }: { tab: TabId }) {
+  const copy = getPremiumDashboardTabCopy(tab);
+
+  return (
+    <div className="se-dashboard-panel relative overflow-hidden rounded-[2.25rem] p-5 md:p-6">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(56,214,255,0.14),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(52,211,153,0.11),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.055),transparent_44%)]" />
+
+      <div className="relative flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+        <div className="max-w-4xl">
+          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">
+            {copy.badge}
+          </div>
+
+          <h2 className="mt-5 text-3xl font-black leading-[1.04] tracking-[-0.045em] text-white md:text-4xl">
+            {copy.title}
+          </h2>
+
+          <p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-white/58">
+            {copy.text}
+          </p>
+        </div>
+
+        <div className="grid gap-2 sm:grid-cols-3 xl:min-w-[520px]">
+          {copy.points.map((point, index) => (
+            <div
+              key={point}
+              className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl border border-cyan-200/15 bg-cyan-200/[0.08] text-[10px] font-black text-cyan-50">
+                0{index + 1}
+              </div>
+
+              <div className="mt-3 text-sm font-black text-white">{point}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -14837,8 +16003,8 @@ const handleAnalyzeCurrentChart = async () => {
   return (
     <div>
       {chartAnalysisOpen && (
-  <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 p-3 backdrop-blur-sm md:items-center md:p-4">
-    <div className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0b0f1a] shadow-2xl md:rounded-[2rem]">
+  <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#07111d]/82 p-3 backdrop-blur-xl md:items-center md:p-4">
+    <div className="max-h-[92vh] w-full max-w-5xl overflow-hidden rounded-[2rem] border border-[rgba(198,226,255,0.16)] bg-[#0d1b2b]/95 shadow-[0_36px_140px_rgba(8,47,73,0.35)] md:rounded-[2.35rem]">
       <div className="flex items-start justify-between gap-4 border-b border-white/10 p-4 md:p-6">
         <div>
           <div className="text-xs uppercase tracking-[0.25em] text-white/35">
@@ -14864,7 +16030,7 @@ const handleAnalyzeCurrentChart = async () => {
       </div>
 
       <div className="grid gap-3 border-b border-white/10 p-4 md:grid-cols-2 md:gap-4 md:p-6">
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+        <div className="se-dashboard-card rounded-3xl p-5">
           <div className="text-xs uppercase tracking-[0.22em] text-white/35">
             {t.charts.chartAnalysisSymbol}
           </div>
@@ -14874,7 +16040,7 @@ const handleAnalyzeCurrentChart = async () => {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+        <div className="se-dashboard-card rounded-3xl p-5">
           <div className="text-xs uppercase tracking-[0.22em] text-white/35">
             {t.charts.chartAnalysisInterval}
           </div>
@@ -15012,7 +16178,7 @@ const handleAnalyzeCurrentChart = async () => {
         <button
           type="button"
           onClick={() => setChartAnalysisOpen(false)}
-          className="rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+          className="se-dashboard-button-primary rounded-full px-6 py-3 text-sm font-black transition hover:-translate-y-0.5"
         >
           {t.charts.chartAnalysisClose}
         </button>
@@ -15022,7 +16188,9 @@ const handleAnalyzeCurrentChart = async () => {
 )}
       
 
-      <div className="mt-8 rounded-3xl border border-white/10 bg-black/20 p-5">
+      <PremiumDashboardTabHero tab="charts" />
+
+      <div className="se-dashboard-panel mt-6 rounded-[2.25rem] p-5">
         {chartsError && (
           <div className="mb-5 rounded-2xl border border-red-400/25 bg-red-400/10 p-4 text-sm text-red-100">
             {chartsError}
@@ -15044,7 +16212,7 @@ const handleAnalyzeCurrentChart = async () => {
             handleOpenChartFromControl();
           }
         }}
-        className="h-12 w-full rounded-2xl border border-white/10 bg-black/30 px-4 text-sm font-medium text-white outline-none transition placeholder:text-white/20 focus:border-cyan-300/40 focus:bg-black/40"
+        className="h-12 w-full rounded-2xl border border-white/10 bg-[#071321]/80 px-4 text-sm font-medium text-white outline-none transition placeholder:text-white/25 focus:border-cyan-300/45 focus:bg-[#0d1b2b]"
       />
     </div>
 
@@ -15105,12 +16273,12 @@ const handleAnalyzeCurrentChart = async () => {
       : "xl:grid-cols-1"
   }`}
 >
-  <div className="h-[760px] overflow-hidden rounded-3xl border border-white/10 bg-[#050813]">
+  <div className="h-[760px] overflow-hidden rounded-3xl border border-[rgba(198,226,255,0.14)] bg-[#071321]">
     <TradingViewChart symbol={symbol} interval={interval} />
   </div>
 
   {watchlistOpen && (
-    <div className="flex h-[760px] flex-col rounded-3xl border border-white/10 bg-white/[0.04] p-4">
+    <div className="flex h-[760px] flex-col se-dashboard-card rounded-3xl p-4">
       <div className="flex items-center justify-between gap-3">
         <div>
           <div className="text-xs uppercase tracking-[0.25em] text-white/35">
@@ -15429,7 +16597,7 @@ function MoversPanel({
   }, [market, side]);
 
   return (
-    <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+    <div className="se-dashboard-card-soft mt-6 rounded-3xl p-5">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <div className="inline-flex rounded-full border border-white/10 bg-white/[0.03] p-1">
@@ -17171,7 +18339,8 @@ if (nextLessonTitle) {
   
 
   return (
-    <div>
+    <div className="space-y-6">
+      <PremiumDashboardTabHero tab="learning" />
       <>
   <SectionHeader title={t.learning.title} text={t.learning.text} />
 
@@ -17187,7 +18356,7 @@ if (nextLessonTitle) {
 </>
 
       <div className="mt-6 grid gap-4 lg:mt-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
+        <div className="se-dashboard-card rounded-[2rem] p-6">
           <div className="text-xs uppercase tracking-[0.25em] text-white/35">
             {t.learning.overviewLabel}
           </div>
@@ -18150,9 +19319,10 @@ const handleDownloadAiReport = () => {
   ];
 
   return (
-    <div>
+    <div className="space-y-6">
+      <PremiumDashboardTabHero tab="reports" />
       <SectionHeader title={t.reports.title} text={t.reports.text} />
-      <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.03] p-5">
+      <div className="mt-6 se-dashboard-card rounded-[2rem] p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.25em] text-white/35">
@@ -18187,7 +19357,7 @@ const handleDownloadAiReport = () => {
             <select
               value={reportPeriod}
               onChange={(event) => setReportPeriod(event.target.value)}
-              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40"
+              className="w-full rounded-2xl border border-white/10 bg-[#071321]/80 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/45 focus:bg-[#0d1b2b]"
             >
               <option value="all">{t.reports.periodAll}</option>
               <option value="7d">{t.reports.period7d}</option>
@@ -18204,7 +19374,7 @@ const handleDownloadAiReport = () => {
             <select
               value={reportMarket}
               onChange={(event) => setReportMarket(event.target.value)}
-              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40"
+              className="w-full rounded-2xl border border-white/10 bg-[#071321]/80 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/45 focus:bg-[#0d1b2b]"
             >
               <option value="all">{t.reports.allMarkets}</option>
               {marketOptions.map((market) => (
@@ -18223,7 +19393,7 @@ const handleDownloadAiReport = () => {
             <select
               value={reportDirection}
               onChange={(event) => setReportDirection(event.target.value)}
-              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40"
+              className="w-full rounded-2xl border border-white/10 bg-[#071321]/80 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/45 focus:bg-[#0d1b2b]"
             >
               <option value="all">{t.reports.allDirections}</option>
               <option value="long">Long</option>
@@ -18239,7 +19409,7 @@ const handleDownloadAiReport = () => {
             <select
               value={reportSetup}
               onChange={(event) => setReportSetup(event.target.value)}
-              className="w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/40"
+              className="w-full rounded-2xl border border-white/10 bg-[#071321]/80 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-300/45 focus:bg-[#0d1b2b]"
             >
               <option value="all">{t.reports.allSetups}</option>
               {setupOptions.map((setup) => (
@@ -18275,7 +19445,7 @@ const handleDownloadAiReport = () => {
   </div>
 </div>
       </div>
-      <div className="mt-6 rounded-[2rem] border border-cyan-300/20 bg-cyan-500/[0.08] p-6">
+      <div className="mt-6 se-dashboard-panel rounded-[2rem] p-6">
   <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
     <div>
       <div className="text-xs uppercase tracking-[0.25em] text-cyan-100/55">
@@ -18597,7 +19767,7 @@ const handleDownloadAiReport = () => {
           </div>
 
           <div className="mt-6 grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-            <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
+            <div className="se-dashboard-card rounded-[2rem] p-6">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="text-xs uppercase tracking-[0.25em] text-white/35">
@@ -18909,7 +20079,7 @@ function ReportListCard({
   empty: string;
 }) {
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-6">
+    <div className="se-dashboard-card rounded-[2rem] p-6">
       <div className="text-xs uppercase tracking-[0.25em] text-white/35">
         {title}
       </div>
@@ -19065,11 +20235,12 @@ const [checkoutError, setCheckoutError] = useState("");
 };
 
   return (
-    <div>
+    <div className="space-y-6">
+      <PremiumDashboardTabHero tab="billing" />
       <SectionHeader title={t.billing.title} text={t.billing.text} />
 
       <div className="mt-8 grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[2rem] border border-cyan-300/20 bg-cyan-500/[0.08] p-6">
+        <div className="se-dashboard-panel rounded-[2rem] p-6">
           <div className="text-xs uppercase tracking-[0.25em] text-cyan-100/55">
             {t.billing.currentPlanLabel}
           </div>
@@ -19155,7 +20326,7 @@ const [checkoutError, setCheckoutError] = useState("");
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-white/10 bg-black/20 p-6">
+        <div className="se-dashboard-card rounded-[2rem] p-6">
           <div className="text-xs uppercase tracking-[0.25em] text-white/40">
             {t.billing.currentLimitsLabel}
           </div>
@@ -19224,7 +20395,7 @@ const [checkoutError, setCheckoutError] = useState("");
   </div>
 )}
       
-      <div className="mt-6 rounded-[2rem] border border-white/10 bg-black/20 p-6">
+      <div className="mt-6 se-dashboard-card rounded-[2rem] p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.25em] text-white/40">
@@ -19374,11 +20545,12 @@ function CoachTab({
   const remaining = Math.max(subscription.aiLimit - subscription.aiUsed, 0);
 
   return (
-    <div>
+    <div className="space-y-6">
+      <PremiumDashboardTabHero tab="coach" />
       <SectionHeader title={t.coach.title} text={t.coach.text} />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-3xl border border-white/10 bg-black/20 p-6">
+        <div className="se-dashboard-card rounded-3xl p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h3 className="text-2xl font-semibold">{t.coach.reviewTitle}</h3>
@@ -19438,7 +20610,7 @@ function CoachTab({
         </div>
 
         <div className="space-y-6">
-  <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+  <div className="se-dashboard-card rounded-3xl p-6">
     <div className="text-xs uppercase tracking-[0.25em] text-white/35">
   {t.coach.answerTitle}
 </div>
@@ -19448,7 +20620,7 @@ function CoachTab({
     </div>
   </div>
 
-  <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6">
+  <div className="se-dashboard-card rounded-3xl p-6">
     <div className="flex items-center justify-between gap-4">
       <div>
         <div className="text-xs uppercase tracking-[0.25em] text-white/35">
@@ -19611,11 +20783,45 @@ function AiReport({ text }: { text: string }) {
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
+function MetricCard({
+  label,
+  value,
+  helper,
+  accent = "neutral",
+}: {
+  label: string;
+  value: string;
+  helper?: string;
+  accent?: "positive" | "negative" | "warning" | "neutral";
+}) {
+  const accentClass =
+    accent === "positive"
+      ? "from-emerald-300/16 to-cyan-300/8 text-emerald-200"
+      : accent === "negative"
+        ? "from-rose-300/14 to-white/0 text-rose-200"
+        : accent === "warning"
+          ? "from-amber-300/14 to-white/0 text-amber-100"
+          : "from-cyan-300/12 to-white/0 text-white";
+
   return (
-    <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-      <p className="text-sm text-white/45">{label}</p>
-      <p className="mt-3 text-3xl font-semibold">{value}</p>
+    <div className="group relative overflow-hidden rounded-[1.75rem] border border-[rgba(198,226,255,0.14)] bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(8,47,73,0.14)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/28 hover:bg-white/[0.065]">
+      <div className={`absolute inset-0 bg-gradient-to-br ${accentClass} opacity-70`} />
+
+      <div className="relative">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-white/38">
+          {label}
+        </p>
+
+        <p className={`mt-4 text-4xl font-black tracking-[-0.05em] ${accentClass}`}>
+          {value}
+        </p>
+
+        {helper ? (
+          <p className="mt-2 text-xs font-semibold leading-5 text-white/42">
+            {helper}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -19639,3 +20845,10 @@ function PlaceholderBlock({
     </div>
   );
 }
+
+
+
+
+
+
+

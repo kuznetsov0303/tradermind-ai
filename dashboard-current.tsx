@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -141,7 +141,7 @@ type TradeScreenshot = {
 
 const dashboardDict = {
   en: {
-    terminal: "Термінал SkillEdge AI",
+    terminal: "SkillEdge AI Terminal",
     dashboard: "Dashboard",
     user: "User",
     choosePlan: "Choose plan",
@@ -150,490 +150,489 @@ const dashboardDict = {
     loading: "Loading...",
     notActivated: "Not activated",
     activatePlan: "Activate a plan to unlock dashboard features.",
-    aiUsage: "Использование AI",
+    aiUsage: "AI usage",
     quickActions: "Quick actions",
     addTrade: "Add trade",
     uploadScreenshot: "Upload screenshot",
-    askAI: "Ask AI",
+    askAI: "Ask AI Coach",
     createReport: "Create report",
     overview: {
-  title: "Performance overview",
-  text: "PnL summary, win rate, discipline score, best setups and main mistakes.",
-  pnlMonth: "Monthly PnL",
-  winRate: "Відсоток прибуткових",
-  discipline: "Оцінка дисципліни",
-  weeklyAi: "Weekly AI summary",
-  weeklyAiText:
-    "SkillEdge AI will summarize your journal, risk behavior, discipline and recurring mistakes into a focused weekly review.",
-},
-charts: {
-  title: "TradingView charts",
-  text: "Embedded TradingView chart for ticker analysis, levels and setups.",
-  placeholder: "TradingView workspace is available inside the Charts module.",
-  analyzeCurrentChart: "Analyze current chart",
-  workspaceText: "Trading workspace with chart, watchlist and market movers.",
-  watchlistExamples: "Watchlist examples: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  openWatchlist: "Open watchlist",
-  hideWatchlist: "Hide watchlist",
-  watchlistTitle: "Список спостереження",
-  watchlistSubtitle: "Symbol / 24h % / volume",
-  addTickerButton: "Add",
-  addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
-  sortSymbol: "Symbol",
-  sortChange: "% 24h",
-  sortVolume: "Vol",
-  symbolColumn: "Symbol",
-  percentColumn: "%",
-  volumeColumn: "Volume",
-  loadingWatchlist: "Loading watchlist...",
-  emptyWatchlist: "Watchlist is empty. Click + and add a ticker.",
-  removeFromWatchlist: "Remove from watchlist",
-  loginFirst: "Please log in first.",
-  settingsLoadError: "Failed to load chart settings.",
-  addTickerError: "Failed to add ticker to watchlist.",
-  removeTickerError: "Failed to remove ticker from watchlist.",
-  moversStocks: "Stocks",
-  moversCrypto: "Crypto",
-  moversGainers: "Лідери росту",
-  moversLosers: "Лідери падіння",
-  moversCollapse: "Collapse",
-  moversExpand: "Expand",
-  moversName: "Name",
-  moversPercentChange: "% Change",
-  moversLoading: "Loading movers...",
-  moversEmpty: "No instruments for this filter.",
-  moversStocksNeedKey:
-    "Stock movers are being prepared for premium market data coverage.",
-chartAnalysisTitle: "AI chart analysis",
-chartAnalysisText:
-  "SkillEdge AI analyzes the current symbol, timeframe, market data, candles, volume and risk context.",
-chartAnalysisLoading: "Analyzing current chart...",
-chartAnalysisError: "Failed to analyze current chart.",
-chartAnalysisEmpty: "Run AI analysis to see the current chart breakdown.",
-chartAnalysisClose: "Close",
-chartAnalysisSymbol: "Symbol",
-chartAnalysisInterval: "Interval",
-chartAnalysisReportLabel: "SkillEdge AI Report",
-chartAnalysisDataLabel: "Market structure report",
-chartAnalysisSectionsLabel: "Analysis sections",
-marketDataUnavailableTitle: "Market data unavailable",
-marketDataUnavailableText:
-  "SkillEdge AI could not load market data for this symbol on the current data plan. Try a more liquid ticker such as AAPL, TSLA, NVDA, SPY or QQQ.",
-marketDataPremiumTitle: "Premium market data required",
-marketDataPremiumText:
-  "This symbol, timeframe or data endpoint may require a higher market data plan. Before launch, SkillEdge AI will support broader premium market coverage.",
-marketDataGenericErrorTitle: "Analysis unavailable",
-marketDataGenericErrorText:
-  "We could not complete the chart analysis right now. Try another ticker, timeframe, or run the analysis again.",
-chartControlTickerLabel: "Ticker",
-chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
-chartControlIntervalLabel: "Timeframe",
-chartControlOpenChart: "Open chart",
-chartControlHint:
-  "Use this bar to control both TradingView and AI analysis. Changes made inside TradingView may not sync back to SkillEdge AI.",
-},
-learning: {
-  title: "Training center",
-  text: "Structured trading education, setups, risk management, psychology and playbook building.",
-  learningNoteTitle: "Learning Center currently works as a refresher base",
-learningNoteText:
-  "SkillEdge AI is primarily focused on trade journaling, chart analysis, AI review, and building a trading system. This section is not positioned as a full academy yet: it is designed as a compact knowledge base to refresh key concepts, so clients can better understand risk, setups, market structure, and AI analysis logic.",
-  overviewLabel: "Learning overview",
-  modulesLabel: "Modules",
-  lessonsLabel: "lessons",
-  progressLabel: "Progress",
-  totalProgressLabel: "Total progress",
-  startButton: "Start",
-  continueButton: "Continue",
-  reviewButton: "Review",
-  notStartedStatus: "Not started",
-  inProgressStatus: "In progress",
-  completedStatus: "Completed",
-  lockedLabel: "Coming soon",
-  estimatedTimeLabel: "Estimated time",
-  levelLabel: "Level",
-  beginnerLevel: "Beginner",
-  intermediateLevel: "Intermediate",
-  advancedLevel: "Advanced",
-  moduleOneTitle: "Market Basics",
-  moduleOneText:
-    "Understand how the market works, how orders interact, and why liquidity matters.",
-  moduleTwoTitle: "Technical Analysis",
-  moduleTwoText:
-    "Learn candles, levels, trend/range logic, volume and clean chart reading.",
-  moduleThreeTitle: "Risk Management",
-  moduleThreeText:
-    "Build rules for risk per trade, stop loss, position sizing and R/R.",
-  moduleFourTitle: "Внутрішньоденний імпульс",
-  moduleFourText:
-    "Study momentum logic, breakout/reclaim, failed breakout and continuation setups.",
-  moduleFiveTitle: "Trading Psychology",
-  moduleFiveText:
-    "Control overtrading, revenge trading, fear, hesitation and impulsive entries.",
-  moduleSixTitle: "Playbook / Setups",
-  moduleSixText:
-    "Turn repeated patterns into a structured trading playbook with triggers and invalidation.",
-  lessonMarketStructure: "How the market works",
-  lessonOrderTypes: "Order types",
-  lessonBidAskSpread: "Bid / Ask / Спред",
-  lessonLiquidity: "Liquidity",
-  lessonCandles: "Candles",
-  lessonLevels: "Support and resistance",
-  lessonTrendRange: "Trend vs range",
-  lessonVolume: "Volume analysis",
-  lessonRiskPerTrade: "Risk per trade",
-  lessonStopLoss: "Stop loss",
-  lessonRiskReward: "Ризик / Потенціал",
-  lessonPositionSizing: "Position sizing",
-  lessonMomentumLogic: "Momentum logic",
-  lessonBreakoutReclaim: "Пробій / повернення рівня",
-  lessonFailedBreakout: "Хибний пробій",
-  lessonContinuation: "Продовження руху",
-  lessonDiscipline: "Discipline",
-  lessonOvertrading: "Переторговка",
-  lessonRevengeTrading: "Торгівля з помсти",
-  lessonPatience: "Patience",
-  lessonSetupChecklist: "Setup checklist",
-  lessonEntryTrigger: "Entry trigger",
-  lessonInvalidation: "Скасування ідеї",
-  lessonReviewProcess: "Review process",
-  advancedTracksLabel: "Advanced tracks",
-advancedTracksText:
-  "Additional specialized learning paths that will be unlocked in the next expansion of SkillEdge AI.",
-comingSoonButton: "Coming soon",
-activeModuleLabel: "Active module",
-openLessonButton: "Open lesson",
-selectedModuleHint:
-  "Select a module to see its lessons, progress and next learning step.",
-nextLessonLabel: "Next lesson",
-moduleDetailsLabel: "Module details",
-lessonViewerLabel: "Lesson viewer",
-lessonContentLabel: "Lesson content",
-lessonCloseButton: "Close lesson",
-lessonStartText:
-  "This lesson is structured as a focused SkillEdge AI knowledge block. Review the key ideas, complete the practice task, and connect the concept with your own trades.",
-lessonKeyPointsLabel: "Key points",
-lessonPracticeLabel: "Practice task",
-lessonPracticeText:
-  "Review the concept, find one chart example, and write what confirms or invalidates the idea.",
-markLessonCompletedButton: "Mark lesson completed",
-lessonCompletedButton: "Lesson completed",
-frontendProgressNote:
-  "Progress is saved to your SkillEdge AI account and will stay available after reload.",
-learningProgressLoading: "Loading learning progress...",
-learningProgressSaving: "Saving progress...",
-learningProgressSaved: "Progress saved",
-lessonAutoAdvanced:
-  "Lesson saved. The next lesson has been opened automatically.",
-moduleCompletedMessage: "Module completed. Great work.",
-learningProgressError: "Failed to sync learning progress.",
-  extraModuleOneTitle: "Smart Money Concepts & Working Setups",
-extraModuleOneText:
-  "Market structure, liquidity, inducement, displacement, order blocks and practical setup logic.",
-extraModuleTwoTitle: "Order Book Scalping in CScalp",
-extraModuleTwoText:
-  "Platform training, order flow basics, level breakout and knife-catching setups for active scalping.",
-extraModuleThreeTitle: "Additional module 3",
-extraModuleThreeText:
-  "This module will be filled with the next specialized training block.",
-extraModuleFourTitle: "Additional module 4",
-extraModuleFourText:
-  "This module will be filled with the next specialized training block.",
-extraModuleOneLessonOne: "Market structure",
-extraModuleOneLessonTwo: "Liquidity zones",
-extraModuleOneLessonThree: "Ордер-блоки",
-extraModuleOneLessonFour: "Working setups",
-extraModuleTwoLessonOne: "CScalp interface",
-extraModuleTwoLessonTwo: "DOM basics",
-extraModuleTwoLessonThree: "Level breakout",
-extraModuleTwoLessonFour: "Knife-catching setup",
-extraModuleThreeLessonOne: "Lesson 1",
-extraModuleThreeLessonTwo: "Lesson 2",
-extraModuleThreeLessonThree: "Lesson 3",
-extraModuleThreeLessonFour: "Lesson 4",
-extraModuleFourLessonOne: "Lesson 1",
-extraModuleFourLessonTwo: "Lesson 2",
-extraModuleFourLessonThree: "Lesson 3",
-extraModuleFourLessonFour: "Lesson 4",
-},
-reports: {
-  title: "Reports",
-  text: "Journal statistics, PnL dynamics, setup quality, mistakes and trading strengths.",
-  placeholder: "Advanced performance reports are generated from your journal, filters, and saved trade data.",
-  emptyTitle: "Not enough data for a report yet",
-  emptyText:
-    "Add a few trades to your journal so SkillEdge AI can build a report on PnL, win rate, setups, mistakes and performance dynamics.",
-  totalTrades: "Total trades",
-  totalTradesHelper: "All trades from the journal",
-  totalPnl: "Загальний PnL",
-  totalPnlHelper: "Total result across closed trades",
-  winRate: "Відсоток прибуткових",
-  averagePnl: "Середній PnL",
-  averagePnlHelper: "Average result per trade",
-  profitFactor: "Profit Factor",
-  profitFactorHelper: "Валовий прибуток / валовий збиток",
-  bestWorst: "Найкраща / найгірша",
-  bestWorstHelper: "Best and worst trade",
-  equityTitle: "Крива дохідності",
-  equitySubtitle: "Cumulative PnL dynamics",
-  points: "points",
-  directionTitle: "Лонг проти шорта",
-  directionSubtitle: "Performance by direction",
-  marketBreakdown: "Markets",
-  setupBreakdown: "Setups",
-  mistakesBreakdown: "Mistakes",
-  noData: "No data yet.",
-    filtersTitle: "Report filters",
-  filtersText:
-    "Narrow statistics by period, market, direction and setup to see the real quality of your trading.",
-  resetFilters: "Reset filters",
-  periodFilter: "Period",
-  periodAll: "All time",
-  period7d: "7 days",
-  period30d: "30 days",
-  period90d: "90 days",
-  marketFilter: "Market",
-  allMarkets: "All markets",
-  directionFilter: "Direction",
-  allDirections: "All directions",
-  setupFilter: "Setup",
-  allSetups: "All setups",
-  filteredTrades: "Filtered trades",
-  noFilteredTradesTitle: "No trades match the selected filters",
-noFilteredTradesText:
-  "Try changing the period, market, direction or setup. Your journal has trades, but this filter combination did not match anything.",
-aiReportTitle: "AI report",
-aiReportSubtitle: "Summary for selected trades",
-aiReportText:
-  "Generate a short report for the current filter: what works, where the mistakes are, risk quality, best-performing setups and what to focus on next.",
-aiReportButton: "Generate report",
-aiReportLoading: "Generating...",
-aiReportError: "Failed to generate AI report.",
-aiReportLabel: "AI report",
-generateAiReport: "Generate report",
-aiReportGenerating: "Generating report...",
-aiReportPlaceholder:
-  "The AI report will appear here after generation. It will also be saved in history so the client can return to it later.",
-aiReportResultLabel: "Result",
-latestAiReportTitle: "Latest AI report",
-savedAiReportTitle: "Saved AI report",
-aiReportHistoryLabel: "History",
-aiReportHistoryTitle: "AI report history",
-aiReportHistoryText:
-  "Open previous AI summaries by filter and quickly return to the most important conclusions.",
-aiReportHistoryEmpty: "No saved AI reports yet.",
-currentSummaryLabel: "Current summary",
-allPeriods: "All periods",
-deleteAiReport: "Delete report",
-copyAiReport: "Copy",
-downloadAiReport: "Download .txt",
-aiReportCopied: "AI report copied.",
-aiReportCopyFailed: "Failed to copy report.",
-aiReportDownloaded: "AI report downloaded.",
-upgradeForAiReports: "Edge required",
-aiReportUpgradeRequired:
-  "AI reports are available on SkillEdge Edge and SkillEdge Elite.",
-aiReportLockedText:
-  "AI reports help review selected trades, find best setups, mistakes, and the next focus area. This feature is available on SkillEdge Edge and SkillEdge Elite.",
-aiReportPlanHint: "AI reports per month on current plan",
-},
-    
-journal: {
-  title: "Trade journal",
-  text: "Add trades, track risk, result, emotions, mistakes and lessons.",
-  locked: "An active plan or demo access is required to add trades.",
-  addTitle: "Add trade",
-  editTitle: "Edit trade",
-addModeText: "Add a new trade to your personal journal.",
-  addText:
-    "Fill in the basic data. Later we will connect screenshots and AI review for each trade.",
-  totalTrades: "Total trades",
-  totalPnl: "Загальний PnL",
-  winRate: "Відсоток прибуткових",
-  avgPnl: "Avg PnL",
-  grossProfit: "Gross Profit",
-grossLoss: "Gross Loss",
-bestTrade: "Best Trade",
-worstTrade: "Worst Trade",
-profitFactor: "Profit Factor",
-equityTitle: "Крива дохідності",
-equityText: "Cumulative PnL based on saved trades.",
-equityEmpty: "Add trades with PnL to build your equity curve.",
-equityPoints: "points",
-expand: "Expand",
-close: "Close",
-cardLabels: {
-  entry: "Entry",
-  exit: "Exit",
-  stop: "Stop",
-  risk: "Risk",
-  result: "Result",
-  setup: "Setup",
-  mistake: "Mistake",
-  lesson: "Lesson",
-  notes: "Notes",
-},
-fullTitle: "Full journal",
-fullText: "Complete trade list. Filters and export are available below.",
-downloadCsv: "Download CSV",
-downloadXlsx: "Download XLSX",
-deleteTradeButton: "Delete trade",
-editTradeButton: "Edit trade",
-openChartButton: "Open chart",
-cancelEditButton: "Cancel edit",
-editModeTitle: "Editing trade",
-editModeText: "Change the highlighted fields and save the trade.",
-actions: "Actions",
-deleteTradeConfirm: "Delete this trade? This action cannot be undone.",
-deleteTradeError: "Failed to delete trade.",
-uploadScreenshotTitle: "Upload trade screenshot",
-screenshotsColumn: "Screens",
-openScreenshots: "Open",
-noScreenshotsForTrade: "No screenshots uploaded for this trade.",
-screenshotViewerTitle: "Trade screenshots",
-loadingScreenshots: "Loading screenshots...",
-uploadScreenshotText:
-  "Attach chart screenshots to your saved trades. Later SkillEdge AI will use them to analyze entries, exits, stops and repeated chart mistakes.",
-screenshotsCount: "screenshots",
-screenshotTradeLabel: "Trade",
-screenshotFileLabel: "Screenshot",
-screenshotChoose: "Choose screenshot",
-screenshotNoFile: "No file selected",
-screenshotSelected: "Selected file",
-screenshotHint:
-  "Steps: 1) Select a trade  2) Click “Choose screenshot”  3) Click “Upload”",
-screenshotUploadHintCompact:
-  "Upload 1 to 3 screenshots with different timeframes for a deeper analysis.",
-  screenshotFormats: "Supported formats: PNG, JPG, WEBP",
-uploadButton: "Upload",
-uploadingButton: "Uploading...",
-selectTradePlaceholder: "Select trade",
-stepOne: "Step 1",
-stepTwo: "Step 2",
-stepThree: "Step 3",
-chartAnalyzeButton: "Analyze chart",
-chartAnalyzingButton: "Analyzing chart...",
-chartScreenshotsLabel: "screenshots",
-journalAnalysisTitle: "SkillEdge AI Journal Analysis",
-journalAnalysisText:
-  "AI will analyze your saved trades, repeated mistakes, setups, emotions, risk and execution quality.",
-journalAnalyzeButton: "Analyze journal",
-journalAnalyzingButton: "Analyzing...",
-savedChartAnalysis: "Saved AI chart analysis",
-showChartHistory: "Show AI history",
-hideChartHistory: "Hide AI history",
-noChartHistory: "No saved chart analyses yet.",
-searchTicker: "Search ticker",
-allMarkets: "All markets",
-allSides: "All sides",
-allResults: "All results",
-marketLabels: {
-  stocks: "Stocks",
-  crypto: "Crypto",
-  futures: "Futures",
-  forex: "Forex",
-  options: "Options",
-},
-directionLabels: {
-  long: "Long",
-  short: "Short",
-},
-resultLabels: {
-  win: "Win",
-  loss: "Loss",
-  breakeven: "Breakeven",
-  notSet: "Not set",
-},
-table: {
-  date: "Date",
-  ticker: "Ticker",
-  market: "Market",
-  side: "Side",
-  entry: "Entry",
-  exit: "Exit",
-  stop: "Stop",
-  risk: "Risk",
-  pnl: "PnL",
-  result: "Result",
-  setup: "Setup",
-},
-  recentTitle: "Recent trades",
-  recentText:
-    "Last 3 trades from your personal journal. Full table, filters and export are available below.",
-  empty:
-    "No trades yet. Add your first trade to start building your performance database.",
-  tradesCount: "trades",
-  saving: "Saving...",
-  save: "Save trade",
-  updateTradeButton: "Update trade",
-  updatingTradeButton: "Updating...",
-  tickerRequired: "Enter ticker.",
-  tradeLimitReached: "Trade limit reached for your current plan",
- tradeUsageTitle: "Trades used",
- tradesLeftLabel: "left",
-  screenshotLimitReached: "Screenshot limit reached for this trade",
- screenshotUsageTitle: "Screenshots used", 
- limitReached: "Trade limit reached for your current plan",
-  loginFirst: "Please log in first.",
-  saveFailed: "Failed to save trade.",
-  
-  fields: {
-    ticker: "Ticker",
-    date: "Date",
-    market: "Market",
-    direction: "Direction",
-    entry: "Entry",
-    exit: "Exit",
-    stop: "Stop",
-    size: "Size",
-    risk: "Risk $",
-    pnl: "PnL $",
-    result: "Result",
-    setup: "Setup",
-    emotion: "Emotion",
-    mistake: "Mistake",
-    lesson: "Lesson",
-    notes: "Notes",
-  },
-  placeholders: {
-    ticker: "AAPL / BTC / NQ",
-    entry: "100",
-    exit: "105",
-    stop: "98",
-    size: "Shares / contracts",
-    risk: "50",
-    pnl: "-25 / 120",
-    setup: "повернення VWAP / згасання гепу",
-    emotion: "Calm / FOMO / fear",
-    mistake: "What did you do wrong?",
-    lesson: "What should you remember next time?",
-    notes: "Context, catalyst, tape, levels...",
-  },
-  options: {
-    notSet: "Not set",
-    win: "Win",
-    loss: "Loss",
-    breakeven: "Breakeven",
-  },
-},
-locked: {
+      title: "Performance overview",
+      text: "PnL summary, win rate, discipline score, best setups and main mistakes.",
+      pnlMonth: "Monthly PnL",
+      winRate: "Win rate",
+      discipline: "Discipline score",
+      weeklyAi: "Weekly AI summary",
+      weeklyAiText:
+        "SkillEdge AI summarizes your journal, risk behavior, discipline and recurring mistakes into a focused weekly review.",
+    },
+    charts: {
+      title: "TradingView charts",
+      text: "Embedded TradingView chart for ticker analysis, levels and setups.",
+      placeholder: "TradingView workspace is available inside the Charts module.",
+      analyzeCurrentChart: "Analyze current chart",
+      workspaceText: "Trading workspace with chart, watchlist and market movers.",
+      watchlistExamples: "Watchlist examples: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      openWatchlist: "Open watchlist",
+      hideWatchlist: "Hide watchlist",
+      watchlistTitle: "Watchlist",
+      watchlistSubtitle: "Symbol / 24h % / volume",
+      addTickerButton: "Add",
+      addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+      sortSymbol: "Symbol",
+      sortChange: "% 24h",
+      sortVolume: "Vol",
+      symbolColumn: "Symbol",
+      percentColumn: "%",
+      volumeColumn: "Volume",
+      loadingWatchlist: "Loading watchlist...",
+      emptyWatchlist: "Watchlist is empty. Click + and add a ticker.",
+      removeFromWatchlist: "Remove from watchlist",
+      loginFirst: "Please log in first.",
+      settingsLoadError: "Failed to load chart settings.",
+      addTickerError: "Failed to add ticker to watchlist.",
+      removeTickerError: "Failed to remove ticker from watchlist.",
+      moversStocks: "Stocks",
+      moversCrypto: "Crypto",
+      moversGainers: "Top gainers",
+      moversLosers: "Top losers",
+      moversCollapse: "Collapse",
+      moversExpand: "Expand",
+      moversName: "Name",
+      moversPercentChange: "% change",
+      moversLoading: "Loading movers...",
+      moversEmpty: "No instruments for this filter.",
+      moversStocksNeedKey:
+        "Stock movers are being prepared for premium market data coverage.",
+      chartAnalysisTitle: "AI chart analysis",
+      chartAnalysisText:
+        "SkillEdge AI analyzes the current symbol, timeframe, market data, candles, volume and risk context.",
+      chartAnalysisLoading: "Analyzing current chart...",
+      chartAnalysisError: "Failed to analyze current chart.",
+      chartAnalysisEmpty: "Run AI analysis to see the current chart breakdown.",
+      chartAnalysisClose: "Close",
+      chartAnalysisSymbol: "Symbol",
+      chartAnalysisInterval: "Timeframe",
+      chartAnalysisReportLabel: "SkillEdge AI Report",
+      chartAnalysisDataLabel: "Market structure report",
+      chartAnalysisSectionsLabel: "Analysis sections",
+      marketDataUnavailableTitle: "Market data unavailable",
+      marketDataUnavailableText:
+        "SkillEdge AI could not load market data for this symbol on the current data plan. Try a more liquid ticker such as AAPL, TSLA, NVDA, SPY or QQQ.",
+      marketDataPremiumTitle: "Premium market data required",
+      marketDataPremiumText:
+  "This symbol, timeframe or data endpoint may require a higher market data plan. SkillEdge AI uses premium market coverage where available.",
+      marketDataGenericErrorTitle: "Analysis unavailable",
+      marketDataGenericErrorText:
+        "We could not complete the chart analysis right now. Try another ticker, timeframe, or run the analysis again.",
+      chartControlTickerLabel: "Ticker",
+      chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+      chartControlIntervalLabel: "Timeframe",
+      chartControlOpenChart: "Open chart",
+      chartControlHint:
+        "Use this bar to control both TradingView and AI analysis. Changes made inside TradingView may not sync back to SkillEdge AI.",
+    },
+    learning: {
+      title: "Training center",
+      text: "Structured trading education, setups, risk management, psychology and playbook building.",
+      learningNoteTitle: "Learning Center works as a refresher base",
+      learningNoteText:
+        "SkillEdge AI is primarily focused on trade journaling, chart analysis, AI review and building a trading system. This section is a compact knowledge base for refreshing key concepts so clients can better understand risk, setups, market structure and AI analysis logic.",
+      overviewLabel: "Learning overview",
+      modulesLabel: "Modules",
+      lessonsLabel: "lessons",
+      progressLabel: "Progress",
+      totalProgressLabel: "Total progress",
+      startButton: "Start",
+      continueButton: "Continue",
+      reviewButton: "Review",
+      notStartedStatus: "Not started",
+      inProgressStatus: "In progress",
+      completedStatus: "Completed",
+      lockedLabel: "Requires access",
+      estimatedTimeLabel: "Estimated time",
+      levelLabel: "Level",
+      beginnerLevel: "Beginner",
+      intermediateLevel: "Intermediate",
+      advancedLevel: "Advanced",
+      moduleOneTitle: "Market Basics",
+      moduleOneText:
+        "Understand how the market works, how orders interact and why liquidity matters.",
+      moduleTwoTitle: "Technical Analysis",
+      moduleTwoText:
+        "Learn candles, levels, trend/range logic, volume and clean chart reading.",
+      moduleThreeTitle: "Risk Management",
+      moduleThreeText:
+        "Build rules for risk per trade, stop loss, position sizing and risk/reward.",
+      moduleFourTitle: "Intraday Momentum",
+      moduleFourText:
+        "Momentum logic, breakout, reclaim, failed breakout and continuation setups.",
+      moduleFiveTitle: "Trading Psychology",
+      moduleFiveText:
+        "Control overtrading, revenge trading, fear, hesitation and impulsive entries.",
+      moduleSixTitle: "Playbook / Setups",
+      moduleSixText:
+        "Turn repeated patterns into a structured trading playbook with entry triggers and invalidation rules.",
+      lessonMarketStructure: "How the market works",
+      lessonOrderTypes: "Order types",
+      lessonBidAskSpread: "Bid / Ask / Spread",
+      lessonLiquidity: "Liquidity",
+      lessonCandles: "Candles",
+      lessonLevels: "Support and resistance",
+      lessonTrendRange: "Trend vs range",
+      lessonVolume: "Volume analysis",
+      lessonRiskPerTrade: "Risk per trade",
+      lessonStopLoss: "Stop loss",
+      lessonRiskReward: "Risk / Reward",
+      lessonPositionSizing: "Position sizing",
+      lessonMomentumLogic: "Momentum logic",
+      lessonBreakoutReclaim: "Breakout / reclaim",
+      lessonFailedBreakout: "Failed breakout",
+      lessonContinuation: "Continuation",
+      lessonDiscipline: "Discipline",
+      lessonOvertrading: "Overtrading",
+      lessonRevengeTrading: "Revenge trading",
+      lessonPatience: "Patience",
+      lessonSetupChecklist: "Setup checklist",
+      lessonEntryTrigger: "Entry trigger",
+      lessonInvalidation: "Invalidation",
+      lessonReviewProcess: "Review process",
+      advancedTracksLabel: "Advanced tracks",
+      advancedTracksText:
+        "Additional specialized learning paths for deepening the trading system inside SkillEdge AI.",
+      comingSoonButton: "Requires access",
+      activeModuleLabel: "Active module",
+      openLessonButton: "Open lesson",
+      selectedModuleHint:
+        "Select a module to see its lessons, progress and next learning step.",
+      nextLessonLabel: "Next lesson",
+      moduleDetailsLabel: "Module details",
+      lessonViewerLabel: "Lesson viewer",
+      lessonContentLabel: "Lesson content",
+      lessonCloseButton: "Close lesson",
+      lessonStartText:
+        "This lesson is structured as a focused SkillEdge AI knowledge block. Review the key ideas, complete the practice task and connect the concept with your own trades.",
+      lessonKeyPointsLabel: "Key points",
+      lessonPracticeLabel: "Practice task",
+      lessonPracticeText:
+        "Review the concept, find one chart example and write what confirms or invalidates the idea.",
+      markLessonCompletedButton: "Mark lesson completed",
+      lessonCompletedButton: "Lesson completed",
+      frontendProgressNote:
+        "Progress is saved to your SkillEdge AI account and will stay available after reload.",
+      learningProgressLoading: "Loading learning progress...",
+      learningProgressSaving: "Saving progress...",
+      learningProgressSaved: "Progress saved",
+      lessonAutoAdvanced:
+        "Lesson saved. The next lesson has been opened automatically.",
+      moduleCompletedMessage: "Module completed. Great work.",
+      learningProgressError: "Failed to sync learning progress.",
+      extraModuleOneTitle: "Smart Money Concepts & Working Setups",
+      extraModuleOneText:
+        "Market structure, liquidity, inducement, displacement, order blocks and practical setup logic.",
+      extraModuleTwoTitle: "Order Book Scalping in CScalp",
+      extraModuleTwoText:
+        "Platform training, order flow basics, level breakout and knife-catching setups for active scalping.",
+      extraModuleThreeTitle: "Advanced module 3",
+      extraModuleThreeText:
+        "This module is reserved for the next specialized training block.",
+      extraModuleFourTitle: "Advanced module 4",
+      extraModuleFourText:
+        "This module is reserved for the next specialized training block.",
+      extraModuleOneLessonOne: "Market structure",
+      extraModuleOneLessonTwo: "Liquidity zones",
+      extraModuleOneLessonThree: "Order blocks",
+      extraModuleOneLessonFour: "Working setups",
+      extraModuleTwoLessonOne: "CScalp interface",
+      extraModuleTwoLessonTwo: "DOM basics",
+      extraModuleTwoLessonThree: "Level breakout",
+      extraModuleTwoLessonFour: "Knife-catching setup",
+      extraModuleThreeLessonOne: "Lesson 1",
+      extraModuleThreeLessonTwo: "Lesson 2",
+      extraModuleThreeLessonThree: "Lesson 3",
+      extraModuleThreeLessonFour: "Lesson 4",
+      extraModuleFourLessonOne: "Lesson 1",
+      extraModuleFourLessonTwo: "Lesson 2",
+      extraModuleFourLessonThree: "Lesson 3",
+      extraModuleFourLessonFour: "Lesson 4",
+    },
+    reports: {
+      title: "Reports",
+      text: "Journal statistics, PnL dynamics, setup quality, mistakes and trading strengths.",
+      placeholder:
+        "Advanced performance reports are generated from your journal, filters and saved trade data.",
+      emptyTitle: "Not enough data for a report yet",
+      emptyText:
+        "Add a few trades to your journal so SkillEdge AI can build a report on PnL, win rate, setups, mistakes and performance dynamics.",
+      totalTrades: "Total trades",
+      totalTradesHelper: "All trades from the journal",
+      totalPnl: "Total PnL",
+      totalPnlHelper: "Total result across closed trades",
+      winRate: "Win rate",
+      averagePnl: "Average PnL",
+      averagePnlHelper: "Average result per trade",
+      profitFactor: "Profit Factor",
+      profitFactorHelper: "Gross profit / gross loss",
+      bestWorst: "Best / Worst",
+      bestWorstHelper: "Best and worst trade",
+      equityTitle: "Equity curve",
+      equitySubtitle: "Cumulative PnL dynamics",
+      points: "points",
+      directionTitle: "Long vs Short",
+      directionSubtitle: "Performance by direction",
+      marketBreakdown: "Markets",
+      setupBreakdown: "Setups",
+      mistakesBreakdown: "Mistakes",
+      noData: "No data yet.",
+      filtersTitle: "Report filters",
+      filtersText:
+        "Narrow statistics by period, market, direction and setup to see the real quality of your trading.",
+      resetFilters: "Reset filters",
+      periodFilter: "Period",
+      periodAll: "All time",
+      period7d: "7 days",
+      period30d: "30 days",
+      period90d: "90 days",
+      marketFilter: "Market",
+      allMarkets: "All markets",
+      directionFilter: "Direction",
+      allDirections: "All directions",
+      setupFilter: "Setup",
+      allSetups: "All setups",
+      filteredTrades: "Filtered trades",
+      noFilteredTradesTitle: "No trades match the selected filters",
+      noFilteredTradesText:
+        "Try changing the period, market, direction or setup. Your journal has trades, but this filter combination did not match anything.",
+      aiReportTitle: "AI report",
+      aiReportSubtitle: "Summary for selected trades",
+      aiReportText:
+        "Generate a short report for the current filter: what works, where the mistakes are, risk quality, best-performing setups and what to focus on next.",
+      aiReportButton: "Generate report",
+      aiReportLoading: "Generating...",
+      aiReportError: "Failed to generate AI report.",
+      aiReportLabel: "AI report",
+      generateAiReport: "Generate report",
+      aiReportGenerating: "Generating report...",
+      aiReportPlaceholder:
+        "The AI report will appear here after generation and stay saved in history for future review.",
+      aiReportResultLabel: "Result",
+      latestAiReportTitle: "Latest AI report",
+      savedAiReportTitle: "Saved AI report",
+      aiReportHistoryLabel: "History",
+      aiReportHistoryTitle: "AI report history",
+      aiReportHistoryText:
+        "Open previous AI summaries by filter and quickly return to the most important conclusions.",
+      aiReportHistoryEmpty: "No saved AI reports yet.",
+      currentSummaryLabel: "Current summary",
+      allPeriods: "All periods",
+      deleteAiReport: "Delete report",
+      copyAiReport: "Copy",
+      downloadAiReport: "Download .txt",
+      aiReportCopied: "AI report copied.",
+      aiReportCopyFailed: "Failed to copy report.",
+      aiReportDownloaded: "AI report downloaded.",
+      upgradeForAiReports: "Edge required",
+      aiReportUpgradeRequired:
+        "AI reports are available on SkillEdge Edge and SkillEdge Elite.",
+      aiReportLockedText:
+        "AI reports help review selected trades, find best setups, mistakes and the next focus area. This feature is available on SkillEdge Edge and SkillEdge Elite.",
+      aiReportPlanHint: "AI reports per month on current plan",
+    },
+    journal: {
+      title: "Trade journal",
+      text: "Add trades, track risk, result, emotions, mistakes and lessons.",
+      locked: "An active plan or demo access is required to add trades.",
+      addTitle: "Add trade",
+      editTitle: "Edit trade",
+      addModeText: "Add a new trade to your personal journal.",
+      addText:
+        "Fill in the basic data, add screenshots and use AI review to evaluate each trade.",
+      totalTrades: "Total trades",
+      totalPnl: "Total PnL",
+      winRate: "Win rate",
+      avgPnl: "Avg PnL",
+      grossProfit: "Gross profit",
+      grossLoss: "Gross loss",
+      bestTrade: "Best trade",
+      worstTrade: "Worst trade",
+      profitFactor: "Profit Factor",
+      equityTitle: "Equity curve",
+      equityText: "Cumulative PnL based on saved trades.",
+      equityEmpty: "Add trades with PnL to build your equity curve.",
+      equityPoints: "points",
+      expand: "Expand",
+      close: "Close",
+      cardLabels: {
+        entry: "Entry",
+        exit: "Exit",
+        stop: "Stop",
+        risk: "Risk",
+        result: "Result",
+        setup: "Setup",
+        mistake: "Mistake",
+        lesson: "Lesson",
+        notes: "Notes",
+      },
+      fullTitle: "Full journal",
+      fullText: "Complete trade list. Filters and export are available below.",
+      downloadCsv: "Download CSV",
+      downloadXlsx: "Download XLSX",
+      deleteTradeButton: "Delete trade",
+      editTradeButton: "Edit trade",
+      openChartButton: "Open chart",
+      cancelEditButton: "Cancel edit",
+      editModeTitle: "Editing trade",
+      editModeText: "Change the highlighted fields and save the trade.",
+      actions: "Actions",
+      deleteTradeConfirm: "Delete this trade? This action cannot be undone.",
+      deleteTradeError: "Failed to delete trade.",
+      uploadScreenshotTitle: "Upload trade screenshot",
+      uploadScreenshotText:
+        "Attach chart screenshots to your saved trades. SkillEdge AI uses them to analyze entries, exits, stops and repeated chart mistakes.",
+      screenshotsCount: "screenshots",
+      screenshotTradeLabel: "Trade",
+      screenshotFileLabel: "Screenshot",
+      screenshotChoose: "Choose screenshot",
+      screenshotNoFile: "No file selected",
+      screenshotSelected: "Selected file",
+      screenshotHint:
+        "Steps: 1) Select a trade  2) Click Choose screenshot  3) Click Upload",
+      screenshotUploadHintCompact:
+        "Upload 1 to 3 screenshots with different timeframes for a deeper analysis.",
+      screenshotFormats: "Supported formats: PNG, JPG, WEBP",
+      screenshotsColumn: "Screens",
+      openScreenshots: "Open",
+      noScreenshotsForTrade: "No screenshots uploaded for this trade.",
+      screenshotViewerTitle: "Trade screenshots",
+      loadingScreenshots: "Loading screenshots...",
+      uploadButton: "Upload",
+      uploadingButton: "Uploading...",
+      selectTradePlaceholder: "Select trade",
+      stepOne: "Step 1",
+      stepTwo: "Step 2",
+      stepThree: "Step 3",
+      chartAnalyzeButton: "Analyze chart",
+      chartAnalyzingButton: "Analyzing chart...",
+      chartScreenshotsLabel: "screenshots",
+      journalAnalysisTitle: "SkillEdge AI Journal Analysis",
+      journalAnalysisText:
+        "AI will analyze your saved trades, repeated mistakes, setups, emotions, risk and execution quality.",
+      journalAnalyzeButton: "Analyze journal",
+      journalAnalyzingButton: "Analyzing...",
+      savedChartAnalysis: "Saved AI chart analysis",
+      showChartHistory: "Show AI history",
+      hideChartHistory: "Hide AI history",
+      noChartHistory: "No saved chart analyses yet.",
+      searchTicker: "Search ticker",
+      allMarkets: "All markets",
+      allSides: "All sides",
+      allResults: "All results",
+      marketLabels: {
+        stocks: "Stocks",
+        crypto: "Crypto",
+        futures: "Futures",
+        forex: "Forex",
+        options: "Options",
+      },
+      directionLabels: {
+        long: "Long",
+        short: "Short",
+      },
+      resultLabels: {
+        win: "Win",
+        loss: "Loss",
+        breakeven: "Breakeven",
+        notSet: "Not set",
+      },
+      table: {
+        date: "Date",
+        ticker: "Ticker",
+        market: "Market",
+        side: "Side",
+        entry: "Entry",
+        exit: "Exit",
+        stop: "Stop",
+        risk: "Risk",
+        pnl: "PnL",
+        result: "Result",
+        setup: "Setup",
+      },
+      recentTitle: "Recent trades",
+      recentText:
+        "Last 3 trades from your personal journal. Full table, filters and export are available below.",
+      empty:
+        "No trades yet. Add your first trade to start building your performance database.",
+      tradesCount: "trades",
+      saving: "Saving...",
+      save: "Save trade",
+      updateTradeButton: "Update trade",
+      updatingTradeButton: "Updating...",
+      tickerRequired: "Enter ticker.",
+      tradeLimitReached: "Trade limit reached for your current plan",
+      tradeUsageTitle: "Trades used",
+      tradesLeftLabel: "left",
+      screenshotLimitReached: "Screenshot limit reached for this trade",
+      screenshotUsageTitle: "Screenshots used",
+      limitReached: "Trade limit reached for your current plan",
+      loginFirst: "Please log in first.",
+      saveFailed: "Failed to save trade.",
+      fields: {
+        ticker: "Ticker",
+        date: "Date",
+        market: "Market",
+        direction: "Direction",
+        entry: "Entry",
+        exit: "Exit",
+        stop: "Stop",
+        size: "Size",
+        risk: "Risk $",
+        pnl: "PnL $",
+        result: "Result",
+        setup: "Setup",
+        emotion: "Emotion",
+        mistake: "Mistake",
+        lesson: "Lesson",
+        notes: "Notes",
+      },
+      placeholders: {
+        ticker: "AAPL / BTC / NQ",
+        entry: "100",
+        exit: "105",
+        stop: "98",
+        size: "Shares / contracts",
+        risk: "50",
+        pnl: "-25 / 120",
+        setup: "VWAP reclaim / gap fade",
+        emotion: "Calm / FOMO / fear",
+        mistake: "What did you do wrong?",
+        lesson: "What should you remember next time?",
+        notes: "Context, catalyst, tape, levels...",
+      },
+      options: {
+        notSet: "Not set",
+        win: "Win",
+        loss: "Loss",
+        breakeven: "Breakeven",
+      },
+    },
+    locked: {
       title: "Activate your plan",
       label: "Access locked",
       text: "After payment, trade journal, SkillEdge AI Coach, TradingView charts, learning, reports and AI review history will be unlocked.",
       button: "Choose plan",
     },
-   tabs: {
-  overview: "Overview",
-  journal: "Trade journal",
-  charts: "Charts",
-  market: "Market",
-  alerts: "Сигналы",
-  coach: "AI-коуч",
-  learning: "Learning",
-  reports: "Reports",
-  billing: "Billing",
-},
+    tabs: {
+      overview: "Overview",
+      journal: "Trade journal",
+      charts: "Charts",
+      market: "Market",
+      alerts: "Signals",
+      coach: "AI Coach",
+      learning: "Learning",
+      reports: "Reports",
+      billing: "Billing",
+    },
     periods: {
       monthly: "1 month",
       halfyear: "6 months",
@@ -644,73 +643,73 @@ locked: {
       label: "Trial version",
       title: "Your 7-day demo access is active",
       text:
-  "This is a trial version of the SkillEdge Core plan with a limit of 10 AI requests. After the trial ends, access will be closed unless you choose a paid plan.",
+        "This is a trial version of the SkillEdge Core plan with a limit of 10 AI requests. After the trial ends, access will be closed unless you choose a paid plan.",
       short: "7-day trial. Limit: 10 AI requests.",
     },
     billing: {
-  title: "Plan & billing",
-  text: "Information about your current plan, payments, and subscription period.",
-  activePlan: "Active plan",
-  inactivePlan: "Plan is not active",
-  period: "Period",
-  validUntil: "Valid until",
-  empty:
-    "After payment, your plan, period, expiration date, and payment history will appear here.",
-  currentPlan: "Current plan",
-creatingCheckout: "Creating checkout...",
-checkoutError: "Failed to create crypto checkout. Please try again.",
-loginRequiredForPayment: "Please log in before buying a plan.",
-  currentPlanLabel: "Current plan",
-  activeSubscription:
-    "Subscription is active. Limits and access are applied automatically.",
-  inactiveSubscription:
-    "Subscription is not active. Some features may be unavailable.",
-  active: "Active",
-  inactive: "Inactive",
-  billingPeriod: "Period",
-  aiUsage: "Использование AI",
-  billingNoteLabel: "Important",
-  billingNoteText:
-  "Billing shows your current plan, limits, access level and subscription status. Card payments are being prepared through an approved merchant provider, while crypto access is available during launch.",
-  currentLimitsLabel: "Limits",
-  currentLimitsTitle: "What your current plan includes",
-  aiCoachLimit: "AI Coach / month",
-  journalAiLimit: "Journal AI / month",
-  chartAiLimit: "Chart analysis / month",
-  aiReportsLimit: "AI reports / month",
-  maxTradesLimit: "Max trades",
-  screenshotsLimit: "Screenshots per trade",
-  aiReportsAccess: "AI-звіти",
-  supportAssistantAccess: "Помічник підтримки",
-  socialTickersAccess: "Соціальні тикери",
-  aiScannerAccess: "AI-сканер",
-aiAlertsAccess: "AI-сигнали",
-premiumChartAccess: "Преміум-аналіз графіка",
-  exportReportsAccess: "Експорт звітів",
-  included: "Included",
-  locked: "Locked",
-  comparePlansLabel: "Comparison",
-  comparePlansTitle: "Plan comparison",
-  comparePlansText:
-    "Make sure customers clearly see the difference between Core, Edge, and Elite.",
-  current: "Current",
-  choosePlan: "Choose plan",
-  planDescriptions: {
-    core: "Basic access for journaling, screenshots, AI Coach and discipline control.",
-edge: "Advanced plan for active traders: more AI, reports, Market Intelligence and AI Scanner.",
-elite:
-  "Maximum plan for serious work: AI Alerts, floating alerts widget, Signal-to-Journal workflow and full AI Trading Desk.",
-  },
-},
+      title: "Plan & billing",
+      text: "Information about your current plan, payments and subscription period.",
+      activePlan: "Active plan",
+      inactivePlan: "Plan is not active",
+      period: "Period",
+      validUntil: "Valid until",
+      empty:
+        "After payment, your plan, period, expiration date and payment history will appear here.",
+      currentPlan: "Current plan",
+      creatingCheckout: "Creating checkout...",
+      checkoutError: "Failed to create crypto checkout. Please try again.",
+      loginRequiredForPayment: "Please log in before buying a plan.",
+      currentPlanLabel: "Current plan",
+      activeSubscription:
+        "Subscription is active. Limits and access are applied automatically.",
+      inactiveSubscription:
+        "Subscription is not active. Some features may be unavailable.",
+      active: "Active",
+      inactive: "Inactive",
+      billingPeriod: "Period",
+      aiUsage: "AI usage",
+      billingNoteLabel: "Important",
+      billingNoteText:
+        "Billing shows your current plan, limits, access level and subscription status. Card payments are being prepared through an approved merchant provider, while crypto access is available during launch.",
+      currentLimitsLabel: "Limits",
+      currentLimitsTitle: "What your current plan includes",
+      aiCoachLimit: "AI Coach / month",
+      journalAiLimit: "Journal AI / month",
+      chartAiLimit: "Chart analysis / month",
+      aiReportsLimit: "AI reports / month",
+      maxTradesLimit: "Max trades",
+      screenshotsLimit: "Screenshots per trade",
+      aiReportsAccess: "AI reports",
+      supportAssistantAccess: "Support assistant",
+      socialTickersAccess: "Social tickers",
+      aiScannerAccess: "AI scanner",
+      aiAlertsAccess: "AI signals",
+      premiumChartAccess: "Premium chart analysis",
+      exportReportsAccess: "Report export",
+      included: "Included",
+      locked: "Locked",
+      comparePlansLabel: "Comparison",
+      comparePlansTitle: "Plan comparison",
+      comparePlansText:
+        "Make sure customers clearly see the difference between Core, Edge and Elite.",
+      current: "Current",
+      choosePlan: "Choose plan",
+      planDescriptions: {
+        core: "Basic access for journaling, screenshots, AI Coach and discipline control.",
+        edge: "Advanced plan for active traders: more AI, reports, Market Intelligence and AI Scanner.",
+        elite:
+          "Maximum plan for serious work: AI signals, floating alerts widget, Signal-to-Journal workflow and full AI Trading Desk.",
+      },
+    },
     aiLimits: {
-  reachedTitle: "AI limit reached",
-  reachedText:
-    "You have used all AI requests available for your current plan this month. Upgrade your plan or wait until the next monthly reset.",
-  remainingPrefix: "Remaining AI requests",
-},
+      reachedTitle: "AI limit reached",
+      reachedText:
+        "You have used all AI requests available for your current plan this month. Upgrade your plan or wait until the next monthly reset.",
+      remainingPrefix: "Remaining AI requests",
+    },
     coach: {
       title: "AI Coach",
-      text: "Describe a trade, emotion, mistake or market situation — the AI coach will analyze discipline, risk and decision quality.",
+      text: "Describe a trade, emotion, mistake or market situation вЂ” the AI coach will analyze discipline, risk and decision quality.",
       reviewTitle: "Trade review",
       reviewText:
         "The more specific your description is, the better the answer. Include ticker, entry, stop, entry reason, emotions and result.",
@@ -724,1203 +723,1206 @@ elite:
         "The review will appear here: what was good, where the mistake was, what lesson to write down and what to check before the next trade.",
       historyTitle: "AI review history",
       historyText: "Last 10 AI coach requests.",
-      historyEmpty: "History is empty. Your first review will appear here after AI responds.",
+      historyEmpty:
+        "History is empty. Your first review will appear here after AI responds.",
       loginFirst: "Please log in first.",
       messageRequired: "Enter a question or trade description.",
       coachError: "AI Coach error.",
       error: "AI coach request failed.",
       failed: "Failed to get AI Coach response.",
       needPlan: "AI Coach requires an active plan or demo access.",
-      limitReached: "AI request limit reached. Upgrade your plan or wait for the limit reset.",
+      limitReached:
+        "AI request limit reached. Upgrade your plan or wait for the limit reset.",
     },
   },
 
   ru: {
-    terminal: "Термінал SkillEdge AI",
-    dashboard: "Личный кабинет",
-    user: "Пользователь",
-    choosePlan: "Выбрать тариф",
-    logout: "Выйти",
-    currentPlan: "Текущий тариф",
-    loading: "Загрузка...",
-    notActivated: "Не активирован",
-    activatePlan: "Активируйте тариф, чтобы открыть функции кабинета.",
-    aiUsage: "Использование AI",
-   quickActions: "Быстрые действия",
-    addTrade: "Добавить сделку",
-    uploadScreenshot: "Загрузить скрин",
-    askAI: "Спросить AI-коуча",
-    createReport: "Создать отчёт",
+    terminal: "РўРµСЂРјРёРЅР°Р» SkillEdge AI",
+    dashboard: "Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚",
+    user: "РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ",
+    choosePlan: "Р’С‹Р±СЂР°С‚СЊ С‚Р°СЂРёС„",
+    logout: "Р’С‹Р№С‚Рё",
+    currentPlan: "РўРµРєСѓС‰РёР№ С‚Р°СЂРёС„",
+    loading: "Р—Р°РіСЂСѓР·РєР°...",
+    notActivated: "РќРµ Р°РєС‚РёРІРёСЂРѕРІР°РЅ",
+    activatePlan: "РђРєС‚РёРІРёСЂСѓР№С‚Рµ С‚Р°СЂРёС„, С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ С„СѓРЅРєС†РёРё РєР°Р±РёРЅРµС‚Р°.",
+    aiUsage: "РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ AI",
+    quickActions: "Р‘С‹СЃС‚СЂС‹Рµ РґРµР№СЃС‚РІРёСЏ",
+    addTrade: "Р”РѕР±Р°РІРёС‚СЊ СЃРґРµР»РєСѓ",
+    uploadScreenshot: "Р—Р°РіСЂСѓР·РёС‚СЊ СЃРєСЂРёРЅС€РѕС‚",
+    askAI: "РЎРїСЂРѕСЃРёС‚СЊ AI-РєРѕСѓС‡Р°",
+    createReport: "РЎРѕР·РґР°С‚СЊ РѕС‚С‡С‘С‚",
     overview: {
-  title: "Обзор эффективности",
-  text: "Сводка PnL, процент прибыльных сделок, оценка дисциплины, лучшие сетапы и главные ошибки.",
-  pnlMonth: "PnL за месяц",
-  winRate: "Відсоток прибуткових",
-  discipline: "Оцінка дисципліни",
-  weeklyAi: "AI-сводка недели",
-  weeklyAiText:
-    "AI-сводка будет собирать ключевые выводы по журналу сделок, риску, дисциплине и повторяющимся ошибкам.",
-},
-charts: {
-  title: "Графики TradingView",
-  text: "Встроенный график TradingView для анализа тикеров, уровней и сетапов.",
-  placeholder: "Рабочее пространство TradingView доступно внутри модуля графиков.",
-  analyzeCurrentChart: "Проанализировать график",
-  workspaceText: "Рабочая зона с графиком, списком наблюдения и лидерами движения рынка.",
-  watchlistExamples: "Примеры списка наблюдения: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  openWatchlist: "Открыть список",
-  hideWatchlist: "Скрыть список",
-  watchlistTitle: "Список спостереження",
-  watchlistSubtitle: "Тикер / 24h % / объём",
-  addTickerButton: "Добавить",
-  addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  addTickerHint: "Пример: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
-  sortSymbol: "Тикер",
-  sortChange: "% 24h",
-  sortVolume: "Объём",
-  symbolColumn: "Тикер",
-  percentColumn: "%",
-  volumeColumn: "Объём",
-  loadingWatchlist: "Загружаем список наблюдения...",
-  emptyWatchlist: "Список пуст. Нажми + и добавь тикер.",
-  removeFromWatchlist: "Удалить из списка",
-  loginFirst: "Сначала войдите в аккаунт.",
-  settingsLoadError: "Не удалось загрузить настройки графиков.",
-  addTickerError: "Не удалось добавить тикер в список наблюдения.",
-  removeTickerError: "Не удалось удалить тикер из списка наблюдения.",
-  moversStocks: "Акции",
-  moversCrypto: "Крипто",
-  moversGainers: "Лідери росту",
-  moversLosers: "Лідери падіння",
-  moversCollapse: "Свернуть",
-  moversExpand: "Развернуть",
-  moversName: "Название",
-  moversPercentChange: "% Изменение",
-  moversLoading: "Загружаем лидеров движения...",
-  moversEmpty: "Нет инструментов под этот фильтр.",
-  moversStocksNeedKey: "Лидеры движения по акциям готовятся к подключению премиум-покрытия рыночных данных.",
-chartAnalysisTitle: "AI-анализ графика",
-chartAnalysisText:
-  "SkillEdge AI анализирует текущий тикер, таймфрейм, рыночные данные, свечи, объём и контекст риска.",
-chartAnalysisLoading: "Анализируем текущий график...",
-chartAnalysisError: "Не удалось проанализировать текущий график.",
-chartAnalysisEmpty: "Запусти AI-анализ, чтобы увидеть разбор текущего графика.",
-chartAnalysisClose: "Закрыть",
-chartAnalysisSymbol: "Тикер",
-chartAnalysisInterval: "Таймфрейм",
-chartAnalysisReportLabel: "Отчёт SkillEdge AI",
-chartAnalysisDataLabel: "Разбор рыночной структуры",
-chartAnalysisSectionsLabel: "Секции анализа",
-marketDataUnavailableTitle: "Рыночные данные недоступны",
-marketDataUnavailableText:
-  "SkillEdge AI не смог загрузить рыночные данные по этому тикеру на текущем тарифе данных. Попробуй более ликвидный тикер: AAPL, TSLA, NVDA, SPY или QQQ.",
-marketDataPremiumTitle: "Нужен премиум-доступ к рыночным данным",
-marketDataPremiumText:
-  "Этот тикер, таймфрейм или источник данных может требовать более высокий тариф рыночных данных. К запуску SkillEdge AI будет поддерживать более широкое премиум-покрытие рынка.",
-marketDataGenericErrorTitle: "Анализ временно недоступен",
-marketDataGenericErrorText:
-  "Сейчас не удалось выполнить анализ графика. Попробуй другой тикер, таймфрейм или запусти анализ ещё раз.",
-chartControlTickerLabel: "Тикер",
-chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
-chartControlIntervalLabel: "Таймфрейм",
-chartControlOpenChart: "Открыть график",
-chartControlHint:
-  "Используй эту панель для управления TradingView и AI-анализом. Изменения внутри самого TradingView могут не синхронизироваться обратно в SkillEdge AI.",
-},
-learning: {
-  title: "Центр обучения",
-  text: "Структурное обучение трейдингу, сетапы, риск-менеджмент, психология и построение торгового плейбука.",
-  learningNoteTitle: "Центр обучения работает как база повторения",
-learningNoteText:
-  "SkillEdge AI в первую очередь сфокусирован на журнале сделок, анализе графиков, AI-разборе и развитии торговой системы. Этот раздел пока не является полноценной академией: он создан как короткая база для восстановления ключевых понятий, чтобы клиент быстрее понимал риск, сетапы, структуру рынка и логику AI-анализа.",
-  overviewLabel: "Обзор обучения",
-  modulesLabel: "Модули",
-  lessonsLabel: "уроков",
-  progressLabel: "Прогресс",
-  totalProgressLabel: "Общий прогресс",
-  startButton: "Начать",
-  continueButton: "Продолжить",
-  reviewButton: "Повторить",
-  notStartedStatus: "Не начато",
-  inProgressStatus: "В процессе",
-  completedStatus: "Пройдено",
-  lockedLabel: "Скоро",
-  estimatedTimeLabel: "Время",
-  levelLabel: "Уровень",
-  beginnerLevel: "Начальный",
-  intermediateLevel: "Средний",
-  advancedLevel: "Продвинутый",
-  moduleOneTitle: "Основы рынка",
-  moduleOneText:
-    "Разберись, как работает рынок, как взаимодействуют ордера и почему ликвидность решает.",
-  moduleTwoTitle: "Технический анализ",
-  moduleTwoText:
-    "Свечи, уровни, тренд/ренж, объём и чистое чтение графика без лишнего шума.",
-  moduleThreeTitle: "Риск-менеджмент",
-  moduleThreeText:
-    "Правила риска на сделку, стоп-лосс, размер позиции и соотношение риск/прибыль.",
-  moduleFourTitle: "Внутрішньоденний імпульс",
-  moduleFourText:
-    "Логика импульса, пробой, возврат уровня, ложный пробой и сетапы продолжения движения.",
-  moduleFiveTitle: "Психология трейдинга",
-  moduleFiveText:
-    "Контроль переторговки, торговли из мести, страха, сомнений и импульсивных входов.",
-  moduleSixTitle: "Плейбук / Сетапы",
-  moduleSixText:
-    "Превращай повторяющиеся паттерны в торговый плейбук с триггерами входа и условиями отмены идеи.",
-  lessonMarketStructure: "Как работает рынок",
-  lessonOrderTypes: "Типы ордеров",
-  lessonBidAskSpread: "Bid / Ask / Спред",
-  lessonLiquidity: "Ликвидность",
-  lessonCandles: "Свечи",
-  lessonLevels: "Поддержка и сопротивление",
-  lessonTrendRange: "Тренд или ренж",
-  lessonVolume: "Анализ объёма",
-  lessonRiskPerTrade: "Риск на сделку",
-  lessonStopLoss: "Стоп-лосс",
-  lessonRiskReward: "Ризик / Потенціал",
-  lessonPositionSizing: "Размер позиции",
-  lessonMomentumLogic: "Логика импульса",
-  lessonBreakoutReclaim: "Пробій / повернення рівня",
-  lessonFailedBreakout: "Хибний пробій",
-  lessonContinuation: "Продовження руху",
-  lessonDiscipline: "Дисциплина",
-  lessonOvertrading: "Переторговка",
-  lessonRevengeTrading: "Торгівля з помсти",
-  lessonPatience: "Терпение",
-  lessonSetupChecklist: "Чеклист сетапа",
-  lessonEntryTrigger: "Триггер входа",
-  lessonInvalidation: "Скасування ідеї",
-  lessonReviewProcess: "Процесс разбора",
-  advancedTracksLabel: "Дополнительные направления",
-advancedTracksText:
-  "Дополнительные специализированные направления обучения для углубления торговой системы внутри SkillEdge AI.",
-comingSoonButton: "Скоро",
-activeModuleLabel: "Активный модуль",
-openLessonButton: "Открыть урок",
-selectedModuleHint:
-  "Выбери модуль, чтобы увидеть уроки, прогресс и следующий шаг обучения.",
-nextLessonLabel: "Следующий урок",
-moduleDetailsLabel: "Детали модуля",
-lessonViewerLabel: "Просмотр урока",
-lessonContentLabel: "Содержание урока",
-lessonCloseButton: "Закрыть урок",
-lessonStartText:
-  "Этот урок оформлен как короткий практический блок SkillEdge AI. Изучи ключевые идеи, выполни задание и свяжи концепцию со своими сделками.",
-lessonKeyPointsLabel: "Ключевые идеи",
-lessonPracticeLabel: "Практическое задание",
-lessonPracticeText:
-  "Разбери концепцию, найди один пример на графике и запиши, что подтверждает или ломает идею.",
-markLessonCompletedButton: "Отметить урок пройденным",
-lessonCompletedButton: "Урок пройден",
-frontendProgressNote:
-  "Прогресс сохраняется в аккаунте SkillEdge AI и останется после перезагрузки.",
-learningProgressLoading: "Загружаем прогресс обучения...",
-learningProgressSaving: "Сохраняем прогресс...",
-learningProgressSaved: "Прогресс сохранён",
-lessonAutoAdvanced:
-  "Урок сохранён. Следующий урок открыт автоматически.",
-moduleCompletedMessage: "Модуль завершён. Отличная работа.",
-learningProgressError: "Не удалось синхронизировать прогресс обучения.",
-  extraModuleOneTitle: "Концепция Smart Money и рабочие сетапы",
-extraModuleOneText:
-  "Структура рынка, ликвидность, провокации, импульсное смещение, ордер-блоки и практическая логика рабочих сетапов.",
-extraModuleTwoTitle: "Скальпинг стакана в CScalp",
-extraModuleTwoText:
-  "Обучение платформе, базовая работа с потоком ордеров, пробой уровня и сетапы “ножи” для активного скальпинга.",
-extraModuleThreeTitle: "Дополнительный модуль 3",
-extraModuleThreeText:
-  "Этот модуль будет заполнен следующим специализированным блоком обучения.",
-extraModuleFourTitle: "Дополнительный модуль 4",
-extraModuleFourText:
-  "Этот модуль будет заполнен следующим специализированным блоком обучения.",
-extraModuleOneLessonOne: "Структура рынка",
-extraModuleOneLessonTwo: "Зоны ликвидности",
-extraModuleOneLessonThree: "Ордер-блоки",
-extraModuleOneLessonFour: "Рабочие сетапы",
-extraModuleTwoLessonOne: "Интерфейс CScalp",
-extraModuleTwoLessonTwo: "Основы стакана",
-extraModuleTwoLessonThree: "Пробой уровня",
-extraModuleTwoLessonFour: "Сетап “ножи”",
-extraModuleThreeLessonOne: "Урок 1",
-extraModuleThreeLessonTwo: "Урок 2",
-extraModuleThreeLessonThree: "Урок 3",
-extraModuleThreeLessonFour: "Урок 4",
-extraModuleFourLessonOne: "Урок 1",
-extraModuleFourLessonTwo: "Урок 2",
-extraModuleFourLessonThree: "Урок 3",
-extraModuleFourLessonFour: "Урок 4",
-},
-reports: {
-  title: "Отчёты",
-  text: "Статистика по журналу, динамика PnL, качество сетапов, ошибки и сильные стороны торговли.",
-  placeholder: "Расширенные отчёты будут добавлены на следующем этапе.",
-  emptyTitle: "Пока недостаточно данных для отчёта",
-  emptyText:
-    "Добавь несколько сделок в журнал, чтобы SkillEdge AI смог построить отчёт по PnL, проценту прибыльных сделок, сетапам, ошибкам и динамике результата.",
-  totalTrades: "Всего сделок",
-  totalTradesHelper: "Все сделки из журнала",
-  totalPnl: "Загальний PnL",
-  totalPnlHelper: "Суммарный результат по закрытым сделкам",
-  winRate: "Відсоток прибуткових",
-  averagePnl: "Середній PnL",
-  averagePnlHelper: "Средний результат на сделку",
-  profitFactor: "Profit Factor",
-  profitFactorHelper: "Валовий прибуток / валовий збиток",
-  bestWorst: "Найкраща / найгірша",
-  bestWorstHelper: "Лучшая и худшая сделка",
-  equityTitle: "Крива дохідності",
-  equitySubtitle: "Динамика накопительного PnL",
-  points: "точек",
-  directionTitle: "Лонг проти шорта",
-  directionSubtitle: "Результат по направлению",
-  marketBreakdown: "Рынки",
-  setupBreakdown: "Сетапы",
-  mistakesBreakdown: "Ошибки",
-  noData: "Пока нет данных.",
-    filtersTitle: "Фильтры отчёта",
-  filtersText:
-    "Сужай статистику по периоду, рынку, направлению и сетапу, чтобы видеть реальное качество торговли.",
-  resetFilters: "Сбросить фильтры",
-  periodFilter: "Период",
-  periodAll: "Всё время",
-  period7d: "7 дней",
-  period30d: "30 дней",
-  period90d: "90 дней",
-  marketFilter: "Рынок",
-  allMarkets: "Все рынки",
-  directionFilter: "Направление",
-  allDirections: "Все направления",
-  setupFilter: "Сетап",
-  allSetups: "Все сетапы",
-  filteredTrades: "Сделок в фильтре",
-  noFilteredTradesTitle: "Под выбранные фильтры сделок нет",
-noFilteredTradesText:
-  "Попробуй изменить период, рынок, направление или сетап. Сделки в журнале есть, но текущая комбинация фильтров ничего не нашла.",
-aiReportTitle: "AI-отчёт",
-aiReportSubtitle: "Сводка по выбранным сделкам",
-aiReportText:
-  "Сгенерируй краткий отчёт по текущему фильтру: что работает, где ошибки, какой риск, какие сетапы дают лучший результат и на что обратить внимание дальше.",
-aiReportButton: "Сгенерировать отчёт",
-aiReportLoading: "Генерируем...",
-aiReportError: "Не удалось сгенерировать AI-отчёт.",
-aiReportLabel: "AI-отчёт",
-generateAiReport: "Сгенерировать отчёт",
-aiReportGenerating: "Генерируем отчёт...",
-aiReportPlaceholder:
-  "AI-отчёт появится здесь после генерации. Он сохранится в истории, чтобы клиент мог вернуться к нему позже.",
-aiReportResultLabel: "Результат",
-latestAiReportTitle: "Последний AI-отчёт",
-savedAiReportTitle: "Сохранённый AI-отчёт",
-aiReportHistoryLabel: "История",
-aiReportHistoryTitle: "История AI-отчётов",
-aiReportHistoryText:
-  "Открывай прошлые AI-сводки по фильтрам и быстро возвращайся к важным выводам.",
-aiReportHistoryEmpty: "Пока сохранённых AI-отчётов нет.",
-currentSummaryLabel: "Текущая сводка",
-allPeriods: "Все периоды",
-deleteAiReport: "Удалить отчёт",
-copyAiReport: "Скопировать",
-downloadAiReport: "Скачать .txt",
-aiReportCopied: "AI-отчёт скопирован.",
-aiReportCopyFailed: "Не удалось скопировать отчёт.",
-aiReportDownloaded: "AI-отчёт скачан.",
-upgradeForAiReports: "Нужен Edge",
-aiReportUpgradeRequired:
-  "AI-отчёты доступны на тарифах SkillEdge Edge и SkillEdge Elite.",
-aiReportLockedText:
-  "AI-отчёты помогают разобрать выбранные сделки, найти лучшие сетапы, ошибки и следующий фокус. Эта функция доступна на тарифах SkillEdge Edge и SkillEdge Elite.",
-aiReportPlanHint: "AI-отчётов в месяц на текущем тарифе",
-}, 
-journal: {
-  title: "Журнал сделок",
-  text: "Добавляйте сделки, фиксируйте риск, результат, эмоции, ошибки и уроки.",
-  locked: "Для добавления сделок нужен активный тариф или пробный доступ.",
-  addTitle: "Добавить сделку",
-  editTitle: "Редактировать сделку",
-addModeText: "Добавь новую сделку в личный журнал.",
-  addText:
-    "Заполни базовые данные, добавь скриншоты и используй AI-разбор для оценки сделки.",
-  totalTrades: "Всего сделок",
-  totalPnl: "Общий PnL",
-  winRate: "Відсоток прибуткових",
-  avgPnl: "Средний PnL",
-  grossProfit: "Валовий прибуток",
-grossLoss: "Валовий збиток",
-bestTrade: "Лучшая сделка",
-worstTrade: "Худшая сделка",
-profitFactor: "Profit Factor",
-equityTitle: "Кривая доходности",
-equityText: "Накопительный PnL на основе сохранённых сделок.",
-equityEmpty: "Добавьте сделки с PnL, чтобы построить кривую доходности.",
-equityPoints: "точек",
-expand: "Развернуть",
-close: "Закрыть",
-cardLabels: {
-  entry: "Вход",
-  exit: "Выход",
-  stop: "Стоп",
-  risk: "Риск",
-  result: "Результат",
-  setup: "Сетап",
-  mistake: "Ошибка",
-  lesson: "Урок",
-  notes: "Заметки",
-},
-fullTitle: "Полный журнал",
-fullText: "Полный список сделок. Ниже доступны фильтры и экспорт.",
-downloadCsv: "Скачать CSV",
-downloadXlsx: "Скачать XLSX",
-deleteTradeButton: "Удалить сделку",
-editTradeButton: "Редактировать",
-openChartButton: "Открыть график",
-cancelEditButton: "Отменить редактирование",
-editModeTitle: "Режим редактирования",
-editModeText: "Измени подсвеченные поля и сохрани сделку.",
-actions: "Действия",
-deleteTradeConfirm: "Удалить эту сделку? Это действие нельзя отменить.",
-deleteTradeError: "Не удалось удалить сделку.",
-uploadScreenshotTitle: "Загрузка скриншота сделки",
-
-uploadScreenshotText:
-  "Прикрепляйте скриншоты графиков к сохранённым сделкам. Позже SkillEdge AI будет использовать их для анализа входов, выходов, стопов и повторяющихся ошибок на графике.",
-screenshotsCount: "скриншотов",
-screenshotTradeLabel: "Сделка",
-screenshotFileLabel: "Скриншот",
-screenshotChoose: "Выбрать скриншот",
-screenshotNoFile: "Файл не выбран",
-screenshotSelected: "Выбранный файл",
-screenshotHint:
-  "Шаги: 1) Выберите сделку  2) Нажмите «Выбрать скриншот»  3) Нажмите «Загрузить»",
-screenshotUploadHintCompact:
-  "Загружай от одного до трёх скринов с разными таймфреймами для более глубокого анализа.",
-  screenshotFormats: "Поддерживаемые форматы: PNG, JPG, WEBP",
-screenshotsColumn: "Скрины",
-openScreenshots: "Открыть",
-noScreenshotsForTrade: "Для этой сделки скрины не загружены.",
-screenshotViewerTitle: "Скрины сделки",
-loadingScreenshots: "Загружаем скрины...",
-  uploadButton: "Загрузить",
-uploadingButton: "Загрузка...",
-selectTradePlaceholder: "Выберите сделку",
-stepOne: "Шаг 1",
-stepTwo: "Шаг 2",
-stepThree: "Шаг 3",
-chartAnalyzeButton: "Разобрать график",
-chartAnalyzingButton: "Анализ графика...",
-chartScreenshotsLabel: "скриншотов",
-journalAnalysisTitle: "AI-анализ журнала сделок",
-journalAnalysisText:
-  "AI проанализирует сохранённые сделки, повторяющиеся ошибки, сетапы, эмоции, риск и качество исполнения.",
-journalAnalyzeButton: "Разобрать журнал",
-journalAnalyzingButton: "Анализ...",
-savedChartAnalysis: "Сохранённый AI-разбор графика",
-showChartHistory: "Показать AI-разборы",
-hideChartHistory: "Скрыть AI-разборы",
-noChartHistory: "Сохранённых разборов графика пока нет.",
-searchTicker: "Поиск тикера",
-allMarkets: "Все рынки",
-allSides: "Все направления",
-allResults: "Все результаты",
-marketLabels: {
-  stocks: "Акции",
-  crypto: "Крипто",
-  futures: "Фьючерсы",
-  forex: "Форекс",
-  options: "Опционы",
-},
-directionLabels: {
-  long: "Лонг",
-  short: "Шорт",
-},
-resultLabels: {
-  win: "Прибыльная",
-  loss: "Убыточная",
-  breakeven: "Безубыток",
-  notSet: "Не задано",
-},
-table: {
-  date: "Дата",
-  ticker: "Тикер",
-  market: "Рынок",
-  side: "Сторона",
-  entry: "Вход",
-  exit: "Выход",
-  stop: "Стоп",
-  risk: "Риск",
-  pnl: "PnL",
-  result: "Результат",
-  setup: "Сетап",
-},
-  recentTitle: "Последние сделки",
-  recentText:
-    "Последние 3 сделки из личного журнала. Полная таблица, фильтры и экспорт доступны ниже.",
-  empty:
-    "Сделок пока нет. Добавьте первую сделку, чтобы начать собирать базу своей статистики.",
-  tradesCount: "сделок",
-  saving: "Сохраняем...",
-  save: "Сохранить сделку",
-  updateTradeButton: "Обновить сделку",
-  updatingTradeButton: "Обновление...",
-  tickerRequired: "Введите тикер.",
-  tradeLimitReached: "Достигнут лимит сделок для вашего текущего тарифа",
-  tradeUsageTitle: "Использовано сделок",
-  tradesLeftLabel: "осталось",
-  screenshotLimitReached: "Достигнут лимит скриншотов для этой сделки",
-  screenshotUsageTitle: "Использовано скриншотов",
-  limitReached: "Достигнут лимит сделок для вашего текущего тарифа",
-  loginFirst: "Сначала войдите в аккаунт.",
-  saveFailed: "Не удалось сохранить сделку.",
-  fields: {
-    ticker: "Тикер",
-    date: "Дата",
-    market: "Рынок",
-    direction: "Направление",
-    entry: "Вход",
-    exit: "Выход",
-    stop: "Стоп",
-    size: "Размер позиции",
-    risk: "Риск $",
-    pnl: "PnL $",
-    result: "Результат",
-    setup: "Сетап",
-    emotion: "Эмоция",
-    mistake: "Ошибка",
-    lesson: "Урок",
-    notes: "Заметки",
-  },
-  placeholders: {
-    ticker: "AAPL / BTC / NQ",
-    entry: "100",
-    exit: "105",
-    stop: "98",
-    size: "Акции / контракты",
-    risk: "50",
-    pnl: "-25 / 120",
-    setup: "повернення VWAP / згасання гепу",
-    emotion: "Спокойствие / FOMO / страх",
-    mistake: "Что было сделано неправильно?",
-    lesson: "Что нужно запомнить на следующую сделку?",
-    notes: "Контекст, катализатор, лента, уровни...",
-  },
-  options: {
-    notSet: "Не задано",
-    win: "Плюс",
-    loss: "Минус",
-    breakeven: "Безубыток",
-  },
-},
-locked: {
-      title: "Активируйте тариф",
-      label: "Доступ закрыт",
-      text: "После оплаты откроются журнал сделок, SkillEdge AI-коуч, графики TradingView, обучение, отчёты и история AI-разборов.",
-      button: "Выбрать тариф",
+      title: "РћР±Р·РѕСЂ СЌС„С„РµРєС‚РёРІРЅРѕСЃС‚Рё",
+      text: "РЎРІРѕРґРєР° PnL, РїСЂРѕС†РµРЅС‚ РїСЂРёР±С‹Р»СЊРЅС‹С… СЃРґРµР»РѕРє, РѕС†РµРЅРєР° РґРёСЃС†РёРїР»РёРЅС‹, Р»СѓС‡С€РёРµ СЃРµС‚Р°РїС‹ Рё РіР»Р°РІРЅС‹Рµ РѕС€РёР±РєРё.",
+      pnlMonth: "PnL Р·Р° РјРµСЃСЏС†",
+      winRate: "РџСЂРѕС†РµРЅС‚ РїСЂРёР±С‹Р»СЊРЅС‹С…",
+      discipline: "РћС†РµРЅРєР° РґРёСЃС†РёРїР»РёРЅС‹",
+      weeklyAi: "AI-СЃРІРѕРґРєР° РЅРµРґРµР»Рё",
+      weeklyAiText:
+        "AI-СЃРІРѕРґРєР° СЃРѕР±РёСЂР°РµС‚ РєР»СЋС‡РµРІС‹Рµ РІС‹РІРѕРґС‹ РїРѕ Р¶СѓСЂРЅР°Р»Сѓ СЃРґРµР»РѕРє, СЂРёСЃРєСѓ, РґРёСЃС†РёРїР»РёРЅРµ Рё РїРѕРІС‚РѕСЂСЏСЋС‰РёРјСЃСЏ РѕС€РёР±РєР°Рј.",
+    },
+    charts: {
+      title: "Р“СЂР°С„РёРєРё TradingView",
+      text: "Р’СЃС‚СЂРѕРµРЅРЅС‹Р№ РіСЂР°С„РёРє TradingView РґР»СЏ Р°РЅР°Р»РёР·Р° С‚РёРєРµСЂРѕРІ, СѓСЂРѕРІРЅРµР№ Рё СЃРµС‚Р°РїРѕРІ.",
+      placeholder: "Р Р°Р±РѕС‡РµРµ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ TradingView РґРѕСЃС‚СѓРїРЅРѕ РІРЅСѓС‚СЂРё РјРѕРґСѓР»СЏ РіСЂР°С„РёРєРѕРІ.",
+      analyzeCurrentChart: "РџСЂРѕР°РЅР°Р»РёР·РёСЂРѕРІР°С‚СЊ РіСЂР°С„РёРє",
+      workspaceText: "Р Р°Р±РѕС‡Р°СЏ Р·РѕРЅР° СЃ РіСЂР°С„РёРєРѕРј, СЃРїРёСЃРєРѕРј РЅР°Р±Р»СЋРґРµРЅРёСЏ Рё Р»РёРґРµСЂР°РјРё РґРІРёР¶РµРЅРёСЏ СЂС‹РЅРєР°.",
+      watchlistExamples: "РџСЂРёРјРµСЂС‹ СЃРїРёСЃРєР° РЅР°Р±Р»СЋРґРµРЅРёСЏ: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      openWatchlist: "РћС‚РєСЂС‹С‚СЊ СЃРїРёСЃРѕРє",
+      hideWatchlist: "РЎРєСЂС‹С‚СЊ СЃРїРёСЃРѕРє",
+      watchlistTitle: "РЎРїРёСЃРѕРє РЅР°Р±Р»СЋРґРµРЅРёСЏ",
+      watchlistSubtitle: "РўРёРєРµСЂ / 24h % / РѕР±СЉС‘Рј",
+      addTickerButton: "Р”РѕР±Р°РІРёС‚СЊ",
+      addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      addTickerHint: "РџСЂРёРјРµСЂ: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+      sortSymbol: "РўРёРєРµСЂ",
+      sortChange: "% 24h",
+      sortVolume: "РћР±СЉС‘Рј",
+      symbolColumn: "РўРёРєРµСЂ",
+      percentColumn: "%",
+      volumeColumn: "РћР±СЉС‘Рј",
+      loadingWatchlist: "Р—Р°РіСЂСѓР¶Р°РµРј СЃРїРёСЃРѕРє РЅР°Р±Р»СЋРґРµРЅРёСЏ...",
+      emptyWatchlist: "РЎРїРёСЃРѕРє РїСѓСЃС‚. РќР°Р¶РјРё + Рё РґРѕР±Р°РІСЊ С‚РёРєРµСЂ.",
+      removeFromWatchlist: "РЈРґР°Р»РёС‚СЊ РёР· СЃРїРёСЃРєР°",
+      loginFirst: "РЎРЅР°С‡Р°Р»Р° РІРѕР№РґРёС‚Рµ РІ Р°РєРєР°СѓРЅС‚.",
+      settingsLoadError: "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ РЅР°СЃС‚СЂРѕР№РєРё РіСЂР°С„РёРєРѕРІ.",
+      addTickerError: "РќРµ СѓРґР°Р»РѕСЃСЊ РґРѕР±Р°РІРёС‚СЊ С‚РёРєРµСЂ РІ СЃРїРёСЃРѕРє РЅР°Р±Р»СЋРґРµРЅРёСЏ.",
+      removeTickerError: "РќРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ С‚РёРєРµСЂ РёР· СЃРїРёСЃРєР° РЅР°Р±Р»СЋРґРµРЅРёСЏ.",
+      moversStocks: "РђРєС†РёРё",
+      moversCrypto: "РљСЂРёРїС‚Рѕ",
+      moversGainers: "Р›РёРґРµСЂС‹ СЂРѕСЃС‚Р°",
+      moversLosers: "Р›РёРґРµСЂС‹ РїР°РґРµРЅРёСЏ",
+      moversCollapse: "РЎРІРµСЂРЅСѓС‚СЊ",
+      moversExpand: "Р Р°Р·РІРµСЂРЅСѓС‚СЊ",
+      moversName: "РќР°Р·РІР°РЅРёРµ",
+      moversPercentChange: "% РёР·РјРµРЅРµРЅРёСЏ",
+      moversLoading: "Р—Р°РіСЂСѓР¶Р°РµРј Р»РёРґРµСЂРѕРІ РґРІРёР¶РµРЅРёСЏ...",
+      moversEmpty: "РќРµС‚ РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ РїРѕРґ СЌС‚РѕС‚ С„РёР»СЊС‚СЂ.",
+      moversStocksNeedKey:
+        "Р›РёРґРµСЂС‹ РґРІРёР¶РµРЅРёСЏ РїРѕ Р°РєС†РёСЏРј РіРѕС‚РѕРІСЏС‚СЃСЏ Рє РїРѕРґРєР»СЋС‡РµРЅРёСЋ РїСЂРµРјРёР°Р»СЊРЅРѕРіРѕ РїРѕРєСЂС‹С‚РёСЏ СЂС‹РЅРѕС‡РЅС‹С… РґР°РЅРЅС‹С….",
+      chartAnalysisTitle: "AI-Р°РЅР°Р»РёР· РіСЂР°С„РёРєР°",
+      chartAnalysisText:
+        "SkillEdge AI Р°РЅР°Р»РёР·РёСЂСѓРµС‚ С‚РµРєСѓС‰РёР№ С‚РёРєРµСЂ, С‚Р°Р№РјС„СЂРµР№Рј, СЂС‹РЅРѕС‡РЅС‹Рµ РґР°РЅРЅС‹Рµ, СЃРІРµС‡Рё, РѕР±СЉС‘Рј Рё РєРѕРЅС‚РµРєСЃС‚ СЂРёСЃРєР°.",
+      chartAnalysisLoading: "РђРЅР°Р»РёР·РёСЂСѓРµРј С‚РµРєСѓС‰РёР№ РіСЂР°С„РёРє...",
+      chartAnalysisError: "РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРѕР°РЅР°Р»РёР·РёСЂРѕРІР°С‚СЊ С‚РµРєСѓС‰РёР№ РіСЂР°С„РёРє.",
+      chartAnalysisEmpty: "Р—Р°РїСѓСЃС‚Рё AI-Р°РЅР°Р»РёР·, С‡С‚РѕР±С‹ СѓРІРёРґРµС‚СЊ СЂР°Р·Р±РѕСЂ С‚РµРєСѓС‰РµРіРѕ РіСЂР°С„РёРєР°.",
+      chartAnalysisClose: "Р—Р°РєСЂС‹С‚СЊ",
+      chartAnalysisSymbol: "РўРёРєРµСЂ",
+      chartAnalysisInterval: "РўР°Р№РјС„СЂРµР№Рј",
+      chartAnalysisReportLabel: "РћС‚С‡С‘С‚ SkillEdge AI",
+      chartAnalysisDataLabel: "Р Р°Р·Р±РѕСЂ СЂС‹РЅРѕС‡РЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂС‹",
+      chartAnalysisSectionsLabel: "Р Р°Р·РґРµР»С‹ Р°РЅР°Р»РёР·Р°",
+      marketDataUnavailableTitle: "Р С‹РЅРѕС‡РЅС‹Рµ РґР°РЅРЅС‹Рµ РЅРµРґРѕСЃС‚СѓРїРЅС‹",
+      marketDataUnavailableText:
+        "SkillEdge AI РЅРµ СЃРјРѕРі Р·Р°РіСЂСѓР·РёС‚СЊ СЂС‹РЅРѕС‡РЅС‹Рµ РґР°РЅРЅС‹Рµ РїРѕ СЌС‚РѕРјСѓ С‚РёРєРµСЂСѓ РЅР° С‚РµРєСѓС‰РµРј С‚Р°СЂРёС„Рµ РґР°РЅРЅС‹С…. РџРѕРїСЂРѕР±СѓР№ Р±РѕР»РµРµ Р»РёРєРІРёРґРЅС‹Р№ С‚РёРєРµСЂ: AAPL, TSLA, NVDA, SPY РёР»Рё QQQ.",
+      marketDataPremiumTitle: "РќСѓР¶РµРЅ РїСЂРµРјРёСѓРј-РґРѕСЃС‚СѓРї Рє СЂС‹РЅРѕС‡РЅС‹Рј РґР°РЅРЅС‹Рј",
+      marketDataPremiumText:
+  "Р­С‚РѕС‚ С‚РёРєРµСЂ, С‚Р°Р№РјС„СЂРµР№Рј РёР»Рё РёСЃС‚РѕС‡РЅРёРє РґР°РЅРЅС‹С… РјРѕР¶РµС‚ С‚СЂРµР±РѕРІР°С‚СЊ Р±РѕР»РµРµ РІС‹СЃРѕРєРёР№ С‚Р°СЂРёС„ СЂС‹РЅРѕС‡РЅС‹С… РґР°РЅРЅС‹С…. SkillEdge AI РёСЃРїРѕР»СЊР·СѓРµС‚ РїСЂРµРјРёР°Р»СЊРЅРѕРµ СЂС‹РЅРѕС‡РЅРѕРµ РїРѕРєСЂС‹С‚РёРµ С‚Р°Рј, РіРґРµ РѕРЅРѕ РґРѕСЃС‚СѓРїРЅРѕ.",
+      marketDataGenericErrorTitle: "РђРЅР°Р»РёР· РІСЂРµРјРµРЅРЅРѕ РЅРµРґРѕСЃС‚СѓРїРµРЅ",
+      marketDataGenericErrorText:
+        "РЎРµР№С‡Р°СЃ РЅРµ СѓРґР°Р»РѕСЃСЊ РІС‹РїРѕР»РЅРёС‚СЊ Р°РЅР°Р»РёР· РіСЂР°С„РёРєР°. РџРѕРїСЂРѕР±СѓР№ РґСЂСѓРіРѕР№ С‚РёРєРµСЂ, С‚Р°Р№РјС„СЂРµР№Рј РёР»Рё Р·Р°РїСѓСЃС‚Рё Р°РЅР°Р»РёР· РµС‰С‘ СЂР°Р·.",
+      chartControlTickerLabel: "РўРёРєРµСЂ",
+      chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+      chartControlIntervalLabel: "РўР°Р№РјС„СЂРµР№Рј",
+      chartControlOpenChart: "РћС‚РєСЂС‹С‚СЊ РіСЂР°С„РёРє",
+      chartControlHint:
+        "РСЃРїРѕР»СЊР·СѓР№ СЌС‚Сѓ РїР°РЅРµР»СЊ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ TradingView Рё AI-Р°РЅР°Р»РёР·РѕРј. РР·РјРµРЅРµРЅРёСЏ РІРЅСѓС‚СЂРё СЃР°РјРѕРіРѕ TradingView РјРѕРіСѓС‚ РЅРµ СЃРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊСЃСЏ РѕР±СЂР°С‚РЅРѕ РІ SkillEdge AI.",
+    },
+    learning: {
+      title: "Р¦РµРЅС‚СЂ РѕР±СѓС‡РµРЅРёСЏ",
+      text: "РЎС‚СЂСѓРєС‚СѓСЂРЅРѕРµ РѕР±СѓС‡РµРЅРёРµ С‚СЂРµР№РґРёРЅРіСѓ, СЃРµС‚Р°РїС‹, СЂРёСЃРє-РјРµРЅРµРґР¶РјРµРЅС‚, РїСЃРёС…РѕР»РѕРіРёСЏ Рё РїРѕСЃС‚СЂРѕРµРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїР»РµР№Р±СѓРєР°.",
+      learningNoteTitle: "Р¦РµРЅС‚СЂ РѕР±СѓС‡РµРЅРёСЏ СЂР°Р±РѕС‚Р°РµС‚ РєР°Рє Р±Р°Р·Р° РїРѕРІС‚РѕСЂРµРЅРёСЏ",
+      learningNoteText:
+        "SkillEdge AI РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ СЃС„РѕРєСѓСЃРёСЂРѕРІР°РЅ РЅР° Р¶СѓСЂРЅР°Р»Рµ СЃРґРµР»РѕРє, Р°РЅР°Р»РёР·Рµ РіСЂР°С„РёРєРѕРІ, AI-СЂР°Р·Р±РѕСЂРµ Рё СЂР°Р·РІРёС‚РёРё С‚РѕСЂРіРѕРІРѕР№ СЃРёСЃС‚РµРјС‹. Р­С‚РѕС‚ СЂР°Р·РґРµР» СЃРѕР·РґР°РЅ РєР°Рє РєРѕСЂРѕС‚РєР°СЏ Р±Р°Р·Р° РґР»СЏ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РєР»СЋС‡РµРІС‹С… РїРѕРЅСЏС‚РёР№, С‡С‚РѕР±С‹ РєР»РёРµРЅС‚ Р±С‹СЃС‚СЂРµРµ РїРѕРЅРёРјР°Р» СЂРёСЃРє, СЃРµС‚Р°РїС‹, СЃС‚СЂСѓРєС‚СѓСЂСѓ СЂС‹РЅРєР° Рё Р»РѕРіРёРєСѓ AI-Р°РЅР°Р»РёР·Р°.",
+      overviewLabel: "РћР±Р·РѕСЂ РѕР±СѓС‡РµРЅРёСЏ",
+      modulesLabel: "РњРѕРґСѓР»Рё",
+      lessonsLabel: "СѓСЂРѕРєРѕРІ",
+      progressLabel: "РџСЂРѕРіСЂРµСЃСЃ",
+      totalProgressLabel: "РћР±С‰РёР№ РїСЂРѕРіСЂРµСЃСЃ",
+      startButton: "РќР°С‡Р°С‚СЊ",
+      continueButton: "РџСЂРѕРґРѕР»Р¶РёС‚СЊ",
+      reviewButton: "РџРѕРІС‚РѕСЂРёС‚СЊ",
+      notStartedStatus: "РќРµ РЅР°С‡Р°С‚Рѕ",
+      inProgressStatus: "Р’ РїСЂРѕС†РµСЃСЃРµ",
+      completedStatus: "РџСЂРѕР№РґРµРЅРѕ",
+      lockedLabel: "РЎРєРѕСЂРѕ",
+      estimatedTimeLabel: "Р’СЂРµРјСЏ",
+      levelLabel: "РЈСЂРѕРІРµРЅСЊ",
+      beginnerLevel: "РќР°С‡Р°Р»СЊРЅС‹Р№",
+      intermediateLevel: "РЎСЂРµРґРЅРёР№",
+      advancedLevel: "РџСЂРѕРґРІРёРЅСѓС‚С‹Р№",
+      moduleOneTitle: "РћСЃРЅРѕРІС‹ СЂС‹РЅРєР°",
+      moduleOneText:
+        "Р Р°Р·Р±РµСЂРёСЃСЊ, РєР°Рє СЂР°Р±РѕС‚Р°РµС‚ СЂС‹РЅРѕРє, РєР°Рє РІР·Р°РёРјРѕРґРµР№СЃС‚РІСѓСЋС‚ РѕСЂРґРµСЂР° Рё РїРѕС‡РµРјСѓ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ СЂРµС€Р°РµС‚.",
+      moduleTwoTitle: "РўРµС…РЅРёС‡РµСЃРєРёР№ Р°РЅР°Р»РёР·",
+      moduleTwoText:
+        "РЎРІРµС‡Рё, СѓСЂРѕРІРЅРё, С‚СЂРµРЅРґ/СЂРµРЅР¶, РѕР±СЉС‘Рј Рё С‡РёСЃС‚РѕРµ С‡С‚РµРЅРёРµ РіСЂР°С„РёРєР° Р±РµР· Р»РёС€РЅРµРіРѕ С€СѓРјР°.",
+      moduleThreeTitle: "Р РёСЃРє-РјРµРЅРµРґР¶РјРµРЅС‚",
+      moduleThreeText:
+        "РџСЂР°РІРёР»Р° СЂРёСЃРєР° РЅР° СЃРґРµР»РєСѓ, СЃС‚РѕРї-Р»РѕСЃСЃ, СЂР°Р·РјРµСЂ РїРѕР·РёС†РёРё Рё СЃРѕРѕС‚РЅРѕС€РµРЅРёРµ СЂРёСЃРє/РїСЂРёР±С‹Р»СЊ.",
+      moduleFourTitle: "Р’РЅСѓС‚СЂРёРґРЅРµРІРЅРѕР№ РёРјРїСѓР»СЊСЃ",
+      moduleFourText:
+        "Р›РѕРіРёРєР° РёРјРїСѓР»СЊСЃР°, РїСЂРѕР±РѕР№, РІРѕР·РІСЂР°С‚ СѓСЂРѕРІРЅСЏ, Р»РѕР¶РЅС‹Р№ РїСЂРѕР±РѕР№ Рё СЃРµС‚Р°РїС‹ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ РґРІРёР¶РµРЅРёСЏ.",
+      moduleFiveTitle: "РџСЃРёС…РѕР»РѕРіРёСЏ С‚СЂРµР№РґРёРЅРіР°",
+      moduleFiveText:
+        "РљРѕРЅС‚СЂРѕР»СЊ РїРµСЂРµС‚РѕСЂРіРѕРІРєРё, С‚РѕСЂРіРѕРІР»Рё РёР· РјРµСЃС‚Рё, СЃС‚СЂР°С…Р°, СЃРѕРјРЅРµРЅРёР№ Рё РёРјРїСѓР»СЊСЃРёРІРЅС‹С… РІС…РѕРґРѕРІ.",
+      moduleSixTitle: "РџР»РµР№Р±СѓРє / РЎРµС‚Р°РїС‹",
+      moduleSixText:
+        "РџСЂРµРІСЂР°С‰Р°Р№ РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ РїР°С‚С‚РµСЂРЅС‹ РІ С‚РѕСЂРіРѕРІС‹Р№ РїР»РµР№Р±СѓРє СЃ С‚СЂРёРіРіРµСЂР°РјРё РІС…РѕРґР° Рё СѓСЃР»РѕРІРёСЏРјРё РѕС‚РјРµРЅС‹ РёРґРµРё.",
+      lessonMarketStructure: "РљР°Рє СЂР°Р±РѕС‚Р°РµС‚ СЂС‹РЅРѕРє",
+      lessonOrderTypes: "РўРёРїС‹ РѕСЂРґРµСЂРѕРІ",
+      lessonBidAskSpread: "Bid / Ask / РЎРїСЂРµРґ",
+      lessonLiquidity: "Р›РёРєРІРёРґРЅРѕСЃС‚СЊ",
+      lessonCandles: "РЎРІРµС‡Рё",
+      lessonLevels: "РџРѕРґРґРµСЂР¶РєР° Рё СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ",
+      lessonTrendRange: "РўСЂРµРЅРґ РёР»Рё СЂРµРЅР¶",
+      lessonVolume: "РђРЅР°Р»РёР· РѕР±СЉС‘РјР°",
+      lessonRiskPerTrade: "Р РёСЃРє РЅР° СЃРґРµР»РєСѓ",
+      lessonStopLoss: "РЎС‚РѕРї-Р»РѕСЃСЃ",
+      lessonRiskReward: "Р РёСЃРє / РџРѕС‚РµРЅС†РёР°Р»",
+      lessonPositionSizing: "Р Р°Р·РјРµСЂ РїРѕР·РёС†РёРё",
+      lessonMomentumLogic: "Р›РѕРіРёРєР° РёРјРїСѓР»СЊСЃР°",
+      lessonBreakoutReclaim: "РџСЂРѕР±РѕР№ / РІРѕР·РІСЂР°С‚ СѓСЂРѕРІРЅСЏ",
+      lessonFailedBreakout: "Р›РѕР¶РЅС‹Р№ РїСЂРѕР±РѕР№",
+      lessonContinuation: "РџСЂРѕРґРѕР»Р¶РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ",
+      lessonDiscipline: "Р”РёСЃС†РёРїР»РёРЅР°",
+      lessonOvertrading: "РџРµСЂРµС‚РѕСЂРіРѕРІРєР°",
+      lessonRevengeTrading: "РўРѕСЂРіРѕРІР»СЏ РёР· РјРµСЃС‚Рё",
+      lessonPatience: "РўРµСЂРїРµРЅРёРµ",
+      lessonSetupChecklist: "Р§РµРєР»РёСЃС‚ СЃРµС‚Р°РїР°",
+      lessonEntryTrigger: "РўСЂРёРіРіРµСЂ РІС…РѕРґР°",
+      lessonInvalidation: "РћС‚РјРµРЅР° РёРґРµРё",
+      lessonReviewProcess: "РџСЂРѕС†РµСЃСЃ СЂР°Р·Р±РѕСЂР°",
+      advancedTracksLabel: "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РЅР°РїСЂР°РІР»РµРЅРёСЏ",
+      advancedTracksText:
+        "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ СЃРїРµС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅС‹Рµ РЅР°РїСЂР°РІР»РµРЅРёСЏ РѕР±СѓС‡РµРЅРёСЏ РґР»СЏ СѓРіР»СѓР±Р»РµРЅРёСЏ С‚РѕСЂРіРѕРІРѕР№ СЃРёСЃС‚РµРјС‹ РІРЅСѓС‚СЂРё SkillEdge AI.",
+      comingSoonButton: "РЎРєРѕСЂРѕ",
+      activeModuleLabel: "РђРєС‚РёРІРЅС‹Р№ РјРѕРґСѓР»СЊ",
+      openLessonButton: "РћС‚РєСЂС‹С‚СЊ СѓСЂРѕРє",
+      selectedModuleHint:
+        "Р’С‹Р±РµСЂРё РјРѕРґСѓР»СЊ, С‡С‚РѕР±С‹ СѓРІРёРґРµС‚СЊ СѓСЂРѕРєРё, РїСЂРѕРіСЂРµСЃСЃ Рё СЃР»РµРґСѓСЋС‰РёР№ С€Р°Рі РѕР±СѓС‡РµРЅРёСЏ.",
+      nextLessonLabel: "РЎР»РµРґСѓСЋС‰РёР№ СѓСЂРѕРє",
+      moduleDetailsLabel: "Р”РµС‚Р°Р»Рё РјРѕРґСѓР»СЏ",
+      lessonViewerLabel: "РџСЂРѕСЃРјРѕС‚СЂ СѓСЂРѕРєР°",
+      lessonContentLabel: "РЎРѕРґРµСЂР¶Р°РЅРёРµ СѓСЂРѕРєР°",
+      lessonCloseButton: "Р—Р°РєСЂС‹С‚СЊ СѓСЂРѕРє",
+      lessonStartText:
+        "Р­С‚РѕС‚ СѓСЂРѕРє РѕС„РѕСЂРјР»РµРЅ РєР°Рє РєРѕСЂРѕС‚РєРёР№ РїСЂР°РєС‚РёС‡РµСЃРєРёР№ Р±Р»РѕРє SkillEdge AI. РР·СѓС‡Рё РєР»СЋС‡РµРІС‹Рµ РёРґРµРё, РІС‹РїРѕР»РЅРё Р·Р°РґР°РЅРёРµ Рё СЃРІСЏР¶Рё РєРѕРЅС†РµРїС†РёСЋ СЃРѕ СЃРІРѕРёРјРё СЃРґРµР»РєР°РјРё.",
+      lessonKeyPointsLabel: "РљР»СЋС‡РµРІС‹Рµ РёРґРµРё",
+      lessonPracticeLabel: "РџСЂР°РєС‚РёС‡РµСЃРєРѕРµ Р·Р°РґР°РЅРёРµ",
+      lessonPracticeText:
+        "Р Р°Р·Р±РµСЂРё РєРѕРЅС†РµРїС†РёСЋ, РЅР°Р№РґРё РѕРґРёРЅ РїСЂРёРјРµСЂ РЅР° РіСЂР°С„РёРєРµ Рё Р·Р°РїРёС€Рё, С‡С‚Рѕ РїРѕРґС‚РІРµСЂР¶РґР°РµС‚ РёР»Рё Р»РѕРјР°РµС‚ РёРґРµСЋ.",
+      markLessonCompletedButton: "РћС‚РјРµС‚РёС‚СЊ СѓСЂРѕРє РїСЂРѕР№РґРµРЅРЅС‹Рј",
+      lessonCompletedButton: "РЈСЂРѕРє РїСЂРѕР№РґРµРЅ",
+      frontendProgressNote:
+        "РџСЂРѕРіСЂРµСЃСЃ СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ РІ Р°РєРєР°СѓРЅС‚Рµ SkillEdge AI Рё РѕСЃС‚Р°РЅРµС‚СЃСЏ РїРѕСЃР»Рµ РїРµСЂРµР·Р°РіСЂСѓР·РєРё.",
+      learningProgressLoading: "Р—Р°РіСЂСѓР¶Р°РµРј РїСЂРѕРіСЂРµСЃСЃ РѕР±СѓС‡РµРЅРёСЏ...",
+      learningProgressSaving: "РЎРѕС…СЂР°РЅСЏРµРј РїСЂРѕРіСЂРµСЃСЃ...",
+      learningProgressSaved: "РџСЂРѕРіСЂРµСЃСЃ СЃРѕС…СЂР°РЅС‘РЅ",
+      lessonAutoAdvanced:
+        "РЈСЂРѕРє СЃРѕС…СЂР°РЅС‘РЅ. РЎР»РµРґСѓСЋС‰РёР№ СѓСЂРѕРє РѕС‚РєСЂС‹С‚ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё.",
+      moduleCompletedMessage: "РњРѕРґСѓР»СЊ Р·Р°РІРµСЂС€С‘РЅ. РћС‚Р»РёС‡РЅР°СЏ СЂР°Р±РѕС‚Р°.",
+      learningProgressError: "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРёРЅС…СЂРѕРЅРёР·РёСЂРѕРІР°С‚СЊ РїСЂРѕРіСЂРµСЃСЃ РѕР±СѓС‡РµРЅРёСЏ.",
+      extraModuleOneTitle: "Smart Money Concepts Рё СЂР°Р±РѕС‡РёРµ СЃРµС‚Р°РїС‹",
+      extraModuleOneText:
+        "РЎС‚СЂСѓРєС‚СѓСЂР° СЂС‹РЅРєР°, Р»РёРєРІРёРґРЅРѕСЃС‚СЊ, РїСЂРѕРІРѕРєР°С†РёРё, РёРјРїСѓР»СЊСЃРЅРѕРµ СЃРјРµС‰РµРЅРёРµ, РѕСЂРґРµСЂ-Р±Р»РѕРєРё Рё РїСЂР°РєС‚РёС‡РµСЃРєР°СЏ Р»РѕРіРёРєР° СЂР°Р±РѕС‡РёС… СЃРµС‚Р°РїРѕРІ.",
+      extraModuleTwoTitle: "РЎРєР°Р»СЊРїРёРЅРі СЃС‚Р°РєР°РЅР° РІ CScalp",
+      extraModuleTwoText:
+        "РћР±СѓС‡РµРЅРёРµ РїР»Р°С‚С„РѕСЂРјРµ, Р±Р°Р·РѕРІР°СЏ СЂР°Р±РѕС‚Р° СЃ РїРѕС‚РѕРєРѕРј РѕСЂРґРµСЂРѕРІ, РїСЂРѕР±РѕР№ СѓСЂРѕРІРЅСЏ Рё СЃРµС‚Р°РїС‹ В«РЅРѕР¶РёВ» РґР»СЏ Р°РєС‚РёРІРЅРѕРіРѕ СЃРєР°Р»СЊРїРёРЅРіР°.",
+      extraModuleThreeTitle: "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ РјРѕРґСѓР»СЊ 3",
+      extraModuleThreeText:
+        "Р­С‚РѕС‚ РјРѕРґСѓР»СЊ Р·Р°СЂРµР·РµСЂРІРёСЂРѕРІР°РЅ РїРѕРґ СЃР»РµРґСѓСЋС‰РёР№ СЃРїРµС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅС‹Р№ Р±Р»РѕРє РѕР±СѓС‡РµРЅРёСЏ.",
+      extraModuleFourTitle: "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ РјРѕРґСѓР»СЊ 4",
+      extraModuleFourText:
+        "Р­С‚РѕС‚ РјРѕРґСѓР»СЊ Р·Р°СЂРµР·РµСЂРІРёСЂРѕРІР°РЅ РїРѕРґ СЃР»РµРґСѓСЋС‰РёР№ СЃРїРµС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅС‹Р№ Р±Р»РѕРє РѕР±СѓС‡РµРЅРёСЏ.",
+      extraModuleOneLessonOne: "РЎС‚СЂСѓРєС‚СѓСЂР° СЂС‹РЅРєР°",
+      extraModuleOneLessonTwo: "Р—РѕРЅС‹ Р»РёРєРІРёРґРЅРѕСЃС‚Рё",
+      extraModuleOneLessonThree: "РћСЂРґРµСЂ-Р±Р»РѕРєРё",
+      extraModuleOneLessonFour: "Р Р°Р±РѕС‡РёРµ СЃРµС‚Р°РїС‹",
+      extraModuleTwoLessonOne: "РРЅС‚РµСЂС„РµР№СЃ CScalp",
+      extraModuleTwoLessonTwo: "РћСЃРЅРѕРІС‹ СЃС‚Р°РєР°РЅР°",
+      extraModuleTwoLessonThree: "РџСЂРѕР±РѕР№ СѓСЂРѕРІРЅСЏ",
+      extraModuleTwoLessonFour: "РЎРµС‚Р°Рї В«РЅРѕР¶РёВ»",
+      extraModuleThreeLessonOne: "РЈСЂРѕРє 1",
+      extraModuleThreeLessonTwo: "РЈСЂРѕРє 2",
+      extraModuleThreeLessonThree: "РЈСЂРѕРє 3",
+      extraModuleThreeLessonFour: "РЈСЂРѕРє 4",
+      extraModuleFourLessonOne: "РЈСЂРѕРє 1",
+      extraModuleFourLessonTwo: "РЈСЂРѕРє 2",
+      extraModuleFourLessonThree: "РЈСЂРѕРє 3",
+      extraModuleFourLessonFour: "РЈСЂРѕРє 4",
+    },
+    reports: {
+      title: "РћС‚С‡С‘С‚С‹",
+      text: "РЎС‚Р°С‚РёСЃС‚РёРєР° РїРѕ Р¶СѓСЂРЅР°Р»Сѓ, РґРёРЅР°РјРёРєР° PnL, РєР°С‡РµСЃС‚РІРѕ СЃРµС‚Р°РїРѕРІ, РѕС€РёР±РєРё Рё СЃРёР»СЊРЅС‹Рµ СЃС‚РѕСЂРѕРЅС‹ С‚РѕСЂРіРѕРІР»Рё.",
+      placeholder:
+        "Р Р°СЃС€РёСЂРµРЅРЅС‹Рµ РѕС‚С‡С‘С‚С‹ С„РѕСЂРјРёСЂСѓСЋС‚СЃСЏ РЅР° РѕСЃРЅРѕРІРµ Р¶СѓСЂРЅР°Р»Р°, С„РёР»СЊС‚СЂРѕРІ Рё СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… СЃРґРµР»РѕРє.",
+      emptyTitle: "РџРѕРєР° РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РґР°РЅРЅС‹С… РґР»СЏ РѕС‚С‡С‘С‚Р°",
+      emptyText:
+        "Р”РѕР±Р°РІСЊ РЅРµСЃРєРѕР»СЊРєРѕ СЃРґРµР»РѕРє РІ Р¶СѓСЂРЅР°Р», С‡С‚РѕР±С‹ SkillEdge AI СЃРјРѕРі РїРѕСЃС‚СЂРѕРёС‚СЊ РѕС‚С‡С‘С‚ РїРѕ PnL, РїСЂРѕС†РµРЅС‚Сѓ РїСЂРёР±С‹Р»СЊРЅС‹С… СЃРґРµР»РѕРє, СЃРµС‚Р°РїР°Рј, РѕС€РёР±РєР°Рј Рё РґРёРЅР°РјРёРєРµ СЂРµР·СѓР»СЊС‚Р°С‚Р°.",
+      totalTrades: "Р’СЃРµРіРѕ СЃРґРµР»РѕРє",
+      totalTradesHelper: "Р’СЃРµ СЃРґРµР»РєРё РёР· Р¶СѓСЂРЅР°Р»Р°",
+      totalPnl: "РћР±С‰РёР№ PnL",
+      totalPnlHelper: "РЎСѓРјРјР°СЂРЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ РїРѕ Р·Р°РєСЂС‹С‚С‹Рј СЃРґРµР»РєР°Рј",
+      winRate: "РџСЂРѕС†РµРЅС‚ РїСЂРёР±С‹Р»СЊРЅС‹С…",
+      averagePnl: "РЎСЂРµРґРЅРёР№ PnL",
+      averagePnlHelper: "РЎСЂРµРґРЅРёР№ СЂРµР·СѓР»СЊС‚Р°С‚ РЅР° СЃРґРµР»РєСѓ",
+      profitFactor: "Profit Factor",
+      profitFactorHelper: "Р’Р°Р»РѕРІР°СЏ РїСЂРёР±С‹Р»СЊ / РІР°Р»РѕРІС‹Р№ СѓР±С‹С‚РѕРє",
+      bestWorst: "Р›СѓС‡С€Р°СЏ / С…СѓРґС€Р°СЏ",
+      bestWorstHelper: "Р›СѓС‡С€Р°СЏ Рё С…СѓРґС€Р°СЏ СЃРґРµР»РєР°",
+      equityTitle: "РљСЂРёРІР°СЏ РґРѕС…РѕРґРЅРѕСЃС‚Рё",
+      equitySubtitle: "Р”РёРЅР°РјРёРєР° РЅР°РєРѕРїРёС‚РµР»СЊРЅРѕРіРѕ PnL",
+      points: "С‚РѕС‡РµРє",
+      directionTitle: "Р›РѕРЅРі РїСЂРѕС‚РёРІ С€РѕСЂС‚Р°",
+      directionSubtitle: "Р РµР·СѓР»СЊС‚Р°С‚ РїРѕ РЅР°РїСЂР°РІР»РµРЅРёСЋ",
+      marketBreakdown: "Р С‹РЅРєРё",
+      setupBreakdown: "РЎРµС‚Р°РїС‹",
+      mistakesBreakdown: "РћС€РёР±РєРё",
+      noData: "РџРѕРєР° РЅРµС‚ РґР°РЅРЅС‹С….",
+      filtersTitle: "Р¤РёР»СЊС‚СЂС‹ РѕС‚С‡С‘С‚Р°",
+      filtersText:
+        "РЎСѓР¶Р°Р№ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РїРѕ РїРµСЂРёРѕРґСѓ, СЂС‹РЅРєСѓ, РЅР°РїСЂР°РІР»РµРЅРёСЋ Рё СЃРµС‚Р°РїСѓ, С‡С‚РѕР±С‹ РІРёРґРµС‚СЊ СЂРµР°Р»СЊРЅРѕРµ РєР°С‡РµСЃС‚РІРѕ С‚РѕСЂРіРѕРІР»Рё.",
+      resetFilters: "РЎР±СЂРѕСЃРёС‚СЊ С„РёР»СЊС‚СЂС‹",
+      periodFilter: "РџРµСЂРёРѕРґ",
+      periodAll: "Р’СЃС‘ РІСЂРµРјСЏ",
+      period7d: "7 РґРЅРµР№",
+      period30d: "30 РґРЅРµР№",
+      period90d: "90 РґРЅРµР№",
+      marketFilter: "Р С‹РЅРѕРє",
+      allMarkets: "Р’СЃРµ СЂС‹РЅРєРё",
+      directionFilter: "РќР°РїСЂР°РІР»РµРЅРёРµ",
+      allDirections: "Р’СЃРµ РЅР°РїСЂР°РІР»РµРЅРёСЏ",
+      setupFilter: "РЎРµС‚Р°Рї",
+      allSetups: "Р’СЃРµ СЃРµС‚Р°РїС‹",
+      filteredTrades: "РЎРґРµР»РѕРє РІ С„РёР»СЊС‚СЂРµ",
+      noFilteredTradesTitle: "РџРѕРґ РІС‹Р±СЂР°РЅРЅС‹Рµ С„РёР»СЊС‚СЂС‹ СЃРґРµР»РѕРє РЅРµС‚",
+      noFilteredTradesText:
+        "РџРѕРїСЂРѕР±СѓР№ РёР·РјРµРЅРёС‚СЊ РїРµСЂРёРѕРґ, СЂС‹РЅРѕРє, РЅР°РїСЂР°РІР»РµРЅРёРµ РёР»Рё СЃРµС‚Р°Рї. РЎРґРµР»РєРё РІ Р¶СѓСЂРЅР°Р»Рµ РµСЃС‚СЊ, РЅРѕ С‚РµРєСѓС‰Р°СЏ РєРѕРјР±РёРЅР°С†РёСЏ С„РёР»СЊС‚СЂРѕРІ РЅРёС‡РµРіРѕ РЅРµ РЅР°С€Р»Р°.",
+      aiReportTitle: "AI-РѕС‚С‡С‘С‚",
+      aiReportSubtitle: "РЎРІРѕРґРєР° РїРѕ РІС‹Р±СЂР°РЅРЅС‹Рј СЃРґРµР»РєР°Рј",
+      aiReportText:
+        "РЎРіРµРЅРµСЂРёСЂСѓР№ РєСЂР°С‚РєРёР№ РѕС‚С‡С‘С‚ РїРѕ С‚РµРєСѓС‰РµРјСѓ С„РёР»СЊС‚СЂСѓ: С‡С‚Рѕ СЂР°Р±РѕС‚Р°РµС‚, РіРґРµ РѕС€РёР±РєРё, РєР°РєРѕР№ СЂРёСЃРє, РєР°РєРёРµ СЃРµС‚Р°РїС‹ РґР°СЋС‚ Р»СѓС‡С€РёР№ СЂРµР·СѓР»СЊС‚Р°С‚ Рё РЅР° С‡С‚Рѕ РѕР±СЂР°С‚РёС‚СЊ РІРЅРёРјР°РЅРёРµ РґР°Р»СЊС€Рµ.",
+      aiReportButton: "РЎРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РѕС‚С‡С‘С‚",
+      aiReportLoading: "Р“РµРЅРµСЂРёСЂСѓРµРј...",
+      aiReportError: "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ AI-РѕС‚С‡С‘С‚.",
+      aiReportLabel: "AI-РѕС‚С‡С‘С‚",
+      generateAiReport: "РЎРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ РѕС‚С‡С‘С‚",
+      aiReportGenerating: "Р“РµРЅРµСЂРёСЂСѓРµРј РѕС‚С‡С‘С‚...",
+      aiReportPlaceholder:
+        "AI-РѕС‚С‡С‘С‚ РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ РїРѕСЃР»Рµ РіРµРЅРµСЂР°С†РёРё. РћРЅ СЃРѕС…СЂР°РЅРёС‚СЃСЏ РІ РёСЃС‚РѕСЂРёРё, С‡С‚РѕР±С‹ РєР»РёРµРЅС‚ РјРѕРі РІРµСЂРЅСѓС‚СЊСЃСЏ Рє РЅРµРјСѓ РїРѕР·Р¶Рµ.",
+      aiReportResultLabel: "Р РµР·СѓР»СЊС‚Р°С‚",
+      latestAiReportTitle: "РџРѕСЃР»РµРґРЅРёР№ AI-РѕС‚С‡С‘С‚",
+      savedAiReportTitle: "РЎРѕС…СЂР°РЅС‘РЅРЅС‹Р№ AI-РѕС‚С‡С‘С‚",
+      aiReportHistoryLabel: "РСЃС‚РѕСЂРёСЏ",
+      aiReportHistoryTitle: "РСЃС‚РѕСЂРёСЏ AI-РѕС‚С‡С‘С‚РѕРІ",
+      aiReportHistoryText:
+        "РћС‚РєСЂС‹РІР°Р№ РїСЂРѕС€Р»С‹Рµ AI-СЃРІРѕРґРєРё РїРѕ С„РёР»СЊС‚СЂР°Рј Рё Р±С‹СЃС‚СЂРѕ РІРѕР·РІСЂР°С‰Р°Р№СЃСЏ Рє РІР°Р¶РЅС‹Рј РІС‹РІРѕРґР°Рј.",
+      aiReportHistoryEmpty: "РџРѕРєР° СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… AI-РѕС‚С‡С‘С‚РѕРІ РЅРµС‚.",
+      currentSummaryLabel: "РўРµРєСѓС‰Р°СЏ СЃРІРѕРґРєР°",
+      allPeriods: "Р’СЃРµ РїРµСЂРёРѕРґС‹",
+      deleteAiReport: "РЈРґР°Р»РёС‚СЊ РѕС‚С‡С‘С‚",
+      copyAiReport: "РЎРєРѕРїРёСЂРѕРІР°С‚СЊ",
+      downloadAiReport: "РЎРєР°С‡Р°С‚СЊ .txt",
+      aiReportCopied: "AI-РѕС‚С‡С‘С‚ СЃРєРѕРїРёСЂРѕРІР°РЅ.",
+      aiReportCopyFailed: "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРєРѕРїРёСЂРѕРІР°С‚СЊ РѕС‚С‡С‘С‚.",
+      aiReportDownloaded: "AI-РѕС‚С‡С‘С‚ СЃРєР°С‡Р°РЅ.",
+      upgradeForAiReports: "РќСѓР¶РµРЅ Edge",
+      aiReportUpgradeRequired:
+        "AI-РѕС‚С‡С‘С‚С‹ РґРѕСЃС‚СѓРїРЅС‹ РЅР° С‚Р°СЂРёС„Р°С… SkillEdge Edge Рё SkillEdge Elite.",
+      aiReportLockedText:
+        "AI-РѕС‚С‡С‘С‚С‹ РїРѕРјРѕРіР°СЋС‚ СЂР°Р·РѕР±СЂР°С‚СЊ РІС‹Р±СЂР°РЅРЅС‹Рµ СЃРґРµР»РєРё, РЅР°Р№С‚Рё Р»СѓС‡С€РёРµ СЃРµС‚Р°РїС‹, РѕС€РёР±РєРё Рё СЃР»РµРґСѓСЋС‰РёР№ С„РѕРєСѓСЃ. Р­С‚Р° С„СѓРЅРєС†РёСЏ РґРѕСЃС‚СѓРїРЅР° РЅР° С‚Р°СЂРёС„Р°С… SkillEdge Edge Рё SkillEdge Elite.",
+      aiReportPlanHint: "AI-РѕС‚С‡С‘С‚РѕРІ РІ РјРµСЃСЏС† РЅР° С‚РµРєСѓС‰РµРј С‚Р°СЂРёС„Рµ",
+    },
+    journal: {
+      title: "Р–СѓСЂРЅР°Р» СЃРґРµР»РѕРє",
+      text: "Р”РѕР±Р°РІР»СЏР№С‚Рµ СЃРґРµР»РєРё, С„РёРєСЃРёСЂСѓР№С‚Рµ СЂРёСЃРє, СЂРµР·СѓР»СЊС‚Р°С‚, СЌРјРѕС†РёРё, РѕС€РёР±РєРё Рё СѓСЂРѕРєРё.",
+      locked: "Р”Р»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ СЃРґРµР»РѕРє РЅСѓР¶РµРЅ Р°РєС‚РёРІРЅС‹Р№ С‚Р°СЂРёС„ РёР»Рё РїСЂРѕР±РЅС‹Р№ РґРѕСЃС‚СѓРї.",
+      addTitle: "Р”РѕР±Р°РІРёС‚СЊ СЃРґРµР»РєСѓ",
+      editTitle: "Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ СЃРґРµР»РєСѓ",
+      addModeText: "Р”РѕР±Р°РІСЊ РЅРѕРІСѓСЋ СЃРґРµР»РєСѓ РІ Р»РёС‡РЅС‹Р№ Р¶СѓСЂРЅР°Р».",
+      addText:
+        "Р—Р°РїРѕР»РЅРё Р±Р°Р·РѕРІС‹Рµ РґР°РЅРЅС‹Рµ, РґРѕР±Р°РІСЊ СЃРєСЂРёРЅС€РѕС‚С‹ Рё РёСЃРїРѕР»СЊР·СѓР№ AI-СЂР°Р·Р±РѕСЂ РґР»СЏ РѕС†РµРЅРєРё СЃРґРµР»РєРё.",
+      totalTrades: "Р’СЃРµРіРѕ СЃРґРµР»РѕРє",
+      totalPnl: "РћР±С‰РёР№ PnL",
+      winRate: "РџСЂРѕС†РµРЅС‚ РїСЂРёР±С‹Р»СЊРЅС‹С…",
+      avgPnl: "РЎСЂРµРґРЅРёР№ PnL",
+      grossProfit: "Р’Р°Р»РѕРІР°СЏ РїСЂРёР±С‹Р»СЊ",
+      grossLoss: "Р’Р°Р»РѕРІС‹Р№ СѓР±С‹С‚РѕРє",
+      bestTrade: "Р›СѓС‡С€Р°СЏ СЃРґРµР»РєР°",
+      worstTrade: "РҐСѓРґС€Р°СЏ СЃРґРµР»РєР°",
+      profitFactor: "Profit Factor",
+      equityTitle: "РљСЂРёРІР°СЏ РґРѕС…РѕРґРЅРѕСЃС‚Рё",
+      equityText: "РќР°РєРѕРїРёС‚РµР»СЊРЅС‹Р№ PnL РЅР° РѕСЃРЅРѕРІРµ СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… СЃРґРµР»РѕРє.",
+      equityEmpty: "Р”РѕР±Р°РІСЊС‚Рµ СЃРґРµР»РєРё СЃ PnL, С‡С‚РѕР±С‹ РїРѕСЃС‚СЂРѕРёС‚СЊ РєСЂРёРІСѓСЋ РґРѕС…РѕРґРЅРѕСЃС‚Рё.",
+      equityPoints: "С‚РѕС‡РµРє",
+      expand: "Р Р°Р·РІРµСЂРЅСѓС‚СЊ",
+      close: "Р—Р°РєСЂС‹С‚СЊ",
+      cardLabels: {
+        entry: "Р’С…РѕРґ",
+        exit: "Р’С‹С…РѕРґ",
+        stop: "РЎС‚РѕРї",
+        risk: "Р РёСЃРє",
+        result: "Р РµР·СѓР»СЊС‚Р°С‚",
+        setup: "РЎРµС‚Р°Рї",
+        mistake: "РћС€РёР±РєР°",
+        lesson: "РЈСЂРѕРє",
+        notes: "Р—Р°РјРµС‚РєРё",
+      },
+      fullTitle: "РџРѕР»РЅС‹Р№ Р¶СѓСЂРЅР°Р»",
+      fullText: "РџРѕР»РЅС‹Р№ СЃРїРёСЃРѕРє СЃРґРµР»РѕРє. РќРёР¶Рµ РґРѕСЃС‚СѓРїРЅС‹ С„РёР»СЊС‚СЂС‹ Рё СЌРєСЃРїРѕСЂС‚.",
+      downloadCsv: "РЎРєР°С‡Р°С‚СЊ CSV",
+      downloadXlsx: "РЎРєР°С‡Р°С‚СЊ XLSX",
+      deleteTradeButton: "РЈРґР°Р»РёС‚СЊ СЃРґРµР»РєСѓ",
+      editTradeButton: "Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ",
+      openChartButton: "РћС‚РєСЂС‹С‚СЊ РіСЂР°С„РёРє",
+      cancelEditButton: "РћС‚РјРµРЅРёС‚СЊ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ",
+      editModeTitle: "Р РµР¶РёРј СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ",
+      editModeText: "РР·РјРµРЅРё РїРѕРґСЃРІРµС‡РµРЅРЅС‹Рµ РїРѕР»СЏ Рё СЃРѕС…СЂР°РЅРё СЃРґРµР»РєСѓ.",
+      actions: "Р”РµР№СЃС‚РІРёСЏ",
+      deleteTradeConfirm: "РЈРґР°Р»РёС‚СЊ СЌС‚Сѓ СЃРґРµР»РєСѓ? Р­С‚Рѕ РґРµР№СЃС‚РІРёРµ РЅРµР»СЊР·СЏ РѕС‚РјРµРЅРёС‚СЊ.",
+      deleteTradeError: "РќРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ СЃРґРµР»РєСѓ.",
+      uploadScreenshotTitle: "Р—Р°РіСЂСѓР·РєР° СЃРєСЂРёРЅС€РѕС‚Р° СЃРґРµР»РєРё",
+      uploadScreenshotText:
+        "РџСЂРёРєСЂРµРїР»СЏР№С‚Рµ СЃРєСЂРёРЅС€РѕС‚С‹ РіСЂР°С„РёРєРѕРІ Рє СЃРѕС…СЂР°РЅС‘РЅРЅС‹Рј СЃРґРµР»РєР°Рј. SkillEdge AI Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РёС… РґР»СЏ Р°РЅР°Р»РёР·Р° РІС…РѕРґРѕРІ, РІС‹С…РѕРґРѕРІ, СЃС‚РѕРїРѕРІ Рё РїРѕРІС‚РѕСЂСЏСЋС‰РёС…СЃСЏ РѕС€РёР±РѕРє РЅР° РіСЂР°С„РёРєРµ.",
+      screenshotsCount: "СЃРєСЂРёРЅС€РѕС‚РѕРІ",
+      screenshotTradeLabel: "РЎРґРµР»РєР°",
+      screenshotFileLabel: "РЎРєСЂРёРЅС€РѕС‚",
+      screenshotChoose: "Р’С‹Р±СЂР°С‚СЊ СЃРєСЂРёРЅС€РѕС‚",
+      screenshotNoFile: "Р¤Р°Р№Р» РЅРµ РІС‹Р±СЂР°РЅ",
+      screenshotSelected: "Р’С‹Р±СЂР°РЅРЅС‹Р№ С„Р°Р№Р»",
+      screenshotHint:
+        "РЁР°РіРё: 1) Р’С‹Р±РµСЂРёС‚Рµ СЃРґРµР»РєСѓ  2) РќР°Р¶РјРёС‚Рµ В«Р’С‹Р±СЂР°С‚СЊ СЃРєСЂРёРЅС€РѕС‚В»  3) РќР°Р¶РјРёС‚Рµ В«Р—Р°РіСЂСѓР·РёС‚СЊВ»",
+      screenshotUploadHintCompact:
+        "Р—Р°РіСЂСѓР¶Р°Р№ РѕС‚ РѕРґРЅРѕРіРѕ РґРѕ С‚СЂС‘С… СЃРєСЂРёРЅРѕРІ СЃ СЂР°Р·РЅС‹РјРё С‚Р°Р№РјС„СЂРµР№РјР°РјРё РґР»СЏ Р±РѕР»РµРµ РіР»СѓР±РѕРєРѕРіРѕ Р°РЅР°Р»РёР·Р°.",
+      screenshotFormats: "РџРѕРґРґРµСЂР¶РёРІР°РµРјС‹Рµ С„РѕСЂРјР°С‚С‹: PNG, JPG, WEBP",
+      screenshotsColumn: "РЎРєСЂРёРЅС‹",
+      openScreenshots: "РћС‚РєСЂС‹С‚СЊ",
+      noScreenshotsForTrade: "Р”Р»СЏ СЌС‚РѕР№ СЃРґРµР»РєРё СЃРєСЂРёРЅС‹ РЅРµ Р·Р°РіСЂСѓР¶РµРЅС‹.",
+      screenshotViewerTitle: "РЎРєСЂРёРЅС‹ СЃРґРµР»РєРё",
+      loadingScreenshots: "Р—Р°РіСЂСѓР¶Р°РµРј СЃРєСЂРёРЅС‹...",
+      uploadButton: "Р—Р°РіСЂСѓР·РёС‚СЊ",
+      uploadingButton: "Р—Р°РіСЂСѓР·РєР°...",
+      selectTradePlaceholder: "Р’С‹Р±РµСЂРёС‚Рµ СЃРґРµР»РєСѓ",
+      stepOne: "РЁР°Рі 1",
+      stepTwo: "РЁР°Рі 2",
+      stepThree: "РЁР°Рі 3",
+      chartAnalyzeButton: "Р Р°Р·РѕР±СЂР°С‚СЊ РіСЂР°С„РёРє",
+      chartAnalyzingButton: "РђРЅР°Р»РёР· РіСЂР°С„РёРєР°...",
+      chartScreenshotsLabel: "СЃРєСЂРёРЅС€РѕС‚РѕРІ",
+      journalAnalysisTitle: "AI-Р°РЅР°Р»РёР· Р¶СѓСЂРЅР°Р»Р° СЃРґРµР»РѕРє",
+      journalAnalysisText:
+        "AI РїСЂРѕР°РЅР°Р»РёР·РёСЂСѓРµС‚ СЃРѕС…СЂР°РЅС‘РЅРЅС‹Рµ СЃРґРµР»РєРё, РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ РѕС€РёР±РєРё, СЃРµС‚Р°РїС‹, СЌРјРѕС†РёРё, СЂРёСЃРє Рё РєР°С‡РµСЃС‚РІРѕ РёСЃРїРѕР»РЅРµРЅРёСЏ.",
+      journalAnalyzeButton: "Р Р°Р·РѕР±СЂР°С‚СЊ Р¶СѓСЂРЅР°Р»",
+      journalAnalyzingButton: "РђРЅР°Р»РёР·...",
+      savedChartAnalysis: "РЎРѕС…СЂР°РЅС‘РЅРЅС‹Р№ AI-СЂР°Р·Р±РѕСЂ РіСЂР°С„РёРєР°",
+      showChartHistory: "РџРѕРєР°Р·Р°С‚СЊ AI-СЂР°Р·Р±РѕСЂС‹",
+      hideChartHistory: "РЎРєСЂС‹С‚СЊ AI-СЂР°Р·Р±РѕСЂС‹",
+      noChartHistory: "РЎРѕС…СЂР°РЅС‘РЅРЅС‹С… СЂР°Р·Р±РѕСЂРѕРІ РіСЂР°С„РёРєР° РїРѕРєР° РЅРµС‚.",
+      searchTicker: "РџРѕРёСЃРє С‚РёРєРµСЂР°",
+      allMarkets: "Р’СЃРµ СЂС‹РЅРєРё",
+      allSides: "Р’СЃРµ РЅР°РїСЂР°РІР»РµРЅРёСЏ",
+      allResults: "Р’СЃРµ СЂРµР·СѓР»СЊС‚Р°С‚С‹",
+      marketLabels: {
+        stocks: "РђРєС†РёРё",
+        crypto: "РљСЂРёРїС‚Рѕ",
+        futures: "Р¤СЊСЋС‡РµСЂСЃС‹",
+        forex: "Р¤РѕСЂРµРєСЃ",
+        options: "РћРїС†РёРѕРЅС‹",
+      },
+      directionLabels: {
+        long: "Р›РѕРЅРі",
+        short: "РЁРѕСЂС‚",
+      },
+      resultLabels: {
+        win: "РџСЂРёР±С‹Р»СЊРЅР°СЏ",
+        loss: "РЈР±С‹С‚РѕС‡РЅР°СЏ",
+        breakeven: "Р‘РµР·СѓР±С‹С‚РѕРє",
+        notSet: "РќРµ Р·Р°РґР°РЅРѕ",
+      },
+      table: {
+        date: "Р”Р°С‚Р°",
+        ticker: "РўРёРєРµСЂ",
+        market: "Р С‹РЅРѕРє",
+        side: "РЎС‚РѕСЂРѕРЅР°",
+        entry: "Р’С…РѕРґ",
+        exit: "Р’С‹С…РѕРґ",
+        stop: "РЎС‚РѕРї",
+        risk: "Р РёСЃРє",
+        pnl: "PnL",
+        result: "Р РµР·СѓР»СЊС‚Р°С‚",
+        setup: "РЎРµС‚Р°Рї",
+      },
+      recentTitle: "РџРѕСЃР»РµРґРЅРёРµ СЃРґРµР»РєРё",
+      recentText:
+        "РџРѕСЃР»РµРґРЅРёРµ 3 СЃРґРµР»РєРё РёР· Р»РёС‡РЅРѕРіРѕ Р¶СѓСЂРЅР°Р»Р°. РџРѕР»РЅР°СЏ С‚Р°Р±Р»РёС†Р°, С„РёР»СЊС‚СЂС‹ Рё СЌРєСЃРїРѕСЂС‚ РґРѕСЃС‚СѓРїРЅС‹ РЅРёР¶Рµ.",
+      empty:
+        "РЎРґРµР»РѕРє РїРѕРєР° РЅРµС‚. Р”РѕР±Р°РІСЊС‚Рµ РїРµСЂРІСѓСЋ СЃРґРµР»РєСѓ, С‡С‚РѕР±С‹ РЅР°С‡Р°С‚СЊ СЃРѕР±РёСЂР°С‚СЊ Р±Р°Р·Сѓ СЃРІРѕРµР№ СЃС‚Р°С‚РёСЃС‚РёРєРё.",
+      tradesCount: "СЃРґРµР»РѕРє",
+      saving: "РЎРѕС…СЂР°РЅСЏРµРј...",
+      save: "РЎРѕС…СЂР°РЅРёС‚СЊ СЃРґРµР»РєСѓ",
+      updateTradeButton: "РћР±РЅРѕРІРёС‚СЊ СЃРґРµР»РєСѓ",
+      updatingTradeButton: "РћР±РЅРѕРІР»РµРЅРёРµ...",
+      tickerRequired: "Р’РІРµРґРёС‚Рµ С‚РёРєРµСЂ.",
+      tradeLimitReached: "Р”РѕСЃС‚РёРіРЅСѓС‚ Р»РёРјРёС‚ СЃРґРµР»РѕРє РґР»СЏ РІР°С€РµРіРѕ С‚РµРєСѓС‰РµРіРѕ С‚Р°СЂРёС„Р°",
+      tradeUsageTitle: "РСЃРїРѕР»СЊР·РѕРІР°РЅРѕ СЃРґРµР»РѕРє",
+      tradesLeftLabel: "РѕСЃС‚Р°Р»РѕСЃСЊ",
+      screenshotLimitReached: "Р”РѕСЃС‚РёРіРЅСѓС‚ Р»РёРјРёС‚ СЃРєСЂРёРЅС€РѕС‚РѕРІ РґР»СЏ СЌС‚РѕР№ СЃРґРµР»РєРё",
+      screenshotUsageTitle: "РСЃРїРѕР»СЊР·РѕРІР°РЅРѕ СЃРєСЂРёРЅС€РѕС‚РѕРІ",
+      limitReached: "Р”РѕСЃС‚РёРіРЅСѓС‚ Р»РёРјРёС‚ СЃРґРµР»РѕРє РґР»СЏ РІР°С€РµРіРѕ С‚РµРєСѓС‰РµРіРѕ С‚Р°СЂРёС„Р°",
+      loginFirst: "РЎРЅР°С‡Р°Р»Р° РІРѕР№РґРёС‚Рµ РІ Р°РєРєР°СѓРЅС‚.",
+      saveFailed: "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ СЃРґРµР»РєСѓ.",
+      fields: {
+        ticker: "РўРёРєРµСЂ",
+        date: "Р”Р°С‚Р°",
+        market: "Р С‹РЅРѕРє",
+        direction: "РќР°РїСЂР°РІР»РµРЅРёРµ",
+        entry: "Р’С…РѕРґ",
+        exit: "Р’С‹С…РѕРґ",
+        stop: "РЎС‚РѕРї",
+        size: "Р Р°Р·РјРµСЂ РїРѕР·РёС†РёРё",
+        risk: "Р РёСЃРє $",
+        pnl: "PnL $",
+        result: "Р РµР·СѓР»СЊС‚Р°С‚",
+        setup: "РЎРµС‚Р°Рї",
+        emotion: "Р­РјРѕС†РёСЏ",
+        mistake: "РћС€РёР±РєР°",
+        lesson: "РЈСЂРѕРє",
+        notes: "Р—Р°РјРµС‚РєРё",
+      },
+      placeholders: {
+        ticker: "AAPL / BTC / NQ",
+        entry: "100",
+        exit: "105",
+        stop: "98",
+        size: "РђРєС†РёРё / РєРѕРЅС‚СЂР°РєС‚С‹",
+        risk: "50",
+        pnl: "-25 / 120",
+        setup: "РІРѕР·РІСЂР°С‚ VWAP / Р·Р°С‚СѓС…Р°РЅРёРµ РіСЌРїР°",
+        emotion: "РЎРїРѕРєРѕР№СЃС‚РІРёРµ / FOMO / СЃС‚СЂР°С…",
+        mistake: "Р§С‚Рѕ Р±С‹Р»Рѕ СЃРґРµР»Р°РЅРѕ РЅРµРїСЂР°РІРёР»СЊРЅРѕ?",
+        lesson: "Р§С‚Рѕ РЅСѓР¶РЅРѕ Р·Р°РїРѕРјРЅРёС‚СЊ РЅР° СЃР»РµРґСѓСЋС‰СѓСЋ СЃРґРµР»РєСѓ?",
+        notes: "РљРѕРЅС‚РµРєСЃС‚, РєР°С‚Р°Р»РёР·Р°С‚РѕСЂ, Р»РµРЅС‚Р°, СѓСЂРѕРІРЅРё...",
+      },
+      options: {
+        notSet: "РќРµ Р·Р°РґР°РЅРѕ",
+        win: "РџР»СЋСЃ",
+        loss: "РњРёРЅСѓСЃ",
+        breakeven: "Р‘РµР·СѓР±С‹С‚РѕРє",
+      },
+    },
+    locked: {
+      title: "РђРєС‚РёРІРёСЂСѓР№С‚Рµ С‚Р°СЂРёС„",
+      label: "Р”РѕСЃС‚СѓРї Р·Р°РєСЂС‹С‚",
+      text: "РџРѕСЃР»Рµ РѕРїР»Р°С‚С‹ РѕС‚РєСЂРѕСЋС‚СЃСЏ Р¶СѓСЂРЅР°Р» СЃРґРµР»РѕРє, SkillEdge AI-РєРѕСѓС‡, РіСЂР°С„РёРєРё TradingView, РѕР±СѓС‡РµРЅРёРµ, РѕС‚С‡С‘С‚С‹ Рё РёСЃС‚РѕСЂРёСЏ AI-СЂР°Р·Р±РѕСЂРѕРІ.",
+      button: "Р’С‹Р±СЂР°С‚СЊ С‚Р°СЂРёС„",
     },
     tabs: {
-  overview: "Обзор",
-  journal: "Журнал сделок",
-  charts: "Графики",
-  market: "Рынок",
-  alerts: "Сигналы",
-  coach: "AI-коуч",
-  learning: "Обучение",
-  reports: "Отчёты",
-  billing: "Оплата",
-},
+      overview: "РћР±Р·РѕСЂ",
+      journal: "Р–СѓСЂРЅР°Р» СЃРґРµР»РѕРє",
+      charts: "Р“СЂР°С„РёРєРё",
+      market: "Р С‹РЅРѕРє",
+      alerts: "РЎРёРіРЅР°Р»С‹",
+      coach: "AI-РєРѕСѓС‡",
+      learning: "РћР±СѓС‡РµРЅРёРµ",
+      reports: "РћС‚С‡С‘С‚С‹",
+      billing: "РћРїР»Р°С‚Р°",
+    },
     periods: {
-      monthly: "1 месяц",
-      halfyear: "6 месяцев",
-      yearly: "1 год",
-      demo: "7-дневная пробная версия",
+      monthly: "1 РјРµСЃСЏС†",
+      halfyear: "6 РјРµСЃСЏС†РµРІ",
+      yearly: "1 РіРѕРґ",
+      demo: "7-РґРЅРµРІРЅР°СЏ РїСЂРѕР±РЅР°СЏ РІРµСЂСЃРёСЏ",
     },
     demo: {
-      label: "Пробная версия",
-      title: "У вас активирован 7-дневный пробный доступ",
+      label: "РџСЂРѕР±РЅР°СЏ РІРµСЂСЃРёСЏ",
+      title: "РЈ РІР°СЃ Р°РєС‚РёРІРёСЂРѕРІР°РЅ 7-РґРЅРµРІРЅС‹Р№ РїСЂРѕР±РЅС‹Р№ РґРѕСЃС‚СѓРї",
       text:
-  "Это пробная версия тарифа SkillEdge Core с лимитом 10 AI-запросов. После окончания срока доступ будет закрыт, если вы не выберете основной тариф.",
-      short: "7-дневная пробная версия. Лимит: 10 AI-запросов.",
+        "Р­С‚Рѕ РїСЂРѕР±РЅР°СЏ РІРµСЂСЃРёСЏ С‚Р°СЂРёС„Р° SkillEdge Core СЃ Р»РёРјРёС‚РѕРј 10 AI-Р·Р°РїСЂРѕСЃРѕРІ. РџРѕСЃР»Рµ РѕРєРѕРЅС‡Р°РЅРёСЏ СЃСЂРѕРєР° РґРѕСЃС‚СѓРї Р±СѓРґРµС‚ Р·Р°РєСЂС‹С‚, РµСЃР»Рё РІС‹ РЅРµ РІС‹Р±РµСЂРµС‚Рµ РѕСЃРЅРѕРІРЅРѕР№ С‚Р°СЂРёС„.",
+      short: "7-РґРЅРµРІРЅР°СЏ РїСЂРѕР±РЅР°СЏ РІРµСЂСЃРёСЏ. Р›РёРјРёС‚: 10 AI-Р·Р°РїСЂРѕСЃРѕРІ.",
     },
     billing: {
-  title: "Тариф и оплата",
-  text: "Информация про текущий тариф, оплаты и срок действия подписки.",
-  activePlan: "Тариф активный",
-  inactivePlan: "Тариф не активирован",
-  period: "Период",
-  validUntil: "Действует до",
-  empty:
-    "После оплаты тут появятся план, период, дата завершения и история платежей.",
-  currentPlan: "Текущий тариф",
-creatingCheckout: "Создаём оплату...",
-checkoutError: "Не удалось создать крипто-оплату. Попробуйте ещё раз.",
-loginRequiredForPayment: "Войдите в аккаунт перед оплатой тарифа.",
-  currentPlanLabel: "Текущий тариф",
-  activeSubscription:
-    "Подписка активна. Лимиты и доступы применяются автоматически.",
-  inactiveSubscription:
-    "Подписка не активна. Некоторые функции могут быть недоступны.",
-  active: "Активна",
-  inactive: "Неактивна",
-  billingPeriod: "Период",
-  aiUsage: "Использование AI",
-  billingNoteLabel: "Важно",
-  billingNoteText:
-    "Раздел оплаты показывает текущий тариф, лимиты, уровень доступа и статус подписки. Оплата картой готовится через одобренного платёжного провайдера, а крипто-доступ доступен на этапе запуска.",
-  currentLimitsLabel: "Лимиты",
-  currentLimitsTitle: "Что входит в текущий тариф",
-  aiCoachLimit: "AI-коуч / месяц",
-  journalAiLimit: "AI-анализ журнала / месяц",
-  chartAiLimit: "AI-анализ графика / месяц",
-  aiReportsLimit: "AI-отчёты / месяц",
-  maxTradesLimit: "Максимум сделок",
-  screenshotsLimit: "Скриншотов на сделку",
-  aiReportsAccess: "AI-звіти",
-  supportAssistantAccess: "Помічник підтримки",
-  socialTickersAccess: "Соціальні тикери",
-  aiScannerAccess: "AI-сканер",
-aiAlertsAccess: "AI-сигнали",
-premiumChartAccess: "Преміум-аналіз графіка",
-  exportReportsAccess: "Експорт звітів",
-  included: "Включено",
-  locked: "Закрыто",
-  comparePlansLabel: "Сравнение",
-  comparePlansTitle: "Сравнение тарифов",
-  comparePlansText:
-    "Проверь, что клиент видит разницу между Core, Edge и Elite.",
-  current: "Текущий",
-  choosePlan: "Выбрать тариф",
-  planDescriptions: {
-    core: "Базовый доступ для журнала сделок, скриншотов, AI-коуча и контроля дисциплины.",
-edge: "Продвинутый тариф для активных трейдеров: больше AI-запросов, отчёты, рыночная разведка и AI-сканер.",
-elite:
-  "Максимальный тариф: AI-сигналы, плавающий виджет сигналов, связка сигналов с журналом и полный AI Trading Desk.",
-  },
-},
+      title: "РўР°СЂРёС„ Рё РѕРїР»Р°С‚Р°",
+      text: "РРЅС„РѕСЂРјР°С†РёСЏ РїСЂРѕ С‚РµРєСѓС‰РёР№ С‚Р°СЂРёС„, РѕРїР»Р°С‚С‹ Рё СЃСЂРѕРє РґРµР№СЃС‚РІРёСЏ РїРѕРґРїРёСЃРєРё.",
+      activePlan: "РўР°СЂРёС„ Р°РєС‚РёРІРЅС‹Р№",
+      inactivePlan: "РўР°СЂРёС„ РЅРµ Р°РєС‚РёРІРёСЂРѕРІР°РЅ",
+      period: "РџРµСЂРёРѕРґ",
+      validUntil: "Р”РµР№СЃС‚РІСѓРµС‚ РґРѕ",
+      empty:
+        "РџРѕСЃР»Рµ РѕРїР»Р°С‚С‹ С‚СѓС‚ РїРѕСЏРІСЏС‚СЃСЏ РїР»Р°РЅ, РїРµСЂРёРѕРґ, РґР°С‚Р° Р·Р°РІРµСЂС€РµРЅРёСЏ Рё РёСЃС‚РѕСЂРёСЏ РїР»Р°С‚РµР¶РµР№.",
+      currentPlan: "РўРµРєСѓС‰РёР№ С‚Р°СЂРёС„",
+      creatingCheckout: "РЎРѕР·РґР°С‘Рј РѕРїР»Р°С‚Сѓ...",
+      checkoutError: "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ РєСЂРёРїС‚Рѕ-РѕРїР»Р°С‚Сѓ. РџРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·.",
+      loginRequiredForPayment: "Р’РѕР№РґРёС‚Рµ РІ Р°РєРєР°СѓРЅС‚ РїРµСЂРµРґ РѕРїР»Р°С‚РѕР№ С‚Р°СЂРёС„Р°.",
+      currentPlanLabel: "РўРµРєСѓС‰РёР№ С‚Р°СЂРёС„",
+      activeSubscription:
+        "РџРѕРґРїРёСЃРєР° Р°РєС‚РёРІРЅР°. Р›РёРјРёС‚С‹ Рё РґРѕСЃС‚СѓРїС‹ РїСЂРёРјРµРЅСЏСЋС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё.",
+      inactiveSubscription:
+        "РџРѕРґРїРёСЃРєР° РЅРµ Р°РєС‚РёРІРЅР°. РќРµРєРѕС‚РѕСЂС‹Рµ С„СѓРЅРєС†РёРё РјРѕРіСѓС‚ Р±С‹С‚СЊ РЅРµРґРѕСЃС‚СѓРїРЅС‹.",
+      active: "РђРєС‚РёРІРЅР°",
+      inactive: "РќРµР°РєС‚РёРІРЅР°",
+      billingPeriod: "РџРµСЂРёРѕРґ",
+      aiUsage: "РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ AI",
+      billingNoteLabel: "Р’Р°Р¶РЅРѕ",
+      billingNoteText:
+        "Р Р°Р·РґРµР» РѕРїР»Р°С‚С‹ РїРѕРєР°Р·С‹РІР°РµС‚ С‚РµРєСѓС‰РёР№ С‚Р°СЂРёС„, Р»РёРјРёС‚С‹, СѓСЂРѕРІРµРЅСЊ РґРѕСЃС‚СѓРїР° Рё СЃС‚Р°С‚СѓСЃ РїРѕРґРїРёСЃРєРё. РћРїР»Р°С‚Р° РєР°СЂС‚РѕР№ РіРѕС‚РѕРІРёС‚СЃСЏ С‡РµСЂРµР· РѕРґРѕР±СЂРµРЅРЅРѕРіРѕ РїР»Р°С‚С‘Р¶РЅРѕРіРѕ РїСЂРѕРІР°Р№РґРµСЂР°, Р° РєСЂРёРїС‚Рѕ-РґРѕСЃС‚СѓРї РґРѕСЃС‚СѓРїРµРЅ РЅР° СЌС‚Р°РїРµ Р·Р°РїСѓСЃРєР°.",
+      currentLimitsLabel: "Р›РёРјРёС‚С‹",
+      currentLimitsTitle: "Р§С‚Рѕ РІС…РѕРґРёС‚ РІ С‚РµРєСѓС‰РёР№ С‚Р°СЂРёС„",
+      aiCoachLimit: "AI-РєРѕСѓС‡ / РјРµСЃСЏС†",
+      journalAiLimit: "AI-Р°РЅР°Р»РёР· Р¶СѓСЂРЅР°Р»Р° / РјРµСЃСЏС†",
+      chartAiLimit: "AI-Р°РЅР°Р»РёР· РіСЂР°С„РёРєР° / РјРµСЃСЏС†",
+      aiReportsLimit: "AI-РѕС‚С‡С‘С‚С‹ / РјРµСЃСЏС†",
+      maxTradesLimit: "РњР°РєСЃРёРјСѓРј СЃРґРµР»РѕРє",
+      screenshotsLimit: "РЎРєСЂРёРЅС€РѕС‚РѕРІ РЅР° СЃРґРµР»РєСѓ",
+      aiReportsAccess: "AI-РѕС‚С‡С‘С‚С‹",
+      supportAssistantAccess: "РџРѕРјРѕС‰РЅРёРє РїРѕРґРґРµСЂР¶РєРё",
+      socialTickersAccess: "РЎРѕС†РёР°Р»СЊРЅС‹Рµ С‚РёРєРµСЂС‹",
+      aiScannerAccess: "AI-СЃРєР°РЅРµСЂ",
+      aiAlertsAccess: "AI-СЃРёРіРЅР°Р»С‹",
+      premiumChartAccess: "РџСЂРµРјРёСѓРј-Р°РЅР°Р»РёР· РіСЂР°С„РёРєР°",
+      exportReportsAccess: "Р­РєСЃРїРѕСЂС‚ РѕС‚С‡С‘С‚РѕРІ",
+      included: "Р’РєР»СЋС‡РµРЅРѕ",
+      locked: "Р—Р°РєСЂС‹С‚Рѕ",
+      comparePlansLabel: "РЎСЂР°РІРЅРµРЅРёРµ",
+      comparePlansTitle: "РЎСЂР°РІРЅРµРЅРёРµ С‚Р°СЂРёС„РѕРІ",
+      comparePlansText:
+        "РџСЂРѕРІРµСЂСЊ, С‡С‚Рѕ РєР»РёРµРЅС‚ РІРёРґРёС‚ СЂР°Р·РЅРёС†Сѓ РјРµР¶РґСѓ Core, Edge Рё Elite.",
+      current: "РўРµРєСѓС‰РёР№",
+      choosePlan: "Р’С‹Р±СЂР°С‚СЊ С‚Р°СЂРёС„",
+      planDescriptions: {
+        core: "Р‘Р°Р·РѕРІС‹Р№ РґРѕСЃС‚СѓРї РґР»СЏ Р¶СѓСЂРЅР°Р»Р° СЃРґРµР»РѕРє, СЃРєСЂРёРЅС€РѕС‚РѕРІ, AI-РєРѕСѓС‡Р° Рё РєРѕРЅС‚СЂРѕР»СЏ РґРёСЃС†РёРїР»РёРЅС‹.",
+        edge: "РџСЂРѕРґРІРёРЅСѓС‚С‹Р№ С‚Р°СЂРёС„ РґР»СЏ Р°РєС‚РёРІРЅС‹С… С‚СЂРµР№РґРµСЂРѕРІ: Р±РѕР»СЊС€Рµ AI-Р·Р°РїСЂРѕСЃРѕРІ, РѕС‚С‡С‘С‚С‹, СЂС‹РЅРѕС‡РЅР°СЏ СЂР°Р·РІРµРґРєР° Рё AI-СЃРєР°РЅРµСЂ.",
+        elite:
+          "РњР°РєСЃРёРјР°Р»СЊРЅС‹Р№ С‚Р°СЂРёС„: AI-СЃРёРіРЅР°Р»С‹, РїР»Р°РІР°СЋС‰РёР№ РІРёРґР¶РµС‚ СЃРёРіРЅР°Р»РѕРІ, СЃРІСЏР·РєР° СЃРёРіРЅР°Р»РѕРІ СЃ Р¶СѓСЂРЅР°Р»РѕРј Рё РїРѕР»РЅС‹Р№ AI Trading Desk.",
+      },
+    },
     aiLimits: {
-  reachedTitle: "Лимит AI исчерпан",
-  reachedText:
-    "Вы использовали все AI-запросы, доступные по вашему текущему тарифу в этом месяце. Обновите тариф или дождитесь следующего месячного сброса.",
-  remainingPrefix: "Осталось AI-запросов",
-},
+      reachedTitle: "Р›РёРјРёС‚ AI РёСЃС‡РµСЂРїР°РЅ",
+      reachedText:
+        "Р’С‹ РёСЃРїРѕР»СЊР·РѕРІР°Р»Рё РІСЃРµ AI-Р·Р°РїСЂРѕСЃС‹, РґРѕСЃС‚СѓРїРЅС‹Рµ РїРѕ РІР°С€РµРјСѓ С‚РµРєСѓС‰РµРјСѓ С‚Р°СЂРёС„Сѓ РІ СЌС‚РѕРј РјРµСЃСЏС†Рµ. РћР±РЅРѕРІРёС‚Рµ С‚Р°СЂРёС„ РёР»Рё РґРѕР¶РґРёС‚РµСЃСЊ СЃР»РµРґСѓСЋС‰РµРіРѕ РјРµСЃСЏС‡РЅРѕРіРѕ СЃР±СЂРѕСЃР°.",
+      remainingPrefix: "РћСЃС‚Р°Р»РѕСЃСЊ AI-Р·Р°РїСЂРѕСЃРѕРІ",
+    },
     coach: {
-      title: "AI-коуч",
-      text: "Опишите сделку, эмоции, ошибку или торговую ситуацию — AI-коуч даст разбор по дисциплине, риску и качеству решения.",
-      reviewTitle: "Разбор сделки",
+      title: "AI-РєРѕСѓС‡",
+      text: "РћРїРёС€РёС‚Рµ СЃРґРµР»РєСѓ, СЌРјРѕС†РёРё, РѕС€РёР±РєСѓ РёР»Рё С‚РѕСЂРіРѕРІСѓСЋ СЃРёС‚СѓР°С†РёСЋ вЂ” AI-РєРѕСѓС‡ РґР°СЃС‚ СЂР°Р·Р±РѕСЂ РїРѕ РґРёСЃС†РёРїР»РёРЅРµ, СЂРёСЃРєСѓ Рё РєР°С‡РµСЃС‚РІСѓ СЂРµС€РµРЅРёСЏ.",
+      reviewTitle: "Р Р°Р·Р±РѕСЂ СЃРґРµР»РєРё",
       reviewText:
-        "Чем конкретнее описание, тем полезнее ответ. Укажи тикер, вход, стоп, причину входа, эмоции и результат.",
+        "Р§РµРј РєРѕРЅРєСЂРµС‚РЅРµРµ РѕРїРёСЃР°РЅРёРµ, С‚РµРј РїРѕР»РµР·РЅРµРµ РѕС‚РІРµС‚. РЈРєР°Р¶Рё С‚РёРєРµСЂ, РІС…РѕРґ, СЃС‚РѕРї, РїСЂРёС‡РёРЅСѓ РІС…РѕРґР°, СЌРјРѕС†РёРё Рё СЂРµР·СѓР»СЊС‚Р°С‚.",
       placeholder:
-        "Пример: сегодня зашёл в шорт после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка.",
-      ask: "Спросить AI",
-      analyzing: "AI анализирует...",
-      newReview: "Новый разбор",
-      answerTitle: "Ответ AI-коуча",
+        "РџСЂРёРјРµСЂ: СЃРµРіРѕРґРЅСЏ Р·Р°С€С‘Р» РІ С€РѕСЂС‚ РїРѕСЃР»Рµ РїСЂРµРјР°СЂРєРµС‚-РїР°РјРїР°, СѓРІРёРґРµР» СЃР»Р°Р±РѕСЃС‚СЊ РїРѕРґ VWAP, РЅРѕ РїРµСЂРµРґРІРёРЅСѓР» СЃС‚РѕРї Рё РїРµСЂРµСЃРёРґРµР» СѓР±С‹С‚РѕРє. Р Р°Р·Р±РµСЂРё, РіРґРµ Р±С‹Р»Р° РѕС€РёР±РєР°.",
+      ask: "РЎРїСЂРѕСЃРёС‚СЊ AI",
+      analyzing: "AI Р°РЅР°Р»РёР·РёСЂСѓРµС‚...",
+      newReview: "РќРѕРІС‹Р№ СЂР°Р·Р±РѕСЂ",
+      answerTitle: "РћС‚РІРµС‚ AI-РєРѕСѓС‡Р°",
       answerPlaceholder:
-        "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой.",
-      historyTitle: "История AI-разборов",
-      historyText: "Последние 10 запросов к AI-коучу.",
-      historyEmpty: "История пока пустая. Первый разбор появится здесь после ответа AI.",
-      loginFirst: "Сначала войдите в аккаунт.",
-      messageRequired: "Введите вопрос или описание сделки.",
-      coachError: "Ошибка AI-коуча.",
-      error: "Ошибка запроса к AI-коучу.",
-      failed: "Не удалось получить ответ AI-коуча.",
-      needPlan: "Для AI-коуча нужен активный тариф или пробный доступ.",
+        "Р—РґРµСЃСЊ РїРѕСЏРІРёС‚СЃСЏ СЂР°Р·Р±РѕСЂ: С‡С‚Рѕ Р±С‹Р»Рѕ С…РѕСЂРѕС€Рѕ, РіРґРµ РѕС€РёР±РєР°, РєР°РєРѕР№ СѓСЂРѕРє Р·Р°РЅРµСЃС‚Рё РІ Р¶СѓСЂРЅР°Р» Рё С‡С‚Рѕ РїСЂРѕРІРµСЂРёС‚СЊ РїРµСЂРµРґ СЃР»РµРґСѓСЋС‰РµР№ СЃРґРµР»РєРѕР№.",
+      historyTitle: "РСЃС‚РѕСЂРёСЏ AI-СЂР°Р·Р±РѕСЂРѕРІ",
+      historyText: "РџРѕСЃР»РµРґРЅРёРµ 10 Р·Р°РїСЂРѕСЃРѕРІ Рє AI-РєРѕСѓС‡Сѓ.",
+      historyEmpty: "РСЃС‚РѕСЂРёСЏ РїРѕРєР° РїСѓСЃС‚Р°СЏ. РџРµСЂРІС‹Р№ СЂР°Р·Р±РѕСЂ РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ РїРѕСЃР»Рµ РѕС‚РІРµС‚Р° AI.",
+      loginFirst: "РЎРЅР°С‡Р°Р»Р° РІРѕР№РґРёС‚Рµ РІ Р°РєРєР°СѓРЅС‚.",
+      messageRequired: "Р’РІРµРґРёС‚Рµ РІРѕРїСЂРѕСЃ РёР»Рё РѕРїРёСЃР°РЅРёРµ СЃРґРµР»РєРё.",
+      coachError: "РћС€РёР±РєР° AI-РєРѕСѓС‡Р°.",
+      error: "РћС€РёР±РєР° Р·Р°РїСЂРѕСЃР° Рє AI-РєРѕСѓС‡Сѓ.",
+      failed: "РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РѕС‚РІРµС‚ AI-РєРѕСѓС‡Р°.",
+      needPlan: "Р”Р»СЏ AI-РєРѕСѓС‡Р° РЅСѓР¶РµРЅ Р°РєС‚РёРІРЅС‹Р№ С‚Р°СЂРёС„ РёР»Рё РїСЂРѕР±РЅС‹Р№ РґРѕСЃС‚СѓРї.",
       limitReached:
-        "Лимит AI-запросов закончился. Выберите тариф выше или дождитесь обновления лимита.",
+        "Р›РёРјРёС‚ AI-Р·Р°РїСЂРѕСЃРѕРІ Р·Р°РєРѕРЅС‡РёР»СЃСЏ. Р’С‹Р±РµСЂРёС‚Рµ С‚Р°СЂРёС„ РІС‹С€Рµ РёР»Рё РґРѕР¶РґРёС‚РµСЃСЊ РѕР±РЅРѕРІР»РµРЅРёСЏ Р»РёРјРёС‚Р°.",
     },
   },
 
   ua: {
-    terminal: "Термінал SkillEdge AI",
-    dashboard: "Особистий кабінет",
-    user: "Користувач",
-    choosePlan: "Обрати тариф",
-    logout: "Вийти",
-    currentPlan: "Поточний тариф",
-    loading: "Завантаження...",
-    notActivated: "Не активовано",
-    activatePlan: "Активуйте тариф, щоб відкрити функції кабінету.",
-    aiUsage: "Використання AI",
-    quickActions: "Швидкі дії",
-    addTrade: "Додати угоду",
-    uploadScreenshot: "Завантажити скрин",
-    askAI: "Запитати AI-коуча",
-    createReport: "Створити звіт",
+    terminal: "РўРµСЂРјС–РЅР°Р» SkillEdge AI",
+    dashboard: "РћСЃРѕР±РёСЃС‚РёР№ РєР°Р±С–РЅРµС‚",
+    user: "РљРѕСЂРёСЃС‚СѓРІР°С‡",
+    choosePlan: "РћР±СЂР°С‚Рё С‚Р°СЂРёС„",
+    logout: "Р’РёР№С‚Рё",
+    currentPlan: "РџРѕС‚РѕС‡РЅРёР№ С‚Р°СЂРёС„",
+    loading: "Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ...",
+    notActivated: "РќРµ Р°РєС‚РёРІРѕРІР°РЅРѕ",
+    activatePlan: "РђРєС‚РёРІСѓР№С‚Рµ С‚Р°СЂРёС„, С‰РѕР± РІС–РґРєСЂРёС‚Рё С„СѓРЅРєС†С–С— РєР°Р±С–РЅРµС‚Сѓ.",
+    aiUsage: "Р’РёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ AI",
+    quickActions: "РЁРІРёРґРєС– РґС–С—",
+    addTrade: "Р”РѕРґР°С‚Рё СѓРіРѕРґСѓ",
+    uploadScreenshot: "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё СЃРєСЂРёРЅ",
+    askAI: "Р—Р°РїРёС‚Р°С‚Рё AI-РєРѕСѓС‡Р°",
+    createReport: "РЎС‚РІРѕСЂРёС‚Рё Р·РІС–С‚",
     overview: {
-  title: "Огляд ефективності",
-  text: "Зведення PnL, відсоток прибуткових угод, оцінка дисципліни, найкращі сетапи та головні помилки.",
-  pnlMonth: "PnL за місяць",
-  winRate: "Відсоток прибуткових",
-  discipline: "Оцінка дисципліни",
-  weeklyAi: "AI-зведення тижня",
-  weeklyAiText:
-    "AI-зведення буде збирати ключові висновки по журналу угод, ризику, дисципліні та повторюваних помилках.",
-},
-charts: {
-  title: "Графіки TradingView",
-  text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
-  placeholder: "Робочий простір TradingView доступний усередині модуля графіків.",
-  analyzeCurrentChart: "Проаналізувати графік",
-  workspaceText: "Робоча зона з графіком, списком спостереження та лідерами руху ринку.",
-  watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  openWatchlist: "Відкрити список",
-  hideWatchlist: "Сховати список",
-  watchlistTitle: "Список спостереження",
-  watchlistSubtitle: "Тикер / 24h % / обʼєм",
-  addTickerButton: "Додати",
-  addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
-  addTickerHint: "Приклад: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
-  sortSymbol: "Тикер",
-  sortChange: "% 24h",
-  sortVolume: "Обʼєм",
-  symbolColumn: "Тикер",
-  percentColumn: "%",
-  volumeColumn: "Обʼєм",
-  loadingWatchlist: "Завантажуємо список спостереження...",
-  emptyWatchlist: "Список порожній. Натисни + і додай тикер.",
-  removeFromWatchlist: "Видалити зі списку",
-  loginFirst: "Спочатку увійдіть в акаунт.",
-  settingsLoadError: "Не вдалося завантажити налаштування графіків.",
-  addTickerError: "Не вдалося додати тикер до списку спостереження.",
-  removeTickerError: "Не вдалося видалити тикер зі списку спостереження.",
-  moversStocks: "Акції",
-  moversCrypto: "Крипто",
-  moversGainers: "Лідери росту",
-  moversLosers: "Лідери падіння",
-  moversCollapse: "Згорнути",
-  moversExpand: "Розгорнути",
-  moversName: "Назва",
-  moversPercentChange: "% Зміна",
-  moversLoading: "Завантажуємо лідерів руху...",
-  moversEmpty: "Немає інструментів під цей фільтр.",
-  moversStocksNeedKey: "Лідери руху по акціях готуються до підключення преміум-покриття ринкових даних.",
-chartAnalysisTitle: "AI-аналіз графіка",
-chartAnalysisText:
-  "SkillEdge AI аналізує поточний тикер, таймфрейм, ринкові дані, свічки, обʼєм і контекст ризику.",
-chartAnalysisLoading: "Аналізуємо поточний графік...",
-chartAnalysisError: "Не вдалося проаналізувати поточний графік.",
-chartAnalysisEmpty: "Запусти AI-аналіз, щоб побачити розбір поточного графіка.",
-chartAnalysisClose: "Закрити",
-chartAnalysisSymbol: "Тікер",
-chartAnalysisInterval: "Таймфрейм",
-chartAnalysisReportLabel: "Звіт SkillEdge AI",
-chartAnalysisDataLabel: "Розбір ринкової структури",
-chartAnalysisSectionsLabel: "Секції аналізу",
-marketDataUnavailableTitle: "Ринкові дані недоступні",
-marketDataUnavailableText:
-  "SkillEdge AI не зміг завантажити ринкові дані по цьому тикеру на поточному тарифі даних. Спробуй більш ліквідний тикер: AAPL, TSLA, NVDA, SPY або QQQ.",
-marketDataPremiumTitle: "Потрібен преміум-доступ до ринкових даних",
-marketDataPremiumText:
-  "Цей тикер, таймфрейм або джерело даних може вимагати вищий тариф ринкових даних. До запуску SkillEdge AI підтримуватиме ширше преміум-покриття ринку.",
-marketDataGenericErrorTitle: "Аналіз тимчасово недоступний",
-marketDataGenericErrorText:
-  "Зараз не вдалося виконати аналіз графіка. Спробуй інший тикер, таймфрейм або запусти аналіз ще раз.",
-chartControlTickerLabel: "Тікер",
-chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
-chartControlIntervalLabel: "Таймфрейм",
-chartControlOpenChart: "Відкрити графік",
-chartControlHint:
-  "Використовуй цю панель для керування TradingView та AI-аналізом. Зміни всередині самого TradingView можуть не синхронізуватися назад у SkillEdge AI.",
-},
-learning: {
-  title: "Центр навчання",
-  text: "Структурне навчання трейдингу, сетапи, ризик-менеджмент, психологія та побудова торгового плейбука.",
-  learningNoteTitle: "Центр навчання працює як база повторення",
-learningNoteText:
-  "SkillEdge AI насамперед сфокусований на журналі угод, аналізі графіків, AI-розборі та розвитку торгової системи. Цей розділ поки не є повноцінною академією: він створений як коротка база для відновлення ключових понять, щоб клієнт швидше розумів ризик, сетапи, структуру ринку та логіку AI-аналізу.",
-  overviewLabel: "Огляд навчання",
-  modulesLabel: "Модулі",
-  lessonsLabel: "уроків",
-  progressLabel: "Прогрес",
-  totalProgressLabel: "Загальний прогрес",
-  startButton: "Почати",
-  continueButton: "Продовжити",
-  reviewButton: "Повторити",
-  notStartedStatus: "Не розпочато",
-  inProgressStatus: "У процесі",
-  completedStatus: "Пройдено",
-  lockedLabel: "Скоро",
-  estimatedTimeLabel: "Час",
-  levelLabel: "Рівень",
-  beginnerLevel: "Початковий",
-  intermediateLevel: "Середній",
-  advancedLevel: "Просунутий",
-  moduleOneTitle: "Основи ринку",
-  moduleOneText:
-    "Розберися, як працює ринок, як взаємодіють ордери і чому ліквідність має значення.",
-  moduleTwoTitle: "Технічний аналіз",
-  moduleTwoText:
-    "Свічки, рівні, тренд/ренж, обʼєм і чисте читання графіка без зайвого шуму.",
-  moduleThreeTitle: "Ризик-менеджмент",
-  moduleThreeText:
-    "Правила ризику на угоду, стоп-лосс, розмір позиції та співвідношення ризик/прибуток.",
-  moduleFourTitle: "Внутрішньоденний імпульс",
-  moduleFourText:
-    "Логіка імпульсу, пробій, повернення рівня, хибний пробій і сетапи продовження руху.",
-  moduleFiveTitle: "Психологія трейдингу",
-  moduleFiveText:
-    "Контроль переторговки, торгівлі з помсти, страху, сумнівів та імпульсивних входів.",
-  moduleSixTitle: "Плейбук / Сетапи",
-  moduleSixText:
-    "Перетворюй повторювані патерни на торговий плейбук із тригерами входу та умовами скасування ідеї.",
-  lessonMarketStructure: "Як працює ринок",
-  lessonOrderTypes: "Типи ордерів",
-  lessonBidAskSpread: "Bid / Ask / Спред",
-  lessonLiquidity: "Ліквідність",
-  lessonCandles: "Свічки",
-  lessonLevels: "Підтримка і спротив",
-  lessonTrendRange: "Тренд або ренж",
-  lessonVolume: "Аналіз обʼєму",
-  lessonRiskPerTrade: "Ризик на угоду",
-  lessonStopLoss: "Стоп-лосс",
-  lessonRiskReward: "Ризик / Потенціал",
-  lessonPositionSizing: "Розмір позиції",
-  lessonMomentumLogic: "Логіка імпульсу",
-  lessonBreakoutReclaim: "Пробій / повернення рівня",
-  lessonFailedBreakout: "Хибний пробій",
-  lessonContinuation: "Продовження руху",
-  lessonDiscipline: "Дисципліна",
-  lessonOvertrading: "Переторговка",
-  lessonRevengeTrading: "Торгівля з помсти",
-  lessonPatience: "Терпіння",
-  lessonSetupChecklist: "Чеклист сетапу",
-  lessonEntryTrigger: "Тригер входу",
-  lessonInvalidation: "Скасування ідеї",
-  lessonReviewProcess: "Процес розбору",
-  advancedTracksLabel: "Додаткові напрямки",
-advancedTracksText:
-  "Додаткові спеціалізовані напрями навчання для поглиблення торгової системи всередині SkillEdge AI.",
-comingSoonButton: "Незабаром",
-activeModuleLabel: "Активний модуль",
-openLessonButton: "Відкрити урок",
-selectedModuleHint:
-  "Обери модуль, щоб побачити уроки, прогрес і наступний крок навчання.",
-nextLessonLabel: "Наступний урок",
-moduleDetailsLabel: "Деталі модуля",
-lessonViewerLabel: "Перегляд уроку",
-lessonContentLabel: "Зміст уроку",
-lessonCloseButton: "Закрити урок",
-lessonStartText:
-  "Цей урок оформлено як короткий практичний блок SkillEdge AI. Вивчи ключові ідеї, виконай завдання та звʼяжи концепцію зі своїми угодами.",
-lessonKeyPointsLabel: "Ключові ідеї",
-lessonPracticeLabel: "Практичне завдання",
-lessonPracticeText:
-  "Розбери концепцію, знайди один приклад на графіку і запиши, що підтверджує або ламає ідею.",
-markLessonCompletedButton: "Позначити урок пройденим",
-lessonCompletedButton: "Урок пройдено",
-frontendProgressNote:
-  "Прогрес зберігається в акаунті SkillEdge AI і залишиться після перезавантаження.",
-learningProgressLoading: "Завантажуємо прогрес навчання...",
-learningProgressSaving: "Зберігаємо прогрес...",
-learningProgressSaved: "Прогрес збережено",
-lessonAutoAdvanced:
-  "Урок збережено. Наступний урок відкрито автоматично.",
-moduleCompletedMessage: "Модуль завершено. Чудова робота.",
-learningProgressError: "Не вдалося синхронізувати прогрес навчання.",
-  extraModuleOneTitle: "Концепція Smart Money та робочі сетапи",
-extraModuleOneText:
-  "Структура ринку, ліквідність, провокації, імпульсне зміщення, ордер-блоки та практична логіка робочих сетапів.",
-extraModuleTwoTitle: "Скальпінг стакана в CScalp",
-extraModuleTwoText:
-  "Навчання платформі, базова робота з потоком ордерів, пробій рівня та сетапи “ножі” для активного скальпінгу.",
-extraModuleThreeTitle: "Додатковий модуль 3",
-extraModuleThreeText:
-  "Цей модуль буде заповнений наступним спеціалізованим навчальним блоком.",
-extraModuleFourTitle: "Додатковий модуль 4",
-extraModuleFourText:
-  "Цей модуль буде заповнений наступним спеціалізованим навчальним блоком.",
-extraModuleOneLessonOne: "Структура ринку",
-extraModuleOneLessonTwo: "Зони ліквідності",
-extraModuleOneLessonThree: "Ордер-блоки",
-extraModuleOneLessonFour: "Робочі сетапи",
-extraModuleTwoLessonOne: "Інтерфейс CScalp",
-extraModuleTwoLessonTwo: "Основи стакана",
-extraModuleTwoLessonThree: "Пробій рівня",
-extraModuleTwoLessonFour: "Сетап “ножі”",
-extraModuleThreeLessonOne: "Урок 1",
-extraModuleThreeLessonTwo: "Урок 2",
-extraModuleThreeLessonThree: "Урок 3",
-extraModuleThreeLessonFour: "Урок 4",
-extraModuleFourLessonOne: "Урок 1",
-extraModuleFourLessonTwo: "Урок 2",
-extraModuleFourLessonThree: "Урок 3",
-extraModuleFourLessonFour: "Урок 4",
-},
-reports: {
-  title: "Звіти",
-  text: "Статистика журналу, динаміка PnL, якість сетапів, помилки та сильні сторони торгівлі.",
-  placeholder: "Розширені звіти буде додано на наступному етапі.",
-  emptyTitle: "Поки недостатньо даних для звіту",
-  emptyText:
-    "Додай кілька угод у журнал, щоб SkillEdge AI зміг побудувати звіт по PnL, відсотку прибуткових угод, сетапах, помилках і динаміці результату.",
-  totalTrades: "Усього угод",
-  totalTradesHelper: "Усі угоди з журналу",
-  totalPnl: "Загальний PnL",
-  totalPnlHelper: "Сумарний результат за закритими угодами",
-  winRate: "Відсоток прибуткових",
-  averagePnl: "Середній PnL",
-  averagePnlHelper: "Середній результат на угоду",
-  profitFactor: "Profit Factor",
-  profitFactorHelper: "Валовий прибуток / валовий збиток",
-  bestWorst: "Найкраща / найгірша",
-  bestWorstHelper: "Найкраща та найгірша угода",
-  equityTitle: "Крива дохідності",
-  equitySubtitle: "Динаміка накопичувального PnL",
-  points: "точок",
-  directionTitle: "Лонг проти шорта",
-  directionSubtitle: "Результат за напрямком",
-  marketBreakdown: "Ринки",
-  setupBreakdown: "Сетапи",
-  mistakesBreakdown: "Помилки",
-  noData: "Поки немає даних.",
-    filtersTitle: "Фільтри звіту",
-  filtersText:
-    "Звужуй статистику за періодом, ринком, напрямком і сетапом, щоб бачити реальну якість торгівлі.",
-  resetFilters: "Скинути фільтри",
-  periodFilter: "Період",
-  periodAll: "Увесь час",
-  period7d: "7 днів",
-  period30d: "30 днів",
-  period90d: "90 днів",
-  marketFilter: "Ринок",
-  allMarkets: "Усі ринки",
-  directionFilter: "Напрямок",
-  allDirections: "Усі напрямки",
-  setupFilter: "Сетап",
-  allSetups: "Усі сетапи",
-  filteredTrades: "Угод у фільтрі",
-  noFilteredTradesTitle: "За вибраними фільтрами угод немає",
-noFilteredTradesText:
-  "Спробуй змінити період, ринок, напрямок або сетап. У журналі є угоди, але поточна комбінація фільтрів нічого не знайшла.",
-aiReportTitle: "AI-звіт",
-aiReportSubtitle: "Зведення за вибраними угодами",
-aiReportText:
-  "Згенеруй короткий звіт за поточним фільтром: що працює, де помилки, якість ризику, найкращі сетапи та на чому сфокусуватися далі.",
-aiReportButton: "Згенерувати звіт",
-aiReportLoading: "Генеруємо...",
-aiReportError: "Не вдалося згенерувати AI-звіт.",
-aiReportLabel: "AI-звіт",
-generateAiReport: "Згенерувати звіт",
-aiReportGenerating: "Генеруємо звіт...",
-aiReportPlaceholder:
-  "AI-звіт з’явиться тут після генерації. Він також збережеться в історії, щоб клієнт міг повернутися до нього пізніше.",
-aiReportResultLabel: "Результат",
-latestAiReportTitle: "Останній AI-звіт",
-savedAiReportTitle: "Збережений AI-звіт",
-aiReportHistoryLabel: "Історія",
-aiReportHistoryTitle: "Історія AI-звітів",
-aiReportHistoryText:
-  "Відкривай попередні AI-зведення за фільтрами та швидко повертайся до найважливіших висновків.",
-aiReportHistoryEmpty: "Поки що збережених AI-звітів немає.",
-currentSummaryLabel: "Поточне зведення",
-allPeriods: "Усі періоди",
-deleteAiReport: "Видалити звіт",
-copyAiReport: "Скопіювати",
-downloadAiReport: "Завантажити .txt",
-aiReportCopied: "AI-звіт скопійовано.",
-aiReportCopyFailed: "Не вдалося скопіювати звіт.",
-aiReportDownloaded: "AI-звіт завантажено.",
-upgradeForAiReports: "Потрібен Edge",
-aiReportUpgradeRequired:
-  "AI-звіти доступні на тарифах SkillEdge Edge та SkillEdge Elite.",
-aiReportLockedText:
-  "AI-звіти допомагають розібрати вибрані угоди, знайти найкращі сетапи, помилки та наступний фокус. Ця функція доступна на тарифах SkillEdge Edge та SkillEdge Elite.",
-aiReportPlanHint: "AI-звітів на місяць на поточному тарифі",
-},
-    
-journal: {
-  title: "Журнал угод",
-  text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
-  locked: "Для додавання угод потрібен активний тариф або пробний доступ.",
-  addTitle: "Додати угоду",
-  editTitle: "Редагувати угоду",
-addModeText: "Додай нову угоду до особистого журналу.",
-  addText:
-    "Заповни базові дані, додай скріншоти та використовуй AI-розбір для оцінки угоди.",
-  totalTrades: "Усього угод",
-  totalPnl: "Загальний PnL",
-  winRate: "Відсоток прибуткових",
-  avgPnl: "Середній PnL",
-  grossProfit: "Валовий прибуток",
-grossLoss: "Валовий збиток",
-bestTrade: "Найкраща угода",
-worstTrade: "Найгірша угода",
-profitFactor: "Profit Factor",
-equityTitle: "Крива PnL",
-equityText: "Накопичувальний PnL на основі збережених угод.",
-equityEmpty: "Додайте угоди з PnL, щоб побудувати криву дохідності.",
-equityPoints: "точок",
-expand: "Розгорнути",
-close: "Закрити",
-cardLabels: {
-  entry: "Вхід",
-  exit: "Вихід",
-  stop: "Стоп",
-  risk: "Ризик",
-  result: "Результат",
-  setup: "Сетап",
-  mistake: "Помилка",
-  lesson: "Урок",
-  notes: "Нотатки",
-},
-fullTitle: "Повний журнал",
-fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
-downloadCsv: "Завантажити CSV",
-downloadXlsx: "Завантажити XLSX",
-deleteTradeButton: "Видалити угоду",
-editTradeButton: "Редагувати",
-openChartButton: "Відкрити графік",
-cancelEditButton: "Скасувати редагування",
-editModeTitle: "Режим редагування",
-editModeText: "Зміни підсвічені поля та збережи угоду.",
-actions: "Дії",
-deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
-deleteTradeError: "Не вдалося видалити угоду.",
-uploadScreenshotTitle: "Завантаження скріншота угоди",
-
-uploadScreenshotText:
-  "Додавайте скріншоти графіків до збережених угод. Пізніше SkillEdge AI використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
-screenshotsCount: "скріншотів",
-screenshotTradeLabel: "Угода",
-screenshotFileLabel: "Скріншот",
-screenshotChoose: "Вибрати скріншот",
-screenshotNoFile: "Файл не вибрано",
-screenshotSelected: "Вибраний файл",
-screenshotHint:
-  "Кроки: 1) Оберіть угоду  2) Натисніть «Вибрати скріншот»  3) Натисніть «Завантажити»",
-screenshotUploadHintCompact:
-  "Завантажуй від одного до трьох скрінів з різними таймфреймами для глибшого аналізу.",
-  screenshotFormats: "Підтримувані формати: PNG, JPG, WEBP",
-screenshotsColumn: "Скріни",
-openScreenshots: "Відкрити",
-noScreenshotsForTrade: "Для цієї угоди скріни не завантажені.",
-screenshotViewerTitle: "Скріни угоди",
-loadingScreenshots: "Завантажуємо скріни...",
-  uploadButton: "Завантажити",
-uploadingButton: "Завантаження...",
-selectTradePlaceholder: "Оберіть угоду",
-stepOne: "Крок 1",
-stepTwo: "Крок 2",
-stepThree: "Крок 3",
-chartAnalyzeButton: "Розібрати графік",
-chartAnalyzingButton: "Аналіз графіка...",
-chartScreenshotsLabel: "скріншотів",
-journalAnalysisTitle: "AI-аналіз журналу угод",
-journalAnalysisText:
-  "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
-journalAnalyzeButton: "Розібрати журнал",
-journalAnalyzingButton: "Аналіз...",
-savedChartAnalysis: "Збережений AI-розбір графіка",
-showChartHistory: "Показати AI-розбори",
-hideChartHistory: "Сховати AI-розбори",
-noChartHistory: "Збережених розборів графіка ще немає.",
-searchTicker: "Пошук тикера",
-allMarkets: "Усі ринки",
-allSides: "Усі напрямки",
-allResults: "Усі результати",
-marketLabels: {
-  stocks: "Акції",
-  crypto: "Крипто",
-  futures: "Ф’ючерси",
-  forex: "Форекс",
-  options: "Опціони",
-},
-directionLabels: {
-  long: "Лонг",
-  short: "Шорт",
-},
-resultLabels: {
-  win: "Прибуткова",
-  loss: "Збиткова",
-  breakeven: "Беззбиткова",
-  notSet: "Не задано",
-},
-table: {
-  date: "Дата",
-  ticker: "Тикер",
-  market: "Ринок",
-  side: "Сторона",
-  entry: "Вхід",
-  exit: "Вихід",
-  stop: "Стоп",
-  risk: "Ризик",
-  pnl: "PnL",
-  result: "Результат",
-  setup: "Сетап",
-},
-  recentTitle: "Останні угоди",
-  recentText:
-    "Останні 3 угоди з особистого журналу. Повна таблиця, фільтри та експорт доступні нижче.",
-  empty:
-    "Угод поки немає. Додайте першу угоду, щоб почати збирати базу своєї статистики.",
-  tradesCount: "угод",
-  saving: "Зберігаємо...",
-  save: "Зберегти угоду",
-  updateTradeButton: "Оновити угоду",
-  updatingTradeButton: "Оновлення...",
-  tickerRequired: "Введіть тикер.",
-  tradeLimitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
-  tradeUsageTitle: "Використано угод",
-  tradesLeftLabel: "залишилось",
-  screenshotLimitReached: "Досягнуто ліміт скриншотів для цієї угоди",
-  screenshotUsageTitle: "Використано скриншотів",
-  limitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
-  loginFirst: "Спочатку увійдіть в акаунт.",
-  saveFailed: "Не вдалося зберегти угоду.",
-  fields: {
-    ticker: "Тикер",
-    date: "Дата",
-    market: "Ринок",
-    direction: "Напрямок",
-    entry: "Вхід",
-    exit: "Вихід",
-    stop: "Стоп",
-    size: "Розмір позиції",
-    risk: "Ризик $",
-    pnl: "PnL $",
-    result: "Результат",
-    setup: "Сетап",
-    emotion: "Емоція",
-    mistake: "Помилка",
-    lesson: "Урок",
-    notes: "Нотатки",
-  },
-  placeholders: {
-    ticker: "AAPL / BTC / NQ",
-    entry: "100",
-    exit: "105",
-    stop: "98",
-    size: "Акції / контракти",
-    risk: "50",
-    pnl: "-25 / 120",
-    setup: "повернення VWAP / згасання гепу",
-    emotion: "Спокій / FOMO / страх",
-    mistake: "Що було зроблено неправильно?",
-    lesson: "Що потрібно запамʼятати на наступну угоду?",
-    notes: "Контекст, каталізатор, стрічка, рівні...",
-  },
-  options: {
-    notSet: "Не задано",
-    win: "Плюс",
-    loss: "Мінус",
-    breakeven: "Беззбиток",
-  },
-},
-locked: {
-      title: "Активуйте тариф",
-      label: "Доступ закрито",
-      text: "Після оплати відкриються журнал угод, SkillEdge AI-коуч, графіки TradingView, навчання, звіти та історія AI-розборів.",
-      button: "Обрати тариф",
+      title: "РћРіР»СЏРґ РµС„РµРєС‚РёРІРЅРѕСЃС‚С–",
+      text: "Р—РІРµРґРµРЅРЅСЏ PnL, РІС–РґСЃРѕС‚РѕРє РїСЂРёР±СѓС‚РєРѕРІРёС… СѓРіРѕРґ, РѕС†С–РЅРєР° РґРёСЃС†РёРїР»С–РЅРё, РЅР°Р№РєСЂР°С‰С– СЃРµС‚Р°РїРё С‚Р° РіРѕР»РѕРІРЅС– РїРѕРјРёР»РєРё.",
+      pnlMonth: "PnL Р·Р° РјС–СЃСЏС†СЊ",
+      winRate: "Р’С–РґСЃРѕС‚РѕРє РїСЂРёР±СѓС‚РєРѕРІРёС…",
+      discipline: "РћС†С–РЅРєР° РґРёСЃС†РёРїР»С–РЅРё",
+      weeklyAi: "AI-Р·РІРµРґРµРЅРЅСЏ С‚РёР¶РЅСЏ",
+      weeklyAiText:
+        "AI-Р·РІРµРґРµРЅРЅСЏ Р·Р±РёСЂР°С” РєР»СЋС‡РѕРІС– РІРёСЃРЅРѕРІРєРё РїРѕ Р¶СѓСЂРЅР°Р»Сѓ СѓРіРѕРґ, СЂРёР·РёРєСѓ, РґРёСЃС†РёРїР»С–РЅС– С‚Р° РїРѕРІС‚РѕСЂСЋРІР°РЅРёС… РїРѕРјРёР»РєР°С….",
+    },
+    charts: {
+      title: "Р“СЂР°С„С–РєРё TradingView",
+      text: "Р’Р±СѓРґРѕРІР°РЅРёР№ РіСЂР°С„С–Рє TradingView РґР»СЏ Р°РЅР°Р»С–Р·Сѓ С‚РёРєРµСЂС–РІ, СЂС–РІРЅС–РІ С– СЃРµС‚Р°РїС–РІ.",
+      placeholder: "Р РѕР±РѕС‡РёР№ РїСЂРѕСЃС‚С–СЂ TradingView РґРѕСЃС‚СѓРїРЅРёР№ СѓСЃРµСЂРµРґРёРЅС– РјРѕРґСѓР»СЏ РіСЂР°С„С–РєС–РІ.",
+      analyzeCurrentChart: "РџСЂРѕР°РЅР°Р»С–Р·СѓРІР°С‚Рё РіСЂР°С„С–Рє",
+      workspaceText: "Р РѕР±РѕС‡Р° Р·РѕРЅР° Р· РіСЂР°С„С–РєРѕРј, СЃРїРёСЃРєРѕРј СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ С‚Р° Р»С–РґРµСЂР°РјРё СЂСѓС…Сѓ СЂРёРЅРєСѓ.",
+      watchlistExamples: "РџСЂРёРєР»Р°РґРё СЃРїРёСЃРєСѓ СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      openWatchlist: "Р’С–РґРєСЂРёС‚Рё СЃРїРёСЃРѕРє",
+      hideWatchlist: "РЎС…РѕРІР°С‚Рё СЃРїРёСЃРѕРє",
+      watchlistTitle: "РЎРїРёСЃРѕРє СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ",
+      watchlistSubtitle: "РўРёРєРµСЂ / 24h % / РѕР±КјС”Рј",
+      addTickerButton: "Р”РѕРґР°С‚Рё",
+      addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+      addTickerHint: "РџСЂРёРєР»Р°Рґ: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+      sortSymbol: "РўРёРєРµСЂ",
+      sortChange: "% 24h",
+      sortVolume: "РћР±КјС”Рј",
+      symbolColumn: "РўРёРєРµСЂ",
+      percentColumn: "%",
+      volumeColumn: "РћР±КјС”Рј",
+      loadingWatchlist: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ СЃРїРёСЃРѕРє СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ...",
+      emptyWatchlist: "РЎРїРёСЃРѕРє РїРѕСЂРѕР¶РЅС–Р№. РќР°С‚РёСЃРЅРё + С– РґРѕРґР°Р№ С‚РёРєРµСЂ.",
+      removeFromWatchlist: "Р’РёРґР°Р»РёС‚Рё Р·С– СЃРїРёСЃРєСѓ",
+      loginFirst: "РЎРїРѕС‡Р°С‚РєСѓ СѓРІС–Р№РґС–С‚СЊ РІ Р°РєР°СѓРЅС‚.",
+      settingsLoadError: "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ РіСЂР°С„С–РєС–РІ.",
+      addTickerError: "РќРµ РІРґР°Р»РѕСЃСЏ РґРѕРґР°С‚Рё С‚РёРєРµСЂ РґРѕ СЃРїРёСЃРєСѓ СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ.",
+      removeTickerError: "РќРµ РІРґР°Р»РѕСЃСЏ РІРёРґР°Р»РёС‚Рё С‚РёРєРµСЂ Р·С– СЃРїРёСЃРєСѓ СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ.",
+      moversStocks: "РђРєС†С–С—",
+      moversCrypto: "РљСЂРёРїС‚Рѕ",
+      moversGainers: "Р›С–РґРµСЂРё СЂРѕСЃС‚Сѓ",
+      moversLosers: "Р›С–РґРµСЂРё РїР°РґС–РЅРЅСЏ",
+      moversCollapse: "Р—РіРѕСЂРЅСѓС‚Рё",
+      moversExpand: "Р РѕР·РіРѕСЂРЅСѓС‚Рё",
+      moversName: "РќР°Р·РІР°",
+      moversPercentChange: "% Р·РјС–РЅРё",
+      moversLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ Р»С–РґРµСЂС–РІ СЂСѓС…Сѓ...",
+      moversEmpty: "РќРµРјР°С” С–РЅСЃС‚СЂСѓРјРµРЅС‚С–РІ РїС–Рґ С†РµР№ С„С–Р»СЊС‚СЂ.",
+      moversStocksNeedKey:
+        "Р›С–РґРµСЂРё СЂСѓС…Сѓ РїРѕ Р°РєС†С–СЏС… РіРѕС‚СѓСЋС‚СЊСЃСЏ РґРѕ РїС–РґРєР»СЋС‡РµРЅРЅСЏ РїСЂРµРјС–Р°Р»СЊРЅРѕРіРѕ РїРѕРєСЂРёС‚С‚СЏ СЂРёРЅРєРѕРІРёС… РґР°РЅРёС….",
+      chartAnalysisTitle: "AI-Р°РЅР°Р»С–Р· РіСЂР°С„С–РєР°",
+      chartAnalysisText:
+        "SkillEdge AI Р°РЅР°Р»С–Р·СѓС” РїРѕС‚РѕС‡РЅРёР№ С‚РёРєРµСЂ, С‚Р°Р№РјС„СЂРµР№Рј, СЂРёРЅРєРѕРІС– РґР°РЅС–, СЃРІС–С‡РєРё, РѕР±КјС”Рј С– РєРѕРЅС‚РµРєСЃС‚ СЂРёР·РёРєСѓ.",
+      chartAnalysisLoading: "РђРЅР°Р»С–Р·СѓС”РјРѕ РїРѕС‚РѕС‡РЅРёР№ РіСЂР°С„С–Рє...",
+      chartAnalysisError: "РќРµ РІРґР°Р»РѕСЃСЏ РїСЂРѕР°РЅР°Р»С–Р·СѓРІР°С‚Рё РїРѕС‚РѕС‡РЅРёР№ РіСЂР°С„С–Рє.",
+      chartAnalysisEmpty: "Р—Р°РїСѓСЃС‚Рё AI-Р°РЅР°Р»С–Р·, С‰РѕР± РїРѕР±Р°С‡РёС‚Рё СЂРѕР·Р±С–СЂ РїРѕС‚РѕС‡РЅРѕРіРѕ РіСЂР°С„С–РєР°.",
+      chartAnalysisClose: "Р—Р°РєСЂРёС‚Рё",
+      chartAnalysisSymbol: "РўС–РєРµСЂ",
+      chartAnalysisInterval: "РўР°Р№РјС„СЂРµР№Рј",
+      chartAnalysisReportLabel: "Р—РІС–С‚ SkillEdge AI",
+      chartAnalysisDataLabel: "Р РѕР·Р±С–СЂ СЂРёРЅРєРѕРІРѕС— СЃС‚СЂСѓРєС‚СѓСЂРё",
+      chartAnalysisSectionsLabel: "РЎРµРєС†С–С— Р°РЅР°Р»С–Р·Сѓ",
+      marketDataUnavailableTitle: "Р РёРЅРєРѕРІС– РґР°РЅС– РЅРµРґРѕСЃС‚СѓРїРЅС–",
+      marketDataUnavailableText:
+        "SkillEdge AI РЅРµ Р·РјС–Рі Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё СЂРёРЅРєРѕРІС– РґР°РЅС– РїРѕ С†СЊРѕРјСѓ С‚РёРєРµСЂСѓ РЅР° РїРѕС‚РѕС‡РЅРѕРјСѓ С‚Р°СЂРёС„С– РґР°РЅРёС…. РЎРїСЂРѕР±СѓР№ Р±С–Р»СЊС€ Р»С–РєРІС–РґРЅРёР№ С‚РёРєРµСЂ: AAPL, TSLA, NVDA, SPY Р°Р±Рѕ QQQ.",
+      marketDataPremiumTitle: "РџРѕС‚СЂС–Р±РµРЅ РїСЂРµРјС–СѓРј-РґРѕСЃС‚СѓРї РґРѕ СЂРёРЅРєРѕРІРёС… РґР°РЅРёС…",
+      marketDataPremiumText:
+  "Р¦РµР№ С‚РёРєРµСЂ, С‚Р°Р№РјС„СЂРµР№Рј Р°Р±Рѕ РґР¶РµСЂРµР»Рѕ РґР°РЅРёС… РјРѕР¶Рµ РІРёРјР°РіР°С‚Рё РІРёС‰РёР№ С‚Р°СЂРёС„ СЂРёРЅРєРѕРІРёС… РґР°РЅРёС…. SkillEdge AI РІРёРєРѕСЂРёСЃС‚РѕРІСѓС” РїСЂРµРјС–Р°Р»СЊРЅРµ СЂРёРЅРєРѕРІРµ РїРѕРєСЂРёС‚С‚СЏ С‚Р°Рј, РґРµ РІРѕРЅРѕ РґРѕСЃС‚СѓРїРЅРµ.",
+      marketDataGenericErrorTitle: "РђРЅР°Р»С–Р· С‚РёРјС‡Р°СЃРѕРІРѕ РЅРµРґРѕСЃС‚СѓРїРЅРёР№",
+      marketDataGenericErrorText:
+        "Р—Р°СЂР°Р· РЅРµ РІРґР°Р»РѕСЃСЏ РІРёРєРѕРЅР°С‚Рё Р°РЅР°Р»С–Р· РіСЂР°С„С–РєР°. РЎРїСЂРѕР±СѓР№ С–РЅС€РёР№ С‚РёРєРµСЂ, С‚Р°Р№РјС„СЂРµР№Рј Р°Р±Рѕ Р·Р°РїСѓСЃС‚Рё Р°РЅР°Р»С–Р· С‰Рµ СЂР°Р·.",
+      chartControlTickerLabel: "РўС–РєРµСЂ",
+      chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+      chartControlIntervalLabel: "РўР°Р№РјС„СЂРµР№Рј",
+      chartControlOpenChart: "Р’С–РґРєСЂРёС‚Рё РіСЂР°С„С–Рє",
+      chartControlHint:
+        "Р’РёРєРѕСЂРёСЃС‚РѕРІСѓР№ С†СЋ РїР°РЅРµР»СЊ РґР»СЏ РєРµСЂСѓРІР°РЅРЅСЏ TradingView С‚Р° AI-Р°РЅР°Р»С–Р·РѕРј. Р—РјС–РЅРё РІСЃРµСЂРµРґРёРЅС– СЃР°РјРѕРіРѕ TradingView РјРѕР¶СѓС‚СЊ РЅРµ СЃРёРЅС…СЂРѕРЅС–Р·СѓРІР°С‚РёСЃСЏ РЅР°Р·Р°Рґ Сѓ SkillEdge AI.",
+    },
+    learning: {
+      title: "Р¦РµРЅС‚СЂ РЅР°РІС‡Р°РЅРЅСЏ",
+      text: "РЎС‚СЂСѓРєС‚СѓСЂРЅРµ РЅР°РІС‡Р°РЅРЅСЏ С‚СЂРµР№РґРёРЅРіСѓ, СЃРµС‚Р°РїРё, СЂРёР·РёРє-РјРµРЅРµРґР¶РјРµРЅС‚, РїСЃРёС…РѕР»РѕРіС–СЏ С‚Р° РїРѕР±СѓРґРѕРІР° С‚РѕСЂРіРѕРІРѕРіРѕ РїР»РµР№Р±СѓРєР°.",
+      learningNoteTitle: "Р¦РµРЅС‚СЂ РЅР°РІС‡Р°РЅРЅСЏ РїСЂР°С†СЋС” СЏРє Р±Р°Р·Р° РїРѕРІС‚РѕСЂРµРЅРЅСЏ",
+      learningNoteText:
+        "SkillEdge AI РЅР°СЃР°РјРїРµСЂРµРґ СЃС„РѕРєСѓСЃРѕРІР°РЅРёР№ РЅР° Р¶СѓСЂРЅР°Р»С– СѓРіРѕРґ, Р°РЅР°Р»С–Р·С– РіСЂР°С„С–РєС–РІ, AI-СЂРѕР·Р±РѕСЂС– С‚Р° СЂРѕР·РІРёС‚РєСѓ С‚РѕСЂРіРѕРІРѕС— СЃРёСЃС‚РµРјРё. Р¦РµР№ СЂРѕР·РґС–Р» СЃС‚РІРѕСЂРµРЅРёР№ СЏРє РєРѕСЂРѕС‚РєР° Р±Р°Р·Р° РґР»СЏ РІС–РґРЅРѕРІР»РµРЅРЅСЏ РєР»СЋС‡РѕРІРёС… РїРѕРЅСЏС‚СЊ, С‰РѕР± РєР»С–С”РЅС‚ С€РІРёРґС€Рµ СЂРѕР·СѓРјС–РІ СЂРёР·РёРє, СЃРµС‚Р°РїРё, СЃС‚СЂСѓРєС‚СѓСЂСѓ СЂРёРЅРєСѓ С‚Р° Р»РѕРіС–РєСѓ AI-Р°РЅР°Р»С–Р·Сѓ.",
+      overviewLabel: "РћРіР»СЏРґ РЅР°РІС‡Р°РЅРЅСЏ",
+      modulesLabel: "РњРѕРґСѓР»С–",
+      lessonsLabel: "СѓСЂРѕРєС–РІ",
+      progressLabel: "РџСЂРѕРіСЂРµСЃ",
+      totalProgressLabel: "Р—Р°РіР°Р»СЊРЅРёР№ РїСЂРѕРіСЂРµСЃ",
+      startButton: "РџРѕС‡Р°С‚Рё",
+      continueButton: "РџСЂРѕРґРѕРІР¶РёС‚Рё",
+      reviewButton: "РџРѕРІС‚РѕСЂРёС‚Рё",
+      notStartedStatus: "РќРµ СЂРѕР·РїРѕС‡Р°С‚Рѕ",
+      inProgressStatus: "РЈ РїСЂРѕС†РµСЃС–",
+      completedStatus: "РџСЂРѕР№РґРµРЅРѕ",
+      lockedLabel: "РЎРєРѕСЂРѕ",
+      estimatedTimeLabel: "Р§Р°СЃ",
+      levelLabel: "Р С–РІРµРЅСЊ",
+      beginnerLevel: "РџРѕС‡Р°С‚РєРѕРІРёР№",
+      intermediateLevel: "РЎРµСЂРµРґРЅС–Р№",
+      advancedLevel: "РџСЂРѕСЃСѓРЅСѓС‚РёР№",
+      moduleOneTitle: "РћСЃРЅРѕРІРё СЂРёРЅРєСѓ",
+      moduleOneText:
+        "Р РѕР·Р±РµСЂРёСЃСЏ, СЏРє РїСЂР°С†СЋС” СЂРёРЅРѕРє, СЏРє РІР·Р°С”РјРѕРґС–СЋС‚СЊ РѕСЂРґРµСЂРё С– С‡РѕРјСѓ Р»С–РєРІС–РґРЅС–СЃС‚СЊ РјР°С” Р·РЅР°С‡РµРЅРЅСЏ.",
+      moduleTwoTitle: "РўРµС…РЅС–С‡РЅРёР№ Р°РЅР°Р»С–Р·",
+      moduleTwoText:
+        "РЎРІС–С‡РєРё, СЂС–РІРЅС–, С‚СЂРµРЅРґ/СЂРµРЅР¶, РѕР±КјС”Рј С– С‡РёСЃС‚Рµ С‡РёС‚Р°РЅРЅСЏ РіСЂР°С„С–РєР° Р±РµР· Р·Р°Р№РІРѕРіРѕ С€СѓРјСѓ.",
+      moduleThreeTitle: "Р РёР·РёРє-РјРµРЅРµРґР¶РјРµРЅС‚",
+      moduleThreeText:
+        "РџСЂР°РІРёР»Р° СЂРёР·РёРєСѓ РЅР° СѓРіРѕРґСѓ, СЃС‚РѕРї-Р»РѕСЃСЃ, СЂРѕР·РјС–СЂ РїРѕР·РёС†С–С— С‚Р° СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЂРёР·РёРє/РїСЂРёР±СѓС‚РѕРє.",
+      moduleFourTitle: "Р’РЅСѓС‚СЂС–С€РЅСЊРѕРґРµРЅРЅРёР№ С–РјРїСѓР»СЊСЃ",
+      moduleFourText:
+        "Р›РѕРіС–РєР° С–РјРїСѓР»СЊСЃСѓ, РїСЂРѕР±С–Р№, РїРѕРІРµСЂРЅРµРЅРЅСЏ СЂС–РІРЅСЏ, С…РёР±РЅРёР№ РїСЂРѕР±С–Р№ С– СЃРµС‚Р°РїРё РїСЂРѕРґРѕРІР¶РµРЅРЅСЏ СЂСѓС…Сѓ.",
+      moduleFiveTitle: "РџСЃРёС…РѕР»РѕРіС–СЏ С‚СЂРµР№РґРёРЅРіСѓ",
+      moduleFiveText:
+        "РљРѕРЅС‚СЂРѕР»СЊ РїРµСЂРµС‚РѕСЂРіРѕРІРєРё, С‚РѕСЂРіС–РІР»С– Р· РїРѕРјСЃС‚Рё, СЃС‚СЂР°С…Сѓ, СЃСѓРјРЅС–РІС–РІ С‚Р° С–РјРїСѓР»СЊСЃРёРІРЅРёС… РІС…РѕРґС–РІ.",
+      moduleSixTitle: "РџР»РµР№Р±СѓРє / РЎРµС‚Р°РїРё",
+      moduleSixText:
+        "РџРµСЂРµС‚РІРѕСЂСЋР№ РїРѕРІС‚РѕСЂСЋРІР°РЅС– РїР°С‚РµСЂРЅРё РЅР° С‚РѕСЂРіРѕРІРёР№ РїР»РµР№Р±СѓРє С–Р· С‚СЂРёРіРµСЂР°РјРё РІС…РѕРґСѓ С‚Р° СѓРјРѕРІР°РјРё СЃРєР°СЃСѓРІР°РЅРЅСЏ С–РґРµС—.",
+      lessonMarketStructure: "РЇРє РїСЂР°С†СЋС” СЂРёРЅРѕРє",
+      lessonOrderTypes: "РўРёРїРё РѕСЂРґРµСЂС–РІ",
+      lessonBidAskSpread: "Bid / Ask / РЎРїСЂРµРґ",
+      lessonLiquidity: "Р›С–РєРІС–РґРЅС–СЃС‚СЊ",
+      lessonCandles: "РЎРІС–С‡РєРё",
+      lessonLevels: "РџС–РґС‚СЂРёРјРєР° С– СЃРїСЂРѕС‚РёРІ",
+      lessonTrendRange: "РўСЂРµРЅРґ Р°Р±Рѕ СЂРµРЅР¶",
+      lessonVolume: "РђРЅР°Р»С–Р· РѕР±КјС”РјСѓ",
+      lessonRiskPerTrade: "Р РёР·РёРє РЅР° СѓРіРѕРґСѓ",
+      lessonStopLoss: "РЎС‚РѕРї-Р»РѕСЃСЃ",
+      lessonRiskReward: "Р РёР·РёРє / РџРѕС‚РµРЅС†С–Р°Р»",
+      lessonPositionSizing: "Р РѕР·РјС–СЂ РїРѕР·РёС†С–С—",
+      lessonMomentumLogic: "Р›РѕРіС–РєР° С–РјРїСѓР»СЊСЃСѓ",
+      lessonBreakoutReclaim: "РџСЂРѕР±С–Р№ / РїРѕРІРµСЂРЅРµРЅРЅСЏ СЂС–РІРЅСЏ",
+      lessonFailedBreakout: "РҐРёР±РЅРёР№ РїСЂРѕР±С–Р№",
+      lessonContinuation: "РџСЂРѕРґРѕРІР¶РµРЅРЅСЏ СЂСѓС…Сѓ",
+      lessonDiscipline: "Р”РёСЃС†РёРїР»С–РЅР°",
+      lessonOvertrading: "РџРµСЂРµС‚РѕСЂРіРѕРІРєР°",
+      lessonRevengeTrading: "РўРѕСЂРіС–РІР»СЏ Р· РїРѕРјСЃС‚Рё",
+      lessonPatience: "РўРµСЂРїС–РЅРЅСЏ",
+      lessonSetupChecklist: "Р§РµРєР»РёСЃС‚ СЃРµС‚Р°РїСѓ",
+      lessonEntryTrigger: "РўСЂРёРіРµСЂ РІС…РѕРґСѓ",
+      lessonInvalidation: "РЎРєР°СЃСѓРІР°РЅРЅСЏ С–РґРµС—",
+      lessonReviewProcess: "РџСЂРѕС†РµСЃ СЂРѕР·Р±РѕСЂСѓ",
+      advancedTracksLabel: "Р”РѕРґР°С‚РєРѕРІС– РЅР°РїСЂСЏРјРєРё",
+      advancedTracksText:
+        "Р”РѕРґР°С‚РєРѕРІС– СЃРїРµС†С–Р°Р»С–Р·РѕРІР°РЅС– РЅР°РїСЂСЏРјРё РЅР°РІС‡Р°РЅРЅСЏ РґР»СЏ РїРѕРіР»РёР±Р»РµРЅРЅСЏ С‚РѕСЂРіРѕРІРѕС— СЃРёСЃС‚РµРјРё РІСЃРµСЂРµРґРёРЅС– SkillEdge AI.",
+      comingSoonButton: "РќРµР·Р°Р±Р°СЂРѕРј",
+      activeModuleLabel: "РђРєС‚РёРІРЅРёР№ РјРѕРґСѓР»СЊ",
+      openLessonButton: "Р’С–РґРєСЂРёС‚Рё СѓСЂРѕРє",
+      selectedModuleHint:
+        "РћР±РµСЂРё РјРѕРґСѓР»СЊ, С‰РѕР± РїРѕР±Р°С‡РёС‚Рё СѓСЂРѕРєРё, РїСЂРѕРіСЂРµСЃ С– РЅР°СЃС‚СѓРїРЅРёР№ РєСЂРѕРє РЅР°РІС‡Р°РЅРЅСЏ.",
+      nextLessonLabel: "РќР°СЃС‚СѓРїРЅРёР№ СѓСЂРѕРє",
+      moduleDetailsLabel: "Р”РµС‚Р°Р»С– РјРѕРґСѓР»СЏ",
+      lessonViewerLabel: "РџРµСЂРµРіР»СЏРґ СѓСЂРѕРєСѓ",
+      lessonContentLabel: "Р—РјС–СЃС‚ СѓСЂРѕРєСѓ",
+      lessonCloseButton: "Р—Р°РєСЂРёС‚Рё СѓСЂРѕРє",
+      lessonStartText:
+        "Р¦РµР№ СѓСЂРѕРє РѕС„РѕСЂРјР»РµРЅРѕ СЏРє РєРѕСЂРѕС‚РєРёР№ РїСЂР°РєС‚РёС‡РЅРёР№ Р±Р»РѕРє SkillEdge AI. Р’РёРІС‡Рё РєР»СЋС‡РѕРІС– С–РґРµС—, РІРёРєРѕРЅР°Р№ Р·Р°РІРґР°РЅРЅСЏ С‚Р° Р·РІКјСЏР¶Рё РєРѕРЅС†РµРїС†С–СЋ Р·С– СЃРІРѕС—РјРё СѓРіРѕРґР°РјРё.",
+      lessonKeyPointsLabel: "РљР»СЋС‡РѕРІС– С–РґРµС—",
+      lessonPracticeLabel: "РџСЂР°РєС‚РёС‡РЅРµ Р·Р°РІРґР°РЅРЅСЏ",
+      lessonPracticeText:
+        "Р РѕР·Р±РµСЂРё РєРѕРЅС†РµРїС†С–СЋ, Р·РЅР°Р№РґРё РѕРґРёРЅ РїСЂРёРєР»Р°Рґ РЅР° РіСЂР°С„С–РєСѓ С– Р·Р°РїРёС€Рё, С‰Рѕ РїС–РґС‚РІРµСЂРґР¶СѓС” Р°Р±Рѕ Р»Р°РјР°С” С–РґРµСЋ.",
+      markLessonCompletedButton: "РџРѕР·РЅР°С‡РёС‚Рё СѓСЂРѕРє РїСЂРѕР№РґРµРЅРёРј",
+      lessonCompletedButton: "РЈСЂРѕРє РїСЂРѕР№РґРµРЅРѕ",
+      frontendProgressNote:
+        "РџСЂРѕРіСЂРµСЃ Р·Р±РµСЂС–РіР°С”С‚СЊСЃСЏ РІ Р°РєР°СѓРЅС‚С– SkillEdge AI С– Р·Р°Р»РёС€РёС‚СЊСЃСЏ РїС–СЃР»СЏ РїРµСЂРµР·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ.",
+      learningProgressLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ РїСЂРѕРіСЂРµСЃ РЅР°РІС‡Р°РЅРЅСЏ...",
+      learningProgressSaving: "Р—Р±РµСЂС–РіР°С”РјРѕ РїСЂРѕРіСЂРµСЃ...",
+      learningProgressSaved: "РџСЂРѕРіСЂРµСЃ Р·Р±РµСЂРµР¶РµРЅРѕ",
+      lessonAutoAdvanced:
+        "РЈСЂРѕРє Р·Р±РµСЂРµР¶РµРЅРѕ. РќР°СЃС‚СѓРїРЅРёР№ СѓСЂРѕРє РІС–РґРєСЂРёС‚Рѕ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ.",
+      moduleCompletedMessage: "РњРѕРґСѓР»СЊ Р·Р°РІРµСЂС€РµРЅРѕ. Р§СѓРґРѕРІР° СЂРѕР±РѕС‚Р°.",
+      learningProgressError: "РќРµ РІРґР°Р»РѕСЃСЏ СЃРёРЅС…СЂРѕРЅС–Р·СѓРІР°С‚Рё РїСЂРѕРіСЂРµСЃ РЅР°РІС‡Р°РЅРЅСЏ.",
+      extraModuleOneTitle: "РљРѕРЅС†РµРїС†С–СЏ Smart Money С‚Р° СЂРѕР±РѕС‡С– СЃРµС‚Р°РїРё",
+      extraModuleOneText:
+        "РЎС‚СЂСѓРєС‚СѓСЂР° СЂРёРЅРєСѓ, Р»С–РєРІС–РґРЅС–СЃС‚СЊ, РїСЂРѕРІРѕРєР°С†С–С—, С–РјРїСѓР»СЊСЃРЅРµ Р·РјС–С‰РµРЅРЅСЏ, РѕСЂРґРµСЂ-Р±Р»РѕРєРё С‚Р° РїСЂР°РєС‚РёС‡РЅР° Р»РѕРіС–РєР° СЂРѕР±РѕС‡РёС… СЃРµС‚Р°РїС–РІ.",
+      extraModuleTwoTitle: "РЎРєР°Р»СЊРїС–РЅРі СЃС‚Р°РєР°РЅР° РІ CScalp",
+      extraModuleTwoText:
+        "РќР°РІС‡Р°РЅРЅСЏ РїР»Р°С‚С„РѕСЂРјС–, Р±Р°Р·РѕРІР° СЂРѕР±РѕС‚Р° Р· РїРѕС‚РѕРєРѕРј РѕСЂРґРµСЂС–РІ, РїСЂРѕР±С–Р№ СЂС–РІРЅСЏ С‚Р° СЃРµС‚Р°РїРё В«РЅРѕР¶С–В» РґР»СЏ Р°РєС‚РёРІРЅРѕРіРѕ СЃРєР°Р»СЊРїС–РЅРіСѓ.",
+      extraModuleThreeTitle: "Р”РѕРґР°С‚РєРѕРІРёР№ РјРѕРґСѓР»СЊ 3",
+      extraModuleThreeText:
+        "Р¦РµР№ РјРѕРґСѓР»СЊ Р·Р°СЂРµР·РµСЂРІРѕРІР°РЅРѕ РїС–Рґ РЅР°СЃС‚СѓРїРЅРёР№ СЃРїРµС†С–Р°Р»С–Р·РѕРІР°РЅРёР№ РЅР°РІС‡Р°Р»СЊРЅРёР№ Р±Р»РѕРє.",
+      extraModuleFourTitle: "Р”РѕРґР°С‚РєРѕРІРёР№ РјРѕРґСѓР»СЊ 4",
+      extraModuleFourText:
+        "Р¦РµР№ РјРѕРґСѓР»СЊ Р·Р°СЂРµР·РµСЂРІРѕРІР°РЅРѕ РїС–Рґ РЅР°СЃС‚СѓРїРЅРёР№ СЃРїРµС†С–Р°Р»С–Р·РѕРІР°РЅРёР№ РЅР°РІС‡Р°Р»СЊРЅРёР№ Р±Р»РѕРє.",
+      extraModuleOneLessonOne: "РЎС‚СЂСѓРєС‚СѓСЂР° СЂРёРЅРєСѓ",
+      extraModuleOneLessonTwo: "Р—РѕРЅРё Р»С–РєРІС–РґРЅРѕСЃС‚С–",
+      extraModuleOneLessonThree: "РћСЂРґРµСЂ-Р±Р»РѕРєРё",
+      extraModuleOneLessonFour: "Р РѕР±РѕС‡С– СЃРµС‚Р°РїРё",
+      extraModuleTwoLessonOne: "Р†РЅС‚РµСЂС„РµР№СЃ CScalp",
+      extraModuleTwoLessonTwo: "РћСЃРЅРѕРІРё СЃС‚Р°РєР°РЅР°",
+      extraModuleTwoLessonThree: "РџСЂРѕР±С–Р№ СЂС–РІРЅСЏ",
+      extraModuleTwoLessonFour: "РЎРµС‚Р°Рї В«РЅРѕР¶С–В»",
+      extraModuleThreeLessonOne: "РЈСЂРѕРє 1",
+      extraModuleThreeLessonTwo: "РЈСЂРѕРє 2",
+      extraModuleThreeLessonThree: "РЈСЂРѕРє 3",
+      extraModuleThreeLessonFour: "РЈСЂРѕРє 4",
+      extraModuleFourLessonOne: "РЈСЂРѕРє 1",
+      extraModuleFourLessonTwo: "РЈСЂРѕРє 2",
+      extraModuleFourLessonThree: "РЈСЂРѕРє 3",
+      extraModuleFourLessonFour: "РЈСЂРѕРє 4",
+    },
+    reports: {
+      title: "Р—РІС–С‚Рё",
+      text: "РЎС‚Р°С‚РёСЃС‚РёРєР° Р¶СѓСЂРЅР°Р»Сѓ, РґРёРЅР°РјС–РєР° PnL, СЏРєС–СЃС‚СЊ СЃРµС‚Р°РїС–РІ, РїРѕРјРёР»РєРё С‚Р° СЃРёР»СЊРЅС– СЃС‚РѕСЂРѕРЅРё С‚РѕСЂРіС–РІР»С–.",
+      placeholder:
+        "Р РѕР·С€РёСЂРµРЅС– Р·РІС–С‚Рё С„РѕСЂРјСѓСЋС‚СЊСЃСЏ РЅР° РѕСЃРЅРѕРІС– Р¶СѓСЂРЅР°Р»Сѓ, С„С–Р»СЊС‚СЂС–РІ С– Р·Р±РµСЂРµР¶РµРЅРёС… СѓРіРѕРґ.",
+      emptyTitle: "РџРѕРєРё РЅРµРґРѕСЃС‚Р°С‚РЅСЊРѕ РґР°РЅРёС… РґР»СЏ Р·РІС–С‚Сѓ",
+      emptyText:
+        "Р”РѕРґР°Р№ РєС–Р»СЊРєР° СѓРіРѕРґ Сѓ Р¶СѓСЂРЅР°Р», С‰РѕР± SkillEdge AI Р·РјС–Рі РїРѕР±СѓРґСѓРІР°С‚Рё Р·РІС–С‚ РїРѕ PnL, РІС–РґСЃРѕС‚РєСѓ РїСЂРёР±СѓС‚РєРѕРІРёС… СѓРіРѕРґ, СЃРµС‚Р°РїР°С…, РїРѕРјРёР»РєР°С… С– РґРёРЅР°РјС–С†С– СЂРµР·СѓР»СЊС‚Р°С‚Сѓ.",
+      totalTrades: "РЈСЃСЊРѕРіРѕ СѓРіРѕРґ",
+      totalTradesHelper: "РЈСЃС– СѓРіРѕРґРё Р· Р¶СѓСЂРЅР°Р»Сѓ",
+      totalPnl: "Р—Р°РіР°Р»СЊРЅРёР№ PnL",
+      totalPnlHelper: "РЎСѓРјР°СЂРЅРёР№ СЂРµР·СѓР»СЊС‚Р°С‚ Р·Р° Р·Р°РєСЂРёС‚РёРјРё СѓРіРѕРґР°РјРё",
+      winRate: "Р’С–РґСЃРѕС‚РѕРє РїСЂРёР±СѓС‚РєРѕРІРёС…",
+      averagePnl: "РЎРµСЂРµРґРЅС–Р№ PnL",
+      averagePnlHelper: "РЎРµСЂРµРґРЅС–Р№ СЂРµР·СѓР»СЊС‚Р°С‚ РЅР° СѓРіРѕРґСѓ",
+      profitFactor: "Profit Factor",
+      profitFactorHelper: "Р’Р°Р»РѕРІРёР№ РїСЂРёР±СѓС‚РѕРє / РІР°Р»РѕРІРёР№ Р·Р±РёС‚РѕРє",
+      bestWorst: "РќР°Р№РєСЂР°С‰Р° / РЅР°Р№РіС–СЂС€Р°",
+      bestWorstHelper: "РќР°Р№РєСЂР°С‰Р° С‚Р° РЅР°Р№РіС–СЂС€Р° СѓРіРѕРґР°",
+      equityTitle: "РљСЂРёРІР° РґРѕС…С–РґРЅРѕСЃС‚С–",
+      equitySubtitle: "Р”РёРЅР°РјС–РєР° РЅР°РєРѕРїРёС‡СѓРІР°Р»СЊРЅРѕРіРѕ PnL",
+      points: "С‚РѕС‡РѕРє",
+      directionTitle: "Р›РѕРЅРі РїСЂРѕС‚Рё С€РѕСЂС‚Р°",
+      directionSubtitle: "Р РµР·СѓР»СЊС‚Р°С‚ Р·Р° РЅР°РїСЂСЏРјРєРѕРј",
+      marketBreakdown: "Р РёРЅРєРё",
+      setupBreakdown: "РЎРµС‚Р°РїРё",
+      mistakesBreakdown: "РџРѕРјРёР»РєРё",
+      noData: "РџРѕРєРё РЅРµРјР°С” РґР°РЅРёС….",
+      filtersTitle: "Р¤С–Р»СЊС‚СЂРё Р·РІС–С‚Сѓ",
+      filtersText:
+        "Р—РІСѓР¶СѓР№ СЃС‚Р°С‚РёСЃС‚РёРєСѓ Р·Р° РїРµСЂС–РѕРґРѕРј, СЂРёРЅРєРѕРј, РЅР°РїСЂСЏРјРєРѕРј С– СЃРµС‚Р°РїРѕРј, С‰РѕР± Р±Р°С‡РёС‚Рё СЂРµР°Р»СЊРЅСѓ СЏРєС–СЃС‚СЊ С‚РѕСЂРіС–РІР»С–.",
+      resetFilters: "РЎРєРёРЅСѓС‚Рё С„С–Р»СЊС‚СЂРё",
+      periodFilter: "РџРµСЂС–РѕРґ",
+      periodAll: "РЈРІРµСЃСЊ С‡Р°СЃ",
+      period7d: "7 РґРЅС–РІ",
+      period30d: "30 РґРЅС–РІ",
+      period90d: "90 РґРЅС–РІ",
+      marketFilter: "Р РёРЅРѕРє",
+      allMarkets: "РЈСЃС– СЂРёРЅРєРё",
+      directionFilter: "РќР°РїСЂСЏРјРѕРє",
+      allDirections: "РЈСЃС– РЅР°РїСЂСЏРјРєРё",
+      setupFilter: "РЎРµС‚Р°Рї",
+      allSetups: "РЈСЃС– СЃРµС‚Р°РїРё",
+      filteredTrades: "РЈРіРѕРґ Сѓ С„С–Р»СЊС‚СЂС–",
+      noFilteredTradesTitle: "Р—Р° РІРёР±СЂР°РЅРёРјРё С„С–Р»СЊС‚СЂР°РјРё СѓРіРѕРґ РЅРµРјР°С”",
+      noFilteredTradesText:
+        "РЎРїСЂРѕР±СѓР№ Р·РјС–РЅРёС‚Рё РїРµСЂС–РѕРґ, СЂРёРЅРѕРє, РЅР°РїСЂСЏРјРѕРє Р°Р±Рѕ СЃРµС‚Р°Рї. РЈ Р¶СѓСЂРЅР°Р»С– С” СѓРіРѕРґРё, Р°Р»Рµ РїРѕС‚РѕС‡РЅР° РєРѕРјР±С–РЅР°С†С–СЏ С„С–Р»СЊС‚СЂС–РІ РЅС–С‡РѕРіРѕ РЅРµ Р·РЅР°Р№С€Р»Р°.",
+      aiReportTitle: "AI-Р·РІС–С‚",
+      aiReportSubtitle: "Р—РІРµРґРµРЅРЅСЏ Р·Р° РІРёР±СЂР°РЅРёРјРё СѓРіРѕРґР°РјРё",
+      aiReportText:
+        "Р—РіРµРЅРµСЂСѓР№ РєРѕСЂРѕС‚РєРёР№ Р·РІС–С‚ Р·Р° РїРѕС‚РѕС‡РЅРёРј С„С–Р»СЊС‚СЂРѕРј: С‰Рѕ РїСЂР°С†СЋС”, РґРµ РїРѕРјРёР»РєРё, СЏРєС–СЃС‚СЊ СЂРёР·РёРєСѓ, РЅР°Р№РєСЂР°С‰С– СЃРµС‚Р°РїРё С‚Р° РЅР° С‡РѕРјСѓ СЃС„РѕРєСѓСЃСѓРІР°С‚РёСЃСЏ РґР°Р»С–.",
+      aiReportButton: "Р—РіРµРЅРµСЂСѓРІР°С‚Рё Р·РІС–С‚",
+      aiReportLoading: "Р“РµРЅРµСЂСѓС”РјРѕ...",
+      aiReportError: "РќРµ РІРґР°Р»РѕСЃСЏ Р·РіРµРЅРµСЂСѓРІР°С‚Рё AI-Р·РІС–С‚.",
+      aiReportLabel: "AI-Р·РІС–С‚",
+      generateAiReport: "Р—РіРµРЅРµСЂСѓРІР°С‚Рё Р·РІС–С‚",
+      aiReportGenerating: "Р“РµРЅРµСЂСѓС”РјРѕ Р·РІС–С‚...",
+      aiReportPlaceholder:
+        "AI-Р·РІС–С‚ Р·вЂ™СЏРІРёС‚СЊСЃСЏ С‚СѓС‚ РїС–СЃР»СЏ РіРµРЅРµСЂР°С†С–С—. Р’С–РЅ С‚Р°РєРѕР¶ Р·Р±РµСЂРµР¶РµС‚СЊСЃСЏ РІ С–СЃС‚РѕСЂС–С—, С‰РѕР± РєР»С–С”РЅС‚ РјС–Рі РїРѕРІРµСЂРЅСѓС‚РёСЃСЏ РґРѕ РЅСЊРѕРіРѕ РїС–Р·РЅС–С€Рµ.",
+      aiReportResultLabel: "Р РµР·СѓР»СЊС‚Р°С‚",
+      latestAiReportTitle: "РћСЃС‚Р°РЅРЅС–Р№ AI-Р·РІС–С‚",
+      savedAiReportTitle: "Р—Р±РµСЂРµР¶РµРЅРёР№ AI-Р·РІС–С‚",
+      aiReportHistoryLabel: "Р†СЃС‚РѕСЂС–СЏ",
+      aiReportHistoryTitle: "Р†СЃС‚РѕСЂС–СЏ AI-Р·РІС–С‚С–РІ",
+      aiReportHistoryText:
+        "Р’С–РґРєСЂРёРІР°Р№ РїРѕРїРµСЂРµРґРЅС– AI-Р·РІРµРґРµРЅРЅСЏ Р·Р° С„С–Р»СЊС‚СЂР°РјРё С‚Р° С€РІРёРґРєРѕ РїРѕРІРµСЂС‚Р°Р№СЃСЏ РґРѕ РЅР°Р№РІР°Р¶Р»РёРІС–С€РёС… РІРёСЃРЅРѕРІРєС–РІ.",
+      aiReportHistoryEmpty: "РџРѕРєРё С‰Рѕ Р·Р±РµСЂРµР¶РµРЅРёС… AI-Р·РІС–С‚С–РІ РЅРµРјР°С”.",
+      currentSummaryLabel: "РџРѕС‚РѕС‡РЅРµ Р·РІРµРґРµРЅРЅСЏ",
+      allPeriods: "РЈСЃС– РїРµСЂС–РѕРґРё",
+      deleteAiReport: "Р’РёРґР°Р»РёС‚Рё Р·РІС–С‚",
+      copyAiReport: "РЎРєРѕРїС–СЋРІР°С‚Рё",
+      downloadAiReport: "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё .txt",
+      aiReportCopied: "AI-Р·РІС–С‚ СЃРєРѕРїС–Р№РѕРІР°РЅРѕ.",
+      aiReportCopyFailed: "РќРµ РІРґР°Р»РѕСЃСЏ СЃРєРѕРїС–СЋРІР°С‚Рё Р·РІС–С‚.",
+      aiReportDownloaded: "AI-Р·РІС–С‚ Р·Р°РІР°РЅС‚Р°Р¶РµРЅРѕ.",
+      upgradeForAiReports: "РџРѕС‚СЂС–Р±РµРЅ Edge",
+      aiReportUpgradeRequired:
+        "AI-Р·РІС–С‚Рё РґРѕСЃС‚СѓРїРЅС– РЅР° С‚Р°СЂРёС„Р°С… SkillEdge Edge С‚Р° SkillEdge Elite.",
+      aiReportLockedText:
+        "AI-Р·РІС–С‚Рё РґРѕРїРѕРјР°РіР°СЋС‚СЊ СЂРѕР·С–Р±СЂР°С‚Рё РІРёР±СЂР°РЅС– СѓРіРѕРґРё, Р·РЅР°Р№С‚Рё РЅР°Р№РєСЂР°С‰С– СЃРµС‚Р°РїРё, РїРѕРјРёР»РєРё С‚Р° РЅР°СЃС‚СѓРїРЅРёР№ С„РѕРєСѓСЃ. Р¦СЏ С„СѓРЅРєС†С–СЏ РґРѕСЃС‚СѓРїРЅР° РЅР° С‚Р°СЂРёС„Р°С… SkillEdge Edge С‚Р° SkillEdge Elite.",
+      aiReportPlanHint: "AI-Р·РІС–С‚С–РІ РЅР° РјС–СЃСЏС†СЊ РЅР° РїРѕС‚РѕС‡РЅРѕРјСѓ С‚Р°СЂРёС„С–",
+    },
+    journal: {
+      title: "Р–СѓСЂРЅР°Р» СѓРіРѕРґ",
+      text: "Р”РѕРґР°РІР°Р№С‚Рµ СѓРіРѕРґРё, С„С–РєСЃСѓР№С‚Рµ СЂРёР·РёРє, СЂРµР·СѓР»СЊС‚Р°С‚, РµРјРѕС†С–С—, РїРѕРјРёР»РєРё С‚Р° СѓСЂРѕРєРё.",
+      locked: "Р”Р»СЏ РґРѕРґР°РІР°РЅРЅСЏ СѓРіРѕРґ РїРѕС‚СЂС–Р±РµРЅ Р°РєС‚РёРІРЅРёР№ С‚Р°СЂРёС„ Р°Р±Рѕ РїСЂРѕР±РЅРёР№ РґРѕСЃС‚СѓРї.",
+      addTitle: "Р”РѕРґР°С‚Рё СѓРіРѕРґСѓ",
+      editTitle: "Р РµРґР°РіСѓРІР°С‚Рё СѓРіРѕРґСѓ",
+      addModeText: "Р”РѕРґР°Р№ РЅРѕРІСѓ СѓРіРѕРґСѓ РґРѕ РѕСЃРѕР±РёСЃС‚РѕРіРѕ Р¶СѓСЂРЅР°Р»Сѓ.",
+      addText:
+        "Р—Р°РїРѕРІРЅРё Р±Р°Р·РѕРІС– РґР°РЅС–, РґРѕРґР°Р№ СЃРєСЂС–РЅС€РѕС‚Рё С‚Р° РІРёРєРѕСЂРёСЃС‚РѕРІСѓР№ AI-СЂРѕР·Р±С–СЂ РґР»СЏ РѕС†С–РЅРєРё СѓРіРѕРґРё.",
+      totalTrades: "РЈСЃСЊРѕРіРѕ СѓРіРѕРґ",
+      totalPnl: "Р—Р°РіР°Р»СЊРЅРёР№ PnL",
+      winRate: "Р’С–РґСЃРѕС‚РѕРє РїСЂРёР±СѓС‚РєРѕРІРёС…",
+      avgPnl: "РЎРµСЂРµРґРЅС–Р№ PnL",
+      grossProfit: "Р’Р°Р»РѕРІРёР№ РїСЂРёР±СѓС‚РѕРє",
+      grossLoss: "Р’Р°Р»РѕРІРёР№ Р·Р±РёС‚РѕРє",
+      bestTrade: "РќР°Р№РєСЂР°С‰Р° СѓРіРѕРґР°",
+      worstTrade: "РќР°Р№РіС–СЂС€Р° СѓРіРѕРґР°",
+      profitFactor: "Profit Factor",
+      equityTitle: "РљСЂРёРІР° РґРѕС…С–РґРЅРѕСЃС‚С–",
+      equityText: "РќР°РєРѕРїРёС‡СѓРІР°Р»СЊРЅРёР№ PnL РЅР° РѕСЃРЅРѕРІС– Р·Р±РµСЂРµР¶РµРЅРёС… СѓРіРѕРґ.",
+      equityEmpty: "Р”РѕРґР°Р№С‚Рµ СѓРіРѕРґРё Р· PnL, С‰РѕР± РїРѕР±СѓРґСѓРІР°С‚Рё РєСЂРёРІСѓ РґРѕС…С–РґРЅРѕСЃС‚С–.",
+      equityPoints: "С‚РѕС‡РѕРє",
+      expand: "Р РѕР·РіРѕСЂРЅСѓС‚Рё",
+      close: "Р—Р°РєСЂРёС‚Рё",
+      cardLabels: {
+        entry: "Р’С…С–Рґ",
+        exit: "Р’РёС…С–Рґ",
+        stop: "РЎС‚РѕРї",
+        risk: "Р РёР·РёРє",
+        result: "Р РµР·СѓР»СЊС‚Р°С‚",
+        setup: "РЎРµС‚Р°Рї",
+        mistake: "РџРѕРјРёР»РєР°",
+        lesson: "РЈСЂРѕРє",
+        notes: "РќРѕС‚Р°С‚РєРё",
+      },
+      fullTitle: "РџРѕРІРЅРёР№ Р¶СѓСЂРЅР°Р»",
+      fullText: "РџРѕРІРЅРёР№ СЃРїРёСЃРѕРє СѓРіРѕРґ. РќРёР¶С‡Рµ РґРѕСЃС‚СѓРїРЅС– С„С–Р»СЊС‚СЂРё С‚Р° РµРєСЃРїРѕСЂС‚.",
+      downloadCsv: "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё CSV",
+      downloadXlsx: "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё XLSX",
+      deleteTradeButton: "Р’РёРґР°Р»РёС‚Рё СѓРіРѕРґСѓ",
+      editTradeButton: "Р РµРґР°РіСѓРІР°С‚Рё",
+      openChartButton: "Р’С–РґРєСЂРёС‚Рё РіСЂР°С„С–Рє",
+      cancelEditButton: "РЎРєР°СЃСѓРІР°С‚Рё СЂРµРґР°РіСѓРІР°РЅРЅСЏ",
+      editModeTitle: "Р РµР¶РёРј СЂРµРґР°РіСѓРІР°РЅРЅСЏ",
+      editModeText: "Р—РјС–РЅРё РїС–РґСЃРІС–С‡РµРЅС– РїРѕР»СЏ С‚Р° Р·Р±РµСЂРµР¶Рё СѓРіРѕРґСѓ.",
+      actions: "Р”С–С—",
+      deleteTradeConfirm: "Р’РёРґР°Р»РёС‚Рё С†СЋ СѓРіРѕРґСѓ? Р¦СЋ РґС–СЋ РЅРµ РјРѕР¶РЅР° СЃРєР°СЃСѓРІР°С‚Рё.",
+      deleteTradeError: "РќРµ РІРґР°Р»РѕСЃСЏ РІРёРґР°Р»РёС‚Рё СѓРіРѕРґСѓ.",
+      uploadScreenshotTitle: "Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ СЃРєСЂС–РЅС€РѕС‚Р° СѓРіРѕРґРё",
+      uploadScreenshotText:
+        "Р”РѕРґР°РІР°Р№С‚Рµ СЃРєСЂС–РЅС€РѕС‚Рё РіСЂР°С„С–РєС–РІ РґРѕ Р·Р±РµСЂРµР¶РµРЅРёС… СѓРіРѕРґ. SkillEdge AI РІРёРєРѕСЂРёСЃС‚РѕРІСѓРІР°С‚РёРјРµ С—С… РґР»СЏ Р°РЅР°Р»С–Р·Сѓ РІС…РѕРґС–РІ, РІРёС…РѕРґС–РІ, СЃС‚РѕРїС–РІ С– РїРѕРІС‚РѕСЂСЋРІР°РЅРёС… РїРѕРјРёР»РѕРє РЅР° РіСЂР°С„С–РєСѓ.",
+      screenshotsCount: "СЃРєСЂС–РЅС€РѕС‚С–РІ",
+      screenshotTradeLabel: "РЈРіРѕРґР°",
+      screenshotFileLabel: "РЎРєСЂС–РЅС€РѕС‚",
+      screenshotChoose: "Р’РёР±СЂР°С‚Рё СЃРєСЂС–РЅС€РѕС‚",
+      screenshotNoFile: "Р¤Р°Р№Р» РЅРµ РІРёР±СЂР°РЅРѕ",
+      screenshotSelected: "Р’РёР±СЂР°РЅРёР№ С„Р°Р№Р»",
+      screenshotHint:
+        "РљСЂРѕРєРё: 1) РћР±РµСЂС–С‚СЊ СѓРіРѕРґСѓ  2) РќР°С‚РёСЃРЅС–С‚СЊ В«Р’РёР±СЂР°С‚Рё СЃРєСЂС–РЅС€РѕС‚В»  3) РќР°С‚РёСЃРЅС–С‚СЊ В«Р—Р°РІР°РЅС‚Р°Р¶РёС‚РёВ»",
+      screenshotUploadHintCompact:
+        "Р—Р°РІР°РЅС‚Р°Р¶СѓР№ РІС–Рґ РѕРґРЅРѕРіРѕ РґРѕ С‚СЂСЊРѕС… СЃРєСЂС–РЅС–РІ Р· СЂС–Р·РЅРёРјРё С‚Р°Р№РјС„СЂРµР№РјР°РјРё РґР»СЏ РіР»РёР±С€РѕРіРѕ Р°РЅР°Р»С–Р·Сѓ.",
+      screenshotFormats: "РџС–РґС‚СЂРёРјСѓРІР°РЅС– С„РѕСЂРјР°С‚Рё: PNG, JPG, WEBP",
+      screenshotsColumn: "РЎРєСЂС–РЅРё",
+      openScreenshots: "Р’С–РґРєСЂРёС‚Рё",
+      noScreenshotsForTrade: "Р”Р»СЏ С†С–С”С— СѓРіРѕРґРё СЃРєСЂС–РЅРё РЅРµ Р·Р°РІР°РЅС‚Р°Р¶РµРЅС–.",
+      screenshotViewerTitle: "РЎРєСЂС–РЅРё СѓРіРѕРґРё",
+      loadingScreenshots: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ СЃРєСЂС–РЅРё...",
+      uploadButton: "Р—Р°РІР°РЅС‚Р°Р¶РёС‚Рё",
+      uploadingButton: "Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ...",
+      selectTradePlaceholder: "РћР±РµСЂС–С‚СЊ СѓРіРѕРґСѓ",
+      stepOne: "РљСЂРѕРє 1",
+      stepTwo: "РљСЂРѕРє 2",
+      stepThree: "РљСЂРѕРє 3",
+      chartAnalyzeButton: "Р РѕР·С–Р±СЂР°С‚Рё РіСЂР°С„С–Рє",
+      chartAnalyzingButton: "РђРЅР°Р»С–Р· РіСЂР°С„С–РєР°...",
+      chartScreenshotsLabel: "СЃРєСЂС–РЅС€РѕС‚С–РІ",
+      journalAnalysisTitle: "AI-Р°РЅР°Р»С–Р· Р¶СѓСЂРЅР°Р»Сѓ СѓРіРѕРґ",
+      journalAnalysisText:
+        "AI РїСЂРѕР°РЅР°Р»С–Р·СѓС” Р·Р±РµСЂРµР¶РµРЅС– СѓРіРѕРґРё, РїРѕРІС‚РѕСЂСЋРІР°РЅС– РїРѕРјРёР»РєРё, СЃРµС‚Р°РїРё, РµРјРѕС†С–С—, СЂРёР·РёРє С– СЏРєС–СЃС‚СЊ РІРёРєРѕРЅР°РЅРЅСЏ.",
+      journalAnalyzeButton: "Р РѕР·С–Р±СЂР°С‚Рё Р¶СѓСЂРЅР°Р»",
+      journalAnalyzingButton: "РђРЅР°Р»С–Р·...",
+      savedChartAnalysis: "Р—Р±РµСЂРµР¶РµРЅРёР№ AI-СЂРѕР·Р±С–СЂ РіСЂР°С„С–РєР°",
+      showChartHistory: "РџРѕРєР°Р·Р°С‚Рё AI-СЂРѕР·Р±РѕСЂРё",
+      hideChartHistory: "РЎС…РѕРІР°С‚Рё AI-СЂРѕР·Р±РѕСЂРё",
+      noChartHistory: "Р—Р±РµСЂРµР¶РµРЅРёС… СЂРѕР·Р±РѕСЂС–РІ РіСЂР°С„С–РєР° С‰Рµ РЅРµРјР°С”.",
+      searchTicker: "РџРѕС€СѓРє С‚РёРєРµСЂР°",
+      allMarkets: "РЈСЃС– СЂРёРЅРєРё",
+      allSides: "РЈСЃС– РЅР°РїСЂСЏРјРєРё",
+      allResults: "РЈСЃС– СЂРµР·СѓР»СЊС‚Р°С‚Рё",
+      marketLabels: {
+        stocks: "РђРєС†С–С—",
+        crypto: "РљСЂРёРїС‚Рѕ",
+        futures: "Р¤вЂ™СЋС‡РµСЂСЃРё",
+        forex: "Р¤РѕСЂРµРєСЃ",
+        options: "РћРїС†С–РѕРЅРё",
+      },
+      directionLabels: {
+        long: "Р›РѕРЅРі",
+        short: "РЁРѕСЂС‚",
+      },
+      resultLabels: {
+        win: "РџСЂРёР±СѓС‚РєРѕРІР°",
+        loss: "Р—Р±РёС‚РєРѕРІР°",
+        breakeven: "Р‘РµР·Р·Р±РёС‚РєРѕРІР°",
+        notSet: "РќРµ Р·Р°РґР°РЅРѕ",
+      },
+      table: {
+        date: "Р”Р°С‚Р°",
+        ticker: "РўРёРєРµСЂ",
+        market: "Р РёРЅРѕРє",
+        side: "РЎС‚РѕСЂРѕРЅР°",
+        entry: "Р’С…С–Рґ",
+        exit: "Р’РёС…С–Рґ",
+        stop: "РЎС‚РѕРї",
+        risk: "Р РёР·РёРє",
+        pnl: "PnL",
+        result: "Р РµР·СѓР»СЊС‚Р°С‚",
+        setup: "РЎРµС‚Р°Рї",
+      },
+      recentTitle: "РћСЃС‚Р°РЅРЅС– СѓРіРѕРґРё",
+      recentText:
+        "РћСЃС‚Р°РЅРЅС– 3 СѓРіРѕРґРё Р· РѕСЃРѕР±РёСЃС‚РѕРіРѕ Р¶СѓСЂРЅР°Р»Сѓ. РџРѕРІРЅР° С‚Р°Р±Р»РёС†СЏ, С„С–Р»СЊС‚СЂРё С‚Р° РµРєСЃРїРѕСЂС‚ РґРѕСЃС‚СѓРїРЅС– РЅРёР¶С‡Рµ.",
+      empty:
+        "РЈРіРѕРґ РїРѕРєРё РЅРµРјР°С”. Р”РѕРґР°Р№С‚Рµ РїРµСЂС€Сѓ СѓРіРѕРґСѓ, С‰РѕР± РїРѕС‡Р°С‚Рё Р·Р±РёСЂР°С‚Рё Р±Р°Р·Сѓ СЃРІРѕС”С— СЃС‚Р°С‚РёСЃС‚РёРєРё.",
+      tradesCount: "СѓРіРѕРґ",
+      saving: "Р—Р±РµСЂС–РіР°С”РјРѕ...",
+      save: "Р—Р±РµСЂРµРіС‚Рё СѓРіРѕРґСѓ",
+      updateTradeButton: "РћРЅРѕРІРёС‚Рё СѓРіРѕРґСѓ",
+      updatingTradeButton: "РћРЅРѕРІР»РµРЅРЅСЏ...",
+      tickerRequired: "Р’РІРµРґС–С‚СЊ С‚РёРєРµСЂ.",
+      tradeLimitReached: "Р”РѕСЃСЏРіРЅСѓС‚Рѕ Р»С–РјС–С‚ СѓРіРѕРґ РґР»СЏ РІР°С€РѕРіРѕ РїРѕС‚РѕС‡РЅРѕРіРѕ С‚Р°СЂРёС„Сѓ",
+      tradeUsageTitle: "Р’РёРєРѕСЂРёСЃС‚Р°РЅРѕ СѓРіРѕРґ",
+      tradesLeftLabel: "Р·Р°Р»РёС€РёР»РѕСЃСЊ",
+      screenshotLimitReached: "Р”РѕСЃСЏРіРЅСѓС‚Рѕ Р»С–РјС–С‚ СЃРєСЂРёРЅС€РѕС‚С–РІ РґР»СЏ С†С–С”С— СѓРіРѕРґРё",
+      screenshotUsageTitle: "Р’РёРєРѕСЂРёСЃС‚Р°РЅРѕ СЃРєСЂРёРЅС€РѕС‚С–РІ",
+      limitReached: "Р”РѕСЃСЏРіРЅСѓС‚Рѕ Р»С–РјС–С‚ СѓРіРѕРґ РґР»СЏ РІР°С€РѕРіРѕ РїРѕС‚РѕС‡РЅРѕРіРѕ С‚Р°СЂРёС„Сѓ",
+      loginFirst: "РЎРїРѕС‡Р°С‚РєСѓ СѓРІС–Р№РґС–С‚СЊ РІ Р°РєР°СѓРЅС‚.",
+      saveFailed: "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р±РµСЂРµРіС‚Рё СѓРіРѕРґСѓ.",
+      fields: {
+        ticker: "РўРёРєРµСЂ",
+        date: "Р”Р°С‚Р°",
+        market: "Р РёРЅРѕРє",
+        direction: "РќР°РїСЂСЏРјРѕРє",
+        entry: "Р’С…С–Рґ",
+        exit: "Р’РёС…С–Рґ",
+        stop: "РЎС‚РѕРї",
+        size: "Р РѕР·РјС–СЂ РїРѕР·РёС†С–С—",
+        risk: "Р РёР·РёРє $",
+        pnl: "PnL $",
+        result: "Р РµР·СѓР»СЊС‚Р°С‚",
+        setup: "РЎРµС‚Р°Рї",
+        emotion: "Р•РјРѕС†С–СЏ",
+        mistake: "РџРѕРјРёР»РєР°",
+        lesson: "РЈСЂРѕРє",
+        notes: "РќРѕС‚Р°С‚РєРё",
+      },
+      placeholders: {
+        ticker: "AAPL / BTC / NQ",
+        entry: "100",
+        exit: "105",
+        stop: "98",
+        size: "РђРєС†С–С— / РєРѕРЅС‚СЂР°РєС‚Рё",
+        risk: "50",
+        pnl: "-25 / 120",
+        setup: "РїРѕРІРµСЂРЅРµРЅРЅСЏ VWAP / Р·РіР°СЃР°РЅРЅСЏ РіРµРїСѓ",
+        emotion: "РЎРїРѕРєС–Р№ / FOMO / СЃС‚СЂР°С…",
+        mistake: "Р©Рѕ Р±СѓР»Рѕ Р·СЂРѕР±Р»РµРЅРѕ РЅРµРїСЂР°РІРёР»СЊРЅРѕ?",
+        lesson: "Р©Рѕ РїРѕС‚СЂС–Р±РЅРѕ Р·Р°РїР°РјКјСЏС‚Р°С‚Рё РЅР° РЅР°СЃС‚СѓРїРЅСѓ СѓРіРѕРґСѓ?",
+        notes: "РљРѕРЅС‚РµРєСЃС‚, РєР°С‚Р°Р»С–Р·Р°С‚РѕСЂ, СЃС‚СЂС–С‡РєР°, СЂС–РІРЅС–...",
+      },
+      options: {
+        notSet: "РќРµ Р·Р°РґР°РЅРѕ",
+        win: "РџР»СЋСЃ",
+        loss: "РњС–РЅСѓСЃ",
+        breakeven: "Р‘РµР·Р·Р±РёС‚РѕРє",
+      },
+    },
+    locked: {
+      title: "РђРєС‚РёРІСѓР№С‚Рµ С‚Р°СЂРёС„",
+      label: "Р”РѕСЃС‚СѓРї Р·Р°РєСЂРёС‚Рѕ",
+      text: "РџС–СЃР»СЏ РѕРїР»Р°С‚Рё РІС–РґРєСЂРёСЋС‚СЊСЃСЏ Р¶СѓСЂРЅР°Р» СѓРіРѕРґ, SkillEdge AI-РєРѕСѓС‡, РіСЂР°С„С–РєРё TradingView, РЅР°РІС‡Р°РЅРЅСЏ, Р·РІС–С‚Рё С‚Р° С–СЃС‚РѕСЂС–СЏ AI-СЂРѕР·Р±РѕСЂС–РІ.",
+      button: "РћР±СЂР°С‚Рё С‚Р°СЂРёС„",
     },
     tabs: {
-  overview: "Огляд",
-  journal: "Журнал угод",
-  charts: "Графіки",
-  market: "Ринок",
-  alerts: "Сигналы",
-  coach: "AI-коуч",
-  learning: "Навчання",
-  reports: "Звіти",
-  billing: "Оплата",
-},
+      overview: "РћРіР»СЏРґ",
+      journal: "Р–СѓСЂРЅР°Р» СѓРіРѕРґ",
+      charts: "Р“СЂР°С„С–РєРё",
+      market: "Р РёРЅРѕРє",
+      alerts: "РЎРёРіРЅР°Р»Рё",
+      coach: "AI-РєРѕСѓС‡",
+      learning: "РќР°РІС‡Р°РЅРЅСЏ",
+      reports: "Р—РІС–С‚Рё",
+      billing: "РћРїР»Р°С‚Р°",
+    },
     periods: {
-      monthly: "1 місяць",
-      halfyear: "6 місяців",
-      yearly: "1 рік",
-      demo: "7-денна пробна версія",
+      monthly: "1 РјС–СЃСЏС†СЊ",
+      halfyear: "6 РјС–СЃСЏС†С–РІ",
+      yearly: "1 СЂС–Рє",
+      demo: "7-РґРµРЅРЅР° РїСЂРѕР±РЅР° РІРµСЂСЃС–СЏ",
     },
     demo: {
-      label: "Пробна версія",
-      title: "У вас активовано 7-денний пробний доступ",
+      label: "РџСЂРѕР±РЅР° РІРµСЂСЃС–СЏ",
+      title: "РЈ РІР°СЃ Р°РєС‚РёРІРѕРІР°РЅРѕ 7-РґРµРЅРЅРёР№ РїСЂРѕР±РЅРёР№ РґРѕСЃС‚СѓРї",
       text:
-  "Це пробна версія тарифу SkillEdge Core з лімітом 10 AI-запитів. Після завершення пробного періоду доступ буде закрито, якщо ви не оберете основний тариф.",
-      short: "7-денна пробна версія. Ліміт: 10 AI-запитів.",    
-},
+        "Р¦Рµ РїСЂРѕР±РЅР° РІРµСЂСЃС–СЏ С‚Р°СЂРёС„Сѓ SkillEdge Core Р· Р»С–РјС–С‚РѕРј 10 AI-Р·Р°РїРёС‚С–РІ. РџС–СЃР»СЏ Р·Р°РІРµСЂС€РµРЅРЅСЏ РїСЂРѕР±РЅРѕРіРѕ РїРµСЂС–РѕРґСѓ РґРѕСЃС‚СѓРї Р±СѓРґРµ Р·Р°РєСЂРёС‚Рѕ, СЏРєС‰Рѕ РІРё РЅРµ РѕР±РµСЂРµС‚Рµ РѕСЃРЅРѕРІРЅРёР№ С‚Р°СЂРёС„.",
+      short: "7-РґРµРЅРЅР° РїСЂРѕР±РЅР° РІРµСЂСЃС–СЏ. Р›С–РјС–С‚: 10 AI-Р·Р°РїРёС‚С–РІ.",
+    },
     billing: {
-  title: "Тариф і оплата",
-  text: "Інформація про поточний тариф, оплати та строк дії підписки.",
-  activePlan: "Тариф активний",
-  inactivePlan: "Тариф не активовано",
-  period: "Період",
-  validUntil: "Діє до",
-  empty:
-    "Після оплати тут зʼявляться план, період, дата завершення та історія платежів.",
-  currentPlan: "Поточний тариф",
-creatingCheckout: "Створюємо оплату...",
-checkoutError: "Не вдалося створити крипто-оплату. Спробуйте ще раз.",
-loginRequiredForPayment: "Увійдіть в акаунт перед оплатою тарифу.",
-  currentPlanLabel: "Поточний тариф",
-  activeSubscription:
-    "Підписка активна. Ліміти та доступи застосовуються автоматично.",
-  inactiveSubscription:
-    "Підписка не активна. Деякі функції можуть бути недоступні.",
-  active: "Активна",
-  inactive: "Неактивна",
-  billingPeriod: "Період",
-  aiUsage: "Использование AI",
-  billingNoteLabel: "Важливо",
-  billingNoteText:
-    "Розділ оплати показує поточний тариф, ліміти, рівень доступу та статус підписки. Оплата карткою готується через погодженого платіжного провайдера, а крипто-доступ доступний на етапі запуску.",
-  currentLimitsLabel: "Ліміти",
-  currentLimitsTitle: "Що входить у поточний тариф",
-  aiCoachLimit: "AI-коуч / місяць",
-  journalAiLimit: "AI-аналіз журналу / місяць",
-  chartAiLimit: "AI-аналіз графіка / місяць",
-  aiReportsLimit: "AI-звіти / місяць",
-  maxTradesLimit: "Максимум угод",
-  screenshotsLimit: "Скріншотів на угоду",
-  aiReportsAccess: "AI-звіти",
-  supportAssistantAccess: "Помічник підтримки",
-  socialTickersAccess: "Соціальні тикери",
-  aiScannerAccess: "AI-сканер",
-aiAlertsAccess: "AI-сигнали",
-premiumChartAccess: "Преміум-аналіз графіка",
-  exportReportsAccess: "Експорт звітів",
-  included: "Увімкнено",
-  locked: "Закрито",
-  comparePlansLabel: "Порівняння",
-  comparePlansTitle: "Порівняння тарифів",
-  comparePlansText:
-    "Перевір, що клієнт чітко бачить різницю між Core, Edge та Elite.",
-  current: "Поточний",
-  choosePlan: "Обрати тариф",
-  planDescriptions: {
-    core: "Базовий доступ для журналу угод, скріншотів, AI-коуча та контролю дисципліни.",
-edge: "Просунутий тариф для активних трейдерів: більше AI-запитів, звіти, ринкова розвідка та AI-сканер.",
-elite:
-  "Максимальний тариф: AI-сигнали, плаваючий віджет сигналів, зв’язка сигналів із журналом і повний AI Trading Desk.",
-  },
-},
+      title: "РўР°СЂРёС„ С– РѕРїР»Р°С‚Р°",
+      text: "Р†РЅС„РѕСЂРјР°С†С–СЏ РїСЂРѕ РїРѕС‚РѕС‡РЅРёР№ С‚Р°СЂРёС„, РѕРїР»Р°С‚Рё С‚Р° СЃС‚СЂРѕРє РґС–С— РїС–РґРїРёСЃРєРё.",
+      activePlan: "РўР°СЂРёС„ Р°РєС‚РёРІРЅРёР№",
+      inactivePlan: "РўР°СЂРёС„ РЅРµ Р°РєС‚РёРІРѕРІР°РЅРѕ",
+      period: "РџРµСЂС–РѕРґ",
+      validUntil: "Р”С–С” РґРѕ",
+      empty:
+        "РџС–СЃР»СЏ РѕРїР»Р°С‚Рё С‚СѓС‚ Р·КјСЏРІР»СЏС‚СЊСЃСЏ РїР»Р°РЅ, РїРµСЂС–РѕРґ, РґР°С‚Р° Р·Р°РІРµСЂС€РµРЅРЅСЏ С‚Р° С–СЃС‚РѕСЂС–СЏ РїР»Р°С‚РµР¶С–РІ.",
+      currentPlan: "РџРѕС‚РѕС‡РЅРёР№ С‚Р°СЂРёС„",
+      creatingCheckout: "РЎС‚РІРѕСЂСЋС”РјРѕ РѕРїР»Р°С‚Сѓ...",
+      checkoutError: "РќРµ РІРґР°Р»РѕСЃСЏ СЃС‚РІРѕСЂРёС‚Рё РєСЂРёРїС‚Рѕ-РѕРїР»Р°С‚Сѓ. РЎРїСЂРѕР±СѓР№С‚Рµ С‰Рµ СЂР°Р·.",
+      loginRequiredForPayment: "РЈРІС–Р№РґС–С‚СЊ РІ Р°РєР°СѓРЅС‚ РїРµСЂРµРґ РѕРїР»Р°С‚РѕСЋ С‚Р°СЂРёС„Сѓ.",
+      currentPlanLabel: "РџРѕС‚РѕС‡РЅРёР№ С‚Р°СЂРёС„",
+      activeSubscription:
+        "РџС–РґРїРёСЃРєР° Р°РєС‚РёРІРЅР°. Р›С–РјС–С‚Рё С‚Р° РґРѕСЃС‚СѓРїРё Р·Р°СЃС‚РѕСЃРѕРІСѓСЋС‚СЊСЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ.",
+      inactiveSubscription:
+        "РџС–РґРїРёСЃРєР° РЅРµ Р°РєС‚РёРІРЅР°. Р”РµСЏРєС– С„СѓРЅРєС†С–С— РјРѕР¶СѓС‚СЊ Р±СѓС‚Рё РЅРµРґРѕСЃС‚СѓРїРЅС–.",
+      active: "РђРєС‚РёРІРЅР°",
+      inactive: "РќРµР°РєС‚РёРІРЅР°",
+      billingPeriod: "РџРµСЂС–РѕРґ",
+      aiUsage: "Р’РёРєРѕСЂРёСЃС‚Р°РЅРЅСЏ AI",
+      billingNoteLabel: "Р’Р°Р¶Р»РёРІРѕ",
+      billingNoteText:
+        "Р РѕР·РґС–Р» РѕРїР»Р°С‚Рё РїРѕРєР°Р·СѓС” РїРѕС‚РѕС‡РЅРёР№ С‚Р°СЂРёС„, Р»С–РјС–С‚Рё, СЂС–РІРµРЅСЊ РґРѕСЃС‚СѓРїСѓ С‚Р° СЃС‚Р°С‚СѓСЃ РїС–РґРїРёСЃРєРё. РћРїР»Р°С‚Р° РєР°СЂС‚РєРѕСЋ РіРѕС‚СѓС”С‚СЊСЃСЏ С‡РµСЂРµР· РїРѕРіРѕРґР¶РµРЅРѕРіРѕ РїР»Р°С‚С–Р¶РЅРѕРіРѕ РїСЂРѕРІР°Р№РґРµСЂР°, Р° РєСЂРёРїС‚Рѕ-РґРѕСЃС‚СѓРї РґРѕСЃС‚СѓРїРЅРёР№ РЅР° РµС‚Р°РїС– Р·Р°РїСѓСЃРєСѓ.",
+      currentLimitsLabel: "Р›С–РјС–С‚Рё",
+      currentLimitsTitle: "Р©Рѕ РІС…РѕРґРёС‚СЊ Сѓ РїРѕС‚РѕС‡РЅРёР№ С‚Р°СЂРёС„",
+      aiCoachLimit: "AI-РєРѕСѓС‡ / РјС–СЃСЏС†СЊ",
+      journalAiLimit: "AI-Р°РЅР°Р»С–Р· Р¶СѓСЂРЅР°Р»Сѓ / РјС–СЃСЏС†СЊ",
+      chartAiLimit: "AI-Р°РЅР°Р»С–Р· РіСЂР°С„С–РєР° / РјС–СЃСЏС†СЊ",
+      aiReportsLimit: "AI-Р·РІС–С‚Рё / РјС–СЃСЏС†СЊ",
+      maxTradesLimit: "РњР°РєСЃРёРјСѓРј СѓРіРѕРґ",
+      screenshotsLimit: "РЎРєСЂС–РЅС€РѕС‚С–РІ РЅР° СѓРіРѕРґСѓ",
+      aiReportsAccess: "AI-Р·РІС–С‚Рё",
+      supportAssistantAccess: "РџРѕРјС–С‡РЅРёРє РїС–РґС‚СЂРёРјРєРё",
+      socialTickersAccess: "РЎРѕС†С–Р°Р»СЊРЅС– С‚РёРєРµСЂРё",
+      aiScannerAccess: "AI-СЃРєР°РЅРµСЂ",
+      aiAlertsAccess: "AI-СЃРёРіРЅР°Р»Рё",
+      premiumChartAccess: "РџСЂРµРјС–СѓРј-Р°РЅР°Р»С–Р· РіСЂР°С„С–РєР°",
+      exportReportsAccess: "Р•РєСЃРїРѕСЂС‚ Р·РІС–С‚С–РІ",
+      included: "РЈРІС–РјРєРЅРµРЅРѕ",
+      locked: "Р—Р°РєСЂРёС‚Рѕ",
+      comparePlansLabel: "РџРѕСЂС–РІРЅСЏРЅРЅСЏ",
+      comparePlansTitle: "РџРѕСЂС–РІРЅСЏРЅРЅСЏ С‚Р°СЂРёС„С–РІ",
+      comparePlansText:
+        "РџРµСЂРµРІС–СЂ, С‰Рѕ РєР»С–С”РЅС‚ С‡С–С‚РєРѕ Р±Р°С‡РёС‚СЊ СЂС–Р·РЅРёС†СЋ РјС–Р¶ Core, Edge С‚Р° Elite.",
+      current: "РџРѕС‚РѕС‡РЅРёР№",
+      choosePlan: "РћР±СЂР°С‚Рё С‚Р°СЂРёС„",
+      planDescriptions: {
+        core: "Р‘Р°Р·РѕРІРёР№ РґРѕСЃС‚СѓРї РґР»СЏ Р¶СѓСЂРЅР°Р»Сѓ СѓРіРѕРґ, СЃРєСЂС–РЅС€РѕС‚С–РІ, AI-РєРѕСѓС‡Р° С‚Р° РєРѕРЅС‚СЂРѕР»СЋ РґРёСЃС†РёРїР»С–РЅРё.",
+        edge: "РџСЂРѕСЃСѓРЅСѓС‚РёР№ С‚Р°СЂРёС„ РґР»СЏ Р°РєС‚РёРІРЅРёС… С‚СЂРµР№РґРµСЂС–РІ: Р±С–Р»СЊС€Рµ AI-Р·Р°РїРёС‚С–РІ, Р·РІС–С‚Рё, СЂРёРЅРєРѕРІР° СЂРѕР·РІС–РґРєР° С‚Р° AI-СЃРєР°РЅРµСЂ.",
+        elite:
+          "РњР°РєСЃРёРјР°Р»СЊРЅРёР№ С‚Р°СЂРёС„: AI-СЃРёРіРЅР°Р»Рё, РїР»Р°РІР°СЋС‡РёР№ РІС–РґР¶РµС‚ СЃРёРіРЅР°Р»С–РІ, Р·РІвЂ™СЏР·РєР° СЃРёРіРЅР°Р»С–РІ С–Р· Р¶СѓСЂРЅР°Р»РѕРј С– РїРѕРІРЅРёР№ AI Trading Desk.",
+      },
+    },
     aiLimits: {
-  reachedTitle: "Ліміт AI вичерпано",
-  reachedText:
-    "Ви використали всі AI-запити, доступні у вашому поточному тарифі цього місяця. Оновіть тариф або дочекайтеся наступного місячного скидання.",
-  remainingPrefix: "Залишилось AI-запитів",
-},
+      reachedTitle: "Р›С–РјС–С‚ AI РІРёС‡РµСЂРїР°РЅРѕ",
+      reachedText:
+        "Р’Рё РІРёРєРѕСЂРёСЃС‚Р°Р»Рё РІСЃС– AI-Р·Р°РїРёС‚Рё, РґРѕСЃС‚СѓРїРЅС– Сѓ РІР°С€РѕРјСѓ РїРѕС‚РѕС‡РЅРѕРјСѓ С‚Р°СЂРёС„С– С†СЊРѕРіРѕ РјС–СЃСЏС†СЏ. РћРЅРѕРІС–С‚СЊ С‚Р°СЂРёС„ Р°Р±Рѕ РґРѕС‡РµРєР°Р№С‚РµСЃСЏ РЅР°СЃС‚СѓРїРЅРѕРіРѕ РјС–СЃСЏС‡РЅРѕРіРѕ СЃРєРёРґР°РЅРЅСЏ.",
+      remainingPrefix: "Р—Р°Р»РёС€РёР»РѕСЃСЊ AI-Р·Р°РїРёС‚С–РІ",
+    },
     coach: {
-      title: "AI-коуч",
-      text: "Опишіть угоду, емоції, помилку або торгову ситуацію — AI-коуч зробить розбір дисципліни, ризику та якості рішення.",
-      reviewTitle: "Розбір угоди",
+      title: "AI-РєРѕСѓС‡",
+      text: "РћРїРёС€С–С‚СЊ СѓРіРѕРґСѓ, РµРјРѕС†С–С—, РїРѕРјРёР»РєСѓ Р°Р±Рѕ С‚РѕСЂРіРѕРІСѓ СЃРёС‚СѓР°С†С–СЋ вЂ” AI-РєРѕСѓС‡ Р·СЂРѕР±РёС‚СЊ СЂРѕР·Р±С–СЂ РґРёСЃС†РёРїР»С–РЅРё, СЂРёР·РёРєСѓ С‚Р° СЏРєРѕСЃС‚С– СЂС–С€РµРЅРЅСЏ.",
+      reviewTitle: "Р РѕР·Р±С–СЂ СѓРіРѕРґРё",
       reviewText:
-        "Чим конкретніший опис, тим корисніша відповідь. Вкажіть тикер, вхід, стоп, причину входу, емоції та результат.",
+        "Р§РёРј РєРѕРЅРєСЂРµС‚РЅС–С€РёР№ РѕРїРёСЃ, С‚РёРј РєРѕСЂРёСЃРЅС–С€Р° РІС–РґРїРѕРІС–РґСЊ. Р’РєР°Р¶С–С‚СЊ С‚РёРєРµСЂ, РІС…С–Рґ, СЃС‚РѕРї, РїСЂРёС‡РёРЅСѓ РІС…РѕРґСѓ, РµРјРѕС†С–С— С‚Р° СЂРµР·СѓР»СЊС‚Р°С‚.",
       placeholder:
-        "Приклад: сьогодні зайшов у шорт після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
-      ask: "Запитати AI",
-      analyzing: "AI аналізує...",
-      newReview: "Новий розбір",
-      answerTitle: "Відповідь AI-коуча",
+        "РџСЂРёРєР»Р°Рґ: СЃСЊРѕРіРѕРґРЅС– Р·Р°Р№С€РѕРІ Сѓ С€РѕСЂС‚ РїС–СЃР»СЏ РїСЂРµРјР°СЂРєРµС‚-РїР°РјРїСѓ, РїРѕР±Р°С‡РёРІ СЃР»Р°Р±РєС–СЃС‚СЊ РїС–Рґ VWAP, Р°Р»Рµ РїРµСЂРµСЃСѓРЅСѓРІ СЃС‚РѕРї С– РїРµСЂРµСЃРёРґС–РІ Р·Р±РёС‚РѕРє. Р РѕР·Р±РµСЂРё, РґРµ Р±СѓР»Р° РїРѕРјРёР»РєР°.",
+      ask: "Р—Р°РїРёС‚Р°С‚Рё AI",
+      analyzing: "AI Р°РЅР°Р»С–Р·СѓС”...",
+      newReview: "РќРѕРІРёР№ СЂРѕР·Р±С–СЂ",
+      answerTitle: "Р’С–РґРїРѕРІС–РґСЊ AI-РєРѕСѓС‡Р°",
       answerPlaceholder:
-        "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
-      historyTitle: "Історія AI-розборів",
-      historyText: "Останні 10 запитів до AI-коуча.",
-      historyEmpty: "Історія поки порожня. Перший розбір зʼявиться тут після відповіді AI.",
-      loginFirst: "Спочатку увійдіть в акаунт.",
-      messageRequired: "Введіть питання або опис угоди.",
-      coachError: "Помилка AI-коуча.",
-      error: "Помилка запиту до AI-коуча.",
-      failed: "Не вдалося отримати відповідь AI-коуча.",
-      needPlan: "Для AI-коуча потрібен активний тариф або пробний доступ.",
+        "РўСѓС‚ Р·КјСЏРІРёС‚СЊСЃСЏ СЂРѕР·Р±С–СЂ: С‰Рѕ Р±СѓР»Рѕ РґРѕР±СЂРµ, РґРµ РїРѕРјРёР»РєР°, СЏРєРёР№ СѓСЂРѕРє Р·Р°РїРёСЃР°С‚Рё РІ Р¶СѓСЂРЅР°Р» С– С‰Рѕ РїРµСЂРµРІС–СЂРёС‚Рё РїРµСЂРµРґ РЅР°СЃС‚СѓРїРЅРѕСЋ СѓРіРѕРґРѕСЋ.",
+      historyTitle: "Р†СЃС‚РѕСЂС–СЏ AI-СЂРѕР·Р±РѕСЂС–РІ",
+      historyText: "РћСЃС‚Р°РЅРЅС– 10 Р·Р°РїРёС‚С–РІ РґРѕ AI-РєРѕСѓС‡Р°.",
+      historyEmpty: "Р†СЃС‚РѕСЂС–СЏ РїРѕРєРё РїРѕСЂРѕР¶РЅСЏ. РџРµСЂС€РёР№ СЂРѕР·Р±С–СЂ Р·КјСЏРІРёС‚СЊСЃСЏ С‚СѓС‚ РїС–СЃР»СЏ РІС–РґРїРѕРІС–РґС– AI.",
+      loginFirst: "РЎРїРѕС‡Р°С‚РєСѓ СѓРІС–Р№РґС–С‚СЊ РІ Р°РєР°СѓРЅС‚.",
+      messageRequired: "Р’РІРµРґС–С‚СЊ РїРёС‚Р°РЅРЅСЏ Р°Р±Рѕ РѕРїРёСЃ СѓРіРѕРґРё.",
+      coachError: "РџРѕРјРёР»РєР° AI-РєРѕСѓС‡Р°.",
+      error: "РџРѕРјРёР»РєР° Р·Р°РїРёС‚Сѓ РґРѕ AI-РєРѕСѓС‡Р°.",
+      failed: "РќРµ РІРґР°Р»РѕСЃСЏ РѕС‚СЂРёРјР°С‚Рё РІС–РґРїРѕРІС–РґСЊ AI-РєРѕСѓС‡Р°.",
+      needPlan: "Р”Р»СЏ AI-РєРѕСѓС‡Р° РїРѕС‚СЂС–Р±РµРЅ Р°РєС‚РёРІРЅРёР№ С‚Р°СЂРёС„ Р°Р±Рѕ РїСЂРѕР±РЅРёР№ РґРѕСЃС‚СѓРї.",
       limitReached:
-        "Ліміт AI-запитів закінчився. Оберіть тариф вище або дочекайтеся оновлення ліміту.",
+        "Р›С–РјС–С‚ AI-Р·Р°РїРёС‚С–РІ Р·Р°РєС–РЅС‡РёРІСЃСЏ. РћР±РµСЂС–С‚СЊ С‚Р°СЂРёС„ РІРёС‰Рµ Р°Р±Рѕ РґРѕС‡РµРєР°Р№С‚РµСЃСЏ РѕРЅРѕРІР»РµРЅРЅСЏ Р»С–РјС–С‚Сѓ.",
     },
   },
 } as const;
@@ -1945,9 +1947,9 @@ const planNames: Record<PlanId, string> = {
 };
 
 const periodNames: Record<BillingPeriod, string> = {
-  monthly: "1 месяц",
-  halfyear: "6 месяцев",
-  yearly: "1 год",
+  monthly: "1 РјРµСЃСЏС†",
+  halfyear: "6 РјРµСЃСЏС†РµРІ",
+  yearly: "1 РіРѕРґ",
 };
 function getPeriodName(
   subscription: {
@@ -1961,7 +1963,7 @@ function getPeriodName(
   }
 
   if (!subscription.period) {
-    return "—";
+    return "вЂ”";
   }
 
   return t.periods[subscription.period];
@@ -2017,6 +2019,20 @@ function buildEquityCurveData(trades: Trade[]) {
 export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+  useEffect(() => {
+  if (typeof window === "undefined") return;
+
+  const params = new URLSearchParams(window.location.search);
+  const requestedTab = params.get("tab");
+
+  if (
+    requestedTab === "alerts" ||
+    requestedTab === "signals" ||
+    requestedTab === "ai-alerts"
+  ) {
+    setActiveTab("alerts");
+  }
+}, []);
   const [chartSymbolFromJournal, setChartSymbolFromJournal] = useState("");
   const [loading, setLoading] = useState(true);
   const [coachMessage, setCoachMessage] = useState("");
@@ -2215,7 +2231,7 @@ const handleCoachSubmit = async () => {
       return;
     }
 
-    const response = await fetch("/api/ai-coach", {
+    const response = await authFetch("/api/ai-coach", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -2381,11 +2397,11 @@ const handleCreateTradeFromAlert = (alert: DashboardMarketAlert) => {
     } confirmation`,
     `Entry zone: ${
       entryMin !== null && entryMax !== null
-        ? `${entryMin}–${entryMax}`
+        ? `${entryMin}вЂ“${entryMax}`
         : "wait trigger"
     }`,
-    `Stop: ${alert.stop_price || "—"}`,
-    `Targets: ${targets || "—"}`,
+    `Stop: ${alert.stop_price || "вЂ”"}`,
+    `Targets: ${targets || "вЂ”"}`,
     alert.trigger_label ? `Trigger: ${alert.trigger_label}` : null,
     alert.why_signal_fired ? `Why signal fired: ${alert.why_signal_fired}` : null,
     alert.risk_note ? `Risk: ${alert.risk_note}` : null,
@@ -2664,7 +2680,7 @@ const handleJournalAnalysis = async () => {
       return;
     }
 
-    const response = await fetch("/api/journal-analysis", {
+    const response = await authFetch("/api/journal-analysis", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -2792,7 +2808,7 @@ const handleTradeChartAnalysis = async (tradeId: string) => {
       return;
     }
 
-    const response = await fetch("/api/analyze-trade-screenshot", {
+    const response = await authFetch("/api/analyze-trade-screenshot", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -2860,14 +2876,14 @@ const featureLockCopy = (() => {
 
   if (language === "ua") {
     return {
-      label: isMarket ? "Потрібен Edge" : "Потрібен Elite",
+      label: isMarket ? "РџРѕС‚СЂС–Р±РµРЅ Edge" : "РџРѕС‚СЂС–Р±РµРЅ Elite",
       title: isMarket
-        ? "Market Intelligence відкривається з SkillEdge Edge."
-        : "AI Alerts доступні тільки на SkillEdge Elite.",
+        ? "Р РёРЅРєРѕРІР° СЂРѕР·РІС–РґРєР° РІС–РґРєСЂРёРІР°С”С‚СЊСЃСЏ Р· SkillEdge Edge."
+        : "AI-СЃРёРіРЅР°Р»Рё РґРѕСЃС‚СѓРїРЅС– С‚С–Р»СЊРєРё РЅР° SkillEdge Elite.",
       text: isMarket
-        ? "На Core доступний тільки preview. SkillEdge Edge та Elite відкривають AI Scanner, Market Intelligence, social/market context і AI Market Brief."
-        : "SkillEdge Edge відкриває AI Scanner / Market Intelligence, але real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow і outcome learning доступні тільки в Elite.",
-      button: isMarket ? "Оновити до Edge" : "Оновити до Elite",
+        ? "РќР° Core РґРѕСЃС‚СѓРїРЅРёР№ Р»РёС€Рµ РїРѕРїРµСЂРµРґРЅС–Р№ РїРµСЂРµРіР»СЏРґ. SkillEdge Edge С‚Р° Elite РІС–РґРєСЂРёРІР°СЋС‚СЊ AI-СЃРєР°РЅРµСЂ, СЂРёРЅРєРѕРІСѓ СЂРѕР·РІС–РґРєСѓ, СЂРёРЅРєРѕРІРёР№ РєРѕРЅС‚РµРєСЃС‚, РІС–РґСЃС‚РµР¶СѓРІР°РЅСѓ СѓРІР°РіСѓ С‚Р° AI-РѕРіР»СЏРґ СЂРёРЅРєСѓ."
+        : "SkillEdge Edge РІС–РґРєСЂРёРІР°С” AI-СЃРєР°РЅРµСЂ С– СЂРёРЅРєРѕРІСѓ СЂРѕР·РІС–РґРєСѓ, Р°Р»Рµ AI-СЃРёРіРЅР°Р»Рё РІ СЂРµР°Р»СЊРЅРѕРјСѓ С‡Р°СЃС–, РїР»Р°РІР°СЋС‡РёР№ РІС–РґР¶РµС‚, Р·РІвЂ™СЏР·РєР° СЃРёРіРЅР°Р»С–РІ С–Р· Р¶СѓСЂРЅР°Р»РѕРј С‚Р° РЅР°РІС‡Р°РЅРЅСЏ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚Р°С… РґРѕСЃС‚СѓРїРЅС– С‚С–Р»СЊРєРё РІ Elite.",
+      button: isMarket ? "РџРµСЂРµР№С‚Рё РЅР° Edge" : "РџРµСЂРµР№С‚Рё РЅР° Elite",
     };
   }
 
@@ -2878,21 +2894,21 @@ const featureLockCopy = (() => {
         ? "Market Intelligence unlocks from SkillEdge Edge."
         : "AI Alerts are available only on SkillEdge Elite.",
       text: isMarket
-        ? "Core users can see the preview. SkillEdge Edge and Elite unlock AI Scanner, Market Intelligence, social/market context and AI Market Brief."
-        : "SkillEdge Edge unlocks AI Scanner / Market Intelligence, but real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow and outcome learning are reserved for Elite.",
+        ? "Core users can see the preview. SkillEdge Edge and Elite unlock AI Scanner, Market Intelligence, tracked attention, market context and AI Market Brief."
+        : "SkillEdge Edge unlocks AI Scanner and Market Intelligence, but real-time AI Alerts, the floating alerts widget, Signal-to-Journal workflow and outcome learning are reserved for Elite.",
       button: isMarket ? "Upgrade to Edge" : "Upgrade to Elite",
     };
   }
 
   return {
-    label: isMarket ? "Нужен Edge" : "Нужен Elite",
+    label: isMarket ? "РќСѓР¶РµРЅ Edge" : "РќСѓР¶РµРЅ Elite",
     title: isMarket
-      ? "Market Intelligence открывается с SkillEdge Edge."
-      : "AI Alerts доступны только на SkillEdge Elite.",
+      ? "Р С‹РЅРѕС‡РЅР°СЏ СЂР°Р·РІРµРґРєР° РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ СЃ SkillEdge Edge."
+      : "AI-СЃРёРіРЅР°Р»С‹ РґРѕСЃС‚СѓРїРЅС‹ С‚РѕР»СЊРєРѕ РЅР° SkillEdge Elite.",
     text: isMarket
-      ? "На Core доступен только preview. SkillEdge Edge и Elite открывают AI Scanner, Market Intelligence, social/market context и AI Market Brief."
-      : "SkillEdge Edge открывает AI Scanner / Market Intelligence, но real-time AI Alerts, floating alerts widget, Signal-to-Journal workflow и outcome learning доступны только в Elite.",
-    button: isMarket ? "Перейти на Edge" : "Перейти на Elite",
+      ? "РќР° Core РґРѕСЃС‚СѓРїРµРЅ С‚РѕР»СЊРєРѕ РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅС‹Р№ РїСЂРѕСЃРјРѕС‚СЂ. SkillEdge Edge Рё Elite РѕС‚РєСЂС‹РІР°СЋС‚ AI-СЃРєР°РЅРµСЂ, СЂС‹РЅРѕС‡РЅСѓСЋ СЂР°Р·РІРµРґРєСѓ, СЂС‹РЅРѕС‡РЅС‹Р№ РєРѕРЅС‚РµРєСЃС‚, РѕС‚СЃР»РµР¶РёРІР°РµРјРѕРµ РІРЅРёРјР°РЅРёРµ Рё AI-РѕР±Р·РѕСЂ СЂС‹РЅРєР°."
+      : "SkillEdge Edge РѕС‚РєСЂС‹РІР°РµС‚ AI-СЃРєР°РЅРµСЂ Рё СЂС‹РЅРѕС‡РЅСѓСЋ СЂР°Р·РІРµРґРєСѓ, РЅРѕ AI-СЃРёРіРЅР°Р»С‹ РІ СЂРµР°Р»СЊРЅРѕРј РІСЂРµРјРµРЅРё, РїР»Р°РІР°СЋС‰РёР№ РІРёРґР¶РµС‚, СЃРІСЏР·РєР° СЃРёРіРЅР°Р»РѕРІ СЃ Р¶СѓСЂРЅР°Р»РѕРј Рё РѕР±СѓС‡РµРЅРёРµ РЅР° РёСЃС…РѕРґР°С… РґРѕСЃС‚СѓРїРЅС‹ С‚РѕР»СЊРєРѕ РІ Elite.",
+    button: isMarket ? "РџРµСЂРµР№С‚Рё РЅР° Edge" : "РџРµСЂРµР№С‚Рё РЅР° Elite",
   };
 })();
 
@@ -2917,95 +2933,96 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
 };
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#050813] px-4 py-6 text-white md:px-8">
+    <main className="se-dashboard-bg relative min-h-screen overflow-hidden text-white">
       <BackgroundFX />
-      <DashboardAlertsWidget
-  subscription={subscription}
-  language={language}
-  onOpenAlerts={() => setActiveTab("alerts")}
-/>
+      
 
-      <div className="relative z-10 mx-auto max-w-7xl">
+      <div className="relative z-10 mx-auto w-full max-w-[1760px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
         <motion.header
-          initial={{ opacity: 0, y: -18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55 }}
-          className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-6 shadow-2xl shadow-indigo-950/20 backdrop-blur-xl"
+  initial={{ opacity: 0, y: -18 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.55 }}
+  className="se-dashboard-panel rounded-[2.25rem] p-5 md:p-6"
+>
+  <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
+    <div className="max-w-3xl">
+      <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-xs font-black uppercase tracking-[0.28em] text-cyan-50/65">
+        {t.terminal}
+      </div>
+
+      <h1 className="mt-4 text-4xl font-black tracking-[-0.045em] text-white md:text-6xl">
+        {t.dashboard}
+      </h1>
+
+      <p className="mt-3 text-sm font-semibold text-white/58">
+        {t.user}:{" "}
+        <span className="text-white/82">{email || t.loading}</span>
+      </p>
+    </div>
+
+    <div className="flex flex-wrap gap-3">
+      <a
+        href="/?page=pricing"
+        className="se-dashboard-button-primary rounded-full px-5 py-3 text-sm font-black transition hover:-translate-y-0.5"
+      >
+        {t.choosePlan}
+      </a>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="se-dashboard-button-secondary rounded-full px-5 py-3 text-sm font-black transition hover:-translate-y-0.5"
+      >
+        {t.logout}
+      </button>
+    </div>
+  </div>
+
+  <div className="mt-7 overflow-x-auto pb-1">
+    <div className="flex min-w-max gap-2 rounded-full border border-[rgba(198,226,255,0.16)] bg-[rgba(14,23,36,0.34)] p-1.5 shadow-inner shadow-black/20">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          onClick={() => setActiveTab(tab.id)}
+          className={`relative rounded-full px-5 py-3 text-sm font-black transition ${
+            activeTab === tab.id
+              ? "text-[#07111d]"
+              : "text-white/58 hover:bg-cyan-200/[0.07] hover:text-white"
+          }`}
         >
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <div className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs uppercase tracking-[0.28em] text-white/45">
-  {t.terminal}
-</div>
+          {activeTab === tab.id && (
+            <motion.span
+              layoutId="active-dashboard-tab"
+              className="absolute inset-0 rounded-full bg-gradient-to-r from-white via-cyan-50 to-emerald-50 shadow-[0_12px_40px_rgba(255,255,255,0.18)]"
+              transition={{
+                type: "spring",
+                stiffness: 420,
+                damping: 32,
+              }}
+            />
+          )}
 
-<h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-6xl">
-  {t.dashboard}
-</h1>
+          <span className="relative z-10 inline-flex items-center gap-2">
+            <span>{t.tabs[tab.id]}</span>
 
-<p className="mt-3 text-sm text-white/55">
-  {t.user}:{" "}
-  <span className="text-white/75">{email || t.loading}</span>
-</p>
-
-<a
-  href="/?page=pricing"
-  className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
->
-  {t.choosePlan}
-</a>
-
-<button
-  onClick={handleLogout}
-  className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
->
-  {t.logout}
-</button>
-            </div>
-          </div>
-
-          <div className="mt-7 overflow-x-auto">
-            <div className="flex min-w-max gap-2 rounded-full border border-white/10 bg-black/20 p-2">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative rounded-full px-5 py-3 text-sm transition ${
-                    activeTab === tab.id
-                      ? "text-black"
-                      : "text-white/55 hover:bg-white/10 hover:text-white"
-                  }`}
-                >
-                  {activeTab === tab.id && (
-                    <motion.span
-                      layoutId="active-dashboard-tab"
-                      className="absolute inset-0 rounded-full bg-white shadow-lg shadow-white/10"
-                      transition={{
-                        type: "spring",
-                        stiffness: 420,
-                        damping: 32,
-                      }}
-                    />
-                  )}
-                  <span className="relative z-10 inline-flex items-center gap-2">
-  <span>{t.tabs[tab.id]}</span>
-
-  {getTabRequiredPlanLabel(tab.id) ? (
-    <span
-      className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] ${
-        activeTab === tab.id
-          ? "border-black/15 bg-black/10 text-black/65"
-          : "border-cyan-300/20 bg-cyan-300/10 text-cyan-100/75"
-      }`}
-    >
-      {getTabRequiredPlanLabel(tab.id)}
-    </span>
-  ) : null}
-</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </motion.header>
+            {getTabRequiredPlanLabel(tab.id) ? (
+              <span
+                className={`rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] ${
+                  activeTab === tab.id
+                    ? "border-black/15 bg-black/10 text-black/65"
+                    : "border-cyan-300/20 bg-cyan-300/10 text-cyan-100/75"
+                }`}
+              >
+                {getTabRequiredPlanLabel(tab.id)}
+              </span>
+            ) : null}
+          </span>
+        </button>
+      ))}
+    </div>
+  </div>
+</motion.header>
 
         <motion.section
           initial={{ opacity: 0, y: 22 }}
@@ -3013,7 +3030,7 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
           transition={{ duration: 0.55, delay: 0.08 }}
           className="mt-6 grid gap-6 lg:grid-cols-[1fr_330px]"
         >
-          <section className="relative min-h-[650px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/30 backdrop-blur-xl">
+          <section className="se-dashboard-panel relative min-h-[650px] overflow-hidden rounded-[2.25rem] p-6">
             <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-indigo-300/40 to-transparent" />
 
             {!loading && locked && activeTab !== "billing" && (
@@ -3029,7 +3046,7 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
 
                   <div className="relative">
                     <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06]">
-                      <span className="text-2xl">✦</span>
+                      <span className="text-2xl">вњ¦</span>
                     </div>
 
                     <p className="mt-5 text-xs uppercase tracking-[0.28em] text-white/40">
@@ -3191,7 +3208,7 @@ onTradeEditCancel={handleTradeEditCancel}
               initial={{ opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.55, delay: 0.15 }}
-              className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl"
+              className="se-dashboard-panel rounded-[2rem] p-6"
             >
               <p className="text-xs uppercase tracking-[0.28em] text-white/35">
   {t.currentPlan}
@@ -3207,7 +3224,7 @@ onTradeEditCancel={handleTradeEditCancel}
 
               <p className="mt-3 text-sm leading-7 text-white/50">
   {subscription.active && subscription.plan && subscription.period
-    ? `${getPeriodName(subscription, t)} · ${t.billing.validUntil} ${formatDate(
+    ? `${getPeriodName(subscription, t)} В· ${t.billing.validUntil} ${formatDate(
         subscription.expiresAt
       )}`
     : t.activatePlan}
@@ -3219,7 +3236,7 @@ onTradeEditCancel={handleTradeEditCancel}
   </div>
 )}
 
-              <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="se-dashboard-card-soft mt-5 rounded-2xl p-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-white/45">{t.aiUsage}</span>
                   <span className="text-white/70">
@@ -3228,9 +3245,9 @@ onTradeEditCancel={handleTradeEditCancel}
                       : "0%"}
                   </span>
                 </div>
-                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/12">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-indigo-300 to-cyan-300"
+                    className="h-full rounded-full bg-gradient-to-r from-cyan-300 via-emerald-300 to-amber-200 shadow-[0_0_18px_rgba(56,214,255,0.35)]"
                     style={{
                       width:
                         subscription.aiLimit > 0
@@ -3250,7 +3267,7 @@ onTradeEditCancel={handleTradeEditCancel}
               initial={{ opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.55, delay: 0.2 }}
-              className="rounded-[2rem] border border-white/10 bg-gradient-to-b from-indigo-500/10 to-white/[0.035] p-6 backdrop-blur-xl"
+              className="se-dashboard-card rounded-[2rem] p-6"
             >
               <p className="text-xs uppercase tracking-[0.28em] text-white/35">
   {t.quickActions}
@@ -3292,7 +3309,7 @@ onTradeEditCancel={handleTradeEditCancel}
         onClick={() => setEquityExpanded(false)}
         className="absolute -right-2 -top-14 rounded-full border border-white/10 bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.03]"
       >
-        ✕ {t.journal.close}
+        вњ• {t.journal.close}
       </button>
 
       <EquityCurveCard trades={trades} t={t} />
@@ -3305,7 +3322,7 @@ onTradeEditCancel={handleTradeEditCancel}
 }
 
 function formatDate(value: string | null) {
-  if (!value) return "—";
+  if (!value) return "вЂ”";
 
   return new Intl.DateTimeFormat("ru-RU", {
     day: "2-digit",
@@ -3318,22 +3335,25 @@ function BackgroundFX() {
   return (
     <>
       <motion.div
-        className="absolute left-[-10%] top-[-10%] h-[420px] w-[420px] rounded-full bg-indigo-500/15 blur-3xl"
-        animate={{ x: [0, 40, 0], y: [0, 30, 0] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute left-[-10%] top-[-10%] h-[520px] w-[520px] rounded-full bg-cyan-400/14 blur-3xl"
+        animate={{ x: [0, 42, 0], y: [0, 28, 0], opacity: [0.45, 0.72, 0.45] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
+
       <motion.div
-        className="absolute right-[-8%] top-[15%] h-[380px] w-[380px] rounded-full bg-cyan-500/10 blur-3xl"
-        animate={{ x: [0, -35, 0], y: [0, 25, 0] }}
-        transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-      />
-      <motion.div
-        className="absolute bottom-[-15%] left-[35%] h-[460px] w-[460px] rounded-full bg-fuchsia-500/10 blur-3xl"
-        animate={{ x: [0, 25, 0], y: [0, -35, 0] }}
+        className="absolute right-[-8%] top-[12%] h-[460px] w-[460px] rounded-full bg-emerald-400/12 blur-3xl"
+        animate={{ x: [0, -38, 0], y: [0, 26, 0], opacity: [0.36, 0.64, 0.36] }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.06),transparent_35%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:56px_56px] opacity-20" />
+
+      <motion.div
+        className="absolute bottom-[-16%] left-[34%] h-[540px] w-[540px] rounded-full bg-blue-400/10 blur-3xl"
+        animate={{ x: [0, 28, 0], y: [0, -36, 0], opacity: [0.28, 0.52, 0.28] }}
+        transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.075),transparent_35%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.028)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.024)_1px,transparent_1px)] bg-[size:58px_58px] opacity-24" />
     </>
   );
 }
@@ -3347,21 +3367,27 @@ function ActionButton({
 }) {
   return (
     <button
+      type="button"
       disabled={disabled}
-      className={`w-full rounded-2xl border border-white/10 px-4 py-3 text-left text-sm transition ${
+      className={`group w-full rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${
         disabled
-          ? "cursor-not-allowed bg-white/[0.025] text-white/25"
-          : "bg-white/[0.04] text-white/65 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
+          ? "cursor-not-allowed border-white/8 bg-white/[0.025] text-white/25"
+          : "border-[rgba(198,226,255,0.14)] bg-white/[0.055] text-white/76 hover:-translate-y-0.5 hover:border-cyan-200/28 hover:bg-cyan-200/[0.08] hover:text-white"
       }`}
     >
-      {label}
+      <span className="flex items-center justify-between gap-3">
+        <span>{label}</span>
+        <span className="text-white/30 transition group-hover:text-cyan-100">
+          в†’
+        </span>
+      </span>
     </button>
   );
 }
 
 function formatExecutionNumber(value: number | null | undefined) {
   if (value === null || value === undefined || !Number.isFinite(value)) {
-    return "—";
+    return "вЂ”";
   }
 
   if (Math.abs(value) >= 100) return value.toFixed(2);
@@ -3387,7 +3413,7 @@ function getSignalPlanDirection(trade: Trade) {
 }
 
 function getTargetHitFromTrade(trade: Trade) {
-  if (trade.exit_price === null) return "—";
+  if (trade.exit_price === null) return "вЂ”";
 
   const direction = trade.direction;
   const targets = [
@@ -3409,7 +3435,7 @@ function getTargetHitFromTrade(trade: Trade) {
     }
   }
 
-  return "No TP";
+  return "NO_TARGET";
 }
 
 function getSignalExecutionReview(trade: Trade) {
@@ -3461,7 +3487,7 @@ function getSignalExecutionReview(trade: Trade) {
   if (entryInZone === false) adherenceScore -= 10;
   if (stopMatched === true) adherenceScore += 15;
   if (stopMatched === false) adherenceScore -= 10;
-  if (targetHit !== "—" && targetHit !== "No TP") adherenceScore += 15;
+  if (targetHit !== "вЂ”" && targetHit !== "NO_TARGET") adherenceScore += 15;
   if (trade.pnl !== null && trade.pnl > 0) adherenceScore += 10;
   if (trade.pnl !== null && trade.pnl < 0) adherenceScore -= 5;
 
@@ -3486,6 +3512,121 @@ function getSignalExecutionReview(trade: Trade) {
     adherenceScore,
     executionLabel,
   };
+}
+
+
+const signalLinkedTradeCopy = {
+  en: {
+    linkedTrade: "Signal-linked trade",
+    defaultSignal: "SkillEdge AI Signal",
+    alertConfidence: "Alert confidence",
+    entryQuality: "Entry quality",
+    noPlanZone: "No plan zone",
+    inZone: "In zone",
+    outsideZone: "Outside zone",
+    plan: "Plan",
+    stopAdherence: "Stop adherence",
+    noStopData: "No stop data",
+    matched: "Matched",
+    different: "Different",
+    targetResult: "Target result",
+    noTarget: "Target not reached",
+    direction: "Direction",
+    trade: "Trade",
+    strongExecution: "Strong execution",
+    acceptableExecution: "Acceptable execution",
+    weakExecution: "Weak execution",
+    planBroken: "Plan broken",
+    strongText:
+      "You followed the signal plan well. This execution should be tracked as a personal strength.",
+    mediumText:
+      "Execution was acceptable, but review entry timing, stop placement and target management.",
+    weakText:
+      "Execution likely deviated from the original signal plan. Check whether you entered late, changed the stop or ignored confirmation.",
+  },
+
+  ru: {
+    linkedTrade: "РЎРґРµР»РєР° СЃРІСЏР·Р°РЅР° СЃ СЃРёРіРЅР°Р»РѕРј",
+    defaultSignal: "РЎРёРіРЅР°Р» SkillEdge AI",
+    alertConfidence: "РЈРІРµСЂРµРЅРЅРѕСЃС‚СЊ СЃРёРіРЅР°Р»Р°",
+    entryQuality: "РљР°С‡РµСЃС‚РІРѕ РІС…РѕРґР°",
+    noPlanZone: "РќРµС‚ РїР»Р°РЅРѕРІРѕР№ Р·РѕРЅС‹",
+    inZone: "Р’ Р·РѕРЅРµ",
+    outsideZone: "Р’РЅРµ Р·РѕРЅС‹",
+    plan: "РџР»Р°РЅ",
+    stopAdherence: "РЎР»РµРґРѕРІР°РЅРёРµ СЃС‚РѕРїСѓ",
+    noStopData: "РќРµС‚ РґР°РЅРЅС‹С… РїРѕ СЃС‚РѕРїСѓ",
+    matched: "РЎРѕРІРїР°РґР°РµС‚",
+    different: "РћС‚Р»РёС‡Р°РµС‚СЃСЏ",
+    targetResult: "Р РµР·СѓР»СЊС‚Р°С‚ РїРѕ С†РµР»СЏРј",
+    noTarget: "Р¦РµР»СЊ РЅРµ РґРѕСЃС‚РёРіРЅСѓС‚Р°",
+    direction: "РќР°РїСЂР°РІР»РµРЅРёРµ",
+    trade: "РЎРґРµР»РєР°",
+    strongExecution: "РЎРёР»СЊРЅРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ",
+    acceptableExecution: "РџСЂРёРµРјР»РµРјРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ",
+    weakExecution: "РЎР»Р°Р±РѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ",
+    planBroken: "РџР»Р°РЅ РЅР°СЂСѓС€РµРЅ",
+    strongText:
+      "РўС‹ С…РѕСЂРѕС€Рѕ СЃР»РµРґРѕРІР°Р» РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Р°. РўР°РєРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ SkillEdge AI РґРѕР»Р¶РµРЅ РѕС‚СЃР»РµР¶РёРІР°С‚СЊ РєР°Рє Р»РёС‡РЅСѓСЋ СЃРёР»СЊРЅСѓСЋ СЃС‚РѕСЂРѕРЅСѓ.",
+    mediumText:
+      "РСЃРїРѕР»РЅРµРЅРёРµ Р±С‹Р»Рѕ РїСЂРёРµРјР»РµРјС‹Рј, РЅРѕ СЃС‚РѕРёС‚ СЂР°Р·РѕР±СЂР°С‚СЊ С‚Р°Р№РјРёРЅРі РІС…РѕРґР°, РїРѕСЃС‚Р°РЅРѕРІРєСѓ СЃС‚РѕРїР° Рё СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ С†РµР»РµР№.",
+    weakText:
+      "РСЃРїРѕР»РЅРµРЅРёРµ, РІРµСЂРѕСЏС‚РЅРѕ, РѕС‚РєР»РѕРЅРёР»РѕСЃСЊ РѕС‚ РёСЃС…РѕРґРЅРѕРіРѕ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°. РџСЂРѕРІРµСЂСЊ, РЅРµ РІРѕС€С‘Р» Р»Рё С‚С‹ РїРѕР·РґРЅРѕ, РЅРµ РёР·РјРµРЅРёР» Р»Рё СЃС‚РѕРї РёР»Рё РЅРµ РїСЂРѕРёРіРЅРѕСЂРёСЂРѕРІР°Р» РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ.",
+  },
+
+  ua: {
+    linkedTrade: "РЈРіРѕРґР° РїРѕРІвЂ™СЏР·Р°РЅР° С–Р· СЃРёРіРЅР°Р»РѕРј",
+    defaultSignal: "РЎРёРіРЅР°Р» SkillEdge AI",
+    alertConfidence: "Р’РїРµРІРЅРµРЅС–СЃС‚СЊ СЃРёРіРЅР°Р»Сѓ",
+    entryQuality: "РЇРєС–СЃС‚СЊ РІС…РѕРґСѓ",
+    noPlanZone: "РќРµРјР°С” РїР»Р°РЅРѕРІРѕС— Р·РѕРЅРё",
+    inZone: "РЈ Р·РѕРЅС–",
+    outsideZone: "РџРѕР·Р° Р·РѕРЅРѕСЋ",
+    plan: "РџР»Р°РЅ",
+    stopAdherence: "Р”РѕС‚СЂРёРјР°РЅРЅСЏ СЃС‚РѕРїР°",
+    noStopData: "РќРµРјР°С” РґР°РЅРёС… РїРѕ СЃС‚РѕРїСѓ",
+    matched: "Р—Р±С–РіР°С”С‚СЊСЃСЏ",
+    different: "Р’С–РґСЂС–Р·РЅСЏС”С‚СЊСЃСЏ",
+    targetResult: "Р РµР·СѓР»СЊС‚Р°С‚ РїРѕ С†С–Р»СЏС…",
+    noTarget: "Р¦С–Р»СЊ РЅРµ РґРѕСЃСЏРіРЅСѓС‚Р°",
+    direction: "РќР°РїСЂСЏРјРѕРє",
+    trade: "РЈРіРѕРґР°",
+    strongExecution: "РЎРёР»СЊРЅРµ РІРёРєРѕРЅР°РЅРЅСЏ",
+    acceptableExecution: "РџСЂРёР№РЅСЏС‚РЅРµ РІРёРєРѕРЅР°РЅРЅСЏ",
+    weakExecution: "РЎР»Р°Р±РєРµ РІРёРєРѕРЅР°РЅРЅСЏ",
+    planBroken: "РџР»Р°РЅ РїРѕСЂСѓС€РµРЅРѕ",
+    strongText:
+      "РўРё РґРѕР±СЂРµ РґРѕС‚СЂРёРјР°РІСЃСЏ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ. РўР°РєРµ РІРёРєРѕРЅР°РЅРЅСЏ SkillEdge AI РјР°С” РІС–РґСЃС‚РµР¶СѓРІР°С‚Рё СЏРє РѕСЃРѕР±РёСЃС‚Сѓ СЃРёР»СЊРЅСѓ СЃС‚РѕСЂРѕРЅСѓ.",
+    mediumText:
+      "Р’РёРєРѕРЅР°РЅРЅСЏ Р±СѓР»Рѕ РїСЂРёР№РЅСЏС‚РЅРёРј, Р°Р»Рµ РІР°СЂС‚Рѕ СЂРѕР·С–Р±СЂР°С‚Рё С‚Р°Р№РјС–РЅРі РІС…РѕРґСѓ, РїРѕСЃС‚Р°РЅРѕРІРєСѓ СЃС‚РѕРїР° С‚Р° СЃСѓРїСЂРѕРІС–Рґ С†С–Р»РµР№.",
+    weakText:
+      "Р’РёРєРѕРЅР°РЅРЅСЏ, Р№РјРѕРІС–СЂРЅРѕ, РІС–РґС…РёР»РёР»РѕСЃСЏ РІС–Рґ РїРѕС‡Р°С‚РєРѕРІРѕРіРѕ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ. РџРµСЂРµРІС–СЂ, С‡Рё РЅРµ СѓРІС–Р№С€РѕРІ С‚Рё РїС–Р·РЅРѕ, С‡Рё РЅРµ Р·РјС–РЅРёРІ СЃС‚РѕРї Р°Р±Рѕ РЅРµ РїСЂРѕС–РіРЅРѕСЂСѓРІР°РІ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ.",
+  },
+} as const;
+
+function getSignalExecutionLabelCopy(
+  label: string,
+  language: Language,
+) {
+  const copy = signalLinkedTradeCopy[language];
+
+  if (label === "Strong execution") return copy.strongExecution;
+  if (label === "Acceptable execution") return copy.acceptableExecution;
+  if (label === "Weak execution") return copy.weakExecution;
+  if (label === "Plan broken") return copy.planBroken;
+
+  return label;
+}
+
+function getSignalTargetHitCopy(
+  targetHit: string,
+  language: Language,
+) {
+  const copy = signalLinkedTradeCopy[language];
+
+  if (targetHit === "NO_TARGET") return copy.noTarget;
+
+  return targetHit;
 }
 
 function JournalTab({
@@ -3591,6 +3732,16 @@ onTradeFormChange: React.Dispatch<
     }>
   >;
 }) {
+
+const journalLanguage: Language =
+  t.dashboard === "Dashboard"
+    ? "en"
+    : t.dashboard === "РћСЃРѕР±РёСЃС‚РёР№ РєР°Р±С–РЅРµС‚"
+      ? "ua"
+      : "ru";
+
+const signalCopy = signalLinkedTradeCopy[journalLanguage];
+
 
 const [screenshotViewerTrade, setScreenshotViewerTrade] =
   useState<Trade | null>(null);
@@ -3711,7 +3862,7 @@ const profitFactor =
 const recentTrades = trades.slice(0, 3);
 
 function getMarketLabel(value: string | null | undefined) {
-  if (!value) return "—";
+  if (!value) return "вЂ”";
 
   const key = value.toLowerCase() as keyof typeof t.journal.marketLabels;
 
@@ -3719,7 +3870,7 @@ function getMarketLabel(value: string | null | undefined) {
 }
 
 function getDirectionLabel(value: string | null | undefined) {
-  if (!value) return "—";
+  if (!value) return "вЂ”";
 
   const key = value.toLowerCase() as keyof typeof t.journal.directionLabels;
 
@@ -4020,7 +4171,7 @@ const downloadTradesXlsx = () => {
           </div>
 
           <div className="mt-1 text-sm text-white/45">
-            {screenshotViewerTrade.trade_date || "—"}
+            {screenshotViewerTrade.trade_date || "вЂ”"}
           </div>
         </div>
 
@@ -4029,7 +4180,7 @@ const downloadTradesXlsx = () => {
           onClick={handleCloseScreenshotViewer}
           className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
         >
-          ×
+          Г—
         </button>
       </div>
 
@@ -4098,14 +4249,14 @@ const downloadTradesXlsx = () => {
 
   <MetricCard
     label={t.journal.winRate}
-    value={winRate === null ? "—" : `${winRate}%`}
+    value={winRate === null ? "вЂ”" : `${winRate}%`}
   />
 
   <MetricCard
     label={t.journal.avgPnl}
     value={
       averagePnl === null
-        ? "—"
+        ? "вЂ”"
         : `${averagePnl >= 0 ? "$" : "-$"}${Math.abs(averagePnl).toFixed(2)}`
     }
   />
@@ -4122,21 +4273,21 @@ const downloadTradesXlsx = () => {
 
 <MetricCard
   label={t.journal.bestTrade}
-  value={bestTrade === null ? "—" : `$${bestTrade.toFixed(2)}`}
+  value={bestTrade === null ? "вЂ”" : `$${bestTrade.toFixed(2)}`}
 />
 
 <MetricCard
   label={t.journal.worstTrade}
   value={
     worstTrade === null
-      ? "—"
+      ? "вЂ”"
       : `${worstTrade < 0 ? "-$" : "$"}${Math.abs(worstTrade).toFixed(2)}`
   }
 />
 
 <MetricCard
   label={t.journal.profitFactor}
-  value={profitFactor === null ? "—" : profitFactor.toFixed(2)}
+  value={profitFactor === null ? "вЂ”" : profitFactor.toFixed(2)}
 />
 </div>
 
@@ -4524,7 +4675,7 @@ const downloadTradesXlsx = () => {
       </div>
 
       <div className="mt-1 text-2xl font-semibold text-white">
-        {trade.pnl === null ? "—" : `$${trade.pnl}`}
+        {trade.pnl === null ? "вЂ”" : `$${trade.pnl}`}
       </div>
     </div>
 
@@ -4590,77 +4741,77 @@ const downloadTradesXlsx = () => {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
-              Signal-linked trade
+              {signalCopy.linkedTrade}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/85">
-              {trade.source_setup_name || trade.setup || "SkillEdge AI Signal"}
+              {trade.source_setup_name || trade.setup || signalCopy.defaultSignal}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Alert confidence:{" "}
-              {trade.alert_confidence_score ?? "—"}
+              {signalCopy.alertConfidence}:{" "}
+              {trade.alert_confidence_score ?? "вЂ”"}
               {trade.alert_confidence_tier
-                ? ` · ${trade.alert_confidence_tier}`
+                ? ` В· ${trade.alert_confidence_tier}`
                 : ""}
             </div>
           </div>
 
           <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
-            {executionReview.adherenceScore}/100 ·{" "}
-            {executionReview.executionLabel}
+            {executionReview.adherenceScore}/100 В·{" "}
+            {getSignalExecutionLabelCopy(executionReview.executionLabel, journalLanguage)}
           </div>
         </div>
 
         <div className="mt-4 grid gap-3 md:grid-cols-4">
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Entry quality
+              {signalCopy.entryQuality}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
               {executionReview.entryInZone === null
-                ? "No plan zone"
+                ? signalCopy.noPlanZone
                 : executionReview.entryInZone
-                  ? "In zone"
-                  : "Outside zone"}
+                  ? signalCopy.inZone
+                  : signalCopy.outsideZone}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Plan:{" "}
+              {signalCopy.plan}:{" "}
               {trade.alert_entry_zone_min && trade.alert_entry_zone_max
                 ? `${formatExecutionNumber(
                     trade.alert_entry_zone_min
-                  )}–${formatExecutionNumber(trade.alert_entry_zone_max)}`
-                : "—"}
+                  )}вЂ“${formatExecutionNumber(trade.alert_entry_zone_max)}`
+                : "вЂ”"}
             </div>
           </div>
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Stop adherence
+              {signalCopy.stopAdherence}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
               {executionReview.stopMatched === null
-                ? "No stop data"
+                ? signalCopy.noStopData
                 : executionReview.stopMatched
-                  ? "Matched"
-                  : "Different"}
+                  ? signalCopy.matched
+                  : signalCopy.different}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Plan: {formatExecutionNumber(trade.alert_stop_price)}
+              {signalCopy.plan}: {formatExecutionNumber(trade.alert_stop_price)}
             </div>
           </div>
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Target result
+              {signalCopy.targetResult}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
-              {executionReview.targetHit}
+              {getSignalTargetHitCopy(executionReview.targetHit, journalLanguage)}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
@@ -4670,25 +4821,25 @@ const downloadTradesXlsx = () => {
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
             <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
-              Direction
+              {signalCopy.direction}
             </div>
 
             <div className="mt-2 text-sm font-semibold text-white/80">
-              {executionReview.directionMatched ? "Matched" : "Different"}
+              {executionReview.directionMatched ? signalCopy.matched : signalCopy.different}
             </div>
 
             <div className="mt-1 text-xs leading-5 text-white/45">
-              Trade: {trade.direction}
+              {signalCopy.trade}: {getDirectionLabel(trade.direction)}
             </div>
           </div>
         </div>
 
         <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/55">
           {executionReview.adherenceScore >= 80
-            ? "You followed the alert plan well. This is the type of execution SkillEdge AI should track as a personal strength."
+            ? signalCopy.strongText
             : executionReview.adherenceScore >= 60
-              ? "Execution was acceptable, but review entry timing, stop placement and target management."
-              : "Execution likely deviated from the original alert plan. Review whether you entered late, changed the stop, or ignored confirmation."}
+              ? signalCopy.mediumText
+              : signalCopy.weakText}
         </div>
       </div>
     );
@@ -4697,23 +4848,23 @@ const downloadTradesXlsx = () => {
 
                   <div className="mt-4 grid gap-3 text-sm text-white/55">
   <div>
-    {t.journal.cardLabels.entry}: {trade.entry_price ?? "—"}
+    {t.journal.cardLabels.entry}: {trade.entry_price ?? "вЂ”"}
   </div>
   <div>
-    {t.journal.cardLabels.exit}: {trade.exit_price ?? "—"}
+    {t.journal.cardLabels.exit}: {trade.exit_price ?? "вЂ”"}
   </div>
   <div>
-    {t.journal.cardLabels.stop}: {trade.stop_loss ?? "—"}
+    {t.journal.cardLabels.stop}: {trade.stop_loss ?? "вЂ”"}
   </div>
   <div>
     {t.journal.cardLabels.risk}:{" "}
-    {trade.risk_amount === null ? "—" : `$${trade.risk_amount}`}
+    {trade.risk_amount === null ? "вЂ”" : `$${trade.risk_amount}`}
   </div>
   <div>
     {t.journal.cardLabels.result}: {getResultLabel(trade.result)}
   </div>
   <div>
-    {t.journal.cardLabels.setup}: {trade.setup ?? "—"}
+    {t.journal.cardLabels.setup}: {trade.setup ?? "вЂ”"}
   </div>
 </div>
 
@@ -4931,17 +5082,17 @@ const downloadTradesXlsx = () => {
                     </td>
                     <td className="py-4 pr-4">{getMarketLabel(trade.market)}</td>
                     <td className="py-4 pr-4">{getDirectionLabel(trade.direction)}</td>
-                    <td className="py-4 pr-4">{trade.entry_price ?? "—"}</td>
-                    <td className="py-4 pr-4">{trade.exit_price ?? "—"}</td>
-                    <td className="py-4 pr-4">{trade.stop_loss ?? "—"}</td>
+                    <td className="py-4 pr-4">{trade.entry_price ?? "вЂ”"}</td>
+                    <td className="py-4 pr-4">{trade.exit_price ?? "вЂ”"}</td>
+                    <td className="py-4 pr-4">{trade.stop_loss ?? "вЂ”"}</td>
                     <td className="py-4 pr-4">
-                      {trade.risk_amount === null ? "—" : `$${trade.risk_amount}`}
+                      {trade.risk_amount === null ? "вЂ”" : `$${trade.risk_amount}`}
                     </td>
                     <td className="py-4 pr-4 font-semibold">
-                      {trade.pnl === null ? "—" : `$${trade.pnl}`}
+                      {trade.pnl === null ? "вЂ”" : `$${trade.pnl}`}
                     </td>
                     <td className="py-4 pr-4">{getResultLabel(trade.result)}</td>
-                    <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
+                    <td className="py-4 pr-4">{trade.setup ?? "вЂ”"}</td>
                     <td className="py-5 pr-4">
   {(() => {
     const screenshotsCount = tradeScreenshots.filter(
@@ -4949,7 +5100,7 @@ const downloadTradesXlsx = () => {
     ).length;
 
     if (screenshotsCount === 0) {
-      return <span className="text-white/35">—</span>;
+      return <span className="text-white/35">вЂ”</span>;
     }
 
     return (
@@ -5065,7 +5216,7 @@ useEffect(() => {
 >
         {!mounted ? (
   <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
-    Loading chart...
+    {t.loading}
   </div>
 ) : equityCurveData.length === 0 ? (
           <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
@@ -5252,14 +5403,14 @@ function getSentimentLabel(
   }
 
   if (language === "ua") {
-    if (sentiment === "bullish") return "Бичачий";
-    if (sentiment === "bearish") return "Ведмежий";
-    return "Нейтральний";
+    if (sentiment === "bullish") return "Р‘РёС‡Р°С‡РёР№";
+    if (sentiment === "bearish") return "Р’РµРґРјРµР¶РёР№";
+    return "РќРµР№С‚СЂР°Р»СЊРЅРёР№";
   }
 
-  if (sentiment === "bullish") return "Бычий";
-  if (sentiment === "bearish") return "Медвежий";
-  return "Нейтральный";
+  if (sentiment === "bullish") return "Р‘С‹С‡РёР№";
+  if (sentiment === "bearish") return "РњРµРґРІРµР¶РёР№";
+  return "РќРµР№С‚СЂР°Р»СЊРЅС‹Р№";
 }
 
 function MarketSourceCard({
@@ -5450,16 +5601,16 @@ noSocialData: string;
 const marketScannerCopy: Record<Language, MarketScannerCopy> = {
   en: {
     title: "Market Intelligence Scanner",
-    text: "Full-market research across NYSE, NASDAQ and AMEX to find potential pump, dump, unusual volume and catalyst candidates before the move becomes obvious.",
-    lockedTitle: "Market Scanner is available on SkillEdge Edge and Elite.",
+    text: "A market intelligence layer for stocks and crypto: movers, unusual volume, catalysts, tracked social attention and opportunity ranking.",
+    lockedTitle: "Market Intelligence is available on SkillEdge Edge and Elite.",
     lockedText:
-      "Core users can see the module preview. Upgrade to unlock full-market scanner results, opportunity score and in-play ticker research.",
+      "Core users can view the module preview. Upgrade to unlock scanner results, opportunity scores, tracked attention data and in-play ticker research.",
     refresh: "Refresh scanner",
     refreshing: "Scanning...",
     source: "Source",
     scanned: "Scanned",
-    pumpWatch: "Pump candidates",
-    dumpWatch: "Dump candidates",
+    pumpWatch: "Pump watch",
+    dumpWatch: "Dump watch",
     unusualVolume: "Unusual volume",
     catalystWatch: "Catalysts",
     all: "All",
@@ -5471,23 +5622,23 @@ const marketScannerCopy: Record<Language, MarketScannerCopy> = {
     score: "Score",
     change: "Move",
     volume: "Volume",
-    mentions: "Mentions",
+    mentions: "Tracked mentions",
     sentiment: "Sentiment",
     risk: "Risk",
-    noData: "No scanner data yet. Press refresh or check your data provider.",
-    socialTitle: "Most mentioned stocks — 24H",
-socialText:
-  "Reddit attention scanner: tickers with unusual discussion activity over the last 24 hours.",
-socialRefresh: "Refresh social scanner",
-socialRefreshing: "Scanning Reddit...",
-socialScore: "Social score",
-mentions24h: "Mentions 24H",
-mentions1h: "Mentions 1H",
-velocity: "Velocity",
-provider: "Provider",
-topPosts: "Top posts",
-noSocialData:
-  "No social mention data yet. Press refresh or check the Reddit provider.",
+    noData: "No scanner data yet. Refresh the scanner or check the data source status.",
+    socialTitle: "Tracked attention вЂ” 24H",
+    socialText:
+      "Tracked social attention from connected sources. These numbers are not full internet coverage.",
+    socialRefresh: "Refresh attention data",
+    socialRefreshing: "Scanning tracked sources...",
+    socialScore: "Attention score",
+    mentions24h: "Tracked 24H",
+    mentions1h: "Tracked 1H",
+    velocity: "Velocity",
+    provider: "Source",
+    topPosts: "Top posts",
+    noSocialData:
+      "No tracked attention data yet. Refresh the scanner or check the source coverage.",
     openChart: "Open chart",
     bullish: "Bullish",
     bearish: "Bearish",
@@ -5495,105 +5646,107 @@ noSocialData:
     upside: "Upside",
     downside: "Downside",
   },
+
   ru: {
-    title: "Market Intelligence Scanner",
-    text: "Сканер всего рынка NYSE, NASDAQ и AMEX для поиска потенциальных пампов, дампов, аномального объёма и тикеров с катализатором до того, как движение станет очевидным.",
-    lockedTitle: "Market Scanner доступен на SkillEdge Edge и Elite.",
+    title: "Р С‹РЅРѕС‡РЅР°СЏ СЂР°Р·РІРµРґРєР°",
+    text: "РЎР»РѕР№ Р°РЅР°Р»РёР·Р° СЂС‹РЅРєР° РґР»СЏ Р°РєС†РёР№ Рё РєСЂРёРїС‚С‹: Р»РёРґРµСЂС‹ РґРІРёР¶РµРЅРёСЏ, Р°РЅРѕРјР°Р»СЊРЅС‹Р№ РѕР±СЉС‘Рј, РєР°С‚Р°Р»РёР·Р°С‚РѕСЂС‹, РѕС‚СЃР»РµР¶РёРІР°РµРјРѕРµ РІРЅРёРјР°РЅРёРµ Рё СЂРµР№С‚РёРЅРі РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№.",
+    lockedTitle: "Р С‹РЅРѕС‡РЅР°СЏ СЂР°Р·РІРµРґРєР° РґРѕСЃС‚СѓРїРЅР° РЅР° SkillEdge Edge Рё Elite.",
     lockedText:
-      "На Core доступен только preview. Edge и Elite открывают полный сканер рынка, opportunity score и поиск in-play тикеров.",
-    refresh: "Обновить сканер",
-    refreshing: "Сканируем...",
-    source: "Источник",
-    scanned: "Скан",
-    pumpWatch: "Кандидаты на памп",
-    dumpWatch: "Кандидаты на дамп",
-    unusualVolume: "Аномальный объём",
-    catalystWatch: "Катализаторы",
-    all: "Все",
-    filters: "Фильтры",
-    allBuckets: "Все категории",
-    stocks: "Акции",
-    crypto: "Крипта",
-    search: "Поиск тикера...",
-    score: "Рейтинг",
-    change: "Движение",
-    volume: "Объём",
-    mentions: "Упоминания",
-    sentiment: "Сентимент",
-    risk: "Риск",
-    noData: "Пока нет данных scanner. Нажми обновить или проверь provider.",
-    socialTitle: "Самые упоминаемые акции — 24 часа",
-socialText:
-  "Reddit scanner внимания: тикеры, которые необычно часто обсуждают за последние 24 часа.",
-socialRefresh: "Обновить social scanner",
-socialRefreshing: "Сканируем Reddit...",
-socialScore: "Social рейтинг",
-mentions24h: "Упоминания 24ч",
-mentions1h: "Упоминания 1ч",
-velocity: "Скорость",
-provider: "Источник",
-topPosts: "Топ посты",
-noSocialData:
-  "Пока нет social mentions. Нажми обновить или проверь Reddit provider.",
-    openChart: "Открыть график",
-    bullish: "Бычий",
-    bearish: "Медвежий",
-    neutral: "Нейтральный",
-    upside: "Вверх",
-    downside: "Вниз",
+      "РќР° Core РґРѕСЃС‚СѓРїРµРЅ С‚РѕР»СЊРєРѕ РїСЂРµРґРІР°СЂРёС‚РµР»СЊРЅС‹Р№ РїСЂРѕСЃРјРѕС‚СЂ. РџРµСЂРµР№РґРёС‚Рµ РЅР° Edge РёР»Рё Elite, С‡С‚РѕР±С‹ РѕС‚РєСЂС‹С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚С‹ СЃРєР°РЅРµСЂР°, СЂРµР№С‚РёРЅРі РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№, РґР°РЅРЅС‹Рµ РїРѕ РѕС‚СЃР»РµР¶РёРІР°РµРјРѕРјСѓ РІРЅРёРјР°РЅРёСЋ Рё РїРѕРёСЃРє Р°РєС‚РёРІРЅС‹С… С‚РёРєРµСЂРѕРІ.",
+    refresh: "РћР±РЅРѕРІРёС‚СЊ СЃРєР°РЅРµСЂ",
+    refreshing: "РЎРєР°РЅРёСЂСѓРµРј...",
+    source: "РСЃС‚РѕС‡РЅРёРє",
+    scanned: "РџСЂРѕРІРµСЂРµРЅРѕ",
+    pumpWatch: "РџР°РјРї-РєР°РЅРґРёРґР°С‚С‹",
+    dumpWatch: "Р”Р°РјРї-РєР°РЅРґРёРґР°С‚С‹",
+    unusualVolume: "РђРЅРѕРјР°Р»СЊРЅС‹Р№ РѕР±СЉС‘Рј",
+    catalystWatch: "РљР°С‚Р°Р»РёР·Р°С‚РѕСЂС‹",
+    all: "Р’СЃРµ",
+    filters: "Р¤РёР»СЊС‚СЂС‹",
+    allBuckets: "Р’СЃРµ РєР°С‚РµРіРѕСЂРёРё",
+    stocks: "РђРєС†РёРё",
+    crypto: "РљСЂРёРїС‚Рѕ",
+    search: "РџРѕРёСЃРє С‚РёРєРµСЂР°...",
+    score: "Р РµР№С‚РёРЅРі",
+    change: "Р”РІРёР¶РµРЅРёРµ",
+    volume: "РћР±СЉС‘Рј",
+    mentions: "РћС‚СЃР»РµР¶РёРІР°РµРјС‹Рµ СѓРїРѕРјРёРЅР°РЅРёСЏ",
+    sentiment: "РќР°СЃС‚СЂРѕРµРЅРёРµ",
+    risk: "Р РёСЃРє",
+    noData: "Р”Р°РЅРЅС‹С… СЃРєР°РЅРµСЂР° РїРѕРєР° РЅРµС‚. РћР±РЅРѕРІРёС‚Рµ СЃРєР°РЅРµСЂ РёР»Рё РїСЂРѕРІРµСЂСЊС‚Рµ СЃС‚Р°С‚СѓСЃ РёСЃС‚РѕС‡РЅРёРєР° РґР°РЅРЅС‹С….",
+    socialTitle: "РћС‚СЃР»РµР¶РёРІР°РµРјРѕРµ РІРЅРёРјР°РЅРёРµ вЂ” 24С‡",
+    socialText:
+      "РћС‚СЃР»РµР¶РёРІР°РµРјРѕРµ РІРЅРёРјР°РЅРёРµ РёР· РїРѕРґРєР»СЋС‡С‘РЅРЅС‹С… РёСЃС‚РѕС‡РЅРёРєРѕРІ. Р­С‚Рё С†РёС„СЂС‹ РЅРµ СЏРІР»СЏСЋС‚СЃСЏ РїРѕР»РЅС‹Рј РѕС…РІР°С‚РѕРј РІСЃРµРіРѕ РёРЅС‚РµСЂРЅРµС‚Р°.",
+    socialRefresh: "РћР±РЅРѕРІРёС‚СЊ РґР°РЅРЅС‹Рµ РІРЅРёРјР°РЅРёСЏ",
+    socialRefreshing: "РЎРєР°РЅРёСЂСѓРµРј РёСЃС‚РѕС‡РЅРёРєРё...",
+    socialScore: "Р РµР№С‚РёРЅРі РІРЅРёРјР°РЅРёСЏ",
+    mentions24h: "РћС‚СЃР»РµР¶РµРЅРѕ Р·Р° 24С‡",
+    mentions1h: "РћС‚СЃР»РµР¶РµРЅРѕ Р·Р° 1С‡",
+    velocity: "РЎРєРѕСЂРѕСЃС‚СЊ",
+    provider: "РСЃС‚РѕС‡РЅРёРє",
+    topPosts: "РўРѕРї-РїРѕСЃС‚С‹",
+    noSocialData:
+      "Р”Р°РЅРЅС‹С… РїРѕ РѕС‚СЃР»РµР¶РёРІР°РµРјРѕРјСѓ РІРЅРёРјР°РЅРёСЋ РїРѕРєР° РЅРµС‚. РћР±РЅРѕРІРёС‚Рµ СЃРєР°РЅРµСЂ РёР»Рё РїСЂРѕРІРµСЂСЊС‚Рµ РїРѕРєСЂС‹С‚РёРµ РёСЃС‚РѕС‡РЅРёРєРѕРІ.",
+    openChart: "РћС‚РєСЂС‹С‚СЊ РіСЂР°С„РёРє",
+    bullish: "Р‘С‹С‡СЊРµ",
+    bearish: "РњРµРґРІРµР¶СЊРµ",
+    neutral: "РќРµР№С‚СЂР°Р»СЊРЅРѕРµ",
+    upside: "Р’РІРµСЂС…",
+    downside: "Р’РЅРёР·",
   },
+
   ua: {
-    title: "Market Intelligence Scanner",
-    text: "Сканер усього ринку NYSE, NASDAQ і AMEX для пошуку потенційних пампів, дампів, аномального обʼєму та тикерів з каталізатором до того, як рух стане очевидним.",
-    lockedTitle: "Market Scanner доступний на SkillEdge Edge та Elite.",
+    title: "Р РёРЅРєРѕРІР° СЂРѕР·РІС–РґРєР°",
+    text: "РЁР°СЂ Р°РЅР°Р»С–Р·Сѓ СЂРёРЅРєСѓ РґР»СЏ Р°РєС†С–Р№ С– РєСЂРёРїС‚Рё: Р»С–РґРµСЂРё СЂСѓС…Сѓ, Р°РЅРѕРјР°Р»СЊРЅРёР№ РѕР±КјС”Рј, РєР°С‚Р°Р»С–Р·Р°С‚РѕСЂРё, РІС–РґСЃС‚РµР¶СѓРІР°РЅР° СѓРІР°РіР° С‚Р° СЂРµР№С‚РёРЅРі РјРѕР¶Р»РёРІРѕСЃС‚РµР№.",
+    lockedTitle: "Р РёРЅРєРѕРІР° СЂРѕР·РІС–РґРєР° РґРѕСЃС‚СѓРїРЅР° РЅР° SkillEdge Edge С‚Р° Elite.",
     lockedText:
-      "На Core доступний тільки preview. Edge та Elite відкривають повний сканер ринку, opportunity score і пошук in-play тикерів.",
-    refresh: "Оновити сканер",
-    refreshing: "Скануємо...",
-    source: "Джерело",
-    scanned: "Скан",
-    pumpWatch: "Кандидати на памп",
-    dumpWatch: "Кандидати на дамп",
-    unusualVolume: "Аномальний обʼєм",
-    catalystWatch: "Каталізатори",
-    all: "Усі",
-    filters: "Фільтри",
-    allBuckets: "Усі категорії",
-    stocks: "Акції",
-    crypto: "Крипта",
-    search: "Пошук тикера...",
-    score: "Рейтинг",
-    change: "Рух",
-    volume: "Обʼєм",
-    mentions: "Згадки",
-    sentiment: "Сентимент",
-    risk: "Ризик",
-    noData: "Поки немає даних scanner. Натисни оновити або перевір provider.",
-    socialTitle: "Найбільш згадувані акції — 24 години",
-socialText:
-  "Reddit scanner уваги: тикери, які незвично часто обговорюють за останні 24 години.",
-socialRefresh: "Оновити social scanner",
-socialRefreshing: "Скануємо Reddit...",
-socialScore: "Social рейтинг",
-mentions24h: "Згадки 24г",
-mentions1h: "Згадки 1г",
-velocity: "Швидкість",
-provider: "Джерело",
-topPosts: "Топ пости",
-noSocialData:
-  "Поки немає social mentions. Натисни оновити або перевір Reddit provider.",
-    openChart: "Відкрити графік",
-    bullish: "Бичачий",
-    bearish: "Ведмежий",
-    neutral: "Нейтральний",
-    upside: "Вгору",
-    downside: "Вниз",
+      "РќР° Core РґРѕСЃС‚СѓРїРЅРёР№ Р»РёС€Рµ РїРѕРїРµСЂРµРґРЅС–Р№ РїРµСЂРµРіР»СЏРґ. РџРµСЂРµР№РґС–С‚СЊ РЅР° Edge Р°Р±Рѕ Elite, С‰РѕР± РІС–РґРєСЂРёС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚Рё СЃРєР°РЅРµСЂР°, СЂРµР№С‚РёРЅРі РјРѕР¶Р»РёРІРѕСЃС‚РµР№, РґР°РЅС– РІС–РґСЃС‚РµР¶СѓРІР°РЅРѕС— СѓРІР°РіРё С‚Р° РїРѕС€СѓРє Р°РєС‚РёРІРЅРёС… С‚РёРєРµСЂС–РІ.",
+    refresh: "РћРЅРѕРІРёС‚Рё СЃРєР°РЅРµСЂ",
+    refreshing: "РЎРєР°РЅСѓС”РјРѕ...",
+    source: "Р”Р¶РµСЂРµР»Рѕ",
+    scanned: "РџРµСЂРµРІС–СЂРµРЅРѕ",
+    pumpWatch: "РџР°РјРї-РєР°РЅРґРёРґР°С‚Рё",
+    dumpWatch: "Р”Р°РјРї-РєР°РЅРґРёРґР°С‚Рё",
+    unusualVolume: "РђРЅРѕРјР°Р»СЊРЅРёР№ РѕР±КјС”Рј",
+    catalystWatch: "РљР°С‚Р°Р»С–Р·Р°С‚РѕСЂРё",
+    all: "РЈСЃС–",
+    filters: "Р¤С–Р»СЊС‚СЂРё",
+    allBuckets: "РЈСЃС– РєР°С‚РµРіРѕСЂС–С—",
+    stocks: "РђРєС†С–С—",
+    crypto: "РљСЂРёРїС‚Рѕ",
+    search: "РџРѕС€СѓРє С‚РёРєРµСЂР°...",
+    score: "Р РµР№С‚РёРЅРі",
+    change: "Р СѓС…",
+    volume: "РћР±КјС”Рј",
+    mentions: "Р’С–РґСЃС‚РµР¶СѓРІР°РЅС– Р·РіР°РґРєРё",
+    sentiment: "РќР°СЃС‚СЂС–Р№",
+    risk: "Р РёР·РёРє",
+    noData: "Р”Р°РЅРёС… СЃРєР°РЅРµСЂР° РїРѕРєРё РЅРµРјР°С”. РћРЅРѕРІС–С‚СЊ СЃРєР°РЅРµСЂ Р°Р±Рѕ РїРµСЂРµРІС–СЂС‚Рµ СЃС‚Р°С‚СѓСЃ РґР¶РµСЂРµР»Р° РґР°РЅРёС….",
+    socialTitle: "Р’С–РґСЃС‚РµР¶СѓРІР°РЅР° СѓРІР°РіР° вЂ” 24Рі",
+    socialText:
+      "Р’С–РґСЃС‚РµР¶СѓРІР°РЅР° СѓРІР°РіР° Р· РїС–РґРєР»СЋС‡РµРЅРёС… РґР¶РµСЂРµР». Р¦С– С†РёС„СЂРё РЅРµ С” РїРѕРІРЅРёРј РѕС…РѕРїР»РµРЅРЅСЏРј СѓСЃСЊРѕРіРѕ С–РЅС‚РµСЂРЅРµС‚Сѓ.",
+    socialRefresh: "РћРЅРѕРІРёС‚Рё РґР°РЅС– СѓРІР°РіРё",
+    socialRefreshing: "РЎРєР°РЅСѓС”РјРѕ РґР¶РµСЂРµР»Р°...",
+    socialScore: "Р РµР№С‚РёРЅРі СѓРІР°РіРё",
+    mentions24h: "Р’С–РґСЃС‚РµР¶РµРЅРѕ Р·Р° 24Рі",
+    mentions1h: "Р’С–РґСЃС‚РµР¶РµРЅРѕ Р·Р° 1Рі",
+    velocity: "РЁРІРёРґРєС–СЃС‚СЊ",
+    provider: "Р”Р¶РµСЂРµР»Рѕ",
+    topPosts: "РўРѕРї-РїРѕСЃС‚Рё",
+    noSocialData:
+      "Р”Р°РЅРёС… С‰РѕРґРѕ РІС–РґСЃС‚РµР¶СѓРІР°РЅРѕС— СѓРІР°РіРё РїРѕРєРё РЅРµРјР°С”. РћРЅРѕРІС–С‚СЊ СЃРєР°РЅРµСЂ Р°Р±Рѕ РїРµСЂРµРІС–СЂС‚Рµ РїРѕРєСЂРёС‚С‚СЏ РґР¶РµСЂРµР».",
+    openChart: "Р’С–РґРєСЂРёС‚Рё РіСЂР°С„С–Рє",
+    bullish: "Р‘РёС‡Р°С‡РёР№",
+    bearish: "Р’РµРґРјРµР¶РёР№",
+    neutral: "РќРµР№С‚СЂР°Р»СЊРЅРёР№",
+    upside: "Р’РіРѕСЂСѓ",
+    downside: "Р’РЅРёР·",
   },
 };
 
 function formatMarketNumber(value: number | null | undefined) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) {
-    return "—";
+    return "вЂ”";
   }
 
   const number = Number(value);
@@ -5726,7 +5879,7 @@ function MarketSocialMentionRow({
                 className="block rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-sm leading-6 text-white/55 transition hover:border-fuchsia-300/25 hover:text-white"
               >
                 <span className="text-white/75">r/{post.subreddit}</span>
-                {" · "}
+                {" В· "}
                 {post.title}
               </a>
             ))}
@@ -5850,6 +6003,38 @@ function MarketScannerRow({
   );
 }
 
+type MarketAlertStructureLevel = {
+  price?: number | null;
+  label?: string | null;
+  type?: string | null;
+};
+
+type MarketAlertSourceData = {
+  marketStructure?: {
+    source?: "structure" | "fallback" | string | null;
+    candlesProvider?: string | null;
+    candlesInterval?: string | null;
+    candlesCount?: number | null;
+    candlesError?: string | null;
+    vwap?: number | null;
+    atr?: number | null;
+    nearestSupport?: MarketAlertStructureLevel | null;
+    nearestResistance?: MarketAlertStructureLevel | null;
+    structureNotes?: string[] | null;
+    missingStructureData?: string[] | null;
+  } | null;
+  skillEdgeEngine?: {
+    setupSlug?: string | null;
+    setupName?: string | null;
+    globalConfidence?: number | null;
+    riskRewardRatio?: number | null;
+    tier?: string | null;
+    reasons?: string[] | null;
+    riskNotes?: string[] | null;
+    rejectionReasons?: string[] | null;
+  } | null;
+};
+
 type DashboardMarketAlert = {
   id: string;
   symbol: string;
@@ -5886,6 +6071,7 @@ type DashboardMarketAlert = {
   target_2?: number | null;
   target_3?: number | null;
   invalidation?: string | null;
+  source_data?: MarketAlertSourceData | null;
   management_plan?: string | null;
   is_new?: boolean;
   viewed_at?: string | null;
@@ -5925,6 +6111,163 @@ signal_mode_note?: string | null;
 user_alert_decision?: string | null;
 user_alert_decision_note?: string | null;
 };
+
+function formatAlertPrice(value?: number | null) {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "вЂ”";
+
+  if (Math.abs(value) >= 100) return value.toFixed(2);
+  if (Math.abs(value) >= 10) return value.toFixed(3);
+
+  return value.toFixed(4);
+}
+
+function getAlertSourceData(alert: DashboardMarketAlert): MarketAlertSourceData {
+  return alert.source_data || {};
+}
+
+function getAlertMarketStructure(alert: DashboardMarketAlert) {
+  return getAlertSourceData(alert).marketStructure || null;
+}
+
+function getAlertRiskReward(alert: DashboardMarketAlert) {
+  const sourceData = getAlertSourceData(alert);
+  const engineRR = sourceData.skillEdgeEngine?.riskRewardRatio;
+
+  if (typeof engineRR === "number" && Number.isFinite(engineRR)) {
+    return engineRR;
+  }
+
+  const entryMin =
+    typeof alert.entry_zone_min === "number" ? alert.entry_zone_min : null;
+  const entryMax =
+    typeof alert.entry_zone_max === "number" ? alert.entry_zone_max : null;
+  const stop = typeof alert.stop_price === "number" ? alert.stop_price : null;
+  const target =
+    typeof alert.target_3 === "number"
+      ? alert.target_3
+      : typeof alert.target_2 === "number"
+        ? alert.target_2
+        : typeof alert.target_1 === "number"
+          ? alert.target_1
+          : null;
+
+  if (entryMin === null || entryMax === null || stop === null || target === null) {
+    return null;
+  }
+
+  const entry = (entryMin + entryMax) / 2;
+  const direction = alert.direction === "downside" ? "downside" : "upside";
+
+  const risk = direction === "upside" ? entry - stop : stop - entry;
+  const reward = direction === "upside" ? target - entry : entry - target;
+
+  if (risk <= 0 || reward <= 0) return null;
+
+  return Number((reward / risk).toFixed(2));
+}
+
+function AlertStructurePanel({
+  alert,
+  copy,
+}: {
+  alert: DashboardMarketAlert;
+  copy: {
+    structureTitle: string;
+    structureBased: string;
+    fallbackBased: string;
+    rr: string;
+    vwap: string;
+    atr: string;
+    support: string;
+    resistance: string;
+    candles: string;
+    missingData: string;
+  };
+}) {
+  const structure = getAlertMarketStructure(alert);
+  const rr = getAlertRiskReward(alert);
+
+  if (!structure && rr === null) return null;
+
+  const isStructure = structure?.source === "structure";
+  const nearestSupport = structure?.nearestSupport;
+  const nearestResistance = structure?.nearestResistance;
+
+  return (
+    <div className="mt-4 rounded-2xl border border-cyan-300/15 bg-cyan-300/[0.035] p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <div className="text-[10px] uppercase tracking-[0.22em] text-cyan-100/45">
+            {copy.structureTitle}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {isStructure ? copy.structureBased : copy.fallbackBased}
+          </div>
+        </div>
+
+        <div className="rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs font-semibold text-white/75">
+          {copy.rr}: {rr !== null ? `${rr}R` : "вЂ”"}
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.vwap}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {formatAlertPrice(structure?.vwap)}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.atr}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {formatAlertPrice(structure?.atr)}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.support}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {nearestSupport?.label
+              ? `${nearestSupport.label}: ${formatAlertPrice(nearestSupport.price)}`
+              : "вЂ”"}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+          <div className="text-[10px] uppercase tracking-[0.18em] text-white/35">
+            {copy.resistance}
+          </div>
+          <div className="mt-1 text-sm font-semibold text-white">
+            {nearestResistance?.label
+              ? `${nearestResistance.label}: ${formatAlertPrice(nearestResistance.price)}`
+              : "вЂ”"}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-white/45">
+        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
+          {copy.candles}: {structure?.candlesProvider || "вЂ”"} В·{" "}
+          {structure?.candlesCount ?? 0}
+        </span>
+
+        {Array.isArray(structure?.missingStructureData) &&
+        structure.missingStructureData.length > 0 ? (
+          <span className="rounded-full border border-amber-300/15 bg-amber-300/[0.06] px-3 py-1 text-amber-100/70">
+            {copy.missingData}: {structure.missingStructureData.join(", ")}
+          </span>
+        ) : null}
+      </div>
+    </div>
+  );
+}
 
 type UserSignalPlaybookItem = {
   id: string;
@@ -6079,7 +6422,7 @@ function getAlertTransparencyItems(alert: DashboardMarketAlert) {
 
   items.push({
     label: "Base confidence",
-    value: confidence === null ? "—" : String(confidence),
+    value: confidence === null ? "вЂ”" : String(confidence),
     note:
       "Core signal quality based on market activity, setup quality, catalyst/social context and risk structure.",
     type: confidence !== null && confidence >= 80 ? "positive" : "neutral",
@@ -6220,26 +6563,36 @@ const [error, setError] = useState("");
   const copy = {
     ru: {
       title: "AI Alerts",
-      subtitle: "Последние торговые сигналы",
-      empty: "Пока нет активных alerts.",
-      scan: "Сканировать",
-      scanning: "Сканируем...",
-      open: "Открыть",
-      close: "Свернуть",
-      expand: "Развернуть",
-      direction: "Направление",
-      entry: "Entry",
-      stop: "Stop",
-      targets: "Targets",
-      risk: "Risk",
+      subtitle: "РџРѕСЃР»РµРґРЅРёРµ С‚РѕСЂРіРѕРІС‹Рµ СЃРёРіРЅР°Р»С‹",
+      empty: "РџРѕРєР° РЅРµС‚ Р°РєС‚РёРІРЅС‹С… alerts.",
+      scan: "РЎРєР°РЅРёСЂРѕРІР°С‚СЊ",
+      scanning: "РЎРєР°РЅРёСЂСѓРµРј...",
+      open: "РћС‚РєСЂС‹С‚СЊ",
+      close: "РЎРІРµСЂРЅСѓС‚СЊ",
+      expand: "Р Р°Р·РІРµСЂРЅСѓС‚СЊ",
+      direction: "РќР°РїСЂР°РІР»РµРЅРёРµ",
+      entry: "Р—РѕРЅР° РІС…РѕРґР°",
+      stop: "РЎС‚РѕРї",
+      targets: "Р¦РµР»Рё",
+      structureTitle: "РЎС‚СЂСѓРєС‚СѓСЂР° СЂС‹РЅРєР°",
+      structureBased: "РџР»Р°РЅ РїРѕСЃС‚СЂРѕРµРЅ РїРѕ СЃРІРµС‡Р°Рј / VWAP / СѓСЂРѕРІРЅСЏРј",
+      fallbackBased: "Fallback-РїР»Р°РЅ: РЅРµ С…РІР°С‚Р°РµС‚ СЃРІРµС‡РµР№/СѓСЂРѕРІРЅРµР№",
+      rr: "RR",
+      vwap: "VWAP",
+      atr: "ATR",
+      support: "Р‘Р»РёР¶Р°Р№С€Р°СЏ РїРѕРґРґРµСЂР¶РєР°",
+      resistance: "Р‘Р»РёР¶Р°Р№С€РµРµ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ",
+      candles: "РЎРІРµС‡Рё",
+      missingData: "РќРµ С…РІР°С‚Р°РµС‚ РґР°РЅРЅС‹С…",
+      risk: "Р РёСЃРє",
       newLabel: "new",
       live: "Live",
-lastChecked: "Проверено",
-autoRefresh: "Auto-refresh 60s / scan 5m",
-priority: "priority",
-latest: "Последний",
-openCenter: "Открыть центр",
-quiet: "Ждём качественный setup",
+      lastChecked: "РџСЂРѕРІРµСЂРµРЅРѕ",
+      autoRefresh: "Auto-refresh 60s / scan 5m",
+      priority: "priority",
+      latest: "РџРѕСЃР»РµРґРЅРёР№",
+      openCenter: "РћС‚РєСЂС‹С‚СЊ С†РµРЅС‚СЂ",
+      quiet: "Р–РґС‘Рј РєР°С‡РµСЃС‚РІРµРЅРЅС‹Р№ setup",
     },
     en: {
       title: "AI Alerts",
@@ -6254,6 +6607,16 @@ quiet: "Ждём качественный setup",
       entry: "Entry",
       stop: "Stop",
       targets: "Targets",
+      structureTitle: "Market structure",
+      structureBased: "Plan built from candles / VWAP / levels",
+      fallbackBased: "Fallback plan: candles/levels are missing",
+      rr: "RR",
+      vwap: "VWAP",
+      atr: "ATR",
+      support: "Nearest support",
+      resistance: "Nearest resistance",
+      candles: "Candles",
+      missingData: "Missing data",
       risk: "Risk",
       newLabel: "new",live: "Live",
 lastChecked: "Checked",
@@ -6265,26 +6628,36 @@ quiet: "Waiting for quality setup",
     },
     ua: {
       title: "AI Alerts",
-      subtitle: "Останні торгові сигнали",
-      empty: "Активних alerts поки немає.",
-      scan: "Сканувати",
-      scanning: "Скануємо...",
-      open: "Відкрити",
-      close: "Згорнути",
-      expand: "Розгорнути",
-      direction: "Напрямок",
-      entry: "Entry",
-      stop: "Stop",
-      targets: "Targets",
-      risk: "Risk",
+      subtitle: "РћСЃС‚Р°РЅРЅС– С‚РѕСЂРіРѕРІС– СЃРёРіРЅР°Р»Рё",
+      empty: "РђРєС‚РёРІРЅРёС… alerts РїРѕРєРё РЅРµРјР°С”.",
+      scan: "РЎРєР°РЅСѓРІР°С‚Рё",
+      scanning: "РЎРєР°РЅСѓС”РјРѕ...",
+      open: "Р’С–РґРєСЂРёС‚Рё",
+      close: "Р—РіРѕСЂРЅСѓС‚Рё",
+      expand: "Р РѕР·РіРѕСЂРЅСѓС‚Рё",
+      direction: "РќР°РїСЂСЏРјРѕРє",
+      entry: "Р—РѕРЅР° РІС…РѕРґСѓ",
+      stop: "РЎС‚РѕРї",
+      targets: "Р¦С–Р»С–",
+      structureTitle: "РЎС‚СЂСѓРєС‚СѓСЂР° СЂРёРЅРєСѓ",
+      structureBased: "РџР»Р°РЅ РїРѕР±СѓРґРѕРІР°РЅРѕ Р·Р° СЃРІС–С‡РєР°РјРё / VWAP / СЂС–РІРЅСЏРјРё",
+      fallbackBased: "Fallback-РїР»Р°РЅ: Р±СЂР°РєСѓС” СЃРІС–С‡РѕРє/СЂС–РІРЅС–РІ",
+      rr: "RR",
+      vwap: "VWAP",
+      atr: "ATR",
+      support: "РќР°Р№Р±Р»РёР¶С‡Р° РїС–РґС‚СЂРёРјРєР°",
+      resistance: "РќР°Р№Р±Р»РёР¶С‡РёР№ РѕРїС–СЂ",
+      candles: "РЎРІС–С‡РєРё",
+      missingData: "Р‘СЂР°РєСѓС” РґР°РЅРёС…",
+      risk: "Р РёР·РёРє",
       newLabel: "new",
       live: "Live",
-lastChecked: "Перевірено",
-autoRefresh: "Auto-refresh 60s / scan 5m",
-priority: "priority",
-latest: "Останній",
-openCenter: "Відкрити центр",
-quiet: "Чекаємо якісний setup",
+      lastChecked: "РџРµСЂРµРІС–СЂРµРЅРѕ",
+      autoRefresh: "Auto-refresh 60s / scan 5m",
+      priority: "priority",
+      latest: "РћСЃС‚Р°РЅРЅС–Р№",
+      openCenter: "Р’С–РґРєСЂРёС‚Рё С†РµРЅС‚СЂ",
+      quiet: "Р§РµРєР°С”РјРѕ СЏРєС–СЃРЅРёР№ setup",
     },
   }[safeLanguage];
 
@@ -6499,7 +6872,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
   {shouldPulse ? (
     <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full bg-cyan-300 shadow-[0_0_18px_rgba(103,232,249,0.9)]" />
   ) : null}
-  ⚡
+  вљЎ
 </div>
 
             <div>
@@ -6520,7 +6893,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
 
               <p className="mt-0.5 line-clamp-1 text-xs text-white/45">
   {latestAlert
-    ? `${copy.latest}: ${latestAlert.symbol} · ${
+    ? `${copy.latest}: ${latestAlert.symbol} В· ${
         latestAlert.setup_name ||
         latestAlert.setup_type ||
         latestAlert.signal_mode_label ||
@@ -6543,13 +6916,13 @@ const shouldPulse = newAlerts.length > 0 && !open;
   <div className="flex items-center gap-2 text-xs text-white/55">
     <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.8)]" />
     <span>{copy.live}</span>
-    <span className="text-white/25">·</span>
+    <span className="text-white/25">В·</span>
     <span>{copy.autoRefresh}</span>
   </div>
 
   <div className="text-xs text-white/40">
     {copy.lastChecked}:{" "}
-    {lastCheckedAt ? new Date(lastCheckedAt).toLocaleTimeString() : "—"}
+    {lastCheckedAt ? new Date(lastCheckedAt).toLocaleTimeString() : "вЂ”"}
   </div>
 </div>
             <div className="flex items-center justify-between gap-2">
@@ -6625,7 +6998,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
             : "border-white/10 bg-white/[0.04] text-white/60"
     }`}
   >
-    {alert.personal_priority_label} ·{" "}
+    {alert.personal_priority_label} В·{" "}
     {alert.personal_priority_score ?? alert.confidence_score ?? alert.score}
   </div>
 ) : null}
@@ -6667,14 +7040,14 @@ const shouldPulse = newAlerts.length > 0 && !open;
                         {copy.entry}:{" "}
                         <span className="text-white/70">
                           {alert.entry_zone_min && alert.entry_zone_max
-                            ? `${alert.entry_zone_min}–${alert.entry_zone_max}`
+                            ? `${alert.entry_zone_min}вЂ“${alert.entry_zone_max}`
                             : "wait trigger"}
                         </span>
                       </div>
                       <div>
                         {copy.stop}:{" "}
                         <span className="text-white/70">
-                          {alert.stop_price || "—"}
+                          {alert.stop_price || "вЂ”"}
                         </span>
                       </div>
                       <div>
@@ -6682,10 +7055,12 @@ const shouldPulse = newAlerts.length > 0 && !open;
                         <span className="text-white/70">
                           {[alert.target_1, alert.target_2, alert.target_3]
                             .filter(Boolean)
-                            .join(" / ") || "—"}
+                            .join(" / ") || "вЂ”"}
                         </span>
                       </div>
                     </div>
+
+                    <AlertStructurePanel alert={alert} copy={copy} />
 
                     {alert.risk_note ? (
                       <div className="mt-2 rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-2 text-[11px] leading-4 text-amber-50/70">
@@ -6751,66 +7126,76 @@ const [error, setError] = useState("");
       ? language
       : "ru";
 
-  const copy = {
+  const rawCopy = {
     ru: {
       title: "AI Alerts Center",
       subtitle:
-        "Сигналы за последние дни: направление, setup, entry zone, stop, targets, risk и management plan.",
-      generate: "Сканировать рынок",
-      generating: "Сканируем...",
-      refresh: "Обновить",
-      checkOutcomes: "Проверить результаты",
-checkingOutcomes: "Проверяем...",
-      empty: "Пока нет активных alerts. Запусти сканирование.",
+        "РЎРёРіРЅР°Р»С‹ Р·Р° РїРѕСЃР»РµРґРЅРёРµ РґРЅРё: РЅР°РїСЂР°РІР»РµРЅРёРµ, setup, entry zone, stop, targets, risk Рё management plan.",
+      generate: "РЎРєР°РЅРёСЂРѕРІР°С‚СЊ СЂС‹РЅРѕРє",
+      generating: "РЎРєР°РЅРёСЂСѓРµРј...",
+      refresh: "РћР±РЅРѕРІРёС‚СЊ",
+      checkOutcomes: "РџСЂРѕРІРµСЂРёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚С‹",
+checkingOutcomes: "РџСЂРѕРІРµСЂСЏРµРј...",
+      empty: "РџРѕРєР° РЅРµС‚ Р°РєС‚РёРІРЅС‹С… alerts. Р—Р°РїСѓСЃС‚Рё СЃРєР°РЅРёСЂРѕРІР°РЅРёРµ.",
       locked:
-  "AI Alerts доступны только на SkillEdge Elite. На SkillEdge Edge открыт AI Scanner / Market Intelligence, но real-time AI Alerts, floating alerts widget и Signal-to-Journal workflow доступны только в Elite.",
-      direction: "Направление",
-setup: "Сетап",
-entry: "Зона входа",
-stop: "Стоп",
-targets: "Цели",
-trigger: "Триггер",
-reason: "Причина",
-risk: "Риск",
-scenario: "Сценарий",
-invalidation: "Отмена идеи",
-management: "Управление",
-confidence: "Уверенность",
-status: "Статус",
-outcome: "Исход",
-time: "Время",
-worked: "Отработал",
-failed: "Не отработал",
-pending: "В ожидании",
-neutral: "Нейтрально",
-avgMfe: "Средний MFE",
-avgMae: "Средний MAE",
-tpHit: "TP достигнут",
-stopHit: "Стоп задет",
-quality: "Качество",
-saveToPlaybook: "Сохранить в Playbook",
-savingToPlaybook: "Сохраняем...",
-savedToPlaybook: "Сохранено",
-createTradeDraft: "Создать черновик сделки",
-openPlaybook: "Открыть Playbook",
-hidePlaybook: "Скрыть Playbook",
+  "AI Alerts РґРѕСЃС‚СѓРїРЅС‹ С‚РѕР»СЊРєРѕ РЅР° SkillEdge Elite. РќР° SkillEdge Edge РѕС‚РєСЂС‹С‚ AI Scanner / Market Intelligence, РЅРѕ real-time AI Alerts, floating alerts widget Рё Signal-to-Journal workflow РґРѕСЃС‚СѓРїРЅС‹ С‚РѕР»СЊРєРѕ РІ Elite.",
+      direction: "РќР°РїСЂР°РІР»РµРЅРёРµ",
+structureTitle: "РЎС‚СЂСѓРєС‚СѓСЂР° СЂС‹РЅРєР°",
+structureBased: "РџР»Р°РЅ РїРѕСЃС‚СЂРѕРµРЅ РїРѕ СЃРІРµС‡Р°Рј / VWAP / СѓСЂРѕРІРЅСЏРј",
+fallbackBased: "Fallback-РїР»Р°РЅ: РЅРµ С…РІР°С‚Р°РµС‚ СЃРІРµС‡РµР№/СѓСЂРѕРІРЅРµР№",
+rr: "RR",
+vwap: "VWAP",
+atr: "ATR",
+support: "Р‘Р»РёР¶Р°Р№С€Р°СЏ РїРѕРґРґРµСЂР¶РєР°",
+resistance: "Р‘Р»РёР¶Р°Р№С€РµРµ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ",
+candles: "РЎРІРµС‡Рё",
+missingData: "РќРµ С…РІР°С‚Р°РµС‚ РґР°РЅРЅС‹С…",
+      setup: "РЎРµС‚Р°Рї",
+entry: "Р—РѕРЅР° РІС…РѕРґР°",
+stop: "РЎС‚РѕРї",
+targets: "Р¦РµР»Рё",
+trigger: "РўСЂРёРіРіРµСЂ",
+reason: "РџСЂРёС‡РёРЅР°",
+risk: "Р РёСЃРє",
+scenario: "РЎС†РµРЅР°СЂРёР№",
+invalidation: "РћС‚РјРµРЅР° РёРґРµРё",
+management: "РЈРїСЂР°РІР»РµРЅРёРµ",
+confidence: "РЈРІРµСЂРµРЅРЅРѕСЃС‚СЊ",
+status: "РЎС‚Р°С‚СѓСЃ",
+outcome: "РСЃС…РѕРґ",
+time: "Р’СЂРµРјСЏ",
+worked: "РћС‚СЂР°Р±РѕС‚Р°Р»",
+failed: "РќРµ РѕС‚СЂР°Р±РѕС‚Р°Р»",
+pending: "Р’ РѕР¶РёРґР°РЅРёРё",
+neutral: "РќРµР№С‚СЂР°Р»СЊРЅРѕ",
+avgMfe: "РЎСЂРµРґРЅРёР№ MFE",
+avgMae: "РЎСЂРµРґРЅРёР№ MAE",
+tpHit: "TP РґРѕСЃС‚РёРіРЅСѓС‚",
+stopHit: "РЎС‚РѕРї Р·Р°РґРµС‚",
+quality: "РљР°С‡РµСЃС‚РІРѕ",
+saveToPlaybook: "РЎРѕС…СЂР°РЅРёС‚СЊ РІ Playbook",
+savingToPlaybook: "РЎРѕС…СЂР°РЅСЏРµРј...",
+savedToPlaybook: "РЎРѕС…СЂР°РЅРµРЅРѕ",
+createTradeDraft: "РЎРѕР·РґР°С‚СЊ СЃРґРµР»РєСѓ РёР· СЃРёРіРЅР°Р»Р°",
+openPlaybook: "РћС‚РєСЂС‹С‚СЊ Playbook",
+hidePlaybook: "РЎРєСЂС‹С‚СЊ Playbook",
 playbookTitle: "Personal Signal Playbook",
 playbookText:
-  "Твоя личная база сохранённых сетапов: логика, подтверждение, ошибки и примеры сигналов.",
+  "РўРІРѕСЏ Р»РёС‡РЅР°СЏ Р±Р°Р·Р° СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… СЃРµС‚Р°РїРѕРІ: Р»РѕРіРёРєР°, РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ, РѕС€РёР±РєРё Рё РїСЂРёРјРµСЂС‹ СЃРёРіРЅР°Р»РѕРІ.",
 playbookEmpty:
-  "Пока нет сохранённых сетапов. Нажми Save to Playbook на любом сигнале.",
-playbookLoading: "Загружаем playbook...",
+  "РџРѕРєР° РЅРµС‚ СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… СЃРµС‚Р°РїРѕРІ. РќР°Р¶РјРё Save to Playbook РЅР° Р»СЋР±РѕРј СЃРёРіРЅР°Р»Рµ.",
+playbookLoading: "Р—Р°РіСЂСѓР¶Р°РµРј playbook...",
 lastExample: "Last example",
-openSignalProfile: "Открыть Signal Profile",
-hideSignalProfile: "Скрыть Signal Profile",
-rebuildSignalProfile: "Пересобрать профиль",
-rebuildingSignalProfile: "Собираем профиль...",
+openSignalProfile: "РћС‚РєСЂС‹С‚СЊ Signal Profile",
+hideSignalProfile: "РЎРєСЂС‹С‚СЊ Signal Profile",
+rebuildSignalProfile: "РџРµСЂРµСЃРѕР±СЂР°С‚СЊ РїСЂРѕС„РёР»СЊ",
+rebuildingSignalProfile: "РЎРѕР±РёСЂР°РµРј РїСЂРѕС„РёР»СЊ...",
 signalProfileTitle: "Personal Signal Profile",
 signalProfileText:
-  "SkillEdge AI показывает, какие AI-сетапы ты торгуешь лучше, где теряешь деньги и какие сигналы стоит приоритезировать.",
+  "SkillEdge AI РїРѕРєР°Р·С‹РІР°РµС‚, РєР°РєРёРµ AI-СЃРµС‚Р°РїС‹ С‚С‹ С‚РѕСЂРіСѓРµС€СЊ Р»СѓС‡С€Рµ, РіРґРµ С‚РµСЂСЏРµС€СЊ РґРµРЅСЊРіРё Рё РєР°РєРёРµ СЃРёРіРЅР°Р»С‹ СЃС‚РѕРёС‚ РїСЂРёРѕСЂРёС‚РµР·РёСЂРѕРІР°С‚СЊ.",
 signalProfileEmpty:
-  "Профиль пока пустой. Создай сделки из AI Alerts и сохрани их в журнал.",
-signalProfileLoading: "Загружаем signal profile...",
+  "РџСЂРѕС„РёР»СЊ РїРѕРєР° РїСѓСЃС‚РѕР№. РЎРѕР·РґР°Р№ СЃРґРµР»РєРё РёР· AI Alerts Рё СЃРѕС…СЂР°РЅРё РёС… РІ Р¶СѓСЂРЅР°Р».",
+signalProfileLoading: "Р—Р°РіСЂСѓР¶Р°РµРј signal profile...",
 personalStrength: "Personal strength",
 riskZone: "Risk zone",
 learningProfile: "Learning",
@@ -6818,260 +7203,260 @@ neutralProfile: "Neutral",
 strengthScore: "Strength score",
 planAdherence: "Plan adherence",
 aiNote: "AI note",
-openTradePatterns: "Открыть Trade Patterns",
-hideTradePatterns: "Скрыть Trade Patterns",
-rebuildTradePatterns: "Найти мои паттерны",
-rebuildingTradePatterns: "Ищем паттерны...",
+openTradePatterns: "РћС‚РєСЂС‹С‚СЊ Trade Patterns",
+hideTradePatterns: "РЎРєСЂС‹С‚СЊ Trade Patterns",
+rebuildTradePatterns: "РќР°Р№С‚Рё РјРѕРё РїР°С‚С‚РµСЂРЅС‹",
+rebuildingTradePatterns: "РС‰РµРј РїР°С‚С‚РµСЂРЅС‹...",
 tradePatternsTitle: "Independent Trade Pattern Profile",
 tradePatternsText:
-  "SkillEdge AI анализирует твои самостоятельные прибыльные сделки и ищет повторяющиеся паттерны, которые потом можно использовать для персональных AI Alerts.",
+  "SkillEdge AI Р°РЅР°Р»РёР·РёСЂСѓРµС‚ С‚РІРѕРё СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅС‹Рµ РїСЂРёР±С‹Р»СЊРЅС‹Рµ СЃРґРµР»РєРё Рё РёС‰РµС‚ РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ РїР°С‚С‚РµСЂРЅС‹, РєРѕС‚РѕСЂС‹Рµ РїРѕС‚РѕРј РјРѕР¶РЅРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РґР»СЏ РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… AI Alerts.",
 tradePatternsEmpty:
-  "Пока нет найденных паттернов. Добавь в Journal несколько самостоятельных прибыльных сделок.",
-tradePatternsLoading: "Загружаем trade patterns...",
+  "РџРѕРєР° РЅРµС‚ РЅР°Р№РґРµРЅРЅС‹С… РїР°С‚С‚РµСЂРЅРѕРІ. Р”РѕР±Р°РІСЊ РІ Journal РЅРµСЃРєРѕР»СЊРєРѕ СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅС‹С… РїСЂРёР±С‹Р»СЊРЅС‹С… СЃРґРµР»РѕРє.",
+tradePatternsLoading: "Р—Р°РіСЂСѓР¶Р°РµРј trade patterns...",
 patternStrength: "Pattern strength",
 examples: "Examples",
 keywords: "Keywords",
-filterAll: "Все",
+filterAll: "Р’СЃРµ",
 filterActionable: "Actionable",
 filterWatchlist: "Watchlist",
-filterPriority: "Приоритет",
-filterCaution: "Осторожно",
-filterJournalMatch: "Совпадение с журналом",
-filterAiStrength: "AI-сила",
+filterPriority: "РџСЂРёРѕСЂРёС‚РµС‚",
+filterCaution: "РћСЃС‚РѕСЂРѕР¶РЅРѕ",
+filterJournalMatch: "РЎРѕРІРїР°РґРµРЅРёРµ СЃ Р¶СѓСЂРЅР°Р»РѕРј",
+filterAiStrength: "AI-СЃРёР»Р°",
 filterLong: "Long",
 filterShort: "Short",
-filterCrypto: "Крипто",
-filterStocks: "Акции",
-filterDecisionWatching: "Наблюдаю",
-filterDecisionTaken: "Взял",
-filterDecisionSkipped: "Пропустил",
-filterDecisionMissed: "Упустил",
+filterCrypto: "РљСЂРёРїС‚Рѕ",
+filterStocks: "РђРєС†РёРё",
+filterDecisionWatching: "РќР°Р±Р»СЋРґР°СЋ",
+filterDecisionTaken: "Р’Р·СЏР»",
+filterDecisionSkipped: "РџСЂРѕРїСѓСЃС‚РёР»",
+filterDecisionMissed: "РЈРїСѓСЃС‚РёР»",
 decisionAnalyticsTitle: "Signal-to-Trade Decisions",
 decisionAnalyticsText:
-  "Тут видно, як клієнт працює з сигналами: спостерігає, бере, пропускає або відмічає missed. Це база майбутньої статистики якості сигналів і виконання.",
-filterEmpty: "Нет alerts под выбранный фильтр.",
-openAlertDetails: "Открыть разбор",
-hideAlertDetails: "Скрыть разбор",
+  "РўСѓС‚ РІРёРґРЅРѕ, СЏРє РєР»С–С”РЅС‚ РїСЂР°С†СЋС” Р· СЃРёРіРЅР°Р»Р°РјРё: СЃРїРѕСЃС‚РµСЂС–РіР°С”, Р±РµСЂРµ, РїСЂРѕРїСѓСЃРєР°С” Р°Р±Рѕ РІС–РґРјС–С‡Р°С” missed. Р¦Рµ Р±Р°Р·Р° РјР°Р№Р±СѓС‚РЅСЊРѕС— СЃС‚Р°С‚РёСЃС‚РёРєРё СЏРєРѕСЃС‚С– СЃРёРіРЅР°Р»С–РІ С– РІРёРєРѕРЅР°РЅРЅСЏ.",
+filterEmpty: "РќРµС‚ alerts РїРѕРґ РІС‹Р±СЂР°РЅРЅС‹Р№ С„РёР»СЊС‚СЂ.",
+openAlertDetails: "РћС‚РєСЂС‹С‚СЊ СЂР°Р·Р±РѕСЂ",
+hideAlertDetails: "РЎРєСЂС‹С‚СЊ СЂР°Р·Р±РѕСЂ",
 liveDesk: "Live AI Trading Desk",
-lastChecked: "Последняя проверка",
+lastChecked: "РџРѕСЃР»РµРґРЅСЏСЏ РїСЂРѕРІРµСЂРєР°",
 autoRefreshNote:
-  "Alerts обновляются автоматически. Market scan работает в фоне, список обновляется каждые 60 секунд.",
-showMoreAlerts: "Показать ещё 10",
-collapseAlerts: "Свернуть всё",   
+  "Alerts РѕР±РЅРѕРІР»СЏСЋС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё. Market scan СЂР°Р±РѕС‚Р°РµС‚ РІ С„РѕРЅРµ, СЃРїРёСЃРѕРє РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ РєР°Р¶РґС‹Рµ 60 СЃРµРєСѓРЅРґ.",
+showMoreAlerts: "РџРѕРєР°Р·Р°С‚СЊ РµС‰С‘ 10",
+collapseAlerts: "РЎРІРµСЂРЅСѓС‚СЊ РІСЃС‘",   
 smartTopFive:
-  "Первые 5 alerts отсортированы по важности: priority, journal match, AI strength, confidence и свежесть сигнала.", 
-emptyDeskTitle: "AI Trading Desk ждёт качественный сетап",
+  "РџРµСЂРІС‹Рµ 5 alerts РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ РІР°Р¶РЅРѕСЃС‚Рё: priority, journal match, AI strength, confidence Рё СЃРІРµР¶РµСЃС‚СЊ СЃРёРіРЅР°Р»Р°.", 
+emptyDeskTitle: "AI Trading Desk Р¶РґС‘С‚ РєР°С‡РµСЃС‚РІРµРЅРЅС‹Р№ СЃРµС‚Р°Рї",
 emptyDeskText:
-  "Сейчас нет активных alerts под выбранный фильтр. Это нормально: SkillEdge AI не должен стрелять мусором. Система ждёт high-confidence ситуацию с понятным trigger, stop, targets и risk note.",
+  "РЎРµР№С‡Р°СЃ РЅРµС‚ Р°РєС‚РёРІРЅС‹С… alerts РїРѕРґ РІС‹Р±СЂР°РЅРЅС‹Р№ С„РёР»СЊС‚СЂ. Р­С‚Рѕ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge AI РЅРµ РґРѕР»Р¶РµРЅ СЃС‚СЂРµР»СЏС‚СЊ РјСѓСЃРѕСЂРѕРј. РЎРёСЃС‚РµРјР° Р¶РґС‘С‚ high-confidence СЃРёС‚СѓР°С†РёСЋ СЃ РїРѕРЅСЏС‚РЅС‹Рј trigger, stop, targets Рё risk note.",
 emptyDeskAction:
-  "Оставь страницу открытой — список обновляется автоматически каждые 60 секунд.",
+  "РћСЃС‚Р°РІСЊ СЃС‚СЂР°РЅРёС†Сѓ РѕС‚РєСЂС‹С‚РѕР№ вЂ” СЃРїРёСЃРѕРє РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РєР°Р¶РґС‹Рµ 60 СЃРµРєСѓРЅРґ.",
 confidenceTransparency: "Score transparency",
 confidenceTransparencyText:
-  "Почему SkillEdge AI выделил этот сигнал и какие факторы усиливают или ослабляют идею.",
+  "РџРѕС‡РµРјСѓ SkillEdge AI РІС‹РґРµР»РёР» СЌС‚РѕС‚ СЃРёРіРЅР°Р» Рё РєР°РєРёРµ С„Р°РєС‚РѕСЂС‹ СѓСЃРёР»РёРІР°СЋС‚ РёР»Рё РѕСЃР»Р°Р±Р»СЏСЋС‚ РёРґРµСЋ.",
 breakdownTitle: "SkillEdge AI Signal Breakdown",
-traderDecision: "Решение трейдера",
-tradePlan: "План сделки",
-whyNow: "Почему сейчас",
-confirmationChecklist: "Чеклист подтверждения",
-avoidThisTradeIf: "Не торговать, если",
-learningLayer: "Обучающий слой",
-decisionWatching: "Наблюдаю",
-decisionTaken: "Взял",
-decisionSkipped: "Пропустил",
-decisionMissed: "Упустил",
-decisionSaved: "Решение сохранено",
-decisionReasonTitle: "Причина решения",
-reasonCleanTrigger: "Чистый триггер",
-reasonGoodRiskReward: "Хороший RR",
-reasonJournalMatch: "Совпадает с журналом",
-reasonNoConfirmation: "Нет подтверждения",
-reasonTooLate: "Слишком поздно",
-reasonRiskHigh: "Риск слишком высокий",
-reasonLiquidity: "Спред / ликвидность",
-reasonNotAtDesk: "Не был у экрана",
-reasonTradeDraftCreated: "Черновик сделки создан",
-topReason: "Главная причина",
-allReasons: "Все причины",
+traderDecision: "Р РµС€РµРЅРёРµ С‚СЂРµР№РґРµСЂР°",
+tradePlan: "РџР»Р°РЅ СЃРґРµР»РєРё",
+whyNow: "РџРѕС‡РµРјСѓ СЃРµР№С‡Р°СЃ",
+confirmationChecklist: "Р§РµРєР»РёСЃС‚ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ",
+avoidThisTradeIf: "РќРµ С‚РѕСЂРіРѕРІР°С‚СЊ, РµСЃР»Рё",
+learningLayer: "РћР±СѓС‡Р°СЋС‰РёР№ СЃР»РѕР№",
+decisionWatching: "РќР°Р±Р»СЋРґР°СЋ",
+decisionTaken: "Р’Р·СЏР»",
+decisionSkipped: "РџСЂРѕРїСѓСЃС‚РёР»",
+decisionMissed: "РЈРїСѓСЃС‚РёР»",
+decisionSaved: "Р РµС€РµРЅРёРµ СЃРѕС…СЂР°РЅРµРЅРѕ",
+decisionReasonTitle: "РџСЂРёС‡РёРЅР° СЂРµС€РµРЅРёСЏ",
+reasonCleanTrigger: "Р§РёСЃС‚С‹Р№ С‚СЂРёРіРіРµСЂ",
+reasonGoodRiskReward: "РҐРѕСЂРѕС€РёР№ RR",
+reasonJournalMatch: "РЎРѕРІРїР°РґР°РµС‚ СЃ Р¶СѓСЂРЅР°Р»РѕРј",
+reasonNoConfirmation: "РќРµС‚ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ",
+reasonTooLate: "РЎР»РёС€РєРѕРј РїРѕР·РґРЅРѕ",
+reasonRiskHigh: "Р РёСЃРє СЃР»РёС€РєРѕРј РІС‹СЃРѕРєРёР№",
+reasonLiquidity: "РЎРїСЂРµРґ / Р»РёРєРІРёРґРЅРѕСЃС‚СЊ",
+reasonNotAtDesk: "РќРµ Р±С‹Р» Сѓ СЌРєСЂР°РЅР°",
+reasonTradeDraftCreated: "РЎРґРµР»РєР° РёР· СЃРёРіРЅР°Р»Р° СЃРѕР·РґР°РЅР°",
+topReason: "Р“Р»Р°РІРЅР°СЏ РїСЂРёС‡РёРЅР°",
+allReasons: "Р’СЃРµ РїСЂРёС‡РёРЅС‹",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "Ты отметил сигнал как Taken. Создай trade draft, чтобы SkillEdge позже сравнил план сигнала с твоим реальным исполнением: вход, стоп, выход, PnL и качество сделки.",
-journalSyncAction: "Создать trade draft",
+  "РўС‹ РѕС‚РјРµС‚РёР» СЃРёРіРЅР°Р» РєР°Рє Taken. РЎРѕР·РґР°Р№ СЃРґРµР»РєСѓ РёР· СЃРёРіРЅР°Р»Р°, С‡С‚РѕР±С‹ SkillEdge СЃСЂР°РІРЅРёР» РїР»Р°РЅ СЃРёРіРЅР°Р»Р° СЃ С‚РІРѕРёРј СЂРµР°Р»СЊРЅС‹Рј РёСЃРїРѕР»РЅРµРЅРёРµРј: РІС…РѕРґ, СЃС‚РѕРї, РІС‹С…РѕРґ, PnL Рё РєР°С‡РµСЃС‚РІРѕ СЃРґРµР»РєРё.",
+journalSyncAction: "РЎРѕР·РґР°С‚СЊ trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
-  "Эта сделка уже связана с alert. SkillEdge сможет сравнить план сигнала с реальным исполнением клиента.",
+  "Р­С‚Р° СЃРґРµР»РєР° СѓР¶Рµ СЃРІСЏР·Р°РЅР° СЃ alert. SkillEdge СЃРјРѕР¶РµС‚ СЃСЂР°РІРЅРёС‚СЊ РїР»Р°РЅ СЃРёРіРЅР°Р»Р° СЃ СЂРµР°Р»СЊРЅС‹Рј РёСЃРїРѕР»РЅРµРЅРёРµРј РєР»РёРµРЅС‚Р°.",
 linkedJournalEmpty:
-  "Пока нет сохранённой сделки в журнале, связанной с этим alert.",
+  "РџРѕРєР° РЅРµС‚ СЃРѕС…СЂР°РЅС‘РЅРЅРѕР№ СЃРґРµР»РєРё РІ Р¶СѓСЂРЅР°Р»Рµ, СЃРІСЏР·Р°РЅРЅРѕР№ СЃ СЌС‚РёРј alert.",
 linkedTrades: "Linked trades",
 linkedPnl: "Linked PnL",
 linkedResult: "Result",
-journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsTitle: "Signal в†” Journal Sync",
 journalLinkAnalyticsText:
-  "SkillEdge отслеживает, какие alerts превратились в реальные сделки в Journal. Это база для анализа исполнения, PnL по сигналам и пропущенных возможностей.",
-takenWithoutJournal: "Taken без Journal",
+  "SkillEdge РѕС‚СЃР»РµР¶РёРІР°РµС‚, РєР°РєРёРµ alerts РїСЂРµРІСЂР°С‚РёР»РёСЃСЊ РІ СЂРµР°Р»СЊРЅС‹Рµ СЃРґРµР»РєРё РІ Journal. Р­С‚Рѕ Р±Р°Р·Р° РґР»СЏ Р°РЅР°Р»РёР·Р° РёСЃРїРѕР»РЅРµРЅРёСЏ, PnL РїРѕ СЃРёРіРЅР°Р»Р°Рј Рё РїСЂРѕРїСѓС‰РµРЅРЅС‹С… РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№.",
+takenWithoutJournal: "Taken Р±РµР· Journal",
 linkedAlertsCount: "Linked alerts",
 linkedTradesPnl: "Linked trades PnL",
 avgExecutionScore: "Avg execution",
-takenWithoutJournalFilter: "Taken без Journal",
-takenWithoutJournalTitle: "Taken alert без сделки в Journal",
+takenWithoutJournalFilter: "Taken Р±РµР· Journal",
+takenWithoutJournalTitle: "Taken alert Р±РµР· СЃРґРµР»РєРё РІ Journal",
 takenWithoutJournalText:
-  "Клиент отметил сигнал как Taken, но ещё не сохранил сделку в журнал. Создай trade draft, чтобы SkillEdge смог сравнить план сигнала с реальным исполнением.",
+  "РљР»РёРµРЅС‚ РѕС‚РјРµС‚РёР» СЃРёРіРЅР°Р» РєР°Рє Taken, РЅРѕ РµС‰С‘ РЅРµ СЃРѕС…СЂР°РЅРёР» СЃРґРµР»РєСѓ РІ Р¶СѓСЂРЅР°Р». РЎРѕР·РґР°Р№ trade draft, С‡С‚РѕР±С‹ SkillEdge СЃРјРѕРі СЃСЂР°РІРЅРёС‚СЊ РїР»Р°РЅ СЃРёРіРЅР°Р»Р° СЃ СЂРµР°Р»СЊРЅС‹Рј РёСЃРїРѕР»РЅРµРЅРёРµРј.",
 executionScore: "Execution score",
 executionReview: "Execution review",
-executionStrong: "Сильное исполнение",
-executionMedium: "Нормально, но есть что улучшить",
-executionWeak: "Нужно разобрать исполнение",
+executionStrong: "РЎРёР»СЊРЅРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ",
+executionMedium: "РќРѕСЂРјР°Р»СЊРЅРѕ, РЅРѕ РµСЃС‚СЊ С‡С‚Рѕ СѓР»СѓС‡С€РёС‚СЊ",
+executionWeak: "РќСѓР¶РЅРѕ СЂР°Р·РѕР±СЂР°С‚СЊ РёСЃРїРѕР»РЅРµРЅРёРµ",
 filterJournalLinked: "Journal linked",
 filterExecutionStrong: "Strong execution",
 filterExecutionReview: "Needs review",
 executionQualityTitle: "Execution Quality",
 executionQualityText:
-  "SkillEdge показывает, какие AI Alerts уже привели к сделкам в Journal и где исполнение было сильным или требует разбора.",
+  "SkillEdge РїРѕРєР°Р·С‹РІР°РµС‚, РєР°РєРёРµ AI Alerts СѓР¶Рµ РїСЂРёРІРµР»Рё Рє СЃРґРµР»РєР°Рј РІ Journal Рё РіРґРµ РёСЃРїРѕР»РЅРµРЅРёРµ Р±С‹Р»Рѕ СЃРёР»СЊРЅС‹Рј РёР»Рё С‚СЂРµР±СѓРµС‚ СЂР°Р·Р±РѕСЂР°.",
 executionCoachTitle: "AI Execution Coach",
 executionCoachText:
-  "SkillEdge разбирает исполнение клиента относительно плана сигнала: вход, стоп, направление, targets и дисциплину.",
+  "SkillEdge СЂР°Р·Р±РёСЂР°РµС‚ РёСЃРїРѕР»РЅРµРЅРёРµ РєР»РёРµРЅС‚Р° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°: РІС…РѕРґ, СЃС‚РѕРї, РЅР°РїСЂР°РІР»РµРЅРёРµ, targets Рё РґРёСЃС†РёРїР»РёРЅСѓ.",
 executionCoachStrong:
-  "Сильное исполнение: клиент в целом следовал плану сигнала. Такие сделки стоит сохранять как личный сильный паттерн.",
+  "РЎРёР»СЊРЅРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ: РєР»РёРµРЅС‚ РІ С†РµР»РѕРј СЃР»РµРґРѕРІР°Р» РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Р°. РўР°РєРёРµ СЃРґРµР»РєРё СЃС‚РѕРёС‚ СЃРѕС…СЂР°РЅСЏС‚СЊ РєР°Рє Р»РёС‡РЅС‹Р№ СЃРёР»СЊРЅС‹Р№ РїР°С‚С‚РµСЂРЅ.",
 executionCoachMedium:
-  "Исполнение нормальное, но есть зоны для улучшения. Проверь вход, стоп и управление после первого target.",
+  "РСЃРїРѕР»РЅРµРЅРёРµ РЅРѕСЂРјР°Р»СЊРЅРѕРµ, РЅРѕ РµСЃС‚СЊ Р·РѕРЅС‹ РґР»СЏ СѓР»СѓС‡С€РµРЅРёСЏ. РџСЂРѕРІРµСЂСЊ РІС…РѕРґ, СЃС‚РѕРї Рё СѓРїСЂР°РІР»РµРЅРёРµ РїРѕСЃР»Рµ РїРµСЂРІРѕРіРѕ target.",
 executionCoachWeak:
-  "Исполнение требует разбора. Вероятно, клиент отклонился от плана сигнала: поздний вход, другой стоп или слабое следование сценарию.",
+  "РСЃРїРѕР»РЅРµРЅРёРµ С‚СЂРµР±СѓРµС‚ СЂР°Р·Р±РѕСЂР°. Р’РµСЂРѕСЏС‚РЅРѕ, РєР»РёРµРЅС‚ РѕС‚РєР»РѕРЅРёР»СЃСЏ РѕС‚ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°: РїРѕР·РґРЅРёР№ РІС…РѕРґ, РґСЂСѓРіРѕР№ СЃС‚РѕРї РёР»Рё СЃР»Р°Р±РѕРµ СЃР»РµРґРѕРІР°РЅРёРµ СЃС†РµРЅР°СЂРёСЋ.",
 executionCoachEntryIssue:
-  "Entry issue: вход был вне плановой зоны или слишком поздно относительно сигнала.",
+  "Entry issue: РІС…РѕРґ Р±С‹Р» РІРЅРµ РїР»Р°РЅРѕРІРѕР№ Р·РѕРЅС‹ РёР»Рё СЃР»РёС€РєРѕРј РїРѕР·РґРЅРѕ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЃРёРіРЅР°Р»Р°.",
 executionCoachStopIssue:
-  "Stop issue: стоп отличается от плана сигнала. Это может ломать статистику и risk/reward.",
+  "Stop issue: СЃС‚РѕРї РѕС‚Р»РёС‡Р°РµС‚СЃСЏ РѕС‚ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°. Р­С‚Рѕ РјРѕР¶РµС‚ Р»РѕРјР°С‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ Рё risk/reward.",
 executionCoachDirectionIssue:
-  "Direction issue: направление сделки отличается от направления alert.",
+  "Direction issue: РЅР°РїСЂР°РІР»РµРЅРёРµ СЃРґРµР»РєРё РѕС‚Р»РёС‡Р°РµС‚СЃСЏ РѕС‚ РЅР°РїСЂР°РІР»РµРЅРёСЏ alert.",
 executionCoachTargetIssue:
-  "Target issue: сделка не дошла до TP или выход был не по плану.",
+  "Target issue: СЃРґРµР»РєР° РЅРµ РґРѕС€Р»Р° РґРѕ TP РёР»Рё РІС‹С…РѕРґ Р±С‹Р» РЅРµ РїРѕ РїР»Р°РЅСѓ.",
 executionWeaknessTitle: "Execution Weakness Map",
 executionWeaknessText:
-  "SkillEdge показывает, где клиент чаще всего отклоняется от плана сигнала: вход, стоп, направление или управление целями.",
+  "SkillEdge РїРѕРєР°Р·С‹РІР°РµС‚, РіРґРµ РєР»РёРµРЅС‚ С‡Р°С‰Рµ РІСЃРµРіРѕ РѕС‚РєР»РѕРЅСЏРµС‚СЃСЏ РѕС‚ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°: РІС…РѕРґ, СЃС‚РѕРї, РЅР°РїСЂР°РІР»РµРЅРёРµ РёР»Рё СѓРїСЂР°РІР»РµРЅРёРµ С†РµР»СЏРјРё.",
 entryIssueFilter: "Entry issues",
 stopIssueFilter: "Stop issues",
 directionIssueFilter: "Direction issues",
 targetIssueFilter: "Target issues",
 executionFocusTitle: "Personal Execution Focus",
 executionFocusText:
-  "SkillEdge выбирает главный фокус на основе связанных Journal-сделок и отклонений от плана сигнала.",
+  "SkillEdge РІС‹Р±РёСЂР°РµС‚ РіР»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ РЅР° РѕСЃРЅРѕРІРµ СЃРІСЏР·Р°РЅРЅС‹С… Journal-СЃРґРµР»РѕРє Рё РѕС‚РєР»РѕРЅРµРЅРёР№ РѕС‚ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°.",
 executionFocusEmpty:
-  "Пока недостаточно linked trades для персонального фокуса. Создай сделки из alerts, чтобы SkillEdge начал находить повторяющиеся слабые места.",
+  "РџРѕРєР° РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ linked trades РґР»СЏ РїРµСЂСЃРѕРЅР°Р»СЊРЅРѕРіРѕ С„РѕРєСѓСЃР°. РЎРѕР·РґР°Р№ СЃРґРµР»РєРё РёР· СЃРёРіРЅР°Р»РѕРІ, С‡С‚РѕР±С‹ SkillEdge РЅР°С‡Р°Р» РЅР°С…РѕРґРёС‚СЊ РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ СЃР»Р°Р±С‹Рµ РјРµСЃС‚Р°.",
 focusEntryText:
-  "Главный фокус — entry timing. Проверь, не входишь ли ты поздно или вне плановой зоны сигнала.",
+  "Р“Р»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ вЂ” entry timing. РџСЂРѕРІРµСЂСЊ, РЅРµ РІС…РѕРґРёС€СЊ Р»Рё С‚С‹ РїРѕР·РґРЅРѕ РёР»Рё РІРЅРµ РїР»Р°РЅРѕРІРѕР№ Р·РѕРЅС‹ СЃРёРіРЅР°Р»Р°.",
 focusStopText:
-  "Главный фокус — stop discipline. Проверь, не меняешь ли стоп относительно плана и не ломаешь ли risk/reward.",
+  "Р“Р»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ вЂ” stop discipline. РџСЂРѕРІРµСЂСЊ, РЅРµ РјРµРЅСЏРµС€СЊ Р»Рё СЃС‚РѕРї РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїР»Р°РЅР° Рё РЅРµ Р»РѕРјР°РµС€СЊ Р»Рё risk/reward.",
 focusDirectionText:
-  "Главный фокус — direction discipline. Проверь, не торгуешь ли против направления alert или без подтверждения сценария.",
+  "Р“Р»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ вЂ” direction discipline. РџСЂРѕРІРµСЂСЊ, РЅРµ С‚РѕСЂРіСѓРµС€СЊ Р»Рё РїСЂРѕС‚РёРІ РЅР°РїСЂР°РІР»РµРЅРёСЏ alert РёР»Рё Р±РµР· РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ СЃС†РµРЅР°СЂРёСЏ.",
 focusTargetText:
-  "Главный фокус — target management. Проверь, как ты ведёшь сделку после входа и не выходишь ли хаотично.",
+  "Р“Р»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ вЂ” target management. РџСЂРѕРІРµСЂСЊ, РєР°Рє С‚С‹ РІРµРґС‘С€СЊ СЃРґРµР»РєСѓ РїРѕСЃР»Рµ РІС…РѕРґР° Рё РЅРµ РІС‹С…РѕРґРёС€СЊ Р»Рё С…Р°РѕС‚РёС‡РЅРѕ.",
 focusStrongText:
-  "Исполнение выглядит сильным. Продолжай фиксировать такие сделки — это база для будущих Personal AI Alerts.",
-openFocusAlerts: "Открыть alerts с этим фокусом",
+  "РСЃРїРѕР»РЅРµРЅРёРµ РІС‹РіР»СЏРґРёС‚ СЃРёР»СЊРЅС‹Рј. РџСЂРѕРґРѕР»Р¶Р°Р№ С„РёРєСЃРёСЂРѕРІР°С‚СЊ С‚Р°РєРёРµ СЃРґРµР»РєРё вЂ” СЌС‚Рѕ Р±Р°Р·Р° РґР»СЏ Р±СѓРґСѓС‰РёС… Personal AI Alerts.",
+openFocusAlerts: "РћС‚РєСЂС‹С‚СЊ alerts СЃ СЌС‚РёРј С„РѕРєСѓСЃРѕРј",
 executionActionPlanTitle: "This Week Action Plan",
 executionActionPlanText:
-  "SkillEdge превращает главный execution focus в конкретные правила на следующую торговую неделю.",
-entryActionOne: "Бери вход только внутри плановой entry zone или после подтверждённого reclaim/rejection.",
-entryActionTwo: "Не догоняй свечу после trigger — поздний вход лучше отметить как Missed.",
-entryActionThree: "Перед входом проверь: цена, стоп и риск всё ещё дают нормальный risk/reward.",
-stopActionOne: "Перед сделкой заранее запиши stop/invalidation и не двигай его без нового сценария.",
-stopActionTwo: "Если стоп отличается от плана alert — уменьши размер позиции или пропусти сделку.",
-stopActionThree: "После сделки проверь, не сломал ли изменённый стоп ожидаемый risk/reward.",
-directionActionOne: "Не торгуй против direction alert без сильного reverse-confirmation.",
-directionActionTwo: "Перед входом проверь, совпадает ли твоя сделка с направлением setup.",
-directionActionThree: "Если рынок сменил структуру — отметь alert как Skipped/Missed, а не входи импульсивно.",
-targetActionOne: "До входа выбери основной target и partial plan.",
-targetActionTwo: "После TP1 не выходи хаотично — веди сделку по заранее заданному management plan.",
-targetActionThree: "Если цена не идёт к target — оцени invalidation, а не надейся.",
-strongActionOne: "Продолжай сохранять сделки, где ты следовал плану alert.",
-strongActionTwo: "Ищи повторяемость: какие setup чаще дают сильное исполнение.",
-strongActionThree: "Эти сделки позже станут базой для Personal AI Alerts.",
+  "SkillEdge РїСЂРµРІСЂР°С‰Р°РµС‚ РіР»Р°РІРЅС‹Р№ execution focus РІ РєРѕРЅРєСЂРµС‚РЅС‹Рµ РїСЂР°РІРёР»Р° РЅР° СЃР»РµРґСѓСЋС‰СѓСЋ С‚РѕСЂРіРѕРІСѓСЋ РЅРµРґРµР»СЋ.",
+entryActionOne: "Р‘РµСЂРё РІС…РѕРґ С‚РѕР»СЊРєРѕ РІРЅСѓС‚СЂРё РїР»Р°РЅРѕРІРѕР№ entry zone РёР»Рё РїРѕСЃР»Рµ РїРѕРґС‚РІРµСЂР¶РґС‘РЅРЅРѕРіРѕ reclaim/rejection.",
+entryActionTwo: "РќРµ РґРѕРіРѕРЅСЏР№ СЃРІРµС‡Сѓ РїРѕСЃР»Рµ trigger вЂ” РїРѕР·РґРЅРёР№ РІС…РѕРґ Р»СѓС‡С€Рµ РѕС‚РјРµС‚РёС‚СЊ РєР°Рє Missed.",
+entryActionThree: "РџРµСЂРµРґ РІС…РѕРґРѕРј РїСЂРѕРІРµСЂСЊ: С†РµРЅР°, СЃС‚РѕРї Рё СЂРёСЃРє РІСЃС‘ РµС‰С‘ РґР°СЋС‚ РЅРѕСЂРјР°Р»СЊРЅС‹Р№ risk/reward.",
+stopActionOne: "РџРµСЂРµРґ СЃРґРµР»РєРѕР№ Р·Р°СЂР°РЅРµРµ Р·Р°РїРёС€Рё stop/invalidation Рё РЅРµ РґРІРёРіР°Р№ РµРіРѕ Р±РµР· РЅРѕРІРѕРіРѕ СЃС†РµРЅР°СЂРёСЏ.",
+stopActionTwo: "Р•СЃР»Рё СЃС‚РѕРї РѕС‚Р»РёС‡Р°РµС‚СЃСЏ РѕС‚ РїР»Р°РЅР° alert вЂ” СѓРјРµРЅСЊС€Рё СЂР°Р·РјРµСЂ РїРѕР·РёС†РёРё РёР»Рё РїСЂРѕРїСѓСЃС‚Рё СЃРґРµР»РєСѓ.",
+stopActionThree: "РџРѕСЃР»Рµ СЃРґРµР»РєРё РїСЂРѕРІРµСЂСЊ, РЅРµ СЃР»РѕРјР°Р» Р»Рё РёР·РјРµРЅС‘РЅРЅС‹Р№ СЃС‚РѕРї РѕР¶РёРґР°РµРјС‹Р№ risk/reward.",
+directionActionOne: "РќРµ С‚РѕСЂРіСѓР№ РїСЂРѕС‚РёРІ direction alert Р±РµР· СЃРёР»СЊРЅРѕРіРѕ reverse-confirmation.",
+directionActionTwo: "РџРµСЂРµРґ РІС…РѕРґРѕРј РїСЂРѕРІРµСЂСЊ, СЃРѕРІРїР°РґР°РµС‚ Р»Рё С‚РІРѕСЏ СЃРґРµР»РєР° СЃ РЅР°РїСЂР°РІР»РµРЅРёРµРј setup.",
+directionActionThree: "Р•СЃР»Рё СЂС‹РЅРѕРє СЃРјРµРЅРёР» СЃС‚СЂСѓРєС‚СѓСЂСѓ вЂ” РѕС‚РјРµС‚СЊ alert РєР°Рє Skipped/Missed, Р° РЅРµ РІС…РѕРґРё РёРјРїСѓР»СЊСЃРёРІРЅРѕ.",
+targetActionOne: "Р”Рѕ РІС…РѕРґР° РІС‹Р±РµСЂРё РѕСЃРЅРѕРІРЅРѕР№ target Рё partial plan.",
+targetActionTwo: "РџРѕСЃР»Рµ TP1 РЅРµ РІС‹С…РѕРґРё С…Р°РѕС‚РёС‡РЅРѕ вЂ” РІРµРґРё СЃРґРµР»РєСѓ РїРѕ Р·Р°СЂР°РЅРµРµ Р·Р°РґР°РЅРЅРѕРјСѓ management plan.",
+targetActionThree: "Р•СЃР»Рё С†РµРЅР° РЅРµ РёРґС‘С‚ Рє target вЂ” РѕС†РµРЅРё invalidation, Р° РЅРµ РЅР°РґРµР№СЃСЏ.",
+strongActionOne: "РџСЂРѕРґРѕР»Р¶Р°Р№ СЃРѕС…СЂР°РЅСЏС‚СЊ СЃРґРµР»РєРё, РіРґРµ С‚С‹ СЃР»РµРґРѕРІР°Р» РїР»Р°РЅСѓ alert.",
+strongActionTwo: "РС‰Рё РїРѕРІС‚РѕСЂСЏРµРјРѕСЃС‚СЊ: РєР°РєРёРµ setup С‡Р°С‰Рµ РґР°СЋС‚ СЃРёР»СЊРЅРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ.",
+strongActionThree: "Р­С‚Рё СЃРґРµР»РєРё РїРѕР·Р¶Рµ СЃС‚Р°РЅСѓС‚ Р±Р°Р·РѕР№ РґР»СЏ Personal AI Alerts.",
 outcomeFollowupTitle: "Alert Outcome Follow-up",
 outcomeFollowupText:
-  "SkillEdge сравнивает решение клиента с фактическим исходом сигнала, чтобы находить missed opportunities, хорошие пропуски и сделки, которые требуют разбора.",
+  "SkillEdge СЃСЂР°РІРЅРёРІР°РµС‚ СЂРµС€РµРЅРёРµ РєР»РёРµРЅС‚Р° СЃ С„Р°РєС‚РёС‡РµСЃРєРёРј РёСЃС…РѕРґРѕРј СЃРёРіРЅР°Р»Р°, С‡С‚РѕР±С‹ РЅР°С…РѕРґРёС‚СЊ missed opportunities, С…РѕСЂРѕС€РёРµ РїСЂРѕРїСѓСЃРєРё Рё СЃРґРµР»РєРё, РєРѕС‚РѕСЂС‹Рµ С‚СЂРµР±СѓСЋС‚ СЂР°Р·Р±РѕСЂР°.",
 outcomeTakenWorked:
-  "Ты взял сигнал, и он отработал. Проверь, была ли сделка сохранена в Journal и насколько исполнение совпало с планом.",
+  "РўС‹ РІР·СЏР» СЃРёРіРЅР°Р», Рё РѕРЅ РѕС‚СЂР°Р±РѕС‚Р°Р». РџСЂРѕРІРµСЂСЊ, Р±С‹Р»Р° Р»Рё СЃРґРµР»РєР° СЃРѕС…СЂР°РЅРµРЅР° РІ Journal Рё РЅР°СЃРєРѕР»СЊРєРѕ РёСЃРїРѕР»РЅРµРЅРёРµ СЃРѕРІРїР°Р»Рѕ СЃ РїР»Р°РЅРѕРј.",
 outcomeTakenFailed:
-  "Ты взял сигнал, но он не отработал. Разбери, было ли подтверждение, не был ли вход поздним и был ли стоп по плану.",
+  "РўС‹ РІР·СЏР» СЃРёРіРЅР°Р», РЅРѕ РѕРЅ РЅРµ РѕС‚СЂР°Р±РѕС‚Р°Р». Р Р°Р·Р±РµСЂРё, Р±С‹Р»Рѕ Р»Рё РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ, РЅРµ Р±С‹Р» Р»Рё РІС…РѕРґ РїРѕР·РґРЅРёРј Рё Р±С‹Р» Р»Рё СЃС‚РѕРї РїРѕ РїР»Р°РЅСѓ.",
 outcomeSkippedWorked:
-  "Сигнал был пропущен, но позже отработал. Это missed opportunity — проверь, почему не было входа: страх, отсутствие у экрана или сомнение.",
+  "РЎРёРіРЅР°Р» Р±С‹Р» РїСЂРѕРїСѓС‰РµРЅ, РЅРѕ РїРѕР·Р¶Рµ РѕС‚СЂР°Р±РѕС‚Р°Р». Р­С‚Рѕ missed opportunity вЂ” РїСЂРѕРІРµСЂСЊ, РїРѕС‡РµРјСѓ РЅРµ Р±С‹Р»Рѕ РІС…РѕРґР°: СЃС‚СЂР°С…, РѕС‚СЃСѓС‚СЃС‚РІРёРµ Сѓ СЌРєСЂР°РЅР° РёР»Рё СЃРѕРјРЅРµРЅРёРµ.",
 outcomeSkippedFailed:
-  "Сигнал был пропущен, и он не отработал. Это хороший фильтр — сохрани причину, почему ты не входил.",
+  "РЎРёРіРЅР°Р» Р±С‹Р» РїСЂРѕРїСѓС‰РµРЅ, Рё РѕРЅ РЅРµ РѕС‚СЂР°Р±РѕС‚Р°Р». Р­С‚Рѕ С…РѕСЂРѕС€РёР№ С„РёР»СЊС‚СЂ вЂ” СЃРѕС…СЂР°РЅРё РїСЂРёС‡РёРЅСѓ, РїРѕС‡РµРјСѓ С‚С‹ РЅРµ РІС…РѕРґРёР».",
 outcomeMissedWorked:
-  "Ты отметил сигнал как Missed, и он отработал. Это важная возможность для обучения: что помешало включиться вовремя?",
+  "РўС‹ РѕС‚РјРµС‚РёР» СЃРёРіРЅР°Р» РєР°Рє Missed, Рё РѕРЅ РѕС‚СЂР°Р±РѕС‚Р°Р». Р­С‚Рѕ РІР°Р¶РЅР°СЏ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РґР»СЏ РѕР±СѓС‡РµРЅРёСЏ: С‡С‚Рѕ РїРѕРјРµС€Р°Р»Рѕ РІРєР»СЋС‡РёС‚СЊСЃСЏ РІРѕРІСЂРµРјСЏ?",
 outcomeMissedFailed:
-  "Ты отметил сигнал как Missed, но он не отработал. Пропуск был безопасным, но всё равно проверь, была ли идея качественной.",
+  "РўС‹ РѕС‚РјРµС‚РёР» СЃРёРіРЅР°Р» РєР°Рє Missed, РЅРѕ РѕРЅ РЅРµ РѕС‚СЂР°Р±РѕС‚Р°Р». РџСЂРѕРїСѓСЃРє Р±С‹Р» Р±РµР·РѕРїР°СЃРЅС‹Рј, РЅРѕ РІСЃС‘ СЂР°РІРЅРѕ РїСЂРѕРІРµСЂСЊ, Р±С‹Р»Р° Р»Рё РёРґРµСЏ РєР°С‡РµСЃС‚РІРµРЅРЅРѕР№.",
 outcomePendingNote:
-  "Outcome ещё pending. Позже SkillEdge сможет сравнить твоё решение с фактическим движением цены.",
+  "Outcome РµС‰С‘ pending. РџРѕР·Р¶Рµ SkillEdge СЃРјРѕР¶РµС‚ СЃСЂР°РІРЅРёС‚СЊ С‚РІРѕС‘ СЂРµС€РµРЅРёРµ СЃ С„Р°РєС‚РёС‡РµСЃРєРёРј РґРІРёР¶РµРЅРёРµРј С†РµРЅС‹.",
 outcomeNeutralNote:
-  "Outcome neutral. Сигнал не дал чистого follow-through, поэтому важно оценивать только качество решения, а не только PnL.",
+  "Outcome neutral. РЎРёРіРЅР°Р» РЅРµ РґР°Р» С‡РёСЃС‚РѕРіРѕ follow-through, РїРѕСЌС‚РѕРјСѓ РІР°Р¶РЅРѕ РѕС†РµРЅРёРІР°С‚СЊ С‚РѕР»СЊРєРѕ РєР°С‡РµСЃС‚РІРѕ СЂРµС€РµРЅРёСЏ, Р° РЅРµ С‚РѕР»СЊРєРѕ PnL.",
 outcomeLearningLabel: "Learning note",
 outcomeStatsLabel: "Outcome stats",
 outcomeLearningAnalyticsTitle: "Outcome Learning Analytics",
 outcomeLearningAnalyticsText:
-  "SkillEdge группирует alerts по решению клиента и фактическому результату сигнала: что было взято, что провалилось, что стало missed opportunity и где клиент правильно отфильтровал плохую идею.",
+  "SkillEdge РіСЂСѓРїРїРёСЂСѓРµС‚ alerts РїРѕ СЂРµС€РµРЅРёСЋ РєР»РёРµРЅС‚Р° Рё С„Р°РєС‚РёС‡РµСЃРєРѕРјСѓ СЂРµР·СѓР»СЊС‚Р°С‚Сѓ СЃРёРіРЅР°Р»Р°: С‡С‚Рѕ Р±С‹Р»Рѕ РІР·СЏС‚Рѕ, С‡С‚Рѕ РїСЂРѕРІР°Р»РёР»РѕСЃСЊ, С‡С‚Рѕ СЃС‚Р°Р»Рѕ missed opportunity Рё РіРґРµ РєР»РёРµРЅС‚ РїСЂР°РІРёР»СЊРЅРѕ РѕС‚С„РёР»СЊС‚СЂРѕРІР°Р» РїР»РѕС…СѓСЋ РёРґРµСЋ.",
 filterTakenWorked: "Taken + Worked",
 filterTakenFailed: "Taken + Failed",
 filterMissedOpportunity: "Missed opportunity",
 filterGoodSkip: "Good skip",
-takenWorkedText: "Сигналы, которые клиент взял и которые отработали.",
-takenFailedText: "Сигналы, которые клиент взял, но они не отработали.",
-missedOpportunityText: "Сигналы, которые клиент пропустил, но они позже отработали.",
-goodSkipText: "Сигналы, которые клиент пропустил, и они не отработали.",
+takenWorkedText: "РЎРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РєР»РёРµРЅС‚ РІР·СЏР» Рё РєРѕС‚РѕСЂС‹Рµ РѕС‚СЂР°Р±РѕС‚Р°Р»Рё.",
+takenFailedText: "РЎРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РєР»РёРµРЅС‚ РІР·СЏР», РЅРѕ РѕРЅРё РЅРµ РѕС‚СЂР°Р±РѕС‚Р°Р»Рё.",
+missedOpportunityText: "РЎРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РєР»РёРµРЅС‚ РїСЂРѕРїСѓСЃС‚РёР», РЅРѕ РѕРЅРё РїРѕР·Р¶Рµ РѕС‚СЂР°Р±РѕС‚Р°Р»Рё.",
+goodSkipText: "РЎРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РєР»РёРµРЅС‚ РїСЂРѕРїСѓСЃС‚РёР», Рё РѕРЅРё РЅРµ РѕС‚СЂР°Р±РѕС‚Р°Р»Рё.",
 outcomeLearningFocusTitle: "Outcome Learning Focus",
 outcomeLearningFocusText:
-  "SkillEdge выбирает главный фокус обучения на основе того, как решения клиента совпали с фактическим исходом сигналов.",
+  "SkillEdge РІС‹Р±РёСЂР°РµС‚ РіР»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ РѕР±СѓС‡РµРЅРёСЏ РЅР° РѕСЃРЅРѕРІРµ С‚РѕРіРѕ, РєР°Рє СЂРµС€РµРЅРёСЏ РєР»РёРµРЅС‚Р° СЃРѕРІРїР°Р»Рё СЃ С„Р°РєС‚РёС‡РµСЃРєРёРј РёСЃС…РѕРґРѕРј СЃРёРіРЅР°Р»РѕРІ.",
 outcomeFocusTakenWorked:
-  "Сильная зона: клиент берёт сигналы, которые отрабатывают. Теперь важно проверить качество исполнения и повторяемость этих setup.",
+  "РЎРёР»СЊРЅР°СЏ Р·РѕРЅР°: РєР»РёРµРЅС‚ Р±РµСЂС‘С‚ СЃРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РѕС‚СЂР°Р±Р°С‚С‹РІР°СЋС‚. РўРµРїРµСЂСЊ РІР°Р¶РЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ РєР°С‡РµСЃС‚РІРѕ РёСЃРїРѕР»РЅРµРЅРёСЏ Рё РїРѕРІС‚РѕСЂСЏРµРјРѕСЃС‚СЊ СЌС‚РёС… setup.",
 outcomeFocusTakenFailed:
-  "Главный фокус — taken failed. Клиент берёт сигналы, которые не отрабатывают. Нужно проверить подтверждение, вход, риск и фильтры качества.",
+  "Р“Р»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ вЂ” taken failed. РљР»РёРµРЅС‚ Р±РµСЂС‘С‚ СЃРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РЅРµ РѕС‚СЂР°Р±Р°С‚С‹РІР°СЋС‚. РќСѓР¶РЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ, РІС…РѕРґ, СЂРёСЃРє Рё С„РёР»СЊС‚СЂС‹ РєР°С‡РµСЃС‚РІР°.",
 outcomeFocusMissedOpportunity:
-  "Главный фокус — missed opportunities. Клиент пропускает сигналы, которые потом отрабатывают. Нужно понять причину: страх, сомнение, отсутствие у экрана или поздняя реакция.",
+  "Р“Р»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ вЂ” missed opportunities. РљР»РёРµРЅС‚ РїСЂРѕРїСѓСЃРєР°РµС‚ СЃРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РїРѕС‚РѕРј РѕС‚СЂР°Р±Р°С‚С‹РІР°СЋС‚. РќСѓР¶РЅРѕ РїРѕРЅСЏС‚СЊ РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, СЃРѕРјРЅРµРЅРёРµ, РѕС‚СЃСѓС‚СЃС‚РІРёРµ Сѓ СЌРєСЂР°РЅР° РёР»Рё РїРѕР·РґРЅСЏСЏ СЂРµР°РєС†РёСЏ.",
 outcomeFocusGoodSkip:
-  "Сильная зона фильтрации: клиент пропускает сигналы, которые не отрабатывают. Нужно сохранить причины таких решений в playbook.",
+  "РЎРёР»СЊРЅР°СЏ Р·РѕРЅР° С„РёР»СЊС‚СЂР°С†РёРё: РєР»РёРµРЅС‚ РїСЂРѕРїСѓСЃРєР°РµС‚ СЃРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РЅРµ РѕС‚СЂР°Р±Р°С‚С‹РІР°СЋС‚. РќСѓР¶РЅРѕ СЃРѕС…СЂР°РЅРёС‚СЊ РїСЂРёС‡РёРЅС‹ С‚Р°РєРёС… СЂРµС€РµРЅРёР№ РІ playbook.",
 outcomeFocusEmpty:
-  "Пока недостаточно отмеченных решений и outcomes. Отмечай alerts как Taken, Skipped или Missed, чтобы SkillEdge начал строить learning focus.",
-openOutcomeFocusAlerts: "Открыть alerts с этим фокусом",
+  "РџРѕРєР° РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РѕС‚РјРµС‡РµРЅРЅС‹С… СЂРµС€РµРЅРёР№ Рё outcomes. РћС‚РјРµС‡Р°Р№ alerts РєР°Рє Taken, Skipped РёР»Рё Missed, С‡С‚РѕР±С‹ SkillEdge РЅР°С‡Р°Р» СЃС‚СЂРѕРёС‚СЊ learning focus.",
+openOutcomeFocusAlerts: "РћС‚РєСЂС‹С‚СЊ alerts СЃ СЌС‚РёРј С„РѕРєСѓСЃРѕРј",
 missedOpportunityCoachTitle: "Missed Opportunity Coach",
 missedOpportunityCoachText:
-  "SkillEdge разбирает рабочие сигналы, которые клиент пропустил, чтобы найти повторяющуюся причину: страх, отсутствие у экрана, поздняя реакция или слабое доверие к setup.",
+  "SkillEdge СЂР°Р·Р±РёСЂР°РµС‚ СЂР°Р±РѕС‡РёРµ СЃРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РєР»РёРµРЅС‚ РїСЂРѕРїСѓСЃС‚РёР», С‡С‚РѕР±С‹ РЅР°Р№С‚Рё РїРѕРІС‚РѕСЂСЏСЋС‰СѓСЋСЃСЏ РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, РѕС‚СЃСѓС‚СЃС‚РІРёРµ Сѓ СЌРєСЂР°РЅР°, РїРѕР·РґРЅСЏСЏ СЂРµР°РєС†РёСЏ РёР»Рё СЃР»Р°Р±РѕРµ РґРѕРІРµСЂРёРµ Рє setup.",
 missedOpportunityCoachEmpty:
-  "Пока нет missed opportunities. Это хорошо: либо клиент не пропускал рабочие сигналы, либо outcomes ещё формируются.",
+  "РџРѕРєР° РЅРµС‚ missed opportunities. Р­С‚Рѕ С…РѕСЂРѕС€Рѕ: Р»РёР±Рѕ РєР»РёРµРЅС‚ РЅРµ РїСЂРѕРїСѓСЃРєР°Р» СЂР°Р±РѕС‡РёРµ СЃРёРіРЅР°Р»С‹, Р»РёР±Рѕ outcomes РµС‰С‘ С„РѕСЂРјРёСЂСѓСЋС‚СЃСЏ.",
 missedOpportunityTopSetup: "Top missed setup",
 missedOpportunityActionPlan: "Missed Opportunity Action Plan",
 missedOpportunityActionOne:
-  "Перед сессией выбери 2–3 setup, которые ты готов торговать без сомнений при появлении trigger.",
+  "РџРµСЂРµРґ СЃРµСЃСЃРёРµР№ РІС‹Р±РµСЂРё 2вЂ“3 setup, РєРѕС‚РѕСЂС‹Рµ С‚С‹ РіРѕС‚РѕРІ С‚РѕСЂРіРѕРІР°С‚СЊ Р±РµР· СЃРѕРјРЅРµРЅРёР№ РїСЂРё РїРѕСЏРІР»РµРЅРёРё trigger.",
 missedOpportunityActionTwo:
-  "Если trigger появился, но ты не вошёл — сразу отметь причину: страх, поздно, не у экрана или не хватило подтверждения.",
+  "Р•СЃР»Рё trigger РїРѕСЏРІРёР»СЃСЏ, РЅРѕ С‚С‹ РЅРµ РІРѕС€С‘Р» вЂ” СЃСЂР°Р·Сѓ РѕС‚РјРµС‚СЊ РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, РїРѕР·РґРЅРѕ, РЅРµ Сѓ СЌРєСЂР°РЅР° РёР»Рё РЅРµ С…РІР°С‚РёР»Рѕ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ.",
 missedOpportunityActionThree:
-  "Если сигнал отработал без тебя — добавь его в playbook и реши, что должно измениться, чтобы в следующий раз не пропустить.",
-alertsStateLoadingTitle: "SkillEdge AI сканирует рынок",
+  "Р•СЃР»Рё СЃРёРіРЅР°Р» РѕС‚СЂР°Р±РѕС‚Р°Р» Р±РµР· С‚РµР±СЏ вЂ” РґРѕР±Р°РІСЊ РµРіРѕ РІ playbook Рё СЂРµС€Рё, С‡С‚Рѕ РґРѕР»Р¶РЅРѕ РёР·РјРµРЅРёС‚СЊСЃСЏ, С‡С‚РѕР±С‹ РІ СЃР»РµРґСѓСЋС‰РёР№ СЂР°Р· РЅРµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ.",
+alertsStateLoadingTitle: "SkillEdge AI СЃРєР°РЅРёСЂСѓРµС‚ СЂС‹РЅРѕРє",
 alertsStateLoadingText:
-  "Загружаем последние alerts, проверяем персональный приоритет, журнал, outcomes и свежесть сигналов.",
-alertsStateErrorTitle: "Не удалось загрузить AI Alerts",
+  "Р—Р°РіСЂСѓР¶Р°РµРј РїРѕСЃР»РµРґРЅРёРµ alerts, РїСЂРѕРІРµСЂСЏРµРј РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РїСЂРёРѕСЂРёС‚РµС‚, Р¶СѓСЂРЅР°Р», outcomes Рё СЃРІРµР¶РµСЃС‚СЊ СЃРёРіРЅР°Р»РѕРІ.",
+alertsStateErrorTitle: "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ AI Alerts",
 alertsStateErrorText:
-  "Проверь подключение, авторизацию или повтори запрос. Если ошибка повторяется — это нужно проверить в backend/API logs.",
-alertsStateEmptyTitle: "AI Trading Desk ждёт качественный сетап",
+  "РџСЂРѕРІРµСЂСЊ РїРѕРґРєР»СЋС‡РµРЅРёРµ, Р°РІС‚РѕСЂРёР·Р°С†РёСЋ РёР»Рё РїРѕРІС‚РѕСЂРё Р·Р°РїСЂРѕСЃ. Р•СЃР»Рё РѕС€РёР±РєР° РїРѕРІС‚РѕСЂСЏРµС‚СЃСЏ вЂ” СЌС‚Рѕ РЅСѓР¶РЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ РІ backend/API logs.",
+alertsStateEmptyTitle: "AI Trading Desk Р¶РґС‘С‚ РєР°С‡РµСЃС‚РІРµРЅРЅС‹Р№ СЃРµС‚Р°Рї",
 alertsStateEmptyText:
-  "Сейчас нет активных alerts. Это нормально: SkillEdge не должен стрелять шумом. Лучше меньше сигналов, но выше качество и понятнее риск.",
-alertsStateFilterEmptyTitle: "Под этот фильтр alerts нет",
+  "РЎРµР№С‡Р°СЃ РЅРµС‚ Р°РєС‚РёРІРЅС‹С… alerts. Р­С‚Рѕ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge РЅРµ РґРѕР»Р¶РµРЅ СЃС‚СЂРµР»СЏС‚СЊ С€СѓРјРѕРј. Р›СѓС‡С€Рµ РјРµРЅСЊС€Рµ СЃРёРіРЅР°Р»РѕРІ, РЅРѕ РІС‹С€Рµ РєР°С‡РµСЃС‚РІРѕ Рё РїРѕРЅСЏС‚РЅРµРµ СЂРёСЃРє.",
+alertsStateFilterEmptyTitle: "РџРѕРґ СЌС‚РѕС‚ С„РёР»СЊС‚СЂ alerts РЅРµС‚",
 alertsStateFilterEmptyText:
-  "Список работает, но текущий фильтр не нашёл подходящих сигналов. Сбрось фильтр или дождись новой high-confidence ситуации.",
-alertsStateResetFilters: "Сбросить фильтры",
-alertsStateRetry: "Повторить загрузку",
-alertsStateRunScan: "Запустить скан",
-alertsStateLiveNote: "Live monitoring работает в фоне",
-selectedFilter: "Выбранный фильтр",
-totalAlerts: "Всего alerts",
-alertsStateErrorLabel: "Ошибка",
-alertsStateLoadingLabel: "Загрузка",
-alertsStateWaitingLabel: "Ожидание",
-alertsStateLiveMonitoringLabel: "Фоновый мониторинг",
-decisionVsOutcomeLabel: "Решение / outcome",
-nextLearningFocus: "Следующий learning focus",
-noFocusYet: "Фокус пока не сформирован",
-outcomeProfileStillForming: "Outcome learning profile ещё формируется",
+  "РЎРїРёСЃРѕРє СЂР°Р±РѕС‚Р°РµС‚, РЅРѕ С‚РµРєСѓС‰РёР№ С„РёР»СЊС‚СЂ РЅРµ РЅР°С€С‘Р» РїРѕРґС…РѕРґСЏС‰РёС… СЃРёРіРЅР°Р»РѕРІ. РЎР±СЂРѕСЃСЊ С„РёР»СЊС‚СЂ РёР»Рё РґРѕР¶РґРёСЃСЊ РЅРѕРІРѕР№ high-confidence СЃРёС‚СѓР°С†РёРё.",
+alertsStateResetFilters: "РЎР±СЂРѕСЃРёС‚СЊ С„РёР»СЊС‚СЂС‹",
+alertsStateRetry: "РџРѕРІС‚РѕСЂРёС‚СЊ Р·Р°РіСЂСѓР·РєСѓ",
+alertsStateRunScan: "Р—Р°РїСѓСЃС‚РёС‚СЊ СЃРєР°РЅ",
+alertsStateLiveNote: "Live monitoring СЂР°Р±РѕС‚Р°РµС‚ РІ С„РѕРЅРµ",
+selectedFilter: "Р’С‹Р±СЂР°РЅРЅС‹Р№ С„РёР»СЊС‚СЂ",
+totalAlerts: "Р’СЃРµРіРѕ alerts",
+alertsStateErrorLabel: "РћС€РёР±РєР°",
+alertsStateLoadingLabel: "Р—Р°РіСЂСѓР·РєР°",
+alertsStateWaitingLabel: "РћР¶РёРґР°РЅРёРµ",
+alertsStateLiveMonitoringLabel: "Р¤РѕРЅРѕРІС‹Р№ РјРѕРЅРёС‚РѕСЂРёРЅРі",
+decisionVsOutcomeLabel: "Р РµС€РµРЅРёРµ / outcome",
+nextLearningFocus: "РЎР»РµРґСѓСЋС‰РёР№ learning focus",
+noFocusYet: "Р¤РѕРєСѓСЃ РїРѕРєР° РЅРµ СЃС„РѕСЂРјРёСЂРѕРІР°РЅ",
+outcomeProfileStillForming: "Outcome learning profile РµС‰С‘ С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ",
 missedOpportunitiesLabel: "missed opportunities",
-noMissedOpportunityPatternTitle: "Паттерн missed opportunities пока не сформирован",
-workedAlertsMissedSuffix: "рабочих alerts были пропущены в этой группе setup.",
+noMissedOpportunityPatternTitle: "РџР°С‚С‚РµСЂРЅ missed opportunities РїРѕРєР° РЅРµ СЃС„РѕСЂРјРёСЂРѕРІР°РЅ",
+workedAlertsMissedSuffix: "СЂР°Р±РѕС‡РёС… alerts Р±С‹Р»Рё РїСЂРѕРїСѓС‰РµРЅС‹ РІ СЌС‚РѕР№ РіСЂСѓРїРїРµ setup.",
 },
     en: {
       title: "AI Alerts Center",
@@ -7086,6 +7471,16 @@ checkingOutcomes: "Checking...",
       locked:
   "AI Alerts are available only on SkillEdge Elite. SkillEdge Edge includes AI Scanner / Market Intelligence, but real-time AI Alerts, floating alerts widget and Signal-to-Journal workflow are reserved for Elite.",
       direction: "Direction",
+      structureTitle: "Market structure",
+structureBased: "Plan built from candles / VWAP / levels",
+fallbackBased: "Fallback plan: candles/levels are missing",
+rr: "RR",
+vwap: "VWAP",
+atr: "ATR",
+support: "Nearest support",
+resistance: "Nearest resistance",
+candles: "Candles",
+missingData: "Missing data",
       setup: "Setup",
       entry: "Entry zone",
       stop: "Stop",
@@ -7145,7 +7540,7 @@ rebuildTradePatterns: "Find my patterns",
 rebuildingTradePatterns: "Finding patterns...",
 tradePatternsTitle: "Independent Trade Pattern Profile",
 tradePatternsText:
-  "SkillEdge AI analyzes your independent profitable journal trades and finds repeated patterns that can later power Personal AI Alerts.",
+  "SkillEdge AI analyzes your independent profitable journal trades and finds repeated patterns for future Personal AI Alerts.",
 tradePatternsEmpty:
   "No patterns found yet. Add several independent profitable trades to the Journal.",
 tradePatternsLoading: "Loading trade patterns...",
@@ -7185,7 +7580,7 @@ emptyDeskTitle: "AI Trading Desk is waiting for a quality setup",
 emptyDeskText:
   "There are no active alerts for the selected filter right now. That is normal: SkillEdge AI should not fire low-quality noise. The system is waiting for a high-confidence situation with clear trigger, stop, targets and risk note.",
 emptyDeskAction:
-  "Keep the page open — the list refreshes automatically every 60 seconds.",
+  "Keep the page open вЂ” the list refreshes automatically every 60 seconds.",
 confidenceTransparency: "Score transparency",
 confidenceTransparencyText:
   "Why SkillEdge AI highlighted this signal and which factors strengthen or weaken the idea.",
@@ -7220,17 +7615,17 @@ topReason: "Top reason",
 allReasons: "All reasons",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "You marked this signal as Taken. Create a trade draft so SkillEdge can later compare the signal plan with your real execution: entry, stop, exit, PnL and trade quality.",
+  "You marked this signal as Taken. Create a trade draft so SkillEdge can compare the signal plan with your real execution: entry, stop, exit, PnL and trade quality.",
 journalSyncAction: "Create trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
-  "This trade is already linked to the alert. SkillEdge can compare the signal plan with the client’s real execution.",
+  "This trade is already linked to the alert. SkillEdge can compare the signal plan with the clientвЂ™s real execution.",
 linkedJournalEmpty:
   "No saved journal trade is linked to this alert yet.",
 linkedTrades: "Linked trades",
 linkedPnl: "Linked PnL",
 linkedResult: "Result",
-journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsTitle: "Signal в†” Journal Sync",
 journalLinkAnalyticsText:
   "SkillEdge tracks which alerts became real Journal trades. This is the base for execution analysis, signal PnL and missed opportunity analytics.",
 takenWithoutJournal: "Taken without Journal",
@@ -7254,7 +7649,7 @@ executionQualityText:
   "SkillEdge shows which AI Alerts already became Journal trades and where execution was strong or needs review.",
 executionCoachTitle: "AI Execution Coach",
 executionCoachText:
-  "SkillEdge reviews the client’s execution against the signal plan: entry, stop, direction, targets and discipline.",
+  "SkillEdge reviews the clientвЂ™s execution against the signal plan: entry, stop, direction, targets and discipline.",
 executionCoachStrong:
   "Strong execution: the client mostly followed the signal plan. These trades should be saved as a personal strength pattern.",
 executionCoachMedium:
@@ -7290,13 +7685,13 @@ focusDirectionText:
 focusTargetText:
   "Main focus: target management. Check how you manage the trade after entry and whether exits are chaotic.",
 focusStrongText:
-  "Execution looks strong. Keep logging these trades — they become the base for future Personal AI Alerts.",
+  "Execution looks strong. Keep logging these trades вЂ” they become the base for future Personal AI Alerts.",
 openFocusAlerts: "Open alerts with this focus",
 executionActionPlanTitle: "This Week Action Plan",
 executionActionPlanText:
   "SkillEdge turns the main execution focus into concrete rules for the next trading week.",
 entryActionOne: "Only take entries inside the planned entry zone or after confirmed reclaim/rejection.",
-entryActionTwo: "Do not chase after the trigger candle — late entry should be marked as Missed.",
+entryActionTwo: "Do not chase after the trigger candle вЂ” late entry should be marked as Missed.",
 entryActionThree: "Before entry, check that price, stop and risk still offer valid risk/reward.",
 stopActionOne: "Before the trade, write the stop/invalidation and do not move it without a new scenario.",
 stopActionTwo: "If your stop differs from the alert plan, reduce size or skip the trade.",
@@ -7305,52 +7700,52 @@ directionActionOne: "Do not trade against the alert direction without strong rev
 directionActionTwo: "Before entry, check whether your trade matches the setup direction.",
 directionActionThree: "If market structure changes, mark the alert as Skipped/Missed instead of entering impulsively.",
 targetActionOne: "Before entry, choose the main target and partial plan.",
-targetActionTwo: "After TP1, do not exit randomly — manage the trade by the predefined plan.",
+targetActionTwo: "After TP1, do not exit randomly вЂ” manage the trade by the predefined plan.",
 targetActionThree: "If price does not move toward target, evaluate invalidation instead of hoping.",
 strongActionOne: "Keep saving trades where you followed the alert plan.",
 strongActionTwo: "Look for repetition: which setups produce strong execution most often.",
-strongActionThree: "These trades will later become the base for Personal AI Alerts.",
+strongActionThree: "These trades become the base for Personal AI Alerts.",
 outcomeFollowupTitle: "Alert Outcome Follow-up",
 outcomeFollowupText:
-  "SkillEdge compares the client’s decision with the actual signal outcome to detect missed opportunities, good skips and trades that need review.",
+  "SkillEdge compares the clientвЂ™s decision with the actual signal outcome to detect missed opportunities, good skips and trades that need review.",
 outcomeTakenWorked:
   "You took the signal and it worked. Check whether the trade was saved in Journal and how closely execution followed the plan.",
 outcomeTakenFailed:
   "You took the signal but it failed. Review confirmation, late entry risk and whether the stop followed the plan.",
 outcomeSkippedWorked:
-  "The signal was skipped but later worked. This is a missed opportunity — check why you did not enter: fear, not at desk or hesitation.",
+  "The signal was skipped and then worked. This is a missed opportunity вЂ” check why you did not enter: fear, not at desk or hesitation.",
 outcomeSkippedFailed:
-  "The signal was skipped and failed. This was a good filter — save the reason why you avoided it.",
+  "The signal was skipped and failed. This was a good filter вЂ” save the reason why you avoided it.",
 outcomeMissedWorked:
   "You marked the signal as Missed and it worked. This is an important learning opportunity: what stopped you from acting in time?",
 outcomeMissedFailed:
   "You marked the signal as Missed but it failed. The miss was safe, but still review whether the idea was high quality.",
 outcomePendingNote:
-  "Outcome is still pending. Later SkillEdge can compare your decision with the actual price path.",
+  "Outcome is still pending. SkillEdge can compare your decision with the actual price path once enough market data is available.",
 outcomeNeutralNote:
   "Outcome is neutral. The signal did not give clean follow-through, so focus on decision quality rather than PnL only.",
 outcomeLearningLabel: "Learning note",
 outcomeStatsLabel: "Outcome stats",
 outcomeLearningAnalyticsTitle: "Outcome Learning Analytics",
 outcomeLearningAnalyticsText:
-  "SkillEdge groups alerts by the client’s decision and the actual signal outcome: what was taken, what failed, what became a missed opportunity and where the client correctly filtered a bad idea.",
+  "SkillEdge groups alerts by the clientвЂ™s decision and the actual signal outcome: what was taken, what failed, what became a missed opportunity and where the client correctly filtered a bad idea.",
 filterTakenWorked: "Taken + Worked",
 filterTakenFailed: "Taken + Failed",
 filterMissedOpportunity: "Missed opportunity",
 filterGoodSkip: "Good skip",
 takenWorkedText: "Signals the client took and that worked.",
 takenFailedText: "Signals the client took but they failed.",
-missedOpportunityText: "Signals the client skipped or missed, but they later worked.",
+missedOpportunityText: "Signals the client skipped or missed, but they eventually worked.",
 goodSkipText: "Signals the client skipped or missed, and they failed.",
 outcomeLearningFocusTitle: "Outcome Learning Focus",
 outcomeLearningFocusText:
-  "SkillEdge selects the main learning focus based on how the client’s decisions matched the actual signal outcomes.",
+  "SkillEdge selects the main learning focus based on how the clientвЂ™s decisions matched the actual signal outcomes.",
 outcomeFocusTakenWorked:
   "Strength zone: the client takes signals that work. Now review execution quality and setup repeatability.",
 outcomeFocusTakenFailed:
   "Main focus: taken failed. The client takes signals that fail. Review confirmation, entry timing, risk and quality filters.",
 outcomeFocusMissedOpportunity:
-  "Main focus: missed opportunities. The client skips or misses signals that later work. Identify the cause: fear, hesitation, not at desk or late reaction.",
+  "Main focus: missed opportunities. The client skips or misses signals that eventually work. Identify the cause: fear, hesitation, not at desk or late reaction.",
 outcomeFocusGoodSkip:
   "Strong filtering zone: the client skips signals that fail. Save the reasons behind these decisions into the playbook.",
 outcomeFocusEmpty:
@@ -7364,7 +7759,7 @@ missedOpportunityCoachEmpty:
 missedOpportunityTopSetup: "Top missed setup",
 missedOpportunityActionPlan: "Missed Opportunity Action Plan",
 missedOpportunityActionOne:
-  "Before the session, choose 2–3 setups you are ready to trade without hesitation when the trigger appears.",
+  "Before the session, choose 2вЂ“3 setups you are ready to trade without hesitation when the trigger appears.",
 missedOpportunityActionTwo:
   "If the trigger appears but you do not enter, immediately mark the reason: fear, too late, not at desk or not enough confirmation.",
 missedOpportunityActionThree:
@@ -7402,16 +7797,26 @@ workedAlertsMissedSuffix: "worked alerts were missed in this setup group.",
     ua: {
       title: "AI Alerts Center",
       subtitle:
-        "Останні сигнали: напрямок, setup, entry zone, stop, targets, risk і management plan.",
-      generate: "Сканувати ринок",
-      generating: "Скануємо...",
-      refresh: "Оновити",
-      checkOutcomes: "Перевірити результати",
-checkingOutcomes: "Перевіряємо...",
-      empty: "Активних alerts поки немає. Запусти сканування.",
+        "РћСЃС‚Р°РЅРЅС– СЃРёРіРЅР°Р»Рё: РЅР°РїСЂСЏРјРѕРє, setup, entry zone, stop, targets, risk С– management plan.",
+      generate: "РЎРєР°РЅСѓРІР°С‚Рё СЂРёРЅРѕРє",
+      generating: "РЎРєР°РЅСѓС”РјРѕ...",
+      refresh: "РћРЅРѕРІРёС‚Рё",
+      checkOutcomes: "РџРµСЂРµРІС–СЂРёС‚Рё СЂРµР·СѓР»СЊС‚Р°С‚Рё",
+checkingOutcomes: "РџРµСЂРµРІС–СЂСЏС”РјРѕ...",
+      empty: "РђРєС‚РёРІРЅРёС… alerts РїРѕРєРё РЅРµРјР°С”. Р—Р°РїСѓСЃС‚Рё СЃРєР°РЅСѓРІР°РЅРЅСЏ.",
       locked:
-  "AI Alerts доступні тільки на SkillEdge Elite. SkillEdge Edge відкриває AI Scanner / Market Intelligence, але real-time AI Alerts, floating alerts widget і Signal-to-Journal workflow доступні тільки в Elite.",
+  "AI Alerts РґРѕСЃС‚СѓРїРЅС– С‚С–Р»СЊРєРё РЅР° SkillEdge Elite. SkillEdge Edge РІС–РґРєСЂРёРІР°С” AI Scanner / Market Intelligence, Р°Р»Рµ real-time AI Alerts, floating alerts widget С– Signal-to-Journal workflow РґРѕСЃС‚СѓРїРЅС– С‚С–Р»СЊРєРё РІ Elite.",
       direction: "Direction",
+      structureTitle: "РЎС‚СЂСѓРєС‚СѓСЂР° СЂРёРЅРєСѓ",
+structureBased: "РџР»Р°РЅ РїРѕР±СѓРґРѕРІР°РЅРѕ Р·Р° СЃРІС–С‡РєР°РјРё / VWAP / СЂС–РІРЅСЏРјРё",
+fallbackBased: "Fallback-РїР»Р°РЅ: Р±СЂР°РєСѓС” СЃРІС–С‡РѕРє/СЂС–РІРЅС–РІ",
+rr: "RR",
+vwap: "VWAP",
+atr: "ATR",
+support: "РќР°Р№Р±Р»РёР¶С‡Р° РїС–РґС‚СЂРёРјРєР°",
+resistance: "РќР°Р№Р±Р»РёР¶С‡РёР№ РѕРїС–СЂ",
+candles: "РЎРІС–С‡РєРё",
+missingData: "Р‘СЂР°РєСѓС” РґР°РЅРёС…",
       setup: "Setup",
       entry: "Entry zone",
       stop: "Stop",
@@ -7439,25 +7844,25 @@ saveToPlaybook: "Save to Playbook",
 savingToPlaybook: "Saving...",
 savedToPlaybook: "Saved",
 createTradeDraft: "Create trade draft",
-openPlaybook: "Відкрити Playbook",
-hidePlaybook: "Сховати Playbook",
+openPlaybook: "Р’С–РґРєСЂРёС‚Рё Playbook",
+hidePlaybook: "РЎС…РѕРІР°С‚Рё Playbook",
 playbookTitle: "Personal Signal Playbook",
 playbookText:
-  "Твоя особиста база збережених сетапів: логіка, підтвердження, помилки та приклади сигналів.",
+  "РўРІРѕСЏ РѕСЃРѕР±РёСЃС‚Р° Р±Р°Р·Р° Р·Р±РµСЂРµР¶РµРЅРёС… СЃРµС‚Р°РїС–РІ: Р»РѕРіС–РєР°, РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ, РїРѕРјРёР»РєРё С‚Р° РїСЂРёРєР»Р°РґРё СЃРёРіРЅР°Р»С–РІ.",
 playbookEmpty:
-  "Збережених сетапів поки немає. Натисни Save to Playbook на будь-якому сигналі.",
-playbookLoading: "Завантажуємо playbook...",
+  "Р—Р±РµСЂРµР¶РµРЅРёС… СЃРµС‚Р°РїС–РІ РїРѕРєРё РЅРµРјР°С”. РќР°С‚РёСЃРЅРё Save to Playbook РЅР° Р±СѓРґСЊ-СЏРєРѕРјСѓ СЃРёРіРЅР°Р»С–.",
+playbookLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ playbook...",
 lastExample: "Last example",
-openSignalProfile: "Відкрити Signal Profile",
-hideSignalProfile: "Сховати Signal Profile",
-rebuildSignalProfile: "Перезібрати профіль",
-rebuildingSignalProfile: "Збираємо профіль...",
+openSignalProfile: "Р’С–РґРєСЂРёС‚Рё Signal Profile",
+hideSignalProfile: "РЎС…РѕРІР°С‚Рё Signal Profile",
+rebuildSignalProfile: "РџРµСЂРµР·С–Р±СЂР°С‚Рё РїСЂРѕС„С–Р»СЊ",
+rebuildingSignalProfile: "Р—Р±РёСЂР°С”РјРѕ РїСЂРѕС„С–Р»СЊ...",
 signalProfileTitle: "Personal Signal Profile",
 signalProfileText:
-  "SkillEdge AI показує, які AI-сетапи ти торгуєш краще, де втрачаєш гроші і які сигнали варто пріоритезувати.",
+  "SkillEdge AI РїРѕРєР°Р·СѓС”, СЏРєС– AI-СЃРµС‚Р°РїРё С‚Рё С‚РѕСЂРіСѓС”С€ РєСЂР°С‰Рµ, РґРµ РІС‚СЂР°С‡Р°С”С€ РіСЂРѕС€С– С– СЏРєС– СЃРёРіРЅР°Р»Рё РІР°СЂС‚Рѕ РїСЂС–РѕСЂРёС‚РµР·СѓРІР°С‚Рё.",
 signalProfileEmpty:
-  "Профіль поки порожній. Створи угоди з AI Alerts і збережи їх у журнал.",
-signalProfileLoading: "Завантажуємо signal profile...",
+  "РџСЂРѕС„С–Р»СЊ РїРѕРєРё РїРѕСЂРѕР¶РЅС–Р№. РЎС‚РІРѕСЂРё СѓРіРѕРґРё Р· AI Alerts С– Р·Р±РµСЂРµР¶Рё С—С… Сѓ Р¶СѓСЂРЅР°Р».",
+signalProfileLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ signal profile...",
 personalStrength: "Personal strength",
 riskZone: "Risk zone",
 learningProfile: "Learning",
@@ -7465,16 +7870,16 @@ neutralProfile: "Neutral",
 strengthScore: "Strength score",
 planAdherence: "Plan adherence",
 aiNote: "AI note",
-openTradePatterns: "Відкрити Trade Patterns",
-hideTradePatterns: "Сховати Trade Patterns",
-rebuildTradePatterns: "Знайти мої патерни",
-rebuildingTradePatterns: "Шукаємо патерни...",
+openTradePatterns: "Р’С–РґРєСЂРёС‚Рё Trade Patterns",
+hideTradePatterns: "РЎС…РѕРІР°С‚Рё Trade Patterns",
+rebuildTradePatterns: "Р—РЅР°Р№С‚Рё РјРѕС— РїР°С‚РµСЂРЅРё",
+rebuildingTradePatterns: "РЁСѓРєР°С”РјРѕ РїР°С‚РµСЂРЅРё...",
 tradePatternsTitle: "Independent Trade Pattern Profile",
 tradePatternsText:
-  "SkillEdge AI аналізує твої самостійні прибуткові угоди з Journal і знаходить повторювані патерни для майбутніх Personal AI Alerts.",
+  "SkillEdge AI Р°РЅР°Р»С–Р·СѓС” С‚РІРѕС— СЃР°РјРѕСЃС‚С–Р№РЅС– РїСЂРёР±СѓС‚РєРѕРІС– СѓРіРѕРґРё Р· Journal С– Р·РЅР°С…РѕРґРёС‚СЊ РїРѕРІС‚РѕСЂСЋРІР°РЅС– РїР°С‚РµСЂРЅРё РґР»СЏ РјР°Р№Р±СѓС‚РЅС–С… Personal AI Alerts.",
 tradePatternsEmpty:
-  "Патернів поки немає. Додай у Journal кілька самостійних прибуткових угод.",
-tradePatternsLoading: "Завантажуємо trade patterns...",
+  "РџР°С‚РµСЂРЅС–РІ РїРѕРєРё РЅРµРјР°С”. Р”РѕРґР°Р№ Сѓ Journal РєС–Р»СЊРєР° СЃР°РјРѕСЃС‚С–Р№РЅРёС… РїСЂРёР±СѓС‚РєРѕРІРёС… СѓРіРѕРґ.",
+tradePatternsLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ trade patterns...",
 patternStrength: "Pattern strength",
 examples: "Examples",
 keywords: "Keywords",
@@ -7495,24 +7900,24 @@ filterDecisionSkipped: "Skipped",
 filterDecisionMissed: "Missed",
 decisionAnalyticsTitle: "Signal-to-Trade Decisions",
 decisionAnalyticsText:
-  "Тут видно, як клієнт працює з сигналами: спостерігає, бере, пропускає або відмічає missed. Це база майбутньої статистики якості сигналів і виконання.",
-filterEmpty: "Немає alerts для вибраного фільтра.",
-openAlertDetails: "Відкрити розбір",
-hideAlertDetails: "Сховати розбір",
+  "РўСѓС‚ РІРёРґРЅРѕ, СЏРє РєР»С–С”РЅС‚ РїСЂР°С†СЋС” Р· СЃРёРіРЅР°Р»Р°РјРё: СЃРїРѕСЃС‚РµСЂС–РіР°С”, Р±РµСЂРµ, РїСЂРѕРїСѓСЃРєР°С” Р°Р±Рѕ РІС–РґРјС–С‡Р°С” missed. Р¦Рµ Р±Р°Р·Р° РјР°Р№Р±СѓС‚РЅСЊРѕС— СЃС‚Р°С‚РёСЃС‚РёРєРё СЏРєРѕСЃС‚С– СЃРёРіРЅР°Р»С–РІ С– РІРёРєРѕРЅР°РЅРЅСЏ.",
+filterEmpty: "РќРµРјР°С” alerts РґР»СЏ РІРёР±СЂР°РЅРѕРіРѕ С„С–Р»СЊС‚СЂР°.",
+openAlertDetails: "Р’С–РґРєСЂРёС‚Рё СЂРѕР·Р±С–СЂ",
+hideAlertDetails: "РЎС…РѕРІР°С‚Рё СЂРѕР·Р±С–СЂ",
 liveDesk: "Live AI Trading Desk",
-lastChecked: "Остання перевірка",
+lastChecked: "РћСЃС‚Р°РЅРЅСЏ РїРµСЂРµРІС–СЂРєР°",
 autoRefreshNote:
-  "Alerts оновлюються автоматично. Market scan працює у фоні, список оновлюється кожні 60 секунд.",
-showMoreAlerts: "Показати ще 10",
-collapseAlerts: "Згорнути все",    
-emptyDeskTitle: "AI Trading Desk чекає якісний сетап",
+  "Alerts РѕРЅРѕРІР»СЋСЋС‚СЊСЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ. Market scan РїСЂР°С†СЋС” Сѓ С„РѕРЅС–, СЃРїРёСЃРѕРє РѕРЅРѕРІР»СЋС”С‚СЊСЃСЏ РєРѕР¶РЅС– 60 СЃРµРєСѓРЅРґ.",
+showMoreAlerts: "РџРѕРєР°Р·Р°С‚Рё С‰Рµ 10",
+collapseAlerts: "Р—РіРѕСЂРЅСѓС‚Рё РІСЃРµ",    
+emptyDeskTitle: "AI Trading Desk С‡РµРєР°С” СЏРєС–СЃРЅРёР№ СЃРµС‚Р°Рї",
 emptyDeskText:
-  "Зараз немає active alerts для вибраного фільтра. Це нормально: SkillEdge AI не має стріляти шумом. Система чекає high-confidence ситуацію з чітким trigger, stop, targets і risk note.",
+  "Р—Р°СЂР°Р· РЅРµРјР°С” active alerts РґР»СЏ РІРёР±СЂР°РЅРѕРіРѕ С„С–Р»СЊС‚СЂР°. Р¦Рµ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge AI РЅРµ РјР°С” СЃС‚СЂС–Р»СЏС‚Рё С€СѓРјРѕРј. РЎРёСЃС‚РµРјР° С‡РµРєР°С” high-confidence СЃРёС‚СѓР°С†С–СЋ Р· С‡С–С‚РєРёРј trigger, stop, targets С– risk note.",
 emptyDeskAction:
-  "Залиш сторінку відкритою — список оновлюється автоматично кожні 60 секунд.",
+  "Р—Р°Р»РёС€ СЃС‚РѕСЂС–РЅРєСѓ РІС–РґРєСЂРёС‚РѕСЋ вЂ” СЃРїРёСЃРѕРє РѕРЅРѕРІР»СЋС”С‚СЊСЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ РєРѕР¶РЅС– 60 СЃРµРєСѓРЅРґ.",
 confidenceTransparency: "Score transparency",
 confidenceTransparencyText:
-  "Чому SkillEdge AI виділив цей сигнал і які фактори підсилюють або послаблюють ідею.",
+  "Р§РѕРјСѓ SkillEdge AI РІРёРґС–Р»РёРІ С†РµР№ СЃРёРіРЅР°Р» С– СЏРєС– С„Р°РєС‚РѕСЂРё РїС–РґСЃРёР»СЋСЋС‚СЊ Р°Р±Рѕ РїРѕСЃР»Р°Р±Р»СЋСЋС‚СЊ С–РґРµСЋ.",
 breakdownTitle: "SkillEdge AI Signal Breakdown",
 traderDecision: "Trader Decision",
 tradePlan: "Trade Plan",
@@ -7520,14 +7925,14 @@ whyNow: "Why now",
 confirmationChecklist: "Confirmation Checklist",
 avoidThisTradeIf: "Avoid This Trade If",
 learningLayer: "Learning Layer",
-closeBreakdown: "Закрити розбір",
-decisionTitle: "Моє рішення",
+closeBreakdown: "Р—Р°РєСЂРёС‚Рё СЂРѕР·Р±С–СЂ",
+decisionTitle: "РњРѕС” СЂС–С€РµРЅРЅСЏ",
 decisionWatching: "Watching",
 decisionTaken: "Taken",
 decisionSkipped: "Skipped",
 decisionMissed: "Missed",
 decisionSaved: "Decision saved",
-decisionReasonTitle: "Причина рішення",
+decisionReasonTitle: "РџСЂРёС‡РёРЅР° СЂС–С€РµРЅРЅСЏ",
 reasonCleanTrigger: "Clean trigger",
 reasonGoodRiskReward: "Good RR",
 reasonJournalMatch: "Journal match",
@@ -7539,191 +7944,566 @@ reasonNotAtDesk: "Not at desk",
 reasonTradeDraftCreated: "Trade draft created",
 reasonInsightsTitle: "Execution reason insights",
 reasonInsightsText:
-  "SkillEdge відстежує причини рішень, щоб потім показувати, де клієнт втрачає найкращі можливості: запізнення, відсутність підтвердження, високий ризик або проблеми з ліквідністю.",
+  "SkillEdge РІС–РґСЃС‚РµР¶СѓС” РїСЂРёС‡РёРЅРё СЂС–С€РµРЅСЊ, С‰РѕР± РїРѕС‚С–Рј РїРѕРєР°Р·СѓРІР°С‚Рё, РґРµ РєР»С–С”РЅС‚ РІС‚СЂР°С‡Р°С” РЅР°Р№РєСЂР°С‰С– РјРѕР¶Р»РёРІРѕСЃС‚С–: Р·Р°РїС–Р·РЅРµРЅРЅСЏ, РІС–РґСЃСѓС‚РЅС–СЃС‚СЊ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ, РІРёСЃРѕРєРёР№ СЂРёР·РёРє Р°Р±Рѕ РїСЂРѕР±Р»РµРјРё Р· Р»С–РєРІС–РґРЅС–СЃС‚СЋ.",
 topReason: "Top reason",
-allReasons: "Усі причини",
+allReasons: "РЈСЃС– РїСЂРёС‡РёРЅРё",
 journalSyncTitle: "Journal Sync",
 journalSyncText:
-  "Ти відмітив сигнал як Taken. Створи trade draft, щоб SkillEdge пізніше порівняв план сигналу з твоїм реальним виконанням: вхід, стоп, вихід, PnL і якість угоди.",
-journalSyncAction: "Створити trade draft",
+  "РўРё РІС–РґРјС–С‚РёРІ СЃРёРіРЅР°Р» СЏРє Taken. РЎС‚РІРѕСЂРё СѓРіРѕРґСѓ С–Р· СЃРёРіРЅР°Р»Сѓ, С‰РѕР± SkillEdge РїРѕСЂС–РІРЅСЏРІ РїР»Р°РЅ СЃРёРіРЅР°Р»Сѓ Р· С‚РІРѕС—Рј СЂРµР°Р»СЊРЅРёРј РІРёРєРѕРЅР°РЅРЅСЏРј: РІС…С–Рґ, СЃС‚РѕРї, РІРёС…С–Рґ, PnL С– СЏРєС–СЃС‚СЊ СѓРіРѕРґРё.",
+journalSyncAction: "РЎС‚РІРѕСЂРёС‚Рё trade draft",
 linkedJournalTitle: "Linked Journal Trade",
 linkedJournalText:
-  "Ця угода вже пов’язана з alert. SkillEdge зможе порівняти план сигналу з реальним виконанням клієнта.",
+  "Р¦СЏ СѓРіРѕРґР° РІР¶Рµ РїРѕРІвЂ™СЏР·Р°РЅР° Р· alert. SkillEdge Р·РјРѕР¶Рµ РїРѕСЂС–РІРЅСЏС‚Рё РїР»Р°РЅ СЃРёРіРЅР°Р»Сѓ Р· СЂРµР°Р»СЊРЅРёРј РІРёРєРѕРЅР°РЅРЅСЏРј РєР»С–С”РЅС‚Р°.",
 linkedJournalEmpty:
-  "Поки немає збереженої угоди в журналі, пов’язаної з цим alert.",
+  "РџРѕРєРё РЅРµРјР°С” Р·Р±РµСЂРµР¶РµРЅРѕС— СѓРіРѕРґРё РІ Р¶СѓСЂРЅР°Р»С–, РїРѕРІвЂ™СЏР·Р°РЅРѕС— Р· С†РёРј alert.",
 linkedTrades: "Linked trades",
 linkedPnl: "Linked PnL",
 linkedResult: "Result",
-journalLinkAnalyticsTitle: "Signal ↔ Journal Sync",
+journalLinkAnalyticsTitle: "Signal в†” Journal Sync",
 journalLinkAnalyticsText:
-  "SkillEdge відстежує, які alerts стали реальними угодами в Journal. Це база для аналізу виконання, PnL по сигналах і пропущених можливостей.",
-takenWithoutJournal: "Taken без Journal",
+  "SkillEdge РІС–РґСЃС‚РµР¶СѓС”, СЏРєС– alerts СЃС‚Р°Р»Рё СЂРµР°Р»СЊРЅРёРјРё СѓРіРѕРґР°РјРё РІ Journal. Р¦Рµ Р±Р°Р·Р° РґР»СЏ Р°РЅР°Р»С–Р·Сѓ РІРёРєРѕРЅР°РЅРЅСЏ, PnL РїРѕ СЃРёРіРЅР°Р»Р°С… С– РїСЂРѕРїСѓС‰РµРЅРёС… РјРѕР¶Р»РёРІРѕСЃС‚РµР№.",
+takenWithoutJournal: "Taken Р±РµР· Journal",
 linkedAlertsCount: "Linked alerts",
 linkedTradesPnl: "Linked trades PnL",
 avgExecutionScore: "Avg execution",
-takenWithoutJournalFilter: "Taken без Journal",
-takenWithoutJournalTitle: "Taken alert без угоди в Journal",
+takenWithoutJournalFilter: "Taken Р±РµР· Journal",
+takenWithoutJournalTitle: "Taken alert Р±РµР· СѓРіРѕРґРё РІ Journal",
 takenWithoutJournalText:
-  "Клієнт відмітив сигнал як Taken, але ще не зберіг угоду в журналі. Створи trade draft, щоб SkillEdge зміг порівняти план сигналу з реальним виконанням.",
+  "РљР»С–С”РЅС‚ РІС–РґРјС–С‚РёРІ СЃРёРіРЅР°Р» СЏРє Taken, Р°Р»Рµ С‰Рµ РЅРµ Р·Р±РµСЂС–Рі СѓРіРѕРґСѓ РІ Р¶СѓСЂРЅР°Р»С–. РЎС‚РІРѕСЂРё trade draft, С‰РѕР± SkillEdge Р·РјС–Рі РїРѕСЂС–РІРЅСЏС‚Рё РїР»Р°РЅ СЃРёРіРЅР°Р»Сѓ Р· СЂРµР°Р»СЊРЅРёРј РІРёРєРѕРЅР°РЅРЅСЏРј.",
 executionScore: "Execution score",
 executionReview: "Execution review",
-executionStrong: "Сильне виконання",
-executionMedium: "Нормально, але є що покращити",
-executionWeak: "Потрібен розбір виконання",
+executionStrong: "РЎРёР»СЊРЅРµ РІРёРєРѕРЅР°РЅРЅСЏ",
+executionMedium: "РќРѕСЂРјР°Р»СЊРЅРѕ, Р°Р»Рµ С” С‰Рѕ РїРѕРєСЂР°С‰РёС‚Рё",
+executionWeak: "РџРѕС‚СЂС–Р±РµРЅ СЂРѕР·Р±С–СЂ РІРёРєРѕРЅР°РЅРЅСЏ",
 filterJournalLinked: "Journal linked",
 filterExecutionStrong: "Strong execution",
 filterExecutionReview: "Needs review",
 executionQualityTitle: "Execution Quality",
 executionQualityText:
-  "SkillEdge показує, які AI Alerts вже стали угодами в Journal і де виконання було сильним або потребує розбору.",
+  "SkillEdge РїРѕРєР°Р·СѓС”, СЏРєС– AI Alerts РІР¶Рµ СЃС‚Р°Р»Рё СѓРіРѕРґР°РјРё РІ Journal С– РґРµ РІРёРєРѕРЅР°РЅРЅСЏ Р±СѓР»Рѕ СЃРёР»СЊРЅРёРј Р°Р±Рѕ РїРѕС‚СЂРµР±СѓС” СЂРѕР·Р±РѕСЂСѓ.",
 executionCoachTitle: "AI Execution Coach",
 executionCoachText:
-  "SkillEdge розбирає виконання клієнта відносно плану сигналу: вхід, стоп, напрямок, targets і дисципліну.",
+  "SkillEdge СЂРѕР·Р±РёСЂР°С” РІРёРєРѕРЅР°РЅРЅСЏ РєР»С–С”РЅС‚Р° РІС–РґРЅРѕСЃРЅРѕ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ: РІС…С–Рґ, СЃС‚РѕРї, РЅР°РїСЂСЏРјРѕРє, targets С– РґРёСЃС†РёРїР»С–РЅСѓ.",
 executionCoachStrong:
-  "Сильне виконання: клієнт загалом дотримався плану сигналу. Такі угоди варто зберігати як особистий сильний патерн.",
+  "РЎРёР»СЊРЅРµ РІРёРєРѕРЅР°РЅРЅСЏ: РєР»С–С”РЅС‚ Р·Р°РіР°Р»РѕРј РґРѕС‚СЂРёРјР°РІСЃСЏ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ. РўР°РєС– СѓРіРѕРґРё РІР°СЂС‚Рѕ Р·Р±РµСЂС–РіР°С‚Рё СЏРє РѕСЃРѕР±РёСЃС‚РёР№ СЃРёР»СЊРЅРёР№ РїР°С‚РµСЂРЅ.",
 executionCoachMedium:
-  "Виконання нормальне, але є зони для покращення. Перевір вхід, стоп і management після першого target.",
+  "Р’РёРєРѕРЅР°РЅРЅСЏ РЅРѕСЂРјР°Р»СЊРЅРµ, Р°Р»Рµ С” Р·РѕРЅРё РґР»СЏ РїРѕРєСЂР°С‰РµРЅРЅСЏ. РџРµСЂРµРІС–СЂ РІС…С–Рґ, СЃС‚РѕРї С– management РїС–СЃР»СЏ РїРµСЂС€РѕРіРѕ target.",
 executionCoachWeak:
-  "Виконання потребує розбору. Ймовірно, клієнт відійшов від плану сигналу: пізній вхід, інший стоп або слабка дисципліна сценарію.",
+  "Р’РёРєРѕРЅР°РЅРЅСЏ РїРѕС‚СЂРµР±СѓС” СЂРѕР·Р±РѕСЂСѓ. Р™РјРѕРІС–СЂРЅРѕ, РєР»С–С”РЅС‚ РІС–РґС–Р№С€РѕРІ РІС–Рґ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ: РїС–Р·РЅС–Р№ РІС…С–Рґ, С–РЅС€РёР№ СЃС‚РѕРї Р°Р±Рѕ СЃР»Р°Р±РєР° РґРёСЃС†РёРїР»С–РЅР° СЃС†РµРЅР°СЂС–СЋ.",
 executionCoachEntryIssue:
-  "Entry issue: вхід був поза плановою зоною або занадто пізно після сигналу.",
+  "Entry issue: РІС…С–Рґ Р±СѓРІ РїРѕР·Р° РїР»Р°РЅРѕРІРѕСЋ Р·РѕРЅРѕСЋ Р°Р±Рѕ Р·Р°РЅР°РґС‚Рѕ РїС–Р·РЅРѕ РїС–СЃР»СЏ СЃРёРіРЅР°Р»Сѓ.",
 executionCoachStopIssue:
-  "Stop issue: стоп відрізняється від плану сигналу. Це може ламати статистику і risk/reward.",
+  "Stop issue: СЃС‚РѕРї РІС–РґСЂС–Р·РЅСЏС”С‚СЊСЃСЏ РІС–Рґ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ. Р¦Рµ РјРѕР¶Рµ Р»Р°РјР°С‚Рё СЃС‚Р°С‚РёСЃС‚РёРєСѓ С– risk/reward.",
 executionCoachDirectionIssue:
-  "Direction issue: напрямок угоди відрізняється від напрямку alert.",
+  "Direction issue: РЅР°РїСЂСЏРјРѕРє СѓРіРѕРґРё РІС–РґСЂС–Р·РЅСЏС”С‚СЊСЃСЏ РІС–Рґ РЅР°РїСЂСЏРјРєСѓ alert.",
 executionCoachTargetIssue:
-  "Target issue: угода не дійшла до TP або вихід був не за планом.",
+  "Target issue: СѓРіРѕРґР° РЅРµ РґС–Р№С€Р»Р° РґРѕ TP Р°Р±Рѕ РІРёС…С–Рґ Р±СѓРІ РЅРµ Р·Р° РїР»Р°РЅРѕРј.",
 executionWeaknessTitle: "Execution Weakness Map",
 executionWeaknessText:
-  "SkillEdge показує, де клієнт найчастіше відхиляється від плану сигналу: вхід, стоп, напрямок або управління цілями.",
+  "SkillEdge РїРѕРєР°Р·СѓС”, РґРµ РєР»С–С”РЅС‚ РЅР°Р№С‡Р°СЃС‚С–С€Рµ РІС–РґС…РёР»СЏС”С‚СЊСЃСЏ РІС–Рґ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ: РІС…С–Рґ, СЃС‚РѕРї, РЅР°РїСЂСЏРјРѕРє Р°Р±Рѕ СѓРїСЂР°РІР»С–РЅРЅСЏ С†С–Р»СЏРјРё.",
 entryIssueFilter: "Entry issues",
 stopIssueFilter: "Stop issues",
 directionIssueFilter: "Direction issues",
 targetIssueFilter: "Target issues",
 executionFocusTitle: "Personal Execution Focus",
 executionFocusText:
-  "SkillEdge обирає головний фокус на основі пов’язаних Journal-угод і відхилень від плану сигналу.",
+  "SkillEdge РѕР±РёСЂР°С” РіРѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ РЅР° РѕСЃРЅРѕРІС– РїРѕРІвЂ™СЏР·Р°РЅРёС… Journal-СѓРіРѕРґ С– РІС–РґС…РёР»РµРЅСЊ РІС–Рґ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ.",
 executionFocusEmpty:
-  "Поки недостатньо linked trades для персонального фокусу. Створюй угоди з alerts, щоб SkillEdge почав знаходити повторювані слабкі місця.",
+  "РџРѕРєРё РЅРµРґРѕСЃС‚Р°С‚РЅСЊРѕ linked trades РґР»СЏ РїРµСЂСЃРѕРЅР°Р»СЊРЅРѕРіРѕ С„РѕРєСѓСЃСѓ. РЎС‚РІРѕСЂСЋР№ СѓРіРѕРґРё Р· alerts, С‰РѕР± SkillEdge РїРѕС‡Р°РІ Р·РЅР°С…РѕРґРёС‚Рё РїРѕРІС‚РѕСЂСЋРІР°РЅС– СЃР»Р°Р±РєС– РјС–СЃС†СЏ.",
 focusEntryText:
-  "Головний фокус — entry timing. Перевір, чи не входиш ти запізно або поза плановою зоною сигналу.",
+  "Р“РѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ вЂ” entry timing. РџРµСЂРµРІС–СЂ, С‡Рё РЅРµ РІС…РѕРґРёС€ С‚Рё Р·Р°РїС–Р·РЅРѕ Р°Р±Рѕ РїРѕР·Р° РїР»Р°РЅРѕРІРѕСЋ Р·РѕРЅРѕСЋ СЃРёРіРЅР°Р»Сѓ.",
 focusStopText:
-  "Головний фокус — stop discipline. Перевір, чи не змінюєш стоп відносно плану і чи не ламаєш risk/reward.",
+  "Р“РѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ вЂ” stop discipline. РџРµСЂРµРІС–СЂ, С‡Рё РЅРµ Р·РјС–РЅСЋС”С€ СЃС‚РѕРї РІС–РґРЅРѕСЃРЅРѕ РїР»Р°РЅСѓ С– С‡Рё РЅРµ Р»Р°РјР°С”С€ risk/reward.",
 focusDirectionText:
-  "Головний фокус — direction discipline. Перевір, чи не торгуєш проти напрямку alert або без підтвердження сценарію.",
+  "Р“РѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ вЂ” direction discipline. РџРµСЂРµРІС–СЂ, С‡Рё РЅРµ С‚РѕСЂРіСѓС”С€ РїСЂРѕС‚Рё РЅР°РїСЂСЏРјРєСѓ alert Р°Р±Рѕ Р±РµР· РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ СЃС†РµРЅР°СЂС–СЋ.",
 focusTargetText:
-  "Головний фокус — target management. Перевір, як ведеш угоду після входу і чи не виходиш хаотично.",
+  "Р“РѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ вЂ” target management. РџРµСЂРµРІС–СЂ, СЏРє РІРµРґРµС€ СѓРіРѕРґСѓ РїС–СЃР»СЏ РІС…РѕРґСѓ С– С‡Рё РЅРµ РІРёС…РѕРґРёС€ С…Р°РѕС‚РёС‡РЅРѕ.",
 focusStrongText:
-  "Виконання виглядає сильним. Продовжуй фіксувати такі угоди — це база для майбутніх Personal AI Alerts.",
-openFocusAlerts: "Відкрити alerts з цим фокусом",
+  "Р’РёРєРѕРЅР°РЅРЅСЏ РІРёРіР»СЏРґР°С” СЃРёР»СЊРЅРёРј. РџСЂРѕРґРѕРІР¶СѓР№ С„С–РєСЃСѓРІР°С‚Рё С‚Р°РєС– СѓРіРѕРґРё вЂ” С†Рµ Р±Р°Р·Р° РґР»СЏ РјР°Р№Р±СѓС‚РЅС–С… Personal AI Alerts.",
+openFocusAlerts: "Р’С–РґРєСЂРёС‚Рё alerts Р· С†РёРј С„РѕРєСѓСЃРѕРј",
 executionActionPlanTitle: "This Week Action Plan",
 executionActionPlanText:
-  "SkillEdge перетворює головний execution focus на конкретні правила для наступного торгового тижня.",
-entryActionOne: "Бери вхід тільки всередині планової entry zone або після підтвердженого reclaim/rejection.",
-entryActionTwo: "Не наздоганяй свічку після trigger — пізній вхід краще відмітити як Missed.",
-entryActionThree: "Перед входом перевір: ціна, стоп і ризик все ще дають нормальний risk/reward.",
-stopActionOne: "Перед угодою заздалегідь запиши stop/invalidation і не рухай його без нового сценарію.",
-stopActionTwo: "Якщо стоп відрізняється від плану alert — зменш позицію або пропусти угоду.",
-stopActionThree: "Після угоди перевір, чи не зламав змінений стоп очікуваний risk/reward.",
-directionActionOne: "Не торгуй проти direction alert без сильного reverse-confirmation.",
-directionActionTwo: "Перед входом перевір, чи збігається твоя угода з напрямком setup.",
-directionActionThree: "Якщо ринок змінив структуру — відміть alert як Skipped/Missed, а не входь імпульсивно.",
-targetActionOne: "До входу обери основний target і partial plan.",
-targetActionTwo: "Після TP1 не виходь хаотично — веди угоду за заздалегідь заданим management plan.",
-targetActionThree: "Якщо ціна не йде до target — оцінюй invalidation, а не надійся.",
-strongActionOne: "Продовжуй зберігати угоди, де ти дотримався плану alert.",
-strongActionTwo: "Шукай повторюваність: які setup найчастіше дають сильне виконання.",
-strongActionThree: "Ці угоди пізніше стануть базою для Personal AI Alerts.",
+  "SkillEdge РїРµСЂРµС‚РІРѕСЂСЋС” РіРѕР»РѕРІРЅРёР№ execution focus РЅР° РєРѕРЅРєСЂРµС‚РЅС– РїСЂР°РІРёР»Р° РґР»СЏ РЅР°СЃС‚СѓРїРЅРѕРіРѕ С‚РѕСЂРіРѕРІРѕРіРѕ С‚РёР¶РЅСЏ.",
+entryActionOne: "Р‘РµСЂРё РІС…С–Рґ С‚С–Р»СЊРєРё РІСЃРµСЂРµРґРёРЅС– РїР»Р°РЅРѕРІРѕС— entry zone Р°Р±Рѕ РїС–СЃР»СЏ РїС–РґС‚РІРµСЂРґР¶РµРЅРѕРіРѕ reclaim/rejection.",
+entryActionTwo: "РќРµ РЅР°Р·РґРѕРіР°РЅСЏР№ СЃРІС–С‡РєСѓ РїС–СЃР»СЏ trigger вЂ” РїС–Р·РЅС–Р№ РІС…С–Рґ РєСЂР°С‰Рµ РІС–РґРјС–С‚РёС‚Рё СЏРє Missed.",
+entryActionThree: "РџРµСЂРµРґ РІС…РѕРґРѕРј РїРµСЂРµРІС–СЂ: С†С–РЅР°, СЃС‚РѕРї С– СЂРёР·РёРє РІСЃРµ С‰Рµ РґР°СЋС‚СЊ РЅРѕСЂРјР°Р»СЊРЅРёР№ risk/reward.",
+stopActionOne: "РџРµСЂРµРґ СѓРіРѕРґРѕСЋ Р·Р°Р·РґР°Р»РµРіС–РґСЊ Р·Р°РїРёС€Рё stop/invalidation С– РЅРµ СЂСѓС…Р°Р№ Р№РѕРіРѕ Р±РµР· РЅРѕРІРѕРіРѕ СЃС†РµРЅР°СЂС–СЋ.",
+stopActionTwo: "РЇРєС‰Рѕ СЃС‚РѕРї РІС–РґСЂС–Р·РЅСЏС”С‚СЊСЃСЏ РІС–Рґ РїР»Р°РЅСѓ alert вЂ” Р·РјРµРЅС€ РїРѕР·РёС†С–СЋ Р°Р±Рѕ РїСЂРѕРїСѓСЃС‚Рё СѓРіРѕРґСѓ.",
+stopActionThree: "РџС–СЃР»СЏ СѓРіРѕРґРё РїРµСЂРµРІС–СЂ, С‡Рё РЅРµ Р·Р»Р°РјР°РІ Р·РјС–РЅРµРЅРёР№ СЃС‚РѕРї РѕС‡С–РєСѓРІР°РЅРёР№ risk/reward.",
+directionActionOne: "РќРµ С‚РѕСЂРіСѓР№ РїСЂРѕС‚Рё direction alert Р±РµР· СЃРёР»СЊРЅРѕРіРѕ reverse-confirmation.",
+directionActionTwo: "РџРµСЂРµРґ РІС…РѕРґРѕРј РїРµСЂРµРІС–СЂ, С‡Рё Р·Р±С–РіР°С”С‚СЊСЃСЏ С‚РІРѕСЏ СѓРіРѕРґР° Р· РЅР°РїСЂСЏРјРєРѕРј setup.",
+directionActionThree: "РЇРєС‰Рѕ СЂРёРЅРѕРє Р·РјС–РЅРёРІ СЃС‚СЂСѓРєС‚СѓСЂСѓ вЂ” РІС–РґРјС–С‚СЊ alert СЏРє Skipped/Missed, Р° РЅРµ РІС…РѕРґСЊ С–РјРїСѓР»СЊСЃРёРІРЅРѕ.",
+targetActionOne: "Р”Рѕ РІС…РѕРґСѓ РѕР±РµСЂРё РѕСЃРЅРѕРІРЅРёР№ target С– partial plan.",
+targetActionTwo: "РџС–СЃР»СЏ TP1 РЅРµ РІРёС…РѕРґСЊ С…Р°РѕС‚РёС‡РЅРѕ вЂ” РІРµРґРё СѓРіРѕРґСѓ Р·Р° Р·Р°Р·РґР°Р»РµРіС–РґСЊ Р·Р°РґР°РЅРёРј management plan.",
+targetActionThree: "РЇРєС‰Рѕ С†С–РЅР° РЅРµ Р№РґРµ РґРѕ target вЂ” РѕС†С–РЅСЋР№ invalidation, Р° РЅРµ РЅР°РґС–Р№СЃСЏ.",
+strongActionOne: "РџСЂРѕРґРѕРІР¶СѓР№ Р·Р±РµСЂС–РіР°С‚Рё СѓРіРѕРґРё, РґРµ С‚Рё РґРѕС‚СЂРёРјР°РІСЃСЏ РїР»Р°РЅСѓ alert.",
+strongActionTwo: "РЁСѓРєР°Р№ РїРѕРІС‚РѕСЂСЋРІР°РЅС–СЃС‚СЊ: СЏРєС– setup РЅР°Р№С‡Р°СЃС‚С–С€Рµ РґР°СЋС‚СЊ СЃРёР»СЊРЅРµ РІРёРєРѕРЅР°РЅРЅСЏ.",
+strongActionThree: "Р¦С– СѓРіРѕРґРё РїС–Р·РЅС–С€Рµ СЃС‚Р°РЅСѓС‚СЊ Р±Р°Р·РѕСЋ РґР»СЏ Personal AI Alerts.",
 outcomeFollowupTitle: "Alert Outcome Follow-up",
 outcomeFollowupText:
-  "SkillEdge порівнює рішення клієнта з фактичним результатом сигналу, щоб знаходити missed opportunities, хороші пропуски та угоди, які потребують розбору.",
+  "SkillEdge РїРѕСЂС–РІРЅСЋС” СЂС–С€РµРЅРЅСЏ РєР»С–С”РЅС‚Р° Р· С„Р°РєС‚РёС‡РЅРёРј СЂРµР·СѓР»СЊС‚Р°С‚РѕРј СЃРёРіРЅР°Р»Сѓ, С‰РѕР± Р·РЅР°С…РѕРґРёС‚Рё missed opportunities, С…РѕСЂРѕС€С– РїСЂРѕРїСѓСЃРєРё С‚Р° СѓРіРѕРґРё, СЏРєС– РїРѕС‚СЂРµР±СѓСЋС‚СЊ СЂРѕР·Р±РѕСЂСѓ.",
 outcomeTakenWorked:
-  "Ти взяв сигнал, і він відпрацював. Перевір, чи збережена угода в Journal і наскільки виконання збіглося з планом.",
+  "РўРё РІР·СЏРІ СЃРёРіРЅР°Р», С– РІС–РЅ РІС–РґРїСЂР°С†СЋРІР°РІ. РџРµСЂРµРІС–СЂ, С‡Рё Р·Р±РµСЂРµР¶РµРЅР° СѓРіРѕРґР° РІ Journal С– РЅР°СЃРєС–Р»СЊРєРё РІРёРєРѕРЅР°РЅРЅСЏ Р·Р±С–РіР»РѕСЃСЏ Р· РїР»Р°РЅРѕРј.",
 outcomeTakenFailed:
-  "Ти взяв сигнал, але він не відпрацював. Розбери, чи було підтвердження, чи не був вхід пізнім і чи був стоп за планом.",
+  "РўРё РІР·СЏРІ СЃРёРіРЅР°Р», Р°Р»Рµ РІС–РЅ РЅРµ РІС–РґРїСЂР°С†СЋРІР°РІ. Р РѕР·Р±РµСЂРё, С‡Рё Р±СѓР»Рѕ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ, С‡Рё РЅРµ Р±СѓРІ РІС…С–Рґ РїС–Р·РЅС–Рј С– С‡Рё Р±СѓРІ СЃС‚РѕРї Р·Р° РїР»Р°РЅРѕРј.",
 outcomeSkippedWorked:
-  "Сигнал був пропущений, але потім відпрацював. Це missed opportunity — перевір, чому не було входу: страх, не був біля екрана або сумнів.",
+  "РЎРёРіРЅР°Р» Р±СѓРІ РїСЂРѕРїСѓС‰РµРЅРёР№, Р°Р»Рµ РїРѕС‚С–Рј РІС–РґРїСЂР°С†СЋРІР°РІ. Р¦Рµ missed opportunity вЂ” РїРµСЂРµРІС–СЂ, С‡РѕРјСѓ РЅРµ Р±СѓР»Рѕ РІС…РѕРґСѓ: СЃС‚СЂР°С…, РЅРµ Р±СѓРІ Р±С–Р»СЏ РµРєСЂР°РЅР° Р°Р±Рѕ СЃСѓРјРЅС–РІ.",
 outcomeSkippedFailed:
-  "Сигнал був пропущений і не відпрацював. Це хороший фільтр — збережи причину, чому ти не входив.",
+  "РЎРёРіРЅР°Р» Р±СѓРІ РїСЂРѕРїСѓС‰РµРЅРёР№ С– РЅРµ РІС–РґРїСЂР°С†СЋРІР°РІ. Р¦Рµ С…РѕСЂРѕС€РёР№ С„С–Р»СЊС‚СЂ вЂ” Р·Р±РµСЂРµР¶Рё РїСЂРёС‡РёРЅСѓ, С‡РѕРјСѓ С‚Рё РЅРµ РІС…РѕРґРёРІ.",
 outcomeMissedWorked:
-  "Ти відмітив сигнал як Missed, і він відпрацював. Це важлива можливість для навчання: що завадило включитися вчасно?",
+  "РўРё РІС–РґРјС–С‚РёРІ СЃРёРіРЅР°Р» СЏРє Missed, С– РІС–РЅ РІС–РґРїСЂР°С†СЋРІР°РІ. Р¦Рµ РІР°Р¶Р»РёРІР° РјРѕР¶Р»РёРІС–СЃС‚СЊ РґР»СЏ РЅР°РІС‡Р°РЅРЅСЏ: С‰Рѕ Р·Р°РІР°РґРёР»Рѕ РІРєР»СЋС‡РёС‚РёСЃСЏ РІС‡Р°СЃРЅРѕ?",
 outcomeMissedFailed:
-  "Ти відмітив сигнал як Missed, але він не відпрацював. Пропуск був безпечним, але все одно перевір якість ідеї.",
+  "РўРё РІС–РґРјС–С‚РёРІ СЃРёРіРЅР°Р» СЏРє Missed, Р°Р»Рµ РІС–РЅ РЅРµ РІС–РґРїСЂР°С†СЋРІР°РІ. РџСЂРѕРїСѓСЃРє Р±СѓРІ Р±РµР·РїРµС‡РЅРёРј, Р°Р»Рµ РІСЃРµ РѕРґРЅРѕ РїРµСЂРµРІС–СЂ СЏРєС–СЃС‚СЊ С–РґРµС—.",
 outcomePendingNote:
-  "Outcome ще pending. Пізніше SkillEdge зможе порівняти твоє рішення з фактичним рухом ціни.",
+  "Outcome С‰Рµ pending. РџС–Р·РЅС–С€Рµ SkillEdge Р·РјРѕР¶Рµ РїРѕСЂС–РІРЅСЏС‚Рё С‚РІРѕС” СЂС–С€РµРЅРЅСЏ Р· С„Р°РєС‚РёС‡РЅРёРј СЂСѓС…РѕРј С†С–РЅРё.",
 outcomeNeutralNote:
-  "Outcome neutral. Сигнал не дав чистого follow-through, тому важливо оцінювати якість рішення, а не тільки PnL.",
+  "Outcome neutral. РЎРёРіРЅР°Р» РЅРµ РґР°РІ С‡РёСЃС‚РѕРіРѕ follow-through, С‚РѕРјСѓ РІР°Р¶Р»РёРІРѕ РѕС†С–РЅСЋРІР°С‚Рё СЏРєС–СЃС‚СЊ СЂС–С€РµРЅРЅСЏ, Р° РЅРµ С‚С–Р»СЊРєРё PnL.",
 outcomeLearningLabel: "Learning note",
 outcomeStatsLabel: "Outcome stats",
 outcomeLearningAnalyticsTitle: "Outcome Learning Analytics",
 outcomeLearningAnalyticsText:
-  "SkillEdge групує alerts за рішенням клієнта і фактичним результатом сигналу: що було взято, що провалилось, що стало missed opportunity і де клієнт правильно відфільтрував слабку ідею.",
+  "SkillEdge РіСЂСѓРїСѓС” alerts Р·Р° СЂС–С€РµРЅРЅСЏРј РєР»С–С”РЅС‚Р° С– С„Р°РєС‚РёС‡РЅРёРј СЂРµР·СѓР»СЊС‚Р°С‚РѕРј СЃРёРіРЅР°Р»Сѓ: С‰Рѕ Р±СѓР»Рѕ РІР·СЏС‚Рѕ, С‰Рѕ РїСЂРѕРІР°Р»РёР»РѕСЃСЊ, С‰Рѕ СЃС‚Р°Р»Рѕ missed opportunity С– РґРµ РєР»С–С”РЅС‚ РїСЂР°РІРёР»СЊРЅРѕ РІС–РґС„С–Р»СЊС‚СЂСѓРІР°РІ СЃР»Р°Р±РєСѓ С–РґРµСЋ.",
 filterTakenWorked: "Taken + Worked",
 filterTakenFailed: "Taken + Failed",
 filterMissedOpportunity: "Missed opportunity",
 filterGoodSkip: "Good skip",
-takenWorkedText: "Сигнали, які клієнт взяв і які відпрацювали.",
-takenFailedText: "Сигнали, які клієнт взяв, але вони не відпрацювали.",
-missedOpportunityText: "Сигнали, які клієнт пропустив, але вони потім відпрацювали.",
-goodSkipText: "Сигнали, які клієнт пропустив, і вони не відпрацювали.",
+takenWorkedText: "РЎРёРіРЅР°Р»Рё, СЏРєС– РєР»С–С”РЅС‚ РІР·СЏРІ С– СЏРєС– РІС–РґРїСЂР°С†СЋРІР°Р»Рё.",
+takenFailedText: "РЎРёРіРЅР°Р»Рё, СЏРєС– РєР»С–С”РЅС‚ РІР·СЏРІ, Р°Р»Рµ РІРѕРЅРё РЅРµ РІС–РґРїСЂР°С†СЋРІР°Р»Рё.",
+missedOpportunityText: "РЎРёРіРЅР°Р»Рё, СЏРєС– РєР»С–С”РЅС‚ РїСЂРѕРїСѓСЃС‚РёРІ, Р°Р»Рµ РІРѕРЅРё РїРѕС‚С–Рј РІС–РґРїСЂР°С†СЋРІР°Р»Рё.",
+goodSkipText: "РЎРёРіРЅР°Р»Рё, СЏРєС– РєР»С–С”РЅС‚ РїСЂРѕРїСѓСЃС‚РёРІ, С– РІРѕРЅРё РЅРµ РІС–РґРїСЂР°С†СЋРІР°Р»Рё.",
 outcomeLearningFocusTitle: "Outcome Learning Focus",
 outcomeLearningFocusText:
-  "SkillEdge обирає головний фокус навчання на основі того, як рішення клієнта збіглися з фактичним результатом сигналів.",
+  "SkillEdge РѕР±РёСЂР°С” РіРѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ РЅР°РІС‡Р°РЅРЅСЏ РЅР° РѕСЃРЅРѕРІС– С‚РѕРіРѕ, СЏРє СЂС–С€РµРЅРЅСЏ РєР»С–С”РЅС‚Р° Р·Р±С–РіР»РёСЃСЏ Р· С„Р°РєС‚РёС‡РЅРёРј СЂРµР·СѓР»СЊС‚Р°С‚РѕРј СЃРёРіРЅР°Р»С–РІ.",
 outcomeFocusTakenWorked:
-  "Сильна зона: клієнт бере сигнали, які відпрацьовують. Тепер важливо перевірити якість виконання і повторюваність цих setup.",
+  "РЎРёР»СЊРЅР° Р·РѕРЅР°: РєР»С–С”РЅС‚ Р±РµСЂРµ СЃРёРіРЅР°Р»Рё, СЏРєС– РІС–РґРїСЂР°С†СЊРѕРІСѓСЋС‚СЊ. РўРµРїРµСЂ РІР°Р¶Р»РёРІРѕ РїРµСЂРµРІС–СЂРёС‚Рё СЏРєС–СЃС‚СЊ РІРёРєРѕРЅР°РЅРЅСЏ С– РїРѕРІС‚РѕСЂСЋРІР°РЅС–СЃС‚СЊ С†РёС… setup.",
 outcomeFocusTakenFailed:
-  "Головний фокус — taken failed. Клієнт бере сигнали, які не відпрацьовують. Потрібно перевірити підтвердження, вхід, ризик і фільтри якості.",
+  "Р“РѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ вЂ” taken failed. РљР»С–С”РЅС‚ Р±РµСЂРµ СЃРёРіРЅР°Р»Рё, СЏРєС– РЅРµ РІС–РґРїСЂР°С†СЊРѕРІСѓСЋС‚СЊ. РџРѕС‚СЂС–Р±РЅРѕ РїРµСЂРµРІС–СЂРёС‚Рё РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ, РІС…С–Рґ, СЂРёР·РёРє С– С„С–Р»СЊС‚СЂРё СЏРєРѕСЃС‚С–.",
 outcomeFocusMissedOpportunity:
-  "Головний фокус — missed opportunities. Клієнт пропускає сигнали, які потім відпрацьовують. Потрібно зрозуміти причину: страх, сумнів, відсутність біля екрана або пізня реакція.",
+  "Р“РѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ вЂ” missed opportunities. РљР»С–С”РЅС‚ РїСЂРѕРїСѓСЃРєР°С” СЃРёРіРЅР°Р»Рё, СЏРєС– РїРѕС‚С–Рј РІС–РґРїСЂР°С†СЊРѕРІСѓСЋС‚СЊ. РџРѕС‚СЂС–Р±РЅРѕ Р·СЂРѕР·СѓРјС–С‚Рё РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, СЃСѓРјРЅС–РІ, РІС–РґСЃСѓС‚РЅС–СЃС‚СЊ Р±С–Р»СЏ РµРєСЂР°РЅР° Р°Р±Рѕ РїС–Р·РЅСЏ СЂРµР°РєС†С–СЏ.",
 outcomeFocusGoodSkip:
-  "Сильна зона фільтрації: клієнт пропускає сигнали, які не відпрацьовують. Потрібно зберегти причини таких рішень у playbook.",
+  "РЎРёР»СЊРЅР° Р·РѕРЅР° С„С–Р»СЊС‚СЂР°С†С–С—: РєР»С–С”РЅС‚ РїСЂРѕРїСѓСЃРєР°С” СЃРёРіРЅР°Р»Рё, СЏРєС– РЅРµ РІС–РґРїСЂР°С†СЊРѕРІСѓСЋС‚СЊ. РџРѕС‚СЂС–Р±РЅРѕ Р·Р±РµСЂРµРіС‚Рё РїСЂРёС‡РёРЅРё С‚Р°РєРёС… СЂС–С€РµРЅСЊ Сѓ playbook.",
 outcomeFocusEmpty:
-  "Поки недостатньо відмічених рішень і outcomes. Відмічай alerts як Taken, Skipped або Missed, щоб SkillEdge почав будувати learning focus.",
-openOutcomeFocusAlerts: "Відкрити alerts з цим фокусом",
+  "РџРѕРєРё РЅРµРґРѕСЃС‚Р°С‚РЅСЊРѕ РІС–РґРјС–С‡РµРЅРёС… СЂС–С€РµРЅСЊ С– outcomes. Р’С–РґРјС–С‡Р°Р№ alerts СЏРє Taken, Skipped Р°Р±Рѕ Missed, С‰РѕР± SkillEdge РїРѕС‡Р°РІ Р±СѓРґСѓРІР°С‚Рё learning focus.",
+openOutcomeFocusAlerts: "Р’С–РґРєСЂРёС‚Рё alerts Р· С†РёРј С„РѕРєСѓСЃРѕРј",
 missedOpportunityCoachTitle: "Missed Opportunity Coach",
 missedOpportunityCoachText:
-  "SkillEdge розбирає робочі сигнали, які клієнт пропустив, щоб знайти повторювану причину: страх, відсутність біля екрана, пізня реакція або слабка довіра до setup.",
+  "SkillEdge СЂРѕР·Р±РёСЂР°С” СЂРѕР±РѕС‡С– СЃРёРіРЅР°Р»Рё, СЏРєС– РєР»С–С”РЅС‚ РїСЂРѕРїСѓСЃС‚РёРІ, С‰РѕР± Р·РЅР°Р№С‚Рё РїРѕРІС‚РѕСЂСЋРІР°РЅСѓ РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, РІС–РґСЃСѓС‚РЅС–СЃС‚СЊ Р±С–Р»СЏ РµРєСЂР°РЅР°, РїС–Р·РЅСЏ СЂРµР°РєС†С–СЏ Р°Р±Рѕ СЃР»Р°Р±РєР° РґРѕРІС–СЂР° РґРѕ setup.",
 missedOpportunityCoachEmpty:
-  "Поки немає missed opportunities. Це добре: або клієнт не пропускав робочі сигнали, або outcomes ще формуються.",
+  "РџРѕРєРё РЅРµРјР°С” missed opportunities. Р¦Рµ РґРѕР±СЂРµ: Р°Р±Рѕ РєР»С–С”РЅС‚ РЅРµ РїСЂРѕРїСѓСЃРєР°РІ СЂРѕР±РѕС‡С– СЃРёРіРЅР°Р»Рё, Р°Р±Рѕ outcomes С‰Рµ С„РѕСЂРјСѓСЋС‚СЊСЃСЏ.",
 missedOpportunityTopSetup: "Top missed setup",
 missedOpportunityActionPlan: "Missed Opportunity Action Plan",
 missedOpportunityActionOne:
-  "Перед сесією обери 2–3 setup, які ти готовий торгувати без сумнівів при появі trigger.",
+  "РџРµСЂРµРґ СЃРµСЃС–С”СЋ РѕР±РµСЂРё 2вЂ“3 setup, СЏРєС– С‚Рё РіРѕС‚РѕРІРёР№ С‚РѕСЂРіСѓРІР°С‚Рё Р±РµР· СЃСѓРјРЅС–РІС–РІ РїСЂРё РїРѕСЏРІС– trigger.",
 missedOpportunityActionTwo:
-  "Якщо trigger з’явився, але ти не увійшов — одразу відміть причину: страх, запізно, не біля екрана або не вистачило підтвердження.",
+  "РЇРєС‰Рѕ trigger Р·вЂ™СЏРІРёРІСЃСЏ, Р°Р»Рµ С‚Рё РЅРµ СѓРІС–Р№С€РѕРІ вЂ” РѕРґСЂР°Р·Сѓ РІС–РґРјС–С‚СЊ РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, Р·Р°РїС–Р·РЅРѕ, РЅРµ Р±С–Р»СЏ РµРєСЂР°РЅР° Р°Р±Рѕ РЅРµ РІРёСЃС‚Р°С‡РёР»Рѕ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ.",
 missedOpportunityActionThree:
-  "Якщо сигнал відпрацював без тебе — додай його в playbook і виріши, що має змінитися, щоб наступного разу не пропустити.",
-alertsStateLoadingTitle: "SkillEdge AI сканує ринок",
+  "РЇРєС‰Рѕ СЃРёРіРЅР°Р» РІС–РґРїСЂР°С†СЋРІР°РІ Р±РµР· С‚РµР±Рµ вЂ” РґРѕРґР°Р№ Р№РѕРіРѕ РІ playbook С– РІРёСЂС–С€Рё, С‰Рѕ РјР°С” Р·РјС–РЅРёС‚РёСЃСЏ, С‰РѕР± РЅР°СЃС‚СѓРїРЅРѕРіРѕ СЂР°Р·Сѓ РЅРµ РїСЂРѕРїСѓСЃС‚РёС‚Рё.",
+alertsStateLoadingTitle: "SkillEdge AI СЃРєР°РЅСѓС” СЂРёРЅРѕРє",
 alertsStateLoadingText:
-  "Завантажуємо останні alerts, перевіряємо персональний пріоритет, журнал, outcomes і свіжість сигналів.",
-alertsStateErrorTitle: "Не вдалося завантажити AI Alerts",
+  "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ РѕСЃС‚Р°РЅРЅС– alerts, РїРµСЂРµРІС–СЂСЏС”РјРѕ РїРµСЂСЃРѕРЅР°Р»СЊРЅРёР№ РїСЂС–РѕСЂРёС‚РµС‚, Р¶СѓСЂРЅР°Р», outcomes С– СЃРІС–Р¶С–СЃС‚СЊ СЃРёРіРЅР°Р»С–РІ.",
+alertsStateErrorTitle: "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё AI Alerts",
 alertsStateErrorText:
-  "Перевір підключення, авторизацію або повтори запит. Якщо помилка повторюється — потрібно перевірити backend/API logs.",
-alertsStateEmptyTitle: "AI Trading Desk чекає якісний setup",
+  "РџРµСЂРµРІС–СЂ РїС–РґРєР»СЋС‡РµРЅРЅСЏ, Р°РІС‚РѕСЂРёР·Р°С†С–СЋ Р°Р±Рѕ РїРѕРІС‚РѕСЂРё Р·Р°РїРёС‚. РЇРєС‰Рѕ РїРѕРјРёР»РєР° РїРѕРІС‚РѕСЂСЋС”С‚СЊСЃСЏ вЂ” РїРѕС‚СЂС–Р±РЅРѕ РїРµСЂРµРІС–СЂРёС‚Рё backend/API logs.",
+alertsStateEmptyTitle: "AI Trading Desk С‡РµРєР°С” СЏРєС–СЃРЅРёР№ setup",
 alertsStateEmptyText:
-  "Зараз немає активних alerts. Це нормально: SkillEdge не має стріляти шумом. Краще менше сигналів, але вища якість і зрозуміліший ризик.",
-alertsStateFilterEmptyTitle: "Для цього фільтра alerts немає",
+  "Р—Р°СЂР°Р· РЅРµРјР°С” Р°РєС‚РёРІРЅРёС… alerts. Р¦Рµ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge РЅРµ РјР°С” СЃС‚СЂС–Р»СЏС‚Рё С€СѓРјРѕРј. РљСЂР°С‰Рµ РјРµРЅС€Рµ СЃРёРіРЅР°Р»С–РІ, Р°Р»Рµ РІРёС‰Р° СЏРєС–СЃС‚СЊ С– Р·СЂРѕР·СѓРјС–Р»С–С€РёР№ СЂРёР·РёРє.",
+alertsStateFilterEmptyTitle: "Р”Р»СЏ С†СЊРѕРіРѕ С„С–Р»СЊС‚СЂР° alerts РЅРµРјР°С”",
 alertsStateFilterEmptyText:
-  "Список працює, але поточний фільтр не знайшов відповідних сигналів. Скинь фільтр або дочекайся нової high-confidence ситуації.",
-alertsStateResetFilters: "Скинути фільтри",
-alertsStateRetry: "Повторити завантаження",
-alertsStateRunScan: "Запустити скан",
-alertsStateLiveNote: "Live monitoring працює у фоні",
+  "РЎРїРёСЃРѕРє РїСЂР°С†СЋС”, Р°Р»Рµ РїРѕС‚РѕС‡РЅРёР№ С„С–Р»СЊС‚СЂ РЅРµ Р·РЅР°Р№С€РѕРІ РІС–РґРїРѕРІС–РґРЅРёС… СЃРёРіРЅР°Р»С–РІ. РЎРєРёРЅСЊ С„С–Р»СЊС‚СЂ Р°Р±Рѕ РґРѕС‡РµРєР°Р№СЃСЏ РЅРѕРІРѕС— high-confidence СЃРёС‚СѓР°С†С–С—.",
+alertsStateResetFilters: "РЎРєРёРЅСѓС‚Рё С„С–Р»СЊС‚СЂРё",
+alertsStateRetry: "РџРѕРІС‚РѕСЂРёС‚Рё Р·Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ",
+alertsStateRunScan: "Р—Р°РїСѓСЃС‚РёС‚Рё СЃРєР°РЅ",
+alertsStateLiveNote: "Live monitoring РїСЂР°С†СЋС” Сѓ С„РѕРЅС–",
 selectedFilter: "Selected filter",
 totalAlerts: "Total alerts",
-alertsStateErrorLabel: "Помилка",
-alertsStateLoadingLabel: "Завантаження",
-alertsStateWaitingLabel: "Очікування",
+alertsStateErrorLabel: "РџРѕРјРёР»РєР°",
+alertsStateLoadingLabel: "Р—Р°РІР°РЅС‚Р°Р¶РµРЅРЅСЏ",
+alertsStateWaitingLabel: "РћС‡С–РєСѓРІР°РЅРЅСЏ",
 alertsStateLiveMonitoringLabel: "Live monitoring",
-decisionVsOutcomeLabel: "Рішення / outcome",
-nextLearningFocus: "Наступний learning focus",
-noFocusYet: "Фокус ще не сформований",
-outcomeProfileStillForming: "Outcome learning profile ще формується",
+decisionVsOutcomeLabel: "Р С–С€РµРЅРЅСЏ / outcome",
+nextLearningFocus: "РќР°СЃС‚СѓРїРЅРёР№ learning focus",
+noFocusYet: "Р¤РѕРєСѓСЃ С‰Рµ РЅРµ СЃС„РѕСЂРјРѕРІР°РЅРёР№",
+outcomeProfileStillForming: "Outcome learning profile С‰Рµ С„РѕСЂРјСѓС”С‚СЊСЃСЏ",
 missedOpportunitiesLabel: "missed opportunities",
-noMissedOpportunityPatternTitle: "Патерн missed opportunities ще не сформований",
-workedAlertsMissedSuffix: "робочих alerts були пропущені в цій групі setup.",
+noMissedOpportunityPatternTitle: "РџР°С‚РµСЂРЅ missed opportunities С‰Рµ РЅРµ СЃС„РѕСЂРјРѕРІР°РЅРёР№",
+workedAlertsMissedSuffix: "СЂРѕР±РѕС‡РёС… alerts Р±СѓР»Рё РїСЂРѕРїСѓС‰РµРЅС– РІ С†С–Р№ РіСЂСѓРїС– setup.",
 },
-  }[safeLanguage];
+  }
+[safeLanguage];
+
+  const alertCopyOverrides = {
+    en: {
+      commonMistakeLabel: "Common mistake:",
+      scoreDisclaimer:
+        "Score is not a guarantee. Trade only after confirmation, valid risk/reward and your own execution checklist.",
+      closeBreakdownHint: "or click outside the window to close this breakdown.",
+    },
+    ru: {
+      title: "Р¦РµРЅС‚СЂ AI-СЃРёРіРЅР°Р»РѕРІ",
+      subtitle:
+        "РЎРёРіРЅР°Р»С‹ Р·Р° РїРѕСЃР»РµРґРЅРёРµ РґРЅРё: РЅР°РїСЂР°РІР»РµРЅРёРµ, СЃРµС‚Р°Рї, Р·РѕРЅР° РІС…РѕРґР°, СЃС‚РѕРї, С†РµР»Рё, СЂРёСЃРє Рё РїР»Р°РЅ СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёСЏ.",
+      empty: "РџРѕРєР° РЅРµС‚ Р°РєС‚РёРІРЅС‹С… СЃРёРіРЅР°Р»РѕРІ. Р—Р°РїСѓСЃС‚Рё СЃРєР°РЅРёСЂРѕРІР°РЅРёРµ СЂС‹РЅРєР°.",
+      locked:
+        "AI-СЃРёРіРЅР°Р»С‹ РґРѕСЃС‚СѓРїРЅС‹ С‚РѕР»СЊРєРѕ РЅР° SkillEdge Elite. SkillEdge Edge РѕС‚РєСЂС‹РІР°РµС‚ AI-СЃРєР°РЅРµСЂ Рё СЂС‹РЅРѕС‡РЅСѓСЋ СЂР°Р·РІРµРґРєСѓ, РЅРѕ real-time AI-СЃРёРіРЅР°Р»С‹, РїР»Р°РІР°СЋС‰РёР№ РІРёРґР¶РµС‚, СЃРІСЏР·РєР° СЃРёРіРЅР°Р»РѕРІ СЃ Р¶СѓСЂРЅР°Р»РѕРј Рё РѕР±СѓС‡РµРЅРёРµ РЅР° РёСЃС…РѕРґР°С… РґРѕСЃС‚СѓРїРЅС‹ С‚РѕР»СЊРєРѕ РІ Elite.",
+      saveToPlaybook: "РЎРѕС…СЂР°РЅРёС‚СЊ РІ РїР»РµР№Р±СѓРє",
+      openPlaybook: "РћС‚РєСЂС‹С‚СЊ РїР»РµР№Р±СѓРє",
+      hidePlaybook: "РЎРєСЂС‹С‚СЊ РїР»РµР№Р±СѓРє",
+      playbookTitle: "Р›РёС‡РЅС‹Р№ РїР»РµР№Р±СѓРє СЃРёРіРЅР°Р»РѕРІ",
+      playbookText:
+        "Р›РёС‡РЅР°СЏ Р±Р°Р·Р° СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… СЃРµС‚Р°РїРѕРІ: Р»РѕРіРёРєР°, РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ, РѕС€РёР±РєРё Рё РїСЂРёРјРµСЂС‹ СЃРёРіРЅР°Р»РѕРІ.",
+      playbookEmpty:
+        "РџРѕРєР° РЅРµС‚ СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… СЃРµС‚Р°РїРѕРІ. РќР°Р¶РјРё В«РЎРѕС…СЂР°РЅРёС‚СЊ РІ РїР»РµР№Р±СѓРєВ» РЅР° Р»СЋР±РѕРј СЃРёРіРЅР°Р»Рµ.",
+      playbookLoading: "Р—Р°РіСЂСѓР¶Р°РµРј РїР»РµР№Р±СѓРє...",
+      lastExample: "РџРѕСЃР»РµРґРЅРёР№ РїСЂРёРјРµСЂ",
+      openSignalProfile: "РћС‚РєСЂС‹С‚СЊ РїСЂРѕС„РёР»СЊ СЃРёРіРЅР°Р»РѕРІ",
+      hideSignalProfile: "РЎРєСЂС‹С‚СЊ РїСЂРѕС„РёР»СЊ СЃРёРіРЅР°Р»РѕРІ",
+      signalProfileTitle: "РџРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РїСЂРѕС„РёР»СЊ СЃРёРіРЅР°Р»РѕРІ",
+      signalProfileText:
+        "SkillEdge AI РїРѕРєР°Р·С‹РІР°РµС‚, РєР°РєРёРµ AI-СЃРµС‚Р°РїС‹ С‚С‹ С‚РѕСЂРіСѓРµС€СЊ Р»СѓС‡С€Рµ, РіРґРµ С‚РµСЂСЏРµС€СЊ РґРµРЅСЊРіРё Рё РєР°РєРёРµ СЃРёРіРЅР°Р»С‹ СЃС‚РѕРёС‚ РїСЂРёРѕСЂРёС‚РµР·РёСЂРѕРІР°С‚СЊ.",
+      signalProfileEmpty:
+        "РџСЂРѕС„РёР»СЊ РїРѕРєР° РїСѓСЃС‚РѕР№. РЎРѕР·РґР°Р№ СЃРґРµР»РєРё РёР· AI-СЃРёРіРЅР°Р»РѕРІ Рё СЃРѕС…СЂР°РЅРё РёС… РІ Р¶СѓСЂРЅР°Р».",
+      signalProfileLoading: "Р—Р°РіСЂСѓР¶Р°РµРј РїСЂРѕС„РёР»СЊ СЃРёРіРЅР°Р»РѕРІ...",
+      personalStrength: "РЎРёР»СЊРЅР°СЏ СЃС‚РѕСЂРѕРЅР°",
+      riskZone: "Р—РѕРЅР° СЂРёСЃРєР°",
+      learningProfile: "РћР±СѓС‡РµРЅРёРµ",
+      neutralProfile: "РќРµР№С‚СЂР°Р»СЊРЅРѕ",
+      strengthScore: "РћС†РµРЅРєР° СЃРёР»С‹",
+      planAdherence: "РЎР»РµРґРѕРІР°РЅРёРµ РїР»Р°РЅСѓ",
+      aiNote: "AI-Р·Р°РјРµС‚РєР°",
+      openTradePatterns: "РћС‚РєСЂС‹С‚СЊ РїР°С‚С‚РµСЂРЅС‹ СЃРґРµР»РѕРє",
+      hideTradePatterns: "РЎРєСЂС‹С‚СЊ РїР°С‚С‚РµСЂРЅС‹ СЃРґРµР»РѕРє",
+      tradePatternsTitle: "РџСЂРѕС„РёР»СЊ СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅС‹С… С‚РѕСЂРіРѕРІС‹С… РїР°С‚С‚РµСЂРЅРѕРІ",
+      tradePatternsText:
+        "SkillEdge AI Р°РЅР°Р»РёР·РёСЂСѓРµС‚ С‚РІРѕРё СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅС‹Рµ РїСЂРёР±С‹Р»СЊРЅС‹Рµ СЃРґРµР»РєРё Рё РёС‰РµС‚ РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ РїР°С‚С‚РµСЂРЅС‹ РґР»СЏ Р±СѓРґСѓС‰РёС… РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹С… AI-СЃРёРіРЅР°Р»РѕРІ.",
+      tradePatternsEmpty:
+        "РџРѕРєР° РЅРµС‚ РЅР°Р№РґРµРЅРЅС‹С… РїР°С‚С‚РµСЂРЅРѕРІ. Р”РѕР±Р°РІСЊ РІ Р¶СѓСЂРЅР°Р» РЅРµСЃРєРѕР»СЊРєРѕ СЃР°РјРѕСЃС‚РѕСЏС‚РµР»СЊРЅС‹С… РїСЂРёР±С‹Р»СЊРЅС‹С… СЃРґРµР»РѕРє.",
+      tradePatternsLoading: "Р—Р°РіСЂСѓР¶Р°РµРј С‚РѕСЂРіРѕРІС‹Рµ РїР°С‚С‚РµСЂРЅС‹...",
+      patternStrength: "РЎРёР»Р° РїР°С‚С‚РµСЂРЅР°",
+      examples: "РџСЂРёРјРµСЂС‹",
+      keywords: "РљР»СЋС‡РµРІС‹Рµ СЃР»РѕРІР°",
+      filterActionable: "Р“РѕС‚РѕРІС‹Рµ Рє РґРµР№СЃС‚РІРёСЋ",
+      filterWatchlist: "РЎРїРёСЃРѕРє РЅР°Р±Р»СЋРґРµРЅРёСЏ",
+      filterLong: "Р›РѕРЅРі",
+      filterShort: "РЁРѕСЂС‚",
+      decisionAnalyticsTitle: "Р РµС€РµРЅРёСЏ РїРѕ СЃРёРіРЅР°Р»Р°Рј",
+      decisionAnalyticsText:
+        "Р—РґРµСЃСЊ РІРёРґРЅРѕ, РєР°Рє РєР»РёРµРЅС‚ СЂР°Р±РѕС‚Р°РµС‚ СЃ СЃРёРіРЅР°Р»Р°РјРё: РЅР°Р±Р»СЋРґР°РµС‚, Р±РµСЂС‘С‚, РїСЂРѕРїСѓСЃРєР°РµС‚ РёР»Рё РѕС‚РјРµС‡Р°РµС‚ СѓРїСѓС‰РµРЅРЅСѓСЋ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ. Р­С‚Рѕ Р±Р°Р·Р° Р±СѓРґСѓС‰РµР№ СЃС‚Р°С‚РёСЃС‚РёРєРё РєР°С‡РµСЃС‚РІР° СЃРёРіРЅР°Р»РѕРІ Рё РёСЃРїРѕР»РЅРµРЅРёСЏ.",
+      filterEmpty: "РќРµС‚ СЃРёРіРЅР°Р»РѕРІ РїРѕРґ РІС‹Р±СЂР°РЅРЅС‹Р№ С„РёР»СЊС‚СЂ.",
+      liveDesk: "Р–РёРІРѕР№ AI Trading Desk",
+      autoRefreshNote:
+        "РЎРёРіРЅР°Р»С‹ РѕР±РЅРѕРІР»СЏСЋС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё. РЎРєР°РЅРёСЂРѕРІР°РЅРёРµ СЂС‹РЅРєР° СЂР°Р±РѕС‚Р°РµС‚ РІ С„РѕРЅРµ, СЃРїРёСЃРѕРє РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ РєР°Р¶РґС‹Рµ 60 СЃРµРєСѓРЅРґ.",
+      smartTopFive:
+        "РџРµСЂРІС‹Рµ 5 СЃРёРіРЅР°Р»РѕРІ РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹ РїРѕ РІР°Р¶РЅРѕСЃС‚Рё: РїСЂРёРѕСЂРёС‚РµС‚, СЃРѕРІРїР°РґРµРЅРёРµ СЃ Р¶СѓСЂРЅР°Р»РѕРј, AI-СЃРёР»Р°, СѓРІРµСЂРµРЅРЅРѕСЃС‚СЊ Рё СЃРІРµР¶РµСЃС‚СЊ СЃРёРіРЅР°Р»Р°.",
+      emptyDeskTitle: "AI Trading Desk Р¶РґС‘С‚ РєР°С‡РµСЃС‚РІРµРЅРЅС‹Р№ СЃРµС‚Р°Рї",
+      emptyDeskText:
+        "РЎРµР№С‡Р°СЃ РЅРµС‚ Р°РєС‚РёРІРЅС‹С… СЃРёРіРЅР°Р»РѕРІ РїРѕРґ РІС‹Р±СЂР°РЅРЅС‹Р№ С„РёР»СЊС‚СЂ. Р­С‚Рѕ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge AI РЅРµ РґРѕР»Р¶РµРЅ СЃС‚СЂРµР»СЏС‚СЊ С€СѓРјРѕРј. РЎРёСЃС‚РµРјР° Р¶РґС‘С‚ high-confidence СЃРёС‚СѓР°С†РёСЋ СЃ РїРѕРЅСЏС‚РЅС‹Рј С‚СЂРёРіРіРµСЂРѕРј, СЃС‚РѕРїРѕРј, С†РµР»СЏРјРё Рё Р·Р°РјРµС‚РєРѕР№ РїРѕ СЂРёСЃРєСѓ.",
+      confidenceTransparency: "РџСЂРѕР·СЂР°С‡РЅРѕСЃС‚СЊ РѕС†РµРЅРєРё",
+      confidenceTransparencyText:
+        "РџРѕС‡РµРјСѓ SkillEdge AI РІС‹РґРµР»РёР» СЌС‚РѕС‚ СЃРёРіРЅР°Р» Рё РєР°РєРёРµ С„Р°РєС‚РѕСЂС‹ СѓСЃРёР»РёРІР°СЋС‚ РёР»Рё РѕСЃР»Р°Р±Р»СЏСЋС‚ РёРґРµСЋ.",
+      breakdownTitle: "Р Р°Р·Р±РѕСЂ СЃРёРіРЅР°Р»Р° SkillEdge AI",
+      journalSyncTitle: "РЎРІСЏР·РєР° СЃ Р¶СѓСЂРЅР°Р»РѕРј",
+      journalSyncText:
+        "РўС‹ РѕС‚РјРµС‚РёР» СЃРёРіРЅР°Р» РєР°Рє В«Р’Р·СЏР»В». РЎРѕР·РґР°Р№ СЃРґРµР»РєСѓ РёР· СЃРёРіРЅР°Р»Р°, С‡С‚РѕР±С‹ SkillEdge РїРѕР·Р¶Рµ СЃСЂР°РІРЅРёР» РїР»Р°РЅ СЃРёРіРЅР°Р»Р° СЃ СЂРµР°Р»СЊРЅС‹Рј РёСЃРїРѕР»РЅРµРЅРёРµРј: РІС…РѕРґ, СЃС‚РѕРї, РІС‹С…РѕРґ, PnL Рё РєР°С‡РµСЃС‚РІРѕ СЃРґРµР»РєРё.",
+      journalSyncAction: "РЎРѕР·РґР°С‚СЊ СЃРґРµР»РєСѓ РёР· СЃРёРіРЅР°Р»Р°",
+      linkedJournalTitle: "РЎРІСЏР·Р°РЅРЅР°СЏ СЃРґРµР»РєР° РІ Р¶СѓСЂРЅР°Р»Рµ",
+      linkedJournalText:
+        "Р­С‚Р° СЃРґРµР»РєР° СѓР¶Рµ СЃРІСЏР·Р°РЅР° СЃ СЃРёРіРЅР°Р»РѕРј. SkillEdge СЃРјРѕР¶РµС‚ СЃСЂР°РІРЅРёС‚СЊ РїР»Р°РЅ СЃРёРіРЅР°Р»Р° СЃ СЂРµР°Р»СЊРЅС‹Рј РёСЃРїРѕР»РЅРµРЅРёРµРј РєР»РёРµРЅС‚Р°.",
+      linkedJournalEmpty:
+        "РџРѕРєР° РЅРµС‚ СЃРѕС…СЂР°РЅС‘РЅРЅРѕР№ СЃРґРµР»РєРё РІ Р¶СѓСЂРЅР°Р»Рµ, СЃРІСЏР·Р°РЅРЅРѕР№ СЃ СЌС‚РёРј СЃРёРіРЅР°Р»РѕРј.",
+      linkedTrades: "РЎРІСЏР·Р°РЅРЅС‹Рµ СЃРґРµР»РєРё",
+      linkedPnl: "PnL СЃРІСЏР·Р°РЅРЅС‹С… СЃРґРµР»РѕРє",
+      linkedResult: "Р РµР·СѓР»СЊС‚Р°С‚",
+      journalLinkAnalyticsTitle: "РЎРёРіРЅР°Р»С‹ в†” Р–СѓСЂРЅР°Р»",
+      journalLinkAnalyticsText:
+        "SkillEdge РѕС‚СЃР»РµР¶РёРІР°РµС‚, РєР°РєРёРµ СЃРёРіРЅР°Р»С‹ РїСЂРµРІСЂР°С‚РёР»РёСЃСЊ РІ СЂРµР°Р»СЊРЅС‹Рµ СЃРґРµР»РєРё РІ Р¶СѓСЂРЅР°Р»Рµ. Р­С‚Рѕ Р±Р°Р·Р° РґР»СЏ Р°РЅР°Р»РёР·Р° РёСЃРїРѕР»РЅРµРЅРёСЏ, PnL РїРѕ СЃРёРіРЅР°Р»Р°Рј Рё СѓРїСѓС‰РµРЅРЅС‹С… РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№.",
+      takenWithoutJournal: "Р’Р·СЏС‚Рѕ Р±РµР· Р¶СѓСЂРЅР°Р»Р°",
+      linkedAlertsCount: "РЎРІСЏР·Р°РЅРЅС‹Рµ СЃРёРіРЅР°Р»С‹",
+      linkedTradesPnl: "PnL СЃРІСЏР·Р°РЅРЅС‹С… СЃРґРµР»РѕРє",
+      avgExecutionScore: "РЎСЂРµРґРЅСЏСЏ РѕС†РµРЅРєР° РёСЃРїРѕР»РЅРµРЅРёСЏ",
+      takenWithoutJournalFilter: "Р’Р·СЏС‚Рѕ Р±РµР· Р¶СѓСЂРЅР°Р»Р°",
+      takenWithoutJournalTitle: "РЎРёРіРЅР°Р» РІР·СЏС‚, РЅРѕ СЃРґРµР»РєРё РІ Р¶СѓСЂРЅР°Р»Рµ РЅРµС‚",
+      takenWithoutJournalText:
+        "РљР»РёРµРЅС‚ РѕС‚РјРµС‚РёР» СЃРёРіРЅР°Р» РєР°Рє В«Р’Р·СЏР»В», РЅРѕ РµС‰С‘ РЅРµ СЃРѕС…СЂР°РЅРёР» СЃРґРµР»РєСѓ РІ Р¶СѓСЂРЅР°Р». РЎРѕР·РґР°Р№ СЃРґРµР»РєСѓ РёР· СЃРёРіРЅР°Р»Р°, С‡С‚РѕР±С‹ SkillEdge СЃРјРѕРі СЃСЂР°РІРЅРёС‚СЊ РїР»Р°РЅ СЃРёРіРЅР°Р»Р° СЃ СЂРµР°Р»СЊРЅС‹Рј РёСЃРїРѕР»РЅРµРЅРёРµРј.",
+      executionScore: "РћС†РµРЅРєР° РёСЃРїРѕР»РЅРµРЅРёСЏ",
+      executionReview: "Р Р°Р·Р±РѕСЂ РёСЃРїРѕР»РЅРµРЅРёСЏ",
+      filterJournalLinked: "РЎРІСЏР·Р°РЅРѕ СЃ Р¶СѓСЂРЅР°Р»РѕРј",
+      filterExecutionStrong: "РЎРёР»СЊРЅРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ",
+      filterExecutionReview: "РќСѓР¶РµРЅ СЂР°Р·Р±РѕСЂ",
+      executionQualityTitle: "РљР°С‡РµСЃС‚РІРѕ РёСЃРїРѕР»РЅРµРЅРёСЏ",
+      executionQualityText:
+        "SkillEdge РїРѕРєР°Р·С‹РІР°РµС‚, РєР°РєРёРµ AI-СЃРёРіРЅР°Р»С‹ СѓР¶Рµ РїСЂРёРІРµР»Рё Рє СЃРґРµР»РєР°Рј РІ Р¶СѓСЂРЅР°Р»Рµ Рё РіРґРµ РёСЃРїРѕР»РЅРµРЅРёРµ Р±С‹Р»Рѕ СЃРёР»СЊРЅС‹Рј РёР»Рё С‚СЂРµР±СѓРµС‚ СЂР°Р·Р±РѕСЂР°.",
+      executionCoachTitle: "AI-РєРѕСѓС‡ РёСЃРїРѕР»РЅРµРЅРёСЏ",
+      executionCoachText:
+        "SkillEdge СЂР°Р·Р±РёСЂР°РµС‚ РёСЃРїРѕР»РЅРµРЅРёРµ РєР»РёРµРЅС‚Р° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°: РІС…РѕРґ, СЃС‚РѕРї, РЅР°РїСЂР°РІР»РµРЅРёРµ, С†РµР»Рё Рё РґРёСЃС†РёРїР»РёРЅСѓ.",
+      executionCoachEntryIssue:
+        "РџСЂРѕР±Р»РµРјР° РІС…РѕРґР°: РІС…РѕРґ Р±С‹Р» РІРЅРµ РїР»Р°РЅРѕРІРѕР№ Р·РѕРЅС‹ РёР»Рё СЃР»РёС€РєРѕРј РїРѕР·РґРЅРѕ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЃРёРіРЅР°Р»Р°.",
+      executionCoachStopIssue:
+        "РџСЂРѕР±Р»РµРјР° СЃС‚РѕРїР°: СЃС‚РѕРї РѕС‚Р»РёС‡Р°РµС‚СЃСЏ РѕС‚ РїР»Р°РЅР° СЃРёРіРЅР°Р»Р°. Р­С‚Рѕ РјРѕР¶РµС‚ Р»РѕРјР°С‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ Рё СЂРёСЃРє/РїРѕС‚РµРЅС†РёР°Р».",
+      executionCoachDirectionIssue:
+        "РџСЂРѕР±Р»РµРјР° РЅР°РїСЂР°РІР»РµРЅРёСЏ: РЅР°РїСЂР°РІР»РµРЅРёРµ СЃРґРµР»РєРё РѕС‚Р»РёС‡Р°РµС‚СЃСЏ РѕС‚ РЅР°РїСЂР°РІР»РµРЅРёСЏ СЃРёРіРЅР°Р»Р°.",
+      executionCoachTargetIssue:
+        "РџСЂРѕР±Р»РµРјР° С†РµР»РµР№: СЃРґРµР»РєР° РЅРµ РґРѕС€Р»Р° РґРѕ TP РёР»Рё РІС‹С…РѕРґ Р±С‹Р» РЅРµ РїРѕ РїР»Р°РЅСѓ.",
+      executionWeaknessTitle: "РљР°СЂС‚Р° СЃР»Р°Р±С‹С… РјРµСЃС‚ РёСЃРїРѕР»РЅРµРЅРёСЏ",
+      entryIssueFilter: "РџСЂРѕР±Р»РµРјС‹ РІС…РѕРґР°",
+      stopIssueFilter: "РџСЂРѕР±Р»РµРјС‹ СЃС‚РѕРїР°",
+      directionIssueFilter: "РџСЂРѕР±Р»РµРјС‹ РЅР°РїСЂР°РІР»РµРЅРёСЏ",
+      targetIssueFilter: "РџСЂРѕР±Р»РµРјС‹ С†РµР»РµР№",
+      executionFocusTitle: "РџРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ С„РѕРєСѓСЃ РёСЃРїРѕР»РЅРµРЅРёСЏ",
+      openFocusAlerts: "РћС‚РєСЂС‹С‚СЊ СЃРёРіРЅР°Р»С‹ СЃ СЌС‚РёРј С„РѕРєСѓСЃРѕРј",
+      executionActionPlanTitle: "РџР»Р°РЅ РґРµР№СЃС‚РІРёР№ РЅР° РЅРµРґРµР»СЋ",
+      executionActionPlanText:
+        "SkillEdge РїСЂРµРІСЂР°С‰Р°РµС‚ РіР»Р°РІРЅС‹Р№ С„РѕРєСѓСЃ РёСЃРїРѕР»РЅРµРЅРёСЏ РІ РєРѕРЅРєСЂРµС‚РЅС‹Рµ РїСЂР°РІРёР»Р° РґР»СЏ СЃР»РµРґСѓСЋС‰РµР№ С‚РѕСЂРіРѕРІРѕР№ РЅРµРґРµР»Рё.",
+      outcomeFollowupTitle: "Р Р°Р·Р±РѕСЂ РёСЃС…РѕРґР° СЃРёРіРЅР°Р»Р°",
+      outcomeFollowupText:
+        "SkillEdge СЃСЂР°РІРЅРёРІР°РµС‚ СЂРµС€РµРЅРёРµ РєР»РёРµРЅС‚Р° СЃ С„Р°РєС‚РёС‡РµСЃРєРёРј СЂРµР·СѓР»СЊС‚Р°С‚РѕРј СЃРёРіРЅР°Р»Р°, С‡С‚РѕР±С‹ РЅР°С…РѕРґРёС‚СЊ СѓРїСѓС‰РµРЅРЅС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё, С…РѕСЂРѕС€РёРµ РїСЂРѕРїСѓСЃРєРё Рё СЃРґРµР»РєРё, РєРѕС‚РѕСЂС‹Рµ С‚СЂРµР±СѓСЋС‚ СЂР°Р·Р±РѕСЂР°.",
+      outcomeLearningLabel: "РЈС‡РµР±РЅР°СЏ Р·Р°РјРµС‚РєР°",
+      outcomeStatsLabel: "РЎС‚Р°С‚РёСЃС‚РёРєР° РёСЃС…РѕРґРѕРІ",
+      outcomeLearningAnalyticsTitle: "РђРЅР°Р»РёС‚РёРєР° РѕР±СѓС‡РµРЅРёСЏ РЅР° РёСЃС…РѕРґР°С…",
+      outcomeLearningAnalyticsText:
+        "SkillEdge РіСЂСѓРїРїРёСЂСѓРµС‚ СЃРёРіРЅР°Р»С‹ РїРѕ СЂРµС€РµРЅРёСЋ РєР»РёРµРЅС‚Р° Рё С„Р°РєС‚РёС‡РµСЃРєРѕРјСѓ СЂРµР·СѓР»СЊС‚Р°С‚Сѓ: С‡С‚Рѕ Р±С‹Р»Рѕ РІР·СЏС‚Рѕ, С‡С‚Рѕ РЅРµ СЃСЂР°Р±РѕС‚Р°Р»Рѕ, С‡С‚Рѕ СЃС‚Р°Р»Рѕ СѓРїСѓС‰РµРЅРЅРѕР№ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊСЋ Рё РіРґРµ РєР»РёРµРЅС‚ РїСЂР°РІРёР»СЊРЅРѕ РѕС‚С„РёР»СЊС‚СЂРѕРІР°Р» СЃР»Р°Р±СѓСЋ РёРґРµСЋ.",
+      outcomeLearningFocusTitle: "Р¤РѕРєСѓСЃ РѕР±СѓС‡РµРЅРёСЏ РЅР° РёСЃС…РѕРґР°С…",
+      missedOpportunityCoachTitle: "РљРѕСѓС‡ СѓРїСѓС‰РµРЅРЅС‹С… РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№",
+      missedOpportunityCoachText:
+        "SkillEdge СЂР°Р·Р±РёСЂР°РµС‚ СЂР°Р±РѕС‡РёРµ СЃРёРіРЅР°Р»С‹, РєРѕС‚РѕСЂС‹Рµ РєР»РёРµРЅС‚ РїСЂРѕРїСѓСЃС‚РёР», С‡С‚РѕР±С‹ РЅР°Р№С‚Рё РїРѕРІС‚РѕСЂСЏСЋС‰СѓСЋСЃСЏ РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, РѕС‚СЃСѓС‚СЃС‚РІРёРµ Сѓ СЌРєСЂР°РЅР°, РїРѕР·РґРЅСЏСЏ СЂРµР°РєС†РёСЏ РёР»Рё СЃР»Р°Р±РѕРµ РґРѕРІРµСЂРёРµ Рє СЃРµС‚Р°РїСѓ.",
+      missedOpportunityTopSetup: "Р“Р»Р°РІРЅС‹Р№ РїСЂРѕРїСѓС‰РµРЅРЅС‹Р№ СЃРµС‚Р°Рї",
+      missedOpportunityActionPlan: "РџР»Р°РЅ РґРµР№СЃС‚РІРёР№ РїРѕ СѓРїСѓС‰РµРЅРЅС‹Рј РІРѕР·РјРѕР¶РЅРѕСЃС‚СЏРј",
+      alertsStateLoadingTitle: "SkillEdge AI СЃРєР°РЅРёСЂСѓРµС‚ СЂС‹РЅРѕРє",
+      alertsStateLoadingText:
+        "Р—Р°РіСЂСѓР¶Р°РµРј РїРѕСЃР»РµРґРЅРёРµ СЃРёРіРЅР°Р»С‹, РїСЂРѕРІРµСЂСЏРµРј РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Р№ РїСЂРёРѕСЂРёС‚РµС‚, РєРѕРЅС‚РµРєСЃС‚ Р¶СѓСЂРЅР°Р»Р°, РёСЃС…РѕРґС‹ Рё СЃРІРµР¶РµСЃС‚СЊ СЃРёРіРЅР°Р»РѕРІ.",
+      alertsStateErrorTitle: "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ AI-СЃРёРіРЅР°Р»С‹",
+      alertsStateErrorText:
+        "РџСЂРѕРІРµСЂСЊ РїРѕРґРєР»СЋС‡РµРЅРёРµ, Р°РІС‚РѕСЂРёР·Р°С†РёСЋ РёР»Рё РїРѕРІС‚РѕСЂРё Р·Р°РїСЂРѕСЃ. Р•СЃР»Рё РѕС€РёР±РєР° РїРѕРІС‚РѕСЂСЏРµС‚СЃСЏ, РЅСѓР¶РЅРѕ РїСЂРѕРІРµСЂРёС‚СЊ backend/API-Р»РѕРіРё.",
+      alertsStateEmptyTitle: "AI Trading Desk Р¶РґС‘С‚ РєР°С‡РµСЃС‚РІРµРЅРЅС‹Р№ СЃРµС‚Р°Рї",
+      alertsStateEmptyText:
+        "РЎРµР№С‡Р°СЃ РЅРµС‚ Р°РєС‚РёРІРЅС‹С… СЃРёРіРЅР°Р»РѕРІ. Р­С‚Рѕ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge РЅРµ РґРѕР»Р¶РµРЅ СЃС‚СЂРµР»СЏС‚СЊ С€СѓРјРѕРј. Р›СѓС‡С€Рµ РјРµРЅСЊС€Рµ СЃРёРіРЅР°Р»РѕРІ, РЅРѕ РІС‹С€Рµ РєР°С‡РµСЃС‚РІРѕ.",
+      alertsStateFilterEmptyTitle: "Р”Р»СЏ СЌС‚РѕРіРѕ С„РёР»СЊС‚СЂР° СЃРёРіРЅР°Р»РѕРІ РЅРµС‚",
+      alertsStateFilterEmptyText:
+        "РЎРїРёСЃРѕРє СЂР°Р±РѕС‚Р°РµС‚, РЅРѕ С‚РµРєСѓС‰РёР№ С„РёР»СЊС‚СЂ РЅРµ РЅР°С€С‘Р» РїРѕРґС…РѕРґСЏС‰РёС… СЃРёРіРЅР°Р»РѕРІ. РЎР±СЂРѕСЃСЊ С„РёР»СЊС‚СЂ РёР»Рё РґРѕР¶РґРёСЃСЊ РЅРѕРІРѕР№ high-confidence СЃРёС‚СѓР°С†РёРё.",
+      alertsStateRunScan: "Р—Р°РїСѓСЃС‚РёС‚СЊ СЃРєР°РЅРёСЂРѕРІР°РЅРёРµ",
+      alertsStateLiveNote: "Р¤РѕРЅРѕРІС‹Р№ РјРѕРЅРёС‚РѕСЂРёРЅРі СЂР°Р±РѕС‚Р°РµС‚",
+      selectedFilter: "Р’С‹Р±СЂР°РЅРЅС‹Р№ С„РёР»СЊС‚СЂ",
+      totalAlerts: "Р’СЃРµРіРѕ СЃРёРіРЅР°Р»РѕРІ",
+      alertsStateLiveMonitoringLabel: "Р¤РѕРЅРѕРІС‹Р№ РјРѕРЅРёС‚РѕСЂРёРЅРі",
+      decisionVsOutcomeLabel: "Р РµС€РµРЅРёРµ / РёСЃС…РѕРґ",
+      nextLearningFocus: "РЎР»РµРґСѓСЋС‰РёР№ С„РѕРєСѓСЃ РѕР±СѓС‡РµРЅРёСЏ",
+      outcomeProfileStillForming: "РџСЂРѕС„РёР»СЊ РѕР±СѓС‡РµРЅРёСЏ РЅР° РёСЃС…РѕРґР°С… РµС‰С‘ С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ",
+      missedOpportunitiesLabel: "СѓРїСѓС‰РµРЅРЅС‹С… РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№",
+      noMissedOpportunityPatternTitle: "РџР°С‚С‚РµСЂРЅ СѓРїСѓС‰РµРЅРЅС‹С… РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№ РµС‰С‘ РЅРµ СЃС„РѕСЂРјРёСЂРѕРІР°РЅ",
+      workedAlertsMissedSuffix: "СЂР°Р±РѕС‡РёС… СЃРёРіРЅР°Р»РѕРІ Р±С‹Р»Рё РїСЂРѕРїСѓС‰РµРЅС‹ РІ СЌС‚РѕР№ РіСЂСѓРїРїРµ СЃРµС‚Р°РїРѕРІ.",
+      commonMistakeLabel: "РўРёРїРёС‡РЅР°СЏ РѕС€РёР±РєР°:",
+      scoreDisclaimer:
+        "РћС†РµРЅРєР° РЅРµ СЏРІР»СЏРµС‚СЃСЏ РіР°СЂР°РЅС‚РёРµР№. РўРѕСЂРіСѓР№ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ, Р°РґРµРєРІР°С‚РЅРѕРіРѕ СЃРѕРѕС‚РЅРѕС€РµРЅРёСЏ СЂРёСЃРєР° Рє РїРѕС‚РµРЅС†РёР°Р»Сѓ Рё СЃРѕР±СЃС‚РІРµРЅРЅРѕРіРѕ С‡РµРєР»РёСЃС‚Р° РёСЃРїРѕР»РЅРµРЅРёСЏ.",
+      closeBreakdownHint: "РёР»Рё РЅР°Р¶РјРё РІРЅРµ РѕРєРЅР°, С‡С‚РѕР±С‹ Р·Р°РєСЂС‹С‚СЊ СЌС‚РѕС‚ СЂР°Р·Р±РѕСЂ.",
+    },
+    ua: {
+      title: "Р¦РµРЅС‚СЂ AI-СЃРёРіРЅР°Р»С–РІ",
+      subtitle:
+        "РћСЃС‚Р°РЅРЅС– СЃРёРіРЅР°Р»Рё: РЅР°РїСЂСЏРјРѕРє, СЃРµС‚Р°Рї, Р·РѕРЅР° РІС…РѕРґСѓ, СЃС‚РѕРї, С†С–Р»С–, СЂРёР·РёРє С– РїР»Р°РЅ СЃСѓРїСЂРѕРІРѕРґСѓ.",
+      empty: "РђРєС‚РёРІРЅРёС… СЃРёРіРЅР°Р»С–РІ РїРѕРєРё РЅРµРјР°С”. Р—Р°РїСѓСЃС‚Рё СЃРєР°РЅСѓРІР°РЅРЅСЏ СЂРёРЅРєСѓ.",
+      locked:
+        "AI-СЃРёРіРЅР°Р»Рё РґРѕСЃС‚СѓРїРЅС– С‚С–Р»СЊРєРё РЅР° SkillEdge Elite. SkillEdge Edge РІС–РґРєСЂРёРІР°С” AI-СЃРєР°РЅРµСЂ С– СЂРёРЅРєРѕРІСѓ СЂРѕР·РІС–РґРєСѓ, Р°Р»Рµ real-time AI-СЃРёРіРЅР°Р»Рё, РїР»Р°РІР°СЋС‡РёР№ РІС–РґР¶РµС‚, Р·РІвЂ™СЏР·РєР° СЃРёРіРЅР°Р»С–РІ С–Р· Р¶СѓСЂРЅР°Р»РѕРј С– РЅР°РІС‡Р°РЅРЅСЏ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚Р°С… РґРѕСЃС‚СѓРїРЅС– С‚С–Р»СЊРєРё РІ Elite.",
+      direction: "РќР°РїСЂСЏРјРѕРє",
+      setup: "РЎРµС‚Р°Рї",
+      entry: "Р—РѕРЅР° РІС…РѕРґСѓ",
+      stop: "РЎС‚РѕРї",
+      targets: "Р¦С–Р»С–",
+      trigger: "РўСЂРёРіРµСЂ",
+      reason: "РџСЂРёС‡РёРЅР°",
+      risk: "Р РёР·РёРє",
+      scenario: "РЎС†РµРЅР°СЂС–Р№",
+      invalidation: "РЎРєР°СЃСѓРІР°РЅРЅСЏ С–РґРµС—",
+      management: "РЎСѓРїСЂРѕРІС–Рґ",
+      confidence: "Р’РїРµРІРЅРµРЅС–СЃС‚СЊ",
+      status: "РЎС‚Р°С‚СѓСЃ",
+      outcome: "Р РµР·СѓР»СЊС‚Р°С‚",
+      time: "Р§Р°СЃ",
+      worked: "Р’С–РґРїСЂР°С†СЋРІР°РІ",
+      failed: "РќРµ РІС–РґРїСЂР°С†СЋРІР°РІ",
+      pending: "РћС‡С–РєСѓС”С‚СЊСЃСЏ",
+      neutral: "РќРµР№С‚СЂР°Р»СЊРЅРѕ",
+      quality: "РЇРєС–СЃС‚СЊ",
+      saveToPlaybook: "Р—Р±РµСЂРµРіС‚Рё РІ РїР»РµР№Р±СѓРє",
+      openPlaybook: "Р’С–РґРєСЂРёС‚Рё РїР»РµР№Р±СѓРє",
+      hidePlaybook: "РЎС…РѕРІР°С‚Рё РїР»РµР№Р±СѓРє",
+      playbookTitle: "РћСЃРѕР±РёСЃС‚РёР№ РїР»РµР№Р±СѓРє СЃРёРіРЅР°Р»С–РІ",
+      playbookText:
+        "РћСЃРѕР±РёСЃС‚Р° Р±Р°Р·Р° Р·Р±РµСЂРµР¶РµРЅРёС… СЃРµС‚Р°РїС–РІ: Р»РѕРіС–РєР°, РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ, РїРѕРјРёР»РєРё С‚Р° РїСЂРёРєР»Р°РґРё СЃРёРіРЅР°Р»С–РІ.",
+      playbookEmpty:
+        "РџРѕРєРё РЅРµРјР°С” Р·Р±РµСЂРµР¶РµРЅРёС… СЃРµС‚Р°РїС–РІ. РќР°С‚РёСЃРЅРё В«Р—Р±РµСЂРµРіС‚Рё РІ РїР»РµР№Р±СѓРєВ» РЅР° Р±СѓРґСЊ-СЏРєРѕРјСѓ СЃРёРіРЅР°Р»С–.",
+      playbookLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ РїР»РµР№Р±СѓРє...",
+      lastExample: "РћСЃС‚Р°РЅРЅС–Р№ РїСЂРёРєР»Р°Рґ",
+      openSignalProfile: "Р’С–РґРєСЂРёС‚Рё РїСЂРѕС„С–Р»СЊ СЃРёРіРЅР°Р»С–РІ",
+      hideSignalProfile: "РЎС…РѕРІР°С‚Рё РїСЂРѕС„С–Р»СЊ СЃРёРіРЅР°Р»С–РІ",
+      signalProfileTitle: "РџРµСЂСЃРѕРЅР°Р»СЊРЅРёР№ РїСЂРѕС„С–Р»СЊ СЃРёРіРЅР°Р»С–РІ",
+      signalProfileText:
+        "SkillEdge AI РїРѕРєР°Р·СѓС”, СЏРєС– AI-СЃРµС‚Р°РїРё С‚Рё С‚РѕСЂРіСѓС”С€ РєСЂР°С‰Рµ, РґРµ РІС‚СЂР°С‡Р°С”С€ РіСЂРѕС€С– С‚Р° СЏРєС– СЃРёРіРЅР°Р»Рё РІР°СЂС‚Рѕ РїСЂС–РѕСЂРёС‚РµР·СѓРІР°С‚Рё.",
+      signalProfileEmpty:
+        "РџСЂРѕС„С–Р»СЊ РїРѕРєРё РїРѕСЂРѕР¶РЅС–Р№. РЎС‚РІРѕСЂРё СѓРіРѕРґРё Р· AI-СЃРёРіРЅР°Р»С–РІ С– Р·Р±РµСЂРµР¶Рё С—С… Сѓ Р¶СѓСЂРЅР°Р».",
+      signalProfileLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ РїСЂРѕС„С–Р»СЊ СЃРёРіРЅР°Р»С–РІ...",
+      personalStrength: "РЎРёР»СЊРЅР° СЃС‚РѕСЂРѕРЅР°",
+      riskZone: "Р—РѕРЅР° СЂРёР·РёРєСѓ",
+      learningProfile: "РќР°РІС‡Р°РЅРЅСЏ",
+      neutralProfile: "РќРµР№С‚СЂР°Р»СЊРЅРѕ",
+      strengthScore: "РћС†С–РЅРєР° СЃРёР»Рё",
+      planAdherence: "Р”РѕС‚СЂРёРјР°РЅРЅСЏ РїР»Р°РЅСѓ",
+      aiNote: "AI-Р·Р°РјС–С‚РєР°",
+      openTradePatterns: "Р’С–РґРєСЂРёС‚Рё РїР°С‚РµСЂРЅРё СѓРіРѕРґ",
+      hideTradePatterns: "РЎС…РѕРІР°С‚Рё РїР°С‚РµСЂРЅРё СѓРіРѕРґ",
+      tradePatternsTitle: "РџСЂРѕС„С–Р»СЊ СЃР°РјРѕСЃС‚С–Р№РЅРёС… С‚РѕСЂРіРѕРІРёС… РїР°С‚РµСЂРЅС–РІ",
+      tradePatternsText:
+        "SkillEdge AI Р°РЅР°Р»С–Р·СѓС” С‚РІРѕС— СЃР°РјРѕСЃС‚С–Р№РЅС– РїСЂРёР±СѓС‚РєРѕРІС– СѓРіРѕРґРё С‚Р° С€СѓРєР°С” РїРѕРІС‚РѕСЂСЋРІР°РЅС– РїР°С‚РµСЂРЅРё РґР»СЏ РјР°Р№Р±СѓС‚РЅС–С… РїРµСЂСЃРѕРЅР°Р»СЊРЅРёС… AI-СЃРёРіРЅР°Р»С–РІ.",
+      tradePatternsEmpty:
+        "РџРѕРєРё РЅРµРјР°С” Р·РЅР°Р№РґРµРЅРёС… РїР°С‚РµСЂРЅС–РІ. Р”РѕРґР°Р№ Сѓ Р¶СѓСЂРЅР°Р» РєС–Р»СЊРєР° СЃР°РјРѕСЃС‚С–Р№РЅРёС… РїСЂРёР±СѓС‚РєРѕРІРёС… СѓРіРѕРґ.",
+      tradePatternsLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ С‚РѕСЂРіРѕРІС– РїР°С‚РµСЂРЅРё...",
+      patternStrength: "РЎРёР»Р° РїР°С‚РµСЂРЅСѓ",
+      examples: "РџСЂРёРєР»Р°РґРё",
+      keywords: "РљР»СЋС‡РѕРІС– СЃР»РѕРІР°",
+      filterAll: "РЈСЃС–",
+      filterActionable: "Р“РѕС‚РѕРІС– РґРѕ РґС–С—",
+      filterWatchlist: "РЎРїРёСЃРѕРє СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ",
+      filterPriority: "РџСЂС–РѕСЂРёС‚РµС‚",
+      filterCaution: "РћР±РµСЂРµР¶РЅРѕ",
+      filterJournalMatch: "Р—Р±С–Рі С–Р· Р¶СѓСЂРЅР°Р»РѕРј",
+      filterAiStrength: "AI-СЃРёР»Р°",
+      filterLong: "Р›РѕРЅРі",
+      filterShort: "РЁРѕСЂС‚",
+      filterCrypto: "РљСЂРёРїС‚Рѕ",
+      filterStocks: "РђРєС†С–С—",
+      filterDecisionWatching: "РЎРїРѕСЃС‚РµСЂС–РіР°СЋ",
+      filterDecisionTaken: "Р’Р·СЏРІ",
+      filterDecisionSkipped: "РџСЂРѕРїСѓСЃС‚РёРІ",
+      filterDecisionMissed: "РЈРїСѓСЃС‚РёРІ",
+      decisionAnalyticsTitle: "Р С–С€РµРЅРЅСЏ РїРѕ СЃРёРіРЅР°Р»Р°С…",
+      decisionAnalyticsText:
+        "РўСѓС‚ РІРёРґРЅРѕ, СЏРє РєР»С–С”РЅС‚ РїСЂР°С†СЋС” Р· СЃРёРіРЅР°Р»Р°РјРё: СЃРїРѕСЃС‚РµСЂС–РіР°С”, Р±РµСЂРµ, РїСЂРѕРїСѓСЃРєР°С” Р°Р±Рѕ РІС–РґРјС–С‡Р°С” СѓРїСѓС‰РµРЅСѓ РјРѕР¶Р»РёРІС–СЃС‚СЊ. Р¦Рµ Р±Р°Р·Р° РјР°Р№Р±СѓС‚РЅСЊРѕС— СЃС‚Р°С‚РёСЃС‚РёРєРё СЏРєРѕСЃС‚С– СЃРёРіРЅР°Р»С–РІ С– РІРёРєРѕРЅР°РЅРЅСЏ.",
+      filterEmpty: "РќРµРјР°С” СЃРёРіРЅР°Р»С–РІ РїС–Рґ РІРёР±СЂР°РЅРёР№ С„С–Р»СЊС‚СЂ.",
+      openAlertDetails: "Р’С–РґРєСЂРёС‚Рё СЂРѕР·Р±С–СЂ",
+      hideAlertDetails: "РЎС…РѕРІР°С‚Рё СЂРѕР·Р±С–СЂ",
+      liveDesk: "Р–РёРІРёР№ AI Trading Desk",
+      lastChecked: "РћСЃС‚Р°РЅРЅСЏ РїРµСЂРµРІС–СЂРєР°",
+      autoRefreshNote:
+        "РЎРёРіРЅР°Р»Рё РѕРЅРѕРІР»СЋСЋС‚СЊСЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ. РЎРєР°РЅСѓРІР°РЅРЅСЏ СЂРёРЅРєСѓ РїСЂР°С†СЋС” Сѓ С„РѕРЅС–, СЃРїРёСЃРѕРє РѕРЅРѕРІР»СЋС”С‚СЊСЃСЏ РєРѕР¶РЅС– 60 СЃРµРєСѓРЅРґ.",
+      showMoreAlerts: "РџРѕРєР°Р·Р°С‚Рё С‰Рµ 10",
+      collapseAlerts: "Р—РіРѕСЂРЅСѓС‚Рё РІСЃРµ",
+      smartTopFive:
+        "РџРµСЂС€С– 5 СЃРёРіРЅР°Р»С–РІ РІС–РґСЃРѕСЂС‚РѕРІР°РЅС– Р·Р° РІР°Р¶Р»РёРІС–СЃС‚СЋ: РїСЂС–РѕСЂРёС‚РµС‚, Р·Р±С–Рі С–Р· Р¶СѓСЂРЅР°Р»РѕРј, AI-СЃРёР»Р°, РІРїРµРІРЅРµРЅС–СЃС‚СЊ С– СЃРІС–Р¶С–СЃС‚СЊ СЃРёРіРЅР°Р»Сѓ.",
+      emptyDeskTitle: "AI Trading Desk С‡РµРєР°С” СЏРєС–СЃРЅРёР№ СЃРµС‚Р°Рї",
+      emptyDeskText:
+        "Р—Р°СЂР°Р· РЅРµРјР°С” Р°РєС‚РёРІРЅРёС… СЃРёРіРЅР°Р»С–РІ РїС–Рґ РІРёР±СЂР°РЅРёР№ С„С–Р»СЊС‚СЂ. Р¦Рµ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge AI РЅРµ РјР°С” СЃС‚СЂС–Р»СЏС‚Рё С€СѓРјРѕРј. РЎРёСЃС‚РµРјР° С‡РµРєР°С” high-confidence СЃРёС‚СѓР°С†С–СЋ Р· С‡С–С‚РєРёРј С‚СЂРёРіРµСЂРѕРј, СЃС‚РѕРїРѕРј, С†С–Р»СЏРјРё С‚Р° РЅРѕС‚Р°С‚РєРѕСЋ РїРѕ СЂРёР·РёРєСѓ.",
+      emptyDeskAction:
+        "Р—Р°Р»РёС€ СЃС‚РѕСЂС–РЅРєСѓ РІС–РґРєСЂРёС‚РѕСЋ вЂ” СЃРїРёСЃРѕРє РѕРЅРѕРІР»СЋС”С‚СЊСЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РЅРѕ РєРѕР¶РЅС– 60 СЃРµРєСѓРЅРґ.",
+      confidenceTransparency: "РџСЂРѕР·РѕСЂС–СЃС‚СЊ РѕС†С–РЅРєРё",
+      confidenceTransparencyText:
+        "Р§РѕРјСѓ SkillEdge AI РІРёРґС–Р»РёРІ С†РµР№ СЃРёРіРЅР°Р» С– СЏРєС– С„Р°РєС‚РѕСЂРё РїРѕСЃРёР»СЋСЋС‚СЊ Р°Р±Рѕ РїРѕСЃР»Р°Р±Р»СЋСЋС‚СЊ С–РґРµСЋ.",
+      breakdownTitle: "Р РѕР·Р±С–СЂ СЃРёРіРЅР°Р»Сѓ SkillEdge AI",
+      traderDecision: "Р С–С€РµРЅРЅСЏ С‚СЂРµР№РґРµСЂР°",
+      tradePlan: "РџР»Р°РЅ СѓРіРѕРґРё",
+      whyNow: "Р§РѕРјСѓ Р·Р°СЂР°Р·",
+      confirmationChecklist: "Р§РµРєР»РёСЃС‚ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ",
+      avoidThisTradeIf: "РќРµ С‚РѕСЂРіСѓРІР°С‚Рё, СЏРєС‰Рѕ",
+      learningLayer: "РќР°РІС‡Р°Р»СЊРЅРёР№ С€Р°СЂ",
+      journalSyncTitle: "Р—РІвЂ™СЏР·РєР° Р· Р¶СѓСЂРЅР°Р»РѕРј",
+      journalSyncText:
+        "РўРё РІС–РґРјС–С‚РёРІ СЃРёРіРЅР°Р» СЏРє В«Р’Р·СЏРІВ». РЎС‚РІРѕСЂРё СѓРіРѕРґСѓ С–Р· СЃРёРіРЅР°Р»Сѓ, С‰РѕР± SkillEdge РїС–Р·РЅС–С€Рµ РїРѕСЂС–РІРЅСЏРІ РїР»Р°РЅ СЃРёРіРЅР°Р»Сѓ Р· СЂРµР°Р»СЊРЅРёРј РІРёРєРѕРЅР°РЅРЅСЏРј: РІС…С–Рґ, СЃС‚РѕРї, РІРёС…С–Рґ, PnL С– СЏРєС–СЃС‚СЊ СѓРіРѕРґРё.",
+      journalSyncAction: "РЎС‚РІРѕСЂРёС‚Рё СѓРіРѕРґСѓ С–Р· СЃРёРіРЅР°Р»Сѓ",
+      linkedJournalTitle: "РџРѕРІвЂ™СЏР·Р°РЅР° СѓРіРѕРґР° РІ Р¶СѓСЂРЅР°Р»С–",
+      linkedJournalText:
+        "Р¦СЏ СѓРіРѕРґР° РІР¶Рµ РїРѕРІвЂ™СЏР·Р°РЅР° С–Р· СЃРёРіРЅР°Р»РѕРј. SkillEdge Р·РјРѕР¶Рµ РїРѕСЂС–РІРЅСЏС‚Рё РїР»Р°РЅ СЃРёРіРЅР°Р»Сѓ Р· СЂРµР°Р»СЊРЅРёРј РІРёРєРѕРЅР°РЅРЅСЏРј РєР»С–С”РЅС‚Р°.",
+      linkedJournalEmpty:
+        "РџРѕРєРё РЅРµРјР°С” Р·Р±РµСЂРµР¶РµРЅРѕС— СѓРіРѕРґРё РІ Р¶СѓСЂРЅР°Р»С–, РїРѕРІвЂ™СЏР·Р°РЅРѕС— Р· С†РёРј СЃРёРіРЅР°Р»РѕРј.",
+      linkedTrades: "РџРѕРІвЂ™СЏР·Р°РЅС– СѓРіРѕРґРё",
+      linkedPnl: "PnL РїРѕРІвЂ™СЏР·Р°РЅРёС… СѓРіРѕРґ",
+      linkedResult: "Р РµР·СѓР»СЊС‚Р°С‚",
+      journalLinkAnalyticsTitle: "РЎРёРіРЅР°Р»Рё в†” Р–СѓСЂРЅР°Р»",
+      journalLinkAnalyticsText:
+        "SkillEdge РІС–РґСЃС‚РµР¶СѓС”, СЏРєС– СЃРёРіРЅР°Р»Рё СЃС‚Р°Р»Рё СЂРµР°Р»СЊРЅРёРјРё СѓРіРѕРґР°РјРё РІ Р¶СѓСЂРЅР°Р»С–. Р¦Рµ Р±Р°Р·Р° РґР»СЏ Р°РЅР°Р»С–Р·Сѓ РІРёРєРѕРЅР°РЅРЅСЏ, PnL РїРѕ СЃРёРіРЅР°Р»Р°С… С– СѓРїСѓС‰РµРЅРёС… РјРѕР¶Р»РёРІРѕСЃС‚РµР№.",
+      takenWithoutJournal: "Р’Р·СЏС‚Рѕ Р±РµР· Р¶СѓСЂРЅР°Р»Сѓ",
+      linkedAlertsCount: "РџРѕРІвЂ™СЏР·Р°РЅС– СЃРёРіРЅР°Р»Рё",
+      linkedTradesPnl: "PnL РїРѕРІвЂ™СЏР·Р°РЅРёС… СѓРіРѕРґ",
+      avgExecutionScore: "РЎРµСЂРµРґРЅСЏ РѕС†С–РЅРєР° РІРёРєРѕРЅР°РЅРЅСЏ",
+      takenWithoutJournalFilter: "Р’Р·СЏС‚Рѕ Р±РµР· Р¶СѓСЂРЅР°Р»Сѓ",
+      takenWithoutJournalTitle: "РЎРёРіРЅР°Р» РІР·СЏС‚Рѕ, Р°Р»Рµ СѓРіРѕРґРё РІ Р¶СѓСЂРЅР°Р»С– РЅРµРјР°С”",
+      takenWithoutJournalText:
+        "РљР»С–С”РЅС‚ РІС–РґРјС–С‚РёРІ СЃРёРіРЅР°Р» СЏРє В«Р’Р·СЏРІВ», Р°Р»Рµ С‰Рµ РЅРµ Р·Р±РµСЂС–Рі СѓРіРѕРґСѓ РІ Р¶СѓСЂРЅР°Р». РЎС‚РІРѕСЂРё СѓРіРѕРґСѓ С–Р· СЃРёРіРЅР°Р»Сѓ, С‰РѕР± SkillEdge Р·РјС–Рі РїРѕСЂС–РІРЅСЏС‚Рё РїР»Р°РЅ СЃРёРіРЅР°Р»Сѓ Р· СЂРµР°Р»СЊРЅРёРј РІРёРєРѕРЅР°РЅРЅСЏРј.",
+      executionScore: "РћС†С–РЅРєР° РІРёРєРѕРЅР°РЅРЅСЏ",
+      executionReview: "Р РѕР·Р±С–СЂ РІРёРєРѕРЅР°РЅРЅСЏ",
+      executionStrong: "РЎРёР»СЊРЅРµ РІРёРєРѕРЅР°РЅРЅСЏ",
+      executionMedium: "РќРѕСЂРјР°Р»СЊРЅРѕ, Р°Р»Рµ С” С‰Рѕ РїРѕРєСЂР°С‰РёС‚Рё",
+      executionWeak: "РџРѕС‚СЂС–Р±РµРЅ СЂРѕР·Р±С–СЂ РІРёРєРѕРЅР°РЅРЅСЏ",
+      filterJournalLinked: "РџРѕРІвЂ™СЏР·Р°РЅРѕ Р· Р¶СѓСЂРЅР°Р»РѕРј",
+      filterExecutionStrong: "РЎРёР»СЊРЅРµ РІРёРєРѕРЅР°РЅРЅСЏ",
+      filterExecutionReview: "РџРѕС‚СЂС–Р±РµРЅ СЂРѕР·Р±С–СЂ",
+      executionQualityTitle: "РЇРєС–СЃС‚СЊ РІРёРєРѕРЅР°РЅРЅСЏ",
+      executionQualityText:
+        "SkillEdge РїРѕРєР°Р·СѓС”, СЏРєС– AI-СЃРёРіРЅР°Р»Рё РІР¶Рµ СЃС‚Р°Р»Рё СѓРіРѕРґР°РјРё РІ Р¶СѓСЂРЅР°Р»С– С– РґРµ РІРёРєРѕРЅР°РЅРЅСЏ Р±СѓР»Рѕ СЃРёР»СЊРЅРёРј Р°Р±Рѕ РїРѕС‚СЂРµР±СѓС” СЂРѕР·Р±РѕСЂСѓ.",
+      executionCoachTitle: "AI-РєРѕСѓС‡ РІРёРєРѕРЅР°РЅРЅСЏ",
+      executionCoachText:
+        "SkillEdge СЂРѕР·Р±РёСЂР°С” РІРёРєРѕРЅР°РЅРЅСЏ РєР»С–С”РЅС‚Р° РІС–РґРЅРѕСЃРЅРѕ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ: РІС…С–Рґ, СЃС‚РѕРї, РЅР°РїСЂСЏРјРѕРє, С†С–Р»С– С‚Р° РґРёСЃС†РёРїР»С–РЅСѓ.",
+      executionCoachEntryIssue:
+        "РџСЂРѕР±Р»РµРјР° РІС…РѕРґСѓ: РІС…С–Рґ Р±СѓРІ РїРѕР·Р° РїР»Р°РЅРѕРІРѕСЋ Р·РѕРЅРѕСЋ Р°Р±Рѕ Р·Р°РЅР°РґС‚Рѕ РїС–Р·РЅРѕ РїС–СЃР»СЏ СЃРёРіРЅР°Р»Сѓ.",
+      executionCoachStopIssue:
+        "РџСЂРѕР±Р»РµРјР° СЃС‚РѕРїР°: СЃС‚РѕРї РІС–РґСЂС–Р·РЅСЏС”С‚СЊСЃСЏ РІС–Рґ РїР»Р°РЅСѓ СЃРёРіРЅР°Р»Сѓ. Р¦Рµ РјРѕР¶Рµ Р»Р°РјР°С‚Рё СЃС‚Р°С‚РёСЃС‚РёРєСѓ С– СЂРёР·РёРє/РїРѕС‚РµРЅС†С–Р°Р».",
+      executionCoachDirectionIssue:
+        "РџСЂРѕР±Р»РµРјР° РЅР°РїСЂСЏРјРєСѓ: РЅР°РїСЂСЏРјРѕРє СѓРіРѕРґРё РІС–РґСЂС–Р·РЅСЏС”С‚СЊСЃСЏ РІС–Рґ РЅР°РїСЂСЏРјРєСѓ СЃРёРіРЅР°Р»Сѓ.",
+      executionCoachTargetIssue:
+        "РџСЂРѕР±Р»РµРјР° С†С–Р»РµР№: СѓРіРѕРґР° РЅРµ РґС–Р№С€Р»Р° РґРѕ TP Р°Р±Рѕ РІРёС…С–Рґ Р±СѓРІ РЅРµ Р·Р° РїР»Р°РЅРѕРј.",
+      executionWeaknessTitle: "РљР°СЂС‚Р° СЃР»Р°Р±РєРёС… РјС–СЃС†СЊ РІРёРєРѕРЅР°РЅРЅСЏ",
+      entryIssueFilter: "РџСЂРѕР±Р»РµРјРё РІС…РѕРґСѓ",
+      stopIssueFilter: "РџСЂРѕР±Р»РµРјРё СЃС‚РѕРїР°",
+      directionIssueFilter: "РџСЂРѕР±Р»РµРјРё РЅР°РїСЂСЏРјРєСѓ",
+      targetIssueFilter: "РџСЂРѕР±Р»РµРјРё С†С–Р»РµР№",
+      executionFocusTitle: "РџРµСЂСЃРѕРЅР°Р»СЊРЅРёР№ С„РѕРєСѓСЃ РІРёРєРѕРЅР°РЅРЅСЏ",
+      openFocusAlerts: "Р’С–РґРєСЂРёС‚Рё СЃРёРіРЅР°Р»Рё Р· С†РёРј С„РѕРєСѓСЃРѕРј",
+      executionActionPlanTitle: "РџР»Р°РЅ РґС–Р№ РЅР° С‚РёР¶РґРµРЅСЊ",
+      executionActionPlanText:
+        "SkillEdge РїРµСЂРµС‚РІРѕСЂСЋС” РіРѕР»РѕРІРЅРёР№ С„РѕРєСѓСЃ РІРёРєРѕРЅР°РЅРЅСЏ РЅР° РєРѕРЅРєСЂРµС‚РЅС– РїСЂР°РІРёР»Р° РґР»СЏ РЅР°СЃС‚СѓРїРЅРѕРіРѕ С‚РѕСЂРіРѕРІРѕРіРѕ С‚РёР¶РЅСЏ.",
+      outcomeFollowupTitle: "Р РѕР·Р±С–СЂ СЂРµР·СѓР»СЊС‚Р°С‚Сѓ СЃРёРіРЅР°Р»Сѓ",
+      outcomeFollowupText:
+        "SkillEdge РїРѕСЂС–РІРЅСЋС” СЂС–С€РµРЅРЅСЏ РєР»С–С”РЅС‚Р° Р· С„Р°РєС‚РёС‡РЅРёРј СЂРµР·СѓР»СЊС‚Р°С‚РѕРј СЃРёРіРЅР°Р»Сѓ, С‰РѕР± Р·РЅР°С…РѕРґРёС‚Рё СѓРїСѓС‰РµРЅС– РјРѕР¶Р»РёРІРѕСЃС‚С–, С…РѕСЂРѕС€С– РїСЂРѕРїСѓСЃРєРё С‚Р° СѓРіРѕРґРё, СЏРєС– РїРѕС‚СЂРµР±СѓСЋС‚СЊ СЂРѕР·Р±РѕСЂСѓ.",
+      outcomeLearningLabel: "РќР°РІС‡Р°Р»СЊРЅР° РЅРѕС‚Р°С‚РєР°",
+      outcomeStatsLabel: "РЎС‚Р°С‚РёСЃС‚РёРєР° СЂРµР·СѓР»СЊС‚Р°С‚С–РІ",
+      outcomeLearningAnalyticsTitle: "РђРЅР°Р»С–С‚РёРєР° РЅР°РІС‡Р°РЅРЅСЏ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚Р°С…",
+      outcomeLearningFocusTitle: "Р¤РѕРєСѓСЃ РЅР°РІС‡Р°РЅРЅСЏ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚Р°С…",
+      missedOpportunityCoachTitle: "РљРѕСѓС‡ СѓРїСѓС‰РµРЅРёС… РјРѕР¶Р»РёРІРѕСЃС‚РµР№",
+      missedOpportunityCoachText:
+        "SkillEdge СЂРѕР·Р±РёСЂР°С” СЂРѕР±РѕС‡С– СЃРёРіРЅР°Р»Рё, СЏРєС– РєР»С–С”РЅС‚ РїСЂРѕРїСѓСЃС‚РёРІ, С‰РѕР± Р·РЅР°Р№С‚Рё РїРѕРІС‚РѕСЂСЋРІР°РЅСѓ РїСЂРёС‡РёРЅСѓ: СЃС‚СЂР°С…, РІС–РґСЃСѓС‚РЅС–СЃС‚СЊ Р±С–Р»СЏ РµРєСЂР°РЅР°, РїС–Р·РЅСЏ СЂРµР°РєС†С–СЏ Р°Р±Рѕ СЃР»Р°Р±РєР° РґРѕРІС–СЂР° РґРѕ СЃРµС‚Р°РїСѓ.",
+      missedOpportunityTopSetup: "Р“РѕР»РѕРІРЅРёР№ РїСЂРѕРїСѓС‰РµРЅРёР№ СЃРµС‚Р°Рї",
+      missedOpportunityActionPlan: "РџР»Р°РЅ РґС–Р№ РїРѕ СѓРїСѓС‰РµРЅРёС… РјРѕР¶Р»РёРІРѕСЃС‚СЏС…",
+      alertsStateLoadingTitle: "SkillEdge AI СЃРєР°РЅСѓС” СЂРёРЅРѕРє",
+      alertsStateLoadingText:
+        "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ РѕСЃС‚Р°РЅРЅС– СЃРёРіРЅР°Р»Рё, РїРµСЂРµРІС–СЂСЏС”РјРѕ РїРµСЂСЃРѕРЅР°Р»СЊРЅРёР№ РїСЂС–РѕСЂРёС‚РµС‚, РєРѕРЅС‚РµРєСЃС‚ Р¶СѓСЂРЅР°Р»Сѓ, СЂРµР·СѓР»СЊС‚Р°С‚Рё Р№ СЃРІС–Р¶С–СЃС‚СЊ СЃРёРіРЅР°Р»С–РІ.",
+      alertsStateErrorTitle: "РќРµ РІРґР°Р»РѕСЃСЏ Р·Р°РІР°РЅС‚Р°Р¶РёС‚Рё AI-СЃРёРіРЅР°Р»Рё",
+      alertsStateErrorText:
+        "РџРµСЂРµРІС–СЂ РїС–РґРєР»СЋС‡РµРЅРЅСЏ, Р°РІС‚РѕСЂРёР·Р°С†С–СЋ Р°Р±Рѕ РїРѕРІС‚РѕСЂРё Р·Р°РїРёС‚. РЇРєС‰Рѕ РїРѕРјРёР»РєР° РїРѕРІС‚РѕСЂСЋС”С‚СЊСЃСЏ вЂ” РїРѕС‚СЂС–Р±РЅРѕ РїРµСЂРµРІС–СЂРёС‚Рё backend/API-Р»РѕРіРё.",
+      alertsStateEmptyTitle: "AI Trading Desk С‡РµРєР°С” СЏРєС–СЃРЅРёР№ СЃРµС‚Р°Рї",
+      alertsStateEmptyText:
+        "Р—Р°СЂР°Р· РЅРµРјР°С” Р°РєС‚РёРІРЅРёС… СЃРёРіРЅР°Р»С–РІ. Р¦Рµ РЅРѕСЂРјР°Р»СЊРЅРѕ: SkillEdge РЅРµ РјР°С” СЃС‚СЂС–Р»СЏС‚Рё С€СѓРјРѕРј. РљСЂР°С‰Рµ РјРµРЅС€Рµ СЃРёРіРЅР°Р»С–РІ, Р°Р»Рµ РІРёС‰Р° СЏРєС–СЃС‚СЊ.",
+      alertsStateFilterEmptyTitle: "Р”Р»СЏ С†СЊРѕРіРѕ С„С–Р»СЊС‚СЂР° СЃРёРіРЅР°Р»С–РІ РЅРµРјР°С”",
+      alertsStateFilterEmptyText:
+        "РЎРїРёСЃРѕРє РїСЂР°С†СЋС”, Р°Р»Рµ РїРѕС‚РѕС‡РЅРёР№ С„С–Р»СЊС‚СЂ РЅРµ Р·РЅР°Р№С€РѕРІ РІС–РґРїРѕРІС–РґРЅРёС… СЃРёРіРЅР°Р»С–РІ. РЎРєРёРЅСЊ С„С–Р»СЊС‚СЂ Р°Р±Рѕ РґРѕС‡РµРєР°Р№СЃСЏ РЅРѕРІРѕС— high-confidence СЃРёС‚СѓР°С†С–С—.",
+      alertsStateRunScan: "Р—Р°РїСѓСЃС‚РёС‚Рё СЃРєР°РЅСѓРІР°РЅРЅСЏ",
+      alertsStateLiveNote: "Р¤РѕРЅРѕРІРёР№ РјРѕРЅС–С‚РѕСЂРёРЅРі РїСЂР°С†СЋС”",
+      selectedFilter: "Р’РёР±СЂР°РЅРёР№ С„С–Р»СЊС‚СЂ",
+      totalAlerts: "РЈСЃСЊРѕРіРѕ СЃРёРіРЅР°Р»С–РІ",
+      alertsStateLiveMonitoringLabel: "Р¤РѕРЅРѕРІРёР№ РјРѕРЅС–С‚РѕСЂРёРЅРі",
+      decisionVsOutcomeLabel: "Р С–С€РµРЅРЅСЏ / СЂРµР·СѓР»СЊС‚Р°С‚",
+      nextLearningFocus: "РќР°СЃС‚СѓРїРЅРёР№ С„РѕРєСѓСЃ РЅР°РІС‡Р°РЅРЅСЏ",
+      outcomeProfileStillForming: "РџСЂРѕС„С–Р»СЊ РЅР°РІС‡Р°РЅРЅСЏ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚Р°С… С‰Рµ С„РѕСЂРјСѓС”С‚СЊСЃСЏ",
+      missedOpportunitiesLabel: "СѓРїСѓС‰РµРЅРёС… РјРѕР¶Р»РёРІРѕСЃС‚РµР№",
+      noMissedOpportunityPatternTitle: "РџР°С‚РµСЂРЅ СѓРїСѓС‰РµРЅРёС… РјРѕР¶Р»РёРІРѕСЃС‚РµР№ С‰Рµ РЅРµ СЃС„РѕСЂРјРѕРІР°РЅРёР№",
+      workedAlertsMissedSuffix: "СЂРѕР±РѕС‡РёС… СЃРёРіРЅР°Р»С–РІ Р±СѓР»Рё РїСЂРѕРїСѓС‰РµРЅС– РІ С†С–Р№ РіСЂСѓРїС– СЃРµС‚Р°РїС–РІ.",
+      commonMistakeLabel: "РўРёРїРѕРІР° РїРѕРјРёР»РєР°:",
+      scoreDisclaimer:
+        "РћС†С–РЅРєР° РЅРµ С” РіР°СЂР°РЅС‚С–С”СЋ. РўРѕСЂРіСѓР№ С‚С–Р»СЊРєРё РїС–СЃР»СЏ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ, Р°РґРµРєРІР°С‚РЅРѕРіРѕ СЃРїС–РІРІС–РґРЅРѕС€РµРЅРЅСЏ СЂРёР·РёРєСѓ РґРѕ РїРѕС‚РµРЅС†С–Р°Р»Сѓ С‚Р° РІР»Р°СЃРЅРѕРіРѕ С‡РµРєР»РёСЃС‚Р° РІРёРєРѕРЅР°РЅРЅСЏ.",
+      closeBreakdownHint: "Р°Р±Рѕ РЅР°С‚РёСЃРЅРё РїРѕР·Р° РІС–РєРЅРѕРј, С‰РѕР± Р·Р°РєСЂРёС‚Рё С†РµР№ СЂРѕР·Р±С–СЂ.",
+    },
+  };
+
+  const copy = {
+    ...rawCopy,
+    ...alertCopyOverrides[safeLanguage],
+  };
+
 
   const hasAccess =
   subscription.active && canUseFeature(subscription.plan, "ai_alerts");
@@ -8439,7 +9219,7 @@ const takenRate =
 
     return acc;
   },
-  {}
+  {} as Record<string, number>
 );
 
 const decisionReasonItems = Object.entries(decisionReasonCounts)
@@ -8447,7 +9227,7 @@ const decisionReasonItems = Object.entries(decisionReasonCounts)
     reason,
     count,
   }))
-  .sort((a, b) => b.count - a.count);
+  .sort((a, b) => Number(b.count) - Number(a.count));
 
 const topDecisionReason = decisionReasonItems[0] || null;
 
@@ -8528,7 +9308,7 @@ const getLinkedTradesForAlert = (alertId: string) => {
 const getLinkedPnlLabel = (items: Trade[]) => {
   const pnlItems = items.filter((trade) => typeof trade.pnl === "number");
 
-  if (pnlItems.length === 0) return "—";
+  if (pnlItems.length === 0) return "вЂ”";
 
   const total = pnlItems.reduce((sum, trade) => sum + (trade.pnl || 0), 0);
 
@@ -8557,7 +9337,7 @@ const getLinkedExecutionScoreLabel = (items: Trade[]) => {
         Boolean(review)
     );
 
-  if (reviews.length === 0) return "—";
+  if (reviews.length === 0) return "вЂ”";
 
   const average = Math.round(
     reviews.reduce((sum, review) => sum + review.adherenceScore, 0) /
@@ -8627,7 +9407,7 @@ const hasTargetExecutionIssue = (alert: DashboardMarketAlert) => {
   return getLinkedTradesForAlert(alert.id).some((trade) => {
     const review = getSignalExecutionReview(trade);
 
-    return review?.targetHit === "No TP";
+    return review?.targetHit === "NO_TARGET";
   });
 };
 
@@ -8680,7 +9460,7 @@ const getAlertExecutionCoachNotes = (alert: DashboardMarketAlert) => {
   ).length;
 
   const targetIssues = reviews.filter(
-    (review) => review.targetHit === "No TP"
+    (review) => review.targetHit === "NO_TARGET"
   ).length;
 
   if (entryIssues > 0) {
@@ -9005,7 +9785,7 @@ const missedOpportunitySetupCounts = missedOpportunityAlerts.reduce<
 }, {});
 
 const topMissedOpportunitySetup =
-  Object.entries(missedOpportunitySetupCounts).sort((a, b) => b[1] - a[1])[0] ||
+  Object.entries(missedOpportunitySetupCounts).sort((a, b) => Number(b[1]) - Number(a[1]))[0] ||
   null;
 
 const missedOpportunityActionPlan = [
@@ -9294,7 +10074,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       {copy.lastChecked}:{" "}
       {alertsLastCheckedAt
         ? new Date(alertsLastCheckedAt).toLocaleTimeString()
-        : "—"}
+        : "вЂ”"}
     </div>
   </div>
 </div>
@@ -9315,7 +10095,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               : "border-white/10 bg-white/[0.035] text-white/55 hover:bg-white/[0.07] hover:text-white"
           }`}
         >
-          {filter.label} · {filter.count}
+          {filter.label} В· {filter.count}
         </button>
       );
     })}
@@ -9323,7 +10103,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
   <div className="mt-3 text-xs text-white/35">
     Showing {visibleAlerts.length} of {alerts.length} alerts
-{decisionReasonFilter ? ` · Reason: ${decisionReasonFilter}` : ""}
+{decisionReasonFilter ? ` В· Reason: ${decisionReasonFilter}` : ""}
   </div>
 </div>
 
@@ -9369,7 +10149,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       {copy.quality}
     </div>
     <div className="mt-2 text-2xl font-semibold text-white">
-      {qualityRate === null ? "—" : `${qualityRate}%`}
+      {qualityRate === null ? "вЂ”" : `${qualityRate}%`}
     </div>
   </div>
 
@@ -9378,7 +10158,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       {copy.avgMfe}
     </div>
     <div className="mt-2 text-2xl font-semibold text-white">
-      {avgMfe === null ? "—" : `${avgMfe.toFixed(2)}%`}
+      {avgMfe === null ? "вЂ”" : `${avgMfe.toFixed(2)}%`}
     </div>
   </div>
 
@@ -9387,7 +10167,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       {copy.avgMae}
     </div>
     <div className="mt-2 text-2xl font-semibold text-white">
-      {avgMae === null ? "—" : `${avgMae.toFixed(2)}%`}
+      {avgMae === null ? "вЂ”" : `${avgMae.toFixed(2)}%`}
     </div>
   </div>
 
@@ -9475,7 +10255,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
           Top pattern
         </div>
         <div className="mt-2 truncate text-sm font-semibold text-white">
-          {topTradePattern ? topTradePattern.pattern_name : "—"}
+          {topTradePattern ? topTradePattern.pattern_name : "вЂ”"}
         </div>
       </div>
     </div>
@@ -9493,10 +10273,10 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             </div>
 
             <div className="mt-1 text-xs text-white/45">
-              {topTradePattern.trades_count} trades · PnL $
-              {Number(topTradePattern.total_pnl || 0).toFixed(2)} · avg $
+              {topTradePattern.trades_count} trades В· PnL $
+              {Number(topTradePattern.total_pnl || 0).toFixed(2)} В· avg $
               {topTradePattern.avg_pnl === null
-                ? "—"
+                ? "вЂ”"
                 : Number(topTradePattern.avg_pnl).toFixed(2)}
             </div>
           </div>
@@ -9532,7 +10312,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             <div className="grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)]">
               <div>
                 <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
-                  {pattern.market || "market"} · {pattern.direction || "setup"}
+                  {pattern.market || "market"} В· {pattern.direction || "setup"}
                 </div>
 
                 <div className="mt-2 text-xl font-semibold text-white">
@@ -9569,7 +10349,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     </div>
                     <div className="mt-1 text-lg font-semibold text-white">
                       {pattern.avg_pnl === null
-                        ? "—"
+                        ? "вЂ”"
                         : `$${Number(pattern.avg_pnl).toFixed(2)}`}
                     </div>
                   </div>
@@ -9580,7 +10360,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     </div>
                     <div className="mt-1 text-lg font-semibold text-white">
                       {pattern.best_pnl === null
-                        ? "—"
+                        ? "вЂ”"
                         : `$${Number(pattern.best_pnl).toFixed(2)}`}
                     </div>
                   </div>
@@ -9591,7 +10371,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     </div>
                     <div className="mt-1 text-lg font-semibold text-white">
                       {pattern.avg_stop_distance_percent === null
-                        ? "—"
+                        ? "вЂ”"
                         : `${pattern.avg_stop_distance_percent}%`}
                     </div>
                   </div>
@@ -9737,11 +10517,11 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             </div>
 
             <div className="mt-1 text-xs text-white/45">
-              {topSignalProfile.trades_count} trades · win rate{" "}
+              {topSignalProfile.trades_count} trades В· win rate{" "}
               {topSignalProfile.win_rate === null
-                ? "—"
+                ? "вЂ”"
                 : `${topSignalProfile.win_rate}%`}{" "}
-              · PnL ${Number(topSignalProfile.total_pnl || 0).toFixed(2)}
+              В· PnL ${Number(topSignalProfile.total_pnl || 0).toFixed(2)}
             </div>
           </div>
 
@@ -9795,7 +10575,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               <div className="grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)]">
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
-                    {profile.asset_type || "market"} ·{" "}
+                    {profile.asset_type || "market"} В·{" "}
                     {profile.direction || "setup"}
                   </div>
 
@@ -9814,7 +10594,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     <br />
                     {copy.planAdherence}:{" "}
                     {profile.avg_plan_adherence === null
-                      ? "—"
+                      ? "вЂ”"
                       : `${profile.avg_plan_adherence}%`}
                   </div>
                 </div>
@@ -9835,7 +10615,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         Win rate
                       </div>
                       <div className="mt-1 text-lg font-semibold text-white">
-                        {profile.win_rate === null ? "—" : `${profile.win_rate}%`}
+                        {profile.win_rate === null ? "вЂ”" : `${profile.win_rate}%`}
                       </div>
                     </div>
 
@@ -9854,7 +10634,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       </div>
                       <div className="mt-1 text-lg font-semibold text-white">
                         {profile.avg_pnl === null
-                          ? "—"
+                          ? "вЂ”"
                           : `$${Number(profile.avg_pnl).toFixed(2)}`}
                       </div>
                     </div>
@@ -9881,14 +10661,14 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
                       Best:{" "}
                       {profile.best_pnl === null
-                        ? "—"
+                        ? "вЂ”"
                         : `$${Number(profile.best_pnl).toFixed(2)}`}
                     </span>
 
                     <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
                       Worst:{" "}
                       {profile.worst_pnl === null
-                        ? "—"
+                        ? "вЂ”"
                         : `$${Number(profile.worst_pnl).toFixed(2)}`}
                     </span>
                   </div>
@@ -9948,7 +10728,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             <div className="grid gap-4 xl:grid-cols-[220px_minmax(0,1fr)]">
               <div>
                 <div className="text-[10px] uppercase tracking-[0.22em] text-violet-100/40">
-                  {setup.asset_type || "market"} · {setup.direction || "setup"}
+                  {setup.asset_type || "market"} В· {setup.direction || "setup"}
                 </div>
 
                 <div className="mt-2 text-xl font-semibold text-white">
@@ -9961,8 +10741,8 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 </div>
 
                 <div className="mt-3 rounded-xl border border-cyan-300/15 bg-cyan-300/[0.04] p-3 text-xs leading-5 text-cyan-50/75">
-                  {copy.lastExample}: {setup.example_symbol || "—"}
-                  {setup.confidence_tier ? ` · ${setup.confidence_tier}` : ""}
+                  {copy.lastExample}: {setup.example_symbol || "вЂ”"}
+                  {setup.confidence_tier ? ` В· ${setup.confidence_tier}` : ""}
                 </div>
               </div>
 
@@ -9995,7 +10775,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                           key={`${setup.id}-confirm-${index}`}
                           className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs leading-5 text-cyan-50/75"
                         >
-                          ✓ {item}
+                          вњ“ {item}
                         </div>
                       ))}
                     </div>
@@ -10005,7 +10785,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 {Array.isArray(setup.avoid_if) && setup.avoid_if.length > 0 ? (
                   <div className="rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-3">
                     <div className="text-[10px] uppercase tracking-[0.18em] text-amber-100/45">
-                      Avoid this trade if
+                      {copy.avoidThisTradeIf}
                     </div>
 
                     <div className="mt-2 grid gap-2 md:grid-cols-2">
@@ -10014,7 +10794,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                           key={`${setup.id}-avoid-${index}`}
                           className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs leading-5 text-amber-50/75"
                         >
-                          ⚠ {item}
+                          вљ  {item}
                         </div>
                       ))}
                     </div>
@@ -10024,7 +10804,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 {setup.setup_common_mistake ? (
                   <div className="rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3 text-xs leading-5 text-red-50/75">
                     <span className="font-semibold text-red-100">
-                      Common mistake:
+                      {copy.commonMistakeLabel}
                     </span>{" "}
                     {setup.setup_common_mistake}
                   </div>
@@ -10034,12 +10814,12 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
                     Entry:{" "}
                     {setup.example_entry_zone_min && setup.example_entry_zone_max
-                      ? `${setup.example_entry_zone_min}–${setup.example_entry_zone_max}`
-                      : "—"}
+                      ? `${setup.example_entry_zone_min}вЂ“${setup.example_entry_zone_max}`
+                      : "вЂ”"}
                   </span>
 
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
-                    Stop: {setup.example_stop_price || "—"}
+                    Stop: {setup.example_stop_price || "вЂ”"}
                   </span>
 
                   <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1">
@@ -10050,7 +10830,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       setup.example_target_3,
                     ]
                       .filter(Boolean)
-                      .join(" / ") || "—"}
+                      .join(" / ") || "вЂ”"}
                   </span>
                 </div>
               </div>
@@ -10075,7 +10855,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
     </div>
 
     <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xs font-semibold text-emerald-100">
-      Taken rate: {takenRate === null ? "—" : `${takenRate}%`}
+      Taken rate: {takenRate === null ? "вЂ”" : `${takenRate}%`}
     </div>
   </div>
 
@@ -10231,7 +11011,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
       <div className="mt-2 text-2xl font-semibold text-white">
         {avgLinkedExecutionScore === null
-          ? "—"
+          ? "вЂ”"
           : `${avgLinkedExecutionScore}/100`}
       </div>
     </div>
@@ -10447,7 +11227,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
     <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
       {primaryExecutionFocus
-        ? `${primaryExecutionFocus.label} · ${primaryExecutionFocus.count}`
+        ? `${primaryExecutionFocus.label} В· ${primaryExecutionFocus.count}`
         : copy.noFocusYet}
     </div>
   </div>
@@ -10480,7 +11260,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     : "border-white/10 bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white"
                 }`}
               >
-                {item.label} · {item.count}
+                {item.label} В· {item.count}
               </button>
             ))}
           </div>
@@ -10687,7 +11467,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
     <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
       {primaryOutcomeLearningFocus
-        ? `${primaryOutcomeLearningFocus.label} · ${primaryOutcomeLearningFocus.count}`
+        ? `${primaryOutcomeLearningFocus.label} В· ${primaryOutcomeLearningFocus.count}`
         : copy.noFocusYet}
     </div>
   </div>
@@ -10720,7 +11500,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     : "border-white/10 bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white"
                 }`}
               >
-                {item.label} · {item.count}
+                {item.label} В· {item.count}
               </button>
             ))}
           </div>
@@ -10777,7 +11557,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
         </div>
 
         <div className="mt-3 text-2xl font-semibold text-white">
-          {topMissedOpportunitySetup ? topMissedOpportunitySetup[0] : "—"}
+          {topMissedOpportunitySetup ? topMissedOpportunitySetup[0] : "вЂ”"}
         </div>
 
         <p className="mt-3 text-sm leading-6 text-white/55">
@@ -10851,7 +11631,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       </div>
 
       <div className="rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-semibold text-white/65">
-        {copy.topReason}: {topDecisionReason?.reason || "—"}
+        {copy.topReason}: {topDecisionReason?.reason || "вЂ”"}
       </div>
     </div>
 
@@ -10883,7 +11663,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               : "border-white/10 bg-black/20 text-white/55 hover:bg-white/[0.07] hover:text-white"
           }`}
         >
-          {item.reason} · {item.count}
+          {item.reason} В· {item.count}
         </button>
       ))}
     </div>
@@ -11039,7 +11819,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
         <div className="mt-2 text-lg font-semibold text-white">
           {alertsLastCheckedAt
             ? new Date(alertsLastCheckedAt).toLocaleTimeString()
-            : "—"}
+            : "вЂ”"}
         </div>
       </div>
     </div>
@@ -11083,7 +11863,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               <div className="grid gap-4 xl:grid-cols-[120px_minmax(190px,260px)_minmax(0,1fr)]">
                 <div>
                   <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">
-                    {alert.asset_type} · {alert.exchange || "—"}
+                    {alert.asset_type} В· {alert.exchange || "вЂ”"}
                   </div>
 
                   <div className="mt-1 text-3xl font-semibold text-white">
@@ -11092,7 +11872,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
                   <div className="mt-2 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
                     {copy.confidence}: {alert.confidence_score || alert.score}
-{alert.confidence_tier ? ` · ${alert.confidence_tier}` : ""}
+{alert.confidence_tier ? ` В· ${alert.confidence_tier}` : ""}
                   </div>
 
                   <div className="mt-3 text-xs leading-5 text-white/40">
@@ -11150,7 +11930,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       {copy.entry}:{" "}
                       <span className="text-white/75">
                         {alert.entry_zone_min && alert.entry_zone_max
-                          ? `${alert.entry_zone_min}–${alert.entry_zone_max}`
+                          ? `${alert.entry_zone_min}вЂ“${alert.entry_zone_max}`
                           : "wait trigger"}
                       </span>
                     </div>
@@ -11158,7 +11938,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     <div>
                       {copy.stop}:{" "}
                       <span className="text-white/75">
-                        {alert.stop_price || "—"}
+                        {alert.stop_price || "вЂ”"}
                       </span>
                     </div>
 
@@ -11167,10 +11947,12 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       <span className="text-white/75">
                         {[alert.target_1, alert.target_2, alert.target_3]
                           .filter(Boolean)
-                          .join(" / ") || "—"}
+                          .join(" / ") || "вЂ”"}
                       </span>
                     </div>
                   </div>
+
+                  <AlertStructurePanel alert={alert} copy={copy} />
                 </div>
 
                 <div className="grid gap-3 lg:grid-cols-2">
@@ -11300,7 +12082,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   return (
     <>
       <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-emerald-100/75">
-        Journal linked: {linkedTrades.length} · PnL{" "}
+        Journal linked: {linkedTrades.length} В· PnL{" "}
         {getLinkedPnlLabel(linkedTrades)}
       </span>
 
@@ -11313,7 +12095,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
 {isAlertTakenWithoutJournal(alert) ? (
   <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-3 py-1 text-amber-100/80">
-    Taken · Journal missing
+    Taken В· Journal missing
   </span>
 ) : null}
 
@@ -11345,21 +12127,21 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
       <div className="uppercase tracking-[0.16em] text-white/30">MFE</div>
       <div className="mt-1 font-semibold text-white/70">
-        {alert.mfe === null || alert.mfe === undefined ? "—" : `${alert.mfe}%`}
+        {alert.mfe === null || alert.mfe === undefined ? "вЂ”" : `${alert.mfe}%`}
       </div>
     </div>
 
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
       <div className="uppercase tracking-[0.16em] text-white/30">MAE</div>
       <div className="mt-1 font-semibold text-white/70">
-        {alert.mae === null || alert.mae === undefined ? "—" : `${alert.mae}%`}
+        {alert.mae === null || alert.mae === undefined ? "вЂ”" : `${alert.mae}%`}
       </div>
     </div>
 
     <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
       <div className="uppercase tracking-[0.16em] text-white/30">Target</div>
       <div className="mt-1 font-semibold text-white/70">
-        {alert.hit_target || "—"}
+        {alert.hit_target || "вЂ”"}
       </div>
     </div>
 
@@ -11432,9 +12214,9 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
                 <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
                   Confidence:{" "}
-                  {breakdownAlert.confidence_score ?? breakdownAlert.score ?? "—"}
+                  {breakdownAlert.confidence_score ?? breakdownAlert.score ?? "вЂ”"}
                   {breakdownAlert.confidence_tier
-                    ? ` · ${breakdownAlert.confidence_tier}`
+                    ? ` В· ${breakdownAlert.confidence_tier}`
                     : ""}
                 </span>
 
@@ -11502,7 +12284,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   onClick={() => setExpandedAlertId(null)}
   className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/[0.08] hover:text-white sm:w-auto"
 >
-  <span className="text-base leading-none">×</span>
+  <span className="text-base leading-none">Г—</span>
   {copy.closeBreakdown}
 </button>
             </div>
@@ -11705,7 +12487,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             {copy.linkedResult}
           </div>
           <div className="mt-1 text-sm font-semibold text-white">
-            {getLinkedResultLabel(linkedTrades) || "—"}
+            {getLinkedResultLabel(linkedTrades) || "вЂ”"}
           </div>
         </div>
         <div className="rounded-xl border border-cyan-300/15 bg-cyan-300/[0.035] p-3">
@@ -11727,7 +12509,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
       const label =
         score === null
-          ? "—"
+          ? "вЂ”"
           : score >= 80
             ? copy.executionStrong
             : score >= 60
@@ -11752,15 +12534,15 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               <span className="font-semibold text-white/85">
                 {trade.ticker}
               </span>{" "}
-              · {trade.direction} · {trade.trade_date} · PnL{" "}
+              В· {trade.direction} В· {trade.trade_date} В· PnL{" "}
               {typeof trade.pnl === "number"
                 ? `${trade.pnl >= 0 ? "+" : ""}${trade.pnl.toFixed(2)}`
-                : "—"}{" "}
-              · {trade.result || "open"}
+                : "вЂ”"}{" "}
+              В· {trade.result || "open"}
             </div>
 
             <div className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 text-[10px] font-semibold text-white/70">
-              {copy.executionScore}: {score === null ? "—" : `${score}/100`}
+              {copy.executionScore}: {score === null ? "вЂ”" : `${score}/100`}
             </div>
           </div>
 
@@ -11895,11 +12677,11 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             </div>
             <div className="mt-1 text-sm font-semibold text-white">
               {breakdownAlert.mfe === null || breakdownAlert.mfe === undefined
-                ? "—"
+                ? "вЂ”"
                 : `${Number(breakdownAlert.mfe).toFixed(2)}%`}{" "}
               /{" "}
               {breakdownAlert.mae === null || breakdownAlert.mae === undefined
-                ? "—"
+                ? "вЂ”"
                 : `${Number(breakdownAlert.mae).toFixed(2)}%`}
             </div>
           </div>
@@ -11909,8 +12691,19 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               TP / Stop
             </div>
             <div className="mt-1 text-sm font-semibold text-white">
-              {breakdownAlert.hit_target || "No TP"} /{" "}
-              {breakdownAlert.hit_stop ? "Stop hit" : "No stop"}
+              {breakdownAlert.hit_target ||
+                (safeLanguage === "ua"
+                  ? "TP РЅРµ РґРѕСЃСЏРіРЅСѓС‚Рѕ"
+                  : safeLanguage === "en"
+                    ? "Target not reached"
+                    : "TP РЅРµ РґРѕСЃС‚РёРіРЅСѓС‚")} /{" "}
+              {breakdownAlert.hit_stop
+                ? copy.stopHit
+                : safeLanguage === "ua"
+                  ? "РЎС‚РѕРї РЅРµ Р·Р°С‡РµРїР»РµРЅРѕ"
+                  : safeLanguage === "en"
+                    ? "Stop not hit"
+                    : "РЎС‚РѕРї РЅРµ Р·Р°РґРµС‚"}
             </div>
           </div>
         </div>
@@ -11959,7 +12752,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       {copy.direction}
                     </div>
                     <div className="mt-1 text-sm font-semibold text-white">
-                      {breakdownAlert.direction || "—"}
+                      {breakdownAlert.direction || "вЂ”"}
                     </div>
                   </div>
 
@@ -11980,7 +12773,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     <div className="mt-1 text-sm font-semibold text-white">
                       {breakdownAlert.entry_zone_min != null &&
                       breakdownAlert.entry_zone_max != null
-                        ? `${breakdownAlert.entry_zone_min}–${breakdownAlert.entry_zone_max}`
+                        ? `${breakdownAlert.entry_zone_min}вЂ“${breakdownAlert.entry_zone_max}`
                         : "Wait trigger"}
                     </div>
                   </div>
@@ -11990,7 +12783,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       {copy.stop}
                     </div>
                     <div className="mt-1 text-sm font-semibold text-white">
-                      {breakdownAlert.stop_price ?? breakdownAlert.invalidation ?? "—"}
+                      {breakdownAlert.stop_price ?? breakdownAlert.invalidation ?? "вЂ”"}
                     </div>
                   </div>
 
@@ -12005,10 +12798,12 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         breakdownAlert.target_3,
                       ]
                         .filter((value) => value != null)
-                        .join(" / ") || "—"}
+                        .join(" / ") || "вЂ”"}
                     </div>
                   </div>
                 </div>
+
+                <AlertStructurePanel alert={breakdownAlert} copy={copy} />
 
                 {breakdownAlert.management_plan ? (
                   <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.035] p-3 text-sm leading-6 text-white/65">
@@ -12047,7 +12842,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                   </div>
 
                   <div className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold text-cyan-100">
-                    {breakdownAlert.confidence_score ?? breakdownAlert.score ?? "—"}
+                    {breakdownAlert.confidence_score ?? breakdownAlert.score ?? "вЂ”"}
                   </div>
                 </div>
 
@@ -12094,7 +12889,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         key={`${breakdownAlert.id}-modal-confirm-${index}`}
                         className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs leading-5 text-emerald-50/75"
                       >
-                        ✓ {item}
+                        вњ“ {item}
                       </div>
                     ))}
                   </div>
@@ -12114,7 +12909,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         key={`${breakdownAlert.id}-modal-avoid-${index}`}
                         className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs leading-5 text-amber-50/75"
                       >
-                        ⚠ {item}
+                        вљ  {item}
                       </div>
                     ))}
                   </div>
@@ -12146,7 +12941,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               {breakdownAlert.setup_common_mistake ? (
                 <div className="mt-3 rounded-xl border border-red-300/15 bg-red-300/[0.035] p-3 text-xs leading-5 text-red-50/75">
                   <span className="font-semibold text-red-100">
-                    Common mistake:
+                    {copy.commonMistakeLabel}
                   </span>{" "}
                   {breakdownAlert.setup_common_mistake}
                 </div>
@@ -12155,14 +12950,13 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
           ) : null}
 
           <div className="mt-4 rounded-2xl border border-red-300/15 bg-red-300/[0.03] p-4 text-xs leading-5 text-red-50/70">
-  Score is not a guarantee. Trade only after confirmation, valid
-  risk/reward and your own execution checklist.
+  {copy.scoreDisclaimer}
 
   <div className="mt-3 flex flex-wrap items-center gap-2 text-white/35">
     <span className="rounded-full border border-white/10 bg-black/20 px-2 py-1">
       Esc
     </span>
-    <span>or click outside the window to close this breakdown.</span>
+    <span>{copy.closeBreakdownHint}</span>
   </div>
 </div>
         </div>
@@ -12307,110 +13101,110 @@ type MarketAIBriefHistoryResponse = {
 
   const localText = {
     ru: {
-      title: "Market Intelligence Center",
+      title: "Р¦РµРЅС‚СЂ СЂС‹РЅРѕС‡РЅРѕР№ СЂР°Р·РІРµРґРєРё",
       subtitle:
-        "Единый центр поиска in-play тикеров: рыночное движение + social mentions + будущий AI-анализ сигналов.",
-      topTitle: "Top Opportunities Now",
+        "Р•РґРёРЅС‹Р№ С†РµРЅС‚СЂ РїРѕРёСЃРєР° Р°РєС‚РёРІРЅС‹С… С‚РёРєРµСЂРѕРІ: РґРІРёР¶РµРЅРёРµ СЂС‹РЅРєР°, РѕС‚СЃР»РµР¶РёРІР°РµРјРѕРµ РІРЅРёРјР°РЅРёРµ, РЅРѕРІРѕСЃС‚РЅС‹Рµ РєР°С‚Р°Р»РёР·Р°С‚РѕСЂС‹ Рё AI-СЂР°Р·Р±РѕСЂ Р»СѓС‡С€РёС… РєР°РЅРґРёРґР°С‚РѕРІ.",
+      topTitle: "Р›СѓС‡С€РёРµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё СЃРµР№С‡Р°СЃ",
       topText:
-        "Один список вместо отдельных сканеров. Система объединяет market activity, Reddit mentions, news catalysts, Binance crypto universe и готовит тикеры для дальнейшего AI-разбора.",
-      aiSoon: "AI Layer Soon",
+        "РћРґРёРЅ СЃРїРёСЃРѕРє РІРјРµСЃС‚Рѕ РѕС‚РґРµР»СЊРЅС‹С… СЃРєР°РЅРµСЂРѕРІ. РЎРёСЃС‚РµРјР° РѕР±СЉРµРґРёРЅСЏРµС‚ СЂС‹РЅРѕС‡РЅСѓСЋ Р°РєС‚РёРІРЅРѕСЃС‚СЊ, Reddit-СѓРїРѕРјРёРЅР°РЅРёСЏ, РЅРѕРІРѕСЃС‚РЅС‹Рµ РєР°С‚Р°Р»РёР·Р°С‚РѕСЂС‹, РєСЂРёРїС‚Рѕ-Р°РєС‚РёРІРЅРѕСЃС‚СЊ Binance Рё РіРѕС‚РѕРІРёС‚ С‚РёРєРµСЂС‹ РґР»СЏ AI-СЂР°Р·Р±РѕСЂР°.",
+      aiSoon: "AI-СЃР»РѕР№",
       aiSoonText:
-        "Дальше сюда добавим AI-сценарии, confluence score, risk notes, сигналы и персональные alerts под стиль клиента.",
+        "AI-СЃР»РѕР№ РїРѕРјРѕРіР°РµС‚ СЂР°Р·РѕР±СЂР°С‚СЊ СЃС†РµРЅР°СЂРёР№, СЃРѕРІРїР°РґРµРЅРёСЏ С„Р°РєС‚РѕСЂРѕРІ, СЂРёСЃРє Р»РѕРІСѓС€РєРё, СѓСЃР»РѕРІРёСЏ РѕС‚РјРµРЅС‹ РёРґРµРё Рё РґР°Р»СЊРЅРµР№С€РёР№ РїР»Р°РЅ РЅР°Р±Р»СЋРґРµРЅРёСЏ.",
       dataNote:
-        "MVP использует доступные источники. Перед релизом подключаем premium full-data providers, intraday 1m/5m/15m и полный universe.",
-      refreshAll: "Обновить всё",
-      aiAnalyzeTop: "AI Market Brief",
-aiAnalyzeTitle: "AI Market Brief по топ-10 возможностям",
-aiAnalyzeText:
-  "SkillEdge AI разбирает топ-10 кандидатов из Market Intelligence: почему тикер in-play, какой сетап формируется, где риск ловушки, какой сценарий смотреть и где идея ломается.",
-aiAnalyzeEmpty: "Сначала обнови scanner, чтобы появились тикеры для AI-разбора.",
-aiAnalyzePreview: "AI preview",
-aiAnalyzeClose: "Закрыть",
-aiHistory: "History",
-aiHistoryTitle: "История AI Market Brief",
-aiHistoryText: "Последние сохранённые AI-брифы по рынку.",
-aiHistoryEmpty: "Истории пока нет. Запусти AI Market Brief, чтобы сохранить первый разбор.",
-aiHistoryLoading: "Загружаем историю...",
-aiOpenBrief: "Открыть brief",
-aiCloseBrief: "Закрыть brief",
-aiSavedAnalysis: "Сохранённый AI-разбор",
-aiStocks: "Акции",
-aiCrypto: "Крипта",
-aiShowMore: "Показать ещё",
-aiShowLess: "Свернуть",
-aiNoItemsForTab: "Нет кандидатов для этого рынка.",
-aiAnalyzeError: "Не удалось получить AI-разбор. Проверь backend env и попробуй ещё раз.",
-      refreshing: "Обновляем...",
-      search: "Поиск тикера...",
-      asset: "Актив",
-      signal: "Сигнал",
-      sort: "Сортировка",
-      allAssets: "Все активы",
-      stocks: "Акции",
-      crypto: "Крипта",
-      allSignals: "Все сигналы",
-      combined: "Combined",
-      marketOnly: "Market only",
-      socialOnly: "Social only",
-      sortScore: "Combined score",
-      sortMentions: "Mentions 24H",
-      sortMove: "Move %",
-      sortSocial: "Social score",
-      ticker: "Тикер",
-      combinedScore: "Score",
-      mentions24h: "Tracked 24H",
-      move: "Move",
-      reason: "Почему важно",
-      noData: "Пока нет данных. Нажми “Обновить всё”.",
-      rawMarket: "Raw market movers",
-      rawSocial: "Raw social mentions",
-      showRaw: "Показать raw data",
-      hideRaw: "Скрыть raw data",
-      source: "Источник",
-      autoRefresh: "Auto-refresh",
-autoRefreshValue: "каждые 15 минут",
-coverageTitle: "Data coverage",
-coverageText:
-  "Mentions показывают только подключённые источники: Reddit сейчас, Stocktwits и crypto-native sources позже. Это не полный интернет-охват.",
-      scanned: "Скан",
-      lockedTitle: "Market Intelligence доступен на SkillEdge Edge и Elite.",
+        "РЎРµР№С‡Р°СЃ РёСЃРїРѕР»СЊР·СѓСЋС‚СЃСЏ РїРѕРґРєР»СЋС‡С‘РЅРЅС‹Рµ РёСЃС‚РѕС‡РЅРёРєРё РґР°РЅРЅС‹С…. Production data stack СЂР°СЃС€РёСЂРёС‚ РїРѕРєСЂС‹С‚РёРµ СЂС‹РЅРєР°, РІРЅСѓС‚СЂРёРґРЅРµРІРЅС‹Рµ С‚Р°Р№РјС„СЂРµР№РјС‹ Рё РїРѕР»РЅС‹Р№ universe Р°РєС†РёР№/РєСЂРёРїС‚Рѕ.",
+      refreshAll: "РћР±РЅРѕРІРёС‚СЊ РІСЃС‘",
+      aiAnalyzeTop: "AI-РѕР±Р·РѕСЂ СЂС‹РЅРєР°",
+      aiAnalyzeTitle: "AI-РѕР±Р·РѕСЂ С‚РѕРї-10 РІРѕР·РјРѕР¶РЅРѕСЃС‚РµР№",
+      aiAnalyzeText:
+        "SkillEdge AI СЂР°Р·Р±РёСЂР°РµС‚ С‚РѕРї-10 РєР°РЅРґРёРґР°С‚РѕРІ РёР· СЂС‹РЅРѕС‡РЅРѕР№ СЂР°Р·РІРµРґРєРё: РїРѕС‡РµРјСѓ С‚РёРєРµСЂ Р°РєС‚РёРІРµРЅ, РєР°РєРѕР№ СЃРµС‚Р°Рї С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ, РіРґРµ СЂРёСЃРє Р»РѕРІСѓС€РєРё, РєР°РєРѕР№ СЃС†РµРЅР°СЂРёР№ СЃРјРѕС‚СЂРµС‚СЊ Рё РіРґРµ РёРґРµСЏ Р»РѕРјР°РµС‚СЃСЏ.",
+      aiAnalyzeEmpty: "РЎРЅР°С‡Р°Р»Р° РѕР±РЅРѕРІРё СЃРєР°РЅРµСЂ, С‡С‚РѕР±С‹ РїРѕСЏРІРёР»РёСЃСЊ С‚РёРєРµСЂС‹ РґР»СЏ AI-СЂР°Р·Р±РѕСЂР°.",
+      aiAnalyzePreview: "AI-РїСЂРµРґРїСЂРѕСЃРјРѕС‚СЂ",
+      aiAnalyzeClose: "Р—Р°РєСЂС‹С‚СЊ",
+      aiHistory: "РСЃС‚РѕСЂРёСЏ",
+      aiHistoryTitle: "РСЃС‚РѕСЂРёСЏ AI-РѕР±Р·РѕСЂРѕРІ СЂС‹РЅРєР°",
+      aiHistoryText: "РџРѕСЃР»РµРґРЅРёРµ СЃРѕС…СЂР°РЅС‘РЅРЅС‹Рµ AI-РѕР±Р·РѕСЂС‹ СЂС‹РЅРєР°.",
+      aiHistoryEmpty: "РСЃС‚РѕСЂРёРё РїРѕРєР° РЅРµС‚. Р—Р°РїСѓСЃС‚Рё AI-РѕР±Р·РѕСЂ СЂС‹РЅРєР°, С‡С‚РѕР±С‹ СЃРѕС…СЂР°РЅРёС‚СЊ РїРµСЂРІС‹Р№ СЂР°Р·Р±РѕСЂ.",
+      aiHistoryLoading: "Р—Р°РіСЂСѓР¶Р°РµРј РёСЃС‚РѕСЂРёСЋ...",
+      aiOpenBrief: "РћС‚РєСЂС‹С‚СЊ РѕР±Р·РѕСЂ",
+      aiCloseBrief: "Р—Р°РєСЂС‹С‚СЊ РѕР±Р·РѕСЂ",
+      aiSavedAnalysis: "РЎРѕС…СЂР°РЅС‘РЅРЅС‹Р№ AI-СЂР°Р·Р±РѕСЂ",
+      aiStocks: "РђРєС†РёРё",
+      aiCrypto: "РљСЂРёРїС‚Рѕ",
+      aiShowMore: "РџРѕРєР°Р·Р°С‚СЊ РµС‰С‘",
+      aiShowLess: "РЎРІРµСЂРЅСѓС‚СЊ",
+      aiNoItemsForTab: "РќРµС‚ РєР°РЅРґРёРґР°С‚РѕРІ РґР»СЏ СЌС‚РѕРіРѕ СЂС‹РЅРєР°.",
+      aiAnalyzeError: "РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ AI-СЂР°Р·Р±РѕСЂ. РџСЂРѕРІРµСЂСЊ СЃРµСЂРІРµСЂРЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё Рё РїРѕРїСЂРѕР±СѓР№ РµС‰С‘ СЂР°Р·.",
+      refreshing: "РћР±РЅРѕРІР»СЏРµРј...",
+      search: "РџРѕРёСЃРє С‚РёРєРµСЂР°...",
+      asset: "РђРєС‚РёРІ",
+      signal: "РЎРёРіРЅР°Р»",
+      sort: "РЎРѕСЂС‚РёСЂРѕРІРєР°",
+      allAssets: "Р’СЃРµ Р°РєС‚РёРІС‹",
+      stocks: "РђРєС†РёРё",
+      crypto: "РљСЂРёРїС‚Рѕ",
+      allSignals: "Р’СЃРµ СЃРёРіРЅР°Р»С‹",
+      combined: "РљРѕРјР±РёРЅРёСЂРѕРІР°РЅРЅС‹Р№",
+      marketOnly: "РўРѕР»СЊРєРѕ СЂС‹РЅРѕРє",
+      socialOnly: "РўРѕР»СЊРєРѕ РІРЅРёРјР°РЅРёРµ",
+      sortScore: "РћР±С‰РёР№ СЂРµР№С‚РёРЅРі",
+      sortMentions: "РЈРїРѕРјРёРЅР°РЅРёСЏ 24С‡",
+      sortMove: "Р”РІРёР¶РµРЅРёРµ %",
+      sortSocial: "Р РµР№С‚РёРЅРі РІРЅРёРјР°РЅРёСЏ",
+      ticker: "РўРёРєРµСЂ",
+      combinedScore: "Р РµР№С‚РёРЅРі",
+      mentions24h: "РћС‚СЃР»РµР¶РµРЅРѕ Р·Р° 24С‡",
+      move: "Р”РІРёР¶РµРЅРёРµ",
+      reason: "РџРѕС‡РµРјСѓ РІР°Р¶РЅРѕ",
+      noData: "РџРѕРєР° РЅРµС‚ РґР°РЅРЅС‹С…. РќР°Р¶РјРё В«РћР±РЅРѕРІРёС‚СЊ РІСЃС‘В».",
+      rawMarket: "РСЃС…РѕРґРЅС‹Рµ СЂС‹РЅРѕС‡РЅС‹Рµ РґР°РЅРЅС‹Рµ",
+      rawSocial: "РСЃС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РІРЅРёРјР°РЅРёСЏ",
+      showRaw: "РџРѕРєР°Р·Р°С‚СЊ РёСЃС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ",
+      hideRaw: "РЎРєСЂС‹С‚СЊ РёСЃС…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ",
+      source: "РСЃС‚РѕС‡РЅРёРє",
+      autoRefresh: "РђРІС‚РѕРѕР±РЅРѕРІР»РµРЅРёРµ",
+      autoRefreshValue: "РєР°Р¶РґС‹Рµ 15 РјРёРЅСѓС‚",
+      coverageTitle: "РџРѕРєСЂС‹С‚РёРµ РґР°РЅРЅС‹С…",
+      coverageText:
+        "РЈРїРѕРјРёРЅР°РЅРёСЏ РїРѕРєР°Р·С‹РІР°СЋС‚ С‚РѕР»СЊРєРѕ РїРѕРґРєР»СЋС‡С‘РЅРЅС‹Рµ РёСЃС‚РѕС‡РЅРёРєРё: СЃРµР№С‡Р°СЃ Reddit; РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Рµ РёСЃС‚РѕС‡РЅРёРєРё РіРѕС‚РѕРІСЏС‚СЃСЏ Рє СЂР°СЃС€РёСЂРµРЅРёСЋ РїРѕРєСЂС‹С‚РёСЏ. Р­С‚Рѕ РЅРµ РїРѕР»РЅС‹Р№ РѕС…РІР°С‚ РІСЃРµРіРѕ РёРЅС‚РµСЂРЅРµС‚Р°.",
+      scanned: "РЎРєР°РЅРёСЂРѕРІР°РЅРёРµ",
+      lockedTitle: "Р С‹РЅРѕС‡РЅР°СЏ СЂР°Р·РІРµРґРєР° РґРѕСЃС‚СѓРїРЅР° РЅР° SkillEdge Edge Рё Elite.",
       lockedText:
-        "На Core доступен preview. Edge и Elite открывают market/social scanner, combined opportunities и будущие AI-сигналы.",
+        "РќР° Core РґРѕСЃС‚СѓРїРµРЅ С‚РѕР»СЊРєРѕ РїСЂРµРґРїСЂРѕСЃРјРѕС‚СЂ. Edge Рё Elite РѕС‚РєСЂС‹РІР°СЋС‚ СЂС‹РЅРѕС‡РЅС‹Р№ СЃРєР°РЅРµСЂ, РѕС‚СЃР»РµР¶РёРІР°РµРјРѕРµ РІРЅРёРјР°РЅРёРµ, РєРѕРјР±РёРЅРёСЂРѕРІР°РЅРЅС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё Рё AI-РѕР±Р·РѕСЂ СЂС‹РЅРєР°.",
     },
     en: {
       title: "Market Intelligence Center",
       subtitle:
-        "Unified in-play ticker research: market movement + social mentions + future AI signal analysis.",
+        "Unified in-play ticker research: market movement, tracked attention, news catalysts and AI review of the best candidates.",
       topTitle: "Top Opportunities Now",
       topText:
-        "One list instead of separate scanners. The system combines market activity, Reddit mentions, news catalysts, Binance crypto universe and prepares tickers for AI analysis.",
-      aiSoon: "AI Layer Soon",
+        "One list instead of separate scanners. The system combines market activity, Reddit mentions, news catalysts, Binance crypto activity and prepares tickers for AI review.",
+      aiSoon: "AI Layer",
       aiSoonText:
-        "Next we add AI scenarios, confluence score, risk notes, signals and personalized alerts based on the client’s trading style.",
+        "The AI layer helps review scenarios, confluence, trap risk, invalidation and the next observation plan.",
       dataNote:
-        "MVP uses available sources. Before launch we connect premium full-data providers, intraday 1m/5m/15m and full universe coverage.",
+        "Connected data sources are used now. The production data stack expands market coverage, intraday timeframes and the full stock/crypto universe through premium market infrastructure.",
       refreshAll: "Refresh all",
       aiAnalyzeTop: "AI Market Brief",
-aiAnalyzeTitle: "AI Market Brief for top 10 opportunities",
-aiAnalyzeText:
-  "SkillEdge AI breaks down the top 10 Market Intelligence candidates: why the ticker is in-play, what setup is forming, where the trap risk is, what scenario to watch and where the idea breaks.",
-aiAnalyzeEmpty: "Refresh the scanner first to load tickers for AI analysis.",
-aiAnalyzePreview: "AI preview",
-aiAnalyzeClose: "Close",
-aiHistory: "History",
-aiHistoryTitle: "AI Market Brief History",
-aiHistoryText: "Latest saved AI market briefs.",
-aiHistoryEmpty: "No history yet. Run AI Market Brief to save the first brief.",
-aiHistoryLoading: "Loading history...",
-aiOpenBrief: "Open brief",
-aiCloseBrief: "Close brief",
-aiSavedAnalysis: "Saved AI analysis",
-aiStocks: "Stocks",
-aiCrypto: "Crypto",
-aiShowMore: "Show more",
-aiShowLess: "Collapse",
-aiNoItemsForTab: "No candidates for this market.",
-aiAnalyzeError: "Failed to load AI analysis. Check backend env and try again.",
+      aiAnalyzeTitle: "AI Market Brief for top 10 opportunities",
+      aiAnalyzeText:
+        "SkillEdge AI reviews the top 10 Market Intelligence candidates: why the ticker is active, what setup is forming, where the trap risk is, what scenario to watch and where the idea breaks.",
+      aiAnalyzeEmpty: "Refresh the scanner first to load tickers for AI review.",
+      aiAnalyzePreview: "AI preview",
+      aiAnalyzeClose: "Close",
+      aiHistory: "History",
+      aiHistoryTitle: "AI Market Brief History",
+      aiHistoryText: "Latest saved AI market briefs.",
+      aiHistoryEmpty: "No history yet. Run AI Market Brief to save the first review.",
+      aiHistoryLoading: "Loading history...",
+      aiOpenBrief: "Open brief",
+      aiCloseBrief: "Close brief",
+      aiSavedAnalysis: "Saved AI review",
+      aiStocks: "Stocks",
+      aiCrypto: "Crypto",
+      aiShowMore: "Show more",
+      aiShowLess: "Collapse",
+      aiNoItemsForTab: "No candidates for this market.",
+      aiAnalyzeError: "Failed to load AI review. Check server settings and try again.",
       refreshing: "Refreshing...",
       search: "Search ticker...",
       asset: "Asset",
@@ -12422,102 +13216,102 @@ aiAnalyzeError: "Failed to load AI analysis. Check backend env and try again.",
       allSignals: "All signals",
       combined: "Combined",
       marketOnly: "Market only",
-      socialOnly: "Social only",
+      socialOnly: "Attention only",
       sortScore: "Combined score",
       sortMentions: "Mentions 24H",
       sortMove: "Move %",
-      sortSocial: "Social score",
+      sortSocial: "Attention score",
       ticker: "Ticker",
       combinedScore: "Score",
       mentions24h: "Tracked 24H",
       move: "Move",
       reason: "Why it matters",
-      noData: "No data yet. Click “Refresh all”.",
-      rawMarket: "Raw market movers",
-      rawSocial: "Raw social mentions",
+      noData: "No data yet. Click вЂњRefresh allвЂќ.",
+      rawMarket: "Raw market data",
+      rawSocial: "Raw attention data",
       showRaw: "Show raw data",
       hideRaw: "Hide raw data",
       source: "Source",
       autoRefresh: "Auto-refresh",
-autoRefreshValue: "every 15 minutes",
-coverageTitle: "Data coverage",
-coverageText:
-  "Mentions show tracked sources only: Reddit now, Stocktwits and crypto-native sources later. This is not full internet coverage.",
+      autoRefreshValue: "every 15 minutes",
+      coverageTitle: "Data coverage",
+      coverageText:
+        "Mentions show tracked sources only: connected Reddit coverage now, with additional tracked sources prepared for expansion. This is not full internet coverage.",
       scanned: "Scanned",
       lockedTitle: "Market Intelligence is available on SkillEdge Edge and Elite.",
       lockedText:
-        "Core users can see the preview. Edge and Elite unlock market/social scanner, combined opportunities and future AI signals.",
+        "Core users can see the preview. Edge and Elite unlock market scanner, tracked attention, combined opportunities and AI Market Brief.",
     },
     ua: {
-      title: "Market Intelligence Center",
+      title: "Р¦РµРЅС‚СЂ СЂРёРЅРєРѕРІРѕС— СЂРѕР·РІС–РґРєРё",
       subtitle:
-        "Єдиний центр пошуку in-play тикерів: рух ринку + social mentions + майбутній AI-аналіз сигналів.",
-      topTitle: "Top Opportunities Now",
+        "Р„РґРёРЅРёР№ С†РµРЅС‚СЂ РїРѕС€СѓРєСѓ Р°РєС‚РёРІРЅРёС… С‚РёРєРµСЂС–РІ: СЂСѓС… СЂРёРЅРєСѓ, РІС–РґСЃС‚РµР¶СѓРІР°РЅР° СѓРІР°РіР°, РЅРѕРІРёРЅРЅС– РєР°С‚Р°Р»С–Р·Р°С‚РѕСЂРё С‚Р° AI-СЂРѕР·Р±С–СЂ РЅР°Р№РєСЂР°С‰РёС… РєР°РЅРґРёРґР°С‚С–РІ.",
+      topTitle: "РќР°Р№РєСЂР°С‰С– РјРѕР¶Р»РёРІРѕСЃС‚С– Р·Р°СЂР°Р·",
       topText:
-        "Один список замість окремих сканерів. Система поєднує market activity, Reddit mentions, news catalysts, Binance crypto universe і готує тикери для AI-аналізу.",
-      aiSoon: "AI Layer Soon",
+        "РћРґРёРЅ СЃРїРёСЃРѕРє Р·Р°РјС–СЃС‚СЊ РѕРєСЂРµРјРёС… СЃРєР°РЅРµСЂС–РІ. РЎРёСЃС‚РµРјР° РїРѕС”РґРЅСѓС” СЂРёРЅРєРѕРІСѓ Р°РєС‚РёРІРЅС–СЃС‚СЊ, Reddit-Р·РіР°РґРєРё, РЅРѕРІРёРЅРЅС– РєР°С‚Р°Р»С–Р·Р°С‚РѕСЂРё, РєСЂРёРїС‚Рѕ-Р°РєС‚РёРІРЅС–СЃС‚СЊ Binance С– РіРѕС‚СѓС” С‚РёРєРµСЂРё РґР»СЏ AI-СЂРѕР·Р±РѕСЂСѓ.",
+      aiSoon: "AI-С€Р°СЂ",
       aiSoonText:
-        "Далі додамо AI-сценарії, confluence score, risk notes, сигнали та персональні alerts під стиль клієнта.",
+        "AI-С€Р°СЂ РґРѕРїРѕРјР°РіР°С” СЂРѕР·С–Р±СЂР°С‚Рё СЃС†РµРЅР°СЂС–Р№, Р·Р±С–Рі С„Р°РєС‚РѕСЂС–РІ, СЂРёР·РёРє РїР°СЃС‚РєРё, СѓРјРѕРІРё СЃРєР°СЃСѓРІР°РЅРЅСЏ С–РґРµС— С‚Р° РїРѕРґР°Р»СЊС€РёР№ РїР»Р°РЅ СЃРїРѕСЃС‚РµСЂРµР¶РµРЅРЅСЏ.",
       dataNote:
-        "MVP використовує доступні джерела. Перед релізом підключаємо premium full-data providers, intraday 1m/5m/15m і повний universe.",
-      refreshAll: "Оновити все",
-      aiAnalyzeTop: "AI Market Brief",
-aiAnalyzeTitle: "AI Market Brief по топ-10 можливостям",
-aiAnalyzeText:
-  "SkillEdge AI розбирає топ-10 кандидатів із Market Intelligence: чому тикер in-play, який сетап формується, де ризик пастки, який сценарій дивитися і де ідея ламається.",
-aiAnalyzeEmpty: "Спочатку онови scanner, щоб зʼявилися тикери для AI-розбору.",
-aiAnalyzePreview: "AI preview",
-aiAnalyzeClose: "Закрити",
-aiHistory: "History",
-aiHistoryTitle: "Історія AI Market Brief",
-aiHistoryText: "Останні збережені AI-брифи по ринку.",
-aiHistoryEmpty: "Історії ще немає. Запусти AI Market Brief, щоб зберегти перший розбір.",
-aiHistoryLoading: "Завантажуємо історію...",
-aiOpenBrief: "Відкрити brief",
-aiCloseBrief: "Закрити brief",
-aiSavedAnalysis: "Збережений AI-розбір",
-aiStocks: "Акції",
-aiCrypto: "Крипта",
-aiShowMore: "Показати ще",
-aiShowLess: "Згорнути",
-aiNoItemsForTab: "Немає кандидатів для цього ринку.",
-aiAnalyzeError: "Не вдалося отримати AI-розбір. Перевір backend env і спробуй ще раз.",
-      refreshing: "Оновлюємо...",
-      search: "Пошук тикера...",
-      asset: "Актив",
-      signal: "Сигнал",
-      sort: "Сортування",
-      allAssets: "Усі активи",
-      stocks: "Акції",
-      crypto: "Крипта",
-      allSignals: "Усі сигнали",
-      combined: "Combined",
-      marketOnly: "Market only",
-      socialOnly: "Social only",
-      sortScore: "Combined score",
-      sortMentions: "Mentions 24H",
-      sortMove: "Move %",
-      sortSocial: "Social score",
-      ticker: "Тикер",
-      combinedScore: "Score",
-      mentions24h: "24г",
-      move: "Move",
-      reason: "Чому важливо",
-      noData: "Поки немає даних. Натисни “Оновити все”.",
-      rawMarket: "Raw market movers",
-      rawSocial: "Raw social mentions",
-      showRaw: "Показати raw data",
-      hideRaw: "Сховати raw data",
-      source: "Джерело",
-      autoRefresh: "Auto-refresh",
-autoRefreshValue: "кожні 15 хвилин",
-coverageTitle: "Data coverage",
-coverageText:
-  "Mentions показують лише підключені джерела: Reddit зараз, Stocktwits і crypto-native sources пізніше. Це не повне покриття всього інтернету.",
-      scanned: "Скан",
-      lockedTitle: "Market Intelligence доступний на SkillEdge Edge та Elite.",
+        "Р—Р°СЂР°Р· РІРёРєРѕСЂРёСЃС‚РѕРІСѓСЋС‚СЊСЃСЏ РїС–РґРєР»СЋС‡РµРЅС– РґР¶РµСЂРµР»Р° РґР°РЅРёС…. Production data stack СЂРѕР·С€РёСЂРёС‚СЊ РїРѕРєСЂРёС‚С‚СЏ СЂРёРЅРєСѓ, РІРЅСѓС‚СЂС–С€РЅСЊРѕРґРµРЅРЅС– С‚Р°Р№РјС„СЂРµР№РјРё С‚Р° РїРѕРІРЅРёР№ universe Р°РєС†С–Р№/РєСЂРёРїС‚Рѕ.",
+      refreshAll: "РћРЅРѕРІРёС‚Рё РІСЃРµ",
+      aiAnalyzeTop: "AI-РѕРіР»СЏРґ СЂРёРЅРєСѓ",
+      aiAnalyzeTitle: "AI-РѕРіР»СЏРґ С‚РѕРї-10 РјРѕР¶Р»РёРІРѕСЃС‚РµР№",
+      aiAnalyzeText:
+        "SkillEdge AI СЂРѕР·Р±РёСЂР°С” С‚РѕРї-10 РєР°РЅРґРёРґР°С‚С–РІ С–Р· СЂРёРЅРєРѕРІРѕС— СЂРѕР·РІС–РґРєРё: С‡РѕРјСѓ С‚РёРєРµСЂ Р°РєС‚РёРІРЅРёР№, СЏРєРёР№ СЃРµС‚Р°Рї С„РѕСЂРјСѓС”С‚СЊСЃСЏ, РґРµ СЂРёР·РёРє РїР°СЃС‚РєРё, СЏРєРёР№ СЃС†РµРЅР°СЂС–Р№ РґРёРІРёС‚РёСЃСЏ С– РґРµ С–РґРµСЏ Р»Р°РјР°С”С‚СЊСЃСЏ.",
+      aiAnalyzeEmpty: "РЎРїРѕС‡Р°С‚РєСѓ РѕРЅРѕРІРё СЃРєР°РЅРµСЂ, С‰РѕР± Р·КјСЏРІРёР»РёСЃСЏ С‚РёРєРµСЂРё РґР»СЏ AI-СЂРѕР·Р±РѕСЂСѓ.",
+      aiAnalyzePreview: "AI-РїРµСЂРµРіР»СЏРґ",
+      aiAnalyzeClose: "Р—Р°РєСЂРёС‚Рё",
+      aiHistory: "Р†СЃС‚РѕСЂС–СЏ",
+      aiHistoryTitle: "Р†СЃС‚РѕСЂС–СЏ AI-РѕРіР»СЏРґС–РІ СЂРёРЅРєСѓ",
+      aiHistoryText: "РћСЃС‚Р°РЅРЅС– Р·Р±РµСЂРµР¶РµРЅС– AI-РѕРіР»СЏРґРё СЂРёРЅРєСѓ.",
+      aiHistoryEmpty: "Р†СЃС‚РѕСЂС–С— С‰Рµ РЅРµРјР°С”. Р—Р°РїСѓСЃС‚Рё AI-РѕРіР»СЏРґ СЂРёРЅРєСѓ, С‰РѕР± Р·Р±РµСЂРµРіС‚Рё РїРµСЂС€РёР№ СЂРѕР·Р±С–СЂ.",
+      aiHistoryLoading: "Р—Р°РІР°РЅС‚Р°Р¶СѓС”РјРѕ С–СЃС‚РѕСЂС–СЋ...",
+      aiOpenBrief: "Р’С–РґРєСЂРёС‚Рё РѕРіР»СЏРґ",
+      aiCloseBrief: "Р—Р°РєСЂРёС‚Рё РѕРіР»СЏРґ",
+      aiSavedAnalysis: "Р—Р±РµСЂРµР¶РµРЅРёР№ AI-СЂРѕР·Р±С–СЂ",
+      aiStocks: "РђРєС†С–С—",
+      aiCrypto: "РљСЂРёРїС‚Рѕ",
+      aiShowMore: "РџРѕРєР°Р·Р°С‚Рё С‰Рµ",
+      aiShowLess: "Р—РіРѕСЂРЅСѓС‚Рё",
+      aiNoItemsForTab: "РќРµРјР°С” РєР°РЅРґРёРґР°С‚С–РІ РґР»СЏ С†СЊРѕРіРѕ СЂРёРЅРєСѓ.",
+      aiAnalyzeError: "РќРµ РІРґР°Р»РѕСЃСЏ РѕС‚СЂРёРјР°С‚Рё AI-СЂРѕР·Р±С–СЂ. РџРµСЂРµРІС–СЂ СЃРµСЂРІРµСЂРЅС– РЅР°Р»Р°С€С‚СѓРІР°РЅРЅСЏ С– СЃРїСЂРѕР±СѓР№ С‰Рµ СЂР°Р·.",
+      refreshing: "РћРЅРѕРІР»СЋС”РјРѕ...",
+      search: "РџРѕС€СѓРє С‚РёРєРµСЂР°...",
+      asset: "РђРєС‚РёРІ",
+      signal: "РЎРёРіРЅР°Р»",
+      sort: "РЎРѕСЂС‚СѓРІР°РЅРЅСЏ",
+      allAssets: "РЈСЃС– Р°РєС‚РёРІРё",
+      stocks: "РђРєС†С–С—",
+      crypto: "РљСЂРёРїС‚Рѕ",
+      allSignals: "РЈСЃС– СЃРёРіРЅР°Р»Рё",
+      combined: "РљРѕРјР±С–РЅРѕРІР°РЅРёР№",
+      marketOnly: "РўС–Р»СЊРєРё СЂРёРЅРѕРє",
+      socialOnly: "РўС–Р»СЊРєРё СѓРІР°РіР°",
+      sortScore: "Р—Р°РіР°Р»СЊРЅРёР№ СЂРµР№С‚РёРЅРі",
+      sortMentions: "Р—РіР°РґРєРё 24Рі",
+      sortMove: "Р СѓС… %",
+      sortSocial: "Р РµР№С‚РёРЅРі СѓРІР°РіРё",
+      ticker: "РўРёРєРµСЂ",
+      combinedScore: "Р РµР№С‚РёРЅРі",
+      mentions24h: "Р’С–РґСЃС‚РµР¶РµРЅРѕ Р·Р° 24Рі",
+      move: "Р СѓС…",
+      reason: "Р§РѕРјСѓ РІР°Р¶Р»РёРІРѕ",
+      noData: "РџРѕРєРё РЅРµРјР°С” РґР°РЅРёС…. РќР°С‚РёСЃРЅРё В«РћРЅРѕРІРёС‚Рё РІСЃРµВ».",
+      rawMarket: "Р’РёС…С–РґРЅС– СЂРёРЅРєРѕРІС– РґР°РЅС–",
+      rawSocial: "Р’РёС…С–РґРЅС– РґР°РЅС– СѓРІР°РіРё",
+      showRaw: "РџРѕРєР°Р·Р°С‚Рё РІРёС…С–РґРЅС– РґР°РЅС–",
+      hideRaw: "РЎС…РѕРІР°С‚Рё РІРёС…С–РґРЅС– РґР°РЅС–",
+      source: "Р”Р¶РµСЂРµР»Рѕ",
+      autoRefresh: "РђРІС‚РѕРѕРЅРѕРІР»РµРЅРЅСЏ",
+      autoRefreshValue: "РєРѕР¶РЅС– 15 С…РІРёР»РёРЅ",
+      coverageTitle: "РџРѕРєСЂРёС‚С‚СЏ РґР°РЅРёС…",
+      coverageText:
+        "Р—РіР°РґРєРё РїРѕРєР°Р·СѓСЋС‚СЊ Р»РёС€Рµ РїС–РґРєР»СЋС‡РµРЅС– РґР¶РµСЂРµР»Р°: Р·Р°СЂР°Р· Reddit, РїС–Р·РЅС–С€Рµ Stocktwits С– crypto-native РґР¶РµСЂРµР»Р°. Р¦Рµ РЅРµ РїРѕРІРЅРµ РїРѕРєСЂРёС‚С‚СЏ РІСЃСЊРѕРіРѕ С–РЅС‚РµСЂРЅРµС‚Сѓ.",
+      scanned: "РЎРєР°РЅСѓРІР°РЅРЅСЏ",
+      lockedTitle: "Р РёРЅРєРѕРІР° СЂРѕР·РІС–РґРєР° РґРѕСЃС‚СѓРїРЅР° РЅР° SkillEdge Edge С‚Р° Elite.",
       lockedText:
-        "На Core доступний preview. Edge та Elite відкривають market/social scanner, combined opportunities і майбутні AI-сигнали.",
+        "РќР° Core РґРѕСЃС‚СѓРїРЅРёР№ Р»РёС€Рµ РїРѕРїРµСЂРµРґРЅС–Р№ РїРµСЂРµРіР»СЏРґ. Edge С‚Р° Elite РІС–РґРєСЂРёРІР°СЋС‚СЊ СЂРёРЅРєРѕРІРёР№ СЃРєР°РЅРµСЂ, РІС–РґСЃС‚РµР¶СѓРІР°РЅСѓ СѓРІР°РіСѓ, РєРѕРјР±С–РЅРѕРІР°РЅС– РјРѕР¶Р»РёРІРѕСЃС‚С– С‚Р° AI-РѕРіР»СЏРґ СЂРёРЅРєСѓ.",
     },
   }[safeLanguage];
 
@@ -13168,7 +13962,7 @@ const hiddenAiCount = Math.max(
           : "text-white/50 hover:text-white"
       }`}
     >
-      {label} · {count}
+      {label} В· {count}
     </button>
   ))}
 </div>
@@ -13196,7 +13990,7 @@ const hiddenAiCount = Math.max(
           : "text-white/50 hover:text-white"
       }`}
     >
-      {tab.label} · {tab.count}
+      {tab.label} В· {tab.count}
     </button>
   ))}
 </div>
@@ -13237,7 +14031,7 @@ const hiddenAiCount = Math.max(
 <div className="mt-5 space-y-3">
   {aiPreviewLoading ? (
     <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
-      SkillEdge AI анализирует топовые возможности...
+      SkillEdge AI Р°РЅР°Р»РёР·РёСЂСѓРµС‚ С‚РѕРїРѕРІС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё...
     </div>
   ) : activeAiPreviewItems.length === 0 ? (
     <div className="rounded-2xl border border-white/10 bg-black/20 p-5 text-sm text-white/50">
@@ -13425,7 +14219,7 @@ const hiddenAiCount = Math.max(
                 </div>
 
                 <div className="mt-1 text-xs text-white/35">
-                  {brief.analysisItems.length} AI items · {brief.planId}
+                  {brief.analysisItems.length} AI items В· {brief.planId}
                 </div>
               </div>
 
@@ -13462,7 +14256,7 @@ const hiddenAiCount = Math.max(
                   key={`${brief.id}-${item.symbol}`}
                   className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/65"
                 >
-                  {item.symbol} · {item.confluence_score}
+                  {item.symbol} В· {item.confluence_score}
                 </span>
               ))}
             </div>
@@ -13723,7 +14517,7 @@ const hiddenAiCount = Math.max(
 
                         <div>
   {item.changePercent === null ? (
-    <span className="text-white/35">—</span>
+    <span className="text-white/35">вЂ”</span>
   ) : (
     <span
       className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
@@ -13808,11 +14602,11 @@ const hiddenAiCount = Math.max(
         <div>
           <p className="text-xs font-semibold text-slate-100">Stocktwits</p>
           <p className="text-[11px] text-slate-500">
-            Trader sentiment / premium stream later
+            Trader sentiment stream
           </p>
         </div>
         <span className="rounded-full border border-violet-300/20 bg-violet-300/10 px-2 py-1 text-xs text-violet-100">
-          Premium later
+          Planned
         </span>
       </div>
     </div>
@@ -13849,17 +14643,17 @@ const hiddenAiCount = Math.max(
     {localText.source}: intelligence{" "}
     {marketIntelligenceItems.length > 0
       ? "unified_market_intelligence"
-      : "—"}{" "}
-    · market {marketSource || "—"} · social {socialSource || "—"}
+      : "вЂ”"}{" "}
+    В· market {marketSource || "вЂ”"} В· social {socialSource || "вЂ”"}
   </div>
 
   <div className="mt-1">
     {localText.scanned}:{" "}
     {marketIntelligenceScannedAt
       ? new Date(marketIntelligenceScannedAt).toLocaleString()
-      : "—"}{" "}
-    / market {scannedAt ? new Date(scannedAt).toLocaleString() : "—"} / social{" "}
-    {socialScannedAt ? new Date(socialScannedAt).toLocaleString() : "—"}
+      : "вЂ”"}{" "}
+    / market {scannedAt ? new Date(scannedAt).toLocaleString() : "вЂ”"} / social{" "}
+    {socialScannedAt ? new Date(socialScannedAt).toLocaleString() : "вЂ”"}
   </div>
 
   <div className="mt-2 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-xs leading-5 text-white/45">
@@ -13922,7 +14716,7 @@ const hiddenAiCount = Math.max(
                           {item.symbol}
                         </div>
                         <div className="text-xs text-white/35">
-                          {item.exchange || "US"} · {item.source || "social"}
+                          {item.exchange || "US"} В· {item.source || "social"}
                         </div>
                       </div>
                       <div className="text-white/60">
@@ -13942,21 +14736,216 @@ const hiddenAiCount = Math.max(
 
 
 function OverviewTab({ t }: { t: (typeof dashboardDict)[Language] }) {
+  const isRu = t.dashboard === "Р›РёС‡РЅС‹Р№ РєР°Р±РёРЅРµС‚";
+  const isUa = t.dashboard === "РћСЃРѕР±РёСЃС‚РёР№ РєР°Р±С–РЅРµС‚";
+
+  const copy = isRu
+    ? {
+        badge: "Trading cockpit",
+        title: "РљРѕРЅС‚СЂРѕР»СЊ РїСЂРѕС†РµСЃСЃР° РїРµСЂРµРґ СЂРµР·СѓР»СЊС‚Р°С‚РѕРј.",
+        text:
+          "Overview РїРѕРєР°Р·С‹РІР°РµС‚ РЅРµ РїСЂРѕСЃС‚Рѕ С†РёС„СЂС‹, Р° СЃРѕСЃС‚РѕСЏРЅРёРµ С‚РІРѕРµР№ С‚РѕСЂРіРѕРІРѕР№ СЃРёСЃС‚РµРјС‹: PnL, РІРёРЅСЂРµР№С‚, РґРёСЃС†РёРїР»РёРЅР°, РїРѕРІС‚РѕСЂСЏРµРјРѕСЃС‚СЊ Рё РєР°С‡РµСЃС‚РІРѕ СЂРµС€РµРЅРёР№.",
+        sessionTitle: "РЎРѕСЃС‚РѕСЏРЅРёРµ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРѕС†РµСЃСЃР°",
+        sessionText:
+          "РЎРЅР°С‡Р°Р»Р° Р¶СѓСЂРЅР°Р» Рё РґРёСЃС†РёРїР»РёРЅР°. РџРѕС‚РѕРј СЃС‚Р°С‚РёСЃС‚РёРєР°. РџРѕС‚РѕРј РїРµСЂСЃРѕРЅР°Р»СЊРЅС‹Рµ РІС‹РІРѕРґС‹ Рё СѓР»СѓС‡С€РµРЅРёРµ.",
+        focusTitle: "РќР° С‡С‚Рѕ СЃРјРѕС‚СЂРµС‚СЊ СЃРµРіРѕРґРЅСЏ",
+        focusItems: [
+          ["Р РёСЃРє", "РќРµ РїСЂРµРІС‹С€Р°С‚СЊ Р»РёРјРёС‚ СЂРёСЃРєР° РЅР° СЃРґРµР»РєСѓ."],
+          ["Р”РёСЃС†РёРїР»РёРЅР°", "Р’С…РѕРґРёС‚СЊ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ СЃРµС‚Р°РїР°."],
+          ["Р–СѓСЂРЅР°Р»", "Р¤РёРєСЃРёСЂРѕРІР°С‚СЊ РїСЂРёС‡РёРЅСѓ РІС…РѕРґР°, СЌРјРѕС†РёСЋ Рё РѕС€РёР±РєСѓ."],
+          ["Review", "РџРѕСЃР»Рµ СЃРµСЃСЃРёРё СЂР°Р·РѕР±СЂР°С‚СЊ Р»СѓС‡С€РёРµ Рё С…СѓРґС€РёРµ СЂРµС€РµРЅРёСЏ."],
+        ],
+        weeklyLabel: "AI review layer",
+        qualityTitle: "РљР°С‡РµСЃС‚РІРѕ РїСЂРѕС†РµСЃСЃР°",
+        qualityItems: [
+          "РќРµС‚ СЃС‚Р°С‚РёСЃС‚РёРєРё вЂ” РЅРµС‚ СЃРёСЃС‚РµРјС‹.",
+          "РќРµС‚ Р¶СѓСЂРЅР°Р»Р° вЂ” РЅРµС‚ РїРµСЂСЃРѕРЅР°Р»РёР·Р°С†РёРё.",
+          "РќРµС‚ review вЂ” РѕС€РёР±РєРё РїРѕРІС‚РѕСЂСЏСЋС‚СЃСЏ.",
+        ],
+      }
+    : isUa
+      ? {
+          badge: "Trading cockpit",
+          title: "РљРѕРЅС‚СЂРѕР»СЊ РїСЂРѕС†РµСЃСѓ РїРµСЂРµРґ СЂРµР·СѓР»СЊС‚Р°С‚РѕРј.",
+          text:
+            "Overview РїРѕРєР°Р·СѓС” РЅРµ РїСЂРѕСЃС‚Рѕ С†РёС„СЂРё, Р° СЃС‚Р°РЅ С‚РІРѕС”С— С‚РѕСЂРіРѕРІРѕС— СЃРёСЃС‚РµРјРё: PnL, РІС–РЅСЂРµР№С‚, РґРёСЃС†РёРїР»С–РЅСѓ, РїРѕРІС‚РѕСЂСЋРІР°РЅС–СЃС‚СЊ С– СЏРєС–СЃС‚СЊ СЂС–С€РµРЅСЊ.",
+          sessionTitle: "РЎС‚Р°РЅ С‚РѕСЂРіРѕРІРѕРіРѕ РїСЂРѕС†РµСЃСѓ",
+          sessionText:
+            "РЎРїРѕС‡Р°С‚РєСѓ Р¶СѓСЂРЅР°Р» С– РґРёСЃС†РёРїР»С–РЅР°. РџРѕС‚С–Рј СЃС‚Р°С‚РёСЃС‚РёРєР°. РџРѕС‚С–Рј РїРµСЂСЃРѕРЅР°Р»СЊРЅС– РІРёСЃРЅРѕРІРєРё С‚Р° РїРѕРєСЂР°С‰РµРЅРЅСЏ.",
+          focusTitle: "РќР° С‰Рѕ РґРёРІРёС‚РёСЃСЊ СЃСЊРѕРіРѕРґРЅС–",
+          focusItems: [
+            ["Р РёР·РёРє", "РќРµ РїРµСЂРµРІРёС‰СѓРІР°С‚Рё Р»С–РјС–С‚ СЂРёР·РёРєСѓ РЅР° СѓРіРѕРґСѓ."],
+            ["Р”РёСЃС†РёРїР»С–РЅР°", "Р’С…РѕРґРёС‚Рё С‚С–Р»СЊРєРё РїС–СЃР»СЏ РїС–РґС‚РІРµСЂРґР¶РµРЅРЅСЏ СЃРµС‚Р°РїСѓ."],
+            ["Р–СѓСЂРЅР°Р»", "Р¤С–РєСЃСѓРІР°С‚Рё РїСЂРёС‡РёРЅСѓ РІС…РѕРґСѓ, РµРјРѕС†С–СЋ С‚Р° РїРѕРјРёР»РєСѓ."],
+            ["Review", "РџС–СЃР»СЏ СЃРµСЃС–С— СЂРѕР·С–Р±СЂР°С‚Рё РЅР°Р№РєСЂР°С‰С– Р№ РЅР°Р№РіС–СЂС€С– СЂС–С€РµРЅРЅСЏ."],
+          ],
+          weeklyLabel: "AI review layer",
+          qualityTitle: "РЇРєС–СЃС‚СЊ РїСЂРѕС†РµСЃСѓ",
+          qualityItems: [
+            "РќРµРјР°С” СЃС‚Р°С‚РёСЃС‚РёРєРё вЂ” РЅРµРјР°С” СЃРёСЃС‚РµРјРё.",
+            "РќРµРјР°С” Р¶СѓСЂРЅР°Р»Сѓ вЂ” РЅРµРјР°С” РїРµСЂСЃРѕРЅР°Р»С–Р·Р°С†С–С—.",
+            "РќРµРјР°С” review вЂ” РїРѕРјРёР»РєРё РїРѕРІС‚РѕСЂСЋСЋС‚СЊСЃСЏ.",
+          ],
+        }
+      : {
+          badge: "Trading cockpit",
+          title: "Control the process before the result.",
+          text:
+            "Overview is not just numbers. It shows the state of your trading system: PnL, win rate, discipline, repeatability and decision quality.",
+          sessionTitle: "Trading process state",
+          sessionText:
+            "First journal and discipline. Then statistics. Then personal conclusions and improvement.",
+          focusTitle: "What to watch today",
+          focusItems: [
+            ["Risk", "Do not exceed risk limit per trade."],
+            ["Discipline", "Enter only after setup confirmation."],
+            ["Journal", "Log entry reason, emotion and mistake."],
+            ["Review", "After the session, review best and worst decisions."],
+          ],
+          weeklyLabel: "AI review layer",
+          qualityTitle: "Process quality",
+          qualityItems: [
+            "No statistics вЂ” no system.",
+            "No journal вЂ” no personalization.",
+            "No review вЂ” mistakes repeat.",
+          ],
+        };
+
   return (
-    <div>
+    <div className="space-y-6">
       <SectionHeader title={t.overview.title} text={t.overview.text} />
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
-        <MetricCard label={t.overview.pnlMonth} value="$0" />
-        <MetricCard label={t.overview.winRate} value="—" />
-        <MetricCard label={t.overview.discipline} value="—" />
+      <div className="grid gap-5 xl:grid-cols-[1.12fr_0.88fr]">
+        <div className="se-dashboard-panel relative overflow-hidden rounded-[2.2rem] p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(56,214,255,0.13),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(52,211,153,0.1),transparent_30%)]" />
+
+          <div className="relative">
+            <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">
+              {copy.badge}
+            </div>
+
+            <h3 className="mt-5 max-w-3xl text-3xl font-black leading-[1.05] tracking-[-0.045em] text-white md:text-4xl">
+              {copy.title}
+            </h3>
+
+            <p className="mt-4 max-w-3xl text-sm font-semibold leading-7 text-white/60">
+              {copy.text}
+            </p>
+
+            <div className="mt-6 grid gap-3 md:grid-cols-4">
+              {copy.focusItems.map(([title, text], index) => (
+                <div
+                  key={title}
+                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4"
+                >
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-cyan-200/16 bg-cyan-200/[0.08] text-[10px] font-black text-cyan-50">
+                    0{index + 1}
+                  </div>
+
+                  <div className="mt-4 text-sm font-black text-white">
+                    {title}
+                  </div>
+
+                  <p className="mt-2 text-xs font-semibold leading-5 text-white/48">
+                    {text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="se-dashboard-card relative overflow-hidden rounded-[2.2rem] p-6">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_0%,rgba(247,201,72,0.12),transparent_30%),radial-gradient(circle_at_16%_90%,rgba(56,214,255,0.11),transparent_32%)]" />
+
+          <div className="relative">
+            <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/38">
+              {copy.sessionTitle}
+            </div>
+
+            <p className="mt-4 text-sm font-semibold leading-7 text-white/60">
+              {copy.sessionText}
+            </p>
+
+            <div className="mt-6 grid gap-3">
+              {copy.qualityItems.map((item) => (
+                <div
+                  key={item}
+                  className="rounded-2xl border border-white/10 bg-black/18 p-4 text-sm font-bold leading-6 text-white/65"
+                >
+                  вњ“ {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="mt-6 rounded-3xl border border-white/10 bg-black/20 p-6">
-        <h3 className="text-xl font-semibold">{t.overview.weeklyAi}</h3>
-        <p className="mt-3 text-sm leading-7 text-white/55">
-          {t.overview.weeklyAiText}
-        </p>
+      <div className="grid gap-4 md:grid-cols-3">
+        <MetricCard
+          label={t.overview.pnlMonth}
+          value="$0"
+          helper={isRu ? "РџРѕСЏРІРёС‚СЃСЏ РїРѕСЃР»Рµ СЃРґРµР»РѕРє" : isUa ? "Р—КјСЏРІРёС‚СЊСЃСЏ РїС–СЃР»СЏ СѓРіРѕРґ" : "Appears after trades"}
+          accent="positive"
+        />
+
+        <MetricCard
+          label={t.overview.winRate}
+          value="вЂ”"
+          helper={isRu ? "РќСѓР¶РЅР° РёСЃС‚РѕСЂРёСЏ СЃРґРµР»РѕРє" : isUa ? "РџРѕС‚СЂС–Р±РЅР° С–СЃС‚РѕСЂС–СЏ СѓРіРѕРґ" : "Needs trade history"}
+          accent="neutral"
+        />
+
+        <MetricCard
+          label={t.overview.discipline}
+          value="вЂ”"
+          helper={isRu ? "РЎС‚СЂРѕРёС‚СЃСЏ РёР· Р¶СѓСЂРЅР°Р»Р°" : isUa ? "Р‘СѓРґСѓС”С‚СЊСЃСЏ Р· Р¶СѓСЂРЅР°Р»Сѓ" : "Built from journal"}
+          accent="warning"
+        />
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="se-dashboard-panel rounded-[2rem] p-6">
+          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">
+            {copy.weeklyLabel}
+          </div>
+
+          <h3 className="mt-5 text-2xl font-black tracking-[-0.03em] text-white">
+            {t.overview.weeklyAi}
+          </h3>
+
+          <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
+            {t.overview.weeklyAiText}
+          </p>
+        </div>
+
+        <div className="se-dashboard-card rounded-[2rem] p-6">
+          <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/38">
+            {copy.qualityTitle}
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {[
+              isRu ? "PnL РґРёРЅР°РјРёРєР°" : isUa ? "PnL РґРёРЅР°РјС–РєР°" : "PnL dynamics",
+              isRu ? "Р›СѓС‡С€РёРµ СЃРµС‚Р°РїС‹" : isUa ? "РќР°Р№РєСЂР°С‰С– СЃРµС‚Р°РїРё" : "Best setups",
+              isRu ? "Р“Р»Р°РІРЅС‹Рµ РѕС€РёР±РєРё" : isUa ? "Р“РѕР»РѕРІРЅС– РїРѕРјРёР»РєРё" : "Main mistakes",
+            ].map((item) => (
+              <div
+                key={item}
+                className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
+              >
+                <div className="text-sm font-black text-white">{item}</div>
+                <div className="mt-2 text-xs font-semibold leading-5 text-white/45">
+                  {isRu
+                    ? "РџРѕСЏРІРёС‚СЃСЏ РїРѕСЃР»Рµ Р·Р°РїРѕР»РЅРµРЅРёСЏ Р¶СѓСЂРЅР°Р»Р°."
+                    : isUa
+                      ? "Р—КјСЏРІРёС‚СЊСЃСЏ РїС–СЃР»СЏ Р·Р°РїРѕРІРЅРµРЅРЅСЏ Р¶СѓСЂРЅР°Р»Сѓ."
+                      : "Appears after journal data is added."}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -14345,7 +15334,7 @@ const handleAnalyzeCurrentChart = async () => {
           onClick={() => setChartAnalysisOpen(false)}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-xl text-white/70 transition hover:bg-white/10 hover:text-white"
         >
-          ×
+          Г—
         </button>
       </div>
 
@@ -14384,7 +15373,7 @@ const handleAnalyzeCurrentChart = async () => {
       </div>
 
       <p className="mt-2 text-sm leading-6 text-cyan-50/60">
-        {formatChartSymbol(symbol)} · {interval}
+        {formatChartSymbol(symbol)} В· {interval}
       </p>
     </div>
 
@@ -14423,7 +15412,7 @@ const handleAnalyzeCurrentChart = async () => {
     </p>
 
     <div className="mt-5 rounded-2xl border border-red-300/10 bg-black/20 p-4 text-xs leading-6 text-red-50/45">
-      {formatChartSymbol(symbol)} · {interval}
+      {formatChartSymbol(symbol)} В· {interval}
     </div>
   </div>
 )}
@@ -14436,7 +15425,7 @@ const handleAnalyzeCurrentChart = async () => {
       </div>
 
       <div className="mt-2 text-xl font-semibold text-white">
-        {formatChartSymbol(symbol)} · {interval}
+        {formatChartSymbol(symbol)} В· {interval}
       </div>
 
       <div className="mt-2 text-sm leading-6 text-cyan-50/60">
@@ -14751,7 +15740,7 @@ const handleAnalyzeCurrentChart = async () => {
     title={t.charts.removeFromWatchlist}
     className="flex h-7 w-7 items-center justify-center rounded-full border border-red-400/20 bg-red-400/10 text-sm leading-none text-red-200 transition hover:bg-red-400/20"
   >
-    ×
+    Г—
   </button>
 </div>
             ))}
@@ -14890,7 +15879,11 @@ function MoversPanel({
         if (!cancelled) {
           setItems([]);
           setError(
-            err instanceof Error ? err.message : "Failed to load movers."
+            market === "stocks"
+              ? t.charts.moversStocksNeedKey
+              : err instanceof Error
+                ? err.message
+                : t.charts.moversLoading
           );
         }
       } finally {
@@ -15101,85 +16094,9 @@ async function fetchCryptoMovers(
 }
 
 async function fetchStockMovers(
-  side: ChartsMoverSide
+  _side: ChartsMoverSide
 ): Promise<ChartsMoverItem[]> {
-  const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY;
-
-  if (!apiKey) {
-    throw new Error(
-      "Для stocks movers добавь NEXT_PUBLIC_FMP_API_KEY в .env.local"
-    );
-  }
-
-  const endpoint =
-    side === "gainers"
-      ? `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${apiKey}`
-      : `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${apiKey}`;
-
-  const response = await fetch(endpoint);
-
-  if (!response.ok) {
-    throw new Error("Stocks movers are unavailable right now.");
-  }
-
-  const data = await response.json();
-
-  if (!Array.isArray(data)) {
-    throw new Error("Stocks movers returned invalid data.");
-  }
-
-  const mapped: ChartsMoverItem[] = data
-    .map((item: any) => {
-      const changePct = parseChangePct(
-        item.changesPercentage ??
-          item.changePercentage ??
-          item.percentageChange ??
-          item.change ??
-          0
-      );
-
-      const rawVolume = Number(item.volume ?? 0);
-
-      return {
-        symbol: item.symbol || "—",
-        name: item.name || item.companyName || item.symbol || "—",
-        price:
-          typeof item.price === "number"
-            ? item.price
-            : typeof item.lastPrice === "number"
-            ? item.lastPrice
-            : null,
-        changePct,
-        volume: formatCompactNumber(rawVolume),
-        rawVolume,
-      };
-    })
-    .filter((item: ChartsMoverItem & { rawVolume?: number }) => {
-      const volume = item.rawVolume ?? 0;
-
-      if (!Number.isFinite(item.changePct) || !Number.isFinite(volume)) {
-        return false;
-      }
-
-      if (volume < 50000) {
-        return false;
-      }
-
-      if (side === "gainers") {
-        return item.changePct >= 10;
-      }
-
-      return item.changePct <= -10;
-    })
-    .sort((a, b) =>
-      side === "gainers"
-        ? b.changePct - a.changePct
-        : a.changePct - b.changePct
-    )
-    .slice(0, 25)
-    .map(({ rawVolume, ...item }) => item);
-
-  return mapped;
+  throw new Error("Stock movers are routed through the premium market data layer.");
 }
 
 function parseChangePct(value: unknown): number {
@@ -15198,7 +16115,7 @@ function formatCompactNumber(value: number | null | undefined): string {
   const numericValue = Number(value ?? 0);
 
   if (!Number.isFinite(numericValue) || numericValue === 0) {
-    return "—";
+    return "вЂ”";
   }
 
   return new Intl.NumberFormat("en", {
@@ -15211,7 +16128,7 @@ function formatPercent(value: number | null | undefined): string {
   const numericValue = Number(value ?? 0);
 
   if (!Number.isFinite(numericValue)) {
-    return "—";
+    return "вЂ”";
   }
 
   return `${numericValue >= 0 ? "+" : ""}${numericValue.toFixed(2)}%`;
@@ -15375,47 +16292,12 @@ async function fetchWatchlistTickerMeta(
   }
 
   if (market === "stocks") {
-    const apiKey = process.env.NEXT_PUBLIC_FMP_API_KEY;
-
-    if (!apiKey) {
-      return {
-        name: formatChartSymbol(symbol),
-        volume24h: null,
-        change24h: null,
-      };
-    }
-
     const cleanSymbol = formatChartSymbol(symbol);
 
-    const response = await fetch(
-      `https://financialmodelingprep.com/api/v3/quote/${cleanSymbol}?apikey=${apiKey}`
-    );
-
-    if (!response.ok) {
-      return {
-        name: cleanSymbol,
-        volume24h: null,
-        change24h: null,
-      };
-    }
-
-    const data = await response.json();
-    const item = Array.isArray(data) ? data[0] : null;
-
-    if (!item) {
-      return {
-        name: cleanSymbol,
-        volume24h: null,
-        change24h: null,
-      };
-    }
-
     return {
-      name: item.name ?? cleanSymbol,
-      volume24h: Number(item.volume ?? 0),
-      change24h: parseChangePct(
-        item.changesPercentage ?? item.changePercentage ?? 0
-      ),
+      name: cleanSymbol,
+      volume24h: null,
+      change24h: null,
     };
   }
 
@@ -15695,796 +16577,796 @@ function getLessonContent(
   const contentByLesson: Record<string, LearningLessonContent> = {
     "market-basics-1": {
       intro:
-        "Рынок — это место, где покупатели и продавцы постоянно договариваются о цене. Цена двигается не потому, что график “хочет” идти вверх или вниз, а потому что в конкретный момент одна сторона становится агрессивнее другой.",
+        "Р С‹РЅРѕРє вЂ” СЌС‚Рѕ РјРµСЃС‚Рѕ, РіРґРµ РїРѕРєСѓРїР°С‚РµР»Рё Рё РїСЂРѕРґР°РІС†С‹ РїРѕСЃС‚РѕСЏРЅРЅРѕ РґРѕРіРѕРІР°СЂРёРІР°СЋС‚СЃСЏ Рѕ С†РµРЅРµ. Р¦РµРЅР° РґРІРёРіР°РµС‚СЃСЏ РЅРµ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ РіСЂР°С„РёРє вЂњС…РѕС‡РµС‚вЂќ РёРґС‚Рё РІРІРµСЂС… РёР»Рё РІРЅРёР·, Р° РїРѕС‚РѕРјСѓ С‡С‚Рѕ РІ РєРѕРЅРєСЂРµС‚РЅС‹Р№ РјРѕРјРµРЅС‚ РѕРґРЅР° СЃС‚РѕСЂРѕРЅР° СЃС‚Р°РЅРѕРІРёС‚СЃСЏ Р°РіСЂРµСЃСЃРёРІРЅРµРµ РґСЂСѓРіРѕР№.",
       blocks: [
         {
-          title: "Что реально двигает цену",
+          title: "Р§С‚Рѕ СЂРµР°Р»СЊРЅРѕ РґРІРёРіР°РµС‚ С†РµРЅСѓ",
           text:
-            "Цена двигается тогда, когда агрессивные покупатели начинают забирать ликвидность у продавцов, либо агрессивные продавцы начинают продавать в покупателей. Если покупатели готовы платить всё выше — цена растёт. Если продавцы готовы продавать всё ниже — цена падает.",
+            "Р¦РµРЅР° РґРІРёРіР°РµС‚СЃСЏ С‚РѕРіРґР°, РєРѕРіРґР° Р°РіСЂРµСЃСЃРёРІРЅС‹Рµ РїРѕРєСѓРїР°С‚РµР»Рё РЅР°С‡РёРЅР°СЋС‚ Р·Р°Р±РёСЂР°С‚СЊ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ Сѓ РїСЂРѕРґР°РІС†РѕРІ, Р»РёР±Рѕ Р°РіСЂРµСЃСЃРёРІРЅС‹Рµ РїСЂРѕРґР°РІС†С‹ РЅР°С‡РёРЅР°СЋС‚ РїСЂРѕРґР°РІР°С‚СЊ РІ РїРѕРєСѓРїР°С‚РµР»РµР№. Р•СЃР»Рё РїРѕРєСѓРїР°С‚РµР»Рё РіРѕС‚РѕРІС‹ РїР»Р°С‚РёС‚СЊ РІСЃС‘ РІС‹С€Рµ вЂ” С†РµРЅР° СЂР°СЃС‚С‘С‚. Р•СЃР»Рё РїСЂРѕРґР°РІС†С‹ РіРѕС‚РѕРІС‹ РїСЂРѕРґР°РІР°С‚СЊ РІСЃС‘ РЅРёР¶Рµ вЂ” С†РµРЅР° РїР°РґР°РµС‚.",
         },
         {
-          title: "Кто участвует в рынке",
+          title: "РљС‚Рѕ СѓС‡Р°СЃС‚РІСѓРµС‚ РІ СЂС‹РЅРєРµ",
           text:
-            "В рынке есть разные участники: долгосрочные инвесторы, фонды, маркет-мейкеры, алгоритмы, скальперы, дейтрейдеры и новостные трейдеры. Каждый из них создаёт спрос, предложение, ликвидность и волатильность.",
+            "Р’ СЂС‹РЅРєРµ РµСЃС‚СЊ СЂР°Р·РЅС‹Рµ СѓС‡Р°СЃС‚РЅРёРєРё: РґРѕР»РіРѕСЃСЂРѕС‡РЅС‹Рµ РёРЅРІРµСЃС‚РѕСЂС‹, С„РѕРЅРґС‹, РјР°СЂРєРµС‚-РјРµР№РєРµСЂС‹, Р°Р»РіРѕСЂРёС‚РјС‹, СЃРєР°Р»СЊРїРµСЂС‹, РґРµР№С‚СЂРµР№РґРµСЂС‹ Рё РЅРѕРІРѕСЃС‚РЅС‹Рµ С‚СЂРµР№РґРµСЂС‹. РљР°Р¶РґС‹Р№ РёР· РЅРёС… СЃРѕР·РґР°С‘С‚ СЃРїСЂРѕСЃ, РїСЂРµРґР»РѕР¶РµРЅРёРµ, Р»РёРєРІРёРґРЅРѕСЃС‚СЊ Рё РІРѕР»Р°С‚РёР»СЊРЅРѕСЃС‚СЊ.",
         },
         {
-          title: "Почему цена не движется идеально",
+          title: "РџРѕС‡РµРјСѓ С†РµРЅР° РЅРµ РґРІРёР¶РµС‚СЃСЏ РёРґРµР°Р»СЊРЅРѕ",
           text:
-            "Цена почти никогда не идёт ровной линией. Она двигается импульсами, откатами, остановками и ложными пробоями, потому что участники рынка постоянно фиксируют прибыль, входят заново, защищают позиции и выбивают стопы.",
+            "Р¦РµРЅР° РїРѕС‡С‚Рё РЅРёРєРѕРіРґР° РЅРµ РёРґС‘С‚ СЂРѕРІРЅРѕР№ Р»РёРЅРёРµР№. РћРЅР° РґРІРёРіР°РµС‚СЃСЏ РёРјРїСѓР»СЊСЃР°РјРё, РѕС‚РєР°С‚Р°РјРё, РѕСЃС‚Р°РЅРѕРІРєР°РјРё Рё Р»РѕР¶РЅС‹РјРё РїСЂРѕР±РѕСЏРјРё, РїРѕС‚РѕРјСѓ С‡С‚Рѕ СѓС‡Р°СЃС‚РЅРёРєРё СЂС‹РЅРєР° РїРѕСЃС‚РѕСЏРЅРЅРѕ С„РёРєСЃРёСЂСѓСЋС‚ РїСЂРёР±С‹Р»СЊ, РІС…РѕРґСЏС‚ Р·Р°РЅРѕРІРѕ, Р·Р°С‰РёС‰Р°СЋС‚ РїРѕР·РёС†РёРё Рё РІС‹Р±РёРІР°СЋС‚ СЃС‚РѕРїС‹.",
         },
         {
-          title: "Что важно для трейдера",
+          title: "Р§С‚Рѕ РІР°Р¶РЅРѕ РґР»СЏ С‚СЂРµР№РґРµСЂР°",
           text:
-            "Трейдеру не нужно угадывать будущее. Его задача — понять текущий баланс силы: кто контролирует движение сейчас, где может быть ликвидность, где участники будут принимать решения и где риск становится понятным.",
+            "РўСЂРµР№РґРµСЂСѓ РЅРµ РЅСѓР¶РЅРѕ СѓРіР°РґС‹РІР°С‚СЊ Р±СѓРґСѓС‰РµРµ. Р•РіРѕ Р·Р°РґР°С‡Р° вЂ” РїРѕРЅСЏС‚СЊ С‚РµРєСѓС‰РёР№ Р±Р°Р»Р°РЅСЃ СЃРёР»С‹: РєС‚Рѕ РєРѕРЅС‚СЂРѕР»РёСЂСѓРµС‚ РґРІРёР¶РµРЅРёРµ СЃРµР№С‡Р°СЃ, РіРґРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ, РіРґРµ СѓС‡Р°СЃС‚РЅРёРєРё Р±СѓРґСѓС‚ РїСЂРёРЅРёРјР°С‚СЊ СЂРµС€РµРЅРёСЏ Рё РіРґРµ СЂРёСЃРє СЃС‚Р°РЅРѕРІРёС‚СЃСЏ РїРѕРЅСЏС‚РЅС‹Рј.",
         },
       ],
       checklist: [
-        "Определи, кто сейчас агрессивнее: покупатели или продавцы.",
-        "Посмотри, есть ли импульс или рынок стоит в диапазоне.",
-        "Найди зоны, где раньше была сильная реакция цены.",
-        "Не открывай сделку без понятного места для стопа.",
+        "РћРїСЂРµРґРµР»Рё, РєС‚Рѕ СЃРµР№С‡Р°СЃ Р°РіСЂРµСЃСЃРёРІРЅРµРµ: РїРѕРєСѓРїР°С‚РµР»Рё РёР»Рё РїСЂРѕРґР°РІС†С‹.",
+        "РџРѕСЃРјРѕС‚СЂРё, РµСЃС‚СЊ Р»Рё РёРјРїСѓР»СЊСЃ РёР»Рё СЂС‹РЅРѕРє СЃС‚РѕРёС‚ РІ РґРёР°РїР°Р·РѕРЅРµ.",
+        "РќР°Р№РґРё Р·РѕРЅС‹, РіРґРµ СЂР°РЅСЊС€Рµ Р±С‹Р»Р° СЃРёР»СЊРЅР°СЏ СЂРµР°РєС†РёСЏ С†РµРЅС‹.",
+        "РќРµ РѕС‚РєСЂС‹РІР°Р№ СЃРґРµР»РєСѓ Р±РµР· РїРѕРЅСЏС‚РЅРѕРіРѕ РјРµСЃС‚Р° РґР»СЏ СЃС‚РѕРїР°.",
       ],
       practice:
-        "Открой любой актив на графике 5m или 15m. Отметь один сильный импульс, один откат и одну зону, где цена остановилась или резко изменила направление. Напиши рядом: кто там был сильнее — покупатели или продавцы.",
+        "РћС‚РєСЂРѕР№ Р»СЋР±РѕР№ Р°РєС‚РёРІ РЅР° РіСЂР°С„РёРєРµ 5m РёР»Рё 15m. РћС‚РјРµС‚СЊ РѕРґРёРЅ СЃРёР»СЊРЅС‹Р№ РёРјРїСѓР»СЊСЃ, РѕРґРёРЅ РѕС‚РєР°С‚ Рё РѕРґРЅСѓ Р·РѕРЅСѓ, РіРґРµ С†РµРЅР° РѕСЃС‚Р°РЅРѕРІРёР»Р°СЃСЊ РёР»Рё СЂРµР·РєРѕ РёР·РјРµРЅРёР»Р° РЅР°РїСЂР°РІР»РµРЅРёРµ. РќР°РїРёС€Рё СЂСЏРґРѕРј: РєС‚Рѕ С‚Р°Рј Р±С‹Р» СЃРёР»СЊРЅРµРµ вЂ” РїРѕРєСѓРїР°С‚РµР»Рё РёР»Рё РїСЂРѕРґР°РІС†С‹.",
     },
 
     "market-basics-2": {
       intro:
-        "Ордер — это инструкция брокеру купить или продать актив. Понимание типов ордеров важно, потому что от них зависит цена входа, скорость исполнения, риск проскальзывания и контроль над сделкой.",
+        "РћСЂРґРµСЂ вЂ” СЌС‚Рѕ РёРЅСЃС‚СЂСѓРєС†РёСЏ Р±СЂРѕРєРµСЂСѓ РєСѓРїРёС‚СЊ РёР»Рё РїСЂРѕРґР°С‚СЊ Р°РєС‚РёРІ. РџРѕРЅРёРјР°РЅРёРµ С‚РёРїРѕРІ РѕСЂРґРµСЂРѕРІ РІР°Р¶РЅРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕС‚ РЅРёС… Р·Р°РІРёСЃРёС‚ С†РµРЅР° РІС…РѕРґР°, СЃРєРѕСЂРѕСЃС‚СЊ РёСЃРїРѕР»РЅРµРЅРёСЏ, СЂРёСЃРє РїСЂРѕСЃРєР°Р»СЊР·С‹РІР°РЅРёСЏ Рё РєРѕРЅС‚СЂРѕР»СЊ РЅР°Рґ СЃРґРµР»РєРѕР№.",
       blocks: [
         {
           title: "Market order",
           text:
-            "Market order исполняется по лучшей доступной цене прямо сейчас. Его плюс — скорость. Минус — ты не контролируешь точную цену исполнения, особенно в быстрых акциях, на премаркете, в крипте или на тонком стакане.",
+            "Market order РёСЃРїРѕР»РЅСЏРµС‚СЃСЏ РїРѕ Р»СѓС‡С€РµР№ РґРѕСЃС‚СѓРїРЅРѕР№ С†РµРЅРµ РїСЂСЏРјРѕ СЃРµР№С‡Р°СЃ. Р•РіРѕ РїР»СЋСЃ вЂ” СЃРєРѕСЂРѕСЃС‚СЊ. РњРёРЅСѓСЃ вЂ” С‚С‹ РЅРµ РєРѕРЅС‚СЂРѕР»РёСЂСѓРµС€СЊ С‚РѕС‡РЅСѓСЋ С†РµРЅСѓ РёСЃРїРѕР»РЅРµРЅРёСЏ, РѕСЃРѕР±РµРЅРЅРѕ РІ Р±С‹СЃС‚СЂС‹С… Р°РєС†РёСЏС…, РЅР° РїСЂРµРјР°СЂРєРµС‚Рµ, РІ РєСЂРёРїС‚Рµ РёР»Рё РЅР° С‚РѕРЅРєРѕРј СЃС‚Р°РєР°РЅРµ.",
         },
         {
           title: "Limit order",
           text:
-            "Limit order позволяет указать цену, по которой ты готов купить или продать. Его плюс — контроль цены. Минус — ордер может не исполниться, если рынок не даст твою цену или быстро уйдёт без тебя.",
+            "Limit order РїРѕР·РІРѕР»СЏРµС‚ СѓРєР°Р·Р°С‚СЊ С†РµРЅСѓ, РїРѕ РєРѕС‚РѕСЂРѕР№ С‚С‹ РіРѕС‚РѕРІ РєСѓРїРёС‚СЊ РёР»Рё РїСЂРѕРґР°С‚СЊ. Р•РіРѕ РїР»СЋСЃ вЂ” РєРѕРЅС‚СЂРѕР»СЊ С†РµРЅС‹. РњРёРЅСѓСЃ вЂ” РѕСЂРґРµСЂ РјРѕР¶РµС‚ РЅРµ РёСЃРїРѕР»РЅРёС‚СЊСЃСЏ, РµСЃР»Рё СЂС‹РЅРѕРє РЅРµ РґР°СЃС‚ С‚РІРѕСЋ С†РµРЅСѓ РёР»Рё Р±С‹СЃС‚СЂРѕ СѓР№РґС‘С‚ Р±РµР· С‚РµР±СЏ.",
         },
         {
           title: "Stop order",
           text:
-            "Stop order активируется, когда цена доходит до заданного уровня. Чаще всего он используется для ограничения риска. Например, если сценарий сломался, stop order помогает выйти из позиции автоматически.",
+            "Stop order Р°РєС‚РёРІРёСЂСѓРµС‚СЃСЏ, РєРѕРіРґР° С†РµРЅР° РґРѕС…РѕРґРёС‚ РґРѕ Р·Р°РґР°РЅРЅРѕРіРѕ СѓСЂРѕРІРЅСЏ. Р§Р°С‰Рµ РІСЃРµРіРѕ РѕРЅ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РѕРіСЂР°РЅРёС‡РµРЅРёСЏ СЂРёСЃРєР°. РќР°РїСЂРёРјРµСЂ, РµСЃР»Рё СЃС†РµРЅР°СЂРёР№ СЃР»РѕРјР°Р»СЃСЏ, stop order РїРѕРјРѕРіР°РµС‚ РІС‹Р№С‚Рё РёР· РїРѕР·РёС†РёРё Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё.",
         },
         {
-          title: "Почему тип ордера влияет на результат",
+          title: "РџРѕС‡РµРјСѓ С‚РёРї РѕСЂРґРµСЂР° РІР»РёСЏРµС‚ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚",
           text:
-            "Один и тот же сетап может дать разный результат в зависимости от ордера. Market order может дать плохое исполнение, limit order может не зайти в сделку, а неправильный stop может выбить из позиции перед движением.",
+            "РћРґРёРЅ Рё С‚РѕС‚ Р¶Рµ СЃРµС‚Р°Рї РјРѕР¶РµС‚ РґР°С‚СЊ СЂР°Р·РЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РѕСЂРґРµСЂР°. Market order РјРѕР¶РµС‚ РґР°С‚СЊ РїР»РѕС…РѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ, limit order РјРѕР¶РµС‚ РЅРµ Р·Р°Р№С‚Рё РІ СЃРґРµР»РєСѓ, Р° РЅРµРїСЂР°РІРёР»СЊРЅС‹Р№ stop РјРѕР¶РµС‚ РІС‹Р±РёС‚СЊ РёР· РїРѕР·РёС†РёРё РїРµСЂРµРґ РґРІРёР¶РµРЅРёРµРј.",
         },
       ],
       checklist: [
-        "Market order — когда важнее скорость, чем точная цена.",
-        "Limit order — когда важнее цена и контроль исполнения.",
-        "Stop order — когда нужно заранее ограничить риск.",
-        "На тонком рынке market order может дать сильное проскальзывание.",
+        "Market order вЂ” РєРѕРіРґР° РІР°Р¶РЅРµРµ СЃРєРѕСЂРѕСЃС‚СЊ, С‡РµРј С‚РѕС‡РЅР°СЏ С†РµРЅР°.",
+        "Limit order вЂ” РєРѕРіРґР° РІР°Р¶РЅРµРµ С†РµРЅР° Рё РєРѕРЅС‚СЂРѕР»СЊ РёСЃРїРѕР»РЅРµРЅРёСЏ.",
+        "Stop order вЂ” РєРѕРіРґР° РЅСѓР¶РЅРѕ Р·Р°СЂР°РЅРµРµ РѕРіСЂР°РЅРёС‡РёС‚СЊ СЂРёСЃРє.",
+        "РќР° С‚РѕРЅРєРѕРј СЂС‹РЅРєРµ market order РјРѕР¶РµС‚ РґР°С‚СЊ СЃРёР»СЊРЅРѕРµ РїСЂРѕСЃРєР°Р»СЊР·С‹РІР°РЅРёРµ.",
       ],
       practice:
-        "Открой стакан или график активной акции. Представь 3 ситуации: быстрый пробой, спокойный откат к уровню и выход по стопу. Для каждой ситуации выбери, какой ордер был бы логичнее: market, limit или stop.",
+        "РћС‚РєСЂРѕР№ СЃС‚Р°РєР°РЅ РёР»Рё РіСЂР°С„РёРє Р°РєС‚РёРІРЅРѕР№ Р°РєС†РёРё. РџСЂРµРґСЃС‚Р°РІСЊ 3 СЃРёС‚СѓР°С†РёРё: Р±С‹СЃС‚СЂС‹Р№ РїСЂРѕР±РѕР№, СЃРїРѕРєРѕР№РЅС‹Р№ РѕС‚РєР°С‚ Рє СѓСЂРѕРІРЅСЋ Рё РІС‹С…РѕРґ РїРѕ СЃС‚РѕРїСѓ. Р”Р»СЏ РєР°Р¶РґРѕР№ СЃРёС‚СѓР°С†РёРё РІС‹Р±РµСЂРё, РєР°РєРѕР№ РѕСЂРґРµСЂ Р±С‹Р» Р±С‹ Р»РѕРіРёС‡РЅРµРµ: market, limit РёР»Рё stop.",
     },
 
     "market-basics-3": {
       intro:
-        "Bid, Ask и Spread — это базовая механика цены. Если трейдер не понимает, где покупают, где продают и сколько стоит немедленное исполнение, он будет часто получать плохие входы и неожиданные убытки.",
+        "Bid, Ask Рё Spread вЂ” СЌС‚Рѕ Р±Р°Р·РѕРІР°СЏ РјРµС…Р°РЅРёРєР° С†РµРЅС‹. Р•СЃР»Рё С‚СЂРµР№РґРµСЂ РЅРµ РїРѕРЅРёРјР°РµС‚, РіРґРµ РїРѕРєСѓРїР°СЋС‚, РіРґРµ РїСЂРѕРґР°СЋС‚ Рё СЃРєРѕР»СЊРєРѕ СЃС‚РѕРёС‚ РЅРµРјРµРґР»РµРЅРЅРѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ, РѕРЅ Р±СѓРґРµС‚ С‡Р°СЃС‚Рѕ РїРѕР»СѓС‡Р°С‚СЊ РїР»РѕС…РёРµ РІС…РѕРґС‹ Рё РЅРµРѕР¶РёРґР°РЅРЅС‹Рµ СѓР±С‹С‚РєРё.",
       blocks: [
         {
           title: "Bid",
           text:
-            "Bid — это лучшая цена, по которой сейчас готовы купить актив. Если ты продаёшь market order, чаще всего ты продаёшь именно в bid. Сильный bid может временно удерживать цену.",
+            "Bid вЂ” СЌС‚Рѕ Р»СѓС‡С€Р°СЏ С†РµРЅР°, РїРѕ РєРѕС‚РѕСЂРѕР№ СЃРµР№С‡Р°СЃ РіРѕС‚РѕРІС‹ РєСѓРїРёС‚СЊ Р°РєС‚РёРІ. Р•СЃР»Рё С‚С‹ РїСЂРѕРґР°С‘С€СЊ market order, С‡Р°С‰Рµ РІСЃРµРіРѕ С‚С‹ РїСЂРѕРґР°С‘С€СЊ РёРјРµРЅРЅРѕ РІ bid. РЎРёР»СЊРЅС‹Р№ bid РјРѕР¶РµС‚ РІСЂРµРјРµРЅРЅРѕ СѓРґРµСЂР¶РёРІР°С‚СЊ С†РµРЅСѓ.",
         },
         {
           title: "Ask",
           text:
-            "Ask — это лучшая цена, по которой сейчас готовы продать актив. Если ты покупаешь market order, чаще всего ты покупаешь именно в ask. Когда покупатели активно забирают ask, цена начинает подниматься.",
+            "Ask вЂ” СЌС‚Рѕ Р»СѓС‡С€Р°СЏ С†РµРЅР°, РїРѕ РєРѕС‚РѕСЂРѕР№ СЃРµР№С‡Р°СЃ РіРѕС‚РѕРІС‹ РїСЂРѕРґР°С‚СЊ Р°РєС‚РёРІ. Р•СЃР»Рё С‚С‹ РїРѕРєСѓРїР°РµС€СЊ market order, С‡Р°С‰Рµ РІСЃРµРіРѕ С‚С‹ РїРѕРєСѓРїР°РµС€СЊ РёРјРµРЅРЅРѕ РІ ask. РљРѕРіРґР° РїРѕРєСѓРїР°С‚РµР»Рё Р°РєС‚РёРІРЅРѕ Р·Р°Р±РёСЂР°СЋС‚ ask, С†РµРЅР° РЅР°С‡РёРЅР°РµС‚ РїРѕРґРЅРёРјР°С‚СЊСЃСЏ.",
         },
         {
           title: "Spread",
           text:
-            "Spread — это разница между bid и ask. Чем шире spread, тем дороже тебе входить и выходить. В активных ликвидных инструментах spread обычно узкий. В тонких акциях, на премаркете или после новостей spread может быть опасно широким.",
+            "Spread вЂ” СЌС‚Рѕ СЂР°Р·РЅРёС†Р° РјРµР¶РґСѓ bid Рё ask. Р§РµРј С€РёСЂРµ spread, С‚РµРј РґРѕСЂРѕР¶Рµ С‚РµР±Рµ РІС…РѕРґРёС‚СЊ Рё РІС‹С…РѕРґРёС‚СЊ. Р’ Р°РєС‚РёРІРЅС‹С… Р»РёРєРІРёРґРЅС‹С… РёРЅСЃС‚СЂСѓРјРµРЅС‚Р°С… spread РѕР±С‹С‡РЅРѕ СѓР·РєРёР№. Р’ С‚РѕРЅРєРёС… Р°РєС†РёСЏС…, РЅР° РїСЂРµРјР°СЂРєРµС‚Рµ РёР»Рё РїРѕСЃР»Рµ РЅРѕРІРѕСЃС‚РµР№ spread РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕРїР°СЃРЅРѕ С€РёСЂРѕРєРёРј.",
         },
         {
-          title: "Почему это важно для интрадей-трейдера",
+          title: "РџРѕС‡РµРјСѓ СЌС‚Рѕ РІР°Р¶РЅРѕ РґР»СЏ РёРЅС‚СЂР°РґРµР№-С‚СЂРµР№РґРµСЂР°",
           text:
-            "В интрадей-торговле точка входа имеет огромное значение. Если ты входишь через широкий spread, сделка может сразу начинаться с минуса. Чем меньше таймфрейм и короче стоп, тем важнее следить за spread.",
+            "Р’ РёРЅС‚СЂР°РґРµР№-С‚РѕСЂРіРѕРІР»Рµ С‚РѕС‡РєР° РІС…РѕРґР° РёРјРµРµС‚ РѕРіСЂРѕРјРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ. Р•СЃР»Рё С‚С‹ РІС…РѕРґРёС€СЊ С‡РµСЂРµР· С€РёСЂРѕРєРёР№ spread, СЃРґРµР»РєР° РјРѕР¶РµС‚ СЃСЂР°Р·Сѓ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ РјРёРЅСѓСЃР°. Р§РµРј РјРµРЅСЊС€Рµ С‚Р°Р№РјС„СЂРµР№Рј Рё РєРѕСЂРѕС‡Рµ СЃС‚РѕРї, С‚РµРј РІР°Р¶РЅРµРµ СЃР»РµРґРёС‚СЊ Р·Р° spread.",
         },
       ],
       checklist: [
-        "Перед входом проверь spread.",
-        "Не используй market order в инструменте с широким spread без причины.",
-        "Смотри, как цена реагирует на bid и ask возле уровня.",
-        "Помни: плохое исполнение может сломать даже хороший сетап.",
+        "РџРµСЂРµРґ РІС…РѕРґРѕРј РїСЂРѕРІРµСЂСЊ spread.",
+        "РќРµ РёСЃРїРѕР»СЊР·СѓР№ market order РІ РёРЅСЃС‚СЂСѓРјРµРЅС‚Рµ СЃ С€РёСЂРѕРєРёРј spread Р±РµР· РїСЂРёС‡РёРЅС‹.",
+        "РЎРјРѕС‚СЂРё, РєР°Рє С†РµРЅР° СЂРµР°РіРёСЂСѓРµС‚ РЅР° bid Рё ask РІРѕР·Р»Рµ СѓСЂРѕРІРЅСЏ.",
+        "РџРѕРјРЅРё: РїР»РѕС…РѕРµ РёСЃРїРѕР»РЅРµРЅРёРµ РјРѕР¶РµС‚ СЃР»РѕРјР°С‚СЊ РґР°Р¶Рµ С…РѕСЂРѕС€РёР№ СЃРµС‚Р°Рї.",
       ],
       practice:
-        "Выбери 3 тикера: один очень ликвидный, один средний и один тонкий. Сравни spread. Посмотри, где можно спокойно входить, а где исполнение уже само по себе становится риском.",
+        "Р’С‹Р±РµСЂРё 3 С‚РёРєРµСЂР°: РѕРґРёРЅ РѕС‡РµРЅСЊ Р»РёРєРІРёРґРЅС‹Р№, РѕРґРёРЅ СЃСЂРµРґРЅРёР№ Рё РѕРґРёРЅ С‚РѕРЅРєРёР№. РЎСЂР°РІРЅРё spread. РџРѕСЃРјРѕС‚СЂРё, РіРґРµ РјРѕР¶РЅРѕ СЃРїРѕРєРѕР№РЅРѕ РІС…РѕРґРёС‚СЊ, Р° РіРґРµ РёСЃРїРѕР»РЅРµРЅРёРµ СѓР¶Рµ СЃР°РјРѕ РїРѕ СЃРµР±Рµ СЃС‚Р°РЅРѕРІРёС‚СЃСЏ СЂРёСЃРєРѕРј.",
     },
 
     "market-basics-4": {
       intro:
-        "Ликвидность — это возможность купить или продать актив без сильного сдвига цены. Для трейдера ликвидность важна не только как объём, но и как зоны, где стоят ордера, стопы и интерес участников.",
+        "Р›РёРєРІРёРґРЅРѕСЃС‚СЊ вЂ” СЌС‚Рѕ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РєСѓРїРёС‚СЊ РёР»Рё РїСЂРѕРґР°С‚СЊ Р°РєС‚РёРІ Р±РµР· СЃРёР»СЊРЅРѕРіРѕ СЃРґРІРёРіР° С†РµРЅС‹. Р”Р»СЏ С‚СЂРµР№РґРµСЂР° Р»РёРєРІРёРґРЅРѕСЃС‚СЊ РІР°Р¶РЅР° РЅРµ С‚РѕР»СЊРєРѕ РєР°Рє РѕР±СЉС‘Рј, РЅРѕ Рё РєР°Рє Р·РѕРЅС‹, РіРґРµ СЃС‚РѕСЏС‚ РѕСЂРґРµСЂР°, СЃС‚РѕРїС‹ Рё РёРЅС‚РµСЂРµСЃ СѓС‡Р°СЃС‚РЅРёРєРѕРІ.",
       blocks: [
         {
-          title: "Что такое ликвидность простыми словами",
+          title: "Р§С‚Рѕ С‚Р°РєРѕРµ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ РїСЂРѕСЃС‚С‹РјРё СЃР»РѕРІР°РјРё",
           text:
-            "Ликвидность показывает, насколько легко можно войти или выйти из позиции. Если ликвидности много, крупные сделки проходят спокойнее. Если ликвидности мало, даже небольшой ордер может резко двинуть цену.",
+            "Р›РёРєРІРёРґРЅРѕСЃС‚СЊ РїРѕРєР°Р·С‹РІР°РµС‚, РЅР°СЃРєРѕР»СЊРєРѕ Р»РµРіРєРѕ РјРѕР¶РЅРѕ РІРѕР№С‚Рё РёР»Рё РІС‹Р№С‚Рё РёР· РїРѕР·РёС†РёРё. Р•СЃР»Рё Р»РёРєРІРёРґРЅРѕСЃС‚Рё РјРЅРѕРіРѕ, РєСЂСѓРїРЅС‹Рµ СЃРґРµР»РєРё РїСЂРѕС…РѕРґСЏС‚ СЃРїРѕРєРѕР№РЅРµРµ. Р•СЃР»Рё Р»РёРєРІРёРґРЅРѕСЃС‚Рё РјР°Р»Рѕ, РґР°Р¶Рµ РЅРµР±РѕР»СЊС€РѕР№ РѕСЂРґРµСЂ РјРѕР¶РµС‚ СЂРµР·РєРѕ РґРІРёРЅСѓС‚СЊ С†РµРЅСѓ.",
         },
         {
-          title: "Где обычно находится ликвидность",
+          title: "Р“РґРµ РѕР±С‹С‡РЅРѕ РЅР°С…РѕРґРёС‚СЃСЏ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ",
           text:
-            "Ликвидность часто собирается возле очевидных уровней: high/low дня, premarket high/low, round numbers, VWAP, зон консолидации, локальных максимумов и минимумов. Там многие ставят стопы, лимитные ордера и ждут реакцию.",
+            "Р›РёРєРІРёРґРЅРѕСЃС‚СЊ С‡Р°СЃС‚Рѕ СЃРѕР±РёСЂР°РµС‚СЃСЏ РІРѕР·Р»Рµ РѕС‡РµРІРёРґРЅС‹С… СѓСЂРѕРІРЅРµР№: high/low РґРЅСЏ, premarket high/low, round numbers, VWAP, Р·РѕРЅ РєРѕРЅСЃРѕР»РёРґР°С†РёРё, Р»РѕРєР°Р»СЊРЅС‹С… РјР°РєСЃРёРјСѓРјРѕРІ Рё РјРёРЅРёРјСѓРјРѕРІ. РўР°Рј РјРЅРѕРіРёРµ СЃС‚Р°РІСЏС‚ СЃС‚РѕРїС‹, Р»РёРјРёС‚РЅС‹Рµ РѕСЂРґРµСЂР° Рё Р¶РґСѓС‚ СЂРµР°РєС†РёСЋ.",
         },
         {
-          title: "Почему цена тянется к ликвидности",
+          title: "РџРѕС‡РµРјСѓ С†РµРЅР° С‚СЏРЅРµС‚СЃСЏ Рє Р»РёРєРІРёРґРЅРѕСЃС‚Рё",
           text:
-            "Рынку нужны встречные ордера для исполнения крупных позиций. Поэтому цена часто идёт туда, где много стопов или лимитных заявок. Для трейдера это объясняет пробои, выносы, резкие ускорения и ложные движения.",
+            "Р С‹РЅРєСѓ РЅСѓР¶РЅС‹ РІСЃС‚СЂРµС‡РЅС‹Рµ РѕСЂРґРµСЂР° РґР»СЏ РёСЃРїРѕР»РЅРµРЅРёСЏ РєСЂСѓРїРЅС‹С… РїРѕР·РёС†РёР№. РџРѕСЌС‚РѕРјСѓ С†РµРЅР° С‡Р°СЃС‚Рѕ РёРґС‘С‚ С‚СѓРґР°, РіРґРµ РјРЅРѕРіРѕ СЃС‚РѕРїРѕРІ РёР»Рё Р»РёРјРёС‚РЅС‹С… Р·Р°СЏРІРѕРє. Р”Р»СЏ С‚СЂРµР№РґРµСЂР° СЌС‚Рѕ РѕР±СЉСЏСЃРЅСЏРµС‚ РїСЂРѕР±РѕРё, РІС‹РЅРѕСЃС‹, СЂРµР·РєРёРµ СѓСЃРєРѕСЂРµРЅРёСЏ Рё Р»РѕР¶РЅС‹Рµ РґРІРёР¶РµРЅРёСЏ.",
         },
         {
-          title: "Как использовать ликвидность в торговле",
+          title: "РљР°Рє РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ РІ С‚РѕСЂРіРѕРІР»Рµ",
           text:
-            "Не нужно просто покупать каждый пробой или шортить каждый вынос. Важно смотреть реакцию: пробой удерживается или быстро возвращается обратно, объём поддерживает движение или движение было только сбором стопов.",
+            "РќРµ РЅСѓР¶РЅРѕ РїСЂРѕСЃС‚Рѕ РїРѕРєСѓРїР°С‚СЊ РєР°Р¶РґС‹Р№ РїСЂРѕР±РѕР№ РёР»Рё С€РѕСЂС‚РёС‚СЊ РєР°Р¶РґС‹Р№ РІС‹РЅРѕСЃ. Р’Р°Р¶РЅРѕ СЃРјРѕС‚СЂРµС‚СЊ СЂРµР°РєС†РёСЋ: РїСЂРѕР±РѕР№ СѓРґРµСЂР¶РёРІР°РµС‚СЃСЏ РёР»Рё Р±С‹СЃС‚СЂРѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РѕР±СЂР°С‚РЅРѕ, РѕР±СЉС‘Рј РїРѕРґРґРµСЂР¶РёРІР°РµС‚ РґРІРёР¶РµРЅРёРµ РёР»Рё РґРІРёР¶РµРЅРёРµ Р±С‹Р»Рѕ С‚РѕР»СЊРєРѕ СЃР±РѕСЂРѕРј СЃС‚РѕРїРѕРІ.",
         },
       ],
       checklist: [
-        "Отмечай зоны очевидной ликвидности до входа.",
-        "Смотри реакцию цены после снятия уровня.",
-        "Не путай настоящий пробой и сбор стопов.",
-        "Входи только там, где понятен риск и сценарий.",
+        "РћС‚РјРµС‡Р°Р№ Р·РѕРЅС‹ РѕС‡РµРІРёРґРЅРѕР№ Р»РёРєРІРёРґРЅРѕСЃС‚Рё РґРѕ РІС…РѕРґР°.",
+        "РЎРјРѕС‚СЂРё СЂРµР°РєС†РёСЋ С†РµРЅС‹ РїРѕСЃР»Рµ СЃРЅСЏС‚РёСЏ СѓСЂРѕРІРЅСЏ.",
+        "РќРµ РїСѓС‚Р°Р№ РЅР°СЃС‚РѕСЏС‰РёР№ РїСЂРѕР±РѕР№ Рё СЃР±РѕСЂ СЃС‚РѕРїРѕРІ.",
+        "Р’С…РѕРґРё С‚РѕР»СЊРєРѕ С‚Р°Рј, РіРґРµ РїРѕРЅСЏС‚РµРЅ СЂРёСЃРє Рё СЃС†РµРЅР°СЂРёР№.",
       ],
       practice:
-        "Открой график акции с гэпом или сильным движением. Отметь premarket high, premarket low, high/low дня и круглые уровни. Посмотри, где цена ускорялась и где после выноса быстро возвращалась обратно.",
+        "РћС‚РєСЂРѕР№ РіСЂР°С„РёРє Р°РєС†РёРё СЃ РіСЌРїРѕРј РёР»Рё СЃРёР»СЊРЅС‹Рј РґРІРёР¶РµРЅРёРµРј. РћС‚РјРµС‚СЊ premarket high, premarket low, high/low РґРЅСЏ Рё РєСЂСѓРіР»С‹Рµ СѓСЂРѕРІРЅРё. РџРѕСЃРјРѕС‚СЂРё, РіРґРµ С†РµРЅР° СѓСЃРєРѕСЂСЏР»Р°СЃСЊ Рё РіРґРµ РїРѕСЃР»Рµ РІС‹РЅРѕСЃР° Р±С‹СЃС‚СЂРѕ РІРѕР·РІСЂР°С‰Р°Р»Р°СЃСЊ РѕР±СЂР°С‚РЅРѕ.",
     },
     "technical-analysis-1": {
   intro:
-    "Свеча показывает, что происходило с ценой за выбранный период времени. Для трейдера важна не только форма свечи, но и контекст: где она появилась, какой был объём, что было до неё и как цена повела себя после.",
+    "РЎРІРµС‡Р° РїРѕРєР°Р·С‹РІР°РµС‚, С‡С‚Рѕ РїСЂРѕРёСЃС…РѕРґРёР»Рѕ СЃ С†РµРЅРѕР№ Р·Р° РІС‹Р±СЂР°РЅРЅС‹Р№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё. Р”Р»СЏ С‚СЂРµР№РґРµСЂР° РІР°Р¶РЅР° РЅРµ С‚РѕР»СЊРєРѕ С„РѕСЂРјР° СЃРІРµС‡Рё, РЅРѕ Рё РєРѕРЅС‚РµРєСЃС‚: РіРґРµ РѕРЅР° РїРѕСЏРІРёР»Р°СЃСЊ, РєР°РєРѕР№ Р±С‹Р» РѕР±СЉС‘Рј, С‡С‚Рѕ Р±С‹Р»Рѕ РґРѕ РЅРµС‘ Рё РєР°Рє С†РµРЅР° РїРѕРІРµР»Р° СЃРµР±СЏ РїРѕСЃР»Рµ.",
   blocks: [
     {
-      title: "Из чего состоит свеча",
+      title: "РР· С‡РµРіРѕ СЃРѕСЃС‚РѕРёС‚ СЃРІРµС‡Р°",
       text:
-        "Свеча показывает цену открытия, максимум, минимум и цену закрытия. Тело свечи показывает основное движение за период, а тени показывают попытки цены уйти выше или ниже, которые не были полностью удержаны.",
+        "РЎРІРµС‡Р° РїРѕРєР°Р·С‹РІР°РµС‚ С†РµРЅСѓ РѕС‚РєСЂС‹С‚РёСЏ, РјР°РєСЃРёРјСѓРј, РјРёРЅРёРјСѓРј Рё С†РµРЅСѓ Р·Р°РєСЂС‹С‚РёСЏ. РўРµР»Рѕ СЃРІРµС‡Рё РїРѕРєР°Р·С‹РІР°РµС‚ РѕСЃРЅРѕРІРЅРѕРµ РґРІРёР¶РµРЅРёРµ Р·Р° РїРµСЂРёРѕРґ, Р° С‚РµРЅРё РїРѕРєР°Р·С‹РІР°СЋС‚ РїРѕРїС‹С‚РєРё С†РµРЅС‹ СѓР№С‚Рё РІС‹С€Рµ РёР»Рё РЅРёР¶Рµ, РєРѕС‚РѕСЂС‹Рµ РЅРµ Р±С‹Р»Рё РїРѕР»РЅРѕСЃС‚СЊСЋ СѓРґРµСЂР¶Р°РЅС‹.",
     },
     {
-      title: "Сильная свеча",
+      title: "РЎРёР»СЊРЅР°СЏ СЃРІРµС‡Р°",
       text:
-        "Сильная свеча обычно имеет большое тело, закрывается близко к максимуму при росте или близко к минимуму при падении. Она показывает, что одна сторона контролировала движение большую часть периода.",
+        "РЎРёР»СЊРЅР°СЏ СЃРІРµС‡Р° РѕР±С‹С‡РЅРѕ РёРјРµРµС‚ Р±РѕР»СЊС€РѕРµ С‚РµР»Рѕ, Р·Р°РєСЂС‹РІР°РµС‚СЃСЏ Р±Р»РёР·РєРѕ Рє РјР°РєСЃРёРјСѓРјСѓ РїСЂРё СЂРѕСЃС‚Рµ РёР»Рё Р±Р»РёР·РєРѕ Рє РјРёРЅРёРјСѓРјСѓ РїСЂРё РїР°РґРµРЅРёРё. РћРЅР° РїРѕРєР°Р·С‹РІР°РµС‚, С‡С‚Рѕ РѕРґРЅР° СЃС‚РѕСЂРѕРЅР° РєРѕРЅС‚СЂРѕР»РёСЂРѕРІР°Р»Р° РґРІРёР¶РµРЅРёРµ Р±РѕР»СЊС€СѓСЋ С‡Р°СЃС‚СЊ РїРµСЂРёРѕРґР°.",
     },
     {
-      title: "Свеча с длинной тенью",
+      title: "РЎРІРµС‡Р° СЃ РґР»РёРЅРЅРѕР№ С‚РµРЅСЊСЋ",
       text:
-        "Длинная тень показывает, что цена пыталась уйти в одну сторону, но её вернули обратно. Это может быть признаком отказа от уровня, снятия ликвидности или фиксации участников.",
+        "Р”Р»РёРЅРЅР°СЏ С‚РµРЅСЊ РїРѕРєР°Р·С‹РІР°РµС‚, С‡С‚Рѕ С†РµРЅР° РїС‹С‚Р°Р»Р°СЃСЊ СѓР№С‚Рё РІ РѕРґРЅСѓ СЃС‚РѕСЂРѕРЅСѓ, РЅРѕ РµС‘ РІРµСЂРЅСѓР»Рё РѕР±СЂР°С‚РЅРѕ. Р­С‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂРёР·РЅР°РєРѕРј РѕС‚РєР°Р·Р° РѕС‚ СѓСЂРѕРІРЅСЏ, СЃРЅСЏС‚РёСЏ Р»РёРєРІРёРґРЅРѕСЃС‚Рё РёР»Рё С„РёРєСЃР°С†РёРё СѓС‡Р°СЃС‚РЅРёРєРѕРІ.",
     },
     {
-      title: "Почему нельзя торговать свечу без контекста",
+      title: "РџРѕС‡РµРјСѓ РЅРµР»СЊР·СЏ С‚РѕСЂРіРѕРІР°С‚СЊ СЃРІРµС‡Сѓ Р±РµР· РєРѕРЅС‚РµРєСЃС‚Р°",
       text:
-        "Одна и та же свеча может означать разные вещи. Длинная верхняя тень возле сильного сопротивления может быть слабостью, но внутри сильного тренда она может быть просто фиксацией перед продолжением.",
+        "РћРґРЅР° Рё С‚Р° Р¶Рµ СЃРІРµС‡Р° РјРѕР¶РµС‚ РѕР·РЅР°С‡Р°С‚СЊ СЂР°Р·РЅС‹Рµ РІРµС‰Рё. Р”Р»РёРЅРЅР°СЏ РІРµСЂС…РЅСЏСЏ С‚РµРЅСЊ РІРѕР·Р»Рµ СЃРёР»СЊРЅРѕРіРѕ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃР»Р°Р±РѕСЃС‚СЊСЋ, РЅРѕ РІРЅСѓС‚СЂРё СЃРёР»СЊРЅРѕРіРѕ С‚СЂРµРЅРґР° РѕРЅР° РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂРѕСЃС‚Рѕ С„РёРєСЃР°С†РёРµР№ РїРµСЂРµРґ РїСЂРѕРґРѕР»Р¶РµРЅРёРµРј.",
     },
   ],
   checklist: [
-    "Смотри, где появилась свеча: на уровне, в тренде или в середине шума.",
-    "Оцени закрытие свечи: сильное оно или слабое.",
-    "Сравни свечу с предыдущими свечами.",
-    "Не принимай решение только по форме свечи.",
+    "РЎРјРѕС‚СЂРё, РіРґРµ РїРѕСЏРІРёР»Р°СЃСЊ СЃРІРµС‡Р°: РЅР° СѓСЂРѕРІРЅРµ, РІ С‚СЂРµРЅРґРµ РёР»Рё РІ СЃРµСЂРµРґРёРЅРµ С€СѓРјР°.",
+    "РћС†РµРЅРё Р·Р°РєСЂС‹С‚РёРµ СЃРІРµС‡Рё: СЃРёР»СЊРЅРѕРµ РѕРЅРѕ РёР»Рё СЃР»Р°Р±РѕРµ.",
+    "РЎСЂР°РІРЅРё СЃРІРµС‡Сѓ СЃ РїСЂРµРґС‹РґСѓС‰РёРјРё СЃРІРµС‡Р°РјРё.",
+    "РќРµ РїСЂРёРЅРёРјР°Р№ СЂРµС€РµРЅРёРµ С‚РѕР»СЊРєРѕ РїРѕ С„РѕСЂРјРµ СЃРІРµС‡Рё.",
   ],
 },
 
 "technical-analysis-2": {
   intro:
-    "Поддержка и сопротивление — это зоны, где цена раньше сильно реагировала или где участники рынка могут снова принять решение. Важно понимать: уровень — это не тонкая линия, а область интереса.",
+    "РџРѕРґРґРµСЂР¶РєР° Рё СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ вЂ” СЌС‚Рѕ Р·РѕРЅС‹, РіРґРµ С†РµРЅР° СЂР°РЅСЊС€Рµ СЃРёР»СЊРЅРѕ СЂРµР°РіРёСЂРѕРІР°Р»Р° РёР»Рё РіРґРµ СѓС‡Р°СЃС‚РЅРёРєРё СЂС‹РЅРєР° РјРѕРіСѓС‚ СЃРЅРѕРІР° РїСЂРёРЅСЏС‚СЊ СЂРµС€РµРЅРёРµ. Р’Р°Р¶РЅРѕ РїРѕРЅРёРјР°С‚СЊ: СѓСЂРѕРІРµРЅСЊ вЂ” СЌС‚Рѕ РЅРµ С‚РѕРЅРєР°СЏ Р»РёРЅРёСЏ, Р° РѕР±Р»Р°СЃС‚СЊ РёРЅС‚РµСЂРµСЃР°.",
   blocks: [
     {
-      title: "Что такое поддержка",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ РїРѕРґРґРµСЂР¶РєР°",
       text:
-        "Поддержка — это зона, где раньше появлялись покупатели и цена останавливалась или разворачивалась вверх. Это не значит, что цена обязана отскочить снова, но значит, что рядом может появиться реакция.",
+        "РџРѕРґРґРµСЂР¶РєР° вЂ” СЌС‚Рѕ Р·РѕРЅР°, РіРґРµ СЂР°РЅСЊС€Рµ РїРѕСЏРІР»СЏР»РёСЃСЊ РїРѕРєСѓРїР°С‚РµР»Рё Рё С†РµРЅР° РѕСЃС‚Р°РЅР°РІР»РёРІР°Р»Р°СЃСЊ РёР»Рё СЂР°Р·РІРѕСЂР°С‡РёРІР°Р»Р°СЃСЊ РІРІРµСЂС…. Р­С‚Рѕ РЅРµ Р·РЅР°С‡РёС‚, С‡С‚Рѕ С†РµРЅР° РѕР±СЏР·Р°РЅР° РѕС‚СЃРєРѕС‡РёС‚СЊ СЃРЅРѕРІР°, РЅРѕ Р·РЅР°С‡РёС‚, С‡С‚Рѕ СЂСЏРґРѕРј РјРѕР¶РµС‚ РїРѕСЏРІРёС‚СЊСЃСЏ СЂРµР°РєС†РёСЏ.",
     },
     {
-      title: "Что такое сопротивление",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ",
       text:
-        "Сопротивление — это зона, где раньше появлялись продавцы и цена останавливалась или разворачивалась вниз. Чем очевиднее зона для участников рынка, тем больше внимания она может привлечь.",
+        "РЎРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ вЂ” СЌС‚Рѕ Р·РѕРЅР°, РіРґРµ СЂР°РЅСЊС€Рµ РїРѕСЏРІР»СЏР»РёСЃСЊ РїСЂРѕРґР°РІС†С‹ Рё С†РµРЅР° РѕСЃС‚Р°РЅР°РІР»РёРІР°Р»Р°СЃСЊ РёР»Рё СЂР°Р·РІРѕСЂР°С‡РёРІР°Р»Р°СЃСЊ РІРЅРёР·. Р§РµРј РѕС‡РµРІРёРґРЅРµРµ Р·РѕРЅР° РґР»СЏ СѓС‡Р°СЃС‚РЅРёРєРѕРІ СЂС‹РЅРєР°, С‚РµРј Р±РѕР»СЊС€Рµ РІРЅРёРјР°РЅРёСЏ РѕРЅР° РјРѕР¶РµС‚ РїСЂРёРІР»РµС‡СЊ.",
     },
     {
-      title: "Почему уровень — это зона",
+      title: "РџРѕС‡РµРјСѓ СѓСЂРѕРІРµРЅСЊ вЂ” СЌС‚Рѕ Р·РѕРЅР°",
       text:
-        "Цена редко реагирует идеально в один цент или пункт. Участники ставят ордера не в одной точке, а в диапазоне. Поэтому поддержку и сопротивление лучше воспринимать как область, где нужно ждать реакцию.",
+        "Р¦РµРЅР° СЂРµРґРєРѕ СЂРµР°РіРёСЂСѓРµС‚ РёРґРµР°Р»СЊРЅРѕ РІ РѕРґРёРЅ С†РµРЅС‚ РёР»Рё РїСѓРЅРєС‚. РЈС‡Р°СЃС‚РЅРёРєРё СЃС‚Р°РІСЏС‚ РѕСЂРґРµСЂР° РЅРµ РІ РѕРґРЅРѕР№ С‚РѕС‡РєРµ, Р° РІ РґРёР°РїР°Р·РѕРЅРµ. РџРѕСЌС‚РѕРјСѓ РїРѕРґРґРµСЂР¶РєСѓ Рё СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёРµ Р»СѓС‡С€Рµ РІРѕСЃРїСЂРёРЅРёРјР°С‚СЊ РєР°Рє РѕР±Р»Р°СЃС‚СЊ, РіРґРµ РЅСѓР¶РЅРѕ Р¶РґР°С‚СЊ СЂРµР°РєС†РёСЋ.",
     },
     {
-      title: "Как использовать уровни",
+      title: "РљР°Рє РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СѓСЂРѕРІРЅРё",
       text:
-        "Уровень сам по себе не является сигналом. Сигнал появляется, когда цена подходит к уровню и показывает реакцию: удержание, пробой, ложный пробой, ускорение, отказ или возврат обратно.",
+        "РЈСЂРѕРІРµРЅСЊ СЃР°Рј РїРѕ СЃРµР±Рµ РЅРµ СЏРІР»СЏРµС‚СЃСЏ СЃРёРіРЅР°Р»РѕРј. РЎРёРіРЅР°Р» РїРѕСЏРІР»СЏРµС‚СЃСЏ, РєРѕРіРґР° С†РµРЅР° РїРѕРґС…РѕРґРёС‚ Рє СѓСЂРѕРІРЅСЋ Рё РїРѕРєР°Р·С‹РІР°РµС‚ СЂРµР°РєС†РёСЋ: СѓРґРµСЂР¶Р°РЅРёРµ, РїСЂРѕР±РѕР№, Р»РѕР¶РЅС‹Р№ РїСЂРѕР±РѕР№, СѓСЃРєРѕСЂРµРЅРёРµ, РѕС‚РєР°Р· РёР»Рё РІРѕР·РІСЂР°С‚ РѕР±СЂР°С‚РЅРѕ.",
     },
   ],
   checklist: [
-    "Отмечай только очевидные уровни, а не всё подряд.",
-    "Используй зоны, а не тонкие линии.",
-    "Жди реакцию цены возле уровня.",
-    "Не входи только потому, что цена коснулась линии.",
+    "РћС‚РјРµС‡Р°Р№ С‚РѕР»СЊРєРѕ РѕС‡РµРІРёРґРЅС‹Рµ СѓСЂРѕРІРЅРё, Р° РЅРµ РІСЃС‘ РїРѕРґСЂСЏРґ.",
+    "РСЃРїРѕР»СЊР·СѓР№ Р·РѕРЅС‹, Р° РЅРµ С‚РѕРЅРєРёРµ Р»РёРЅРёРё.",
+    "Р–РґРё СЂРµР°РєС†РёСЋ С†РµРЅС‹ РІРѕР·Р»Рµ СѓСЂРѕРІРЅСЏ.",
+    "РќРµ РІС…РѕРґРё С‚РѕР»СЊРєРѕ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ С†РµРЅР° РєРѕСЃРЅСѓР»Р°СЃСЊ Р»РёРЅРёРё.",
   ],
 },
 
 "technical-analysis-3": {
   intro:
-    "Тренд и ренж — это два разных состояния рынка. В тренде цена движется направленно, а в ренже цена зажата между зонами спроса и предложения. Ошибка многих трейдеров — торговать ренж как тренд или тренд как ренж.",
+    "РўСЂРµРЅРґ Рё СЂРµРЅР¶ вЂ” СЌС‚Рѕ РґРІР° СЂР°Р·РЅС‹С… СЃРѕСЃС‚РѕСЏРЅРёСЏ СЂС‹РЅРєР°. Р’ С‚СЂРµРЅРґРµ С†РµРЅР° РґРІРёР¶РµС‚СЃСЏ РЅР°РїСЂР°РІР»РµРЅРЅРѕ, Р° РІ СЂРµРЅР¶Рµ С†РµРЅР° Р·Р°Р¶Р°С‚Р° РјРµР¶РґСѓ Р·РѕРЅР°РјРё СЃРїСЂРѕСЃР° Рё РїСЂРµРґР»РѕР¶РµРЅРёСЏ. РћС€РёР±РєР° РјРЅРѕРіРёС… С‚СЂРµР№РґРµСЂРѕРІ вЂ” С‚РѕСЂРіРѕРІР°С‚СЊ СЂРµРЅР¶ РєР°Рє С‚СЂРµРЅРґ РёР»Рё С‚СЂРµРЅРґ РєР°Рє СЂРµРЅР¶.",
   blocks: [
     {
-      title: "Что такое тренд",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ С‚СЂРµРЅРґ",
       text:
-        "Тренд — это направленное движение цены. В аптренде цена чаще делает более высокие максимумы и более высокие минимумы. В даунтренде — более низкие максимумы и более низкие минимумы.",
+        "РўСЂРµРЅРґ вЂ” СЌС‚Рѕ РЅР°РїСЂР°РІР»РµРЅРЅРѕРµ РґРІРёР¶РµРЅРёРµ С†РµРЅС‹. Р’ Р°РїС‚СЂРµРЅРґРµ С†РµРЅР° С‡Р°С‰Рµ РґРµР»Р°РµС‚ Р±РѕР»РµРµ РІС‹СЃРѕРєРёРµ РјР°РєСЃРёРјСѓРјС‹ Рё Р±РѕР»РµРµ РІС‹СЃРѕРєРёРµ РјРёРЅРёРјСѓРјС‹. Р’ РґР°СѓРЅС‚СЂРµРЅРґРµ вЂ” Р±РѕР»РµРµ РЅРёР·РєРёРµ РјР°РєСЃРёРјСѓРјС‹ Рё Р±РѕР»РµРµ РЅРёР·РєРёРµ РјРёРЅРёРјСѓРјС‹.",
     },
     {
-      title: "Что такое ренж",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ СЂРµРЅР¶",
       text:
-        "Ренж — это состояние рынка без явного направления. Цена ходит между верхней и нижней границей, а пробои часто могут быть ложными. В ренже важно не путать шум с началом тренда.",
+        "Р РµРЅР¶ вЂ” СЌС‚Рѕ СЃРѕСЃС‚РѕСЏРЅРёРµ СЂС‹РЅРєР° Р±РµР· СЏРІРЅРѕРіРѕ РЅР°РїСЂР°РІР»РµРЅРёСЏ. Р¦РµРЅР° С…РѕРґРёС‚ РјРµР¶РґСѓ РІРµСЂС…РЅРµР№ Рё РЅРёР¶РЅРµР№ РіСЂР°РЅРёС†РµР№, Р° РїСЂРѕР±РѕРё С‡Р°СЃС‚Рѕ РјРѕРіСѓС‚ Р±С‹С‚СЊ Р»РѕР¶РЅС‹РјРё. Р’ СЂРµРЅР¶Рµ РІР°Р¶РЅРѕ РЅРµ РїСѓС‚Р°С‚СЊ С€СѓРј СЃ РЅР°С‡Р°Р»РѕРј С‚СЂРµРЅРґР°.",
     },
     {
-      title: "Как отличить тренд от ренжа",
+      title: "РљР°Рє РѕС‚Р»РёС‡РёС‚СЊ С‚СЂРµРЅРґ РѕС‚ СЂРµРЅР¶Р°",
       text:
-        "В тренде откаты чаще удерживаются, а движение продолжается. В ренже цена часто возвращается обратно в середину диапазона после попытки пробоя. Если цена не может продолжить после пробоя — это признак слабости.",
+        "Р’ С‚СЂРµРЅРґРµ РѕС‚РєР°С‚С‹ С‡Р°С‰Рµ СѓРґРµСЂР¶РёРІР°СЋС‚СЃСЏ, Р° РґРІРёР¶РµРЅРёРµ РїСЂРѕРґРѕР»Р¶Р°РµС‚СЃСЏ. Р’ СЂРµРЅР¶Рµ С†РµРЅР° С‡Р°СЃС‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РѕР±СЂР°С‚РЅРѕ РІ СЃРµСЂРµРґРёРЅСѓ РґРёР°РїР°Р·РѕРЅР° РїРѕСЃР»Рµ РїРѕРїС‹С‚РєРё РїСЂРѕР±РѕСЏ. Р•СЃР»Рё С†РµРЅР° РЅРµ РјРѕР¶РµС‚ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РїРѕСЃР»Рµ РїСЂРѕР±РѕСЏ вЂ” СЌС‚Рѕ РїСЂРёР·РЅР°Рє СЃР»Р°Р±РѕСЃС‚Рё.",
     },
     {
-      title: "Почему это важно для входа",
+      title: "РџРѕС‡РµРјСѓ СЌС‚Рѕ РІР°Р¶РЅРѕ РґР»СЏ РІС…РѕРґР°",
       text:
-        "В тренде логичнее искать продолжение движения после отката или пробоя. В ренже опасно покупать верх диапазона и шортить низ диапазона без подтверждения. Сначала нужно понять режим рынка, потом выбирать сетап.",
+        "Р’ С‚СЂРµРЅРґРµ Р»РѕРіРёС‡РЅРµРµ РёСЃРєР°С‚СЊ РїСЂРѕРґРѕР»Р¶РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ РїРѕСЃР»Рµ РѕС‚РєР°С‚Р° РёР»Рё РїСЂРѕР±РѕСЏ. Р’ СЂРµРЅР¶Рµ РѕРїР°СЃРЅРѕ РїРѕРєСѓРїР°С‚СЊ РІРµСЂС… РґРёР°РїР°Р·РѕРЅР° Рё С€РѕСЂС‚РёС‚СЊ РЅРёР· РґРёР°РїР°Р·РѕРЅР° Р±РµР· РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ. РЎРЅР°С‡Р°Р»Р° РЅСѓР¶РЅРѕ РїРѕРЅСЏС‚СЊ СЂРµР¶РёРј СЂС‹РЅРєР°, РїРѕС‚РѕРј РІС‹Р±РёСЂР°С‚СЊ СЃРµС‚Р°Рї.",
     },
   ],
   checklist: [
-    "Определи, рынок сейчас движется направленно или стоит в диапазоне.",
-    "В тренде смотри, удерживаются ли откаты.",
-    "В ренже будь осторожен с пробоями без продолжения.",
-    "Не торгуй один и тот же сетап одинаково в тренде и в ренже.",
+    "РћРїСЂРµРґРµР»Рё, СЂС‹РЅРѕРє СЃРµР№С‡Р°СЃ РґРІРёР¶РµС‚СЃСЏ РЅР°РїСЂР°РІР»РµРЅРЅРѕ РёР»Рё СЃС‚РѕРёС‚ РІ РґРёР°РїР°Р·РѕРЅРµ.",
+    "Р’ С‚СЂРµРЅРґРµ СЃРјРѕС‚СЂРё, СѓРґРµСЂР¶РёРІР°СЋС‚СЃСЏ Р»Рё РѕС‚РєР°С‚С‹.",
+    "Р’ СЂРµРЅР¶Рµ Р±СѓРґСЊ РѕСЃС‚РѕСЂРѕР¶РµРЅ СЃ РїСЂРѕР±РѕСЏРјРё Р±РµР· РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.",
+    "РќРµ С‚РѕСЂРіСѓР№ РѕРґРёРЅ Рё С‚РѕС‚ Р¶Рµ СЃРµС‚Р°Рї РѕРґРёРЅР°РєРѕРІРѕ РІ С‚СЂРµРЅРґРµ Рё РІ СЂРµРЅР¶Рµ.",
   ],
 },
 
 "technical-analysis-4": {
   intro:
-    "Объём показывает активность участников рынка. Сам по себе объём не говорит, куда точно пойдёт цена, но помогает понять, есть ли интерес к движению, подтверждается ли пробой и насколько серьёзной может быть реакция.",
+    "РћР±СЉС‘Рј РїРѕРєР°Р·С‹РІР°РµС‚ Р°РєС‚РёРІРЅРѕСЃС‚СЊ СѓС‡Р°СЃС‚РЅРёРєРѕРІ СЂС‹РЅРєР°. РЎР°Рј РїРѕ СЃРµР±Рµ РѕР±СЉС‘Рј РЅРµ РіРѕРІРѕСЂРёС‚, РєСѓРґР° С‚РѕС‡РЅРѕ РїРѕР№РґС‘С‚ С†РµРЅР°, РЅРѕ РїРѕРјРѕРіР°РµС‚ РїРѕРЅСЏС‚СЊ, РµСЃС‚СЊ Р»Рё РёРЅС‚РµСЂРµСЃ Рє РґРІРёР¶РµРЅРёСЋ, РїРѕРґС‚РІРµСЂР¶РґР°РµС‚СЃСЏ Р»Рё РїСЂРѕР±РѕР№ Рё РЅР°СЃРєРѕР»СЊРєРѕ СЃРµСЂСЊС‘Р·РЅРѕР№ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЂРµР°РєС†РёСЏ.",
   blocks: [
     {
-      title: "Что показывает объём",
+      title: "Р§С‚Рѕ РїРѕРєР°Р·С‹РІР°РµС‚ РѕР±СЉС‘Рј",
       text:
-        "Объём показывает, сколько акций, контрактов или монет было проторговано за определённый период. Высокий объём означает повышенный интерес, но не всегда означает продолжение движения.",
+        "РћР±СЉС‘Рј РїРѕРєР°Р·С‹РІР°РµС‚, СЃРєРѕР»СЊРєРѕ Р°РєС†РёР№, РєРѕРЅС‚СЂР°РєС‚РѕРІ РёР»Рё РјРѕРЅРµС‚ Р±С‹Р»Рѕ РїСЂРѕС‚РѕСЂРіРѕРІР°РЅРѕ Р·Р° РѕРїСЂРµРґРµР»С‘РЅРЅС‹Р№ РїРµСЂРёРѕРґ. Р’С‹СЃРѕРєРёР№ РѕР±СЉС‘Рј РѕР·РЅР°С‡Р°РµС‚ РїРѕРІС‹С€РµРЅРЅС‹Р№ РёРЅС‚РµСЂРµСЃ, РЅРѕ РЅРµ РІСЃРµРіРґР° РѕР·РЅР°С‡Р°РµС‚ РїСЂРѕРґРѕР»Р¶РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ.",
     },
     {
-      title: "Объём на импульсе",
+      title: "РћР±СЉС‘Рј РЅР° РёРјРїСѓР»СЊСЃРµ",
       text:
-        "Если цена пробивает уровень и объём резко растёт, это может говорить о настоящем интересе участников. Но важно смотреть, удерживается ли движение после всплеска объёма.",
+        "Р•СЃР»Рё С†РµРЅР° РїСЂРѕР±РёРІР°РµС‚ СѓСЂРѕРІРµРЅСЊ Рё РѕР±СЉС‘Рј СЂРµР·РєРѕ СЂР°СЃС‚С‘С‚, СЌС‚Рѕ РјРѕР¶РµС‚ РіРѕРІРѕСЂРёС‚СЊ Рѕ РЅР°СЃС‚РѕСЏС‰РµРј РёРЅС‚РµСЂРµСЃРµ СѓС‡Р°СЃС‚РЅРёРєРѕРІ. РќРѕ РІР°Р¶РЅРѕ СЃРјРѕС‚СЂРµС‚СЊ, СѓРґРµСЂР¶РёРІР°РµС‚СЃСЏ Р»Рё РґРІРёР¶РµРЅРёРµ РїРѕСЃР»Рµ РІСЃРїР»РµСЃРєР° РѕР±СЉС‘РјР°.",
     },
     {
-      title: "Объём без продолжения",
+      title: "РћР±СЉС‘Рј Р±РµР· РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ",
       text:
-        "Если появляется большой объём, но цена не может продолжить движение, это может быть признаком поглощения, фиксации или ловушки. Такой момент особенно важен возле уровней.",
+        "Р•СЃР»Рё РїРѕСЏРІР»СЏРµС‚СЃСЏ Р±РѕР»СЊС€РѕР№ РѕР±СЉС‘Рј, РЅРѕ С†РµРЅР° РЅРµ РјРѕР¶РµС‚ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РґРІРёР¶РµРЅРёРµ, СЌС‚Рѕ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂРёР·РЅР°РєРѕРј РїРѕРіР»РѕС‰РµРЅРёСЏ, С„РёРєСЃР°С†РёРё РёР»Рё Р»РѕРІСѓС€РєРё. РўР°РєРѕР№ РјРѕРјРµРЅС‚ РѕСЃРѕР±РµРЅРЅРѕ РІР°Р¶РµРЅ РІРѕР·Р»Рµ СѓСЂРѕРІРЅРµР№.",
     },
     {
-      title: "Как использовать объём в интрадей",
+      title: "РљР°Рє РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РѕР±СЉС‘Рј РІ РёРЅС‚СЂР°РґРµР№",
       text:
-        "Для интрадей-трейдера объём полезен как подтверждение реакции. Пробой с объёмом и удержанием сильнее, чем пробой без объёма. Отказ от уровня на большом объёме может быть сильным сигналом смены контроля.",
+        "Р”Р»СЏ РёРЅС‚СЂР°РґРµР№-С‚СЂРµР№РґРµСЂР° РѕР±СЉС‘Рј РїРѕР»РµР·РµРЅ РєР°Рє РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ СЂРµР°РєС†РёРё. РџСЂРѕР±РѕР№ СЃ РѕР±СЉС‘РјРѕРј Рё СѓРґРµСЂР¶Р°РЅРёРµРј СЃРёР»СЊРЅРµРµ, С‡РµРј РїСЂРѕР±РѕР№ Р±РµР· РѕР±СЉС‘РјР°. РћС‚РєР°Р· РѕС‚ СѓСЂРѕРІРЅСЏ РЅР° Р±РѕР»СЊС€РѕРј РѕР±СЉС‘РјРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРёР»СЊРЅС‹Рј СЃРёРіРЅР°Р»РѕРј СЃРјРµРЅС‹ РєРѕРЅС‚СЂРѕР»СЏ.",
     },
   ],
   checklist: [
-    "Сравни текущий объём с предыдущими свечами.",
-    "Смотри не только всплеск объёма, но и реакцию после него.",
-    "Пробой без объёма слабее пробоя с объёмом.",
-    "Большой объём без продолжения может быть ловушкой.",
+    "РЎСЂР°РІРЅРё С‚РµРєСѓС‰РёР№ РѕР±СЉС‘Рј СЃ РїСЂРµРґС‹РґСѓС‰РёРјРё СЃРІРµС‡Р°РјРё.",
+    "РЎРјРѕС‚СЂРё РЅРµ С‚РѕР»СЊРєРѕ РІСЃРїР»РµСЃРє РѕР±СЉС‘РјР°, РЅРѕ Рё СЂРµР°РєС†РёСЋ РїРѕСЃР»Рµ РЅРµРіРѕ.",
+    "РџСЂРѕР±РѕР№ Р±РµР· РѕР±СЉС‘РјР° СЃР»Р°Р±РµРµ РїСЂРѕР±РѕСЏ СЃ РѕР±СЉС‘РјРѕРј.",
+    "Р‘РѕР»СЊС€РѕР№ РѕР±СЉС‘Рј Р±РµР· РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р»РѕРІСѓС€РєРѕР№.",
   ],
 },
 "risk-management-1": {
   intro:
-    "Риск-менеджмент — это система, которая защищает трейдера от одной плохой сделки, плохого дня или серии ошибок. Хороший трейдер думает не только о том, сколько можно заработать, но и о том, сколько можно потерять, если сценарий окажется неправильным.",
+    "Р РёСЃРє-РјРµРЅРµРґР¶РјРµРЅС‚ вЂ” СЌС‚Рѕ СЃРёСЃС‚РµРјР°, РєРѕС‚РѕСЂР°СЏ Р·Р°С‰РёС‰Р°РµС‚ С‚СЂРµР№РґРµСЂР° РѕС‚ РѕРґРЅРѕР№ РїР»РѕС…РѕР№ СЃРґРµР»РєРё, РїР»РѕС…РѕРіРѕ РґРЅСЏ РёР»Рё СЃРµСЂРёРё РѕС€РёР±РѕРє. РҐРѕСЂРѕС€РёР№ С‚СЂРµР№РґРµСЂ РґСѓРјР°РµС‚ РЅРµ С‚РѕР»СЊРєРѕ Рѕ С‚РѕРј, СЃРєРѕР»СЊРєРѕ РјРѕР¶РЅРѕ Р·Р°СЂР°Р±РѕС‚Р°С‚СЊ, РЅРѕ Рё Рѕ С‚РѕРј, СЃРєРѕР»СЊРєРѕ РјРѕР¶РЅРѕ РїРѕС‚РµСЂСЏС‚СЊ, РµСЃР»Рё СЃС†РµРЅР°СЂРёР№ РѕРєР°Р¶РµС‚СЃСЏ РЅРµРїСЂР°РІРёР»СЊРЅС‹Рј.",
   blocks: [
     {
-      title: "Почему риск важнее идеи",
+      title: "РџРѕС‡РµРјСѓ СЂРёСЃРє РІР°Р¶РЅРµРµ РёРґРµРё",
       text:
-        "Даже сильная торговая идея может не сработать. Рынок может резко изменить направление, выйти новость, исчезнуть ликвидность или появиться агрессивный продавец/покупатель. Если риск заранее не определён, одна сделка может испортить весь день или даже весь счёт.",
+        "Р”Р°Р¶Рµ СЃРёР»СЊРЅР°СЏ С‚РѕСЂРіРѕРІР°СЏ РёРґРµСЏ РјРѕР¶РµС‚ РЅРµ СЃСЂР°Р±РѕС‚Р°С‚СЊ. Р С‹РЅРѕРє РјРѕР¶РµС‚ СЂРµР·РєРѕ РёР·РјРµРЅРёС‚СЊ РЅР°РїСЂР°РІР»РµРЅРёРµ, РІС‹Р№С‚Рё РЅРѕРІРѕСЃС‚СЊ, РёСЃС‡РµР·РЅСѓС‚СЊ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ РёР»Рё РїРѕСЏРІРёС‚СЊСЃСЏ Р°РіСЂРµСЃСЃРёРІРЅС‹Р№ РїСЂРѕРґР°РІРµС†/РїРѕРєСѓРїР°С‚РµР»СЊ. Р•СЃР»Рё СЂРёСЃРє Р·Р°СЂР°РЅРµРµ РЅРµ РѕРїСЂРµРґРµР»С‘РЅ, РѕРґРЅР° СЃРґРµР»РєР° РјРѕР¶РµС‚ РёСЃРїРѕСЂС‚РёС‚СЊ РІРµСЃСЊ РґРµРЅСЊ РёР»Рё РґР°Р¶Рµ РІРµСЃСЊ СЃС‡С‘С‚.",
     },
     {
-      title: "Риск на сделку",
+      title: "Р РёСЃРє РЅР° СЃРґРµР»РєСѓ",
       text:
-        "Риск на сделку — это сумма, которую трейдер готов потерять, если сценарий не сработает. Например, если риск $50, значит стоп должен быть рассчитан так, чтобы при выходе по стопу убыток был около $50, а не случайной суммой.",
+        "Р РёСЃРє РЅР° СЃРґРµР»РєСѓ вЂ” СЌС‚Рѕ СЃСѓРјРјР°, РєРѕС‚РѕСЂСѓСЋ С‚СЂРµР№РґРµСЂ РіРѕС‚РѕРІ РїРѕС‚РµСЂСЏС‚СЊ, РµСЃР»Рё СЃС†РµРЅР°СЂРёР№ РЅРµ СЃСЂР°Р±РѕС‚Р°РµС‚. РќР°РїСЂРёРјРµСЂ, РµСЃР»Рё СЂРёСЃРє $50, Р·РЅР°С‡РёС‚ СЃС‚РѕРї РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЂР°СЃСЃС‡РёС‚Р°РЅ С‚Р°Рє, С‡С‚РѕР±С‹ РїСЂРё РІС‹С…РѕРґРµ РїРѕ СЃС‚РѕРїСѓ СѓР±С‹С‚РѕРє Р±С‹Р» РѕРєРѕР»Рѕ $50, Р° РЅРµ СЃР»СѓС‡Р°Р№РЅРѕР№ СЃСѓРјРјРѕР№.",
     },
     {
-      title: "Риск на день",
+      title: "Р РёСЃРє РЅР° РґРµРЅСЊ",
       text:
-        "Риск на день ограничивает максимальную потерю за торговую сессию. Это нужно, чтобы после плохой серии не начинать отыгрываться, увеличивать размер позиции и разрушать дисциплину.",
+        "Р РёСЃРє РЅР° РґРµРЅСЊ РѕРіСЂР°РЅРёС‡РёРІР°РµС‚ РјР°РєСЃРёРјР°Р»СЊРЅСѓСЋ РїРѕС‚РµСЂСЋ Р·Р° С‚РѕСЂРіРѕРІСѓСЋ СЃРµСЃСЃРёСЋ. Р­С‚Рѕ РЅСѓР¶РЅРѕ, С‡С‚РѕР±С‹ РїРѕСЃР»Рµ РїР»РѕС…РѕР№ СЃРµСЂРёРё РЅРµ РЅР°С‡РёРЅР°С‚СЊ РѕС‚С‹РіСЂС‹РІР°С‚СЊСЃСЏ, СѓРІРµР»РёС‡РёРІР°С‚СЊ СЂР°Р·РјРµСЂ РїРѕР·РёС†РёРё Рё СЂР°Р·СЂСѓС€Р°С‚СЊ РґРёСЃС†РёРїР»РёРЅСѓ.",
     },
     {
-      title: "Главная цель риск-менеджмента",
+      title: "Р“Р»Р°РІРЅР°СЏ С†РµР»СЊ СЂРёСЃРє-РјРµРЅРµРґР¶РјРµРЅС‚Р°",
       text:
-        "Цель риск-менеджмента — не убрать убытки полностью. Убытки будут всегда. Цель — сделать их контролируемыми, ожидаемыми и такими, чтобы они не ломали стратегию, психологию и депозит.",
+        "Р¦РµР»СЊ СЂРёСЃРє-РјРµРЅРµРґР¶РјРµРЅС‚Р° вЂ” РЅРµ СѓР±СЂР°С‚СЊ СѓР±С‹С‚РєРё РїРѕР»РЅРѕСЃС‚СЊСЋ. РЈР±С‹С‚РєРё Р±СѓРґСѓС‚ РІСЃРµРіРґР°. Р¦РµР»СЊ вЂ” СЃРґРµР»Р°С‚СЊ РёС… РєРѕРЅС‚СЂРѕР»РёСЂСѓРµРјС‹РјРё, РѕР¶РёРґР°РµРјС‹РјРё Рё С‚Р°РєРёРјРё, С‡С‚РѕР±С‹ РѕРЅРё РЅРµ Р»РѕРјР°Р»Рё СЃС‚СЂР°С‚РµРіРёСЋ, РїСЃРёС…РѕР»РѕРіРёСЋ Рё РґРµРїРѕР·РёС‚.",
     },
   ],
   checklist: [
-    "Перед входом знай точную сумму риска.",
-    "Не увеличивай риск из-за уверенности или желания отыграться.",
-    "Ограничивай дневной убыток заранее.",
-    "Хорошая сделка — это не только идея, но и контролируемый риск.",
+    "РџРµСЂРµРґ РІС…РѕРґРѕРј Р·РЅР°Р№ С‚РѕС‡РЅСѓСЋ СЃСѓРјРјСѓ СЂРёСЃРєР°.",
+    "РќРµ СѓРІРµР»РёС‡РёРІР°Р№ СЂРёСЃРє РёР·-Р·Р° СѓРІРµСЂРµРЅРЅРѕСЃС‚Рё РёР»Рё Р¶РµР»Р°РЅРёСЏ РѕС‚С‹РіСЂР°С‚СЊСЃСЏ.",
+    "РћРіСЂР°РЅРёС‡РёРІР°Р№ РґРЅРµРІРЅРѕР№ СѓР±С‹С‚РѕРє Р·Р°СЂР°РЅРµРµ.",
+    "РҐРѕСЂРѕС€Р°СЏ СЃРґРµР»РєР° вЂ” СЌС‚Рѕ РЅРµ С‚РѕР»СЊРєРѕ РёРґРµСЏ, РЅРѕ Рё РєРѕРЅС‚СЂРѕР»РёСЂСѓРµРјС‹Р№ СЂРёСЃРє.",
   ],
 },
 
 "risk-management-2": {
   intro:
-    "Размер позиции показывает, сколько акций, контрактов или монет ты можешь взять в сделку при заданном риске. Это один из самых важных навыков трейдера, потому что он связывает идею, стоп и допустимую потерю.",
+    "Р Р°Р·РјРµСЂ РїРѕР·РёС†РёРё РїРѕРєР°Р·С‹РІР°РµС‚, СЃРєРѕР»СЊРєРѕ Р°РєС†РёР№, РєРѕРЅС‚СЂР°РєС‚РѕРІ РёР»Рё РјРѕРЅРµС‚ С‚С‹ РјРѕР¶РµС€СЊ РІР·СЏС‚СЊ РІ СЃРґРµР»РєСѓ РїСЂРё Р·Р°РґР°РЅРЅРѕРј СЂРёСЃРєРµ. Р­С‚Рѕ РѕРґРёРЅ РёР· СЃР°РјС‹С… РІР°Р¶РЅС‹С… РЅР°РІС‹РєРѕРІ С‚СЂРµР№РґРµСЂР°, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ СЃРІСЏР·С‹РІР°РµС‚ РёРґРµСЋ, СЃС‚РѕРї Рё РґРѕРїСѓСЃС‚РёРјСѓСЋ РїРѕС‚РµСЂСЋ.",
   blocks: [
     {
-      title: "Формула позиции",
+      title: "Р¤РѕСЂРјСѓР»Р° РїРѕР·РёС†РёРё",
       text:
-        "Базовая логика простая: размер позиции = риск на сделку / расстояние до стопа. Если ты готов рискнуть $50, а стоп находится на $0.25 от входа, размер позиции будет 200 акций.",
+        "Р‘Р°Р·РѕРІР°СЏ Р»РѕРіРёРєР° РїСЂРѕСЃС‚Р°СЏ: СЂР°Р·РјРµСЂ РїРѕР·РёС†РёРё = СЂРёСЃРє РЅР° СЃРґРµР»РєСѓ / СЂР°СЃСЃС‚РѕСЏРЅРёРµ РґРѕ СЃС‚РѕРїР°. Р•СЃР»Рё С‚С‹ РіРѕС‚РѕРІ СЂРёСЃРєРЅСѓС‚СЊ $50, Р° СЃС‚РѕРї РЅР°С…РѕРґРёС‚СЃСЏ РЅР° $0.25 РѕС‚ РІС…РѕРґР°, СЂР°Р·РјРµСЂ РїРѕР·РёС†РёРё Р±СѓРґРµС‚ 200 Р°РєС†РёР№.",
     },
     {
-      title: "Почему нельзя брать объём на глаз",
+      title: "РџРѕС‡РµРјСѓ РЅРµР»СЊР·СЏ Р±СЂР°С‚СЊ РѕР±СЉС‘Рј РЅР° РіР»Р°Р·",
       text:
-        "Если брать позицию на глаз, риск будет каждый раз разным. В одной сделке ты можешь потерять $20, в другой $150, хотя думал, что торгуешь одинаково. Это ломает статистику и делает результат случайным.",
+        "Р•СЃР»Рё Р±СЂР°С‚СЊ РїРѕР·РёС†РёСЋ РЅР° РіР»Р°Р·, СЂРёСЃРє Р±СѓРґРµС‚ РєР°Р¶РґС‹Р№ СЂР°Р· СЂР°Р·РЅС‹Рј. Р’ РѕРґРЅРѕР№ СЃРґРµР»РєРµ С‚С‹ РјРѕР¶РµС€СЊ РїРѕС‚РµСЂСЏС‚СЊ $20, РІ РґСЂСѓРіРѕР№ $150, С…РѕС‚СЏ РґСѓРјР°Р», С‡С‚Рѕ С‚РѕСЂРіСѓРµС€СЊ РѕРґРёРЅР°РєРѕРІРѕ. Р­С‚Рѕ Р»РѕРјР°РµС‚ СЃС‚Р°С‚РёСЃС‚РёРєСѓ Рё РґРµР»Р°РµС‚ СЂРµР·СѓР»СЊС‚Р°С‚ СЃР»СѓС‡Р°Р№РЅС‹Рј.",
     },
     {
-      title: "Стоп определяет объём",
+      title: "РЎС‚РѕРї РѕРїСЂРµРґРµР»СЏРµС‚ РѕР±СЉС‘Рј",
       text:
-        "Сначала определяется точка входа и место, где сценарий будет сломан. Только после этого считается объём. Нельзя сначала выбрать желаемый объём, а потом подгонять стоп под эмоции.",
+        "РЎРЅР°С‡Р°Р»Р° РѕРїСЂРµРґРµР»СЏРµС‚СЃСЏ С‚РѕС‡РєР° РІС…РѕРґР° Рё РјРµСЃС‚Рѕ, РіРґРµ СЃС†РµРЅР°СЂРёР№ Р±СѓРґРµС‚ СЃР»РѕРјР°РЅ. РўРѕР»СЊРєРѕ РїРѕСЃР»Рµ СЌС‚РѕРіРѕ СЃС‡РёС‚Р°РµС‚СЃСЏ РѕР±СЉС‘Рј. РќРµР»СЊР·СЏ СЃРЅР°С‡Р°Р»Р° РІС‹Р±СЂР°С‚СЊ Р¶РµР»Р°РµРјС‹Р№ РѕР±СЉС‘Рј, Р° РїРѕС‚РѕРј РїРѕРґРіРѕРЅСЏС‚СЊ СЃС‚РѕРї РїРѕРґ СЌРјРѕС†РёРё.",
     },
     {
-      title: "Что делать с широким стопом",
+      title: "Р§С‚Рѕ РґРµР»Р°С‚СЊ СЃ С€РёСЂРѕРєРёРј СЃС‚РѕРїРѕРј",
       text:
-        "Если стоп слишком широкий, позиция должна быть меньше. Если после расчёта объём получается слишком маленьким или сделка не даёт нормального потенциала, лучше пропустить вход.",
+        "Р•СЃР»Рё СЃС‚РѕРї СЃР»РёС€РєРѕРј С€РёСЂРѕРєРёР№, РїРѕР·РёС†РёСЏ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РјРµРЅСЊС€Рµ. Р•СЃР»Рё РїРѕСЃР»Рµ СЂР°СЃС‡С‘С‚Р° РѕР±СЉС‘Рј РїРѕР»СѓС‡Р°РµС‚СЃСЏ СЃР»РёС€РєРѕРј РјР°Р»РµРЅСЊРєРёРј РёР»Рё СЃРґРµР»РєР° РЅРµ РґР°С‘С‚ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ РїРѕС‚РµРЅС†РёР°Р»Р°, Р»СѓС‡С€Рµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ РІС…РѕРґ.",
     },
   ],
   checklist: [
-    "Сначала определи стоп, потом считай объём.",
-    "Не бери одинаковый размер позиции на разных сетапах.",
-    "Чем шире стоп, тем меньше позиция.",
-    "Не увеличивай объём, если не готов принять реальный риск.",
+    "РЎРЅР°С‡Р°Р»Р° РѕРїСЂРµРґРµР»Рё СЃС‚РѕРї, РїРѕС‚РѕРј СЃС‡РёС‚Р°Р№ РѕР±СЉС‘Рј.",
+    "РќРµ Р±РµСЂРё РѕРґРёРЅР°РєРѕРІС‹Р№ СЂР°Р·РјРµСЂ РїРѕР·РёС†РёРё РЅР° СЂР°Р·РЅС‹С… СЃРµС‚Р°РїР°С….",
+    "Р§РµРј С€РёСЂРµ СЃС‚РѕРї, С‚РµРј РјРµРЅСЊС€Рµ РїРѕР·РёС†РёСЏ.",
+    "РќРµ СѓРІРµР»РёС‡РёРІР°Р№ РѕР±СЉС‘Рј, РµСЃР»Рё РЅРµ РіРѕС‚РѕРІ РїСЂРёРЅСЏС‚СЊ СЂРµР°Р»СЊРЅС‹Р№ СЂРёСЃРє.",
   ],
 },
 
 "risk-management-3": {
   intro:
-    "Risk/Reward показывает соотношение потенциальной прибыли к потенциальному убытку. Он помогает понять, стоит ли сделка риска. Даже хорошая идея может быть плохой сделкой, если потенциальная прибыль слишком маленькая относительно стопа.",
+    "Risk/Reward РїРѕРєР°Р·С‹РІР°РµС‚ СЃРѕРѕС‚РЅРѕС€РµРЅРёРµ РїРѕС‚РµРЅС†РёР°Р»СЊРЅРѕР№ РїСЂРёР±С‹Р»Рё Рє РїРѕС‚РµРЅС†РёР°Р»СЊРЅРѕРјСѓ СѓР±С‹С‚РєСѓ. РћРЅ РїРѕРјРѕРіР°РµС‚ РїРѕРЅСЏС‚СЊ, СЃС‚РѕРёС‚ Р»Рё СЃРґРµР»РєР° СЂРёСЃРєР°. Р”Р°Р¶Рµ С…РѕСЂРѕС€Р°СЏ РёРґРµСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїР»РѕС…РѕР№ СЃРґРµР»РєРѕР№, РµСЃР»Рё РїРѕС‚РµРЅС†РёР°Р»СЊРЅР°СЏ РїСЂРёР±С‹Р»СЊ СЃР»РёС€РєРѕРј РјР°Р»РµРЅСЊРєР°СЏ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ СЃС‚РѕРїР°.",
   blocks: [
     {
-      title: "Что такое R",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ R",
       text:
-        "R — это единица риска. Если ты рискуешь $50, то 1R = $50. Прибыль $100 будет +2R, убыток $50 будет -1R. Такой подход помогает оценивать сделки независимо от размера позиции и цены акции.",
+        "R вЂ” СЌС‚Рѕ РµРґРёРЅРёС†Р° СЂРёСЃРєР°. Р•СЃР»Рё С‚С‹ СЂРёСЃРєСѓРµС€СЊ $50, С‚Рѕ 1R = $50. РџСЂРёР±С‹Р»СЊ $100 Р±СѓРґРµС‚ +2R, СѓР±С‹С‚РѕРє $50 Р±СѓРґРµС‚ -1R. РўР°РєРѕР№ РїРѕРґС…РѕРґ РїРѕРјРѕРіР°РµС‚ РѕС†РµРЅРёРІР°С‚СЊ СЃРґРµР»РєРё РЅРµР·Р°РІРёСЃРёРјРѕ РѕС‚ СЂР°Р·РјРµСЂР° РїРѕР·РёС†РёРё Рё С†РµРЅС‹ Р°РєС†РёРё.",
     },
     {
-      title: "Почему важен потенциал",
+      title: "РџРѕС‡РµРјСѓ РІР°Р¶РµРЅ РїРѕС‚РµРЅС†РёР°Р»",
       text:
-        "Перед входом нужно понимать, куда цена реально может дойти. Если стоп $0.30, а ближайшая цель всего $0.20, сделка не имеет хорошего соотношения риска и прибыли.",
+        "РџРµСЂРµРґ РІС…РѕРґРѕРј РЅСѓР¶РЅРѕ РїРѕРЅРёРјР°С‚СЊ, РєСѓРґР° С†РµРЅР° СЂРµР°Р»СЊРЅРѕ РјРѕР¶РµС‚ РґРѕР№С‚Рё. Р•СЃР»Рё СЃС‚РѕРї $0.30, Р° Р±Р»РёР¶Р°Р№С€Р°СЏ С†РµР»СЊ РІСЃРµРіРѕ $0.20, СЃРґРµР»РєР° РЅРµ РёРјРµРµС‚ С…РѕСЂРѕС€РµРіРѕ СЃРѕРѕС‚РЅРѕС€РµРЅРёСЏ СЂРёСЃРєР° Рё РїСЂРёР±С‹Р»Рё.",
     },
     {
-      title: "Не все сделки должны быть 3R",
+      title: "РќРµ РІСЃРµ СЃРґРµР»РєРё РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ 3R",
       text:
-        "В скальпинге и интрадей-торговле не каждая сделка даст большое соотношение. Но трейдер должен понимать, почему он входит, где частично фиксирует прибыль и где сценарий перестаёт быть выгодным.",
+        "Р’ СЃРєР°Р»СЊРїРёРЅРіРµ Рё РёРЅС‚СЂР°РґРµР№-С‚РѕСЂРіРѕРІР»Рµ РЅРµ РєР°Р¶РґР°СЏ СЃРґРµР»РєР° РґР°СЃС‚ Р±РѕР»СЊС€РѕРµ СЃРѕРѕС‚РЅРѕС€РµРЅРёРµ. РќРѕ С‚СЂРµР№РґРµСЂ РґРѕР»Р¶РµРЅ РїРѕРЅРёРјР°С‚СЊ, РїРѕС‡РµРјСѓ РѕРЅ РІС…РѕРґРёС‚, РіРґРµ С‡Р°СЃС‚РёС‡РЅРѕ С„РёРєСЃРёСЂСѓРµС‚ РїСЂРёР±С‹Р»СЊ Рё РіРґРµ СЃС†РµРЅР°СЂРёР№ РїРµСЂРµСЃС‚Р°С‘С‚ Р±С‹С‚СЊ РІС‹РіРѕРґРЅС‹Рј.",
     },
     {
-      title: "Risk/Reward и win rate",
+      title: "Risk/Reward Рё win rate",
       text:
-        "Чем ниже средний Risk/Reward, тем выше должен быть win rate. Если трейдер часто берёт маленькую прибыль и держит большие убытки, даже высокий процент прибыльных сделок может не спасти систему.",
+        "Р§РµРј РЅРёР¶Рµ СЃСЂРµРґРЅРёР№ Risk/Reward, С‚РµРј РІС‹С€Рµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ win rate. Р•СЃР»Рё С‚СЂРµР№РґРµСЂ С‡Р°СЃС‚Рѕ Р±РµСЂС‘С‚ РјР°Р»РµРЅСЊРєСѓСЋ РїСЂРёР±С‹Р»СЊ Рё РґРµСЂР¶РёС‚ Р±РѕР»СЊС€РёРµ СѓР±С‹С‚РєРё, РґР°Р¶Рµ РІС‹СЃРѕРєРёР№ РїСЂРѕС†РµРЅС‚ РїСЂРёР±С‹Р»СЊРЅС‹С… СЃРґРµР»РѕРє РјРѕР¶РµС‚ РЅРµ СЃРїР°СЃС‚Рё СЃРёСЃС‚РµРјСѓ.",
     },
   ],
   checklist: [
-    "Перед входом определи ближайшую логичную цель.",
-    "Сравни цель со стопом.",
-    "Думай в R, а не только в долларах.",
-    "Не входи в сделку, где потенциальный убыток больше разумной цели.",
+    "РџРµСЂРµРґ РІС…РѕРґРѕРј РѕРїСЂРµРґРµР»Рё Р±Р»РёР¶Р°Р№С€СѓСЋ Р»РѕРіРёС‡РЅСѓСЋ С†РµР»СЊ.",
+    "РЎСЂР°РІРЅРё С†РµР»СЊ СЃРѕ СЃС‚РѕРїРѕРј.",
+    "Р”СѓРјР°Р№ РІ R, Р° РЅРµ С‚РѕР»СЊРєРѕ РІ РґРѕР»Р»Р°СЂР°С….",
+    "РќРµ РІС…РѕРґРё РІ СЃРґРµР»РєСѓ, РіРґРµ РїРѕС‚РµРЅС†РёР°Р»СЊРЅС‹Р№ СѓР±С‹С‚РѕРє Р±РѕР»СЊС€Рµ СЂР°Р·СѓРјРЅРѕР№ С†РµР»Рё.",
   ],
 },
 
 "risk-management-4": {
   intro:
-    "Дневной лимит — это заранее установленная граница убытка, после которой трейдер прекращает торговлю. Он нужен не потому, что трейдер слабый, а потому что после серии убытков качество решений обычно ухудшается.",
+    "Р”РЅРµРІРЅРѕР№ Р»РёРјРёС‚ вЂ” СЌС‚Рѕ Р·Р°СЂР°РЅРµРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅРЅР°СЏ РіСЂР°РЅРёС†Р° СѓР±С‹С‚РєР°, РїРѕСЃР»Рµ РєРѕС‚РѕСЂРѕР№ С‚СЂРµР№РґРµСЂ РїСЂРµРєСЂР°С‰Р°РµС‚ С‚РѕСЂРіРѕРІР»СЋ. РћРЅ РЅСѓР¶РµРЅ РЅРµ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ С‚СЂРµР№РґРµСЂ СЃР»Р°Р±С‹Р№, Р° РїРѕС‚РѕРјСѓ С‡С‚Рѕ РїРѕСЃР»Рµ СЃРµСЂРёРё СѓР±С‹С‚РєРѕРІ РєР°С‡РµСЃС‚РІРѕ СЂРµС€РµРЅРёР№ РѕР±С‹С‡РЅРѕ СѓС…СѓРґС€Р°РµС‚СЃСЏ.",
   blocks: [
     {
-      title: "Зачем нужен дневной лимит",
+      title: "Р—Р°С‡РµРј РЅСѓР¶РµРЅ РґРЅРµРІРЅРѕР№ Р»РёРјРёС‚",
       text:
-        "После нескольких плохих сделок появляется желание отыграться. Трейдер начинает видеть сетапы там, где их нет, увеличивает риск, нарушает план и торгует эмоции. Дневной лимит защищает от этого состояния.",
+        "РџРѕСЃР»Рµ РЅРµСЃРєРѕР»СЊРєРёС… РїР»РѕС…РёС… СЃРґРµР»РѕРє РїРѕСЏРІР»СЏРµС‚СЃСЏ Р¶РµР»Р°РЅРёРµ РѕС‚С‹РіСЂР°С‚СЊСЃСЏ. РўСЂРµР№РґРµСЂ РЅР°С‡РёРЅР°РµС‚ РІРёРґРµС‚СЊ СЃРµС‚Р°РїС‹ С‚Р°Рј, РіРґРµ РёС… РЅРµС‚, СѓРІРµР»РёС‡РёРІР°РµС‚ СЂРёСЃРє, РЅР°СЂСѓС€Р°РµС‚ РїР»Р°РЅ Рё С‚РѕСЂРіСѓРµС‚ СЌРјРѕС†РёРё. Р”РЅРµРІРЅРѕР№ Р»РёРјРёС‚ Р·Р°С‰РёС‰Р°РµС‚ РѕС‚ СЌС‚РѕРіРѕ СЃРѕСЃС‚РѕСЏРЅРёСЏ.",
     },
     {
-      title: "Лимит по деньгам",
+      title: "Р›РёРјРёС‚ РїРѕ РґРµРЅСЊРіР°Рј",
       text:
-        "Самый простой вариант — лимит по сумме. Например, если риск на сделку $50, дневной лимит может быть $100–150. После достижения лимита торговля прекращается до следующего дня.",
+        "РЎР°РјС‹Р№ РїСЂРѕСЃС‚РѕР№ РІР°СЂРёР°РЅС‚ вЂ” Р»РёРјРёС‚ РїРѕ СЃСѓРјРјРµ. РќР°РїСЂРёРјРµСЂ, РµСЃР»Рё СЂРёСЃРє РЅР° СЃРґРµР»РєСѓ $50, РґРЅРµРІРЅРѕР№ Р»РёРјРёС‚ РјРѕР¶РµС‚ Р±С‹С‚СЊ $100вЂ“150. РџРѕСЃР»Рµ РґРѕСЃС‚РёР¶РµРЅРёСЏ Р»РёРјРёС‚Р° С‚РѕСЂРіРѕРІР»СЏ РїСЂРµРєСЂР°С‰Р°РµС‚СЃСЏ РґРѕ СЃР»РµРґСѓСЋС‰РµРіРѕ РґРЅСЏ.",
     },
     {
-      title: "Лимит по качеству",
+      title: "Р›РёРјРёС‚ РїРѕ РєР°С‡РµСЃС‚РІСѓ",
       text:
-        "Иногда важно остановиться не только после убытка, но и после плохого поведения: импульсивных входов, нарушения стопа, входа без сетапа, увеличения объёма без причины. Это тоже сигнал завершить сессию.",
+        "РРЅРѕРіРґР° РІР°Р¶РЅРѕ РѕСЃС‚Р°РЅРѕРІРёС‚СЊСЃСЏ РЅРµ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ СѓР±С‹С‚РєР°, РЅРѕ Рё РїРѕСЃР»Рµ РїР»РѕС…РѕРіРѕ РїРѕРІРµРґРµРЅРёСЏ: РёРјРїСѓР»СЊСЃРёРІРЅС‹С… РІС…РѕРґРѕРІ, РЅР°СЂСѓС€РµРЅРёСЏ СЃС‚РѕРїР°, РІС…РѕРґР° Р±РµР· СЃРµС‚Р°РїР°, СѓРІРµР»РёС‡РµРЅРёСЏ РѕР±СЉС‘РјР° Р±РµР· РїСЂРёС‡РёРЅС‹. Р­С‚Рѕ С‚РѕР¶Рµ СЃРёРіРЅР°Р» Р·Р°РІРµСЂС€РёС‚СЊ СЃРµСЃСЃРёСЋ.",
     },
     {
-      title: "Как относиться к остановке",
+      title: "РљР°Рє РѕС‚РЅРѕСЃРёС‚СЊСЃСЏ Рє РѕСЃС‚Р°РЅРѕРІРєРµ",
       text:
-        "Остановка после лимита — это не поражение. Это профессиональное действие. Трейдер, который умеет остановиться, сохраняет капитал, психику и возможность торговать завтра.",
+        "РћСЃС‚Р°РЅРѕРІРєР° РїРѕСЃР»Рµ Р»РёРјРёС‚Р° вЂ” СЌС‚Рѕ РЅРµ РїРѕСЂР°Р¶РµРЅРёРµ. Р­С‚Рѕ РїСЂРѕС„РµСЃСЃРёРѕРЅР°Р»СЊРЅРѕРµ РґРµР№СЃС‚РІРёРµ. РўСЂРµР№РґРµСЂ, РєРѕС‚РѕСЂС‹Р№ СѓРјРµРµС‚ РѕСЃС‚Р°РЅРѕРІРёС‚СЊСЃСЏ, СЃРѕС…СЂР°РЅСЏРµС‚ РєР°РїРёС‚Р°Р», РїСЃРёС…РёРєСѓ Рё РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ С‚РѕСЂРіРѕРІР°С‚СЊ Р·Р°РІС‚СЂР°.",
     },
   ],
   checklist: [
-    "Установи дневной лимит до начала сессии.",
-    "После достижения лимита не открывай новые сделки.",
-    "Отдельно отслеживай нарушение правил, а не только PnL.",
-    "Не пытайся вернуть день любой ценой.",
+    "РЈСЃС‚Р°РЅРѕРІРё РґРЅРµРІРЅРѕР№ Р»РёРјРёС‚ РґРѕ РЅР°С‡Р°Р»Р° СЃРµСЃСЃРёРё.",
+    "РџРѕСЃР»Рµ РґРѕСЃС‚РёР¶РµРЅРёСЏ Р»РёРјРёС‚Р° РЅРµ РѕС‚РєСЂС‹РІР°Р№ РЅРѕРІС‹Рµ СЃРґРµР»РєРё.",
+    "РћС‚РґРµР»СЊРЅРѕ РѕС‚СЃР»РµР¶РёРІР°Р№ РЅР°СЂСѓС€РµРЅРёРµ РїСЂР°РІРёР», Р° РЅРµ С‚РѕР»СЊРєРѕ PnL.",
+    "РќРµ РїС‹С‚Р°Р№СЃСЏ РІРµСЂРЅСѓС‚СЊ РґРµРЅСЊ Р»СЋР±РѕР№ С†РµРЅРѕР№.",
   ],
 },
 "intraday-momentum-1": {
   intro:
-    "Momentum — это ситуация, когда цена движется быстро и направленно, потому что одна сторона рынка становится агрессивнее другой. В интрадей-торговле momentum важен тем, что даёт быстрые движения, понятные точки риска и возможность работать по реакции.",
+    "Momentum вЂ” СЌС‚Рѕ СЃРёС‚СѓР°С†РёСЏ, РєРѕРіРґР° С†РµРЅР° РґРІРёР¶РµС‚СЃСЏ Р±С‹СЃС‚СЂРѕ Рё РЅР°РїСЂР°РІР»РµРЅРЅРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРґРЅР° СЃС‚РѕСЂРѕРЅР° СЂС‹РЅРєР° СЃС‚Р°РЅРѕРІРёС‚СЃСЏ Р°РіСЂРµСЃСЃРёРІРЅРµРµ РґСЂСѓРіРѕР№. Р’ РёРЅС‚СЂР°РґРµР№-С‚РѕСЂРіРѕРІР»Рµ momentum РІР°Р¶РµРЅ С‚РµРј, С‡С‚Рѕ РґР°С‘С‚ Р±С‹СЃС‚СЂС‹Рµ РґРІРёР¶РµРЅРёСЏ, РїРѕРЅСЏС‚РЅС‹Рµ С‚РѕС‡РєРё СЂРёСЃРєР° Рё РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ СЂР°Р±РѕС‚Р°С‚СЊ РїРѕ СЂРµР°РєС†РёРё.",
   blocks: [
     {
-      title: "Что такое momentum",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ momentum",
       text:
-        "Momentum появляется, когда в актив приходит повышенный интерес: новость, гэп, объём, пробой уровня, сильный рынок или агрессивные участники. Цена начинает двигаться быстрее обычного, а откаты становятся меньше или быстрее выкупаются.",
+        "Momentum РїРѕСЏРІР»СЏРµС‚СЃСЏ, РєРѕРіРґР° РІ Р°РєС‚РёРІ РїСЂРёС…РѕРґРёС‚ РїРѕРІС‹С€РµРЅРЅС‹Р№ РёРЅС‚РµСЂРµСЃ: РЅРѕРІРѕСЃС‚СЊ, РіСЌРї, РѕР±СЉС‘Рј, РїСЂРѕР±РѕР№ СѓСЂРѕРІРЅСЏ, СЃРёР»СЊРЅС‹Р№ СЂС‹РЅРѕРє РёР»Рё Р°РіСЂРµСЃСЃРёРІРЅС‹Рµ СѓС‡Р°СЃС‚РЅРёРєРё. Р¦РµРЅР° РЅР°С‡РёРЅР°РµС‚ РґРІРёРіР°С‚СЊСЃСЏ Р±С‹СЃС‚СЂРµРµ РѕР±С‹С‡РЅРѕРіРѕ, Р° РѕС‚РєР°С‚С‹ СЃС‚Р°РЅРѕРІСЏС‚СЃСЏ РјРµРЅСЊС€Рµ РёР»Рё Р±С‹СЃС‚СЂРµРµ РІС‹РєСѓРїР°СЋС‚СЃСЏ.",
     },
     {
-      title: "Почему momentum опасен без плана",
+      title: "РџРѕС‡РµРјСѓ momentum РѕРїР°СЃРµРЅ Р±РµР· РїР»Р°РЅР°",
       text:
-        "Импульс может дать быстрый профит, но также может резко развернуться. Если входить поздно, без стопа и без понимания уровня, трейдер легко покупает вершину или шортит самый низ движения.",
+        "РРјРїСѓР»СЊСЃ РјРѕР¶РµС‚ РґР°С‚СЊ Р±С‹СЃС‚СЂС‹Р№ РїСЂРѕС„РёС‚, РЅРѕ С‚Р°РєР¶Рµ РјРѕР¶РµС‚ СЂРµР·РєРѕ СЂР°Р·РІРµСЂРЅСѓС‚СЊСЃСЏ. Р•СЃР»Рё РІС…РѕРґРёС‚СЊ РїРѕР·РґРЅРѕ, Р±РµР· СЃС‚РѕРїР° Рё Р±РµР· РїРѕРЅРёРјР°РЅРёСЏ СѓСЂРѕРІРЅСЏ, С‚СЂРµР№РґРµСЂ Р»РµРіРєРѕ РїРѕРєСѓРїР°РµС‚ РІРµСЂС€РёРЅСѓ РёР»Рё С€РѕСЂС‚РёС‚ СЃР°РјС‹Р№ РЅРёР· РґРІРёР¶РµРЅРёСЏ.",
     },
     {
-      title: "Momentum vs обычный шум",
+      title: "Momentum vs РѕР±С‹С‡РЅС‹Р№ С€СѓРј",
       text:
-        "Не каждое движение является momentum. Настоящий momentum обычно сопровождается расширением диапазона свечей, ростом объёма, удержанием уровней и быстрым продолжением после небольших пауз.",
+        "РќРµ РєР°Р¶РґРѕРµ РґРІРёР¶РµРЅРёРµ СЏРІР»СЏРµС‚СЃСЏ momentum. РќР°СЃС‚РѕСЏС‰РёР№ momentum РѕР±С‹С‡РЅРѕ СЃРѕРїСЂРѕРІРѕР¶РґР°РµС‚СЃСЏ СЂР°СЃС€РёСЂРµРЅРёРµРј РґРёР°РїР°Р·РѕРЅР° СЃРІРµС‡РµР№, СЂРѕСЃС‚РѕРј РѕР±СЉС‘РјР°, СѓРґРµСЂР¶Р°РЅРёРµРј СѓСЂРѕРІРЅРµР№ Рё Р±С‹СЃС‚СЂС‹Рј РїСЂРѕРґРѕР»Р¶РµРЅРёРµРј РїРѕСЃР»Рµ РЅРµР±РѕР»СЊС€РёС… РїР°СѓР·.",
     },
     {
-      title: "Что важно для входа",
+      title: "Р§С‚Рѕ РІР°Р¶РЅРѕ РґР»СЏ РІС…РѕРґР°",
       text:
-        "Для momentum-трейдера важно не просто увидеть рост или падение, а понять, где движение началось, где ближайший уровень, где может быть ликвидность и где сценарий будет сломан.",
+        "Р”Р»СЏ momentum-С‚СЂРµР№РґРµСЂР° РІР°Р¶РЅРѕ РЅРµ РїСЂРѕСЃС‚Рѕ СѓРІРёРґРµС‚СЊ СЂРѕСЃС‚ РёР»Рё РїР°РґРµРЅРёРµ, Р° РїРѕРЅСЏС‚СЊ, РіРґРµ РґРІРёР¶РµРЅРёРµ РЅР°С‡Р°Р»РѕСЃСЊ, РіРґРµ Р±Р»РёР¶Р°Р№С€РёР№ СѓСЂРѕРІРµРЅСЊ, РіРґРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ Рё РіРґРµ СЃС†РµРЅР°СЂРёР№ Р±СѓРґРµС‚ СЃР»РѕРјР°РЅ.",
     },
   ],
   checklist: [
-    "Ищи ускорение цены, а не случайное движение.",
-    "Проверяй объём относительно предыдущих свечей.",
-    "Смотри, удерживает ли цена пробитый уровень.",
-    "Не входи поздно, если стоп становится слишком широким.",
+    "РС‰Рё СѓСЃРєРѕСЂРµРЅРёРµ С†РµРЅС‹, Р° РЅРµ СЃР»СѓС‡Р°Р№РЅРѕРµ РґРІРёР¶РµРЅРёРµ.",
+    "РџСЂРѕРІРµСЂСЏР№ РѕР±СЉС‘Рј РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РїСЂРµРґС‹РґСѓС‰РёС… СЃРІРµС‡РµР№.",
+    "РЎРјРѕС‚СЂРё, СѓРґРµСЂР¶РёРІР°РµС‚ Р»Рё С†РµРЅР° РїСЂРѕР±РёС‚С‹Р№ СѓСЂРѕРІРµРЅСЊ.",
+    "РќРµ РІС…РѕРґРё РїРѕР·РґРЅРѕ, РµСЃР»Рё СЃС‚РѕРї СЃС‚Р°РЅРѕРІРёС‚СЃСЏ СЃР»РёС€РєРѕРј С€РёСЂРѕРєРёРј.",
   ],
 },
 
 "intraday-momentum-2": {
   intro:
-    "Gap and go — это сценарий, где актив открывается с гэпом и продолжает движение в сторону гэпа после открытия рынка. Такой сетап часто появляется на новостях, earnings, upgrade/downgrade, сильном секторе или необычном объёме.",
+    "Gap and go вЂ” СЌС‚Рѕ СЃС†РµРЅР°СЂРёР№, РіРґРµ Р°РєС‚РёРІ РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ СЃ РіСЌРїРѕРј Рё РїСЂРѕРґРѕР»Р¶Р°РµС‚ РґРІРёР¶РµРЅРёРµ РІ СЃС‚РѕСЂРѕРЅСѓ РіСЌРїР° РїРѕСЃР»Рµ РѕС‚РєСЂС‹С‚РёСЏ СЂС‹РЅРєР°. РўР°РєРѕР№ СЃРµС‚Р°Рї С‡Р°СЃС‚Рѕ РїРѕСЏРІР»СЏРµС‚СЃСЏ РЅР° РЅРѕРІРѕСЃС‚СЏС…, earnings, upgrade/downgrade, СЃРёР»СЊРЅРѕРј СЃРµРєС‚РѕСЂРµ РёР»Рё РЅРµРѕР±С‹С‡РЅРѕРј РѕР±СЉС‘РјРµ.",
   blocks: [
     {
-      title: "Что такое гэп",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ РіСЌРї",
       text:
-        "Гэп — это разрыв между ценой предыдущего закрытия и текущей ценой. Если акция открывается значительно выше или ниже, это означает, что за пределами обычной сессии появился новый спрос или предложение.",
+        "Р“СЌРї вЂ” СЌС‚Рѕ СЂР°Р·СЂС‹РІ РјРµР¶РґСѓ С†РµРЅРѕР№ РїСЂРµРґС‹РґСѓС‰РµРіРѕ Р·Р°РєСЂС‹С‚РёСЏ Рё С‚РµРєСѓС‰РµР№ С†РµРЅРѕР№. Р•СЃР»Рё Р°РєС†РёСЏ РѕС‚РєСЂС‹РІР°РµС‚СЃСЏ Р·РЅР°С‡РёС‚РµР»СЊРЅРѕ РІС‹С€Рµ РёР»Рё РЅРёР¶Рµ, СЌС‚Рѕ РѕР·РЅР°С‡Р°РµС‚, С‡С‚Рѕ Р·Р° РїСЂРµРґРµР»Р°РјРё РѕР±С‹С‡РЅРѕР№ СЃРµСЃСЃРёРё РїРѕСЏРІРёР»СЃСЏ РЅРѕРІС‹Р№ СЃРїСЂРѕСЃ РёР»Рё РїСЂРµРґР»РѕР¶РµРЅРёРµ.",
     },
     {
-      title: "Когда gap and go сильнее",
+      title: "РљРѕРіРґР° gap and go СЃРёР»СЊРЅРµРµ",
       text:
-        "Сетап сильнее, когда есть понятный catalyst, высокий relative volume, удержание premarket levels и отсутствие быстрого возврата в гэп. Чем лучше цена держит импульс после открытия, тем выше шанс продолжения.",
+        "РЎРµС‚Р°Рї СЃРёР»СЊРЅРµРµ, РєРѕРіРґР° РµСЃС‚СЊ РїРѕРЅСЏС‚РЅС‹Р№ catalyst, РІС‹СЃРѕРєРёР№ relative volume, СѓРґРµСЂР¶Р°РЅРёРµ premarket levels Рё РѕС‚СЃСѓС‚СЃС‚РІРёРµ Р±С‹СЃС‚СЂРѕРіРѕ РІРѕР·РІСЂР°С‚Р° РІ РіСЌРї. Р§РµРј Р»СѓС‡С€Рµ С†РµРЅР° РґРµСЂР¶РёС‚ РёРјРїСѓР»СЊСЃ РїРѕСЃР»Рµ РѕС‚РєСЂС‹С‚РёСЏ, С‚РµРј РІС‹С€Рµ С€Р°РЅСЃ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ.",
     },
     {
-      title: "Где искать вход",
+      title: "Р“РґРµ РёСЃРєР°С‚СЊ РІС…РѕРґ",
       text:
-        "Часто вход ищут не в случайном месте, а после удержания premarket high/low, VWAP, opening range, локального отката или пробоя зоны, где продавцы/покупатели не смогли развернуть движение.",
+        "Р§Р°СЃС‚Рѕ РІС…РѕРґ РёС‰СѓС‚ РЅРµ РІ СЃР»СѓС‡Р°Р№РЅРѕРј РјРµСЃС‚Рµ, Р° РїРѕСЃР»Рµ СѓРґРµСЂР¶Р°РЅРёСЏ premarket high/low, VWAP, opening range, Р»РѕРєР°Р»СЊРЅРѕРіРѕ РѕС‚РєР°С‚Р° РёР»Рё РїСЂРѕР±РѕСЏ Р·РѕРЅС‹, РіРґРµ РїСЂРѕРґР°РІС†С‹/РїРѕРєСѓРїР°С‚РµР»Рё РЅРµ СЃРјРѕРіР»Рё СЂР°Р·РІРµСЂРЅСѓС‚СЊ РґРІРёР¶РµРЅРёРµ.",
     },
     {
-      title: "Главный риск",
+      title: "Р“Р»Р°РІРЅС‹Р№ СЂРёСЃРє",
       text:
-        "Главный риск gap and go — купить слишком поздно после большого движения или зайти в момент, когда ранние участники уже фиксируют прибыль. Поэтому важно ждать структуру, уровень и реакцию.",
+        "Р“Р»Р°РІРЅС‹Р№ СЂРёСЃРє gap and go вЂ” РєСѓРїРёС‚СЊ СЃР»РёС€РєРѕРј РїРѕР·РґРЅРѕ РїРѕСЃР»Рµ Р±РѕР»СЊС€РѕРіРѕ РґРІРёР¶РµРЅРёСЏ РёР»Рё Р·Р°Р№С‚Рё РІ РјРѕРјРµРЅС‚, РєРѕРіРґР° СЂР°РЅРЅРёРµ СѓС‡Р°СЃС‚РЅРёРєРё СѓР¶Рµ С„РёРєСЃРёСЂСѓСЋС‚ РїСЂРёР±С‹Р»СЊ. РџРѕСЌС‚РѕРјСѓ РІР°Р¶РЅРѕ Р¶РґР°С‚СЊ СЃС‚СЂСѓРєС‚СѓСЂСѓ, СѓСЂРѕРІРµРЅСЊ Рё СЂРµР°РєС†РёСЋ.",
     },
   ],
   checklist: [
-    "Проверь размер гэпа и причину движения.",
-    "Смотри premarket high/low и VWAP.",
-    "Оцени, держится ли цена после открытия.",
-    "Не входи в растянутую свечу без понятного стопа.",
+    "РџСЂРѕРІРµСЂСЊ СЂР°Р·РјРµСЂ РіСЌРїР° Рё РїСЂРёС‡РёРЅСѓ РґРІРёР¶РµРЅРёСЏ.",
+    "РЎРјРѕС‚СЂРё premarket high/low Рё VWAP.",
+    "РћС†РµРЅРё, РґРµСЂР¶РёС‚СЃСЏ Р»Рё С†РµРЅР° РїРѕСЃР»Рµ РѕС‚РєСЂС‹С‚РёСЏ.",
+    "РќРµ РІС…РѕРґРё РІ СЂР°СЃС‚СЏРЅСѓС‚СѓСЋ СЃРІРµС‡Сѓ Р±РµР· РїРѕРЅСЏС‚РЅРѕРіРѕ СЃС‚РѕРїР°.",
   ],
 },
 
 "intraday-momentum-3": {
   intro:
-    "Continuation — это продолжение уже начатого движения. Для трейдера это один из самых логичных momentum-сценариев: рынок уже показал направление, а задача — найти место, где продолжение имеет хороший риск.",
+    "Continuation вЂ” СЌС‚Рѕ РїСЂРѕРґРѕР»Р¶РµРЅРёРµ СѓР¶Рµ РЅР°С‡Р°С‚РѕРіРѕ РґРІРёР¶РµРЅРёСЏ. Р”Р»СЏ С‚СЂРµР№РґРµСЂР° СЌС‚Рѕ РѕРґРёРЅ РёР· СЃР°РјС‹С… Р»РѕРіРёС‡РЅС‹С… momentum-СЃС†РµРЅР°СЂРёРµРІ: СЂС‹РЅРѕРє СѓР¶Рµ РїРѕРєР°Р·Р°Р» РЅР°РїСЂР°РІР»РµРЅРёРµ, Р° Р·Р°РґР°С‡Р° вЂ” РЅР°Р№С‚Рё РјРµСЃС‚Рѕ, РіРґРµ РїСЂРѕРґРѕР»Р¶РµРЅРёРµ РёРјРµРµС‚ С…РѕСЂРѕС€РёР№ СЂРёСЃРє.",
   blocks: [
     {
-      title: "Что такое continuation",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ continuation",
       text:
-        "Continuation возникает, когда цена после импульса делает паузу, откат или консолидацию, но не ломает структуру. После этого движение продолжается в сторону первоначального импульса.",
+        "Continuation РІРѕР·РЅРёРєР°РµС‚, РєРѕРіРґР° С†РµРЅР° РїРѕСЃР»Рµ РёРјРїСѓР»СЊСЃР° РґРµР»Р°РµС‚ РїР°СѓР·Сѓ, РѕС‚РєР°С‚ РёР»Рё РєРѕРЅСЃРѕР»РёРґР°С†РёСЋ, РЅРѕ РЅРµ Р»РѕРјР°РµС‚ СЃС‚СЂСѓРєС‚СѓСЂСѓ. РџРѕСЃР»Рµ СЌС‚РѕРіРѕ РґРІРёР¶РµРЅРёРµ РїСЂРѕРґРѕР»Р¶Р°РµС‚СЃСЏ РІ СЃС‚РѕСЂРѕРЅСѓ РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅРѕРіРѕ РёРјРїСѓР»СЊСЃР°.",
     },
     {
-      title: "Какая пауза считается здоровой",
+      title: "РљР°РєР°СЏ РїР°СѓР·Р° СЃС‡РёС‚Р°РµС‚СЃСЏ Р·РґРѕСЂРѕРІРѕР№",
       text:
-        "Здоровая пауза обычно не слишком глубокая, проходит на меньшем объёме и удерживает ключевые уровни. Если откат слишком резкий и возвращает большую часть импульса, continuation становится слабее.",
+        "Р—РґРѕСЂРѕРІР°СЏ РїР°СѓР·Р° РѕР±С‹С‡РЅРѕ РЅРµ СЃР»РёС€РєРѕРј РіР»СѓР±РѕРєР°СЏ, РїСЂРѕС…РѕРґРёС‚ РЅР° РјРµРЅСЊС€РµРј РѕР±СЉС‘РјРµ Рё СѓРґРµСЂР¶РёРІР°РµС‚ РєР»СЋС‡РµРІС‹Рµ СѓСЂРѕРІРЅРё. Р•СЃР»Рё РѕС‚РєР°С‚ СЃР»РёС€РєРѕРј СЂРµР·РєРёР№ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ Р±РѕР»СЊС€СѓСЋ С‡Р°СЃС‚СЊ РёРјРїСѓР»СЊСЃР°, continuation СЃС‚Р°РЅРѕРІРёС‚СЃСЏ СЃР»Р°Р±РµРµ.",
     },
     {
-      title: "Где искать триггер",
+      title: "Р“РґРµ РёСЃРєР°С‚СЊ С‚СЂРёРіРіРµСЂ",
       text:
-        "Триггером может быть пробой локального high/low после паузы, удержание VWAP, возврат выше уровня, ускорение объёма или отказ продавцов/покупателей продолжить откат.",
+        "РўСЂРёРіРіРµСЂРѕРј РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂРѕР±РѕР№ Р»РѕРєР°Р»СЊРЅРѕРіРѕ high/low РїРѕСЃР»Рµ РїР°СѓР·С‹, СѓРґРµСЂР¶Р°РЅРёРµ VWAP, РІРѕР·РІСЂР°С‚ РІС‹С€Рµ СѓСЂРѕРІРЅСЏ, СѓСЃРєРѕСЂРµРЅРёРµ РѕР±СЉС‘РјР° РёР»Рё РѕС‚РєР°Р· РїСЂРѕРґР°РІС†РѕРІ/РїРѕРєСѓРїР°С‚РµР»РµР№ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РѕС‚РєР°С‚.",
     },
     {
-      title: "Когда continuation лучше пропустить",
+      title: "РљРѕРіРґР° continuation Р»СѓС‡С€Рµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ",
       text:
-        "Если цена уже далеко от базы, объём падает, уровень не удерживается, а стоп получается слишком широким — продолжение может быть плохой сделкой даже при правильном направлении.",
+        "Р•СЃР»Рё С†РµРЅР° СѓР¶Рµ РґР°Р»РµРєРѕ РѕС‚ Р±Р°Р·С‹, РѕР±СЉС‘Рј РїР°РґР°РµС‚, СѓСЂРѕРІРµРЅСЊ РЅРµ СѓРґРµСЂР¶РёРІР°РµС‚СЃСЏ, Р° СЃС‚РѕРї РїРѕР»СѓС‡Р°РµС‚СЃСЏ СЃР»РёС€РєРѕРј С€РёСЂРѕРєРёРј вЂ” РїСЂРѕРґРѕР»Р¶РµРЅРёРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїР»РѕС…РѕР№ СЃРґРµР»РєРѕР№ РґР°Р¶Рµ РїСЂРё РїСЂР°РІРёР»СЊРЅРѕРј РЅР°РїСЂР°РІР»РµРЅРёРё.",
     },
   ],
   checklist: [
-    "Сначала должен быть сильный импульс.",
-    "Пауза не должна ломать структуру.",
-    "Ищи вход возле уровня, а не посреди движения.",
-    "Стоп должен быть логичным и коротким относительно цели.",
+    "РЎРЅР°С‡Р°Р»Р° РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЃРёР»СЊРЅС‹Р№ РёРјРїСѓР»СЊСЃ.",
+    "РџР°СѓР·Р° РЅРµ РґРѕР»Р¶РЅР° Р»РѕРјР°С‚СЊ СЃС‚СЂСѓРєС‚СѓСЂСѓ.",
+    "РС‰Рё РІС…РѕРґ РІРѕР·Р»Рµ СѓСЂРѕРІРЅСЏ, Р° РЅРµ РїРѕСЃСЂРµРґРё РґРІРёР¶РµРЅРёСЏ.",
+    "РЎС‚РѕРї РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ Р»РѕРіРёС‡РЅС‹Рј Рё РєРѕСЂРѕС‚РєРёРј РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ С†РµР»Рё.",
   ],
 },
 
 "intraday-momentum-4": {
   intro:
-    "False breakout и trap — это ситуации, когда цена пробивает очевидный уровень, собирает ликвидность, но не может продолжить движение и быстро возвращается обратно. Для momentum-трейдера это важно, потому что такие моменты часто дают сильное обратное движение.",
+    "False breakout Рё trap вЂ” СЌС‚Рѕ СЃРёС‚СѓР°С†РёРё, РєРѕРіРґР° С†РµРЅР° РїСЂРѕР±РёРІР°РµС‚ РѕС‡РµРІРёРґРЅС‹Р№ СѓСЂРѕРІРµРЅСЊ, СЃРѕР±РёСЂР°РµС‚ Р»РёРєРІРёРґРЅРѕСЃС‚СЊ, РЅРѕ РЅРµ РјРѕР¶РµС‚ РїСЂРѕРґРѕР»Р¶РёС‚СЊ РґРІРёР¶РµРЅРёРµ Рё Р±С‹СЃС‚СЂРѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РѕР±СЂР°С‚РЅРѕ. Р”Р»СЏ momentum-С‚СЂРµР№РґРµСЂР° СЌС‚Рѕ РІР°Р¶РЅРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ С‚Р°РєРёРµ РјРѕРјРµРЅС‚С‹ С‡Р°СЃС‚Рѕ РґР°СЋС‚ СЃРёР»СЊРЅРѕРµ РѕР±СЂР°С‚РЅРѕРµ РґРІРёР¶РµРЅРёРµ.",
   blocks: [
     {
-      title: "Что такое false breakout",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ false breakout",
       text:
-        "False breakout — это ложный пробой уровня. Цена выходит выше сопротивления или ниже поддержки, но вместо продолжения быстро возвращается обратно в диапазон или под/над уровень.",
+        "False breakout вЂ” СЌС‚Рѕ Р»РѕР¶РЅС‹Р№ РїСЂРѕР±РѕР№ СѓСЂРѕРІРЅСЏ. Р¦РµРЅР° РІС‹С…РѕРґРёС‚ РІС‹С€Рµ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ РёР»Рё РЅРёР¶Рµ РїРѕРґРґРµСЂР¶РєРё, РЅРѕ РІРјРµСЃС‚Рѕ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ Р±С‹СЃС‚СЂРѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РѕР±СЂР°С‚РЅРѕ РІ РґРёР°РїР°Р·РѕРЅ РёР»Рё РїРѕРґ/РЅР°Рґ СѓСЂРѕРІРµРЅСЊ.",
     },
     {
-      title: "Что такое trap",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ trap",
       text:
-        "Trap — это ловушка для трейдеров, которые вошли на очевидный пробой. Если после пробоя нет продолжения, эти трейдеры начинают выходить, а их выход усиливает движение в обратную сторону.",
+        "Trap вЂ” СЌС‚Рѕ Р»РѕРІСѓС€РєР° РґР»СЏ С‚СЂРµР№РґРµСЂРѕРІ, РєРѕС‚РѕСЂС‹Рµ РІРѕС€Р»Рё РЅР° РѕС‡РµРІРёРґРЅС‹Р№ РїСЂРѕР±РѕР№. Р•СЃР»Рё РїРѕСЃР»Рµ РїСЂРѕР±РѕСЏ РЅРµС‚ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ, СЌС‚Рё С‚СЂРµР№РґРµСЂС‹ РЅР°С‡РёРЅР°СЋС‚ РІС‹С…РѕРґРёС‚СЊ, Р° РёС… РІС‹С…РѕРґ СѓСЃРёР»РёРІР°РµС‚ РґРІРёР¶РµРЅРёРµ РІ РѕР±СЂР°С‚РЅСѓСЋ СЃС‚РѕСЂРѕРЅСѓ.",
     },
     {
-      title: "Как распознать слабый пробой",
+      title: "РљР°Рє СЂР°СЃРїРѕР·РЅР°С‚СЊ СЃР»Р°Р±С‹Р№ РїСЂРѕР±РѕР№",
       text:
-        "Слабый пробой часто выглядит так: цена вышла за уровень, но объём не поддержал движение, свеча закрылась плохо, следующий импульс не появился, а цена быстро вернулась обратно.",
+        "РЎР»Р°Р±С‹Р№ РїСЂРѕР±РѕР№ С‡Р°СЃС‚Рѕ РІС‹РіР»СЏРґРёС‚ С‚Р°Рє: С†РµРЅР° РІС‹С€Р»Р° Р·Р° СѓСЂРѕРІРµРЅСЊ, РЅРѕ РѕР±СЉС‘Рј РЅРµ РїРѕРґРґРµСЂР¶Р°Р» РґРІРёР¶РµРЅРёРµ, СЃРІРµС‡Р° Р·Р°РєСЂС‹Р»Р°СЃСЊ РїР»РѕС…Рѕ, СЃР»РµРґСѓСЋС‰РёР№ РёРјРїСѓР»СЊСЃ РЅРµ РїРѕСЏРІРёР»СЃСЏ, Р° С†РµРЅР° Р±С‹СЃС‚СЂРѕ РІРµСЂРЅСѓР»Р°СЃСЊ РѕР±СЂР°С‚РЅРѕ.",
     },
     {
-      title: "Как использовать trap",
+      title: "РљР°Рє РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ trap",
       text:
-        "Trap не нужно угадывать заранее. Его нужно видеть по факту реакции: пробой был, продолжения нет, возврат под/над уровень произошёл, участники начинают закрываться. Только после этого появляется логика сделки.",
+        "Trap РЅРµ РЅСѓР¶РЅРѕ СѓРіР°РґС‹РІР°С‚СЊ Р·Р°СЂР°РЅРµРµ. Р•РіРѕ РЅСѓР¶РЅРѕ РІРёРґРµС‚СЊ РїРѕ С„Р°РєС‚Сѓ СЂРµР°РєС†РёРё: РїСЂРѕР±РѕР№ Р±С‹Р», РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ РЅРµС‚, РІРѕР·РІСЂР°С‚ РїРѕРґ/РЅР°Рґ СѓСЂРѕРІРµРЅСЊ РїСЂРѕРёР·РѕС€С‘Р», СѓС‡Р°СЃС‚РЅРёРєРё РЅР°С‡РёРЅР°СЋС‚ Р·Р°РєСЂС‹РІР°С‚СЊСЃСЏ. РўРѕР»СЊРєРѕ РїРѕСЃР»Рµ СЌС‚РѕРіРѕ РїРѕСЏРІР»СЏРµС‚СЃСЏ Р»РѕРіРёРєР° СЃРґРµР»РєРё.",
     },
   ],
   checklist: [
-    "Не считай каждый пробой настоящим.",
-    "Смотри, есть ли продолжение после снятия уровня.",
-    "Возврат обратно за уровень — важный сигнал слабости пробоя.",
-    "Trap лучше торговать после подтверждения, а не заранее.",
+    "РќРµ СЃС‡РёС‚Р°Р№ РєР°Р¶РґС‹Р№ РїСЂРѕР±РѕР№ РЅР°СЃС‚РѕСЏС‰РёРј.",
+    "РЎРјРѕС‚СЂРё, РµСЃС‚СЊ Р»Рё РїСЂРѕРґРѕР»Р¶РµРЅРёРµ РїРѕСЃР»Рµ СЃРЅСЏС‚РёСЏ СѓСЂРѕРІРЅСЏ.",
+    "Р’РѕР·РІСЂР°С‚ РѕР±СЂР°С‚РЅРѕ Р·Р° СѓСЂРѕРІРµРЅСЊ вЂ” РІР°Р¶РЅС‹Р№ СЃРёРіРЅР°Р» СЃР»Р°Р±РѕСЃС‚Рё РїСЂРѕР±РѕСЏ.",
+    "Trap Р»СѓС‡С€Рµ С‚РѕСЂРіРѕРІР°С‚СЊ РїРѕСЃР»Рµ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ, Р° РЅРµ Р·Р°СЂР°РЅРµРµ.",
   ],
 },
 "trading-psychology-1": {
   intro:
-    "Психология трейдинга — это способность принимать решения по плану, даже когда рынок вызывает страх, жадность, азарт или желание отыграться. В трейдинге недостаточно знать сетап: нужно уметь выполнить его спокойно и последовательно.",
+    "РџСЃРёС…РѕР»РѕРіРёСЏ С‚СЂРµР№РґРёРЅРіР° вЂ” СЌС‚Рѕ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ РїСЂРёРЅРёРјР°С‚СЊ СЂРµС€РµРЅРёСЏ РїРѕ РїР»Р°РЅСѓ, РґР°Р¶Рµ РєРѕРіРґР° СЂС‹РЅРѕРє РІС‹Р·С‹РІР°РµС‚ СЃС‚СЂР°С…, Р¶Р°РґРЅРѕСЃС‚СЊ, Р°Р·Р°СЂС‚ РёР»Рё Р¶РµР»Р°РЅРёРµ РѕС‚С‹РіСЂР°С‚СЊСЃСЏ. Р’ С‚СЂРµР№РґРёРЅРіРµ РЅРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ Р·РЅР°С‚СЊ СЃРµС‚Р°Рї: РЅСѓР¶РЅРѕ СѓРјРµС‚СЊ РІС‹РїРѕР»РЅРёС‚СЊ РµРіРѕ СЃРїРѕРєРѕР№РЅРѕ Рё РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕ.",
   blocks: [
     {
-      title: "Почему психология влияет на результат",
+      title: "РџРѕС‡РµРјСѓ РїСЃРёС…РѕР»РѕРіРёСЏ РІР»РёСЏРµС‚ РЅР° СЂРµР·СѓР»СЊС‚Р°С‚",
       text:
-        "Две одинаковые торговые идеи могут дать разный результат у разных трейдеров. Один войдёт по плану, поставит стоп и примет убыток. Другой увеличит объём, передвинет стоп, усреднится и превратит нормальный минус в проблему.",
+        "Р”РІРµ РѕРґРёРЅР°РєРѕРІС‹Рµ С‚РѕСЂРіРѕРІС‹Рµ РёРґРµРё РјРѕРіСѓС‚ РґР°С‚СЊ СЂР°Р·РЅС‹Р№ СЂРµР·СѓР»СЊС‚Р°С‚ Сѓ СЂР°Р·РЅС‹С… С‚СЂРµР№РґРµСЂРѕРІ. РћРґРёРЅ РІРѕР№РґС‘С‚ РїРѕ РїР»Р°РЅСѓ, РїРѕСЃС‚Р°РІРёС‚ СЃС‚РѕРї Рё РїСЂРёРјРµС‚ СѓР±С‹С‚РѕРє. Р”СЂСѓРіРѕР№ СѓРІРµР»РёС‡РёС‚ РѕР±СЉС‘Рј, РїРµСЂРµРґРІРёРЅРµС‚ СЃС‚РѕРї, СѓСЃСЂРµРґРЅРёС‚СЃСЏ Рё РїСЂРµРІСЂР°С‚РёС‚ РЅРѕСЂРјР°Р»СЊРЅС‹Р№ РјРёРЅСѓСЃ РІ РїСЂРѕР±Р»РµРјСѓ.",
     },
     {
-      title: "Главный враг — не эмоции",
+      title: "Р“Р»Р°РІРЅС‹Р№ РІСЂР°Рі вЂ” РЅРµ СЌРјРѕС†РёРё",
       text:
-        "Эмоции сами по себе не являются проблемой. Проблема начинается, когда трейдер действует под их влиянием: входит без сигнала, закрывает прибыль слишком рано, держит убыток слишком долго или мстит рынку после стопа.",
+        "Р­РјРѕС†РёРё СЃР°РјРё РїРѕ СЃРµР±Рµ РЅРµ СЏРІР»СЏСЋС‚СЃСЏ РїСЂРѕР±Р»РµРјРѕР№. РџСЂРѕР±Р»РµРјР° РЅР°С‡РёРЅР°РµС‚СЃСЏ, РєРѕРіРґР° С‚СЂРµР№РґРµСЂ РґРµР№СЃС‚РІСѓРµС‚ РїРѕРґ РёС… РІР»РёСЏРЅРёРµРј: РІС…РѕРґРёС‚ Р±РµР· СЃРёРіРЅР°Р»Р°, Р·Р°РєСЂС‹РІР°РµС‚ РїСЂРёР±С‹Р»СЊ СЃР»РёС€РєРѕРј СЂР°РЅРѕ, РґРµСЂР¶РёС‚ СѓР±С‹С‚РѕРє СЃР»РёС€РєРѕРј РґРѕР»РіРѕ РёР»Рё РјСЃС‚РёС‚ СЂС‹РЅРєСѓ РїРѕСЃР»Рµ СЃС‚РѕРїР°.",
     },
     {
-      title: "Стабильность важнее идеального входа",
+      title: "РЎС‚Р°Р±РёР»СЊРЅРѕСЃС‚СЊ РІР°Р¶РЅРµРµ РёРґРµР°Р»СЊРЅРѕРіРѕ РІС…РѕРґР°",
       text:
-        "Профессиональный трейдер не пытается каждый раз поймать идеальную точку. Он строит повторяемый процесс: подготовка, сценарий, вход, риск, сопровождение, выход и разбор сделки.",
+        "РџСЂРѕС„РµСЃСЃРёРѕРЅР°Р»СЊРЅС‹Р№ С‚СЂРµР№РґРµСЂ РЅРµ РїС‹С‚Р°РµС‚СЃСЏ РєР°Р¶РґС‹Р№ СЂР°Р· РїРѕР№РјР°С‚СЊ РёРґРµР°Р»СЊРЅСѓСЋ С‚РѕС‡РєСѓ. РћРЅ СЃС‚СЂРѕРёС‚ РїРѕРІС‚РѕСЂСЏРµРјС‹Р№ РїСЂРѕС†РµСЃСЃ: РїРѕРґРіРѕС‚РѕРІРєР°, СЃС†РµРЅР°СЂРёР№, РІС…РѕРґ, СЂРёСЃРє, СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ, РІС‹С…РѕРґ Рё СЂР°Р·Р±РѕСЂ СЃРґРµР»РєРё.",
     },
     {
-      title: "Что значит торговать дисциплинированно",
+      title: "Р§С‚Рѕ Р·РЅР°С‡РёС‚ С‚РѕСЂРіРѕРІР°С‚СЊ РґРёСЃС†РёРїР»РёРЅРёСЂРѕРІР°РЅРЅРѕ",
       text:
-        "Дисциплина — это не жёсткость ради жёсткости. Это способность делать правильное действие, когда эмоционально хочется сделать другое. Например, закрыть сделку по стопу, не входить без сетапа или завершить день после лимита.",
+        "Р”РёСЃС†РёРїР»РёРЅР° вЂ” СЌС‚Рѕ РЅРµ Р¶С‘СЃС‚РєРѕСЃС‚СЊ СЂР°РґРё Р¶С‘СЃС‚РєРѕСЃС‚Рё. Р­С‚Рѕ СЃРїРѕСЃРѕР±РЅРѕСЃС‚СЊ РґРµР»Р°С‚СЊ РїСЂР°РІРёР»СЊРЅРѕРµ РґРµР№СЃС‚РІРёРµ, РєРѕРіРґР° СЌРјРѕС†РёРѕРЅР°Р»СЊРЅРѕ С…РѕС‡РµС‚СЃСЏ СЃРґРµР»Р°С‚СЊ РґСЂСѓРіРѕРµ. РќР°РїСЂРёРјРµСЂ, Р·Р°РєСЂС‹С‚СЊ СЃРґРµР»РєСѓ РїРѕ СЃС‚РѕРїСѓ, РЅРµ РІС…РѕРґРёС‚СЊ Р±РµР· СЃРµС‚Р°РїР° РёР»Рё Р·Р°РІРµСЂС€РёС‚СЊ РґРµРЅСЊ РїРѕСЃР»Рµ Р»РёРјРёС‚Р°.",
     },
   ],
   checklist: [
-    "Не оценивай себя по одной сделке.",
-    "Отделяй качество решения от результата сделки.",
-    "Следи за состоянием до входа, а не только после убытка.",
-    "Не торгуй, если главная мотивация — отыграться.",
+    "РќРµ РѕС†РµРЅРёРІР°Р№ СЃРµР±СЏ РїРѕ РѕРґРЅРѕР№ СЃРґРµР»РєРµ.",
+    "РћС‚РґРµР»СЏР№ РєР°С‡РµСЃС‚РІРѕ СЂРµС€РµРЅРёСЏ РѕС‚ СЂРµР·СѓР»СЊС‚Р°С‚Р° СЃРґРµР»РєРё.",
+    "РЎР»РµРґРё Р·Р° СЃРѕСЃС‚РѕСЏРЅРёРµРј РґРѕ РІС…РѕРґР°, Р° РЅРµ С‚РѕР»СЊРєРѕ РїРѕСЃР»Рµ СѓР±С‹С‚РєР°.",
+    "РќРµ С‚РѕСЂРіСѓР№, РµСЃР»Рё РіР»Р°РІРЅР°СЏ РјРѕС‚РёРІР°С†РёСЏ вЂ” РѕС‚С‹РіСЂР°С‚СЊСЃСЏ.",
   ],
 },
 
 "trading-psychology-2": {
   intro:
-    "FOMO — это страх упустить движение. Он появляется, когда цена резко идёт без тебя, и кажется, что если не войти прямо сейчас, возможность исчезнет. Это одна из главных причин поздних входов и плохого риска.",
+    "FOMO вЂ” СЌС‚Рѕ СЃС‚СЂР°С… СѓРїСѓСЃС‚РёС‚СЊ РґРІРёР¶РµРЅРёРµ. РћРЅ РїРѕСЏРІР»СЏРµС‚СЃСЏ, РєРѕРіРґР° С†РµРЅР° СЂРµР·РєРѕ РёРґС‘С‚ Р±РµР· С‚РµР±СЏ, Рё РєР°Р¶РµС‚СЃСЏ, С‡С‚Рѕ РµСЃР»Рё РЅРµ РІРѕР№С‚Рё РїСЂСЏРјРѕ СЃРµР№С‡Р°СЃ, РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РёСЃС‡РµР·РЅРµС‚. Р­С‚Рѕ РѕРґРЅР° РёР· РіР»Р°РІРЅС‹С… РїСЂРёС‡РёРЅ РїРѕР·РґРЅРёС… РІС…РѕРґРѕРІ Рё РїР»РѕС…РѕРіРѕ СЂРёСЃРєР°.",
   blocks: [
     {
-      title: "Как выглядит FOMO",
+      title: "РљР°Рє РІС‹РіР»СЏРґРёС‚ FOMO",
       text:
-        "Трейдер видит сильную свечу, ускорение, зелёный PnL у других или быстрое движение в ленте и входит без плана. Часто такой вход происходит далеко от уровня, со слишком широким стопом и без понятного сценария выхода.",
+        "РўСЂРµР№РґРµСЂ РІРёРґРёС‚ СЃРёР»СЊРЅСѓСЋ СЃРІРµС‡Сѓ, СѓСЃРєРѕСЂРµРЅРёРµ, Р·РµР»С‘РЅС‹Р№ PnL Сѓ РґСЂСѓРіРёС… РёР»Рё Р±С‹СЃС‚СЂРѕРµ РґРІРёР¶РµРЅРёРµ РІ Р»РµРЅС‚Рµ Рё РІС…РѕРґРёС‚ Р±РµР· РїР»Р°РЅР°. Р§Р°СЃС‚Рѕ С‚Р°РєРѕР№ РІС…РѕРґ РїСЂРѕРёСЃС…РѕРґРёС‚ РґР°Р»РµРєРѕ РѕС‚ СѓСЂРѕРІРЅСЏ, СЃРѕ СЃР»РёС€РєРѕРј С€РёСЂРѕРєРёРј СЃС‚РѕРїРѕРј Рё Р±РµР· РїРѕРЅСЏС‚РЅРѕРіРѕ СЃС†РµРЅР°СЂРёСЏ РІС‹С…РѕРґР°.",
     },
     {
-      title: "Почему FOMO опасно",
+      title: "РџРѕС‡РµРјСѓ FOMO РѕРїР°СЃРЅРѕ",
       text:
-        "Когда вход происходит из страха упустить, трейдер обычно покупает там, где ранние участники уже фиксируют прибыль, или шортит там, где продавцы уже выдохлись. Сделка сразу становится эмоциональной.",
+        "РљРѕРіРґР° РІС…РѕРґ РїСЂРѕРёСЃС…РѕРґРёС‚ РёР· СЃС‚СЂР°С…Р° СѓРїСѓСЃС‚РёС‚СЊ, С‚СЂРµР№РґРµСЂ РѕР±С‹С‡РЅРѕ РїРѕРєСѓРїР°РµС‚ С‚Р°Рј, РіРґРµ СЂР°РЅРЅРёРµ СѓС‡Р°СЃС‚РЅРёРєРё СѓР¶Рµ С„РёРєСЃРёСЂСѓСЋС‚ РїСЂРёР±С‹Р»СЊ, РёР»Рё С€РѕСЂС‚РёС‚ С‚Р°Рј, РіРґРµ РїСЂРѕРґР°РІС†С‹ СѓР¶Рµ РІС‹РґРѕС…Р»РёСЃСЊ. РЎРґРµР»РєР° СЃСЂР°Р·Сѓ СЃС‚Р°РЅРѕРІРёС‚СЃСЏ СЌРјРѕС†РёРѕРЅР°Р»СЊРЅРѕР№.",
     },
     {
-      title: "Как снизить FOMO",
+      title: "РљР°Рє СЃРЅРёР·РёС‚СЊ FOMO",
       text:
-        "Лучший способ снизить FOMO — заранее знать свои сетапы. Если движение не даёт входа по твоей системе, оно не твоё. Рынок каждый день даёт новые возможности, но плохой вход может испортить весь день.",
+        "Р›СѓС‡С€РёР№ СЃРїРѕСЃРѕР± СЃРЅРёР·РёС‚СЊ FOMO вЂ” Р·Р°СЂР°РЅРµРµ Р·РЅР°С‚СЊ СЃРІРѕРё СЃРµС‚Р°РїС‹. Р•СЃР»Рё РґРІРёР¶РµРЅРёРµ РЅРµ РґР°С‘С‚ РІС…РѕРґР° РїРѕ С‚РІРѕРµР№ СЃРёСЃС‚РµРјРµ, РѕРЅРѕ РЅРµ С‚РІРѕС‘. Р С‹РЅРѕРє РєР°Р¶РґС‹Р№ РґРµРЅСЊ РґР°С‘С‚ РЅРѕРІС‹Рµ РІРѕР·РјРѕР¶РЅРѕСЃС‚Рё, РЅРѕ РїР»РѕС…РѕР№ РІС…РѕРґ РјРѕР¶РµС‚ РёСЃРїРѕСЂС‚РёС‚СЊ РІРµСЃСЊ РґРµРЅСЊ.",
     },
     {
-      title: "Фраза профессионального трейдера",
+      title: "Р¤СЂР°Р·Р° РїСЂРѕС„РµСЃСЃРёРѕРЅР°Р»СЊРЅРѕРіРѕ С‚СЂРµР№РґРµСЂР°",
       text:
-        "Если я не понимаю, где мой риск, значит это не моя сделка. Лучше пропустить движение, чем войти поздно и потерять контроль.",
+        "Р•СЃР»Рё СЏ РЅРµ РїРѕРЅРёРјР°СЋ, РіРґРµ РјРѕР№ СЂРёСЃРє, Р·РЅР°С‡РёС‚ СЌС‚Рѕ РЅРµ РјРѕСЏ СЃРґРµР»РєР°. Р›СѓС‡С€Рµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ РґРІРёР¶РµРЅРёРµ, С‡РµРј РІРѕР№С‚Рё РїРѕР·РґРЅРѕ Рё РїРѕС‚РµСЂСЏС‚СЊ РєРѕРЅС‚СЂРѕР»СЊ.",
     },
   ],
   checklist: [
-    "Не входи только потому, что цена быстро движется.",
-    "Перед входом ответь: где стоп и почему именно там?",
-    "Если вход далеко от уровня — будь особенно осторожен.",
-    "Пропущенная сделка лучше импульсивной сделки.",
+    "РќРµ РІС…РѕРґРё С‚РѕР»СЊРєРѕ РїРѕС‚РѕРјСѓ, С‡С‚Рѕ С†РµРЅР° Р±С‹СЃС‚СЂРѕ РґРІРёР¶РµС‚СЃСЏ.",
+    "РџРµСЂРµРґ РІС…РѕРґРѕРј РѕС‚РІРµС‚СЊ: РіРґРµ СЃС‚РѕРї Рё РїРѕС‡РµРјСѓ РёРјРµРЅРЅРѕ С‚Р°Рј?",
+    "Р•СЃР»Рё РІС…РѕРґ РґР°Р»РµРєРѕ РѕС‚ СѓСЂРѕРІРЅСЏ вЂ” Р±СѓРґСЊ РѕСЃРѕР±РµРЅРЅРѕ РѕСЃС‚РѕСЂРѕР¶РµРЅ.",
+    "РџСЂРѕРїСѓС‰РµРЅРЅР°СЏ СЃРґРµР»РєР° Р»СѓС‡С€Рµ РёРјРїСѓР»СЊСЃРёРІРЅРѕР№ СЃРґРµР»РєРё.",
   ],
 },
 
 "trading-psychology-3": {
   intro:
-    "Revenge trading — это попытка отыграться после убытка. В этот момент трейдер торгует не рынок, а свою эмоцию: злость, обиду, желание доказать себе, что он прав, или вернуть день в плюс любой ценой.",
+    "Revenge trading вЂ” СЌС‚Рѕ РїРѕРїС‹С‚РєР° РѕС‚С‹РіСЂР°С‚СЊСЃСЏ РїРѕСЃР»Рµ СѓР±С‹С‚РєР°. Р’ СЌС‚РѕС‚ РјРѕРјРµРЅС‚ С‚СЂРµР№РґРµСЂ С‚РѕСЂРіСѓРµС‚ РЅРµ СЂС‹РЅРѕРє, Р° СЃРІРѕСЋ СЌРјРѕС†РёСЋ: Р·Р»РѕСЃС‚СЊ, РѕР±РёРґСѓ, Р¶РµР»Р°РЅРёРµ РґРѕРєР°Р·Р°С‚СЊ СЃРµР±Рµ, С‡С‚Рѕ РѕРЅ РїСЂР°РІ, РёР»Рё РІРµСЂРЅСѓС‚СЊ РґРµРЅСЊ РІ РїР»СЋСЃ Р»СЋР±РѕР№ С†РµРЅРѕР№.",
   blocks: [
     {
-      title: "Как начинается revenge trading",
+      title: "РљР°Рє РЅР°С‡РёРЅР°РµС‚СЃСЏ revenge trading",
       text:
-        "Обычно всё начинается с нормального стопа. Но трейдер воспринимает его как личную ошибку, сразу ищет новый вход, увеличивает объём или входит в слабый сетап, чтобы быстро вернуть потерянное.",
+        "РћР±С‹С‡РЅРѕ РІСЃС‘ РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ РЅРѕСЂРјР°Р»СЊРЅРѕРіРѕ СЃС‚РѕРїР°. РќРѕ С‚СЂРµР№РґРµСЂ РІРѕСЃРїСЂРёРЅРёРјР°РµС‚ РµРіРѕ РєР°Рє Р»РёС‡РЅСѓСЋ РѕС€РёР±РєСѓ, СЃСЂР°Р·Сѓ РёС‰РµС‚ РЅРѕРІС‹Р№ РІС…РѕРґ, СѓРІРµР»РёС‡РёРІР°РµС‚ РѕР±СЉС‘Рј РёР»Рё РІС…РѕРґРёС‚ РІ СЃР»Р°Р±С‹Р№ СЃРµС‚Р°Рї, С‡С‚РѕР±С‹ Р±С‹СЃС‚СЂРѕ РІРµСЂРЅСѓС‚СЊ РїРѕС‚РµСЂСЏРЅРЅРѕРµ.",
     },
     {
-      title: "Почему это разрушает систему",
+      title: "РџРѕС‡РµРјСѓ СЌС‚Рѕ СЂР°Р·СЂСѓС€Р°РµС‚ СЃРёСЃС‚РµРјСѓ",
       text:
-        "Revenge trading ломает статистику. Вместо запланированных сделок появляются хаотичные входы. Риск увеличивается, качество решений падает, а дневной убыток может стать намного больше изначально допустимого.",
+        "Revenge trading Р»РѕРјР°РµС‚ СЃС‚Р°С‚РёСЃС‚РёРєСѓ. Р’РјРµСЃС‚Рѕ Р·Р°РїР»Р°РЅРёСЂРѕРІР°РЅРЅС‹С… СЃРґРµР»РѕРє РїРѕСЏРІР»СЏСЋС‚СЃСЏ С…Р°РѕС‚РёС‡РЅС‹Рµ РІС…РѕРґС‹. Р РёСЃРє СѓРІРµР»РёС‡РёРІР°РµС‚СЃСЏ, РєР°С‡РµСЃС‚РІРѕ СЂРµС€РµРЅРёР№ РїР°РґР°РµС‚, Р° РґРЅРµРІРЅРѕР№ СѓР±С‹С‚РѕРє РјРѕР¶РµС‚ СЃС‚Р°С‚СЊ РЅР°РјРЅРѕРіРѕ Р±РѕР»СЊС€Рµ РёР·РЅР°С‡Р°Р»СЊРЅРѕ РґРѕРїСѓСЃС‚РёРјРѕРіРѕ.",
     },
     {
-      title: "Как остановить отыгрыш",
+      title: "РљР°Рє РѕСЃС‚Р°РЅРѕРІРёС‚СЊ РѕС‚С‹РіСЂС‹С€",
       text:
-        "Нужно иметь заранее прописанное правило: после двух ошибок подряд, нарушения стопа или достижения дневного лимита торговля прекращается. Это не слабость, а защита капитала и психики.",
+        "РќСѓР¶РЅРѕ РёРјРµС‚СЊ Р·Р°СЂР°РЅРµРµ РїСЂРѕРїРёСЃР°РЅРЅРѕРµ РїСЂР°РІРёР»Рѕ: РїРѕСЃР»Рµ РґРІСѓС… РѕС€РёР±РѕРє РїРѕРґСЂСЏРґ, РЅР°СЂСѓС€РµРЅРёСЏ СЃС‚РѕРїР° РёР»Рё РґРѕСЃС‚РёР¶РµРЅРёСЏ РґРЅРµРІРЅРѕРіРѕ Р»РёРјРёС‚Р° С‚РѕСЂРіРѕРІР»СЏ РїСЂРµРєСЂР°С‰Р°РµС‚СЃСЏ. Р­С‚Рѕ РЅРµ СЃР»Р°Р±РѕСЃС‚СЊ, Р° Р·Р°С‰РёС‚Р° РєР°РїРёС‚Р°Р»Р° Рё РїСЃРёС…РёРєРё.",
     },
     {
-      title: "Что делать после плохой сделки",
+      title: "Р§С‚Рѕ РґРµР»Р°С‚СЊ РїРѕСЃР»Рµ РїР»РѕС…РѕР№ СЃРґРµР»РєРё",
       text:
-        "После плохой сделки нужно не искать срочный новый вход, а коротко записать: был ли сетап, был ли риск, был ли вход по плану, что именно нарушено. Только после этого можно принимать следующее решение.",
+        "РџРѕСЃР»Рµ РїР»РѕС…РѕР№ СЃРґРµР»РєРё РЅСѓР¶РЅРѕ РЅРµ РёСЃРєР°С‚СЊ СЃСЂРѕС‡РЅС‹Р№ РЅРѕРІС‹Р№ РІС…РѕРґ, Р° РєРѕСЂРѕС‚РєРѕ Р·Р°РїРёСЃР°С‚СЊ: Р±С‹Р» Р»Рё СЃРµС‚Р°Рї, Р±С‹Р» Р»Рё СЂРёСЃРє, Р±С‹Р» Р»Рё РІС…РѕРґ РїРѕ РїР»Р°РЅСѓ, С‡С‚Рѕ РёРјРµРЅРЅРѕ РЅР°СЂСѓС€РµРЅРѕ. РўРѕР»СЊРєРѕ РїРѕСЃР»Рµ СЌС‚РѕРіРѕ РјРѕР¶РЅРѕ РїСЂРёРЅРёРјР°С‚СЊ СЃР»РµРґСѓСЋС‰РµРµ СЂРµС€РµРЅРёРµ.",
     },
   ],
   checklist: [
-    "После стопа не открывай новую сделку сразу на эмоциях.",
-    "Не увеличивай объём, чтобы вернуть убыток быстрее.",
-    "Остановись после нарушения правил.",
-    "Разбирай ошибку письменно, а не через новую сделку.",
+    "РџРѕСЃР»Рµ СЃС‚РѕРїР° РЅРµ РѕС‚РєСЂС‹РІР°Р№ РЅРѕРІСѓСЋ СЃРґРµР»РєСѓ СЃСЂР°Р·Сѓ РЅР° СЌРјРѕС†РёСЏС….",
+    "РќРµ СѓРІРµР»РёС‡РёРІР°Р№ РѕР±СЉС‘Рј, С‡С‚РѕР±С‹ РІРµСЂРЅСѓС‚СЊ СѓР±С‹С‚РѕРє Р±С‹СЃС‚СЂРµРµ.",
+    "РћСЃС‚Р°РЅРѕРІРёСЃСЊ РїРѕСЃР»Рµ РЅР°СЂСѓС€РµРЅРёСЏ РїСЂР°РІРёР».",
+    "Р Р°Р·Р±РёСЂР°Р№ РѕС€РёР±РєСѓ РїРёСЃСЊРјРµРЅРЅРѕ, Р° РЅРµ С‡РµСЂРµР· РЅРѕРІСѓСЋ СЃРґРµР»РєСѓ.",
   ],
 },
 
 "trading-psychology-4": {
   intro:
-    "Дисциплина в трейдинге строится не на мотивации, а на процессе. Мотивация может быть высокой утром и исчезнуть после двух стопов. Процесс нужен, чтобы трейдер знал, что делать независимо от эмоций.",
+    "Р”РёСЃС†РёРїР»РёРЅР° РІ С‚СЂРµР№РґРёРЅРіРµ СЃС‚СЂРѕРёС‚СЃСЏ РЅРµ РЅР° РјРѕС‚РёРІР°С†РёРё, Р° РЅР° РїСЂРѕС†РµСЃСЃРµ. РњРѕС‚РёРІР°С†РёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ РІС‹СЃРѕРєРѕР№ СѓС‚СЂРѕРј Рё РёСЃС‡РµР·РЅСѓС‚СЊ РїРѕСЃР»Рµ РґРІСѓС… СЃС‚РѕРїРѕРІ. РџСЂРѕС†РµСЃСЃ РЅСѓР¶РµРЅ, С‡С‚РѕР±С‹ С‚СЂРµР№РґРµСЂ Р·РЅР°Р», С‡С‚Рѕ РґРµР»Р°С‚СЊ РЅРµР·Р°РІРёСЃРёРјРѕ РѕС‚ СЌРјРѕС†РёР№.",
   blocks: [
     {
-      title: "Что такое торговый процесс",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ С‚РѕСЂРіРѕРІС‹Р№ РїСЂРѕС†РµСЃСЃ",
       text:
-        "Торговый процесс — это повторяемая последовательность действий: подготовка, выбор тикеров, уровни, сценарии, риск, вход, сопровождение, выход и разбор. Чем понятнее процесс, тем меньше места для хаоса.",
+        "РўРѕСЂРіРѕРІС‹Р№ РїСЂРѕС†РµСЃСЃ вЂ” СЌС‚Рѕ РїРѕРІС‚РѕСЂСЏРµРјР°СЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ РґРµР№СЃС‚РІРёР№: РїРѕРґРіРѕС‚РѕРІРєР°, РІС‹Р±РѕСЂ С‚РёРєРµСЂРѕРІ, СѓСЂРѕРІРЅРё, СЃС†РµРЅР°СЂРёРё, СЂРёСЃРє, РІС…РѕРґ, СЃРѕРїСЂРѕРІРѕР¶РґРµРЅРёРµ, РІС‹С…РѕРґ Рё СЂР°Р·Р±РѕСЂ. Р§РµРј РїРѕРЅСЏС‚РЅРµРµ РїСЂРѕС†РµСЃСЃ, С‚РµРј РјРµРЅСЊС€Рµ РјРµСЃС‚Р° РґР»СЏ С…Р°РѕСЃР°.",
     },
     {
-      title: "Почему дневник обязателен",
+      title: "РџРѕС‡РµРјСѓ РґРЅРµРІРЅРёРє РѕР±СЏР·Р°С‚РµР»РµРЅ",
       text:
-        "Без дневника трейдер часто помнит только яркие сделки: большие плюсы, обидные минусы и упущенные движения. Дневник показывает реальную статистику: где есть преимущество, где ошибки повторяются, какие сетапы работают лучше.",
+        "Р‘РµР· РґРЅРµРІРЅРёРєР° С‚СЂРµР№РґРµСЂ С‡Р°СЃС‚Рѕ РїРѕРјРЅРёС‚ С‚РѕР»СЊРєРѕ СЏСЂРєРёРµ СЃРґРµР»РєРё: Р±РѕР»СЊС€РёРµ РїР»СЋСЃС‹, РѕР±РёРґРЅС‹Рµ РјРёРЅСѓСЃС‹ Рё СѓРїСѓС‰РµРЅРЅС‹Рµ РґРІРёР¶РµРЅРёСЏ. Р”РЅРµРІРЅРёРє РїРѕРєР°Р·С‹РІР°РµС‚ СЂРµР°Р»СЊРЅСѓСЋ СЃС‚Р°С‚РёСЃС‚РёРєСѓ: РіРґРµ РµСЃС‚СЊ РїСЂРµРёРјСѓС‰РµСЃС‚РІРѕ, РіРґРµ РѕС€РёР±РєРё РїРѕРІС‚РѕСЂСЏСЋС‚СЃСЏ, РєР°РєРёРµ СЃРµС‚Р°РїС‹ СЂР°Р±РѕС‚Р°СЋС‚ Р»СѓС‡С€Рµ.",
     },
     {
-      title: "Как формируется дисциплина",
+      title: "РљР°Рє С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ РґРёСЃС†РёРїР»РёРЅР°",
       text:
-        "Дисциплина формируется через повторение маленьких правил. Не нарушить стоп. Не входить без уровня. Не увеличивать риск после минуса. Завершить день после лимита. Эти действия создают профессиональное поведение.",
+        "Р”РёСЃС†РёРїР»РёРЅР° С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ С‡РµСЂРµР· РїРѕРІС‚РѕСЂРµРЅРёРµ РјР°Р»РµРЅСЊРєРёС… РїСЂР°РІРёР». РќРµ РЅР°СЂСѓС€РёС‚СЊ СЃС‚РѕРї. РќРµ РІС…РѕРґРёС‚СЊ Р±РµР· СѓСЂРѕРІРЅСЏ. РќРµ СѓРІРµР»РёС‡РёРІР°С‚СЊ СЂРёСЃРє РїРѕСЃР»Рµ РјРёРЅСѓСЃР°. Р—Р°РІРµСЂС€РёС‚СЊ РґРµРЅСЊ РїРѕСЃР»Рµ Р»РёРјРёС‚Р°. Р­С‚Рё РґРµР№СЃС‚РІРёСЏ СЃРѕР·РґР°СЋС‚ РїСЂРѕС„РµСЃСЃРёРѕРЅР°Р»СЊРЅРѕРµ РїРѕРІРµРґРµРЅРёРµ.",
     },
     {
-      title: "Как оценивать день",
+      title: "РљР°Рє РѕС†РµРЅРёРІР°С‚СЊ РґРµРЅСЊ",
       text:
-        "День нужно оценивать не только по PnL. Важно смотреть, были ли сделки по плану, соблюдался ли риск, не было ли импульсивных входов, насколько хорошо трейдер выполнил свой процесс.",
+        "Р”РµРЅСЊ РЅСѓР¶РЅРѕ РѕС†РµРЅРёРІР°С‚СЊ РЅРµ С‚РѕР»СЊРєРѕ РїРѕ PnL. Р’Р°Р¶РЅРѕ СЃРјРѕС‚СЂРµС‚СЊ, Р±С‹Р»Рё Р»Рё СЃРґРµР»РєРё РїРѕ РїР»Р°РЅСѓ, СЃРѕР±Р»СЋРґР°Р»СЃСЏ Р»Рё СЂРёСЃРє, РЅРµ Р±С‹Р»Рѕ Р»Рё РёРјРїСѓР»СЊСЃРёРІРЅС‹С… РІС…РѕРґРѕРІ, РЅР°СЃРєРѕР»СЊРєРѕ С…РѕСЂРѕС€Рѕ С‚СЂРµР№РґРµСЂ РІС‹РїРѕР»РЅРёР» СЃРІРѕР№ РїСЂРѕС†РµСЃСЃ.",
     },
   ],
   checklist: [
-    "Перед сессией подготовь сценарии.",
-    "После сделки запиши причину входа и выхода.",
-    "Оцени день по качеству решений, а не только по PnL.",
-    "Дисциплина — это повторяемый процесс, а не настроение.",
+    "РџРµСЂРµРґ СЃРµСЃСЃРёРµР№ РїРѕРґРіРѕС‚РѕРІСЊ СЃС†РµРЅР°СЂРёРё.",
+    "РџРѕСЃР»Рµ СЃРґРµР»РєРё Р·Р°РїРёС€Рё РїСЂРёС‡РёРЅСѓ РІС…РѕРґР° Рё РІС‹С…РѕРґР°.",
+    "РћС†РµРЅРё РґРµРЅСЊ РїРѕ РєР°С‡РµСЃС‚РІСѓ СЂРµС€РµРЅРёР№, Р° РЅРµ С‚РѕР»СЊРєРѕ РїРѕ PnL.",
+    "Р”РёСЃС†РёРїР»РёРЅР° вЂ” СЌС‚Рѕ РїРѕРІС‚РѕСЂСЏРµРјС‹Р№ РїСЂРѕС†РµСЃСЃ, Р° РЅРµ РЅР°СЃС‚СЂРѕРµРЅРёРµ.",
   ],
 },
 "playbook-setups-1": {
   intro:
-    "Playbook — это личная библиотека торговых сценариев. Он нужен, чтобы трейдер не входил случайно, а работал по повторяемым ситуациям: что ищем, где вход, где риск, где выход и когда сетап лучше пропустить.",
+    "Playbook вЂ” СЌС‚Рѕ Р»РёС‡РЅР°СЏ Р±РёР±Р»РёРѕС‚РµРєР° С‚РѕСЂРіРѕРІС‹С… СЃС†РµРЅР°СЂРёРµРІ. РћРЅ РЅСѓР¶РµРЅ, С‡С‚РѕР±С‹ С‚СЂРµР№РґРµСЂ РЅРµ РІС…РѕРґРёР» СЃР»СѓС‡Р°Р№РЅРѕ, Р° СЂР°Р±РѕС‚Р°Р» РїРѕ РїРѕРІС‚РѕСЂСЏРµРјС‹Рј СЃРёС‚СѓР°С†РёСЏРј: С‡С‚Рѕ РёС‰РµРј, РіРґРµ РІС…РѕРґ, РіРґРµ СЂРёСЃРє, РіРґРµ РІС‹С…РѕРґ Рё РєРѕРіРґР° СЃРµС‚Р°Рї Р»СѓС‡С€Рµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ.",
   blocks: [
     {
-      title: "Что такое торговый сетап",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ С‚РѕСЂРіРѕРІС‹Р№ СЃРµС‚Р°Рї",
       text:
-        "Сетап — это повторяемая рыночная ситуация, где у трейдера есть понятная логика входа, стопа, цели и управления позицией. Сетап не означает гарантию прибыли, но даёт структуру для принятия решения.",
+        "РЎРµС‚Р°Рї вЂ” СЌС‚Рѕ РїРѕРІС‚РѕСЂСЏРµРјР°СЏ СЂС‹РЅРѕС‡РЅР°СЏ СЃРёС‚СѓР°С†РёСЏ, РіРґРµ Сѓ С‚СЂРµР№РґРµСЂР° РµСЃС‚СЊ РїРѕРЅСЏС‚РЅР°СЏ Р»РѕРіРёРєР° РІС…РѕРґР°, СЃС‚РѕРїР°, С†РµР»Рё Рё СѓРїСЂР°РІР»РµРЅРёСЏ РїРѕР·РёС†РёРµР№. РЎРµС‚Р°Рї РЅРµ РѕР·РЅР°С‡Р°РµС‚ РіР°СЂР°РЅС‚РёСЋ РїСЂРёР±С‹Р»Рё, РЅРѕ РґР°С‘С‚ СЃС‚СЂСѓРєС‚СѓСЂСѓ РґР»СЏ РїСЂРёРЅСЏС‚РёСЏ СЂРµС€РµРЅРёСЏ.",
     },
     {
-      title: "Зачем нужен playbook",
+      title: "Р—Р°С‡РµРј РЅСѓР¶РµРЅ playbook",
       text:
-        "Без playbook трейдер каждый день торгует по-разному. Сегодня пробой, завтра откат, послезавтра новость, потом интуитивный вход. Playbook помогает сузить фокус и понять, какие сценарии реально дают преимущество.",
+        "Р‘РµР· playbook С‚СЂРµР№РґРµСЂ РєР°Р¶РґС‹Р№ РґРµРЅСЊ С‚РѕСЂРіСѓРµС‚ РїРѕ-СЂР°Р·РЅРѕРјСѓ. РЎРµРіРѕРґРЅСЏ РїСЂРѕР±РѕР№, Р·Р°РІС‚СЂР° РѕС‚РєР°С‚, РїРѕСЃР»РµР·Р°РІС‚СЂР° РЅРѕРІРѕСЃС‚СЊ, РїРѕС‚РѕРј РёРЅС‚СѓРёС‚РёРІРЅС‹Р№ РІС…РѕРґ. Playbook РїРѕРјРѕРіР°РµС‚ СЃСѓР·РёС‚СЊ С„РѕРєСѓСЃ Рё РїРѕРЅСЏС‚СЊ, РєР°РєРёРµ СЃС†РµРЅР°СЂРёРё СЂРµР°Р»СЊРЅРѕ РґР°СЋС‚ РїСЂРµРёРјСѓС‰РµСЃС‚РІРѕ.",
     },
     {
-      title: "Что должно быть в описании сетапа",
+      title: "Р§С‚Рѕ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ РІ РѕРїРёСЃР°РЅРёРё СЃРµС‚Р°РїР°",
       text:
-        "В хорошем описании сетапа есть контекст, условия отбора, триггер входа, место стопа, цель, invalidation, ошибки, примеры хороших и плохих сделок. Чем конкретнее описание, тем легче повторять сетап.",
+        "Р’ С…РѕСЂРѕС€РµРј РѕРїРёСЃР°РЅРёРё СЃРµС‚Р°РїР° РµСЃС‚СЊ РєРѕРЅС‚РµРєСЃС‚, СѓСЃР»РѕРІРёСЏ РѕС‚Р±РѕСЂР°, С‚СЂРёРіРіРµСЂ РІС…РѕРґР°, РјРµСЃС‚Рѕ СЃС‚РѕРїР°, С†РµР»СЊ, invalidation, РѕС€РёР±РєРё, РїСЂРёРјРµСЂС‹ С…РѕСЂРѕС€РёС… Рё РїР»РѕС…РёС… СЃРґРµР»РѕРє. Р§РµРј РєРѕРЅРєСЂРµС‚РЅРµРµ РѕРїРёСЃР°РЅРёРµ, С‚РµРј Р»РµРіС‡Рµ РїРѕРІС‚РѕСЂСЏС‚СЊ СЃРµС‚Р°Рї.",
     },
     {
-      title: "Как AI будет использовать playbook",
+      title: "РљР°Рє AI Р±СѓРґРµС‚ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ playbook",
       text:
-        "В будущем SkillEdge AI сможет сравнивать сделки клиента с его лучшими сетапами: был ли контекст, был ли правильный уровень, не был ли вход поздним, совпадал ли риск с правилами и где трейдер отклонился от плана.",
+        "Р’ Р±СѓРґСѓС‰РµРј SkillEdge AI СЃРјРѕР¶РµС‚ СЃСЂР°РІРЅРёРІР°С‚СЊ СЃРґРµР»РєРё РєР»РёРµРЅС‚Р° СЃ РµРіРѕ Р»СѓС‡С€РёРјРё СЃРµС‚Р°РїР°РјРё: Р±С‹Р» Р»Рё РєРѕРЅС‚РµРєСЃС‚, Р±С‹Р» Р»Рё РїСЂР°РІРёР»СЊРЅС‹Р№ СѓСЂРѕРІРµРЅСЊ, РЅРµ Р±С‹Р» Р»Рё РІС…РѕРґ РїРѕР·РґРЅРёРј, СЃРѕРІРїР°РґР°Р» Р»Рё СЂРёСЃРє СЃ РїСЂР°РІРёР»Р°РјРё Рё РіРґРµ С‚СЂРµР№РґРµСЂ РѕС‚РєР»РѕРЅРёР»СЃСЏ РѕС‚ РїР»Р°РЅР°.",
     },
   ],
   checklist: [
-    "Опиши сетап простыми словами.",
-    "Укажи условия, при которых сетап считается рабочим.",
-    "Запиши, где должен быть стоп и почему.",
-    "Добавляй реальные примеры сделок в playbook.",
+    "РћРїРёС€Рё СЃРµС‚Р°Рї РїСЂРѕСЃС‚С‹РјРё СЃР»РѕРІР°РјРё.",
+    "РЈРєР°Р¶Рё СѓСЃР»РѕРІРёСЏ, РїСЂРё РєРѕС‚РѕСЂС‹С… СЃРµС‚Р°Рї СЃС‡РёС‚Р°РµС‚СЃСЏ СЂР°Р±РѕС‡РёРј.",
+    "Р—Р°РїРёС€Рё, РіРґРµ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ СЃС‚РѕРї Рё РїРѕС‡РµРјСѓ.",
+    "Р”РѕР±Р°РІР»СЏР№ СЂРµР°Р»СЊРЅС‹Рµ РїСЂРёРјРµСЂС‹ СЃРґРµР»РѕРє РІ playbook.",
   ],
 },
 
 "playbook-setups-2": {
   intro:
-    "Контекст — это рыночная обстановка вокруг сделки. Один и тот же вход может быть сильным или слабым в зависимости от гэпа, объёма, новости, рынка, таймфрейма, уровня и поведения цены до входа.",
+    "РљРѕРЅС‚РµРєСЃС‚ вЂ” СЌС‚Рѕ СЂС‹РЅРѕС‡РЅР°СЏ РѕР±СЃС‚Р°РЅРѕРІРєР° РІРѕРєСЂСѓРі СЃРґРµР»РєРё. РћРґРёРЅ Рё С‚РѕС‚ Р¶Рµ РІС…РѕРґ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРёР»СЊРЅС‹Рј РёР»Рё СЃР»Р°Р±С‹Рј РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РіСЌРїР°, РѕР±СЉС‘РјР°, РЅРѕРІРѕСЃС‚Рё, СЂС‹РЅРєР°, С‚Р°Р№РјС„СЂРµР№РјР°, СѓСЂРѕРІРЅСЏ Рё РїРѕРІРµРґРµРЅРёСЏ С†РµРЅС‹ РґРѕ РІС…РѕРґР°.",
   blocks: [
     {
-      title: "Почему контекст важнее паттерна",
+      title: "РџРѕС‡РµРјСѓ РєРѕРЅС‚РµРєСЃС‚ РІР°Р¶РЅРµРµ РїР°С‚С‚РµСЂРЅР°",
       text:
-        "Паттерн без контекста часто обманывает. Пробой уровня после сильного гэпа и объёма — это одно. Такой же пробой в середине тихого дня без объёма — совсем другое. Контекст показывает, есть ли причина для движения.",
+        "РџР°С‚С‚РµСЂРЅ Р±РµР· РєРѕРЅС‚РµРєСЃС‚Р° С‡Р°СЃС‚Рѕ РѕР±РјР°РЅС‹РІР°РµС‚. РџСЂРѕР±РѕР№ СѓСЂРѕРІРЅСЏ РїРѕСЃР»Рµ СЃРёР»СЊРЅРѕРіРѕ РіСЌРїР° Рё РѕР±СЉС‘РјР° вЂ” СЌС‚Рѕ РѕРґРЅРѕ. РўР°РєРѕР№ Р¶Рµ РїСЂРѕР±РѕР№ РІ СЃРµСЂРµРґРёРЅРµ С‚РёС…РѕРіРѕ РґРЅСЏ Р±РµР· РѕР±СЉС‘РјР° вЂ” СЃРѕРІСЃРµРј РґСЂСѓРіРѕРµ. РљРѕРЅС‚РµРєСЃС‚ РїРѕРєР°Р·С‹РІР°РµС‚, РµСЃС‚СЊ Р»Рё РїСЂРёС‡РёРЅР° РґР»СЏ РґРІРёР¶РµРЅРёСЏ.",
     },
     {
-      title: "Какие элементы контекста смотреть",
+      title: "РљР°РєРёРµ СЌР»РµРјРµРЅС‚С‹ РєРѕРЅС‚РµРєСЃС‚Р° СЃРјРѕС‚СЂРµС‚СЊ",
       text:
-        "Перед сделкой важно смотреть catalyst, gap %, relative volume, premarket high/low, VWAP, общий рынок, сектор, тренд/ренж, расстояние до уровней и качество предыдущего движения.",
+        "РџРµСЂРµРґ СЃРґРµР»РєРѕР№ РІР°Р¶РЅРѕ СЃРјРѕС‚СЂРµС‚СЊ catalyst, gap %, relative volume, premarket high/low, VWAP, РѕР±С‰РёР№ СЂС‹РЅРѕРє, СЃРµРєС‚РѕСЂ, С‚СЂРµРЅРґ/СЂРµРЅР¶, СЂР°СЃСЃС‚РѕСЏРЅРёРµ РґРѕ СѓСЂРѕРІРЅРµР№ Рё РєР°С‡РµСЃС‚РІРѕ РїСЂРµРґС‹РґСѓС‰РµРіРѕ РґРІРёР¶РµРЅРёСЏ.",
     },
     {
-      title: "Контекст для long и short",
+      title: "РљРѕРЅС‚РµРєСЃС‚ РґР»СЏ long Рё short",
       text:
-        "Для long важно понимать, есть ли спрос, удерживаются ли откаты, есть ли место до сопротивления. Для short важно понимать, есть ли слабость, слом структуры, failed breakout, давление продавцов и пространство вниз.",
+        "Р”Р»СЏ long РІР°Р¶РЅРѕ РїРѕРЅРёРјР°С‚СЊ, РµСЃС‚СЊ Р»Рё СЃРїСЂРѕСЃ, СѓРґРµСЂР¶РёРІР°СЋС‚СЃСЏ Р»Рё РѕС‚РєР°С‚С‹, РµСЃС‚СЊ Р»Рё РјРµСЃС‚Рѕ РґРѕ СЃРѕРїСЂРѕС‚РёРІР»РµРЅРёСЏ. Р”Р»СЏ short РІР°Р¶РЅРѕ РїРѕРЅРёРјР°С‚СЊ, РµСЃС‚СЊ Р»Рё СЃР»Р°Р±РѕСЃС‚СЊ, СЃР»РѕРј СЃС‚СЂСѓРєС‚СѓСЂС‹, failed breakout, РґР°РІР»РµРЅРёРµ РїСЂРѕРґР°РІС†РѕРІ Рё РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ РІРЅРёР·.",
     },
     {
-      title: "Когда сетап лучше пропустить",
+      title: "РљРѕРіРґР° СЃРµС‚Р°Рї Р»СѓС‡С€Рµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ",
       text:
-        "Если контекст слабый, объём низкий, уровень неочевидный, движение уже растянуто, а риск широкий — лучше пропустить. Хороший трейдинг часто строится не только на входах, но и на отказе от плохих сделок.",
+        "Р•СЃР»Рё РєРѕРЅС‚РµРєСЃС‚ СЃР»Р°Р±С‹Р№, РѕР±СЉС‘Рј РЅРёР·РєРёР№, СѓСЂРѕРІРµРЅСЊ РЅРµРѕС‡РµРІРёРґРЅС‹Р№, РґРІРёР¶РµРЅРёРµ СѓР¶Рµ СЂР°СЃС‚СЏРЅСѓС‚Рѕ, Р° СЂРёСЃРє С€РёСЂРѕРєРёР№ вЂ” Р»СѓС‡С€Рµ РїСЂРѕРїСѓСЃС‚РёС‚СЊ. РҐРѕСЂРѕС€РёР№ С‚СЂРµР№РґРёРЅРі С‡Р°СЃС‚Рѕ СЃС‚СЂРѕРёС‚СЃСЏ РЅРµ С‚РѕР»СЊРєРѕ РЅР° РІС…РѕРґР°С…, РЅРѕ Рё РЅР° РѕС‚РєР°Р·Рµ РѕС‚ РїР»РѕС…РёС… СЃРґРµР»РѕРє.",
     },
   ],
   checklist: [
-    "Перед входом проверь catalyst или причину движения.",
-    "Сравни текущий объём с обычным объёмом.",
-    "Оцени, есть ли место до ближайшей цели.",
-    "Не торгуй паттерн отдельно от контекста.",
+    "РџРµСЂРµРґ РІС…РѕРґРѕРј РїСЂРѕРІРµСЂСЊ catalyst РёР»Рё РїСЂРёС‡РёРЅСѓ РґРІРёР¶РµРЅРёСЏ.",
+    "РЎСЂР°РІРЅРё С‚РµРєСѓС‰РёР№ РѕР±СЉС‘Рј СЃ РѕР±С‹С‡РЅС‹Рј РѕР±СЉС‘РјРѕРј.",
+    "РћС†РµРЅРё, РµСЃС‚СЊ Р»Рё РјРµСЃС‚Рѕ РґРѕ Р±Р»РёР¶Р°Р№С€РµР№ С†РµР»Рё.",
+    "РќРµ С‚РѕСЂРіСѓР№ РїР°С‚С‚РµСЂРЅ РѕС‚РґРµР»СЊРЅРѕ РѕС‚ РєРѕРЅС‚РµРєСЃС‚Р°.",
   ],
 },
 
 "playbook-setups-3": {
   intro:
-    "Entry trigger — это конкретный момент, когда трейдер получает подтверждение для входа. Хороший trigger помогает не входить слишком рано, не гнаться за ценой и привязать сделку к понятному риску.",
+    "Entry trigger вЂ” СЌС‚Рѕ РєРѕРЅРєСЂРµС‚РЅС‹Р№ РјРѕРјРµРЅС‚, РєРѕРіРґР° С‚СЂРµР№РґРµСЂ РїРѕР»СѓС‡Р°РµС‚ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ РґР»СЏ РІС…РѕРґР°. РҐРѕСЂРѕС€РёР№ trigger РїРѕРјРѕРіР°РµС‚ РЅРµ РІС…РѕРґРёС‚СЊ СЃР»РёС€РєРѕРј СЂР°РЅРѕ, РЅРµ РіРЅР°С‚СЊСЃСЏ Р·Р° С†РµРЅРѕР№ Рё РїСЂРёРІСЏР·Р°С‚СЊ СЃРґРµР»РєСѓ Рє РїРѕРЅСЏС‚РЅРѕРјСѓ СЂРёСЃРєСѓ.",
   blocks: [
     {
-      title: "Что такое trigger",
+      title: "Р§С‚Рѕ С‚Р°РєРѕРµ trigger",
       text:
-        "Trigger — это не просто желание войти. Это конкретное действие цены: пробой и удержание уровня, откат к VWAP, возврат после false breakout, ускорение объёма, reclaim уровня или rejection от зоны.",
+        "Trigger вЂ” СЌС‚Рѕ РЅРµ РїСЂРѕСЃС‚Рѕ Р¶РµР»Р°РЅРёРµ РІРѕР№С‚Рё. Р­С‚Рѕ РєРѕРЅРєСЂРµС‚РЅРѕРµ РґРµР№СЃС‚РІРёРµ С†РµРЅС‹: РїСЂРѕР±РѕР№ Рё СѓРґРµСЂР¶Р°РЅРёРµ СѓСЂРѕРІРЅСЏ, РѕС‚РєР°С‚ Рє VWAP, РІРѕР·РІСЂР°С‚ РїРѕСЃР»Рµ false breakout, СѓСЃРєРѕСЂРµРЅРёРµ РѕР±СЉС‘РјР°, reclaim СѓСЂРѕРІРЅСЏ РёР»Рё rejection РѕС‚ Р·РѕРЅС‹.",
     },
     {
-      title: "Почему нельзя входить только по идее",
+      title: "РџРѕС‡РµРјСѓ РЅРµР»СЊР·СЏ РІС…РѕРґРёС‚СЊ С‚РѕР»СЊРєРѕ РїРѕ РёРґРµРµ",
       text:
-        "Идея может быть правильной, но вход слишком ранним или поздним. Например, акция может быть слабой, но если шортить внизу после сильного падения, риск становится плохим. Trigger нужен, чтобы идея стала сделкой.",
+        "РРґРµСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂР°РІРёР»СЊРЅРѕР№, РЅРѕ РІС…РѕРґ СЃР»РёС€РєРѕРј СЂР°РЅРЅРёРј РёР»Рё РїРѕР·РґРЅРёРј. РќР°РїСЂРёРјРµСЂ, Р°РєС†РёСЏ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃР»Р°Р±РѕР№, РЅРѕ РµСЃР»Рё С€РѕСЂС‚РёС‚СЊ РІРЅРёР·Сѓ РїРѕСЃР»Рµ СЃРёР»СЊРЅРѕРіРѕ РїР°РґРµРЅРёСЏ, СЂРёСЃРє СЃС‚Р°РЅРѕРІРёС‚СЃСЏ РїР»РѕС…РёРј. Trigger РЅСѓР¶РµРЅ, С‡С‚РѕР±С‹ РёРґРµСЏ СЃС‚Р°Р»Р° СЃРґРµР»РєРѕР№.",
     },
     {
-      title: "Примеры триггеров",
+      title: "РџСЂРёРјРµСЂС‹ С‚СЂРёРіРіРµСЂРѕРІ",
       text:
-        "Для continuation trigger может быть пробой локального high после паузы. Для trap — возврат обратно под уровень после ложного пробоя. Для pullback — удержание зоны и появление реакции в сторону тренда.",
+        "Р”Р»СЏ continuation trigger РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂРѕР±РѕР№ Р»РѕРєР°Р»СЊРЅРѕРіРѕ high РїРѕСЃР»Рµ РїР°СѓР·С‹. Р”Р»СЏ trap вЂ” РІРѕР·РІСЂР°С‚ РѕР±СЂР°С‚РЅРѕ РїРѕРґ СѓСЂРѕРІРµРЅСЊ РїРѕСЃР»Рµ Р»РѕР¶РЅРѕРіРѕ РїСЂРѕР±РѕСЏ. Р”Р»СЏ pullback вЂ” СѓРґРµСЂР¶Р°РЅРёРµ Р·РѕРЅС‹ Рё РїРѕСЏРІР»РµРЅРёРµ СЂРµР°РєС†РёРё РІ СЃС‚РѕСЂРѕРЅСѓ С‚СЂРµРЅРґР°.",
     },
     {
-      title: "Trigger и стоп",
+      title: "Trigger Рё СЃС‚РѕРї",
       text:
-        "Хороший trigger почти всегда даёт понятное место для стопа. Если после входа непонятно, где сценарий сломан, значит trigger был слабым или сделка выбрана неправильно.",
+        "РҐРѕСЂРѕС€РёР№ trigger РїРѕС‡С‚Рё РІСЃРµРіРґР° РґР°С‘С‚ РїРѕРЅСЏС‚РЅРѕРµ РјРµСЃС‚Рѕ РґР»СЏ СЃС‚РѕРїР°. Р•СЃР»Рё РїРѕСЃР»Рµ РІС…РѕРґР° РЅРµРїРѕРЅСЏС‚РЅРѕ, РіРґРµ СЃС†РµРЅР°СЂРёР№ СЃР»РѕРјР°РЅ, Р·РЅР°С‡РёС‚ trigger Р±С‹Р» СЃР»Р°Р±С‹Рј РёР»Рё СЃРґРµР»РєР° РІС‹Р±СЂР°РЅР° РЅРµРїСЂР°РІРёР»СЊРЅРѕ.",
     },
   ],
   checklist: [
-    "Перед входом назови конкретный trigger.",
-    "Не путай торговую идею и сигнал входа.",
-    "Проверь, даёт ли trigger понятный стоп.",
-    "Если trigger не появился — сделки нет.",
+    "РџРµСЂРµРґ РІС…РѕРґРѕРј РЅР°Р·РѕРІРё РєРѕРЅРєСЂРµС‚РЅС‹Р№ trigger.",
+    "РќРµ РїСѓС‚Р°Р№ С‚РѕСЂРіРѕРІСѓСЋ РёРґРµСЋ Рё СЃРёРіРЅР°Р» РІС…РѕРґР°.",
+    "РџСЂРѕРІРµСЂСЊ, РґР°С‘С‚ Р»Рё trigger РїРѕРЅСЏС‚РЅС‹Р№ СЃС‚РѕРї.",
+    "Р•СЃР»Рё trigger РЅРµ РїРѕСЏРІРёР»СЃСЏ вЂ” СЃРґРµР»РєРё РЅРµС‚.",
   ],
 },
 
 "playbook-setups-4": {
   intro:
-    "Разбор сделок превращает опыт в систему. Если просто торговать и не анализировать, ошибки повторяются. Если фиксировать входы, выходы, контекст и эмоции, постепенно становится видно, какие сетапы работают, а какие ломают результат.",
+    "Р Р°Р·Р±РѕСЂ СЃРґРµР»РѕРє РїСЂРµРІСЂР°С‰Р°РµС‚ РѕРїС‹С‚ РІ СЃРёСЃС‚РµРјСѓ. Р•СЃР»Рё РїСЂРѕСЃС‚Рѕ С‚РѕСЂРіРѕРІР°С‚СЊ Рё РЅРµ Р°РЅР°Р»РёР·РёСЂРѕРІР°С‚СЊ, РѕС€РёР±РєРё РїРѕРІС‚РѕСЂСЏСЋС‚СЃСЏ. Р•СЃР»Рё С„РёРєСЃРёСЂРѕРІР°С‚СЊ РІС…РѕРґС‹, РІС‹С…РѕРґС‹, РєРѕРЅС‚РµРєСЃС‚ Рё СЌРјРѕС†РёРё, РїРѕСЃС‚РµРїРµРЅРЅРѕ СЃС‚Р°РЅРѕРІРёС‚СЃСЏ РІРёРґРЅРѕ, РєР°РєРёРµ СЃРµС‚Р°РїС‹ СЂР°Р±РѕС‚Р°СЋС‚, Р° РєР°РєРёРµ Р»РѕРјР°СЋС‚ СЂРµР·СѓР»СЊС‚Р°С‚.",
   blocks: [
     {
-      title: "Что смотреть в разборе сделки",
+      title: "Р§С‚Рѕ СЃРјРѕС‚СЂРµС‚СЊ РІ СЂР°Р·Р±РѕСЂРµ СЃРґРµР»РєРё",
       text:
-        "В разборе важно смотреть не только PnL. Нужно понять, был ли сетап, был ли контекст, где был вход, где был стоп, была ли цель, соблюдался ли риск и было ли отклонение от плана.",
+        "Р’ СЂР°Р·Р±РѕСЂРµ РІР°Р¶РЅРѕ СЃРјРѕС‚СЂРµС‚СЊ РЅРµ С‚РѕР»СЊРєРѕ PnL. РќСѓР¶РЅРѕ РїРѕРЅСЏС‚СЊ, Р±С‹Р» Р»Рё СЃРµС‚Р°Рї, Р±С‹Р» Р»Рё РєРѕРЅС‚РµРєСЃС‚, РіРґРµ Р±С‹Р» РІС…РѕРґ, РіРґРµ Р±С‹Р» СЃС‚РѕРї, Р±С‹Р»Р° Р»Рё С†РµР»СЊ, СЃРѕР±Р»СЋРґР°Р»СЃСЏ Р»Рё СЂРёСЃРє Рё Р±С‹Р»Рѕ Р»Рё РѕС‚РєР»РѕРЅРµРЅРёРµ РѕС‚ РїР»Р°РЅР°.",
     },
     {
-      title: "Хорошая убыточная сделка",
+      title: "РҐРѕСЂРѕС€Р°СЏ СѓР±С‹С‚РѕС‡РЅР°СЏ СЃРґРµР»РєР°",
       text:
-        "Сделка может быть убыточной, но правильной, если вход был по сетапу, риск соблюдён, стоп логичный, а сценарий просто не сработал. Такие сделки не нужно эмоционально наказывать.",
+        "РЎРґРµР»РєР° РјРѕР¶РµС‚ Р±С‹С‚СЊ СѓР±С‹С‚РѕС‡РЅРѕР№, РЅРѕ РїСЂР°РІРёР»СЊРЅРѕР№, РµСЃР»Рё РІС…РѕРґ Р±С‹Р» РїРѕ СЃРµС‚Р°РїСѓ, СЂРёСЃРє СЃРѕР±Р»СЋРґС‘РЅ, СЃС‚РѕРї Р»РѕРіРёС‡РЅС‹Р№, Р° СЃС†РµРЅР°СЂРёР№ РїСЂРѕСЃС‚Рѕ РЅРµ СЃСЂР°Р±РѕС‚Р°Р». РўР°РєРёРµ СЃРґРµР»РєРё РЅРµ РЅСѓР¶РЅРѕ СЌРјРѕС†РёРѕРЅР°Р»СЊРЅРѕ РЅР°РєР°Р·С‹РІР°С‚СЊ.",
     },
     {
-      title: "Плохая прибыльная сделка",
+      title: "РџР»РѕС…Р°СЏ РїСЂРёР±С‹Р»СЊРЅР°СЏ СЃРґРµР»РєР°",
       text:
-        "Сделка может быть прибыльной, но плохой, если вход был импульсивным, риск не был понятен, стоп нарушен или прибыль появилась случайно. Такие сделки опасны, потому что закрепляют неправильное поведение.",
+        "РЎРґРµР»РєР° РјРѕР¶РµС‚ Р±С‹С‚СЊ РїСЂРёР±С‹Р»СЊРЅРѕР№, РЅРѕ РїР»РѕС…РѕР№, РµСЃР»Рё РІС…РѕРґ Р±С‹Р» РёРјРїСѓР»СЊСЃРёРІРЅС‹Рј, СЂРёСЃРє РЅРµ Р±С‹Р» РїРѕРЅСЏС‚РµРЅ, СЃС‚РѕРї РЅР°СЂСѓС€РµРЅ РёР»Рё РїСЂРёР±С‹Р»СЊ РїРѕСЏРІРёР»Р°СЃСЊ СЃР»СѓС‡Р°Р№РЅРѕ. РўР°РєРёРµ СЃРґРµР»РєРё РѕРїР°СЃРЅС‹, РїРѕС‚РѕРјСѓ С‡С‚Рѕ Р·Р°РєСЂРµРїР»СЏСЋС‚ РЅРµРїСЂР°РІРёР»СЊРЅРѕРµ РїРѕРІРµРґРµРЅРёРµ.",
     },
     {
-      title: "Как находить лучшие сетапы",
+      title: "РљР°Рє РЅР°С…РѕРґРёС‚СЊ Р»СѓС‡С€РёРµ СЃРµС‚Р°РїС‹",
       text:
-        "Нужно регулярно смотреть сделки по категориям: какой сетап, какой таймфрейм, какой market context, какой результат в R, где были ошибки. Через это формируется личная статистика и настоящий playbook.",
+        "РќСѓР¶РЅРѕ СЂРµРіСѓР»СЏСЂРЅРѕ СЃРјРѕС‚СЂРµС‚СЊ СЃРґРµР»РєРё РїРѕ РєР°С‚РµРіРѕСЂРёСЏРј: РєР°РєРѕР№ СЃРµС‚Р°Рї, РєР°РєРѕР№ С‚Р°Р№РјС„СЂРµР№Рј, РєР°РєРѕР№ market context, РєР°РєРѕР№ СЂРµР·СѓР»СЊС‚Р°С‚ РІ R, РіРґРµ Р±С‹Р»Рё РѕС€РёР±РєРё. Р§РµСЂРµР· СЌС‚Рѕ С„РѕСЂРјРёСЂСѓРµС‚СЃСЏ Р»РёС‡РЅР°СЏ СЃС‚Р°С‚РёСЃС‚РёРєР° Рё РЅР°СЃС‚РѕСЏС‰РёР№ playbook.",
     },
   ],
   checklist: [
-    "Разбирай сделку по качеству решения, а не только по PnL.",
-    "Отделяй хорошие убытки от плохих ошибок.",
-    "Ищи повторяющиеся прибыльные сценарии.",
-    "Добавляй лучшие примеры в личный playbook.",
+    "Р Р°Р·Р±РёСЂР°Р№ СЃРґРµР»РєСѓ РїРѕ РєР°С‡РµСЃС‚РІСѓ СЂРµС€РµРЅРёСЏ, Р° РЅРµ С‚РѕР»СЊРєРѕ РїРѕ PnL.",
+    "РћС‚РґРµР»СЏР№ С…РѕСЂРѕС€РёРµ СѓР±С‹С‚РєРё РѕС‚ РїР»РѕС…РёС… РѕС€РёР±РѕРє.",
+    "РС‰Рё РїРѕРІС‚РѕСЂСЏСЋС‰РёРµСЃСЏ РїСЂРёР±С‹Р»СЊРЅС‹Рµ СЃС†РµРЅР°СЂРёРё.",
+    "Р”РѕР±Р°РІР»СЏР№ Р»СѓС‡С€РёРµ РїСЂРёРјРµСЂС‹ РІ Р»РёС‡РЅС‹Р№ playbook.",
   ],
 },
   };
@@ -16494,21 +17376,21 @@ function getLessonContent(
   return (
     contentByLesson[lessonKey] ?? {
       intro:
-        "Материал для этого урока будет добавлен в следующем обновлении Learning Center.",
+        "РњР°С‚РµСЂРёР°Р» РґР»СЏ СЌС‚РѕРіРѕ СѓСЂРѕРєР° Р±СѓРґРµС‚ РґРѕР±Р°РІР»РµРЅ РІ СЃР»РµРґСѓСЋС‰РµРј РѕР±РЅРѕРІР»РµРЅРёРё Learning Center.",
       blocks: [
         {
-          title: "Скоро",
+          title: "РЎРєРѕСЂРѕ",
           text:
-            "Мы постепенно наполняем каждый урок полноценным учебным материалом, практикой и чеклистами.",
+            "РњС‹ РїРѕСЃС‚РµРїРµРЅРЅРѕ РЅР°РїРѕР»РЅСЏРµРј РєР°Р¶РґС‹Р№ СѓСЂРѕРє РїРѕР»РЅРѕС†РµРЅРЅС‹Рј СѓС‡РµР±РЅС‹Рј РјР°С‚РµСЂРёР°Р»РѕРј, РїСЂР°РєС‚РёРєРѕР№ Рё С‡РµРєР»РёСЃС‚Р°РјРё.",
         },
       ],
       checklist: [
-        "Открой урок.",
-        "Изучи основной материал.",
-        "Выполни практическое задание.",
+        "РћС‚РєСЂРѕР№ СѓСЂРѕРє.",
+        "РР·СѓС‡Рё РѕСЃРЅРѕРІРЅРѕР№ РјР°С‚РµСЂРёР°Р».",
+        "Р’С‹РїРѕР»РЅРё РїСЂР°РєС‚РёС‡РµСЃРєРѕРµ Р·Р°РґР°РЅРёРµ.",
       ],
       practice:
-        "Вернись к этому уроку позже — материал будет расширен.",
+        "Р’РµСЂРЅРёСЃСЊ Рє СЌС‚РѕРјСѓ СѓСЂРѕРєСѓ РїРѕР·Р¶Рµ вЂ” РјР°С‚РµСЂРёР°Р» Р±СѓРґРµС‚ СЂР°СЃС€РёСЂРµРЅ.",
     }
   );
 }
@@ -16911,7 +17793,7 @@ if (nextLessonTitle) {
 </h3>
 
         <p className="mt-2 text-sm leading-7 text-cyan-50/60">
-          {activeLesson.moduleTitle} · {activeLesson.lessonIndex}
+          {activeLesson.moduleTitle} В· {activeLesson.lessonIndex}
         </p>
       </div>
 
@@ -16928,7 +17810,7 @@ if (nextLessonTitle) {
   <div className="mt-6 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
     <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
       <div className="text-xs uppercase tracking-[0.22em] text-cyan-100/50">
-        Материал урока
+        РњР°С‚РµСЂРёР°Р» СѓСЂРѕРєР°
       </div>
 
       <p className="mt-4 text-sm leading-7 text-white/65">
@@ -16956,7 +17838,7 @@ if (nextLessonTitle) {
     <div className="space-y-4">
   <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
     <div className="text-xs uppercase tracking-[0.22em] text-white/35">
-      Чеклист
+      Р§РµРєР»РёСЃС‚
     </div>
 
     <div className="mt-4 grid gap-2">
@@ -16966,7 +17848,7 @@ if (nextLessonTitle) {
           className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-sm leading-6 text-white/60"
         >
           <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 text-[10px] text-cyan-100">
-            ✓
+            вњ“
           </span>
 
           <span>{item}</span>
@@ -16977,11 +17859,11 @@ if (nextLessonTitle) {
 
   <div className="rounded-[1.5rem] border border-cyan-300/20 bg-cyan-300/10 p-5">
     <div className="text-xs uppercase tracking-[0.22em] text-cyan-100/55">
-      Завершение урока
+      Р—Р°РІРµСЂС€РµРЅРёРµ СѓСЂРѕРєР°
     </div>
 
     <p className="mt-4 text-sm leading-7 text-cyan-50/70">
-      Изучи материал и чеклист. Когда будешь готов, отметь урок пройденным.
+      РР·СѓС‡Рё РјР°С‚РµСЂРёР°Р» Рё С‡РµРєР»РёСЃС‚. РљРѕРіРґР° Р±СѓРґРµС€СЊ РіРѕС‚РѕРІ, РѕС‚РјРµС‚СЊ СѓСЂРѕРє РїСЂРѕР№РґРµРЅРЅС‹Рј.
     </p>
 
     <button
@@ -17106,7 +17988,7 @@ if (nextLessonTitle) {
               : "border-white/10 bg-white/[0.04] text-white/55"
           }`}
         >
-          {lessonCompleted ? "✓" : index + 1}
+          {lessonCompleted ? "вњ“" : index + 1}
         </div>
 
         <div className="min-w-0 text-[13px] leading-6 text-white/80">
@@ -17732,7 +18614,7 @@ const handleDownloadAiReport = () => {
     },
     {
       label: t.reports.profitFactor,
-      value: profitFactor ? profitFactor.toFixed(2) : "—",
+      value: profitFactor ? profitFactor.toFixed(2) : "вЂ”",
       helper: t.reports.profitFactorHelper,
     },
     {
@@ -18327,7 +19209,7 @@ const handleDownloadAiReport = () => {
             Adoption
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
-            {signalAdoptionRate === null ? "—" : `${signalAdoptionRate}%`}
+            {signalAdoptionRate === null ? "вЂ”" : `${signalAdoptionRate}%`}
           </div>
         </div>
 
@@ -18345,7 +19227,7 @@ const handleDownloadAiReport = () => {
             Win rate
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
-            {signalWinRate === null ? "—" : `${signalWinRate}%`}
+            {signalWinRate === null ? "вЂ”" : `${signalWinRate}%`}
           </div>
         </div>
 
@@ -18355,7 +19237,7 @@ const handleDownloadAiReport = () => {
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
             {signalAveragePnl === null
-              ? "—"
+              ? "вЂ”"
               : `$${signalAveragePnl.toFixed(2)}`}
           </div>
         </div>
@@ -18389,14 +19271,14 @@ const handleDownloadAiReport = () => {
             Best setup
           </div>
           <div className="mt-2 truncate text-sm font-semibold text-white">
-            {signalBestSetup ? signalBestSetup[0] : "—"}
+            {signalBestSetup ? signalBestSetup[0] : "вЂ”"}
           </div>
           <div className="mt-1 text-xs text-white/45">
             {signalBestSetup
               ? `${signalBestSetup[1].count} / $${signalBestSetup[1].pnl.toFixed(
                   2
                 )}`
-              : "—"}
+              : "вЂ”"}
           </div>
         </div>
       </div>
@@ -18447,10 +19329,10 @@ const handleDownloadAiReport = () => {
           <div className="mt-3 rounded-xl border border-amber-300/15 bg-amber-300/[0.035] p-4 text-sm leading-6 text-amber-50/75">
             Worst setup:{" "}
             {signalWorstSetup
-              ? `${signalWorstSetup[0]} · ${signalWorstSetup[1].count} / $${signalWorstSetup[1].pnl.toFixed(
+              ? `${signalWorstSetup[0]} В· ${signalWorstSetup[1].count} / $${signalWorstSetup[1].pnl.toFixed(
                   2
                 )}`
-              : "—"}
+              : "вЂ”"}
           </div>
         </div>
       </div>
@@ -18697,7 +19579,7 @@ const [checkoutError, setCheckoutError] = useState("");
                 {t.billing.billingPeriod}
               </div>
               <div className="mt-2 text-lg font-semibold text-white">
-                {subscription.period || "—"}
+                {subscription.period || "вЂ”"}
               </div>
             </div>
 
@@ -18708,7 +19590,7 @@ const [checkoutError, setCheckoutError] = useState("");
               <div className="mt-2 text-lg font-semibold text-white">
                 {subscription.expiresAt
                   ? new Date(subscription.expiresAt).toLocaleDateString()
-                  : "—"}
+                  : "вЂ”"}
               </div>
             </div>
           </div>
@@ -19146,10 +20028,10 @@ function AiReport({ text }: { text: string }) {
             : lines;
 
         const bullets = bodyLines
-          .filter((line) => /^[-•]\s+/.test(line))
-          .map((line) => line.replace(/^[-•]\s+/, "").trim());
+          .filter((line) => /^[-вЂў]\s+/.test(line))
+          .map((line) => line.replace(/^[-вЂў]\s+/, "").trim());
 
-        const paragraphs = bodyLines.filter((line) => !/^[-•]\s+/.test(line));
+        const paragraphs = bodyLines.filter((line) => !/^[-вЂў]\s+/.test(line));
 
         return (
           <div
@@ -19189,7 +20071,7 @@ function AiReport({ text }: { text: string }) {
                     className="flex gap-3 rounded-2xl border border-white/10 bg-black/20 p-3 text-sm leading-6 text-white/65"
                   >
                     <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/10 text-[10px] text-cyan-100">
-                      ✓
+                      вњ“
                     </span>
 
                     <span>{bullet}</span>
@@ -19204,11 +20086,45 @@ function AiReport({ text }: { text: string }) {
   );
 }
 
-function MetricCard({ label, value }: { label: string; value: string }) {
+function MetricCard({
+  label,
+  value,
+  helper,
+  accent = "neutral",
+}: {
+  label: string;
+  value: string;
+  helper?: string;
+  accent?: "positive" | "negative" | "warning" | "neutral";
+}) {
+  const accentClass =
+    accent === "positive"
+      ? "from-emerald-300/16 to-cyan-300/8 text-emerald-200"
+      : accent === "negative"
+        ? "from-rose-300/14 to-white/0 text-rose-200"
+        : accent === "warning"
+          ? "from-amber-300/14 to-white/0 text-amber-100"
+          : "from-cyan-300/12 to-white/0 text-white";
+
   return (
-    <div className="rounded-3xl border border-white/10 bg-black/30 p-5">
-      <p className="text-sm text-white/45">{label}</p>
-      <p className="mt-3 text-3xl font-semibold">{value}</p>
+    <div className="group relative overflow-hidden rounded-[1.75rem] border border-[rgba(198,226,255,0.14)] bg-white/[0.045] p-5 shadow-[0_18px_70px_rgba(8,47,73,0.14)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/28 hover:bg-white/[0.065]">
+      <div className={`absolute inset-0 bg-gradient-to-br ${accentClass} opacity-70`} />
+
+      <div className="relative">
+        <p className="text-xs font-black uppercase tracking-[0.2em] text-white/38">
+          {label}
+        </p>
+
+        <p className={`mt-4 text-4xl font-black tracking-[-0.05em] ${accentClass}`}>
+          {value}
+        </p>
+
+        {helper ? (
+          <p className="mt-2 text-xs font-semibold leading-5 text-white/42">
+            {helper}
+          </p>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -19232,3 +20148,5 @@ function PlaceholderBlock({
     </div>
   );
 }
+
+

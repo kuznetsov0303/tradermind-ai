@@ -27,126 +27,150 @@ type LoadedSupportSession = {
 
 const supportDict = {
   ru: {
-    title: "Поддержка SkillEdge",
-    subtitle: "Выберите удобный способ связи",
+    title: "SKILLEDGE SUPPORT",
+    subtitle: "Product desk на связи",
     intro:
-      "Добрый день. Напишите вопрос — после отправки он сразу уйдёт оператору.",
-    placeholder: "Опишите вопрос для оператора...",
+      "Привет. Я помогу быстро сориентироваться по SkillEdge: тарифы, оплата, кабинет, журнал, AI Coach, Reports, Market Scanner и AI Alerts. Напиши вопрос — я дам короткий ответ и параллельно передам обращение оператору.",
+    placeholder: "Спросите про оплату, тариф, журнал, AI Alerts...",
     send: "Отправить",
     sending: "Отправляю...",
     operatorSuccess: "Запрос оператору отправлен. Мы получили ваше сообщение.",
     operatorError:
       "Не удалось отправить запрос оператору. Проверьте Telegram-настройки или попробуйте позже.",
     floatingLabel: "Поддержка",
-    chooseTitle: "Как вам удобнее связаться?",
+    chooseTitle: "Чем помочь?",
     chooseSubtitle:
-      "Выберите формат связи. Мы поможем спокойно, понятно и без лишнего давления.",
-    emailTitle: "Почта",
+      "SkillEdge Support помогает по продукту, оплате, доступу и работе кабинета. Без воды — быстро разберём вопрос.",
+    emailTitle: "Email-заявка",
     emailText:
-      "Оставьте email и вопрос. Мы получим обращение и ответим как можно быстрее.",
-    chatTitle: "Чат",
+      "Для вопросов по доступу, оплате или аккаунту. Оставьте email и детали — команда вернётся с ответом.",
+    chatTitle: "Быстрый чат",
     chatText:
-      "Напишите сообщение в чат. После нажатия «Отправить» запрос сразу уйдёт оператору.",
-    emailHeading: "Отправьте нам вопрос",
+      "Напишите вопрос. Вы получите быстрый product-desk ответ, а оператор увидит обращение в support-панели.",
+    emailHeading: "Отправьте запрос в поддержку",
     emailDescription:
-      "Укажите email и коротко опишите ситуацию. Чем больше контекста — тем быстрее мы разберёмся.",
+      "Укажите email и контекст: тариф, оплата, ошибка, страница или действие. Чем точнее описание — тем быстрее решение.",
     emailPlaceholder: "your@email.com",
-    questionPlaceholder: "Опишите ваш вопрос...",
+    questionPlaceholder: "Опишите вопрос: тариф, оплата, журнал, сигналы, доступ...",
     sendEmail: "Отправить запрос",
     sendingEmail: "Отправляю...",
     emailSuccess:
-      "Запрос отправлен. Мы посмотрим его и ответим на указанный email.",
+      "Запрос отправлен. Команда SkillEdge проверит детали и ответит на указанный email.",
     emailError:
       "Не удалось отправить запрос. Проверьте email и попробуйте ещё раз.",
     back: "Назад",
     emailSavedNotice:
-      "Заявка будет сохранена в системе поддержки и отправлена команде SkillEdge AI.",
+      "Заявка сохранится в системе поддержки и уйдёт команде SkillEdge AI.",
     chatOperatorNotice:
-      "После отправки сообщение сразу уйдёт оператору. Отвечать вам смогут прямо из support-панели.",
+      "Каждое сообщение уходит оператору. Быстрый ответ в чате помогает сразу понять направление, но сложные вопросы проверяет команда.",
     disclaimer:
-      "SkillEdge AI не является финансовым консультантом. Поддержка помогает с продуктом, доступом, оплатой и общими вопросами по платформе.",
+      "SkillEdge AI не является финансовым консультантом. Поддержка помогает с продуктом, доступом, оплатой, кабинетом и общими вопросами платформы.",
+    shortcutsTitle: "Быстрые вопросы",
+    quickQuestions: [
+      "Тарифы и доступ",
+      "Оплата криптой",
+      "AI Alerts",
+      "Журнал сделок",
+      "Позвать оператора",
+    ],
   },
 
   en: {
-    title: "SkillEdge Support",
-    subtitle: "Choose the best contact option",
+    title: "SKILLEDGE SUPPORT",
+    subtitle: "Product desk online",
     intro:
-      "Good afternoon. Write your question — once you send it, it will go directly to an operator.",
-    placeholder: "Describe your question for the operator...",
+      "Hi. I can quickly guide you through SkillEdge: plans, payments, dashboard, journal, AI Coach, Reports, Market Scanner and AI Alerts. Send your question — I’ll give a short product-desk answer and route it to an operator.",
+    placeholder: "Ask about payment, plans, journal, AI Alerts...",
     send: "Send",
     sending: "Sending...",
     operatorSuccess: "Operator request sent. We received your message.",
     operatorError:
       "Failed to send operator request. Check Telegram settings or try again later.",
     floatingLabel: "Support",
-    chooseTitle: "How would you like to contact us?",
+    chooseTitle: "How can we help?",
     chooseSubtitle:
-      "Choose the easiest channel. We’ll guide you without pressure.",
-    emailTitle: "Email",
+      "SkillEdge Support helps with product, payment, access and dashboard workflows. No noise — just a clear answer.",
+    emailTitle: "Email request",
     emailText:
-      "Leave your email and question. We’ll receive your request and answer as soon as possible.",
-    chatTitle: "Chat",
+      "Best for access, billing or account questions. Leave your email and details — the team will reply.",
+    chatTitle: "Fast chat",
     chatText:
-      "Write a message in chat. After pressing Send, the request goes directly to an operator.",
-    emailHeading: "Send us your question",
+      "Write your question. You’ll get a quick product-desk answer and the operator will see the request in the support panel.",
+    emailHeading: "Send a support request",
     emailDescription:
-      "Write your email and describe what you need help with. The more context you add, the faster we can help.",
+      "Add your email and context: plan, payment, error, page or action. More detail means faster resolution.",
     emailPlaceholder: "your@email.com",
-    questionPlaceholder: "Describe your question...",
+    questionPlaceholder: "Describe the issue: plan, payment, journal, alerts, access...",
     sendEmail: "Send request",
     sendingEmail: "Sending...",
     emailSuccess:
-      "Request sent. We’ll review it and reply to the email you provided.",
+      "Request sent. The SkillEdge team will review it and reply to the email you provided.",
     emailError:
       "Could not send the request. Please check your email and try again.",
     back: "Back",
     emailSavedNotice:
       "The request will be saved in the support system and sent to the SkillEdge AI team.",
     chatOperatorNotice:
-      "After sending, the message goes directly to an operator. The team can reply from the support panel.",
+      "Every message is routed to an operator. The quick chat answer gives immediate direction; complex issues are checked by the team.",
     disclaimer:
-      "SkillEdge AI is not a financial advisor. Support helps with product, access, payment and general platform questions.",
+      "SkillEdge AI is not a financial advisor. Support helps with product, access, payment, dashboard and general platform questions.",
+    shortcutsTitle: "Fast questions",
+    quickQuestions: [
+      "Plans and access",
+      "Crypto payment",
+      "AI Alerts",
+      "Trade journal",
+      "Contact operator",
+    ],
   },
 
   ua: {
-    title: "Підтримка SkillEdge",
-    subtitle: "Оберіть зручний спосіб зв’язку",
+    title: "SKILLEDGE SUPPORT",
+    subtitle: "Product desk на зв’язку",
     intro:
-      "Добрий день. Напишіть питання — після відправки воно одразу піде оператору.",
-    placeholder: "Опишіть питання для оператора...",
+      "Привіт. Я швидко зорієнтую по SkillEdge: тарифи, оплата, кабінет, журнал, AI Coach, Reports, Market Scanner та AI Alerts. Напишіть питання — я дам коротку відповідь і передам звернення оператору.",
+    placeholder: "Запитайте про оплату, тариф, журнал, AI Alerts...",
     send: "Надіслати",
     sending: "Надсилаю...",
     operatorSuccess: "Запит оператору надіслано. Ми отримали ваше повідомлення.",
     operatorError:
       "Не вдалося надіслати запит оператору. Перевірте Telegram-налаштування або спробуйте пізніше.",
     floatingLabel: "Підтримка",
-    chooseTitle: "Який канал вам зручніший?",
+    chooseTitle: "Чим допомогти?",
     chooseSubtitle:
-      "Оберіть формат зв’язку. Ми допоможемо спокійно, зрозуміло і без зайвого тиску.",
-    emailTitle: "Пошта",
+      "SkillEdge Support допомагає з продуктом, оплатою, доступом і роботою кабінету. Без зайвого шуму — швидко по суті.",
+    emailTitle: "Email-заявка",
     emailText:
-      "Залиште email і питання. Ми отримаємо звернення і відповімо якнайшвидше.",
-    chatTitle: "Чат",
+      "Для питань по доступу, оплаті або акаунту. Залиште email і деталі — команда відповість.",
+    chatTitle: "Швидкий чат",
     chatText:
-      "Напишіть повідомлення в чат. Після натискання «Надіслати» запит одразу піде оператору.",
-    emailHeading: "Надішліть нам питання",
+      "Напишіть питання. Ви отримаєте швидку product-desk відповідь, а оператор побачить звернення в support-панелі.",
+    emailHeading: "Надішліть запит у підтримку",
     emailDescription:
-      "Вкажіть email і коротко опишіть ситуацію. Чим більше контексту — тим швидше ми розберемося.",
+      "Вкажіть email і контекст: тариф, оплата, помилка, сторінка або дія. Чим точніший опис — тим швидше рішення.",
     emailPlaceholder: "your@email.com",
-    questionPlaceholder: "Опишіть ваше питання...",
+    questionPlaceholder: "Опишіть питання: тариф, оплата, журнал, сигнали, доступ...",
     sendEmail: "Надіслати запит",
     sendingEmail: "Надсилаю...",
     emailSuccess:
-      "Запит надіслано. Ми переглянемо його і відповімо на вказаний email.",
+      "Запит надіслано. Команда SkillEdge перевірить деталі й відповість на вказаний email.",
     emailError:
       "Не вдалося надіслати запит. Перевірте email і спробуйте ще раз.",
     back: "Назад",
     emailSavedNotice:
       "Заявку буде збережено в системі підтримки та відправлено команді SkillEdge AI.",
     chatOperatorNotice:
-      "Після відправки повідомлення одразу піде оператору. Команда зможе відповісти вам із support-панелі.",
+      "Кожне повідомлення йде оператору. Швидка відповідь у чаті дає напрямок одразу, складні питання перевіряє команда.",
     disclaimer:
-      "SkillEdge AI не є фінансовим консультантом. Підтримка допомагає з продуктом, доступом, оплатою і загальними питаннями платформи.",
+      "SkillEdge AI не є фінансовим консультантом. Підтримка допомагає з продуктом, доступом, оплатою, кабінетом і загальними питаннями платформи.",
+    shortcutsTitle: "Швидкі питання",
+    quickQuestions: [
+      "Тарифи і доступ",
+      "Оплата криптою",
+      "AI Alerts",
+      "Журнал угод",
+      "Покликати оператора",
+    ],
   },
 };
 
@@ -286,6 +310,316 @@ function isIntroMessage(text: string) {
     text === supportDict.ua.intro
   );
 }
+
+function normalizeSupportQuestion(text: string) {
+  return text.toLowerCase().replace(/ё/g, "е");
+}
+
+function includesAny(text: string, keywords: string[]) {
+  return keywords.some((keyword) => text.includes(keyword));
+}
+
+function buildSupportAssistantReply(
+  question: string,
+  language: SupportLanguage
+) {
+  const text = normalizeSupportQuestion(question);
+
+  const isPricing = includesAny(text, [
+    "тариф",
+    "цена",
+    "прайс",
+    "plan",
+    "pricing",
+    "price",
+    "core",
+    "edge",
+    "elite",
+    "доступ",
+    "access",
+    "підпис",
+    "підписка",
+  ]);
+
+  const isPayment = includesAny(text, [
+    "оплат",
+    "crypto",
+    "крипт",
+    "payment",
+    "billing",
+    "txid",
+    "usdt",
+    "карта",
+    "stripe",
+    "invoice",
+  ]);
+
+  const isAlerts = includesAny(text, [
+    "alert",
+    "alerts",
+    "сигнал",
+    "сигналы",
+    "ai alerts",
+    "scanner",
+    "сканер",
+    "market",
+    "brief",
+    "алерт",
+    "сигнали",
+  ]);
+
+  const isJournal = includesAny(text, [
+    "journal",
+    "журнал",
+    "trade",
+    "trades",
+    "сделк",
+    "угод",
+    "скрин",
+    "screenshot",
+    "pnl",
+    "статист",
+  ]);
+
+  const isCoach = includesAny(text, [
+    "coach",
+    "коуч",
+    "чат",
+    "ai coach",
+    "помощ",
+    "аналіз",
+    "анализ",
+    "review",
+  ]);
+
+  const isReports = includesAny(text, [
+    "report",
+    "reports",
+    "отчет",
+    "отчёт",
+    "звіт",
+    "аналитика",
+    "analytics",
+  ]);
+
+  const isOperator = includesAny(text, [
+    "оператор",
+    "operator",
+    "human",
+    "человек",
+    "людина",
+    "менеджер",
+    "support",
+    "поддерж",
+    "підтрим",
+  ]);
+
+  if (language === "en") {
+    if (isPricing) {
+      return [
+        "Desk answer: SkillEdge has three access levels.",
+        "Core: journal, screenshots, AI Coach and basic discipline workflow.",
+        "Edge: stronger review, reports, Market Intelligence and AI Market Brief.",
+        "Elite: full AI Trading Desk — AI Alerts, floating alerts widget, signal-to-journal workflow and advanced review.",
+        "Action: tell me which feature you need most, and the operator will help confirm the right plan.",
+      ].join("\n");
+    }
+
+    if (isPayment) {
+      return [
+        "Desk answer: current launch flow supports crypto payment.",
+        "Process: choose plan → get payment instructions → send TXID/proof → access is activated after confirmation.",
+        "Cards/Stripe can be added later, but production access should always be verified through the billing record.",
+        "Action: send your plan + TXID/proof if payment was already made.",
+      ].join("\n");
+    }
+
+    if (isAlerts) {
+      return [
+        "Desk answer: AI Alerts are not blind calls.",
+        "A valid alert needs: in-play ticker, setup, trigger, entry zone, stop/invalidation, targets, RR and risk note.",
+        "Edge gets Market Intelligence / AI Market Brief. Elite gets real-time actionable AI Alerts and signal tracking.",
+        "Action: if you do not see alerts, check plan access first, then market data / scanner status.",
+      ].join("\n");
+    }
+
+    if (isJournal) {
+      return [
+        "Desk answer: the journal is the core of the trader profile.",
+        "Trades, screenshots, setups, PnL, mistakes and execution quality build the personal pattern profile.",
+        "Later, SkillEdge can compare alerts with real execution and highlight what fits the trader best.",
+        "Action: upload trades and screenshots consistently — clean data creates better review.",
+      ].join("\n");
+    }
+
+    if (isReports) {
+      return [
+        "Desk answer: Reports turn journal data into a performance review.",
+        "Focus: what works, what leaks money, setup quality, execution quality, risk discipline and next fixes.",
+        "Action: generate reports after enough trades are logged; 10+ trades gives a better first read.",
+      ].join("\n");
+    }
+
+    if (isCoach) {
+      return [
+        "Desk answer: AI Coach is built for process, not hype.",
+        "Use it for rules, risk discipline, trade review, preparation and correction of repeated mistakes.",
+        "Best prompt: describe the trade, setup, entry, stop, target, emotion and result.",
+        "Action: ask a specific execution question for the strongest answer.",
+      ].join("\n");
+    }
+
+    if (isOperator) {
+      return [
+        "Operator request routed.",
+        "Add the exact page, plan, email/account and what action failed. That gives support enough context to solve it faster.",
+      ].join("\n");
+    }
+
+    return [
+      "Desk answer: I routed this to support.",
+      "For a faster fix, include: page, plan, email/account, what you clicked, what happened, and a screenshot if possible.",
+      "SkillEdge Support can help with access, plans, payment, journal, screenshots, AI Coach, Reports, Market Intelligence and AI Alerts.",
+    ].join("\n");
+  }
+
+  if (language === "ua") {
+    if (isPricing) {
+      return [
+        "Desk-відповідь: у SkillEdge три рівні доступу.",
+        "Core: журнал, скріншоти, AI Coach і базова дисципліна.",
+        "Edge: глибший review, звіти, Market Intelligence та AI Market Brief.",
+        "Elite: повний AI Trading Desk — AI Alerts, floating alerts widget, зв’язка сигналів із журналом і просунутий review.",
+        "Дія: напишіть, яка функція потрібна найбільше — оператор допоможе підтвердити тариф.",
+      ].join("\n");
+    }
+
+    if (isPayment) {
+      return [
+        "Desk-відповідь: на етапі запуску основний flow — оплата криптою.",
+        "Процес: вибір тарифу → інструкція оплати → TXID/підтвердження → доступ активується після перевірки.",
+        "Карти/Stripe можна додати пізніше, але доступ має підтверджуватися через billing-запис.",
+        "Дія: якщо оплату вже зроблено, надішліть тариф + TXID/підтвердження.",
+      ].join("\n");
+    }
+
+    if (isAlerts) {
+      return [
+        "Desk-відповідь: AI Alerts — це не сліпі buy/sell сигнали.",
+        "Сигнал має містити: in-play тикер, setup, trigger, entry zone, stop/invalidation, targets, RR і risk note.",
+        "Edge отримує Market Intelligence / AI Market Brief. Elite отримує real-time actionable AI Alerts і tracking сигналів.",
+        "Дія: якщо сигналів не видно — спершу перевірте тариф, потім статус market data / scanner.",
+      ].join("\n");
+    }
+
+    if (isJournal) {
+      return [
+        "Desk-відповідь: журнал — основа персонального профілю трейдера.",
+        "Угоди, скріншоти, сетапи, PnL, помилки та якість виконання формують pattern profile.",
+        "Пізніше SkillEdge порівнює alerts із реальним виконанням і підсвічує те, що краще підходить трейдеру.",
+        "Дія: стабільно додавайте угоди й скріншоти — чисті дані дають сильніший review.",
+      ].join("\n");
+    }
+
+    if (isReports) {
+      return [
+        "Desk-відповідь: Reports перетворюють журнал на performance review.",
+        "Фокус: що працює, що забирає гроші, якість сетапів, виконання, ризик-дисципліна і пріоритетні правки.",
+        "Дія: генеруйте звіти після накопичення угод; 10+ угод дають кращий перший зріз.",
+      ].join("\n");
+    }
+
+    if (isCoach) {
+      return [
+        "Desk-відповідь: AI Coach створений для процесу, а не для хайпу.",
+        "Використовуйте його для правил, ризик-дисципліни, review угод, підготовки й виправлення повторюваних помилок.",
+        "Найкращий запит: опишіть угоду, setup, entry, stop, target, емоцію і результат.",
+        "Дія: поставте конкретне питання по виконанню — відповідь буде сильнішою.",
+      ].join("\n");
+    }
+
+    if (isOperator) {
+      return [
+        "Запит оператору передано.",
+        "Додайте сторінку, тариф, email/акаунт і що саме не спрацювало. Так підтримка вирішить питання швидше.",
+      ].join("\n");
+    }
+
+    return [
+      "Desk-відповідь: я передав звернення в підтримку.",
+      "Для швидшого рішення додайте: сторінку, тариф, email/акаунт, що натиснули, що сталося, і скріншот за можливості.",
+      "SkillEdge Support допомагає з доступом, тарифами, оплатою, журналом, скріншотами, AI Coach, Reports, Market Intelligence та AI Alerts.",
+    ].join("\n");
+  }
+
+  if (isPricing) {
+    return [
+      "Desk-ответ: в SkillEdge три уровня доступа.",
+      "Core: журнал, скриншоты, AI Coach и базовая дисциплина.",
+      "Edge: более сильный review, отчёты, Market Intelligence и AI Market Brief.",
+      "Elite: полный AI Trading Desk — AI Alerts, floating alerts widget, связка сигналов с журналом и продвинутый разбор.",
+      "Действие: напиши, какая функция нужна больше всего — оператор поможет подтвердить подходящий тариф.",
+    ].join("\n");
+  }
+
+  if (isPayment) {
+    return [
+      "Desk-ответ: на этапе запуска основной flow — оплата криптой.",
+      "Процесс: выбрать тариф → получить инструкцию оплаты → отправить TXID/подтверждение → доступ активируется после проверки.",
+      "Карты/Stripe можно добавить позже, но доступ должен подтверждаться через billing-запись.",
+      "Действие: если уже оплатил — отправь тариф + TXID/подтверждение.",
+    ].join("\n");
+  }
+
+  if (isAlerts) {
+    return [
+      "Desk-ответ: AI Alerts — это не слепые buy/sell сигналы.",
+      "Сигнал должен иметь: in-play тикер, setup, trigger, entry zone, stop/invalidation, targets, RR и risk note.",
+      "Edge получает Market Intelligence / AI Market Brief. Elite получает real-time actionable AI Alerts и tracking сигналов.",
+      "Действие: если сигналов нет — сначала проверь тариф, потом статус market data / scanner.",
+    ].join("\n");
+  }
+
+  if (isJournal) {
+    return [
+      "Desk-ответ: журнал — основа персонального профиля трейдера.",
+      "Сделки, скриншоты, сетапы, PnL, ошибки и качество исполнения строят pattern profile.",
+      "Позже SkillEdge сравнивает alerts с реальным исполнением и подсвечивает то, что лучше подходит трейдеру.",
+      "Действие: стабильно добавляй сделки и скриншоты — чистые данные дают более сильный review.",
+    ].join("\n");
+  }
+
+  if (isReports) {
+    return [
+      "Desk-ответ: Reports превращают журнал в performance review.",
+      "Фокус: что работает, что забирает деньги, качество сетапов, исполнение, риск-дисциплина и приоритетные правки.",
+      "Действие: генерируй отчёты после накопления сделок; 10+ сделок дают лучший первый срез.",
+    ].join("\n");
+  }
+
+  if (isCoach) {
+    return [
+      "Desk-ответ: AI Coach создан для процесса, а не для хайпа.",
+      "Используй его для правил, риск-дисциплины, review сделок, подготовки и исправления повторяющихся ошибок.",
+      "Лучший запрос: опиши сделку, setup, entry, stop, target, эмоцию и результат.",
+      "Действие: задай конкретный вопрос по исполнению — ответ будет сильнее.",
+    ].join("\n");
+  }
+
+  if (isOperator) {
+    return [
+      "Запрос оператору передан.",
+      "Добавь страницу, тариф, email/аккаунт и что именно не сработало. Так поддержка решит вопрос быстрее.",
+    ].join("\n");
+  }
+
+  return [
+    "Desk-ответ: я передал обращение в поддержку.",
+    "Для быстрого решения добавь: страницу, тариф, email/аккаунт, что нажал, что произошло, и скриншот если возможно.",
+    "SkillEdge Support помогает с доступом, тарифами, оплатой, журналом, скриншотами, AI Coach, Reports, Market Intelligence и AI Alerts.",
+  ].join("\n");
+}
+
 
 function mapStoredMessage(
   message: StoredSupportMessage,
@@ -637,12 +971,20 @@ setMessages((previousMessages) =>
 
       const currentLanguage = detectLanguage();
       const userMessage = createMessage("user", text);
+      const assistantMessage = createMessage(
+        "assistant",
+        buildSupportAssistantReply(text, currentLanguage)
+      );
 
       setLanguage(currentLanguage);
       setInput("");
-      setMessages((current) => [...current, userMessage]);
+      setMessages((current) => [...current, userMessage, assistantMessage]);
 
-      await saveMessages([userMessage], activeSessionId, activeAnonymousId);
+      await saveMessages(
+        [userMessage, assistantMessage],
+        activeSessionId,
+        activeAnonymousId
+      );
 
       await sendOperatorRequest({
         targetSessionId: activeSessionId,
@@ -911,6 +1253,25 @@ setMessages((previousMessages) =>
 
           {supportMode === "chat" && (
             <>
+              <div className="border-b border-white/10 px-4 py-3">
+                <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-cyan-100/45">
+                  {t.shortcutsTitle}
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {t.quickQuestions.map((question) => (
+                    <button
+                      key={question}
+                      type="button"
+                      onClick={() => setInput(question)}
+                      className="rounded-full border border-cyan-300/15 bg-cyan-300/[0.055] px-3 py-1.5 text-xs font-semibold text-cyan-50/80 transition hover:border-cyan-200/45 hover:bg-cyan-300/[0.12] hover:text-white"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="max-h-[320px] space-y-3 overflow-y-auto p-4">
                 {messages.length === 0 ? (
   <div className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm leading-6 text-white/60">

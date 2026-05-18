@@ -902,7 +902,7 @@ async function fetchRedditSubredditPosts(subreddit: string) {
 
   const response = await fetch(url, {
     headers: {
-      "User-Agent": process.env.REDDIT_USER_AGENT || "SkillEdgeAI/1.0 market-social-scanner",
+      "User-Agent": "SkillEdgeAI/1.0 market-social-scanner",
       Accept: "application/json",
     },
     next: { revalidate: 60 * 10 },
@@ -920,15 +920,6 @@ async function fetchRedditSubredditPosts(subreddit: string) {
 }
 
 async function loadRedditMentions() {
-  if (process.env.REDDIT_ENABLED !== "true") {
-    console.log("Reddit scanner skipped:", {
-      reason: "REDDIT_ENABLED is not true",
-      status: "pending Reddit Data API approval",
-    });
-
-    return [];
-  }
-
   const stockUniverse = await fetchFmpUniverse();
 const cryptoUniverse = await fetchBinanceUniverse();
 

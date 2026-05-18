@@ -3,6 +3,11 @@ import OpenAI from "openai";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { canUseFeature, normalizePlanId } from "@/lib/plan-limits";
 import { requireFeatureAccess } from "@/lib/security/feature-gate";
+import {
+  getSkillEdgeMarketBriefPrompt,
+  getSkillEdgeConciseOutputRules,
+  getSkillEdgeJsonOutputRules,
+} from "@/lib/ai/skill-edge-prompts";
 
 export const runtime = "nodejs";
 
@@ -50,6 +55,20 @@ type MarketAIAnalysisResponse = {
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+function getOpenAIModel(planId: string | null) {
+  const normalizedPlanId = String(planId || "").toLowerCase();
+
+  if (normalizedPlanId.includes("elite")) {
+    return process.env.SKILLEDGE_ELITE_AI_MODEL || "gpt-5.1";
+  }
+
+  if (normalizedPlanId.includes("edge") || normalizedPlanId.includes("pro")) {
+    return process.env.SKILLEDGE_EDGE_AI_MODEL || "gpt-5-mini";
+  }
+
+  return process.env.SKILLEDGE_CORE_AI_MODEL || "gpt-4.1-mini";
+}
 
 async function getRequestUser(request: Request) {
   const authHeader = request.headers.get("authorization") || "";
@@ -270,63 +289,59 @@ export async function POST(request: Request) {
     }
 
     const language = getLanguageName(body?.language);
-    const model = process.env.SKILLEDGE_AI_MARKET_MODEL || "gpt-5.2";
+const promptLanguage =
+  typeof body?.language === "string" && body.language.trim()
+    ? body.language.trim()
+    : "ru";
+
+const model = getOpenAIModel(planId);
+
+const systemPrompt = [
+  getSkillEdgeMarketBriefPrompt({
+    language: promptLanguage,
+    plan: planId,
+    userContext: [
+      `Plan ID: ${planId}`,
+      `Output language: ${language}`,
+      `Items submitted: ${items.length}`,
+      "Market Brief must separate actionable alerts from watchlist candidates.",
+      "Catalyst/news/social attention is only an in-play reason, not a trade by itself.",
+      "Do not upgrade a ticker just because it moved hard. Setup + trigger + RR decide quality.",
+    ].join("\n"),
+  }),
+  getSkillEdgeConciseOutputRules(),
+  getSkillEdgeJsonOutputRules(),
+  "",
+  "Return JSON with this exact shape:",
+  "{",
+  '  "summary": "short desk summary",',
+  '  "items": [',
+  "    {",
+  '      "symbol": "TICKER",',
+  '      "verdict": "A+ actionable | A actionable | Watch only | Rejected",',
+  '      "score": 0,',
+  '      "setup_type": "specific setup name",',
+  '      "direction_bias": "upside | downside | neutral",',
+  '      "reason": "why this ticker is in play + why setup matters",',
+  '      "risk_note": "main risk / trap / invalidation problem",',
+  '      "scenario": "trigger, entry condition, invalidation and action note",',
+  '      "action_note": "no chase / wait trigger / actionable after confirmation / skip"',
+  "    }",
+  "  ]",
+  "}",
+  "",
+  "Strict desk rules:",
+  "- If setup is not triggered, verdict must be Watch only.",
+  "- If RR/stop/structure is unclear, verdict must be Watch only or Rejected.",
+  "- If movement is extended and entry is late, say No chase.",
+  "- For crypto, use liquidity / sweep / reclaim / rejection / displacement language only when data supports it.",
+  "- For stocks, use catalyst/momentum/VWAP/gap/fade/continuation language only when data supports it.",
+  "- Do not invent exact entry/stop/targets if the data does not include levels.",
+].join("\n");
 
     const response = await openai.responses.create({
       model,
-      instructions: `
-You are SkillEdge AI, a premium market intelligence assistant for active traders.
-
-Analyze only the provided market opportunities. Do not invent missing data.
-Do not give direct financial advice like "buy now" or "short now".
-Give scenario-based trading intelligence.
-
-Important:
-Use different reasoning modes for stocks and crypto.
-
-For stocks:
-Focus on catalyst, price move, volume, earnings/news, social attention, continuation/fade risk, trap risk, and clean confirmation levels.
-
-For crypto:
-Use Smart Money / SMC-style reasoning where possible:
-- market structure context
-- liquidity sweep / reclaim logic
-- buyside and sellside liquidity
-- continuation vs reversal
-- displacement / weak push
-- premium/discount idea if relevant
-- invalidation around liquidity/structure
-- avoid pretending exact levels if candles are not provided
-
-If crypto candle/OHLC data is missing, clearly phrase it as "SMC-style read based on available scanner data", not as a full chart-based SMC analysis.
-
-Return ONLY valid JSON with this exact shape:
-{
-  "summary": "string",
-  "items": [
-    {
-      "symbol": "string",
-      "verdict": "string",
-      "confluence_score": 0,
-      "setup_type": "string",
-      "reason": "string",
-      "risk_note": "string",
-      "scenario": "string",
-      "invalidation": "string",
-      "action_note": "string"
-    }
-  ]
-}
-
-For crypto items, make setup_type and scenario reflect Smart Money language when appropriate:
-examples: "liquidity sweep + reclaim watch", "continuation after displacement", "sellside liquidity risk", "range reclaim scenario", "failed breakout / liquidity trap".
-
-For stock items, make setup_type and scenario reflect catalyst/momentum language:
-examples: "earnings dump continuation", "news-driven momentum", "gap fade risk", "post-catalyst continuation", "high-volume trap watch".
-
-Language: ${language}.
-Tone: premium, concise, trader-focused.
-      `.trim(),
+      instructions: systemPrompt,
       input: JSON.stringify(
         {
           opportunities: items,

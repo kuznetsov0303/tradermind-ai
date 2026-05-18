@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/market/alerts/cron/stock",
+      "schedule": "*/3 * * * *"
+    },
+    {
+      "path": "/api/market/alerts/cron/crypto",
+      "schedule": "*/2 * * * *"
+    }
+  ]
+}

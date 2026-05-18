@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { checkAiFeatureLimit } from "@/lib/ai-usage-limits";
 import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
+import {
+  getSkillEdgeTradeScreenshotPrompt,
+  getSkillEdgeConciseOutputRules,
+} from "@/lib/ai/skill-edge-prompts";
 
 type Trade = {
   id: string;
@@ -38,11 +42,17 @@ type TradeScreenshot = {
 };
 
 function getOpenAIModel(planId: string | null) {
-  if (planId === "starter") return "gpt-4o-mini";
-  if (planId === "pro") return "gpt-4o-mini";
-  if (planId === "elite") return "gpt-4o-mini";
+  const normalizedPlanId = String(planId || "").toLowerCase();
 
-  return "gpt-4o-mini";
+  if (normalizedPlanId.includes("elite")) {
+    return process.env.SKILLEDGE_ELITE_AI_MODEL || "gpt-5.1";
+  }
+
+  if (normalizedPlanId.includes("edge") || normalizedPlanId.includes("pro")) {
+    return process.env.SKILLEDGE_EDGE_AI_MODEL || "gpt-5-mini";
+  }
+
+  return process.env.SKILLEDGE_CORE_AI_MODEL || "gpt-4.1-mini";
 }
 
 function getPublicPlanName(planId: string | null) {
@@ -229,6 +239,26 @@ if (!usage.allowed) {
   );
 }
 
+const systemPrompt = [
+  getSkillEdgeTradeScreenshotPrompt({
+    language,
+    plan: planId,
+    userContext: [
+      `Public AI brand: ${publicPlanName}`,
+      `Plan ID: ${planId}`,
+      `Trade ticker: ${trade.ticker || "unknown"}`,
+      `Trade direction: ${trade.direction || "unknown"}`,
+      `Entry price: ${trade.entry_price ?? "unknown"}`,
+      `Exit price: ${trade.exit_price ?? "unknown"}`,
+      `Stop loss: ${trade.stop_loss ?? "unknown"}`,
+      `PnL: ${trade.pnl ?? "unknown"}`,
+      `Setup: ${trade.setup || "unknown"}`,
+      `Screenshots attached: ${imageInputs.length}`,
+    ].join("\n"),
+  }),
+  getSkillEdgeConciseOutputRules(),
+].join("\n\n");
+
     const response = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
@@ -241,15 +271,14 @@ if (!usage.allowed) {
         max_output_tokens: 1400,
         input: [
           {
-            role: "system",
-            content: [
-              {
-                type: "input_text",
-                text:
-  `You are SkillEdge AI, a professional trading chart and execution analyst. Do not mention OpenAI, GPT, or model names. Analyze the trade screenshots and trade journal data. Focus on entry quality, exit quality, stop placement, market structure, risk, execution discipline, and what the trader should improve next time. ${getOutputLanguageInstruction(language)}`,
-              },
-            ],
-          },
+  role: "system",
+  content: [
+    {
+      type: "input_text",
+      text: systemPrompt,
+    },
+  ],
+},
           {
             role: "user",
             content: [
@@ -259,7 +288,8 @@ if (!usage.allowed) {
                   {
   plan: publicPlanName,
   language,
-  outputLanguageInstruction: getOutputLanguageInstruction(language),
+  analysisStyle:
+  "SkillEdge execution review: chart read, setup, entry quality, stop/invalidation, targets/RR, mistake or best decision, next rule.",
   trade: {
                       date: trade.trade_date,
                       ticker: trade.ticker,
