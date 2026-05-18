@@ -5,6 +5,12 @@ import type { SkillEdgeCandle } from "@/lib/trading/market-structure";
 import { fetchSkillEdgeCandles } from "@/lib/trading/market-candles-provider";
 import { analyzeSkillEdgePriceActionPatterns } from "@/lib/trading/price-action-patterns";
 import type { SkillEdgePriceActionPatternAnalysis } from "@/lib/trading/price-action-patterns";
+
+type FetchSkillEdgeCandlesParams = Parameters<typeof fetchSkillEdgeCandles>[0];
+type SkillEdgeCandleInterval = FetchSkillEdgeCandlesParams["interval"];
+type SkillEdgeCandlesResult = Awaited<ReturnType<typeof fetchSkillEdgeCandles>>;
+
+
 type MarketScannerRow = {
   symbol: string;
   exchange: string | null;
@@ -254,12 +260,9 @@ type FmpSignalMover = {
   companyName?: string | null;
   price?: number | string | null;
   changesPercentage?: number | string | null;
-  changePercentage?: number | string | null;
   change?: number | string | null;
   changes?: number | string | null;
   volume?: number | string | null;
-  avgVolume?: number | string | null;
-  marketCap?: number | string | null;
   exchange?: string | null;
   exchangeShortName?: string | null;
 };
@@ -309,220 +312,43 @@ function isProbablyTradeableUsStock(symbol: string) {
   if (!normalized) return false;
   if (!/^[A-Z]{1,5}$/.test(normalized)) return false;
 
+  const blockedSuffixes = ["W", "WS", "WT", "U", "UN", "R"];
+  if (normalized.length >= 5 && blockedSuffixes.some((suffix) => normalized.endsWith(suffix))) {
+    return false;
+  }
+
   return true;
 }
 
-function getFmpSignalApiError(payload: unknown): string | null {
-  if (!payload || typeof payload !== "object") return null;
-
-  const record = payload as Record<string, unknown>;
-
-  return (
-    String(
-      record["Error Message"] ||
-        record["Error"] ||
-        record["error"] ||
-        record["message"] ||
-        ""
-    ).trim() || null
-  );
-}
-
-function buildFmpSignalUrl(path: string, baseUrl: string, apiKey: string) {
-  const cleanBase = baseUrl.replace(/\/+$/g, "");
-  const cleanPath = path.replace(/^\/+/g, "");
-  const separator = cleanPath.includes("?") ? "&" : "?";
-
-  return `${cleanBase}/${cleanPath}${separator}apikey=${encodeURIComponent(apiKey)}`;
-}
-
-async function fetchFmpSignalArray(
-  stablePath: string,
-  legacyPath?: string
-): Promise<FmpSignalMover[]> {
+async function fetchFmpSignalJson<T>(path: string): Promise<T> {
   const apiKey = getFmpSignalApiKey();
 
   if (!apiKey) {
     throw new Error("FMP_API_KEY is missing.");
   }
 
-  const attempts = [
-    {
-      label: "stable",
-      url: buildFmpSignalUrl(stablePath, getFmpSignalBaseUrl(), apiKey),
+  const baseUrl = getFmpSignalBaseUrl();
+  const separator = path.includes("?") ? "&" : "?";
+  const url = `${baseUrl}/${path}${separator}apikey=${encodeURIComponent(apiKey)}`;
+
+  const response = await fetch(url, {
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
     },
-    legacyPath
-      ? {
-          label: "legacy",
-          url: buildFmpSignalUrl(
-            legacyPath,
-            process.env.FMP_LEGACY_BASE_URL || "https://financialmodelingprep.com/api/v3",
-            apiKey
-          ),
-        }
-      : null,
-  ].filter(Boolean) as Array<{ label: string; url: string }>;
+  });
 
-  const errors: string[] = [];
-
-  for (const attempt of attempts) {
-    try {
-      const response = await fetch(attempt.url, {
-        cache: "no-store",
-        headers: {
-          Accept: "application/json",
-        },
-      });
-
-      const text = await response.text();
-      let payload: unknown = null;
-
-      try {
-        payload = JSON.parse(text);
-      } catch {
-        payload = text;
-      }
-
-      if (!response.ok) {
-        errors.push(`${attempt.label}: HTTP ${response.status} ${text.slice(0, 180)}`);
-        continue;
-      }
-
-      const apiError = getFmpSignalApiError(payload);
-
-      if (apiError) {
-        errors.push(`${attempt.label}: ${apiError}`);
-        continue;
-      }
-
-      if (!Array.isArray(payload)) {
-        errors.push(
-          `${attempt.label}: expected array, got ${typeof payload}. Payload preview: ${text.slice(
-            0,
-            180
-          )}`
-        );
-        continue;
-      }
-
-      const rows = payload as FmpSignalMover[];
-
-      // Важно: stable quote иногда может вернуть [].
-      // Тогда не считаем это успехом, а пробуем legacy fallback.
-      if (rows.length === 0 && legacyPath) {
-        errors.push(`${attempt.label}: empty array`);
-        continue;
-      }
-
-      return rows;
-    } catch (error) {
-      errors.push(
-        `${attempt.label}: ${error instanceof Error ? error.message : "Unknown FMP fetch error"}`
-      );
-    }
+  if (!response.ok) {
+    const text = await response.text().catch(() => "");
+    throw new Error(`FMP ${path} failed: ${response.status} ${text.slice(0, 200)}`);
   }
 
-  throw new Error(`FMP seed failed. ${errors.join(" | ")}`);
-}
-
-function mergeFmpMoverWithQuote(item: FmpSignalMover, quote: FmpSignalMover | null): FmpSignalMover {
-  if (!quote) return item;
-
-  return {
-    ...item,
-    symbol: item.symbol || quote.symbol || quote.ticker,
-    ticker: item.ticker || quote.ticker || quote.symbol,
-    name: item.name || quote.name || quote.companyName,
-    companyName: item.companyName || quote.companyName || quote.name,
-    price: firstFiniteSignalNumber(item.price) ?? quote.price ?? item.price,
-    changesPercentage:
-      firstFiniteSignalNumber(item.changesPercentage) ??
-      firstFiniteSignalNumber(item.changePercentage) ??
-      quote.changesPercentage ??
-      quote.changePercentage ??
-      item.changesPercentage,
-    changePercentage:
-      firstFiniteSignalNumber(item.changePercentage) ??
-      firstFiniteSignalNumber(item.changesPercentage) ??
-      quote.changePercentage ??
-      quote.changesPercentage ??
-      item.changePercentage,
-    change: firstFiniteSignalNumber(item.change) ?? quote.change ?? item.change,
-    changes: firstFiniteSignalNumber(item.changes) ?? quote.changes ?? item.changes,
-    volume: firstFiniteSignalNumber(item.volume) ?? quote.volume ?? item.volume,
-    avgVolume: firstFiniteSignalNumber(item.avgVolume) ?? quote.avgVolume ?? item.avgVolume,
-    marketCap: firstFiniteSignalNumber(item.marketCap) ?? quote.marketCap ?? item.marketCap,
-    exchange: item.exchange || quote.exchange,
-    exchangeShortName: item.exchangeShortName || quote.exchangeShortName,
-  };
-}
-
-async function fetchFmpQuotesForSignalSymbols(symbols: string[]): Promise<Map<string, FmpSignalMover>> {
-  const uniqueSymbols = Array.from(
-    new Set(symbols.map((symbol) => normalizeSymbol(symbol)).filter(Boolean))
-  ).slice(0, 200);
-
-  const result = new Map<string, FmpSignalMover>();
-
-  if (uniqueSymbols.length === 0) return result;
-
-  for (let index = 0; index < uniqueSymbols.length; index += 50) {
-    const batch = uniqueSymbols.slice(index, index + 50);
-    const joinedSymbols = batch.join(",");
-
-    try {
-      const quotes = await fetchFmpSignalArray(
-        `quote?symbol=${encodeURIComponent(joinedSymbols)}`,
-        `quote/${joinedSymbols}`
-      );
-
-      for (const quote of quotes) {
-        const symbol = normalizeSymbol(String(quote.symbol || quote.ticker || ""));
-
-        if (symbol) {
-          result.set(symbol, quote);
-        }
-      }
-    } catch (error) {
-      console.error(
-        "FMP batch quote enrichment failed:",
-        error instanceof Error ? error.message : error
-      );
-
-      // Fallback: если batch quote не сработал, пробуем по одному тикеру.
-      for (const symbol of batch) {
-        try {
-          const quotes = await fetchFmpSignalArray(
-            `quote?symbol=${encodeURIComponent(symbol)}`,
-            `quote/${symbol}`
-          );
-
-          const quote = quotes[0];
-
-          if (quote) {
-            const normalized = normalizeSymbol(String(quote.symbol || quote.ticker || symbol));
-
-            if (normalized) {
-              result.set(normalized, quote);
-            }
-          }
-        } catch (singleError) {
-          console.error(
-            `FMP single quote enrichment failed for ${symbol}:`,
-            singleError instanceof Error ? singleError.message : singleError
-          );
-        }
-      }
-    }
-  }
-
-  return result;
+  return (await response.json()) as T;
 }
 
 function parseFmpChangePct(item: FmpSignalMover) {
   return firstFiniteSignalNumber(
     item.changesPercentage,
-    item.changePercentage,
     item.change,
     item.changes
   ) ?? 0;
@@ -553,11 +379,20 @@ function buildStockSeedRow(
   }
 
   const direction = changePercent >= 0 ? "upside" : "downside";
+
   const volumeScore = Math.min(20, Math.log10(Math.max(volume, 1) / minVolume) * 8);
   const changeScore = Math.min(35, Math.abs(changePercent) * 2.5);
-  const bucketBoost = bucket === "pump_watch" || bucket === "dump_watch" ? 12 : 6;
+  const bucketBoost =
+    bucket === "pump_watch" || bucket === "dump_watch"
+      ? 12
+      : 6;
+
   const opportunityScore = clamp(45 + volumeScore + changeScore + bucketBoost, 0, 100);
-  const exchange = item.exchangeShortName || item.exchange || "US";
+
+  const exchange =
+    item.exchangeShortName ||
+    item.exchange ||
+    "US";
 
   return {
     symbol,
@@ -578,7 +413,7 @@ function buildStockSeedRow(
         : bucket === "dump_watch"
           ? "Active stock fade candidate"
           : "Unusual volume stock candidate",
-    opportunity_score: Math.round(opportunityScore),
+    opportunity_score: Number(opportunityScore.toFixed(2)),
     source: "fmp_signal_seed",
     scanned_at: new Date().toISOString(),
     raw_data: {
@@ -611,36 +446,22 @@ async function refreshStockScannerSnapshotsForSignals(): Promise<StockSeedResult
 
   try {
     const [gainers, losers, active] = await Promise.all([
-  fetchFmpSignalArray("biggest-gainers", "stock_market/gainers"),
-  fetchFmpSignalArray("biggest-losers", "stock_market/losers"),
-  fetchFmpSignalArray("most-actives", "stock_market/actives"),
-]);
+      fetchFmpSignalJson<FmpSignalMover[]>("biggest-gainers"),
+      fetchFmpSignalJson<FmpSignalMover[]>("biggest-losers"),
+      fetchFmpSignalJson<FmpSignalMover[]>("most-actives"),
+    ]);
 
-    const fetchedTotal = gainers.length + losers.length + active.length;
-
-const seedItems = [
-  ...gainers.slice(0, limit).map((item) => ({ item, bucket: "pump_watch" as const })),
-  ...losers.slice(0, limit).map((item) => ({ item, bucket: "dump_watch" as const })),
-  ...active.slice(0, limit).map((item) => ({ item, bucket: "unusual_volume" as const })),
-];
-
-const quoteMap = await fetchFmpQuotesForSignalSymbols(
-  seedItems.map(({ item }) => String(item.symbol || item.ticker || ""))
-);
-
-const enrichedSeedItems = seedItems.map(({ item, bucket }) => {
-  const symbol = normalizeSymbol(String(item.symbol || item.ticker || ""));
-  const quote = symbol ? quoteMap.get(symbol) || null : null;
-
-  return {
-    item: mergeFmpMoverWithQuote(item, quote),
-    bucket,
-  };
-});
-
-const rows = enrichedSeedItems
-  .map(({ item, bucket }) => buildStockSeedRow(item, bucket))
-  .filter((row): row is MarketScannerRow => Boolean(row));
+    const rows = [
+      ...(Array.isArray(gainers)
+        ? gainers.slice(0, limit).map((item) => buildStockSeedRow(item, "pump_watch"))
+        : []),
+      ...(Array.isArray(losers)
+        ? losers.slice(0, limit).map((item) => buildStockSeedRow(item, "dump_watch"))
+        : []),
+      ...(Array.isArray(active)
+        ? active.slice(0, limit).map((item) => buildStockSeedRow(item, "unusual_volume"))
+        : []),
+    ].filter((row): row is MarketScannerRow => Boolean(row));
 
     const bestBySymbol = new Map<string, MarketScannerRow>();
 
@@ -654,15 +475,14 @@ const rows = enrichedSeedItems
       }
     }
 
-    const maxRows = Math.max(10, Math.min(250, Number(process.env.SIGNAL_STOCK_SEED_MAX_ROWS || "80")));
     const finalRows = Array.from(bestBySymbol.values())
       .sort((a, b) => (b.opportunity_score ?? 0) - (a.opportunity_score ?? 0))
-      .slice(0, maxRows);
+      .slice(0, Number(process.env.SIGNAL_STOCK_SEED_MAX_ROWS || "80"));
 
     if (finalRows.length === 0) {
       return {
         enabled: true,
-        loaded: fetchedTotal,
+        loaded: rows.length,
         inserted: 0,
         error: null,
       };
@@ -1097,6 +917,7 @@ function getAssetType(row: MarketScannerRow) {
   return "stock";
 }
 
+
 type AlertAssetTypeFilter = "all" | "stock" | "crypto";
 
 function normalizeAssetTypeFilter(value: string | null): AlertAssetTypeFilter {
@@ -1420,6 +1241,7 @@ function roundPrice(value: number | null) {
 
   return Number(value.toFixed(8));
 }
+
 
 function capSignalScoreForLifecycle(
   score: number,
@@ -2097,6 +1919,7 @@ function validateDirectionalTradePlan(params: {
   };
 }
 
+
 type SignalDirection = "upside" | "downside";
 
 type SignalTradePlan = {
@@ -2125,10 +1948,12 @@ type ExecutionTriggerCheck = {
   triggerType: string;
   label: string;
   reasons: string[];
-  timeframe: "1m/3m";
+  timeframe: string;
   entryReference: number | null;
   stopReference: number | null;
   scoreImpact: number;
+  fastExecutionCandles: number;
+  executionCandles: number;
   oneMinuteCandles: number;
   threeMinuteCandles: number;
 };
@@ -2151,6 +1976,195 @@ type EntryWindowCheck = {
   distancePct: number | null;
   progressToTp1: number | null;
 };
+
+type SignalTimeframeConfig = {
+  contextTimeframe: string;
+  confirmationTimeframe: string;
+  fastExecutionTimeframe: string;
+  executionTimeframe: string;
+  contextLimit: number;
+  confirmationLimit: number;
+  fastExecutionLimit: number;
+  executionLimit: number;
+  contextLabel: string;
+  confirmationLabel: string;
+  executionLabel: string;
+  setupTimeframeLabel: string;
+  confirmationTimeframeLabel: string;
+};
+
+function readEnvString(name: string, fallback: string) {
+  const value = process.env[name]?.trim();
+
+  return value && value.length > 0 ? value : fallback;
+}
+
+function readSignalTimeframe(name: string, fallback: string) {
+  const value = readEnvString(name, fallback).toLowerCase();
+
+  if (/^\d+(m|h|d)$/.test(value)) return value;
+
+  return fallback;
+}
+
+function asSkillEdgeCandleInterval(interval: string) {
+  return interval as SkillEdgeCandleInterval;
+}
+
+function timeframeToMinutes(interval: string) {
+  const normalized = interval.trim().toLowerCase();
+  const match = normalized.match(/^(\d+)(m|h|d)$/);
+
+  if (!match) return null;
+
+  const amount = Number(match[1]);
+  const unit = match[2];
+
+  if (!Number.isFinite(amount) || amount <= 0) return null;
+  if (unit === "m") return amount;
+  if (unit === "h") return amount * 60;
+  if (unit === "d") return amount * 24 * 60;
+
+  return null;
+}
+
+function canAggregateTimeframe(fromInterval: string, toInterval: string) {
+  const fromMinutes = timeframeToMinutes(fromInterval);
+  const toMinutes = timeframeToMinutes(toInterval);
+
+  if (!fromMinutes || !toMinutes || toMinutes <= fromMinutes) return null;
+  if (toMinutes % fromMinutes !== 0) return null;
+
+  return toMinutes / fromMinutes;
+}
+
+function buildSyntheticCandlesResult(
+  base: SkillEdgeCandlesResult,
+  _interval: string,
+  candles: SkillEdgeCandle[]
+): SkillEdgeCandlesResult {
+  return {
+    ...base,
+    candles,
+    provider: base.provider,
+    error: base.error,
+  };
+}
+
+function getSignalTimeframeConfig(assetType: "stock" | "crypto"): SignalTimeframeConfig {
+  if (assetType === "crypto") {
+    const contextTimeframe = readSignalTimeframe("SIGNAL_CRYPTO_CONTEXT_TIMEFRAME", "1h");
+    const confirmationTimeframe = readSignalTimeframe(
+      "SIGNAL_CRYPTO_CONFIRMATION_TIMEFRAME",
+      contextTimeframe
+    );
+    const fastExecutionTimeframe = readSignalTimeframe("SIGNAL_CRYPTO_FAST_EXECUTION_TIMEFRAME", "3m");
+    const executionTimeframe = readSignalTimeframe("SIGNAL_CRYPTO_EXECUTION_TIMEFRAME", "5m");
+
+    return {
+      contextTimeframe,
+      confirmationTimeframe,
+      fastExecutionTimeframe,
+      executionTimeframe,
+      contextLimit: readEnvNumber("SIGNAL_CRYPTO_CONTEXT_CANDLE_LIMIT", 120),
+      confirmationLimit: readEnvNumber("SIGNAL_CRYPTO_CONFIRMATION_CANDLE_LIMIT", 120),
+      fastExecutionLimit: readEnvNumber("SIGNAL_CRYPTO_FAST_EXECUTION_CANDLE_LIMIT", 240),
+      executionLimit: readEnvNumber("SIGNAL_CRYPTO_EXECUTION_CANDLE_LIMIT", 180),
+      contextLabel: `${contextTimeframe} context`,
+      confirmationLabel: `${confirmationTimeframe} confirmation`,
+      executionLabel: `${fastExecutionTimeframe}/${executionTimeframe} execution`,
+      setupTimeframeLabel: `${contextTimeframe} context / ${fastExecutionTimeframe}-${executionTimeframe} trigger`,
+      confirmationTimeframeLabel: `${contextTimeframe}/${confirmationTimeframe} context + ${fastExecutionTimeframe}/${executionTimeframe} execution`,
+    };
+  }
+
+  const contextTimeframe = readSignalTimeframe("SIGNAL_STOCK_CONTEXT_TIMEFRAME", "15m");
+  const confirmationTimeframe = readSignalTimeframe(
+    "SIGNAL_STOCK_CONFIRMATION_TIMEFRAME",
+    "30m"
+  );
+  const fastExecutionTimeframe = readSignalTimeframe("SIGNAL_STOCK_FAST_EXECUTION_TIMEFRAME", "1m");
+  const executionTimeframe = readSignalTimeframe("SIGNAL_STOCK_EXECUTION_TIMEFRAME", "3m");
+
+  return {
+    contextTimeframe,
+    confirmationTimeframe,
+    fastExecutionTimeframe,
+    executionTimeframe,
+    contextLimit: readEnvNumber("SIGNAL_STOCK_CONTEXT_CANDLE_LIMIT", 96),
+    confirmationLimit: readEnvNumber("SIGNAL_STOCK_CONFIRMATION_CANDLE_LIMIT", 96),
+    fastExecutionLimit: readEnvNumber("SIGNAL_STOCK_FAST_EXECUTION_CANDLE_LIMIT", 240),
+    executionLimit: readEnvNumber("SIGNAL_STOCK_EXECUTION_CANDLE_LIMIT", 180),
+    contextLabel: `${contextTimeframe} context`,
+    confirmationLabel: `${confirmationTimeframe} confirmation`,
+    executionLabel: `${fastExecutionTimeframe}/${executionTimeframe} execution`,
+    setupTimeframeLabel: `${contextTimeframe}/${confirmationTimeframe} context / ${fastExecutionTimeframe}-${executionTimeframe} trigger`,
+    confirmationTimeframeLabel: `${contextTimeframe}/${confirmationTimeframe} context + ${fastExecutionTimeframe}/${executionTimeframe} execution`,
+  };
+}
+
+async function fetchSignalCandlesForTimeframe(params: {
+  symbol: string;
+  assetType: "stock" | "crypto";
+  interval: string;
+  limit: number;
+}) {
+  return fetchSkillEdgeCandles({
+    symbol: params.symbol,
+    assetType: params.assetType,
+    interval: asSkillEdgeCandleInterval(params.interval),
+    limit: params.limit,
+  });
+}
+
+async function loadSignalExecutionCandles(params: {
+  symbol: string;
+  assetType: "stock" | "crypto";
+  config: SignalTimeframeConfig;
+}) {
+  const [fastResult, executionResult] = await Promise.all([
+    fetchSignalCandlesForTimeframe({
+      symbol: params.symbol,
+      assetType: params.assetType,
+      interval: params.config.fastExecutionTimeframe,
+      limit: params.config.fastExecutionLimit,
+    }),
+    fetchSignalCandlesForTimeframe({
+      symbol: params.symbol,
+      assetType: params.assetType,
+      interval: params.config.executionTimeframe,
+      limit: params.config.executionLimit,
+    }),
+  ]);
+
+  if (executionResult.candles.length > 0) {
+    return {
+      fastExecutionCandlesResult: fastResult,
+      executionCandlesResult: executionResult,
+    };
+  }
+
+  const aggregationRatio = canAggregateTimeframe(
+    params.config.fastExecutionTimeframe,
+    params.config.executionTimeframe
+  );
+
+  if (aggregationRatio && fastResult.candles.length > 0) {
+    return {
+      fastExecutionCandlesResult: fastResult,
+      executionCandlesResult: buildSyntheticCandlesResult(
+        fastResult,
+        params.config.executionTimeframe,
+        aggregateCandlesByCount(fastResult.candles, aggregationRatio)
+      ),
+    };
+  }
+
+  return {
+    fastExecutionCandlesResult: fastResult,
+    executionCandlesResult: executionResult,
+  };
+}
 
 function getCandleTimestampMs(candle: SkillEdgeCandle) {
   if (candle.timestamp instanceof Date) return candle.timestamp.getTime();
@@ -2301,17 +2315,19 @@ function inferSignalDirectionFromContext(params: {
   row: MarketScannerRow;
   changePercent: number;
   price: number | null;
-  context5m: SkillEdgeCandle[];
-  context15m: SkillEdgeCandle[];
+  primaryContextCandles: SkillEdgeCandle[];
+  confirmationContextCandles: SkillEdgeCandle[];
+  primaryTimeframe: string;
+  confirmationTimeframe: string;
 }): SignalDirection | null {
-  const fiveMinuteTrend = getSimpleSignalTrend(params.context5m, 8);
-  const fifteenMinuteTrend = getSimpleSignalTrend(params.context15m, 6);
-  const last5mClose = getLastSignalCandle(params.context5m)?.close ?? params.price;
-  const vwap = calculateSignalVwap(params.context5m);
+  const primaryTrend = getSimpleSignalTrend(params.primaryContextCandles, 8);
+  const confirmationTrend = getSimpleSignalTrend(params.confirmationContextCandles, 6);
+  const lastPrimaryClose = getLastSignalCandle(params.primaryContextCandles)?.close ?? params.price;
+  const vwap = calculateSignalVwap(params.primaryContextCandles);
   const aboveVwap =
-    vwap !== null && last5mClose !== null ? last5mClose >= vwap * 0.997 : false;
+    vwap !== null && lastPrimaryClose !== null ? lastPrimaryClose >= vwap * 0.997 : false;
   const belowVwap =
-    vwap !== null && last5mClose !== null ? last5mClose <= vwap * 1.003 : false;
+    vwap !== null && lastPrimaryClose !== null ? lastPrimaryClose <= vwap * 1.003 : false;
   const rawText = [
     params.row.scan_bucket,
     params.row.direction_bias,
@@ -2345,8 +2361,8 @@ function inferSignalDirectionFromContext(params: {
   if (
     params.changePercent >= 3 &&
     continuationText &&
-    fiveMinuteTrend !== "down" &&
-    fifteenMinuteTrend !== "down" &&
+    primaryTrend !== "down" &&
+    confirmationTrend !== "down" &&
     aboveVwap
   ) {
     return "upside";
@@ -2355,18 +2371,18 @@ function inferSignalDirectionFromContext(params: {
   if (
     params.changePercent <= -3 &&
     shortText &&
-    fiveMinuteTrend !== "up" &&
-    fifteenMinuteTrend !== "up" &&
+    primaryTrend !== "up" &&
+    confirmationTrend !== "up" &&
     belowVwap
   ) {
     return "downside";
   }
 
-  if (params.changePercent >= 5 && fiveMinuteTrend === "up" && fifteenMinuteTrend !== "down" && aboveVwap) {
+  if (params.changePercent >= 5 && primaryTrend === "up" && confirmationTrend !== "down" && aboveVwap) {
     return "upside";
   }
 
-  if (params.changePercent <= -5 && fiveMinuteTrend === "down" && fifteenMinuteTrend !== "up" && belowVwap) {
+  if (params.changePercent <= -5 && primaryTrend === "down" && confirmationTrend !== "up" && belowVwap) {
     return "downside";
   }
 
@@ -2413,43 +2429,49 @@ function shouldOverrideDirectionWithContext(params: {
 
 function evaluateSetupContext(params: {
   direction: SignalDirection;
-  context5m: SkillEdgeCandle[];
-  context15m: SkillEdgeCandle[];
+  primaryContextCandles: SkillEdgeCandle[];
+  confirmationContextCandles: SkillEdgeCandle[];
+  primaryTimeframe: string;
+  confirmationTimeframe: string;
+  executionLabel: string;
 }) : SetupContextCheck {
-  const fiveMinuteTrend = getSimpleSignalTrend(params.context5m, 8);
-  const fifteenMinuteTrend = getSimpleSignalTrend(params.context15m, 6);
-  const reasons: string[] = [`5m context=${fiveMinuteTrend}`, `15m context=${fifteenMinuteTrend}`];
+  const primaryTrend = getSimpleSignalTrend(params.primaryContextCandles, 8);
+  const confirmationTrend = getSimpleSignalTrend(params.confirmationContextCandles, 6);
+  const reasons: string[] = [
+    `${params.primaryTimeframe} context=${primaryTrend}`,
+    `${params.confirmationTimeframe} context=${confirmationTrend}`,
+  ];
 
   let canBeActive = true;
   let scoreImpact = 0;
 
   const bothOpposeShort =
     params.direction === "downside" &&
-    fiveMinuteTrend === "up" &&
-    fifteenMinuteTrend === "up";
+    primaryTrend === "up" &&
+    confirmationTrend === "up";
   const bothOpposeLong =
     params.direction === "upside" &&
-    fiveMinuteTrend === "down" &&
-    fifteenMinuteTrend === "down";
+    primaryTrend === "down" &&
+    confirmationTrend === "down";
 
   if (bothOpposeShort || bothOpposeLong) {
     canBeActive = false;
     scoreImpact -= 8;
-    reasons.push("5m/15m context is against the trade direction; active status requires stronger trigger.");
+    reasons.push(`${params.primaryTimeframe}/${params.confirmationTimeframe} context is against the trade direction; active status requires stronger trigger.`);
   }
 
-  const recent5m = recentSignalCandles(params.context5m, 6);
-  const last5m = recent5m[recent5m.length - 1] || null;
+  const recentPrimary = recentSignalCandles(params.primaryContextCandles, 6);
+  const lastPrimary = recentPrimary[recentPrimary.length - 1] || null;
   const totalRecentRange =
-    recent5m.length > 0
-      ? Math.max(...recent5m.map((candle) => candle.high)) -
-        Math.min(...recent5m.map((candle) => candle.low))
+    recentPrimary.length > 0
+      ? Math.max(...recentPrimary.map((candle) => candle.high)) -
+        Math.min(...recentPrimary.map((candle) => candle.low))
       : 0;
 
-  if (last5m && totalRecentRange > 0 && candleRange(last5m) / totalRecentRange > 0.62) {
+  if (lastPrimary && totalRecentRange > 0 && candleRange(lastPrimary) / totalRecentRange > 0.62) {
     canBeActive = false;
     scoreImpact -= 6;
-    reasons.push("Setup is dominated by one large 5m candle; downgrade until a cleaner 1m/3m trigger forms.");
+    reasons.push(`Setup is dominated by one large ${params.primaryTimeframe} candle; downgrade until a cleaner ${params.executionLabel} trigger forms.`);
   }
 
   return {
@@ -2457,8 +2479,8 @@ function evaluateSetupContext(params: {
     canBeActive,
     label: reasons.join(" · "),
     reasons,
-    fiveMinuteTrend,
-    fifteenMinuteTrend,
+    fiveMinuteTrend: primaryTrend,
+    fifteenMinuteTrend: confirmationTrend,
     scoreImpact,
   };
 }
@@ -2466,79 +2488,90 @@ function evaluateSetupContext(params: {
 function buildExecutionTrigger(params: {
   symbol: string;
   direction: SignalDirection;
-  oneMinuteCandles: SkillEdgeCandle[];
+  fastExecutionCandles: SkillEdgeCandle[];
+  executionCandles: SkillEdgeCandle[];
+  fastExecutionTimeframe: string;
+  executionTimeframe: string;
   price: number | null;
   assetType: "stock" | "crypto";
 }): ExecutionTriggerCheck {
-  const oneMinute = normalizeSignalCandles(params.oneMinuteCandles);
-  const threeMinute = aggregateCandlesByCount(oneMinute, 3);
-  const last1 = getLastSignalCandle(oneMinute);
-  const prev1 = getPreviousSignalCandle(oneMinute);
-  const last3 = getLastSignalCandle(threeMinute);
-  const prev3 = getPreviousSignalCandle(threeMinute);
-  const recent1 = recentSignalCandles(oneMinute, 8);
-  const recent3 = recentSignalCandles(threeMinute, 4);
-  const avgVolume = averageSignalVolume(oneMinute.slice(0, -1), 20);
-  const currentVolume = last1?.volume || 0;
+  const fastCandles = normalizeSignalCandles(params.fastExecutionCandles);
+  const executionCandles = normalizeSignalCandles(params.executionCandles);
+  const lastFast = getLastSignalCandle(fastCandles);
+  const prevFast = getPreviousSignalCandle(fastCandles);
+  const lastExecution = getLastSignalCandle(executionCandles);
+  const prevExecution = getPreviousSignalCandle(executionCandles);
+  const recentFast = recentSignalCandles(fastCandles, 8);
+  const recentExecution = recentSignalCandles(executionCandles, 4);
+  const avgVolume = averageSignalVolume(fastCandles.slice(0, -1), 20);
+  const currentVolume = lastFast?.volume || 0;
   const volumeExpansion = avgVolume !== null && currentVolume > avgVolume * 1.15;
+  const timeframeLabel = `${params.fastExecutionTimeframe}/${params.executionTimeframe}`;
   const reasons: string[] = [];
 
-  if (oneMinute.length < 6 || !last1) {
+  if (fastCandles.length < 6 || !lastFast) {
     return {
       passed: false,
       canBeActive: false,
       triggerType: "waiting_for_micro_candles",
-      label: "Waiting for 1m/3m trigger candles",
-      reasons: [`${params.symbol}: not enough 1m candles for execution trigger.`],
-      timeframe: "1m/3m",
+      label: `Waiting for ${timeframeLabel} trigger candles`,
+      reasons: [`${params.symbol}: not enough ${params.fastExecutionTimeframe} candles for execution trigger.`],
+      timeframe: timeframeLabel,
       entryReference: params.price,
       stopReference: null,
       scoreImpact: -10,
-      oneMinuteCandles: oneMinute.length,
-      threeMinuteCandles: threeMinute.length,
+      fastExecutionCandles: fastCandles.length,
+      executionCandles: executionCandles.length,
+      oneMinuteCandles: fastCandles.length,
+      threeMinuteCandles: executionCandles.length,
     };
   }
 
-  const priorLows = recent1.slice(0, -1).map((candle) => candle.low);
-  const priorHighs = recent1.slice(0, -1).map((candle) => candle.high);
+  const priorLows = recentFast.slice(0, -1).map((candle) => candle.low);
+  const priorHighs = recentFast.slice(0, -1).map((candle) => candle.high);
   const priorLow = priorLows.length > 0 ? Math.min(...priorLows) : null;
   const priorHigh = priorHighs.length > 0 ? Math.max(...priorHighs) : null;
-  const entryReference = params.price || last1.close;
+  const entryReference = params.price || lastFast.close;
   let triggerType = "waiting_for_trigger";
   let stopReference: number | null = null;
 
   if (params.direction === "downside") {
-    const bearish1 = isBearishTriggerCandle(last1);
-    const bearish3 = isBearishTriggerCandle(last3);
+    const bearishFast = isBearishTriggerCandle(lastFast);
+    const bearishExecution = isBearishTriggerCandle(lastExecution);
     const failedReclaim =
-      Boolean(prev1) &&
-      last1.high > prev1!.high &&
-      last1.close < prev1!.high &&
-      last1.close < last1.open;
-    const lowerHigh3 =
-      Boolean(last3 && prev3) &&
-      last3!.high <= prev3!.high * 1.0025 &&
-      last3!.close < prev3!.close;
-    const microBreak = priorLow !== null && last1.close < priorLow;
+      Boolean(prevFast) &&
+      lastFast.high > prevFast!.high &&
+      lastFast.close < prevFast!.high &&
+      lastFast.close < lastFast.open;
+    const lowerHighExecution =
+      Boolean(lastExecution && prevExecution) &&
+      lastExecution!.high <= prevExecution!.high * 1.0025 &&
+      lastExecution!.close < prevExecution!.close;
+    const microBreak = priorLow !== null && lastFast.close < priorLow;
 
-    if (failedReclaim) reasons.push("1m failed reclaim / stuff candle");
-    if (lowerHigh3) reasons.push("3m lower high confirmed");
-    if (bearish1 || bearish3) reasons.push("bearish 1m/3m trigger candle");
-    if (microBreak) reasons.push("1m micro-support break");
-    if (volumeExpansion) reasons.push("1m volume expands on trigger");
+    if (failedReclaim) reasons.push(`${params.fastExecutionTimeframe} failed reclaim / stuff candle`);
+    if (lowerHighExecution) reasons.push(`${params.executionTimeframe} lower high confirmed`);
+    if (bearishFast || bearishExecution) reasons.push(`bearish ${timeframeLabel} trigger candle`);
+    if (microBreak) reasons.push(`${params.fastExecutionTimeframe} micro-support break`);
+    if (volumeExpansion) reasons.push(`${params.fastExecutionTimeframe} volume expands on trigger`);
 
-    const triggerCount = [failedReclaim, lowerHigh3, bearish1 || bearish3, microBreak].filter(Boolean).length;
+    const triggerCount = [
+      failedReclaim,
+      lowerHighExecution,
+      bearishFast || bearishExecution,
+      microBreak,
+    ].filter(Boolean).length;
     const passed = triggerCount >= 1 && (volumeExpansion || triggerCount >= 2);
 
     if (passed) {
       triggerType = failedReclaim
-        ? "1m_failed_reclaim"
-        : lowerHigh3
-          ? "3m_lower_high"
+        ? `${params.fastExecutionTimeframe}_failed_reclaim`
+        : lowerHighExecution
+          ? `${params.executionTimeframe}_lower_high`
           : microBreak
-            ? "1m_micro_break"
+            ? `${params.fastExecutionTimeframe}_micro_break`
             : "bearish_trigger_candle";
-      stopReference = getRecentHigh([...recent1, ...recent3]);
+      stopReference = getRecentHigh([...recentFast, ...recentExecution]);
     }
 
     return {
@@ -2547,48 +2580,55 @@ function buildExecutionTrigger(params: {
       triggerType,
       label: passed
         ? `Execution trigger: ${reasons.slice(0, 3).join(" / ")}`
-        : "Waiting for 1m/3m short trigger",
-      reasons: reasons.length > 0 ? reasons : ["No clean 1m/3m downside trigger yet."],
-      timeframe: "1m/3m",
+        : `Waiting for ${timeframeLabel} short trigger`,
+      reasons: reasons.length > 0 ? reasons : [`No clean ${timeframeLabel} downside trigger yet.`],
+      timeframe: timeframeLabel,
       entryReference,
       stopReference,
       scoreImpact: passed ? 7 : -12,
-      oneMinuteCandles: oneMinute.length,
-      threeMinuteCandles: threeMinute.length,
+      fastExecutionCandles: fastCandles.length,
+      executionCandles: executionCandles.length,
+      oneMinuteCandles: fastCandles.length,
+      threeMinuteCandles: executionCandles.length,
     };
   }
 
-  const bullish1 = isBullishTriggerCandle(last1);
-  const bullish3 = isBullishTriggerCandle(last3);
+  const bullishFast = isBullishTriggerCandle(lastFast);
+  const bullishExecution = isBullishTriggerCandle(lastExecution);
   const reclaim =
-    Boolean(prev1) &&
-    last1.low < prev1!.low &&
-    last1.close > prev1!.low &&
-    last1.close > last1.open;
-  const higherLow3 =
-    Boolean(last3 && prev3) &&
-    last3!.low >= prev3!.low * 0.9975 &&
-    last3!.close > prev3!.close;
-  const microBreakout = priorHigh !== null && last1.close > priorHigh;
+    Boolean(prevFast) &&
+    lastFast.low < prevFast!.low &&
+    lastFast.close > prevFast!.low &&
+    lastFast.close > lastFast.open;
+  const higherLowExecution =
+    Boolean(lastExecution && prevExecution) &&
+    lastExecution!.low >= prevExecution!.low * 0.9975 &&
+    lastExecution!.close > prevExecution!.close;
+  const microBreakout = priorHigh !== null && lastFast.close > priorHigh;
 
-  if (reclaim) reasons.push("1m liquidity reclaim");
-  if (higherLow3) reasons.push("3m higher low confirmed");
-  if (bullish1 || bullish3) reasons.push("bullish 1m/3m trigger candle");
-  if (microBreakout) reasons.push("1m micro-breakout");
-  if (volumeExpansion) reasons.push("1m volume expands on trigger");
+  if (reclaim) reasons.push(`${params.fastExecutionTimeframe} liquidity reclaim`);
+  if (higherLowExecution) reasons.push(`${params.executionTimeframe} higher low confirmed`);
+  if (bullishFast || bullishExecution) reasons.push(`bullish ${timeframeLabel} trigger candle`);
+  if (microBreakout) reasons.push(`${params.fastExecutionTimeframe} micro-breakout`);
+  if (volumeExpansion) reasons.push(`${params.fastExecutionTimeframe} volume expands on trigger`);
 
-  const triggerCount = [reclaim, higherLow3, bullish1 || bullish3, microBreakout].filter(Boolean).length;
+  const triggerCount = [
+    reclaim,
+    higherLowExecution,
+    bullishFast || bullishExecution,
+    microBreakout,
+  ].filter(Boolean).length;
   const passed = triggerCount >= 1 && (volumeExpansion || triggerCount >= 2);
 
   if (passed) {
     triggerType = reclaim
-      ? "1m_liquidity_reclaim"
-      : higherLow3
-        ? "3m_higher_low"
+      ? `${params.fastExecutionTimeframe}_liquidity_reclaim`
+      : higherLowExecution
+        ? `${params.executionTimeframe}_higher_low`
         : microBreakout
-          ? "1m_micro_breakout"
+          ? `${params.fastExecutionTimeframe}_micro_breakout`
           : "bullish_trigger_candle";
-    stopReference = getRecentLow([...recent1, ...recent3]);
+    stopReference = getRecentLow([...recentFast, ...recentExecution]);
   }
 
   return {
@@ -2597,14 +2637,16 @@ function buildExecutionTrigger(params: {
     triggerType,
     label: passed
       ? `Execution trigger: ${reasons.slice(0, 3).join(" / ")}`
-      : "Waiting for 1m/3m long trigger",
-    reasons: reasons.length > 0 ? reasons : ["No clean 1m/3m upside trigger yet."],
-    timeframe: "1m/3m",
+      : `Waiting for ${timeframeLabel} long trigger`,
+    reasons: reasons.length > 0 ? reasons : [`No clean ${timeframeLabel} upside trigger yet.`],
+    timeframe: timeframeLabel,
     entryReference,
     stopReference,
     scoreImpact: passed ? 7 : -12,
-    oneMinuteCandles: oneMinute.length,
-    threeMinuteCandles: threeMinute.length,
+    fastExecutionCandles: fastCandles.length,
+    executionCandles: executionCandles.length,
+    oneMinuteCandles: fastCandles.length,
+    threeMinuteCandles: executionCandles.length,
   };
 }
 
@@ -2696,8 +2738,8 @@ function applyExecutionTriggerToTradePlan(params: {
     target_3: target3,
     invalidation:
       params.direction === "downside"
-        ? `Invalid if price reclaims and holds above the 1m/3m trigger high (${roundPrice(params.trigger.stopReference)}).`
-        : `Invalid if price loses and holds below the 1m/3m trigger low (${roundPrice(params.trigger.stopReference)}).`,
+        ? `Invalid if price reclaims and holds above the ${params.trigger.timeframe} trigger high (${roundPrice(params.trigger.stopReference)}).`
+        : `Invalid if price loses and holds below the ${params.trigger.timeframe} trigger low (${roundPrice(params.trigger.stopReference)}).`,
     management_plan:
       params.direction === "downside"
         ? "Enter only while price remains near the trigger zone. Cover partial at TP1, then trail above lower highs. Do not chase after TP1 is almost reached."
@@ -2874,46 +2916,50 @@ async function buildAlertDraft(params: {
       : "upside";
 
   const existingCandles = extractCandlesFromScannerRow(params.row);
+  const timeframeConfig = getSignalTimeframeConfig(assetType);
 
   const triggerCandlesResult =
     existingCandles.length > 0
       ? {
           candles: existingCandles,
-          provider: "none" as const,
-          interval: "5m" as const,
+          provider: "scanner_snapshot" as const,
+          interval: asSkillEdgeCandleInterval(timeframeConfig.contextTimeframe),
           error: null,
         }
-      : await fetchSkillEdgeCandles({
+      : await fetchSignalCandlesForTimeframe({
           symbol,
           assetType,
-          interval: "5m",
-          limit: 180,
+          interval: timeframeConfig.contextTimeframe,
+          limit: timeframeConfig.contextLimit,
         });
 
-  const [executionCandlesResult, contextCandlesResult] = await Promise.all([
-    fetchSkillEdgeCandles({
-      symbol,
-      assetType,
-      interval: "1m",
-      limit: 180,
-    }),
-    fetchSkillEdgeCandles({
-      symbol,
-      assetType,
-      interval: "15m",
-      limit: 96,
-    }),
-  ]);
+  const [{ fastExecutionCandlesResult, executionCandlesResult }, contextCandlesResult] =
+    await Promise.all([
+      loadSignalExecutionCandles({
+        symbol,
+        assetType,
+        config: timeframeConfig,
+      }),
+      fetchSignalCandlesForTimeframe({
+        symbol,
+        assetType,
+        interval: timeframeConfig.confirmationTimeframe,
+        limit: timeframeConfig.confirmationLimit,
+      }),
+    ]);
 
   const structureCandles = triggerCandlesResult.candles;
+  const fastExecutionCandles = fastExecutionCandlesResult.candles;
   const executionCandles = executionCandlesResult.candles;
   const contextCandles = contextCandlesResult.candles;
   const contextualDirection = inferSignalDirectionFromContext({
     row: params.row,
     changePercent,
     price,
-    context5m: structureCandles,
-    context15m: contextCandles,
+    primaryContextCandles: structureCandles,
+    confirmationContextCandles: contextCandles,
+    primaryTimeframe: timeframeConfig.contextTimeframe,
+    confirmationTimeframe: timeframeConfig.confirmationTimeframe,
   });
   const workingDirection: SignalDirection = contextualDirection ?? preliminaryDirection;
   const workingAlertType = getEngineAlertType({
@@ -3084,14 +3130,20 @@ async function buildAlertDraft(params: {
 
   const setupContext = evaluateSetupContext({
     direction: finalDirection,
-    context5m: structureCandles,
-    context15m: contextCandles,
+    primaryContextCandles: structureCandles,
+    confirmationContextCandles: contextCandles,
+    primaryTimeframe: timeframeConfig.contextTimeframe,
+    confirmationTimeframe: timeframeConfig.confirmationTimeframe,
+    executionLabel: timeframeConfig.executionLabel,
   });
 
   const executionTrigger = buildExecutionTrigger({
     symbol,
     direction: finalDirection,
-    oneMinuteCandles: executionCandles,
+    fastExecutionCandles,
+    executionCandles,
+    fastExecutionTimeframe: timeframeConfig.fastExecutionTimeframe,
+    executionTimeframe: timeframeConfig.executionTimeframe,
     price,
     assetType,
   });
@@ -3161,9 +3213,9 @@ async function buildAlertDraft(params: {
     reasonParts.push(`context direction bias: ${contextualDirection}`);
   }
   if (engineDirectionBeforeContextOverride !== finalDirection) {
-    reasonParts.push(`direction corrected from ${engineDirectionBeforeContextOverride} to ${finalDirection} by 5m/15m context`);
+    reasonParts.push(`direction corrected from ${engineDirectionBeforeContextOverride} to ${finalDirection} by ${timeframeConfig.contextTimeframe}/${timeframeConfig.confirmationTimeframe} context`);
   }
-  reasonParts.push(executionTrigger.passed ? executionTrigger.label : "waiting for 1m/3m execution trigger");
+  reasonParts.push(executionTrigger.passed ? executionTrigger.label : `${timeframeConfig.executionLabel}: waiting for confirmation`);
   reasonParts.push(setupContext.label);
   if (!entryWindow.passed) reasonParts.push(entryWindow.reason);
 
@@ -3223,8 +3275,8 @@ if (tradePlan.source === "structure") {
     scenario,
     setup_type: setup.name,
     created_at: new Date().toISOString(),
-    setup_timeframe: "5m context / 1m-3m trigger",
-    confirmation_timeframe: "5m/15m context + 1m/3m execution",
+    setup_timeframe: timeframeConfig.setupTimeframeLabel,
+    confirmation_timeframe: timeframeConfig.confirmationTimeframeLabel,
     confidence_tier: displayConfidenceTier,
     why_signal_fired:
       [
@@ -3241,7 +3293,7 @@ if (tradePlan.source === "structure") {
       `Volume gate: ${volumeGate.label}`,
       executionTrigger.passed
         ? `Execution trigger: ${executionTrigger.label}`
-        : "Execution trigger: wait for 1m/3m confirmation before entry",
+        : `Execution trigger: wait for ${timeframeConfig.executionLabel} confirmation before entry`,
       `Context: ${setupContext.label}`,
       `Entry window: ${entryWindow.reason}`,
       ...setup.checklist,
@@ -3292,6 +3344,10 @@ if (tradePlan.source === "structure") {
         candlesInterval: triggerCandlesResult.interval,
         candlesCount: structureCandles.length,
         candlesError: triggerCandlesResult.error,
+        fastExecutionCandlesProvider: fastExecutionCandlesResult.provider,
+        fastExecutionCandlesInterval: fastExecutionCandlesResult.interval,
+        fastExecutionCandlesCount: fastExecutionCandles.length,
+        fastExecutionCandlesError: fastExecutionCandlesResult.error,
         executionCandlesProvider: executionCandlesResult.provider,
         executionCandlesInterval: executionCandlesResult.interval,
         executionCandlesCount: executionCandles.length,
@@ -3300,6 +3356,7 @@ if (tradePlan.source === "structure") {
         contextCandlesInterval: contextCandlesResult.interval,
         contextCandlesCount: contextCandles.length,
         contextCandlesError: contextCandlesResult.error,
+        timeframeConfig,
         vwap: tradePlan.vwap,
         atr: tradePlan.atr,
         nearestSupport: tradePlan.nearest_support,
@@ -3405,17 +3462,17 @@ async function loadRecentOrLatestMarketRows({
   }
 
   let latestQuery = supabaseAdmin
-    .from("market_scanner_snapshots")
-    .select("*");
+  .from("market_scanner_snapshots")
+  .select("*");
 
-  if (assetTypeFilter !== "all") {
-    latestQuery = latestQuery.eq("asset_type", assetTypeFilter);
-  }
+if (assetTypeFilter !== "all") {
+  latestQuery = latestQuery.eq("asset_type", assetTypeFilter);
+}
 
-  const latestResult = await latestQuery
-    .order("scanned_at", { ascending: false })
-    .order("opportunity_score", { ascending: false })
-    .limit(limit);
+const latestResult = await latestQuery
+  .order("scanned_at", { ascending: false })
+  .order("opportunity_score", { ascending: false })
+  .limit(limit);
 
   if (latestResult.error) {
     return {
@@ -3427,16 +3484,17 @@ async function loadRecentOrLatestMarketRows({
     };
   }
 
-  const latestRows = (latestResult.data || []) as MarketScannerRow[];
+  const fallbackRows = (latestResult.data || []) as MarketScannerRow[];
 
   return {
-    rows: latestRows,
+    rows: fallbackRows,
     recentRowsLoaded: 0,
-    fallbackRowsLoaded: latestRows.length,
-    usedFallback: true,
+    fallbackRowsLoaded: fallbackRows.length,
+    usedFallback: fallbackRows.length > 0,
     error: null,
   };
 }
+
 
 export type MarketAlertGenerationSource = "manual" | "cron" | "internal";
 
@@ -3469,34 +3527,34 @@ export async function generateMarketAlertsInternal(params: {
   const marketSince = new Date(Date.now() - marketWindowMinutes * 60 * 1000).toISOString();
   const socialSince = new Date(Date.now() - socialWindowMinutes * 60 * 1000).toISOString();
 
-  const preGenerationNotes: string[] = [];
+const preGenerationNotes: string[] = [];
 
-  if (
-    params.source === "cron" &&
-    (assetTypeFilter === "stock" || assetTypeFilter === "all")
-  ) {
-    const stockSeed = await refreshStockScannerSnapshotsForSignals();
+if (
+  params.source === "cron" &&
+  (assetTypeFilter === "stock" || assetTypeFilter === "all")
+) {
+  const stockSeed = await refreshStockScannerSnapshotsForSignals();
 
-    preGenerationNotes.push(
-      `Stock signal seed: enabled=${stockSeed.enabled}, loaded=${stockSeed.loaded}, inserted=${stockSeed.inserted}${
-        stockSeed.error ? `, error=${stockSeed.error}` : ""
-      }`
-    );
-  }
+  preGenerationNotes.push(
+    `Stock signal seed: enabled=${stockSeed.enabled}, loaded=${stockSeed.loaded}, inserted=${stockSeed.inserted}${
+      stockSeed.error ? `, error=${stockSeed.error}` : ""
+    }`
+  );
+}
 
   const [marketLoad, socialResult] = await Promise.all([
-    loadRecentOrLatestMarketRows({
-      marketSince,
-      limit: loadLimit,
-      assetTypeFilter,
-    }),
-    supabaseAdmin
-      .from("market_social_mentions")
-      .select("*")
-      .gte("scanned_at", socialSince)
-      .order("social_score", { ascending: false })
-      .limit(loadLimit),
-  ]);
+  loadRecentOrLatestMarketRows({
+    marketSince,
+    limit: loadLimit,
+    assetTypeFilter,
+  }),
+  supabaseAdmin
+    .from("market_social_mentions")
+    .select("*")
+    .gte("scanned_at", socialSince)
+    .order("social_score", { ascending: false })
+    .limit(loadLimit),
+]);
 
   const diagnosticNotes: string[] = [...preGenerationNotes];
 
