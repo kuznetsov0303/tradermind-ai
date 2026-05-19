@@ -1161,7 +1161,6 @@ if (page === "about") {
               {t.lang}
             </button>
 
-            <ButtonX onClick={() => handleCheckout("demo", "monthly")}>{t.requestDemo}</ButtonX>
 
             {currentUserEmail ? (
               <>
@@ -2842,6 +2841,37 @@ function PricingPage({
   const copy = getPricingShowcaseCopy(t.lang);
   const elitePlan = copy.plans.find((plan: any) => plan.id === "elite") ?? copy.plans[2];
 
+const demoCopy =
+  t.lang === "EN"
+    ? {
+        badge: "Elite demo",
+        title: "Try SkillEdge Elite for 3 days",
+        text:
+          "Get full Elite access for 3 days: journal, AI Coach, reports, Market Intelligence, AI Alerts and the floating alerts widget.",
+        warning:
+          "Best activated Monday–Thursday. We do not recommend activating the demo on Friday because the US stock market is closed on the weekend and live stock signals will be limited. Crypto signals may still appear.",
+        button: "Activate demo",
+      }
+    : t.lang === "UA"
+      ? {
+          badge: "Elite demo",
+          title: "Спробуй SkillEdge Elite на 3 дні",
+          text:
+            "Отримай повний Elite-доступ на 3 дні: журнал, AI Coach, звіти, Market Intelligence, AI Alerts і floating alerts widget.",
+          warning:
+            "Краще активувати з понеділка по четвер. Не рекомендуємо оплачувати demo у пʼятницю, тому що фондовий ринок США закритий на вихідних і live stock-сигналів буде менше. Crypto-сигнали можуть продовжувати зʼявлятися.",
+          button: "Активувати demo",
+        }
+      : {
+          badge: "Elite demo",
+          title: "Попробуй SkillEdge Elite на 3 дня",
+          text:
+            "Полный Elite-доступ на 3 дня: журнал, AI Coach, отчёты, Market Intelligence, AI Alerts и floating alerts widget.",
+          warning:
+            "Лучше активировать с понедельника по четверг. Не рекомендуем оплачивать demo в пятницу, потому что фондовый рынок США закрыт на выходных и live stock-сигналов будет меньше. Crypto-сигналы могут продолжать появляться.",
+          button: "Активировать demo",
+        };
+
   const getPlanPrice = (plan: any) => {
     const price = plan.price?.[billing];
 
@@ -3084,6 +3114,45 @@ function PricingPage({
           </motion.div>
         ))}
       </section>
+
+<section className="relative -mt-8 overflow-hidden rounded-[2rem] border border-amber-200/16 bg-white/[0.035] p-4 shadow-[0_24px_90px_rgba(0,0,0,0.16)] backdrop-blur-xl md:p-5">
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(251,191,36,0.12),transparent_30%),radial-gradient(circle_at_92%_20%,rgba(34,211,238,0.10),transparent_32%)]" />
+
+  <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div className="max-w-4xl">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-amber-200/20 bg-amber-200/[0.08] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-amber-100/78">
+          {demoCopy.badge}
+        </span>
+
+        <span className="text-xs font-bold text-white/38">
+          3 days · full Elite access
+        </span>
+      </div>
+
+      <h3 className="mt-3 text-xl font-black tracking-[-0.025em] text-white md:text-2xl">
+        {demoCopy.title}
+      </h3>
+
+      <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-white/58">
+        {demoCopy.text}
+      </p>
+
+      <p className="mt-3 max-w-4xl rounded-2xl border border-amber-200/14 bg-amber-200/[0.055] px-4 py-3 text-xs font-semibold leading-5 text-amber-50/72">
+        {demoCopy.warning}
+      </p>
+    </div>
+
+    <button
+      type="button"
+      onClick={() => handleCheckout("demo", "monthly")}
+      className="inline-flex shrink-0 items-center justify-center rounded-full border border-cyan-100/18 bg-cyan-50 px-5 py-3 text-sm font-black text-[#06111d] shadow-[0_14px_44px_rgba(103,232,249,0.14)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_20px_70px_rgba(103,232,249,0.2)]"
+    >
+      {demoCopy.button}
+      <span className="ml-2">→</span>
+    </button>
+  </div>
+</section>
 
       <section className="relative overflow-hidden rounded-[2.8rem] border border-cyan-200/12 bg-[#081522]/78 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_10%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
