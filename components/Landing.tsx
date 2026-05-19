@@ -10,14 +10,15 @@ import BrandMark from "@/components/marketing/BrandMark";
 import TradingBackground from "@/components/marketing/TradingBackground";
 
 type Language = "en" | "ru" | "ua";
-type PageKey = "home" | "product" | "pricing" | "team";
+type PageKey = "home" | "desk" | "product" | "pricing" | "team";
 type BillingPeriod = "monthly" | "halfyear" | "yearly";
 type AuthMode = "login" | "register" | null;
 
-const navKeys: PageKey[] = ["home", "product", "pricing", "team"];
+const navKeys: PageKey[] = ["home", "desk", "product", "pricing", "team"];
 
 const pageHref: Record<PageKey, string> = {
   home: "/",
+  desk: "/desk",
   product: "/product",
   pricing: "/pricing",
   team: "/about",
@@ -35,6 +36,7 @@ const dict = {
     viewAbout: "About us",
     nav: {
       home: "Home",
+      desk: "Desk",
       product: "Product",
       pricing: "Pricing",
       team: "About us",
@@ -327,6 +329,7 @@ const dict = {
     viewAbout: "О нас",
     nav: {
       home: "Главная",
+      desk: "Desk",
       product: "Продукт",
       pricing: "Тарифы",
       team: "О нас",
@@ -619,6 +622,7 @@ const dict = {
     viewAbout: "Про нас",
     nav: {
       home: "Головна",
+      desk: "Desk",
       product: "Продукт",
       pricing: "Тарифи",
       team: "Про нас",
@@ -985,6 +989,7 @@ useEffect(() => {
 
     if (
   page === "home" ||
+  page === "desk" ||
   page === "product" ||
   page === "pricing" ||
   page === "team"
@@ -1141,13 +1146,15 @@ if (page === "about") {
     }
   };
 
+const backgroundVariant = active === "desk" ? "product" : active;
+  
   return (
   <div className="relative isolate min-h-screen overflow-hidden bg-[#070b16] text-white">
     <AnimatePresence>
       {showSplashIntro ? <SkillEdgeSplashIntro language={language} /> : null}
     </AnimatePresence>
 
-    <TradingBackground variant={active} />
+    <TradingBackground variant={backgroundVariant} />
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070b16]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-3">
@@ -1287,9 +1294,10 @@ if (page === "about") {
       <main className="relative z-10 mx-auto max-w-7xl px-4 py-12 md:px-8">
         <AnimatePresence mode="wait">
           {active === "home" && <HomePage key="home" t={t} setActive={setActive} />}
-          {active === "product" && <ProductPage key="product" t={t} setActive={setActive} />}
-          {active === "pricing" && <PricingPage key="pricing" t={t} handleCheckout={handleCheckout} checkoutStatus={checkoutStatus} />}
-          {active === "team" && <TeamPage key="team" t={t} setActive={setActive} />}
+{active === "desk" && <DeskPage key="desk" t={t} setActive={setActive} />}
+{active === "product" && <ProductPage key="product" t={t} setActive={setActive} />}
+{active === "pricing" && <PricingPage key="pricing" t={t} handleCheckout={handleCheckout} checkoutStatus={checkoutStatus} />}
+{active === "team" && <TeamPage key="team" t={t} setActive={setActive} />}
         </AnimatePresence>
       </main>
 
@@ -2307,6 +2315,364 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
   );
 }
 
+function DeskVideoPreview() {
+  return (
+    <div className="relative">
+      <motion.div
+        initial={{ opacity: 0, y: 24, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 0.28, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="relative overflow-hidden rounded-[2.8rem] border border-cyan-200/12 bg-[#06111d]/72 p-3 shadow-[0_34px_130px_rgba(8,47,73,0.22)] backdrop-blur-2xl"
+      >
+        <div className="pointer-events-none absolute inset-0 z-20 rounded-[2.8rem] bg-[radial-gradient(circle_at_20%_0%,rgba(56,214,255,0.16),transparent_34%),radial-gradient(circle_at_90%_20%,rgba(52,211,153,0.11),transparent_32%),linear-gradient(180deg,rgba(3,7,18,0.16),rgba(3,7,18,0.42))]" />
+
+        <div className="pointer-events-none absolute inset-0 z-30 rounded-[2.8rem] ring-1 ring-inset ring-white/8" />
+
+        <motion.div
+          aria-hidden
+          animate={{ x: ["-25%", "125%"] }}
+          transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+          className="pointer-events-none absolute left-0 top-0 z-30 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/42 to-transparent"
+        />
+
+        <div className="relative z-10 overflow-hidden rounded-[2.25rem] bg-[#020711]">
+          <video
+            src="/media/desk-preview.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            className="h-[620px] w-full object-cover opacity-[0.42] mix-blend-screen saturate-[0.72] contrast-[1.08] brightness-[0.68]"
+          />
+
+          <div className="pointer-events-none absolute inset-0 bg-[#06111d]/34" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#06111d] via-[#06111d]/18 to-[#06111d]/45" />
+
+          <div className="pointer-events-none absolute left-5 top-5 rounded-full border border-cyan-200/16 bg-cyan-200/[0.065] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-50/70 backdrop-blur-xl">
+            SkillEdge AI visual layer
+          </div>
+
+          <div className="pointer-events-none absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-[#06111d]/62 p-4 backdrop-blur-xl">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[0.22em] text-white/38">
+                  Live desk preview
+                </div>
+                <div className="mt-1 text-xl font-black text-white">
+                  Market context → plan → review
+                </div>
+              </div>
+
+              <div className="rounded-full border border-emerald-200/20 bg-emerald-200/[0.08] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100/75">
+                Active
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="pointer-events-none absolute -right-16 top-12 h-44 w-44 rounded-full bg-cyan-300/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 left-10 h-52 w-52 rounded-full bg-emerald-300/8 blur-3xl" />
+    </div>
+  );
+}
+
+function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
+  const language: Language =
+    t.lang === "RU" ? "ru" : t.lang === "UA" ? "ua" : "en";
+
+  const copy =
+    language === "en"
+      ? {
+          eyebrow: "SkillEdge AI Trading Desk",
+          title: "Turn market noise into a clear execution process.",
+          text:
+            "A premium workspace for traders who want structure: market context, AI alerts, journal, screenshots, reports and review logic in one connected desk.",
+          primary: "Open pricing",
+          secondary: "View product",
+          outcomeTitle: "What the trader gets",
+          outcomeText:
+            "SkillEdge AI is not built to throw random signals. It is built to help you understand the setup, the risk, the trigger and your own execution quality.",
+          workflowTitle: "Desk workflow",
+          finalTitle: "Build your process like a trading desk.",
+          finalText:
+            "Use SkillEdge AI to scan cleaner, plan faster, track mistakes and improve the way you trade over time.",
+          cards: [
+            ["Market Intelligence", "Find stocks and crypto with real activity, catalysts and context before wasting time on dead charts."],
+            ["AI Alerts", "Elite signals include setup, direction, trigger zone, invalidation, targets, risk notes and outcome tracking."],
+            ["Journal + Screenshots", "Save every trade with context, chart screenshots, emotions, mistakes, lessons and execution notes."],
+            ["Reports", "Turn your trades into structured feedback: PnL, win rate, mistakes, best setups and review insights."],
+          ],
+          workflow: [
+            ["01", "Scan", "Find active tickers and market context."],
+            ["02", "Validate", "Check catalyst, volume, structure and risk."],
+            ["03", "Plan", "Define trigger, entry zone, stop and targets."],
+            ["04", "Execute", "Trade with a clearer desk plan."],
+            ["05", "Review", "Connect the outcome back to your journal."],
+          ],
+          bullets: [
+            "Less random clicking",
+            "Cleaner risk decisions",
+            "Better post-trade review",
+            "Personal edge from your own data",
+          ],
+        }
+      : language === "ua"
+        ? {
+            eyebrow: "SkillEdge AI Trading Desk",
+            title: "Перетвори ринковий шум на чіткий процес виконання.",
+            text:
+              "Преміальний робочий простір для трейдера: ринковий контекст, AI-сигнали, журнал, скріншоти, звіти й логіка розбору в одному desk.",
+            primary: "Відкрити тарифи",
+            secondary: "Подивитись продукт",
+            outcomeTitle: "Що отримує трейдер",
+            outcomeText:
+              "SkillEdge AI створюється не для випадкових сигналів. Система допомагає зрозуміти сетап, ризик, тригер і якість власного виконання.",
+            workflowTitle: "Desk workflow",
+            finalTitle: "Будуй процес як trading desk.",
+            finalText:
+              "Використовуй SkillEdge AI, щоб чистіше сканувати ринок, швидше планувати, бачити помилки й покращувати свою торгівлю з часом.",
+            cards: [
+              ["Market Intelligence", "Знаходь акції та крипту з реальною активністю, каталізаторами й контекстом."],
+              ["AI Alerts", "Elite-сигнали містять сетап, напрямок, тригер, invalidation, цілі, risk note та outcome tracking."],
+              ["Журнал + скріншоти", "Зберігай кожну угоду з контекстом, скріншотами, емоціями, помилками, уроками й нотатками."],
+              ["Звіти", "Перетворюй угоди в структурний feedback: PnL, win rate, помилки, найкращі сетапи й висновки."],
+            ],
+            workflow: [
+              ["01", "Scan", "Знайди активні тікери та ринковий контекст."],
+              ["02", "Validate", "Перевір каталізатор, обʼєм, структуру й ризик."],
+              ["03", "Plan", "Визнач тригер, зону входу, стоп і цілі."],
+              ["04", "Execute", "Торгуй з чіткішим планом."],
+              ["05", "Review", "Звʼяжи результат із журналом."],
+            ],
+            bullets: [
+              "Менше випадкових входів",
+              "Чистіші risk-рішення",
+              "Кращий post-trade review",
+              "Особиста перевага з твоїх даних",
+            ],
+          }
+        : {
+            eyebrow: "SkillEdge AI Trading Desk",
+            title: "Преврати рыночный шум в чёткий процесс исполнения.",
+            text:
+              "Премиальное рабочее пространство для трейдера: рыночный контекст, AI-сигналы, журнал, скриншоты, отчёты и логика разбора в одном desk.",
+            primary: "Открыть тарифы",
+            secondary: "Посмотреть продукт",
+            outcomeTitle: "Что получает трейдер",
+            outcomeText:
+              "SkillEdge AI создаётся не для случайных сигналов. Система помогает понять сетап, риск, триггер и качество собственного исполнения.",
+            workflowTitle: "Desk workflow",
+            finalTitle: "Построй процесс как trading desk.",
+            finalText:
+              "Используй SkillEdge AI, чтобы чище сканировать рынок, быстрее планировать, видеть ошибки и улучшать свою торговлю со временем.",
+            cards: [
+              ["Market Intelligence", "Находи акции и крипту с реальной активностью, катализаторами и контекстом до того, как тратить время на мёртвые графики."],
+              ["AI Alerts", "Elite-сигналы включают сетап, направление, триггер, invalidation, цели, risk note и outcome tracking."],
+              ["Журнал + скриншоты", "Сохраняй каждую сделку с контекстом, скриншотами, эмоциями, ошибками, уроками и заметками."],
+              ["Отчёты", "Превращай сделки в структурный feedback: PnL, win rate, ошибки, лучшие сетапы и выводы."],
+            ],
+            workflow: [
+              ["01", "Scan", "Найти активные тикеры и рыночный контекст."],
+              ["02", "Validate", "Проверить катализатор, объём, структуру и риск."],
+              ["03", "Plan", "Определить триггер, зону входа, стоп и цели."],
+              ["04", "Execute", "Торговать с более чётким планом."],
+              ["05", "Review", "Связать результат обратно с журналом."],
+            ],
+            bullets: [
+              "Меньше случайных входов",
+              "Чище решения по риску",
+              "Сильнее post-trade review",
+              "Личное преимущество из твоих данных",
+            ],
+          };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 18 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -18 }}
+      transition={{ duration: 0.38 }}
+      className="mx-auto w-full max-w-[1700px] space-y-10 px-4 pb-28 pt-8 sm:px-6 lg:px-10 xl:px-14"
+    >
+      <section className="relative overflow-hidden rounded-[3.1rem] border border-cyan-100/14 bg-[#071522]/90 p-5 shadow-[0_38px_150px_rgba(8,47,73,0.30)] backdrop-blur-2xl md:p-7 lg:p-10">
+  <video
+    src="/media/desk-preview.mp4"
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="metadata"
+    className="absolute left-0 top-1/2 h-[86%] w-full -translate-y-1/2 object-cover object-center opacity-[0.42] saturate-[0.95] contrast-[1.12] brightness-[0.92]"
+  />
+
+  <div className="absolute inset-0 bg-[#06111d]/34" />
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(56,214,255,0.16),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(52,211,153,0.12),transparent_30%),linear-gradient(90deg,rgba(3,7,18,0.82),rgba(3,7,18,0.52)_48%,rgba(3,7,18,0.22)_100%)]" />
+  <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:66px_66px] opacity-18" />
+
+  <motion.div
+    aria-hidden
+    animate={{ x: ["-20%", "120%"] }}
+    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+    className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent"
+  />
+
+  <div className="relative z-10 flex min-h-[560px] items-center py-8 md:min-h-[610px] lg:py-10">
+    <div className="max-w-4xl">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08, duration: 0.45 }}
+        className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] text-cyan-50/76 backdrop-blur-xl"
+      >
+        {copy.eyebrow}
+      </motion.div>
+
+      <motion.h1
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16, duration: 0.6 }}
+        className="mt-6 max-w-4xl text-5xl font-black leading-[0.9] tracking-[-0.075em] text-white md:text-6xl xl:text-7xl"
+      >
+        {copy.title}
+      </motion.h1>
+
+      <motion.p
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.26, duration: 0.55 }}
+        className="mt-7 max-w-2xl text-base font-semibold leading-8 text-white/68 md:text-lg"
+      >
+        {copy.text}
+      </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.36, duration: 0.5 }}
+        className="mt-9 flex flex-wrap gap-3"
+      >
+        <button
+          type="button"
+          onClick={() => setActive("pricing")}
+          className="group relative overflow-hidden rounded-full border border-cyan-100/20 bg-gradient-to-r from-white via-cyan-50 to-emerald-50 px-7 py-3.5 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(103,232,249,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(103,232,249,0.26)]"
+        >
+          <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
+          <span className="relative">{copy.primary} →</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActive("product")}
+          className="rounded-full border border-cyan-200/22 bg-cyan-200/[0.07] px-7 py-3.5 text-sm font-black text-cyan-50 transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-200/[0.12]"
+        >
+          {copy.secondary}
+          <span className="ml-2">↗</span>
+        </button>
+      </motion.div>
+
+      <div className="mt-8 grid max-w-4xl gap-3 sm:grid-cols-2">
+        {copy.bullets.map((item, index) => (
+          <motion.div
+            key={item}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.42 + index * 0.08, duration: 0.42 }}
+            className="rounded-2xl border border-white/10 bg-[#06111d]/54 px-4 py-3 text-sm font-black text-white/74 backdrop-blur-xl"
+          >
+            <span className="mr-2 text-cyan-200">✓</span>
+            {item}
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+      <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        {copy.cards.map((card, index) => (
+          <motion.button
+            key={card[0]}
+            type="button"
+            onClick={() => setActive(index === 1 ? "pricing" : "product")}
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ delay: index * 0.08, duration: 0.45 }}
+            className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 text-left shadow-[0_26px_100px_rgba(0,0,0,0.20)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/26 hover:bg-cyan-200/[0.07]"
+          >
+            <div className="absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-300/0 blur-3xl transition duration-500 group-hover:bg-cyan-300/14" />
+            <div className="relative">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/16 bg-cyan-200/[0.08] text-sm font-black text-cyan-50">
+                0{index + 1}
+              </div>
+              <h3 className="mt-6 text-xl font-black text-white">{card[0]}</h3>
+              <p className="mt-3 text-sm font-semibold leading-7 text-white/55">{card[1]}</p>
+              <div className="mt-6 inline-flex rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-black text-white/62 transition group-hover:border-cyan-200/28 group-hover:text-cyan-50">
+                Explore <span className="ml-2">→</span>
+              </div>
+            </div>
+          </motion.button>
+        ))}
+      </section>
+
+      <section className="relative overflow-hidden rounded-[3rem] border border-cyan-200/12 bg-[#081522]/82 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_12%_90%,rgba(16,185,129,0.12),transparent_34%)]" />
+
+        <div className="relative grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
+          <div>
+            <Badge>{copy.workflowTitle}</Badge>
+            <h2 className="mt-6 text-4xl font-black leading-tight text-white md:text-5xl">
+              {copy.outcomeTitle}
+            </h2>
+            <p className="mt-5 max-w-2xl text-sm font-semibold leading-7 text-white/58">
+              {copy.outcomeText}
+            </p>
+          </div>
+
+          <div className="grid gap-3">
+            {copy.workflow.map((step, index) => (
+              <motion.div
+                key={step[0]}
+                initial={{ opacity: 0, x: 24 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: index * 0.07, duration: 0.42 }}
+                className="grid gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 md:grid-cols-[80px_160px_1fr] md:items-center"
+              >
+                <div className="text-sm font-black text-cyan-100/65">{step[0]}</div>
+                <div className="text-lg font-black text-white">{step[1]}</div>
+                <div className="text-sm font-semibold leading-6 text-white/52">{step[2]}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/[0.035] p-8 text-center shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-12">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,214,255,0.13),transparent_36%),radial-gradient(circle_at_50%_100%,rgba(52,211,153,0.10),transparent_34%)]" />
+        <div className="relative mx-auto max-w-3xl">
+          <h2 className="text-4xl font-black tracking-[-0.05em] text-white md:text-6xl">
+            {copy.finalTitle}
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-sm font-semibold leading-7 text-white/58 md:text-base">
+            {copy.finalText}
+          </p>
+
+          <button
+            type="button"
+            onClick={() => setActive("pricing")}
+            className="group relative mt-8 overflow-hidden rounded-full border border-cyan-100/20 bg-gradient-to-r from-white via-cyan-50 to-emerald-50 px-8 py-4 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(103,232,249,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(103,232,249,0.26)]"
+          >
+            <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
+            <span className="relative">{copy.primary} →</span>
+          </button>
+        </div>
+      </section>
+    </motion.div>
+  );
+}
 
 function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
   const p = t.productPage;
