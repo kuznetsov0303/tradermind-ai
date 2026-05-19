@@ -38,6 +38,7 @@ type TabId =
   | "billing";
 
 type PlanId = "core" | "edge" | "elite";
+type PurchasePlanId = PlanId | "demo";
 type BillingPeriod = "monthly" | "halfyear" | "yearly";
 type AlertAssetFilter = "all" | "stock" | "crypto";
 
@@ -657,15 +658,19 @@ const dashboardDict = {
       monthly: "1 month",
       halfyear: "6 months",
       yearly: "1 year",
-      demo: "7-day trial",
+      demo: "3-day Elite demo",
     },
     demo: {
-      label: "Trial version",
-      title: "Your 7-day demo access is active",
-      text:
-        "This is a trial version of the SkillEdge Core plan with a limit of 10 AI requests. After the trial ends, access will be closed unless you choose a paid plan.",
-      short: "7-day trial. Limit: 10 AI requests.",
-    },
+  label: "Elite demo",
+  title: "Your 3-day Elite demo access is active",
+  text:
+    "This is a 3-day SkillEdge Elite demo with maximum platform access: journal, AI Coach, reports, Market Intelligence and AI Alerts. After the demo ends, access will be closed unless you choose a paid plan.",
+  short:
+    "3-day Elite demo. Best activated Monday–Thursday; live stock signals are limited on weekends.",
+  cta: "Activate 3-day Elite demo",
+  warning:
+    "Best time to activate: Monday–Thursday. We do not recommend activating the demo on Friday because the US stock market is closed on the weekend and live stock signals will be limited. Crypto signals may still appear.",
+},
     billing: {
       title: "Plan & billing",
       text: "Information about your current plan, payments and subscription period.",
@@ -1253,15 +1258,19 @@ const dashboardDict = {
       monthly: "1 месяц",
       halfyear: "6 месяцев",
       yearly: "1 год",
-      demo: "7-дневная пробная версия",
+      demo: "3-дневный Elite demo",
     },
     demo: {
-      label: "Пробная версия",
-      title: "У вас активирован 7-дневный пробный доступ",
-      text:
-        "Это пробная версия тарифа SkillEdge Core с лимитом 10 AI-запросов. После окончания срока доступ будет закрыт, если вы не выберете основной тариф.",
-      short: "7-дневная пробная версия. Лимит: 10 AI-запросов.",
-    },
+  label: "Elite demo",
+  title: "У вас активирован 3-дневный Elite demo-доступ",
+  text:
+    "Это 3-дневный demo-доступ к SkillEdge Elite с максимальными возможностями платформы: журнал, AI Coach, отчёты, Market Intelligence и AI Alerts. После окончания demo доступ будет закрыт, если вы не выберете платный тариф.",
+  short:
+    "3-дневный Elite demo. Лучше активировать с понедельника по четверг; на выходных live stock-сигналы ограничены.",
+  cta: "Активировать 3-дневный Elite demo",
+  warning:
+    "Лучшее время для активации: понедельник–четверг. Не рекомендуем оплачивать demo в пятницу, потому что фондовый рынок США закрыт на выходных и live stock-сигналов будет меньше. Crypto-сигналы могут продолжать появляться.",
+},
     billing: {
       title: "Тариф и оплата",
       text: "Информация про текущий тариф, оплаты и срок действия подписки.",
@@ -1848,15 +1857,19 @@ const dashboardDict = {
       monthly: "1 місяць",
       halfyear: "6 місяців",
       yearly: "1 рік",
-      demo: "7-денна пробна версія",
+      demo: "3-денний Elite demo",
     },
     demo: {
-      label: "Пробна версія",
-      title: "У вас активовано 7-денний пробний доступ",
-      text:
-        "Це пробна версія тарифу SkillEdge Core з лімітом 10 AI-запитів. Після завершення пробного періоду доступ буде закрито, якщо ви не оберете основний тариф.",
-      short: "7-денна пробна версія. Ліміт: 10 AI-запитів.",
-    },
+  label: "Elite demo",
+  title: "У вас активовано 3-денний Elite demo-доступ",
+  text:
+    "Це 3-денний demo-доступ до SkillEdge Elite з максимальними можливостями платформи: журнал, AI Coach, звіти, Market Intelligence та AI Alerts. Після завершення demo доступ буде закрито, якщо ви не оберете платний тариф.",
+  short:
+    "3-денний Elite demo. Краще активувати з понеділка по четвер; на вихідних live stock-сигнали обмежені.",
+  cta: "Активувати 3-денний Elite demo",
+  warning:
+    "Найкращий час для активації: понеділок–четвер. Не рекомендуємо оплачувати demo у пʼятницю, тому що фондовий ринок США закритий на вихідних і live stock-сигналів буде менше. Crypto-сигнали можуть продовжувати зʼявлятися.",
+},
     billing: {
       title: "Тариф і оплата",
       text: "Інформація про поточний тариф, оплати та строк дії підписки.",
@@ -20463,7 +20476,7 @@ function BillingTab({
 }) {
   const activePlan = normalizePlanId(subscription.plan);
   const activeLimits = getPlanLimits(activePlan);
-const [checkoutLoadingPlan, setCheckoutLoadingPlan] = useState<PlanId | null>(
+const [checkoutLoadingPlan, setCheckoutLoadingPlan] = useState<PurchasePlanId | null>(
   null
 );
 const [checkoutError, setCheckoutError] = useState("");
@@ -20532,7 +20545,7 @@ const [checkoutError, setCheckoutError] = useState("");
     },
   ];
 
-  const handleChoosePlan = async (planId: PlanId) => {
+  const handleChoosePlan = async (planId: PurchasePlanId) => {
   try {
     setCheckoutError("");
     setCheckoutLoadingPlan(planId);
@@ -20755,6 +20768,37 @@ const [checkoutError, setCheckoutError] = useState("");
             {t.billing.comparePlansText}
           </div>
         </div>
+
+<div className="mt-6 overflow-hidden rounded-[1.75rem] border border-amber-300/20 bg-gradient-to-br from-amber-300/10 via-white/[0.035] to-cyan-300/[0.04] p-5">
+  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <div>
+      <div className="text-xs font-black uppercase tracking-[0.22em] text-amber-100/70">
+        {t.demo.label}
+      </div>
+
+      <h3 className="mt-2 text-2xl font-black text-white">
+        {t.demo.title}
+      </h3>
+
+      <p className="mt-2 max-w-3xl text-sm leading-6 text-white/58">
+        {t.demo.text}
+      </p>
+
+      <div className="mt-4 rounded-2xl border border-amber-200/18 bg-amber-200/[0.07] px-4 py-3 text-xs leading-5 text-amber-50/78">
+        {t.demo.warning}
+      </div>
+    </div>
+
+    <button
+      type="button"
+      onClick={() => handleChoosePlan("demo")}
+      disabled={checkoutLoadingPlan === "demo"}
+      className="shrink-0 rounded-full bg-gradient-to-r from-amber-100 via-white to-cyan-100 px-5 py-3 text-sm font-black text-[#06111d] shadow-[0_16px_45px_rgba(251,191,36,0.16)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      {checkoutLoadingPlan === "demo" ? t.billing.creatingCheckout : t.demo.cta}
+    </button>
+  </div>
+</div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-3">
           {planOrder.map((planId) => {

@@ -69,9 +69,9 @@ function getExpiresAt(period: BillingPeriod, isDemo = false) {
   const now = new Date();
 
   if (isDemo) {
-    now.setDate(now.getDate() + 7);
-    return now.toISOString();
-  }
+  now.setDate(now.getDate() + 3);
+  return now.toISOString();
+}
 
   if (period === "monthly") {
     now.setMonth(now.getMonth() + 1);
@@ -191,7 +191,7 @@ export async function POST(req: Request) {
     const isDemo = Boolean(payment.is_demo);
 
     const expiresAt = getExpiresAt(billingPeriod, isDemo);
-    const aiMonthlyLimit = isDemo ? 10 : getAiLimit(planId);
+    const aiMonthlyLimit = isDemo ? getAiLimit("elite") : getAiLimit(planId);
 
     const { error: subscriptionDeactivateError } = await supabaseAdmin
       .from("subscriptions")
