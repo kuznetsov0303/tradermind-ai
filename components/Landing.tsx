@@ -923,6 +923,10 @@ export default function Landing({
   const [showSplashIntro, setShowSplashIntro] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [checkoutStatus, setCheckoutStatus] = useState("");
+  const [paymentModal, setPaymentModal] = useState<{
+  planId: string;
+  billingPeriod: BillingPeriod;
+} | null>(null);
   const [authMode, setAuthMode] = useState<AuthMode>(null);
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
@@ -1146,6 +1150,28 @@ if (page === "about") {
     }
   };
 
+const openPaymentModal = (id: string, billingPeriod: BillingPeriod = "monthly") => {
+  setCheckoutStatus("");
+  setPaymentModal({ planId: id, billingPeriod });
+};
+
+const closePaymentModal = () => {
+  setPaymentModal(null);
+};
+
+const handleCryptoPaymentFromModal = () => {
+  if (!paymentModal) return;
+
+  const selected = paymentModal;
+  setPaymentModal(null);
+  handleCheckout(selected.planId, selected.billingPeriod);
+};
+
+const handleCardPaymentFromModal = () => {
+  setPaymentModal(null);
+  setCheckoutStatus(t.pricingPage.cardPayment || "Card payment is being prepared.");
+};
+
 const backgroundVariant = active === "desk" ? "product" : active;
   
   return (
@@ -1296,13 +1322,20 @@ const backgroundVariant = active === "desk" ? "product" : active;
           {active === "home" && <HomePage key="home" t={t} setActive={setActive} />}
 {active === "desk" && <DeskPage key="desk" t={t} setActive={setActive} />}
 {active === "product" && <ProductPage key="product" t={t} setActive={setActive} />}
-{active === "pricing" && <PricingPage key="pricing" t={t} handleCheckout={handleCheckout} checkoutStatus={checkoutStatus} />}
+{active === "pricing" && (
+  <PricingPage
+    key="pricing"
+    t={t}
+    handleCheckout={openPaymentModal}
+    checkoutStatus={checkoutStatus}
+  />
+)}
 {active === "team" && <TeamPage key="team" t={t} setActive={setActive} />}
         </AnimatePresence>
       </main>
 
      <div className="relative z-10">
-  <PremiumFooter t={t} setActive={setActive} handleCheckout={handleCheckout} />
+  <PremiumFooter t={t} setActive={setActive} handleCheckout={openPaymentModal} />
 </div>
       <CookieConsent />
 
@@ -1319,6 +1352,19 @@ const backgroundVariant = active === "desk" ? "product" : active;
         setAuthMode={setAuthMode}
         setAuthStatus={setAuthStatus}
       />
+
+      <AnimatePresence>
+  {paymentModal ? (
+    <PaymentMethodModal
+      key="payment-method-modal"
+      t={t}
+      selection={paymentModal}
+      onClose={closePaymentModal}
+      onCrypto={handleCryptoPaymentFromModal}
+      onCard={handleCardPaymentFromModal}
+    />
+  ) : null}
+</AnimatePresence>
     </div>
   );
 }
@@ -4306,6 +4352,213 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           </button>
         </div>
       </section>
+    </motion.div>
+  );
+}
+
+function PaymentMethodModal({
+  t,
+  selection,
+  onClose,
+  onCrypto,
+  onCard,
+}: {
+  t: any;
+  selection: {
+    planId: string;
+    billingPeriod: BillingPeriod;
+  };
+  onClose: () => void;
+  onCrypto: () => void;
+  onCard: () => void;
+}) {
+  const language: Language =
+    t.lang === "RU" ? "ru" : t.lang === "UA" ? "ua" : "en";
+
+  const copy =
+    language === "en"
+      ? {
+          badge: "Secure checkout",
+          title: "Choose payment method",
+          text:
+            "Select how you want to activate SkillEdge AI. Crypto payment is available now. Card payment is being prepared.",
+          crypto: "Pay with crypto",
+          cryptoText: "USDT TRC20 invoice through the active launch payment flow.",
+          card: "Pay by card",
+          cardText: "Card payment is being prepared and will be available soon.",
+          demoNote:
+            "Demo gives full SkillEdge Elite access for 3 days. Best activated Monday–Thursday.",
+          close: "Close",
+          billing: {
+            monthly: "Monthly",
+            halfyear: "6 months",
+            yearly: "1 year",
+          },
+        }
+      : language === "ua"
+        ? {
+            badge: "Secure checkout",
+            title: "Обери спосіб оплати",
+            text:
+              "Обери, як активувати SkillEdge AI. Крипто-оплата вже доступна. Оплата карткою готується.",
+            crypto: "Оплатити криптою",
+            cryptoText: "USDT TRC20 invoice через активний launch payment flow.",
+            card: "Оплатити карткою",
+            cardText: "Оплата карткою готується і буде доступна скоро.",
+            demoNote:
+              "Demo відкриває повний SkillEdge Elite доступ на 3 дні. Краще активувати з понеділка по четвер.",
+            close: "Закрити",
+            billing: {
+              monthly: "1 місяць",
+              halfyear: "6 місяців",
+              yearly: "1 рік",
+            },
+          }
+        : {
+            badge: "Secure checkout",
+            title: "Выбери способ оплаты",
+            text:
+              "Выбери, как активировать SkillEdge AI. Крипто-оплата уже доступна. Оплата картой готовится.",
+            crypto: "Оплатить криптой",
+            cryptoText: "USDT TRC20 invoice через активный launch payment flow.",
+            card: "Оплатить картой",
+            cardText: "Оплата картой готовится и будет доступна скоро.",
+            demoNote:
+              "Demo открывает полный SkillEdge Elite доступ на 3 дня. Лучше активировать с понедельника по четверг.",
+            close: "Закрыть",
+            billing: {
+              monthly: "1 месяц",
+              halfyear: "6 месяцев",
+              yearly: "1 год",
+            },
+          };
+
+  const planName =
+    selection.planId === "demo"
+      ? "SkillEdge Elite Demo"
+      : selection.planId === "core"
+        ? "SkillEdge Core"
+        : selection.planId === "edge"
+          ? "SkillEdge Edge"
+          : "SkillEdge Elite";
+
+  const periodLabel =
+    selection.planId === "demo"
+      ? "3 days"
+      : copy.billing[selection.billingPeriod];
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[90] flex items-center justify-center bg-black/72 px-4 py-6 backdrop-blur-xl"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      <motion.div
+        initial={{ opacity: 0, y: 22, scale: 0.96 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 18, scale: 0.96 }}
+        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+        className="relative w-full max-w-3xl overflow-hidden rounded-[2.4rem] border border-cyan-200/16 bg-[#071522]/96 p-5 shadow-[0_34px_140px_rgba(0,0,0,0.5)] backdrop-blur-2xl md:p-6"
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.18),transparent_32%),radial-gradient(circle_at_90%_20%,rgba(52,211,153,0.13),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
+
+        <div className="relative">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/74">
+                {copy.badge}
+              </div>
+
+              <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-white md:text-4xl">
+                {copy.title}
+              </h2>
+
+              <p className="mt-3 max-w-2xl text-sm font-semibold leading-7 text-white/56">
+                {copy.text}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.055] text-white/60 transition hover:bg-white/10 hover:text-white"
+              aria-label={copy.close}
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="mt-6 rounded-[1.6rem] border border-white/10 bg-black/20 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <div className="text-xs font-black uppercase tracking-[0.2em] text-white/34">
+                  Selected access
+                </div>
+                <div className="mt-1 text-xl font-black text-white">
+                  {planName}
+                </div>
+              </div>
+
+              <div className="rounded-full border border-emerald-200/18 bg-emerald-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100/76">
+                {periodLabel}
+              </div>
+            </div>
+
+            {selection.planId === "demo" ? (
+              <div className="mt-4 rounded-2xl border border-amber-200/16 bg-amber-200/[0.055] px-4 py-3 text-xs font-semibold leading-5 text-amber-50/76">
+                {copy.demoNote}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-2">
+            <button
+              type="button"
+              onClick={onCrypto}
+              className="group relative overflow-hidden rounded-[1.7rem] border border-cyan-200/18 bg-cyan-200/[0.075] p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-cyan-100/36 hover:bg-cyan-200/[0.11] hover:shadow-[0_22px_80px_rgba(34,211,238,0.16)]"
+            >
+              <span className="absolute -right-14 -top-14 h-32 w-32 rounded-full bg-cyan-300/0 blur-3xl transition group-hover:bg-cyan-300/16" />
+              <span className="relative">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/18 bg-cyan-200/[0.09] text-xl">
+                  ₮
+                </span>
+                <span className="mt-5 block text-xl font-black text-white">
+                  {copy.crypto}
+                </span>
+                <span className="mt-2 block text-sm font-semibold leading-6 text-white/52">
+                  {copy.cryptoText}
+                </span>
+                <span className="mt-5 inline-flex rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-cyan-50/78">
+                  Continue →
+                </span>
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onCard}
+              className="group relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.045] p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-emerald-200/28 hover:bg-emerald-200/[0.07]"
+            >
+              <span className="absolute -right-14 -top-14 h-32 w-32 rounded-full bg-emerald-300/0 blur-3xl transition group-hover:bg-emerald-300/12" />
+              <span className="relative">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-200/16 bg-emerald-200/[0.08] text-xl">
+                  💳
+                </span>
+                <span className="mt-5 block text-xl font-black text-white">
+                  {copy.card}
+                </span>
+                <span className="mt-2 block text-sm font-semibold leading-6 text-white/52">
+                  {copy.cardText}
+                </span>
+                <span className="mt-5 inline-flex rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/62">
+                  Coming soon
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
