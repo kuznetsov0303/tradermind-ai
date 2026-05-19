@@ -2039,9 +2039,16 @@ function buildEquityCurveData(trades: Trade[]) {
 export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
+  const [quickNoteOpen, setQuickNoteOpen] = useState(false);
+const [quickNoteContent, setQuickNoteContent] = useState("");
+const [quickNoteLoading, setQuickNoteLoading] = useState(false);
+const [quickNoteSaving, setQuickNoteSaving] = useState(false);
+const [quickNoteSavedAt, setQuickNoteSavedAt] = useState("");
+const [quickNoteError, setQuickNoteError] = useState("");
+const [quickNoteHydrated, setQuickNoteHydrated] = useState(false);
   const [requestedAlertAssetFilter, setRequestedAlertAssetFilter] =
-    useState<AlertAssetFilter>("all");
-  useEffect(() => {
+  useState<AlertAssetFilter>("all");
+   useEffect(() => {
   if (typeof window === "undefined") return;
 
   const params = new URLSearchParams(window.location.search);
@@ -2060,6 +2067,22 @@ export default function DashboardPage() {
     setActiveTab("alerts");
   }
 }, []);
+
+useEffect(() => {
+  if (!quickNoteOpen || quickNoteHydrated) return;
+
+  loadQuickNote();
+}, [quickNoteOpen, quickNoteHydrated]);
+
+useEffect(() => {
+  if (!quickNoteOpen || !quickNoteHydrated) return;
+
+  const timer = window.setTimeout(() => {
+    saveQuickNote(quickNoteContent);
+  }, 900);
+
+  return () => window.clearTimeout(timer);
+}, [quickNoteContent, quickNoteOpen, quickNoteHydrated]); 
   const [chartSymbolFromJournal, setChartSymbolFromJournal] = useState("");
   const [loading, setLoading] = useState(true);
   const [coachMessage, setCoachMessage] = useState("");
@@ -2387,6 +2410,134 @@ const handleOpenTradeChart = (trade: Trade) => {
   setActiveTab("charts");
 };
 
+const updateDashboardUrlTab = (tab: string) => {
+  if (typeof window === "undefined") return;
+
+  const params = new URLSearchParams(window.location.search);
+  params.set("tab", tab);
+  window.history.pushState({}, "", `/dashboard?${params.toString()}`);
+};
+
+const scrollDashboardTop = () => {
+  window.setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, 120);
+};
+
+const handleQuickAddTrade = () => {
+  setEditingTradeId("");
+  setSelectedTradeIdForScreenshot("");
+  setScreenshotFiles([]);
+  resetTradeForm();
+
+  setActiveTab("journal");
+  updateDashboardUrlTab("journal");
+
+  window.setTimeout(() => {
+    const target = document.getElementById("journal-add-trade");
+
+    if (target) {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, 180);
+};
+
+const handleQuickAskCoach = () => {
+  setActiveTab("coach");
+  updateDashboardUrlTab("coach");
+
+  window.setTimeout(() => {
+    const input = document.querySelector<HTMLTextAreaElement>("textarea");
+    input?.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, 180);
+};
+
+const handleQuickCreateReport = () => {
+  setActiveTab("reports");
+  updateDashboardUrlTab("reports");
+  scrollDashboardTop();
+};
+
+const loadQuickNote = async () => {
+  try {
+    setQuickNoteLoading(true);
+    setQuickNoteError("");
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      setQuickNoteError("Login required to load your note.");
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("user_quick_notes")
+      .select("content, updated_at")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (error) {
+      setQuickNoteError(error.message);
+      return;
+    }
+
+    setQuickNoteContent(data?.content || "");
+    setQuickNoteSavedAt(data?.updated_at || "");
+    setQuickNoteHydrated(true);
+  } catch {
+    setQuickNoteError("Failed to load note.");
+  } finally {
+    setQuickNoteLoading(false);
+  }
+};
+
+const saveQuickNote = async (content = quickNoteContent) => {
+  try {
+    setQuickNoteSaving(true);
+    setQuickNoteError("");
+
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      setQuickNoteError("Login required to save your note.");
+      return;
+    }
+
+    const savedAt = new Date().toISOString();
+
+    const { error } = await supabase.from("user_quick_notes").upsert(
+      {
+        user_id: user.id,
+        content,
+        updated_at: savedAt,
+      },
+      { onConflict: "user_id" }
+    );
+
+    if (error) {
+      setQuickNoteError(error.message);
+      return;
+    }
+
+    setQuickNoteSavedAt(savedAt);
+  } catch {
+    setQuickNoteError("Failed to save note.");
+  } finally {
+    setQuickNoteSaving(false);
+  }
+};
 
 const handleOpenAlertsFromWidget = (assetFilter: AlertAssetFilter = "all") => {
   setRequestedAlertAssetFilter(assetFilter);
@@ -3318,16 +3469,71 @@ onTradeEditCancel={handleTradeEditCancel}
               transition={{ duration: 0.55, delay: 0.2 }}
               className="se-dashboard-card rounded-[2rem] p-6"
             >
-              <p className="text-xs uppercase tracking-[0.28em] text-white/35">
-  {t.quickActions}
-</p>
+              <div className="relative overflow-hidden rounded-[1.7rem] border border-cyan-200/10 bg-[#071320]/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+  <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-300/14 blur-3xl" />
+  <div className="pointer-events-none absolute -bottom-20 -left-14 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
 
-              <div className="mt-5 space-y-3">
-                <ActionButton label={t.addTrade} disabled={locked} />
-<ActionButton label={t.uploadScreenshot} disabled={locked} />
-<ActionButton label={t.askAI} disabled={locked} />
-<ActionButton label={t.createReport} disabled={locked} />
-              </div>
+  <div className="relative flex items-center justify-between gap-3">
+    <div>
+      <p className="text-xs uppercase tracking-[0.28em] text-white/35">
+        {t.quickActions}
+      </p>
+      <h3 className="mt-1 text-sm font-black uppercase tracking-[0.16em] text-white/80">
+  Command center
+</h3>
+    </div>
+
+    <div className="rounded-full border border-cyan-200/15 bg-cyan-200/[0.06] px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100/80">
+      Live
+    </div>
+  </div>
+
+  <div className="relative mt-4 space-y-2">
+    <ActionButton
+      label={t.addTrade}
+      description="Open journal trade ticket"
+      badge="Journal"
+      disabled={locked}
+      onClick={handleQuickAddTrade}
+    />
+
+    <ActionButton
+      label={
+        language === "en"
+          ? "Ask SkillEdge AI coach"
+          : language === "ua"
+            ? "Запитати SkillEdge AI коуча"
+            : "Спросить SkillEdge AI коуча"
+      }
+      description="Go straight to the coach input"
+      badge="AI"
+      disabled={locked}
+      onClick={handleQuickAskCoach}
+    />
+
+    <ActionButton
+      label={
+        language === "en"
+          ? "Make a note"
+          : language === "ua"
+            ? "Зробити нотатку"
+            : "Сделать заметку"
+      }
+      description="Personal trader notepad"
+      badge="Note"
+      disabled={locked}
+      onClick={() => setQuickNoteOpen(true)}
+    />
+
+    <ActionButton
+      label={t.createReport}
+      description="Open AI reports workspace"
+      badge="Reports"
+      disabled={locked}
+      onClick={handleQuickCreateReport}
+    />
+  </div>
+</div>
 
 {activeTab === "journal" && (
   <motion.div
@@ -3363,6 +3569,116 @@ onTradeEditCancel={handleTradeEditCancel}
 
       <EquityCurveCard trades={trades} t={t} />
     </div>
+  </div>
+)}
+
+{quickNoteOpen && (
+  <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/72 px-4 py-6 backdrop-blur-xl">
+    <motion.div
+      initial={{ opacity: 0, y: 18, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: 18, scale: 0.97 }}
+      transition={{ duration: 0.25 }}
+      className="relative w-full max-w-3xl overflow-hidden rounded-[2rem] border border-cyan-200/15 bg-[#08131f]/95 shadow-[0_30px_120px_rgba(0,0,0,0.55)]"
+    >
+      <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-cyan-300/16 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-20 h-60 w-60 rounded-full bg-emerald-300/12 blur-3xl" />
+
+      <div className="relative border-b border-white/10 p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-cyan-100/45">
+              SkillEdge Notepad
+            </p>
+
+            <h2 className="mt-2 text-2xl font-black text-white">
+              {language === "en"
+                ? "Your permanent trading note"
+                : language === "ua"
+                  ? "Твоя постійна трейдинг-нотатка"
+                  : "Твоя вечная трейдинг-заметка"}
+            </h2>
+
+            <p className="mt-2 max-w-xl text-sm leading-6 text-white/55">
+              {language === "en"
+                ? "One private page for session thoughts, reminders, mistakes, ideas and rules. It is saved to your account automatically."
+                : language === "ua"
+                  ? "Один приватний лист для думок по сесії, нагадувань, помилок, ідей і правил. Автоматично зберігається у твоєму акаунті."
+                  : "Один приватный лист для мыслей по сессии, напоминаний, ошибок, идей и правил. Автоматически сохраняется в твоём аккаунте."}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              saveQuickNote();
+              setQuickNoteOpen(false);
+            }}
+            className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-white/70 transition hover:bg-white/10 hover:text-white"
+          >
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div className="relative p-6">
+        {quickNoteLoading ? (
+          <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-8 text-center text-sm text-white/55">
+            Loading your note...
+          </div>
+        ) : (
+          <textarea
+            value={quickNoteContent}
+            onChange={(event) => setQuickNoteContent(event.target.value)}
+            placeholder={
+              language === "en"
+                ? "Write everything here: session plan, rules, mistakes, ideas, reminders..."
+                : language === "ua"
+                  ? "Пиши все тут: план сесії, правила, помилки, ідеї, нагадування..."
+                  : "Пиши всё тут: план сессии, правила, ошибки, идеи, напоминания..."
+            }
+            className="min-h-[420px] w-full resize-none rounded-[1.5rem] border border-cyan-200/12 bg-black/28 p-5 text-sm leading-7 text-white outline-none shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] placeholder:text-white/25 focus:border-cyan-200/35"
+          />
+        )}
+
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="text-xs text-white/45">
+            {quickNoteError ? (
+              <span className="text-rose-200">{quickNoteError}</span>
+            ) : quickNoteSaving ? (
+              <span>Saving...</span>
+            ) : quickNoteSavedAt ? (
+              <span>
+                Saved{" "}
+                {new Intl.DateTimeFormat("ru-RU", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date(quickNoteSavedAt))}
+              </span>
+            ) : (
+              <span>Autosave is ready</span>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => saveQuickNote()}
+            disabled={quickNoteSaving}
+            className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-sm font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {quickNoteSaving
+              ? "Saving..."
+              : language === "en"
+                ? "Save note"
+                : language === "ua"
+                  ? "Зберегти нотатку"
+                  : "Сохранить заметку"}
+          </button>
+        </div>
+      </div>
+    </motion.div>
   </div>
 )}
 
@@ -3419,25 +3735,53 @@ function BackgroundFX() {
 
 function ActionButton({
   label,
+  description,
+  badge,
   disabled,
+  onClick,
 }: {
   label: string;
+  description?: string;
+  badge?: string;
   disabled?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
       type="button"
       disabled={disabled}
-      className={`group w-full rounded-2xl border px-4 py-3 text-left text-sm font-bold transition ${
+      onClick={onClick}
+      className={`group relative w-full overflow-hidden rounded-[1.1rem] border px-3 py-3 text-left transition ${
         disabled
           ? "cursor-not-allowed border-white/8 bg-white/[0.025] text-white/25"
-          : "border-[rgba(198,226,255,0.14)] bg-white/[0.055] text-white/76 hover:-translate-y-0.5 hover:border-cyan-200/28 hover:bg-cyan-200/[0.08] hover:text-white"
+          : "border-[rgba(198,226,255,0.12)] bg-white/[0.045] text-white/78 shadow-[inset_0_1px_0_rgba(255,255,255,0.035)] hover:-translate-y-0.5 hover:border-cyan-200/32 hover:bg-cyan-200/[0.075] hover:text-white hover:shadow-[0_14px_40px_rgba(34,211,238,0.10)]"
       }`}
     >
-      <span className="flex items-center justify-between gap-3">
-        <span>{label}</span>
-        <span className="text-white/30 transition group-hover:text-cyan-100">
-          в†’
+      <span className="pointer-events-none absolute inset-y-2 left-0 w-[2px] rounded-full bg-gradient-to-b from-cyan-200/0 via-cyan-200/55 to-emerald-200/0 opacity-0 transition group-hover:opacity-100" />
+
+      <span className="relative flex items-center justify-between gap-2">
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[13px] font-black leading-tight">
+            {label}
+          </span>
+
+          {description ? (
+            <span className="mt-1 block truncate text-[10px] font-medium leading-tight text-white/34">
+              {description}
+            </span>
+          ) : null}
+        </span>
+
+        <span className="flex shrink-0 items-center gap-1.5">
+          {badge ? (
+            <span className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.06] px-2 py-0.5 text-[8px] font-black uppercase tracking-[0.12em] text-cyan-100/65">
+              {badge}
+            </span>
+          ) : null}
+
+          <span className="flex h-7 w-7 items-center justify-center rounded-full border border-white/10 bg-white/[0.045] text-xs text-white/35 transition group-hover:border-cyan-200/25 group-hover:bg-cyan-200/10 group-hover:text-cyan-100">
+            →
+          </span>
         </span>
       </span>
     </button>
@@ -4504,7 +4848,7 @@ const downloadTradesXlsx = () => {
   {journalDeskCopy.formBadge}
 </div>
 
-<h2 className="mt-4 text-2xl font-black tracking-[-0.03em] text-white">
+<h2 id="journal-add-trade" className="mt-5 text-3xl font-black text-white">
   {editingTradeId ? t.journal.editTitle : t.journal.addTitle}
 </h2>
 
