@@ -916,6 +916,7 @@ export default function Landing({
   const [language, setLanguage] = useState<Language>("en");
   const [active, setActiveState] = useState<PageKey>(initialPage);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showSplashIntro, setShowSplashIntro] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [checkoutStatus, setCheckoutStatus] = useState("");
   const [authMode, setAuthMode] = useState<AuthMode>(null);
@@ -935,6 +936,21 @@ export default function Landing({
   useEffect(() => {
     setActiveState(initialPage);
   }, [initialPage]);
+
+useEffect(() => {
+  const splashSeen = sessionStorage.getItem("skilledge_splash_seen");
+
+  if (splashSeen === "true") return;
+
+  setShowSplashIntro(true);
+  sessionStorage.setItem("skilledge_splash_seen", "true");
+
+  const timer = window.setTimeout(() => {
+    setShowSplashIntro(false);
+  }, 2800);
+
+  return () => window.clearTimeout(timer);
+}, []);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem("skilledge_language");
@@ -1127,6 +1143,10 @@ if (page === "about") {
 
   return (
   <div className="relative isolate min-h-screen overflow-hidden bg-[#070b16] text-white">
+    <AnimatePresence>
+      {showSplashIntro ? <SkillEdgeSplashIntro language={language} /> : null}
+    </AnimatePresence>
+
     <TradingBackground variant={active} />
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070b16]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
@@ -3920,6 +3940,138 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           </button>
         </div>
       </section>
+    </motion.div>
+  );
+}
+
+function SkillEdgeSplashIntro({ language }: { language: Language }) {
+  const copy =
+    language === "en"
+      ? {
+          label: "AI Trading Desk",
+          status: "Initializing market intelligence",
+          modules: ["Market scan", "Risk engine", "AI alerts"],
+        }
+      : language === "ua"
+        ? {
+            label: "AI Trading Desk",
+            status: "Запускаємо ринкову аналітику",
+            modules: ["Market scan", "Risk engine", "AI alerts"],
+          }
+        : {
+            label: "AI Trading Desk",
+            status: "Запускаем рыночную аналитику",
+            modules: ["Market scan", "Risk engine", "AI alerts"],
+          };
+
+  return (
+    <motion.div
+      key="skilledge-splash-intro"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, filter: "blur(18px)" }}
+      transition={{ duration: 0.75, ease: "easeInOut" }}
+      className="fixed inset-0 z-[999] flex items-center justify-center overflow-hidden bg-[#030711]"
+    >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0.18, 0.32, 0.18] }}
+        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(34,211,238,0.28),transparent_28%),radial-gradient(circle_at_50%_64%,rgba(16,185,129,0.16),transparent_34%)]"
+      />
+
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.028)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
+
+      <motion.div
+        initial={{ scale: 0.82, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        className="relative flex flex-col items-center px-6 text-center"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+          className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/10"
+        />
+
+        <motion.div
+          animate={{ rotate: -360 }}
+          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          className="absolute left-1/2 top-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/10 border-t-cyan-100/45"
+        />
+
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.55 }}
+          className="relative mb-6 flex h-20 w-20 items-center justify-center rounded-[1.6rem] border border-cyan-200/18 bg-white/[0.045] shadow-[0_0_80px_rgba(34,211,238,0.22)] backdrop-blur-xl"
+        >
+          <div className="absolute inset-2 rounded-[1.2rem] bg-gradient-to-br from-cyan-200/20 via-white/5 to-emerald-200/20" />
+          <span className="relative text-xl font-black tracking-[-0.08em] text-white">
+            SE
+          </span>
+          <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_22px_rgba(110,231,183,0.95)]" />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.38, duration: 0.65 }}
+          className="text-xs font-black uppercase tracking-[0.42em] text-cyan-100/55"
+        >
+          {copy.label}
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 18, letterSpacing: "0.18em" }}
+          animate={{ opacity: 1, y: 0, letterSpacing: "-0.055em" }}
+          transition={{ delay: 0.55, duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-4 text-5xl font-black text-white md:text-7xl"
+        >
+          SkillEdge AI
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.85, duration: 0.55 }}
+          className="mt-4 text-sm font-semibold text-white/52 md:text-base"
+        >
+          {copy.status}
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.05, duration: 0.55 }}
+          className="mt-7 flex flex-wrap items-center justify-center gap-2"
+        >
+          {copy.modules.map((item, index) => (
+            <motion.span
+              key={item}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.18 + index * 0.12, duration: 0.35 }}
+              className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-white/48"
+            >
+              {item}
+            </motion.span>
+          ))}
+        </motion.div>
+
+        <motion.div
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: 260, opacity: 1 }}
+          transition={{ delay: 1.15, duration: 1.15, ease: "easeInOut" }}
+          className="mt-8 h-px overflow-hidden rounded-full bg-white/10"
+        >
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: "120%" }}
+            transition={{ delay: 1.25, duration: 1.15, ease: "easeInOut" }}
+            className="h-full w-1/2 bg-gradient-to-r from-transparent via-cyan-100 to-transparent"
+          />
+        </motion.div>
+      </motion.div>
     </motion.div>
   );
 }
