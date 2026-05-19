@@ -4462,8 +4462,22 @@ function HeroSection({
   cards: [string, string][];
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[2.75rem] border border-white/10 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
-      <Glow />
+    <section className="relative overflow-hidden rounded-[2.75rem] border border-cyan-200/12 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
+  <Glow />
+
+  <motion.div
+    aria-hidden
+    animate={{ x: ["-20%", "120%"] }}
+    transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+    className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/45 to-transparent"
+  />
+
+  <motion.div
+    aria-hidden
+    animate={{ opacity: [0.18, 0.34, 0.18], scale: [1, 1.08, 1] }}
+    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+    className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-cyan-300/12 blur-3xl"
+  />
       <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
           <Badge>{badge}</Badge>
@@ -4509,15 +4523,71 @@ function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string
 }
 
 function Badge({ children }: { children: React.ReactNode }) {
-  return <div className="inline-flex rounded-full border border-indigo-300/20 bg-indigo-300/10 px-4 py-1 text-xs uppercase tracking-[0.22em] text-indigo-100">✧ {children}</div>;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45 }}
+      className="inline-flex items-center gap-2 rounded-full border border-cyan-200/18 bg-cyan-200/[0.075] px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-cyan-100/78 shadow-[0_0_40px_rgba(34,211,238,0.08)]"
+    >
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.9)]" />
+      {children}
+    </motion.div>
+  );
 }
 
-function CardBox({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 ${className}`}>{children}</div>;
+function CardBox({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <motion.div
+      whileHover={{ y: -5, scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 260, damping: 24 }}
+      className={`group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 transition duration-300 hover:border-cyan-200/22 hover:bg-white/[0.06] hover:shadow-[0_28px_110px_rgba(34,211,238,0.10)] ${className}`}
+    >
+      <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-300/0 blur-3xl transition duration-500 group-hover:bg-cyan-300/12" />
+      <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
+        <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-cyan-100/35 to-transparent" />
+      </div>
+
+      <div className="relative z-10">{children}</div>
+    </motion.div>
+  );
 }
 
-function ButtonX({ children, onClick, className = "" }: { children: React.ReactNode; onClick?: () => void; className?: string }) {
-  return <button onClick={onClick} className={`inline-flex min-h-11 items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition hover:scale-[1.02] ${className}`}>{children}</button>;
+function ButtonX({
+  children,
+  onClick,
+  className = "",
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  className?: string;
+}) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileHover={{ y: -2, scale: 1.025 }}
+      whileTap={{ scale: 0.975 }}
+      transition={{ type: "spring", stiffness: 420, damping: 28 }}
+      className={`group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full border border-cyan-100/20 bg-gradient-to-r from-white via-cyan-50 to-emerald-50 px-6 py-3 text-sm font-black text-[#06111d] shadow-[0_18px_55px_rgba(103,232,249,0.16)] transition duration-300 hover:shadow-[0_24px_80px_rgba(103,232,249,0.24)] ${className}`}
+    >
+      <span className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
+        <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
+      </span>
+
+      <span className="pointer-events-none absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.9),transparent_42%)] opacity-45" />
+
+      <span className="relative z-10 flex items-center justify-center">
+        {children}
+      </span>
+    </motion.button>
+  );
 }
 
 function InfoCard({ title, text, index }: { title: string; text: string; index: number }) {
