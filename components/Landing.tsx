@@ -4975,29 +4975,71 @@ function PremiumFooter({
   );
 }
 
+const footerGuideHref: Record<string, string> = {
+  "Гайд по журналу сделок": "/journal-guide",
+  "Гайд по журналу угод": "/journal-guide",
+  "Journal guide": "/journal-guide",
+  "Trading journal guide": "/journal-guide",
+
+  "Гайд по AI-сигналам": "/ai-guide",
+  "Гайд по AI": "/ai-guide",
+  "AI guide": "/ai-guide",
+  "AI signals guide": "/ai-guide",
+};
+
+function getFooterLinkLabel(link: any) {
+  if (typeof link === "string") return link;
+
+  if (link && typeof link === "object") {
+    return link.label || link.title || link.text || link.name || "";
+  }
+
+  return "";
+}
+
 function FooterColumn({
   title,
   links,
 }: {
   title: string;
-  links: { label: string; href: string }[];
+  links: any[];
 }) {
   return (
     <div>
-      <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
+      <h4 className="text-xs font-black uppercase tracking-[0.28em] text-white/38">
         {title}
-      </div>
+      </h4>
 
-      <div className="mt-4 space-y-3">
-        {links.map((item) => (
-          <Link
-            key={`${title}-${item.label}`}
-            href={item.href}
-            className="block text-left text-sm text-white/58 transition hover:text-white"
-          >
-            {item.label}
-          </Link>
-        ))}
+      <div className="mt-4 space-y-2">
+        {links.map((link, index) => {
+          const label = getFooterLinkLabel(link);
+          const href =
+  footerGuideHref[label.trim()] ||
+  (link && typeof link === "object" && link.href ? link.href : "");
+
+          if (!label) return null;
+
+          if (href) {
+            return (
+              <Link
+                key={`${label}-${index}`}
+                href={href}
+                className="block text-sm font-semibold text-white/56 transition hover:text-cyan-100"
+              >
+                {label}
+              </Link>
+            );
+          }
+
+          return (
+            <span
+              key={`${label}-${index}`}
+              className="block text-sm font-semibold text-white/45"
+            >
+              {label}
+            </span>
+          );
+        })}
       </div>
     </div>
   );
