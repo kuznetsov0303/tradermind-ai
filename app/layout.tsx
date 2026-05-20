@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Vollkorn } from "next/font/google";
 import "./globals.css";
 import SupportWidget from "@/components/SupportWidget";
 import SeoJsonLd from "@/components/marketing/SeoJsonLd";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import GlobalAlertsWidget from "@/components/GlobalAlertsWidget";
+
+
+const vollkorn = Vollkorn({
+  subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  display: "swap",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,7 +88,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-            <body className="min-h-full flex flex-col">
+            <body className={`${vollkorn.className} min-h-full flex flex-col`}>
         <SeoJsonLd />
         {children}
         <GlobalAlertsWidget />

@@ -329,7 +329,7 @@ const dict = {
     viewAbout: "О нас",
     nav: {
       home: "Главная",
-      desk: "Desk",
+      desk: "AI-деск",
       product: "Продукт",
       pricing: "Тарифы",
       team: "О нас",
@@ -622,7 +622,7 @@ const dict = {
     viewAbout: "Про нас",
     nav: {
       home: "Головна",
-      desk: "Desk",
+      desk: "AI-деск",
       product: "Продукт",
       pricing: "Тарифи",
       team: "Про нас",
@@ -946,8 +946,9 @@ export default function Landing({
   }, [initialPage]);
 
 useEffect(() => {
-  const splashSeen = sessionStorage.getItem("skilledge_splash_seen");
+  if (initialPage !== "home") return;
 
+  const splashSeen = sessionStorage.getItem("skilledge_splash_seen");
   if (splashSeen === "true") return;
 
   setShowSplashIntro(true);
@@ -958,7 +959,7 @@ useEffect(() => {
   }, 2800);
 
   return () => window.clearTimeout(timer);
-}, []);
+}, [initialPage]);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem("skilledge_language");
@@ -1900,7 +1901,7 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
       transition={{ delay: 0.12, duration: 0.65 }}
       className="relative z-10 w-full"
     >
-      <div className="absolute -inset-10 rounded-[3.4rem] bg-cyan-300/12 blur-3xl" />
+      <div className="absolute -inset-10 rounded-[2.8rem] bg-cyan-300/12 blur-3xl" />
 
       <div className="relative w-full overflow-hidden rounded-[2.6rem] border border-cyan-100/18 bg-[#0d1b2b]/86 p-5 shadow-[0_44px_170px_rgba(8,47,73,0.36)] backdrop-blur-2xl md:p-6 xl:p-7">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(56,214,255,0.22),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(52,211,153,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_44%)]" />
@@ -2223,7 +2224,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       transition={{ duration: 0.35 }}
       className="mx-auto w-full max-w-[1760px] space-y-14 px-4 pb-24 pt-8 sm:px-6 lg:px-10 xl:px-14 2xl:px-16"
     >
-      <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[3.4rem] border border-cyan-100/14 bg-[#0d1b2b]/82 p-6 shadow-[0_44px_170px_rgba(8,47,73,0.34)] backdrop-blur-2xl md:p-8 lg:p-12 xl:p-14">
+      <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[2.8rem] border border-cyan-100/14 bg-[#0d1b2b]/82 p-6 shadow-[0_44px_170px_rgba(8,47,73,0.34)] backdrop-blur-2xl md:p-8 lg:p-10 xl:p-14">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(56,214,255,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(52,211,153,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
 
@@ -2540,7 +2541,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -18 }}
       transition={{ duration: 0.38 }}
-      className="mx-auto w-full max-w-[1700px] space-y-10 px-4 pb-28 pt-8 sm:px-6 lg:px-10 xl:px-14"
+      className="mx-auto w-full max-w-[1700px] space-y-7 px-4 pb-28 pt-8 sm:px-6 lg:px-10 xl:px-14"
     >
       <section className="relative overflow-hidden rounded-[3.1rem] border border-cyan-100/14 bg-[#071522]/90 p-5 shadow-[0_38px_150px_rgba(8,47,73,0.30)] backdrop-blur-2xl md:p-7 lg:p-10">
   <video
@@ -2663,7 +2664,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         ))}
       </section>
 
-      <section className="relative overflow-hidden rounded-[3rem] border border-cyan-200/12 bg-[#081522]/82 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
+      <section className="relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-[#081522]/82 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_12%_90%,rgba(16,185,129,0.12),transparent_34%)]" />
 
         <div className="relative grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
@@ -2696,7 +2697,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-white/[0.035] p-8 text-center shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-12">
+      <section className="relative overflow-hidden rounded-[2.4rem] border border-white/10 bg-white/[0.035] p-8 text-center shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,214,255,0.13),transparent_36%),radial-gradient(circle_at_50%_100%,rgba(52,211,153,0.10),transparent_34%)]" />
         <div className="relative mx-auto max-w-3xl">
           <h2 className="text-4xl font-black tracking-[-0.05em] text-white md:text-6xl">
@@ -3615,7 +3616,7 @@ const demoCopy =
             transition={{ delay: 0.12, duration: 0.6 }}
             className="relative"
           >
-            <div className="absolute -inset-10 rounded-[3rem] bg-cyan-300/12 blur-3xl" />
+            <div className="absolute -inset-10 rounded-[2.4rem] bg-cyan-300/12 blur-3xl" />
 
             <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-200/20 bg-cyan-200/[0.075] p-5 shadow-[0_40px_150px_rgba(8,47,73,0.35)] backdrop-blur-2xl">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(34,211,238,0.22),transparent_34%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.15),transparent_30%)]" />
@@ -3677,7 +3678,7 @@ const demoCopy =
 
 <PricingValueBlock lang={t.lang} />
 
-      <section className="grid gap-6 lg:grid-cols-3">
+      <section className="grid items-stretch gap-6 lg:grid-cols-3">
         {copy.plans.map((plan: any, index: number) => (
           <motion.div
             key={plan.id}
@@ -3686,10 +3687,21 @@ const demoCopy =
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: index * 0.07, duration: 0.45 }}
             whileHover={{ y: -8 }}
-            className={`relative overflow-hidden rounded-[2.5rem] border p-6 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-xl transition duration-300 md:p-7 ${getPlanAccent(
-              plan.id
-            )}`}
+            className={`group relative flex h-full min-h-[720px] flex-col overflow-hidden rounded-[2.25rem] border p-5 shadow-[0_26px_110px_rgba(0,0,0,0.22)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:scale-[1.015] ${
+  plan.id === "elite"
+    ? "border-cyan-200/36 bg-gradient-to-br from-cyan-200/[0.14] via-white/[0.06] to-emerald-200/[0.10] shadow-[0_34px_150px_rgba(34,211,238,0.24)]"
+    : "border-white/10 bg-white/[0.04] hover:border-cyan-200/26 hover:bg-cyan-200/[0.065] hover:shadow-[0_34px_130px_rgba(34,211,238,0.13)]"
+}`}
           >
+            {plan.id === "elite" ? (
+  <div className="absolute right-5 top-5 z-20 rounded-full border border-emerald-200/22 bg-emerald-200/[0.10] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100 shadow-[0_0_34px_rgba(52,211,153,0.18)]">
+    {t.lang === "EN"
+      ? "Traders choice"
+      : t.lang === "UA"
+        ? "Вибір трейдерів"
+        : "Выбор трейдеров"}
+  </div>
+) : null}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.10),transparent_30%)]" />
 
             <div className="relative">
@@ -3747,7 +3759,7 @@ const demoCopy =
               <button
                 type="button"
                 onClick={() => handleCheckout(plan.id, billing)}
-                className={`mt-7 w-full rounded-2xl px-5 py-4 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
+                className={`mt-auto w-full rounded-2xl px-5 py-4 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
                   plan.id === "elite"
                     ? "bg-white text-[#06111d] shadow-[0_20px_80px_rgba(255,255,255,0.2)] hover:shadow-[0_24px_90px_rgba(34,211,238,0.25)]"
                     : "border border-white/12 bg-white/[0.055] text-white hover:border-cyan-200/30 hover:bg-cyan-200/[0.09]"
@@ -4416,7 +4428,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       transition={{ duration: 0.35 }}
       className="mx-auto w-full max-w-[1600px] space-y-16 px-4 pb-28 pt-10 sm:px-6 lg:px-8 xl:px-10"
     >
-      <section className="relative overflow-hidden rounded-[3.4rem] border border-white/10 bg-[#06111d]/88 p-6 shadow-[0_45px_180px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10">
+      <section className="relative overflow-hidden rounded-[2.8rem] border border-white/10 bg-[#06111d]/88 p-6 shadow-[0_45px_180px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(34,211,238,0.16),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(16,185,129,0.13),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]" />
 
         <div className="relative grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
@@ -4459,7 +4471,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[3rem] border border-cyan-200/12 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
+      <section className="relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(34,211,238,0.13),transparent_32%),radial-gradient(circle_at_12%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
 
         <div className="relative grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
@@ -4542,7 +4554,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         </motion.div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[3rem] border border-white/10 bg-[#06131f]/86 p-6 shadow-[0_40px_160px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:p-8 lg:p-10">
+      <section className="relative overflow-hidden rounded-[2.4rem] border border-white/10 bg-[#06131f]/86 p-6 shadow-[0_40px_160px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:p-8 lg:p-10">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_90%_90%,rgba(16,185,129,0.13),transparent_36%)]" />
 
         <div className="relative grid gap-8 lg:grid-cols-[1fr_0.7fr] lg:items-center">
