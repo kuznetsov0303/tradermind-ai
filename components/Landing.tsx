@@ -283,7 +283,7 @@ const dict = {
       legal: "Legal",
       productLinks: ["Home", "Product", "Pricing", "About us"],
       featureLinks: ["AI Trading Desk", "AI Alerts", "Market Intelligence", "Journal & Screenshots", "Execution Coach", "Outcome Learning", "Playbook", "Reports", "Learning Center", "Support Assistant"],
-      resourceLinks: ["Getting Started", "How SkillEdge Works", "Trading Journal Guide", "AI Alerts Guide", "Contact Support"],
+      resourceLinks: ["Getting Started", "How SkillEdge Works", "Trading Journal Guide", "AI Alerts Guide", "Referral program", "Contact Support"],
       legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
       cookieSettings: "Cookie settings",
       choosePlan: "Choose plan",
@@ -576,7 +576,7 @@ const dict = {
       legal: "Документы",
       productLinks: ["Главная", "Продукт", "Тарифы", "О нас"],
       featureLinks: ["AI Trading Desk", "AI-сигналы", "Рыночная разведка", "Журнал и скриншоты", "Коуч исполнения", "Обучение на исходах", "Плейбук", "Отчёты", "Центр обучения", "Помощник поддержки"],
-      resourceLinks: ["Начало работы", "Как работает SkillEdge", "Гайд по журналу сделок", "Гайд по AI-сигналам", "Связаться с поддержкой"],
+      resourceLinks: ["Начало работы", "Как работает SkillEdge", "Гайд по журналу сделок", "Гайд по AI-сигналам", "Реферальная программа", "Связаться с поддержкой"],
       legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
       cookieSettings: "Настройки cookie",
       choosePlan: "Выбрать тариф",
@@ -869,7 +869,7 @@ const dict = {
       legal: "Документи",
       productLinks: ["Головна", "Продукт", "Тарифи", "Про нас"],
       featureLinks: ["AI Trading Desk", "AI-сигнали", "Ринкова розвідка", "Журнал і скріншоти", "Коуч виконання", "Навчання на результатах", "Плейбук", "Звіти", "Центр навчання", "Помічник підтримки"],
-      resourceLinks: ["Початок роботи", "Як працює SkillEdge", "Гайд по журналу угод", "Гайд по AI-сигналах", "Зв’язатися з підтримкою"],
+      resourceLinks: ["Початок роботи", "Як працює SkillEdge", "Гайд по журналу угод", "Гайд по AI-сигналах", "Партнерська програма", "Зв’язатися з підтримкою"],
       legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
       cookieSettings: "Налаштування cookie",
       choosePlan: "Обрати тариф",
@@ -4975,6 +4975,7 @@ function PremiumFooter({
         { label: "How SkillEdge Works", href: "/product" },
         { label: "Trading Journal Guide", href: "/product" },
         { label: "AI Signals Guide", href: "/product" },
+        { label: "Referral program", href: "/referral" },
         { label: "Contact Support", href: "/about" },
       ],
       legalLinks: [
@@ -5028,6 +5029,7 @@ function PremiumFooter({
         { label: "Как работает SkillEdge", href: "/product" },
         { label: "Гайд по журналу сделок", href: "/product" },
         { label: "Гайд по AI-сигналам", href: "/product" },
+        { label: "Реферальная программа", href: "/referral" },
         { label: "Связаться с поддержкой", href: "/about" },
       ],
       legalLinks: [
@@ -5081,6 +5083,7 @@ function PremiumFooter({
         { label: "Як працює SkillEdge", href: "/product" },
         { label: "Гайд по журналу угод", href: "/product" },
         { label: "Гайд по AI-сигналах", href: "/product" },
+        { label: "Партнерська програма", href: "/referral" },
         { label: "Звʼязатися з підтримкою", href: "/about" },
       ],
       legalLinks: [
@@ -5211,6 +5214,10 @@ const footerGuideHref: Record<string, string> = {
   "Гайд по AI": "/ai-guide",
   "AI guide": "/ai-guide",
   "AI signals guide": "/ai-guide",
+
+  "Реферальная программа": "/referral",
+  "Referral program": "/referral",
+  "Партнерська програма": "/referral",
 };
 
 function getFooterLinkLabel(link: any) {
