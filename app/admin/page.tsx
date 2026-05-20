@@ -293,11 +293,10 @@ export default function AdminHubPage() {
           <AdminHubCard
             label="Support"
             title="Support Widget Chats"
-            text="Сюда подключим обращения из floating support assistant: клиент просит оператора → заявка приходит в админку и Telegram."
+            text="Открывай клиентские обращения из floating support assistant, смотри активные сессии и отвечай клиенту прямо из админки."
             href="/admin/support"
-            status="next"
-            disabled
-          />
+            status="live"
+/>
 
           <AdminHubCard
             label="Users"
