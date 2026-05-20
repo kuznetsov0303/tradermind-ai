@@ -98,6 +98,131 @@ function getAiLimit(planId: string) {
   );
 }
 
+async function createReferralRewardForPayment(payment: {
+  id?: string;
+  user_id: string;
+  order_id: string | null;
+  invoice_id: string | null;
+  amount: number | string | null;
+  is_demo?: boolean | null;
+}) {
+  if (payment.is_demo) {
+    return {
+      created: false,
+      reason: "demo_payment_skipped",
+    };
+  }
+
+  const paymentAmountUsd = Number(payment.amount || 0);
+
+  if (!Number.isFinite(paymentAmountUsd) || paymentAmountUsd <= 0) {
+    return {
+      created: false,
+      reason: "invalid_payment_amount",
+    };
+  }
+
+  const paymentId =
+    payment.invoice_id || payment.order_id || payment.id || `payment_${Date.now()}`;
+
+  const { data: existingReward } = await supabaseAdmin
+    .from("referral_rewards")
+    .select("id")
+    .eq("payment_id", paymentId)
+    .maybeSingle();
+
+  if (existingReward?.id) {
+    return {
+      created: false,
+      reason: "reward_already_exists",
+    };
+  }
+
+  const { data: referral, error: referralError } = await supabaseAdmin
+    .from("referrals")
+    .select("id, referrer_user_id, referred_user_id, status")
+    .eq("referred_user_id", payment.user_id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (referralError) {
+    throw new Error(`Referral lookup failed: ${referralError.message}`);
+  }
+
+  if (!referral?.id) {
+    return {
+      created: false,
+      reason: "no_referral",
+    };
+  }
+
+  if (referral.referrer_user_id === payment.user_id) {
+    return {
+      created: false,
+      reason: "self_referral_blocked",
+    };
+  }
+
+  const { count: previousRewardsCount, error: previousRewardsError } =
+    await supabaseAdmin
+      .from("referral_rewards")
+      .select("id", { count: "exact", head: true })
+      .eq("referred_user_id", payment.user_id)
+      .neq("status", "cancelled");
+
+  if (previousRewardsError) {
+    throw new Error(
+      `Previous rewards lookup failed: ${previousRewardsError.message}`
+    );
+  }
+
+  const isFirstPayment = Number(previousRewardsCount || 0) === 0;
+  const rewardPercent = isFirstPayment ? 15 : 5;
+  const rewardPoints = Number(
+    ((paymentAmountUsd * rewardPercent) / 100).toFixed(2)
+  );
+
+  if (rewardPoints <= 0) {
+    return {
+      created: false,
+      reason: "zero_reward",
+    };
+  }
+
+  const { error: rewardInsertError } = await supabaseAdmin
+    .from("referral_rewards")
+    .insert({
+      referral_id: referral.id,
+      referrer_user_id: referral.referrer_user_id,
+      referred_user_id: payment.user_id,
+      payment_id: paymentId,
+      payment_amount_usd: paymentAmountUsd,
+      reward_percent: rewardPercent,
+      reward_points: rewardPoints,
+      reward_type: isFirstPayment ? "first_payment" : "recurring_payment",
+      status: "available",
+      available_at: new Date().toISOString(),
+    });
+
+  if (rewardInsertError) {
+    if (rewardInsertError.code === "23505") {
+      return {
+        created: false,
+        reason: "duplicate_payment_reward",
+      };
+    }
+
+    throw new Error(`Referral reward insert failed: ${rewardInsertError.message}`);
+  }
+
+  return {
+    created: true,
+    rewardPercent,
+    rewardPoints,
+    rewardType: isFirstPayment ? "first_payment" : "recurring_payment",
+  };
+}
+
 export async function POST(req: Request) {
   try {
     const rawBody = await req.text();
@@ -233,14 +358,30 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({
-      ok: true,
-      message: "Subscription activated",
-      userId: payment.user_id,
-      planId,
-      billingPeriod,
-      paymentStatus,
-    });
+let referralRewardResult: unknown = null;
+
+try {
+  referralRewardResult = await createReferralRewardForPayment({
+    id: payment.id,
+    user_id: payment.user_id,
+    order_id: payment.order_id,
+    invoice_id: invoiceId ?? payment.invoice_id,
+    amount: payment.amount,
+    is_demo: isDemo,
+  });
+} catch (referralRewardError) {
+  console.error("Referral reward error:", referralRewardError);
+}
+
+   return NextResponse.json({
+  ok: true,
+  message: "Subscription activated",
+  userId: payment.user_id,
+  planId,
+  billingPeriod,
+  paymentStatus,
+  referralReward: referralRewardResult,
+});
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Webhook processing error";

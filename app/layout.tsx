@@ -5,7 +5,7 @@ import SupportWidget from "@/components/SupportWidget";
 import SeoJsonLd from "@/components/marketing/SeoJsonLd";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import GlobalAlertsWidget from "@/components/GlobalAlertsWidget";
-
+import ReferralTracker from "@/components/ReferralTracker";
 
 const vollkorn = Vollkorn({
   subsets: ["latin", "cyrillic"],
@@ -90,6 +90,7 @@ export default function RootLayout({
     >
             <body className={`${vollkorn.className} min-h-full flex flex-col`}>
         <SeoJsonLd />
+        <ReferralTracker />
         {children}
         <GlobalAlertsWidget />
         <SupportWidget />

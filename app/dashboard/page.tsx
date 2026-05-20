@@ -2120,6 +2120,7 @@ function buildEquityCurveData(trades: Trade[]) {
 
 export default function DashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [activeTab, setActiveTab] = useState<TabId>("overview");
   const [quickNoteOpen, setQuickNoteOpen] = useState(false);
 const [quickNoteContent, setQuickNoteContent] = useState("");
@@ -2279,6 +2280,16 @@ if (
 
       const user = userData.user;
       setEmail(user.email ?? null);
+      try {
+  const adminResponse = await authFetch("/api/admin/me", {
+    method: "GET",
+  });
+
+  const adminResult = await adminResponse.json().catch(() => ({}));
+  setIsAdmin(Boolean(adminResult.isAdmin));
+} catch {
+  setIsAdmin(false);
+}
       await refreshReferralBalance();
 
       const { data: analysesData } = await supabase
@@ -3362,6 +3373,15 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
         {t.choosePlan}
       </a>
 
+{isAdmin ? (
+  <a
+    href="/admin"
+    className="rounded-full border border-amber-300/20 bg-amber-300/[0.08] px-5 py-3 text-sm font-black text-amber-100 transition hover:-translate-y-0.5 hover:bg-amber-300/[0.12]"
+  >
+    Admin hub
+  </a>
+) : null}
+
       <button
         type="button"
         onClick={handleLogout}
@@ -3417,6 +3437,14 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
     </div>
   </div>
 </motion.header>
+
+<ReferralProgramCard
+  data={referralDashboard}
+  loading={referralDashboardLoading}
+  error={referralDashboardError}
+  language={language}
+  onRefresh={refreshReferralBalance}
+/>
 
         <motion.section
           initial={{ opacity: 0, y: 22 }}
@@ -3665,11 +3693,9 @@ onTradeEditCancel={handleTradeEditCancel}
               transition={{ duration: 0.55, delay: 0.2 }}
               className="se-dashboard-card rounded-[2rem] p-6"
             >
-              <div className="relative overflow-hidden rounded-[1.7rem] border border-cyan-200/10 bg-[#071320]/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-  <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-300/14 blur-3xl" />
-  <div className="pointer-events-none absolute -bottom-20 -left-14 h-40 w-40 rounded-full bg-emerald-300/10 blur-3xl" />
+              
 
-  <div className="relative flex items-center justify-between gap-3">
+  <div className="flex items-center justify-between gap-3">
     <div>
       <p className="text-xs uppercase tracking-[0.28em] text-white/35">
         {t.quickActions}
@@ -3684,7 +3710,7 @@ onTradeEditCancel={handleTradeEditCancel}
     </div>
   </div>
 
-  <div className="relative mt-4 space-y-2">
+  <div className="mt-4 space-y-2">
     <ActionButton
       label={t.addTrade}
       description="Open journal trade ticket"
@@ -3745,7 +3771,7 @@ onTradeEditCancel={handleTradeEditCancel}
   onClick={handleOpenWithdrawModal}
 />
   </div>
-</div>
+
 
 {activeTab === "journal" && (
   <motion.div
@@ -3764,13 +3790,7 @@ onTradeEditCancel={handleTradeEditCancel}
 )}
 
             </motion.div>
-            <ReferralProgramCard
-  data={referralDashboard}
-  loading={referralDashboardLoading}
-  error={referralDashboardError}
-  language={language}
-  onRefresh={refreshReferralBalance}
-/>
+            
           </aside>
         </motion.section>
       </div>
@@ -4310,7 +4330,7 @@ function ReferralProgramCard({
       initial={{ opacity: 0, x: 18 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.55, delay: 0.24 }}
-      className="se-dashboard-card rounded-[2rem] p-6"
+      className="se-dashboard-panel rounded-[2rem] p-5 md:p-6"
     >
       <div className="relative overflow-hidden rounded-[1.7rem] border border-emerald-200/10 bg-[#071320]/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-emerald-300/12 blur-3xl" />
@@ -4391,7 +4411,7 @@ function ReferralProgramCard({
             {copy.loading}
           </div>
         ) : (
-          <div className="relative mt-5 space-y-5">
+          <div className="relative mt-5 grid gap-5 xl:grid-cols-3">
             <div>
               <h4 className="text-xs font-black uppercase tracking-[0.22em] text-white/40">
                 {copy.invited}

@@ -1,0 +1,342 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { authFetch } from "@/lib/security/client-auth-fetch";
+
+type WithdrawalRequest = {
+  id: string;
+  user_id: string;
+  amount_points: number;
+  wallet_address: string;
+  network: string;
+  confirmation_email: string;
+  status: string;
+  admin_note: string | null;
+  created_at: string;
+  processed_at: string | null;
+};
+
+function formatPoints(value: number) {
+  const safeValue = Number.isFinite(Number(value)) ? Number(value) : 0;
+  return `${safeValue.toFixed(2).replace(/\.00$/, "")} pts`;
+}
+
+function AdminStatCard({
+  label,
+  value,
+  text,
+}: {
+  label: string;
+  value: string;
+  text: string;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.045] p-5">
+      <div className="pointer-events-none absolute -right-12 -top-12 h-28 w-28 rounded-full bg-cyan-300/10 blur-3xl" />
+      <div className="relative">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-white/35">
+          {label}
+        </p>
+        <div className="mt-3 text-3xl font-black tracking-[-0.05em] text-white">
+          {value}
+        </div>
+        <p className="mt-2 text-sm font-semibold leading-6 text-white/48">
+          {text}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function AdminHubCard({
+  label,
+  title,
+  text,
+  href,
+  status,
+  disabled,
+}: {
+  label: string;
+  title: string;
+  text: string;
+  href: string;
+  status: string;
+  disabled?: boolean;
+}) {
+  const content = (
+    <div
+      className={`group relative h-full overflow-hidden rounded-[2rem] border p-5 transition ${
+        disabled
+          ? "border-white/10 bg-white/[0.025] opacity-65"
+          : "border-cyan-200/12 bg-cyan-200/[0.045] hover:-translate-y-1 hover:border-cyan-200/26 hover:bg-cyan-200/[0.07]"
+      }`}
+    >
+      <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-300/0 blur-3xl transition group-hover:bg-cyan-300/12" />
+      <div className="relative">
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/50">
+            {label}
+          </p>
+
+          <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-white/45">
+            {status}
+          </span>
+        </div>
+
+        <h2 className="mt-4 text-2xl font-black tracking-[-0.05em] text-white">
+          {title}
+        </h2>
+
+        <p className="mt-3 min-h-[72px] text-sm font-semibold leading-6 text-white/50">
+          {text}
+        </p>
+
+        <div className="mt-5 inline-flex rounded-full bg-white px-5 py-3 text-sm font-black text-[#06111d] transition group-hover:-translate-y-0.5">
+          {disabled ? "Coming soon" : "Open"}
+        </div>
+      </div>
+    </div>
+  );
+
+  if (disabled) return content;
+
+  return (
+    <Link href={href} className="block h-full">
+      {content}
+    </Link>
+  );
+}
+
+export default function AdminHubPage() {
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [requests, setRequests] = useState<WithdrawalRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const pendingRequests = useMemo(
+    () => requests.filter((request) => request.status === "pending"),
+    [requests]
+  );
+
+  const pendingAmount = useMemo(
+    () =>
+      pendingRequests.reduce(
+        (sum, request) => sum + Number(request.amount_points || 0),
+        0
+      ),
+    [pendingRequests]
+  );
+
+  async function loadAdminHub() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const adminResponse = await authFetch("/api/admin/me", {
+        method: "GET",
+      });
+
+      const adminResult = await adminResponse.json().catch(() => ({}));
+      const admin = Boolean(adminResult.isAdmin);
+
+      setIsAdmin(admin);
+
+      if (!admin) return;
+
+      const withdrawalsResponse = await authFetch(
+        "/api/admin/referrals/withdrawals",
+        {
+          method: "GET",
+        }
+      );
+
+      const withdrawalsResult = await withdrawalsResponse
+        .json()
+        .catch(() => ({}));
+
+      if (!withdrawalsResponse.ok) {
+        throw new Error(
+          withdrawalsResult.error || "Failed to load admin dashboard"
+        );
+      }
+
+      setRequests((withdrawalsResult.requests || []) as WithdrawalRequest[]);
+    } catch (loadError) {
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Failed to load admin dashboard"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadAdminHub();
+  }, []);
+
+  if (loading || isAdmin === null) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#060a13] px-4 text-white">
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 text-center shadow-[0_30px_120px_rgba(0,0,0,0.35)]">
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-cyan-100/45">
+            SkillEdge Admin
+          </p>
+          <h1 className="mt-3 text-3xl font-black">Loading admin hub...</h1>
+        </div>
+      </main>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-[#060a13] px-4 text-white">
+        <div className="max-w-xl rounded-[2rem] border border-rose-300/16 bg-rose-300/[0.05] p-8 text-center shadow-[0_30px_120px_rgba(0,0,0,0.35)]">
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-rose-100/55">
+            Access denied
+          </p>
+          <h1 className="mt-3 text-4xl font-black tracking-[-0.05em]">
+            Admin access only
+          </h1>
+          <p className="mt-4 text-sm font-semibold leading-6 text-white/52">
+            This area is available only for emails listed in SKILLEDGE_ADMIN_EMAILS.
+          </p>
+
+          <Link
+            href="/dashboard"
+            className="mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-black text-[#06111d] transition hover:-translate-y-0.5"
+          >
+            Back to dashboard
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-[#060a13] px-4 py-6 text-white md:px-8">
+      <div className="mx-auto max-w-7xl">
+        <header className="relative overflow-hidden rounded-[2.4rem] border border-white/10 bg-white/[0.045] p-6 shadow-[0_30px_120px_rgba(0,0,0,0.35)] md:p-8">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-cyan-300/12 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-24 -left-20 h-56 w-56 rounded-full bg-emerald-300/10 blur-3xl" />
+
+          <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.28em] text-cyan-100/45">
+                SkillEdge Admin Hub
+              </p>
+              <h1 className="mt-3 text-4xl font-black tracking-[-0.06em] md:text-6xl">
+                Control center
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm font-semibold leading-7 text-white/52">
+                Управление выводами referral points, support-заявками, пользователями,
+                подписками и платежной системой.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={loadAdminHub}
+                className="rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-5 py-3 text-sm font-black text-cyan-50 transition hover:bg-cyan-200/[0.12]"
+              >
+                Refresh
+              </button>
+
+              <Link
+                href="/dashboard"
+                className="rounded-full bg-white px-5 py-3 text-sm font-black text-[#06111d] transition hover:-translate-y-0.5"
+              >
+                Dashboard
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        {error ? (
+          <div className="mt-5 rounded-2xl border border-rose-300/18 bg-rose-300/[0.08] px-4 py-3 text-sm font-bold text-rose-100">
+            {error}
+          </div>
+        ) : null}
+
+        <section className="mt-5 grid gap-4 md:grid-cols-3">
+          <AdminStatCard
+            label="Pending withdrawals"
+            value={String(pendingRequests.length)}
+            text="Заявки, которые ждут ручной выплаты криптой."
+          />
+
+          <AdminStatCard
+            label="Pending amount"
+            value={formatPoints(pendingAmount)}
+            text="Сумма points, зарезервированная под pending-заявки."
+          />
+
+          <AdminStatCard
+            label="Total requests"
+            value={String(requests.length)}
+            text="Последние referral withdrawal requests в системе."
+          />
+        </section>
+
+        <section className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <AdminHubCard
+            label="Money"
+            title="Referral Withdrawals"
+            text="Подтверждай выплаты: Paid после фактической отправки крипты, Reject если заявка неверная."
+            href="/admin/referrals"
+            status={pendingRequests.length ? `${pendingRequests.length} pending` : "ready"}
+          />
+
+          <AdminHubCard
+            label="Support"
+            title="Support Widget Chats"
+            text="Сюда подключим обращения из floating support assistant: клиент просит оператора → заявка приходит в админку и Telegram."
+            href="/admin/support"
+            status="next"
+            disabled
+          />
+
+          <AdminHubCard
+            label="Users"
+            title="Users & Subscriptions"
+            text="Будущий блок для проверки клиентов, тарифов, demo-доступов, лимитов, статуса подписки и ручной помощи."
+            href="/admin/users"
+            status="planned"
+            disabled
+          />
+
+          <AdminHubCard
+            label="Payments"
+            title="Payments & Webhooks"
+            text="Будущий блок для контроля оплат, crypto invoices, webhook events, failed payments и referral reward начислений."
+            href="/admin/payments"
+            status="planned"
+            disabled
+          />
+
+          <AdminHubCard
+            label="System"
+            title="Signals / Market Data Status"
+            text="Будущий блок для контроля AI Signals, scanner cron, Telegram delivery, market data providers и ошибок API."
+            href="/admin/system"
+            status="planned"
+            disabled
+          />
+
+          <AdminHubCard
+            label="Security"
+            title="Admin Access"
+            text="Доступ к этой зоне проверяется через backend по SKILLEDGE_ADMIN_EMAILS. Service role key остаётся только на сервере."
+            href="/admin"
+            status="protected"
+            disabled
+          />
+        </section>
+      </div>
+    </main>
+  );
+}
+
