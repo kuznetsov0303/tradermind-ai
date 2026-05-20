@@ -2720,6 +2720,116 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
   );
 }
 
+function ProductBuiltForTradersBlock({ lang }: { lang: string }) {
+  const copy =
+    lang === "EN"
+      ? {
+          eyebrow: "Built from zero for trading",
+          title: "Not another AI chat. A full trading product built around execution.",
+          text:
+            "SkillEdge AI is a dedicated AI Trading Desk created for real trading workflow: market context, journal, screenshots, AI review, reports, scanner, alerts and performance feedback in one connected system.",
+          second:
+            "A generic AI tool only answers the question you type. SkillEdge AI is different: it works around your process. Every trade, screenshot, setup, mistake and report becomes part of your personal trading context.",
+          third:
+            "That is why SkillEdge AI cannot be replaced by a free tool. It is not a prompt box. It is a structured product built by specialists in AI engineering, software development and trading workflow design to help traders build discipline, understand risk and improve execution quality.",
+          chips: [
+            "Journal + screenshots",
+            "AI trade review",
+            "Market Intelligence",
+            "AI Alerts",
+            "Reports",
+            "Personal trading context",
+          ],
+        }
+      : lang === "UA"
+        ? {
+            eyebrow: "Створено з нуля під трейдинг",
+            title: "Не черговий AI-чат. Повноцінний trading product навколо виконання.",
+            text:
+              "SkillEdge AI — це окремий AI Trading Desk, створений під реальний процес трейдера: ринковий контекст, журнал, скріншоти, AI-розбір, звіти, сканер, сигнали та feedback по виконанню в одній системі.",
+            second:
+              "Звичайний AI-інструмент відповідає тільки на запит. SkillEdge AI працює інакше: він будується навколо твого процесу. Кожна угода, скріншот, сетап, помилка й звіт стають частиною твого особистого trading context.",
+            third:
+              "Саме тому SkillEdge AI не замінюється безкоштовним інструментом. Це не поле для промптів. Це структурований продукт, створений спеціалістами з AI engineering, software development і trading workflow, щоб допомагати трейдеру будувати дисципліну, бачити ризик і покращувати якість виконання.",
+            chips: [
+              "Журнал + скріншоти",
+              "AI-розбір угод",
+              "Market Intelligence",
+              "AI Alerts",
+              "Звіти",
+              "Особистий trading context",
+            ],
+          }
+        : {
+            eyebrow: "Создано с нуля под трейдинг",
+            title: "Не очередной AI-чат, а полноценный trading product вокруг исполнения.",
+            text:
+              "SkillEdge AI — это отдельный AI Trading Desk, созданный под реальный процесс трейдера: рыночный контекст, журнал, скриншоты, AI-разбор, отчёты, сканер, сигналы и feedback по исполнению в одной системе.",
+            second:
+              "Обычный AI-инструмент отвечает только на вопрос, который ему задали. SkillEdge AI работает иначе: он строится вокруг торгового процесса. Каждая сделка, каждый скриншот, каждый сетап, каждая ошибка и каждый отчёт становятся частью личного trading context трейдера.",
+            third:
+              "Именно поэтому SkillEdge AI нельзя заменить бесплатным инструментом. Это не поле для промптов. Это структурированный продукт, созданный специалистами в AI engineering, software development и trading workflow, чтобы помогать трейдеру строить дисциплину, видеть риск и улучшать качество исполнения.",
+            chips: [
+              "Журнал + скриншоты",
+              "AI-разбор сделок",
+              "Market Intelligence",
+              "AI Alerts",
+              "Отчёты",
+              "Личный trading context",
+            ],
+          };
+
+  return (
+    <section className="relative overflow-hidden rounded-[2.8rem] border border-cyan-200/12 bg-[#081522]/82 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.16),transparent_32%),radial-gradient(circle_at_90%_20%,rgba(52,211,153,0.12),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.055),transparent_44%)]" />
+
+      <motion.div
+        aria-hidden
+        animate={{ x: ["-20%", "120%"] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent"
+      />
+
+      <div className="relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+        <div>
+          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.075] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/76">
+            {copy.eyebrow}
+          </div>
+
+          <h2 className="mt-6 max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.055em] text-white md:text-5xl">
+            {copy.title}
+          </h2>
+        </div>
+
+        <div className="space-y-4">
+          <p className="text-sm font-semibold leading-7 text-white/62">
+            {copy.text}
+          </p>
+
+          <p className="text-sm font-semibold leading-7 text-white/56">
+            {copy.second}
+          </p>
+
+          <p className="rounded-[1.5rem] border border-cyan-200/12 bg-cyan-200/[0.055] p-4 text-sm font-semibold leading-7 text-cyan-50/70">
+            {copy.third}
+          </p>
+
+          <div className="flex flex-wrap gap-2 pt-1">
+            {copy.chips.map((chip) => (
+              <span
+                key={chip}
+                className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/54"
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
   const p = t.productPage;
 
@@ -2735,6 +2845,8 @@ function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => 
         onSecondary={() => setActive("team")}
         cards={p.heroCards}
       />
+
+<ProductBuiltForTradersBlock lang={t.lang} />
 
       <section>
         <SectionTitle eyebrow="AI Trading Desk" title={p.deskTitle} text={p.deskText} />
@@ -3260,6 +3372,106 @@ function getPricingShowcaseCopy(lang: string) {
   };
 }
 
+function PricingValueBlock({ lang }: { lang: string }) {
+  const copy =
+    lang === "EN"
+      ? {
+          eyebrow: "What you actually get",
+          title: "You are not paying for a simple AI chat. You are activating a trading workflow.",
+          text:
+            "SkillEdge AI connects your journal, screenshots, AI trade review, Market Intelligence, AI Alerts and reports into one execution-focused system.",
+          strong:
+            "A basic AI tool can answer a question. SkillEdge AI helps build a process: record trades, understand mistakes, track setups, review execution and turn your trading history into usable data.",
+          items: [
+            "Trading journal",
+            "Screenshots",
+            "AI review",
+            "Market Intelligence",
+            "AI Alerts",
+            "Reports",
+          ],
+        }
+      : lang === "UA"
+        ? {
+            eyebrow: "Що ти реально отримуєш",
+            title: "Ти платиш не за простий AI-чат. Ти активуєш trading workflow.",
+            text:
+              "SkillEdge AI поєднує журнал, скріншоти, AI-розбір угод, Market Intelligence, AI Alerts і звіти в одну систему навколо виконання.",
+            strong:
+              "Звичайний AI-інструмент може відповісти на запит. SkillEdge AI допомагає будувати процес: фіксувати угоди, бачити помилки, відстежувати сетапи, розбирати виконання й перетворювати історію торгівлі на дані.",
+            items: [
+              "Журнал угод",
+              "Скріншоти",
+              "AI-розбір",
+              "Market Intelligence",
+              "AI Alerts",
+              "Звіти",
+            ],
+          }
+        : {
+            eyebrow: "Что ты реально получаешь",
+            title: "Ты платишь не за простой AI-чат. Ты активируешь trading workflow.",
+            text:
+              "SkillEdge AI связывает журнал, скриншоты, AI-разбор сделок, Market Intelligence, AI Alerts и отчёты в одну систему вокруг исполнения.",
+            strong:
+              "Обычный AI-инструмент может ответить на вопрос. SkillEdge AI помогает строить процесс: фиксировать сделки, видеть ошибки, отслеживать сетапы, разбирать исполнение и превращать историю торговли в данные.",
+            items: [
+              "Журнал сделок",
+              "Скриншоты",
+              "AI-разбор",
+              "Market Intelligence",
+              "AI Alerts",
+              "Отчёты",
+            ],
+          };
+
+  return (
+    <section className="relative overflow-hidden rounded-[2.2rem] border border-cyan-200/12 bg-[#081522]/82 p-5 shadow-[0_28px_120px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-7">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.14),transparent_32%),radial-gradient(circle_at_92%_20%,rgba(52,211,153,0.10),transparent_32%)]" />
+
+      <motion.div
+        aria-hidden
+        animate={{ x: ["-20%", "120%"] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+        className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/50 to-transparent"
+      />
+
+      <div className="relative grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+        <div>
+          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/74">
+            {copy.eyebrow}
+          </div>
+
+          <h2 className="mt-5 max-w-3xl text-3xl font-black leading-[0.98] tracking-[-0.045em] text-white md:text-4xl">
+            {copy.title}
+          </h2>
+        </div>
+
+        <div>
+          <p className="text-sm font-semibold leading-7 text-white/60">
+            {copy.text}
+          </p>
+
+          <p className="mt-3 rounded-[1.35rem] border border-cyan-200/12 bg-cyan-200/[0.055] p-4 text-sm font-semibold leading-7 text-cyan-50/70">
+            {copy.strong}
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            {copy.items.map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-white/54"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function PricingPage({
   t,
   handleCheckout,
@@ -3462,6 +3674,8 @@ const demoCopy =
           </motion.div>
         </div>
       </section>
+
+<PricingValueBlock lang={t.lang} />
 
       <section className="grid gap-6 lg:grid-cols-3">
         {copy.plans.map((plan: any, index: number) => (

@@ -4,37 +4,19 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 const aiModules = [
-  [
-    "AI Coach",
-    "Разбирает сделки, риск, сетап, эмоции и ошибки. Не просто отвечает — помогает думать как трейдер с планом.",
-  ],
-  [
-    "Market Intelligence",
-    "Ищет in-play акции и крипту: движение, объём, катализатор, рыночный контекст и активность.",
-  ],
-  [
-    "AI Market Brief",
-    "Объясняет, почему тикер попал в список, какой setup формируется, где риск и что ломает идею.",
-  ],
-  [
-    "AI Alerts",
-    "Elite-сигналы: setup, direction, trigger, entry zone, invalidation, targets, risk note и outcome tracking.",
-  ],
-  [
-    "Journal Memory",
-    "AI использует журнал, скрины, ошибки и сильные сделки, чтобы лучше понимать твой стиль.",
-  ],
-  [
-    "Reports",
-    "Собирает сделки в review: PnL, win rate, лучшие сетапы, слабые места и качество исполнения.",
-  ],
+  ["AI Coach", "Разбор сделки, риска, сетапа, эмоции, ошибки и следующего шага — в формате трейдерского review."],
+  ["Market Intelligence", "Поиск in-play акций и крипты: движение, объём, катализатор, активность и контекст."],
+  ["AI Market Brief", "Короткий desk-бриф: почему тикер активен, какой setup формируется, где риск и что ломает идею."],
+  ["AI Alerts", "Elite workflow: setup, direction, trigger, entry zone, stop/invalidation, targets, risk note и outcome tracking."],
+  ["Journal Context", "AI использует сделки, скрины, ошибки, setup tags и отчёты, чтобы лучше понимать стиль трейдера."],
+  ["Reports", "Сводит историю в понятный feedback: PnL, win rate, best/worst setups, слабые места и качество исполнения."],
 ];
 
 const workflow = [
-  ["01", "Scan", "Система находит активные тикеры, а не заставляет тебя листать мёртвые графики."],
-  ["02", "Filter", "Отсекает слабый шум: плохой объём, поздний chase, мутный риск, слабый катализатор."],
-  ["03", "Explain", "AI даёт контекст: что за setup, где trigger, где invalidation и где ловушка."],
-  ["04", "Execute", "Ты получаешь не слепой сигнал, а рабочий план: entry zone, stop, targets, RR."],
+  ["01", "Scan", "Система ищет активные инструменты, а не заставляет листать мёртвые графики."],
+  ["02", "Filter", "Отсекает слабый шум: плохой объём, поздний chase, мутный риск, слабый catalyst."],
+  ["03", "Explain", "AI объясняет setup, trigger, invalidation, trap warning и контекст движения."],
+  ["04", "Plan", "Трейдер получает рабочий план: зона, риск, цели, сценарий и что отменяет идею."],
   ["05", "Review", "После сделки журнал и отчёты показывают, что сработало, а что нужно убрать."],
 ];
 
@@ -45,25 +27,25 @@ const strategies = [
   "Pullback continuation",
   "Lower high after pump",
   "Catalyst reaction",
-  "SMC / liquidity sweep",
+  "Liquidity sweep",
   "Volume expansion",
 ];
 
-const aiVsChat = [
-  ["Обычный чат", "SkillEdge AI"],
-  ["Отвечает на вопрос", "Работает внутри trading workflow"],
-  ["Не знает твой журнал", "Учитывает сделки, скрины, ошибки и setup tags"],
-  ["Может дать общие советы", "Даёт context → trigger → risk → invalidation"],
-  ["Нет связи с рынком", "Связан с Market Intelligence, Reports и Alerts"],
+const comparison = [
+  ["Обычный AI-инструмент", "SkillEdge AI"],
+  ["Отвечает на один запрос", "Работает внутри trading workflow"],
+  ["Не знает твою историю", "Учитывает сделки, скрины, ошибки и setup tags"],
+  ["Даёт общие советы", "Даёт context → trigger → risk → invalidation"],
+  ["Не связан с рынком", "Связан с Market Intelligence, Alerts, Journal и Reports"],
 ];
 
 const outcomes = [
-  "понимать, почему тикер активен",
-  "быстрее отличать setup от шума",
+  "быстрее понимать, почему тикер активен",
+  "отличать setup от шума",
   "не входить поздно без плана",
-  "видеть риск до сделки, а не после",
-  "получать разбор своих ошибок",
-  "строить персональный trading desk на своих данных",
+  "видеть риск до сделки",
+  "получать разбор ошибок",
+  "строить личный trading desk на своих данных",
 ];
 
 export default function AiGuidePage() {
@@ -104,6 +86,7 @@ export default function AiGuidePage() {
 
         <section className="relative overflow-hidden rounded-[2.6rem] border border-cyan-100/14 bg-[#071522]/88 p-5 shadow-[0_36px_150px_rgba(8,47,73,0.30)] backdrop-blur-2xl md:p-8 lg:p-10">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.17),transparent_30%),radial-gradient(circle_at_90%_20%,rgba(52,211,153,0.12),transparent_32%)]" />
+
           <motion.div
             aria-hidden
             animate={{ x: ["-20%", "120%"] }}
@@ -118,7 +101,7 @@ export default function AiGuidePage() {
                 animate={{ opacity: 1, y: 0 }}
                 className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/76"
               >
-                SkillEdge AI engine
+                AI Trading Desk
               </motion.div>
 
               <motion.h1
@@ -127,7 +110,7 @@ export default function AiGuidePage() {
                 transition={{ delay: 0.1, duration: 0.55 }}
                 className="mt-6 max-w-4xl text-5xl font-black leading-[0.9] tracking-[-0.075em] md:text-6xl xl:text-7xl"
               >
-                Не чат. AI Trading Desk для твоего процесса.
+                Не простая AI-форма. Продукт, созданный под трейдинг.
               </motion.h1>
 
               <motion.p
@@ -136,7 +119,7 @@ export default function AiGuidePage() {
                 transition={{ delay: 0.18, duration: 0.5 }}
                 className="mt-6 max-w-2xl text-base font-semibold leading-7 text-white/64"
               >
-                SkillEdge AI связывает рынок, сигналы, журнал, скриншоты и отчёты. Клиент получает не “совет из воздуха”, а контекст, сетап, риск, trigger и review.
+                SkillEdge AI связывает рынок, сигналы, журнал, скриншоты, отчёты и AI-разбор в один execution workflow. Клиент платит не за ответ на вопрос, а за систему, которая помогает видеть контекст, риск, setup и качество исполнения.
               </motion.p>
 
               <div className="mt-8 flex flex-wrap gap-3">
@@ -145,14 +128,14 @@ export default function AiGuidePage() {
                   className="group relative overflow-hidden rounded-full bg-white px-6 py-3 text-sm font-black text-[#06111d] transition hover:-translate-y-0.5"
                 >
                   <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
-                  <span className="relative">Открыть AI-доступ →</span>
+                  <span className="relative">Выбрать доступ →</span>
                 </Link>
 
                 <Link
-                  href="/journal-guide"
+                  href="/desk"
                   className="rounded-full border border-cyan-200/20 bg-cyan-200/[0.07] px-6 py-3 text-sm font-black text-cyan-50 transition hover:bg-cyan-200/[0.12]"
                 >
-                  Как работает журнал ↗
+                  Открыть Trading Desk ↗
                 </Link>
               </div>
             </div>
@@ -169,25 +152,28 @@ export default function AiGuidePage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/38">
-                      AI Brief
+                      Live AI workflow
                     </div>
-                    <h2 className="mt-1 text-2xl font-black">Market → Setup → Risk</h2>
+                    <h2 className="mt-1 text-2xl font-black">Market Brief</h2>
                   </div>
 
                   <div className="rounded-full border border-emerald-200/18 bg-emerald-200/[0.08] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100/76">
-                    Live
+                    Desk mode
                   </div>
                 </div>
 
                 <div className="mt-5 grid gap-3">
                   {[
-                    ["Ticker", "High relative volume + catalyst"],
-                    ["Setup", "VWAP reclaim / continuation"],
-                    ["Trigger", "Hold above level, no late chase"],
-                    ["Risk", "Invalidation below reclaim zone"],
-                    ["Action", "Wait confirmation before size"],
+                    ["Context", "High relative volume + catalyst"],
+                    ["Setup", "VWAP reclaim / failed breakdown"],
+                    ["Risk", "Invalidation under key level"],
+                    ["Plan", "Trigger → entry zone → targets"],
+                    ["Review", "Outcome connected to journal"],
                   ].map((row) => (
-                    <div key={row[0]} className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+                    <div
+                      key={row[0]}
+                      className="rounded-2xl border border-white/10 bg-white/[0.04] p-3"
+                    >
                       <div className="text-[9px] font-black uppercase tracking-[0.2em] text-white/34">
                         {row[0]}
                       </div>
@@ -195,15 +181,19 @@ export default function AiGuidePage() {
                     </div>
                   ))}
                 </div>
+
+                <div className="mt-4 rounded-2xl border border-cyan-200/12 bg-cyan-200/[0.055] p-3 text-xs font-semibold leading-5 text-cyan-50/64">
+                  Цель — не слепой сигнал, а понятный trading plan: context, trigger, risk, scenario и review.
+                </div>
               </div>
             </motion.div>
           </div>
         </section>
 
         <section className="mt-7 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {aiModules.map((item, index) => (
+          {aiModules.map((module, index) => (
             <motion.div
-              key={item[0]}
+              key={module[0]}
               initial={{ opacity: 0, y: 22 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -216,8 +206,10 @@ export default function AiGuidePage() {
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.08] text-xs font-black text-cyan-50">
                   0{index + 1}
                 </div>
-                <h3 className="mt-4 text-lg font-black">{item[0]}</h3>
-                <p className="mt-2 text-sm font-semibold leading-6 text-white/54">{item[1]}</p>
+                <h3 className="mt-4 text-lg font-black">{module[0]}</h3>
+                <p className="mt-2 text-sm font-semibold leading-6 text-white/54">
+                  {module[1]}
+                </p>
               </div>
             </motion.div>
           ))}
@@ -227,8 +219,12 @@ export default function AiGuidePage() {
           <div className="relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-[#081522]/82 p-5 shadow-[0_28px_120px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-7">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(34,211,238,0.13),transparent_32%)]" />
             <div className="relative">
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/56">Workflow</div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">Как AI работает внутри сделки</h2>
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/56">
+                Desk workflow
+              </div>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">
+                Как AI превращает рынок в план
+              </h2>
 
               <div className="mt-5 grid gap-2">
                 {workflow.map((step, index) => (
@@ -238,9 +234,9 @@ export default function AiGuidePage() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.04, duration: 0.35 }}
-                    className="grid gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:grid-cols-[64px_130px_1fr]"
+                    className="grid gap-2 rounded-2xl border border-white/10 bg-white/[0.04] p-3 md:grid-cols-[72px_120px_1fr]"
                   >
-                    <div className="text-xs font-black text-cyan-100/70">{step[0]}</div>
+                    <div className="text-sm font-black text-cyan-100/64">{step[0]}</div>
                     <div className="text-sm font-black text-white">{step[1]}</div>
                     <div className="text-sm font-semibold leading-6 text-white/52">{step[2]}</div>
                   </motion.div>
@@ -252,19 +248,26 @@ export default function AiGuidePage() {
           <div className="relative overflow-hidden rounded-[2.4rem] border border-emerald-200/12 bg-white/[0.035] p-5 shadow-[0_28px_120px_rgba(16,185,129,0.10)] backdrop-blur-xl md:p-7">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(52,211,153,0.13),transparent_34%)]" />
             <div className="relative">
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100/56">Playbook logic</div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">Сетапы, которые понимает AI</h2>
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100/56">
+                Setup library
+              </div>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">
+                Не “магия”. Логика сетапов и риска.
+              </h2>
 
               <div className="mt-5 flex flex-wrap gap-2">
                 {strategies.map((item) => (
-                  <span key={item} className="rounded-full border border-white/10 bg-black/18 px-4 py-2 text-xs font-black text-white/64">
+                  <span
+                    key={item}
+                    className="rounded-full border border-white/10 bg-black/18 px-3 py-2 text-xs font-black text-white/62"
+                  >
                     {item}
                   </span>
                 ))}
               </div>
 
-              <p className="mt-5 rounded-2xl border border-amber-200/14 bg-amber-200/[0.055] p-4 text-xs font-semibold leading-5 text-amber-50/72">
-                Это не обещание прибыли. AI помогает фильтровать контекст, видеть риск и дисциплинировать процесс.
+              <p className="mt-5 rounded-2xl border border-emerald-200/14 bg-emerald-200/[0.055] p-4 text-sm font-semibold leading-7 text-emerald-50/68">
+                SkillEdge AI должен помогать трейдеру понимать механику сделки: почему ситуация in-play, где подтверждение, где ловушка и где идея становится недействительной.
               </p>
             </div>
           </div>
@@ -274,15 +277,19 @@ export default function AiGuidePage() {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,214,255,0.12),transparent_38%)]" />
           <div className="relative grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/38">Why paid</div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">Почему это не обычный ChatGPT</h2>
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/38">
+                Why paid
+              </div>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">
+                Почему это не заменить бесплатным инструментом
+              </h2>
               <p className="mt-4 max-w-xl text-sm font-semibold leading-7 text-white/56">
-                Обычный чат отвечает отдельно. SkillEdge AI встроен в продукт: журнал, отчёты, market scan, alerts и персональный контекст трейдера.
+                Бесплатный инструмент не знает твою историю сделок, не связан с market scanner, не помнит твои setup tags, не строит отчёты по исполнению и не соединяет signals ↔ journal ↔ review.
               </p>
             </div>
 
             <div className="grid gap-2">
-              {aiVsChat.map((row, index) => (
+              {comparison.map((row, index) => (
                 <motion.div
                   key={`${row[0]}-${row[1]}`}
                   initial={{ opacity: 0, y: 14 }}
@@ -305,12 +312,21 @@ export default function AiGuidePage() {
 
         <section className="mt-7 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-[#081522]/82 p-5 shadow-[0_28px_120px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-7">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(34,211,238,0.13),transparent_32%)]" />
             <div className="relative">
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/56">Outcome</div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">Что получает трейдер</h2>
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/56">
+                Outcome
+              </div>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">
+                Что получает трейдер
+              </h2>
+
               <div className="mt-5 grid gap-2">
                 {outcomes.map((item) => (
-                  <div key={item} className="rounded-2xl border border-white/10 bg-black/18 px-4 py-3 text-sm font-bold leading-6 text-white/66">
+                  <div
+                    key={item}
+                    className="rounded-2xl border border-white/10 bg-black/18 px-4 py-3 text-sm font-bold leading-6 text-white/66"
+                  >
                     <span className="mr-2 text-cyan-200">✓</span>
                     {item}
                   </div>
@@ -319,27 +335,38 @@ export default function AiGuidePage() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-[2.4rem] border border-emerald-200/12 bg-white/[0.035] p-5 shadow-[0_28px_120px_rgba(16,185,129,0.10)] backdrop-blur-xl md:p-7">
+          <div className="relative overflow-hidden rounded-[2.4rem] border border-emerald-200/12 bg-[#071522]/86 p-5 shadow-[0_28px_120px_rgba(16,185,129,0.10)] backdrop-blur-xl md:p-7">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_0%,rgba(52,211,153,0.13),transparent_34%)]" />
             <div className="relative">
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100/56">Personalization</div>
-              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">AI становится сильнее от твоей истории</h2>
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100/56">
+                Built by specialists
+              </div>
+              <h2 className="mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl">
+                Создано с нуля под трейдинг, а не адаптировано “на коленке”.
+              </h2>
               <p className="mt-4 text-sm font-semibold leading-7 text-white/56">
-                Чем больше у клиента сделок, скринов, тегов и ошибок в журнале, тем больше контекста получает система для разборов, отчётов и будущих персональных alerts.
+                SkillEdge AI проектируется как полноценный SaaS-продукт на стыке AI engineering, software development, trading workflow, market intelligence и risk-first логики. Это отдельная система вокруг трейдера: от поиска идеи до review после сделки.
               </p>
-              <Link href="/pricing" className="mt-7 inline-flex rounded-full bg-white px-7 py-3.5 text-sm font-black text-[#06111d] transition hover:-translate-y-0.5">
-                Выбрать доступ →
-              </Link>
+              <p className="mt-4 rounded-2xl border border-amber-200/14 bg-amber-200/[0.055] p-4 text-xs font-semibold leading-6 text-amber-50/68">
+                SkillEdge AI не обещает прибыль и не заменяет риск-менеджмент. Его задача — дать структуру, контекст, дисциплину и качественный разбор.
+              </p>
             </div>
           </div>
         </section>
 
         <section className="mt-7 overflow-hidden rounded-[2.5rem] border border-cyan-200/12 bg-[#071522]/86 p-6 text-center shadow-[0_28px_120px_rgba(8,47,73,0.22)] md:p-9">
-          <h2 className="text-3xl font-black tracking-[-0.04em] md:text-5xl">AI полезен только тогда, когда он встроен в процесс.</h2>
+          <h2 className="text-3xl font-black tracking-[-0.04em] md:text-5xl">
+            Сильная торговля начинается с процесса. AI должен усиливать именно его.
+          </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm font-semibold leading-7 text-white/56">
-            SkillEdge AI помогает трейдеру сканировать рынок, понимать setups, контролировать риск и разбирать результат после сделки.
+            Сканируй рынок, получай context, фиксируй сделки, разбирай ошибки и превращай историю в данные для роста.
           </p>
-          <Link href="/pricing" className="mt-7 inline-flex rounded-full bg-white px-7 py-3.5 text-sm font-black text-[#06111d] transition hover:-translate-y-0.5">
-            Открыть SkillEdge AI →
+
+          <Link
+            href="/pricing"
+            className="mt-7 inline-flex rounded-full bg-white px-7 py-3.5 text-sm font-black text-[#06111d] transition hover:-translate-y-0.5"
+          >
+            Выбрать доступ →
           </Link>
         </section>
 
@@ -358,6 +385,7 @@ function AiGuideFooter() {
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/18 bg-cyan-200/[0.08] text-xs font-black text-white">
               SE
             </div>
+
             <div>
               <div className="text-sm font-black text-white">SkillEdge AI</div>
               <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/36">
@@ -367,12 +395,14 @@ function AiGuideFooter() {
           </Link>
 
           <p className="mt-4 max-w-md text-sm font-semibold leading-7 text-white/48">
-            Market Intelligence, AI Coach, signals, reports и journal context в одном рабочем процессе трейдера.
+            Market intelligence, AI review, alerts, reports and journal context in one trading workflow.
           </p>
         </div>
 
         <div>
-          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">Продукт</h4>
+          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">
+            Продукт
+          </h4>
           <div className="mt-4 space-y-2">
             <Link href="/" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">Главная</Link>
             <Link href="/desk" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">AI Trading Desk</Link>
@@ -382,7 +412,9 @@ function AiGuideFooter() {
         </div>
 
         <div>
-          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">Гайды</h4>
+          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">
+            Гайды
+          </h4>
           <div className="mt-4 space-y-2">
             <Link href="/journal-guide" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">Гайд по журналу</Link>
             <Link href="/ai-guide" className="block text-sm font-semibold text-cyan-100">Гайд по AI</Link>
@@ -391,7 +423,9 @@ function AiGuideFooter() {
         </div>
 
         <div>
-          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">Контакты</h4>
+          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">
+            Контакты
+          </h4>
           <div className="mt-4 space-y-2 text-sm font-semibold text-white/48">
             <p>support@upyourskills.site</p>
             <p>Dubai / Warsaw / Kyiv</p>
@@ -401,7 +435,7 @@ function AiGuideFooter() {
 
       <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-5 text-xs font-semibold text-white/34 md:flex-row md:items-center md:justify-between">
         <p>© 2026 SkillEdge AI. Все права защищены.</p>
-        <p>Market context. Risk. Execution. Review.</p>
+        <p>Context. Risk. Execution. Review.</p>
       </div>
     </footer>
   );
