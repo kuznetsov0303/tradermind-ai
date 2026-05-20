@@ -8,6 +8,11 @@ import AdminActivationStatsBlock, {
   type ActivationStatsResponse,
 } from "@/components/admin/AdminActivationStatsBlock";
 
+type SupportSession = {
+  id: string;
+  status: string;
+};
+
 type WithdrawalRequest = {
   id: string;
   user_id: string;
@@ -115,12 +120,18 @@ function AdminHubCard({
 export default function AdminHubPage() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [requests, setRequests] = useState<WithdrawalRequest[]>([]);
+  const [supportSessions, setSupportSessions] = useState<SupportSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activationStats, setActivationStats] =
   useState<ActivationStatsResponse>(emptyActivationStatsResponse);
 const [activationStatsLoading, setActivationStatsLoading] = useState(false);
 
+
+const openSupportChats = useMemo(
+  () => supportSessions.filter((session) => session.status !== "closed").length,
+  [supportSessions]
+);
   const pendingRequests = useMemo(
     () => requests.filter((request) => request.status === "pending"),
     [requests]
@@ -169,6 +180,20 @@ try {
   }
 } finally {
   setActivationStatsLoading(false);
+}
+
+try {
+  const supportResponse = await authFetch("/api/support/admin/sessions", {
+    method: "GET",
+  });
+
+  const supportResult = await supportResponse.json().catch(() => ({}));
+
+  if (supportResponse.ok) {
+    setSupportSessions((supportResult.sessions || []) as SupportSession[]);
+  }
+} catch {
+  setSupportSessions([]);
 }
 
       const withdrawalsResponse = await authFetch(
@@ -328,7 +353,7 @@ try {
             title="Support Widget Chats"
             text="Открывай клиентские обращения из floating support assistant, смотри активные сессии и отвечай клиенту прямо из админки."
             href="/admin/support"
-            status="live"
+            status={openSupportChats > 0 ? `${openSupportChats} open` : "live"}
 />
 
           <AdminHubCard

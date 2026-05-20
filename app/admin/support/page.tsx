@@ -65,6 +65,33 @@ export default function AdminSupportPage() {
     return sessions.find((session) => session.id === selectedSessionId) || null;
   }, [sessions, selectedSessionId]);
 
+  const getSessionQueueTime = (session: SupportSession) => {
+  const value = session.created_at || session.updated_at;
+  const time = new Date(value).getTime();
+
+  return Number.isFinite(time) ? time : 0;
+};
+
+const sortSupportQueue = (items: SupportSession[]) => {
+  return [...items].sort((a, b) => {
+    const aClosed = a.status === "closed";
+    const bClosed = b.status === "closed";
+
+    if (aClosed !== bClosed) {
+      return aClosed ? 1 : -1;
+    }
+
+    const aTime = getSessionQueueTime(a);
+    const bTime = getSessionQueueTime(b);
+
+    if (!aClosed && !bClosed) {
+      return aTime - bTime;
+    }
+
+    return bTime - aTime;
+  });
+};
+
   const getAccessToken = async () => {
     const {
       data: { session },
@@ -73,53 +100,70 @@ export default function AdminSupportPage() {
     return session?.access_token || "";
   };
 
-  const loadSessions = async () => {
-    try {
-      setError("");
-      setLoadingSessions(true);
+  const loadSessions = async (
+  options: { respectUrlSession?: boolean } = { respectUrlSession: true }
+) => {
+  try {
+    setError("");
+    setLoadingSessions(true);
 
-      const accessToken = await getAccessToken();
+    const accessToken = await getAccessToken();
 
-      if (!accessToken) {
-        setError("Войди в админ-аккаунт, чтобы открыть поддержку.");
-        return;
-      }
-
-      const response = await authFetch("/api/support/admin/sessions", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data?.error || "Не удалось загрузить чаты.");
-        return;
-      }
-
-      const loadedSessions = data.sessions || [];
-
-      setSessions(loadedSessions);
-
-      const params = new URLSearchParams(window.location.search);
-      const sessionFromUrl = params.get("session");
-
-      if (sessionFromUrl) {
-        setSelectedSessionId(sessionFromUrl);
-        return;
-      }
-
-      if (!selectedSessionId && loadedSessions[0]?.id) {
-        setSelectedSessionId(loadedSessions[0].id);
-      }
-    } catch {
-      setError("Не удалось загрузить чаты.");
-    } finally {
-      setLoadingSessions(false);
-      setAuthChecked(true);
+    if (!accessToken) {
+      setError("Войди в админ-аккаунт, чтобы открыть поддержку.");
+      return [];
     }
-  };
+
+    const response = await authFetch("/api/support/admin/sessions", {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || "Не удалось загрузить чаты.");
+      return [];
+    }
+
+    const loadedSessions = sortSupportQueue(
+      (data.sessions || []) as SupportSession[]
+    );
+
+    setSessions(loadedSessions);
+
+    const params = new URLSearchParams(window.location.search);
+    const sessionFromUrl = params.get("session");
+
+    if (options.respectUrlSession !== false && sessionFromUrl) {
+      const sessionExists = loadedSessions.some(
+        (session) => session.id === sessionFromUrl
+      );
+
+      if (sessionExists) {
+        setSelectedSessionId(sessionFromUrl);
+        return loadedSessions;
+      }
+    }
+
+    const nextOpenSession =
+      loadedSessions.find((session) => session.status !== "closed") ||
+      loadedSessions[0];
+
+    if (!selectedSessionId && nextOpenSession?.id) {
+      setSelectedSessionId(nextOpenSession.id);
+    }
+
+    return loadedSessions;
+  } catch {
+    setError("Не удалось загрузить чаты.");
+    return [];
+  } finally {
+    setLoadingSessions(false);
+    setAuthChecked(true);
+  }
+};
 
   const loadMessages = async (sessionId: string) => {
     try {
@@ -210,48 +254,60 @@ export default function AdminSupportPage() {
   };
 
   const closeChat = async () => {
-    try {
-      if (!selectedSessionId) {
-        return;
-      }
-
-      setError("");
-      setClosingChat(true);
-
-      const accessToken = await getAccessToken();
-
-      if (!accessToken) {
-        setError("Войди в админ-аккаунт.");
-        return;
-      }
-
-      const response = await authFetch("/api/support/admin/close", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-          sessionId: selectedSessionId,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data?.error || "Не удалось закрыть чат.");
-        return;
-      }
-
-      await loadSessions();
-      await loadMessages(selectedSessionId);
-    } catch {
-      setError("Не удалось закрыть чат.");
-    } finally {
-      setClosingChat(false);
+  try {
+    if (!selectedSessionId) {
+      return;
     }
-  };
 
+    setClosingChat(true);
+    setError("");
+
+    const accessToken = await getAccessToken();
+
+    if (!accessToken) {
+      setError("Войди в админ-аккаунт.");
+      return;
+    }
+
+    const response = await authFetch("/api/support/admin/close", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        sessionId: selectedSessionId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || "Не удалось закрыть чат.");
+      return;
+    }
+
+    window.history.replaceState({}, "", "/admin/support");
+    const loadedSessions = await loadSessions({ respectUrlSession: false });
+
+    const nextOpenSession = loadedSessions.find(
+      (session) => session.status !== "closed"
+    );
+
+    if (nextOpenSession?.id) {
+      setSelectedSessionId(nextOpenSession.id);
+      await loadMessages(nextOpenSession.id);
+    } else {
+      setSelectedSessionId("");
+      setSelectedSession(null);
+      setMessages([]);
+    }
+  } catch {
+    setError("Не удалось закрыть чат.");
+  } finally {
+    setClosingChat(false);
+  }
+};
   useEffect(() => {
     loadSessions();
   }, []);
@@ -285,7 +341,7 @@ export default function AdminSupportPage() {
 
           <button
             type="button"
-            onClick={loadSessions}
+            onClick={() => loadSessions({ respectUrlSession: false })}
             className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/75 transition hover:bg-white/10"
           >
             Обновить
