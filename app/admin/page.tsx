@@ -3,6 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { authFetch } from "@/lib/security/client-auth-fetch";
+import AdminActivationStatsBlock, {
+  emptyActivationStatsResponse,
+  type ActivationStatsResponse,
+} from "@/components/admin/AdminActivationStatsBlock";
 
 type WithdrawalRequest = {
   id: string;
@@ -113,6 +117,9 @@ export default function AdminHubPage() {
   const [requests, setRequests] = useState<WithdrawalRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activationStats, setActivationStats] =
+  useState<ActivationStatsResponse>(emptyActivationStatsResponse);
+const [activationStatsLoading, setActivationStatsLoading] = useState(false);
 
   const pendingRequests = useMemo(
     () => requests.filter((request) => request.status === "pending"),
@@ -143,6 +150,26 @@ export default function AdminHubPage() {
       setIsAdmin(admin);
 
       if (!admin) return;
+
+      setActivationStatsLoading(true);
+
+try {
+  const activationResponse = await authFetch("/api/admin/stats/activations", {
+    method: "GET",
+  });
+
+  const activationResult = await activationResponse.json().catch(() => ({}));
+
+  if (activationResponse.ok) {
+    setActivationStats({
+      stats: activationResult.stats || emptyActivationStatsResponse.stats,
+      totals: activationResult.totals || emptyActivationStatsResponse.totals,
+      updatedAt: activationResult.updatedAt || null,
+    });
+  }
+} finally {
+  setActivationStatsLoading(false);
+}
 
       const withdrawalsResponse = await authFetch(
         "/api/admin/referrals/withdrawals",
@@ -280,6 +307,12 @@ export default function AdminHubPage() {
             text="Последние referral withdrawal requests в системе."
           />
         </section>
+
+<AdminActivationStatsBlock
+  stats={activationStats}
+  loading={activationStatsLoading}
+  onRefresh={loadAdminHub}
+/>
 
         <section className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <AdminHubCard

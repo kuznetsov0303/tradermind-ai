@@ -223,6 +223,43 @@ async function createReferralRewardForPayment(payment: {
   };
 }
 
+async function recordSubscriptionActivationEvent(event: {
+  userId: string;
+  planId: string;
+  billingPeriod: string | null;
+  paymentId: string;
+  paymentAmountUsd: number;
+  isDemo: boolean;
+}) {
+  const normalizedPlanId = event.isDemo ? "demo" : event.planId;
+
+  if (!["demo", "core", "edge", "elite"].includes(normalizedPlanId)) {
+    return { created: false, reason: "unknown_plan" };
+  }
+
+  const { error } = await supabaseAdmin
+    .from("subscription_activation_events")
+    .insert({
+      user_id: event.userId,
+      plan_id: normalizedPlanId,
+      billing_period: event.billingPeriod,
+      payment_id: event.paymentId,
+      payment_amount_usd: event.paymentAmountUsd,
+      source: "nowpayments_webhook",
+      activated_at: new Date().toISOString(),
+    });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { created: false, reason: "activation_event_already_exists" };
+    }
+
+    throw new Error(`Activation event insert failed: ${error.message}`);
+  }
+
+  return { created: true, planId: normalizedPlanId };
+}
+
 export async function POST(req: Request) {
   try {
     const rawBody = await req.text();
@@ -373,6 +410,26 @@ try {
   console.error("Referral reward error:", referralRewardError);
 }
 
+let activationEventResult: unknown = null;
+
+try {
+  activationEventResult = await recordSubscriptionActivationEvent({
+    userId: payment.user_id,
+    planId,
+    billingPeriod,
+    paymentId:
+      invoiceId ||
+      payment.invoice_id ||
+      payment.order_id ||
+      payment.id ||
+      `payment_${Date.now()}`,
+    paymentAmountUsd: Number(payment.amount || 0),
+    isDemo,
+  });
+} catch (activationEventError) {
+  console.error("Activation event error:", activationEventError);
+}
+
    return NextResponse.json({
   ok: true,
   message: "Subscription activated",
@@ -381,6 +438,7 @@ try {
   billingPeriod,
   paymentStatus,
   referralReward: referralRewardResult,
+  activationEvent: activationEventResult,
 });
   } catch (error) {
     const message =
