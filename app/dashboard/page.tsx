@@ -60,6 +60,75 @@ function isAlertInAssetFilter(alert: DashboardMarketAlert, filter: AlertAssetFil
   return filter === "crypto" ? alert.asset_type === "crypto" : alert.asset_type !== "crypto";
 }
 
+type ReferralBalanceSummary = {
+  total_earned_points: number;
+  available_points: number;
+  pending_points: number;
+  withdrawn_points: number;
+  referral_count: number;
+  withdrawal_threshold: number;
+};
+
+const emptyReferralBalance: ReferralBalanceSummary = {
+  total_earned_points: 0,
+  available_points: 0,
+  pending_points: 0,
+  withdrawn_points: 0,
+  referral_count: 0,
+  withdrawal_threshold: 75,
+};
+
+type ReferralInvitedTrader = {
+  id: string;
+  referredUserId: string;
+  email: string;
+  status: string;
+  createdAt: string;
+  totalEarnedPoints: number;
+};
+
+type ReferralRewardHistoryItem = {
+  id: string;
+  referredUserId: string;
+  referredEmail: string;
+  paymentAmountUsd: number;
+  rewardPercent: number;
+  rewardPoints: number;
+  rewardType: string;
+  status: string;
+  createdAt: string;
+};
+
+type ReferralWithdrawalHistoryItem = {
+  id: string;
+  amountPoints: number;
+  walletAddress: string;
+  network: string;
+  confirmationEmail: string;
+  status: string;
+  adminNote: string | null;
+  createdAt: string;
+  processedAt: string | null;
+};
+
+type ReferralDashboardData = {
+  referralCode: string;
+  referralLink: string;
+  summary: ReferralBalanceSummary;
+  invitedTraders: ReferralInvitedTrader[];
+  rewardHistory: ReferralRewardHistoryItem[];
+  withdrawalHistory: ReferralWithdrawalHistoryItem[];
+};
+
+const emptyReferralDashboard: ReferralDashboardData = {
+  referralCode: "",
+  referralLink: "",
+  summary: emptyReferralBalance,
+  invitedTraders: [],
+  rewardHistory: [],
+  withdrawalHistory: [],
+};
+
 type Subscription = {
   active: boolean;
   isDemo: boolean;
@@ -2166,7 +2235,21 @@ const [tradeError, setTradeError] = useState("");
 const [journalAnalysis, setJournalAnalysis] = useState("");
 const [journalAnalysisLoading, setJournalAnalysisLoading] = useState(false);
 const [journalAnalysisError, setJournalAnalysisError] = useState("");
-  const [subscription, setSubscription] = useState({
+const [referralBalance, setReferralBalance] =
+  useState<ReferralBalanceSummary>(emptyReferralBalance);
+const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+const [withdrawAmount, setWithdrawAmount] = useState("");
+const [withdrawWallet, setWithdrawWallet] = useState("");
+const [withdrawNetwork, setWithdrawNetwork] = useState("");
+const [withdrawEmail, setWithdrawEmail] = useState("");
+const [withdrawSaving, setWithdrawSaving] = useState(false);
+const [withdrawError, setWithdrawError] = useState("");
+const [withdrawSuccess, setWithdrawSuccess] = useState("");
+const [referralDashboard, setReferralDashboard] =
+  useState<ReferralDashboardData>(emptyReferralDashboard);
+const [referralDashboardLoading, setReferralDashboardLoading] = useState(false);
+const [referralDashboardError, setReferralDashboardError] = useState("");
+const [subscription, setSubscription] = useState({
   active: false,
   plan: null as PlanId | null,
   period: null as BillingPeriod | null,
@@ -2196,6 +2279,7 @@ if (
 
       const user = userData.user;
       setEmail(user.email ?? null);
+      await refreshReferralBalance();
 
       const { data: analysesData } = await supabase
   .from("ai_analyses")
@@ -3070,7 +3154,106 @@ setExpandedChartAnalysisTradeId(tradeId);
 };
 
 
+const referralCopy = getReferralDashboardCopy(language);
+const referralCanWithdraw =
+  referralBalance.available_points >= referralBalance.withdrawal_threshold;
 
+async function refreshReferralBalance() {
+  setReferralDashboardError("");
+  setReferralDashboardLoading(true);
+
+  try {
+    const response = await authFetch("/api/referrals/dashboard", {
+      method: "GET",
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to load referral dashboard");
+    }
+
+    const dashboard = (result.dashboard || emptyReferralDashboard) as ReferralDashboardData;
+
+    setReferralDashboard(dashboard);
+    setReferralBalance(dashboard.summary || emptyReferralBalance);
+  } catch (error) {
+    setReferralDashboardError(
+      error instanceof Error
+        ? error.message
+        : "Failed to load referral dashboard"
+    );
+  } finally {
+    setReferralDashboardLoading(false);
+  }
+}
+
+function handleOpenWithdrawModal() {
+  setWithdrawError("");
+  setWithdrawSuccess("");
+  setWithdrawAmount(String(referralBalance.available_points || 75));
+  setWithdrawWallet("");
+  setWithdrawNetwork("");
+  setWithdrawEmail(email || "");
+  setWithdrawModalOpen(true);
+}
+
+async function handleWithdrawSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+
+  setWithdrawError("");
+  setWithdrawSuccess("");
+
+  const amountPoints = Number(withdrawAmount.replace(",", "."));
+
+  if (!Number.isFinite(amountPoints) || amountPoints < 75) {
+    setWithdrawError("Minimum withdrawal amount is 75 points.");
+    return;
+  }
+
+  if (amountPoints > referralBalance.available_points) {
+    setWithdrawError("Withdrawal amount is higher than available balance.");
+    return;
+  }
+
+  setWithdrawSaving(true);
+
+  try {
+    const response = await authFetch("/api/referrals/withdraw", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        amountPoints,
+        walletAddress: withdrawWallet,
+        network: withdrawNetwork,
+        confirmationEmail: withdrawEmail,
+      }),
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error || referralCopy.failed);
+    }
+
+    await refreshReferralBalance();
+
+    setWithdrawSuccess(referralCopy.success);
+    setWithdrawWallet("");
+    setWithdrawNetwork("");
+    setWithdrawEmail("");
+
+    window.setTimeout(() => {
+      setWithdrawModalOpen(false);
+    }, 1200);
+  } catch (error) {
+    setWithdrawError(error instanceof Error ? error.message : referralCopy.failed);
+  } finally {
+    setWithdrawSaving(false);
+  }
+}
   const locked = !subscription.active;
 
 const activeFeatureLock =
@@ -3545,6 +3728,22 @@ onTradeEditCancel={handleTradeEditCancel}
       disabled={locked}
       onClick={handleQuickCreateReport}
     />
+
+    <ActionButton
+  label={referralCopy.withdrawButton}
+  description={
+    referralCanWithdraw
+      ? `${referralCopy.withdrawReady}: ${formatReferralPoints(
+          referralBalance.available_points
+        )}`
+      : `${referralCopy.withdrawLocked}: ${formatReferralPoints(
+          referralBalance.available_points
+        )}/${formatReferralPoints(referralBalance.withdrawal_threshold)}`
+  }
+  badge={referralCopy.withdrawBadge}
+  disabled={!referralCanWithdraw}
+  onClick={handleOpenWithdrawModal}
+/>
   </div>
 </div>
 
@@ -3565,6 +3764,13 @@ onTradeEditCancel={handleTradeEditCancel}
 )}
 
             </motion.div>
+            <ReferralProgramCard
+  data={referralDashboard}
+  loading={referralDashboardLoading}
+  error={referralDashboardError}
+  language={language}
+  onRefresh={refreshReferralBalance}
+/>
           </aside>
         </motion.section>
       </div>
@@ -3694,6 +3900,140 @@ onTradeEditCancel={handleTradeEditCancel}
     </motion.div>
   </div>
 )}
+{withdrawModalOpen && (
+  <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/60 px-4 backdrop-blur-sm">
+    <motion.div
+      initial={{ opacity: 0, y: 18, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.22 }}
+      className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-cyan-200/14 bg-[#081522]/95 p-5 shadow-[0_30px_130px_rgba(0,0,0,0.55)]"
+    >
+      <div className="pointer-events-none absolute -right-20 -top-20 h-44 w-44 rounded-full bg-cyan-300/14 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-20 h-44 w-44 rounded-full bg-emerald-300/10 blur-3xl" />
+
+      <div className="relative">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/55">
+              Referral payout
+            </p>
+            <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+              {referralCopy.modalTitle}
+            </h3>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setWithdrawModalOpen(false)}
+            className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-2 text-xs font-black text-white/60 transition hover:bg-white/[0.09] hover:text-white"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p className="mt-3 text-sm font-semibold leading-6 text-white/52">
+          {referralCopy.modalText}
+        </p>
+
+        <div className="mt-4 rounded-2xl border border-emerald-200/12 bg-emerald-200/[0.06] p-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-semibold text-white/48">
+              {referralCopy.withdrawReady}
+            </span>
+            <span className="font-black text-emerald-100">
+              {formatReferralPoints(referralBalance.available_points)}
+            </span>
+          </div>
+        </div>
+
+        <form onSubmit={handleWithdrawSubmit} className="mt-4 space-y-3">
+          <label className="block">
+            <span className="text-xs font-black uppercase tracking-[0.18em] text-white/38">
+              {referralCopy.amount}
+            </span>
+            <input
+              type="number"
+              min={75}
+              max={referralBalance.available_points}
+              step="0.01"
+              value={withdrawAmount}
+              onChange={(event) => setWithdrawAmount(event.target.value)}
+              placeholder={referralCopy.amountPlaceholder}
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-xs font-black uppercase tracking-[0.18em] text-white/38">
+              {referralCopy.wallet}
+            </span>
+            <input
+              value={withdrawWallet}
+              onChange={(event) => setWithdrawWallet(event.target.value)}
+              placeholder={referralCopy.walletPlaceholder}
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-xs font-black uppercase tracking-[0.18em] text-white/38">
+              {referralCopy.network}
+            </span>
+            <input
+              value={withdrawNetwork}
+              onChange={(event) => setWithdrawNetwork(event.target.value)}
+              placeholder={referralCopy.networkPlaceholder}
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36"
+            />
+          </label>
+
+          <label className="block">
+            <span className="text-xs font-black uppercase tracking-[0.18em] text-white/38">
+              {referralCopy.email}
+            </span>
+            <input
+              type="email"
+              value={withdrawEmail}
+              onChange={(event) => setWithdrawEmail(event.target.value)}
+              placeholder={referralCopy.emailPlaceholder}
+              className="mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36"
+            />
+          </label>
+
+          {withdrawError ? (
+            <div className="rounded-2xl border border-rose-300/18 bg-rose-300/[0.08] px-4 py-3 text-xs font-semibold leading-5 text-rose-100">
+              {withdrawError}
+            </div>
+          ) : null}
+
+          {withdrawSuccess ? (
+            <div className="rounded-2xl border border-emerald-300/18 bg-emerald-300/[0.08] px-4 py-3 text-xs font-semibold leading-5 text-emerald-100">
+              {withdrawSuccess}
+            </div>
+          ) : null}
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => setWithdrawModalOpen(false)}
+              className="flex-1 rounded-full border border-white/10 bg-white/[0.05] px-4 py-3 text-sm font-black text-white/64 transition hover:bg-white/[0.09] hover:text-white"
+            >
+              {referralCopy.cancel}
+            </button>
+
+            <button
+              type="submit"
+              disabled={withdrawSaving}
+              className="flex-1 rounded-full bg-white px-4 py-3 text-sm font-black text-[#06111d] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {withdrawSaving ? referralCopy.sending : referralCopy.send}
+            </button>
+          </div>
+        </form>
+      </div>
+    </motion.div>
+  </div>
+)}
 
 {/* The site-wide GlobalAlertsWidget is the only floating alerts widget.
     Keep the local dashboard widget disabled to avoid duplicate AI Alerts bubbles. */}
@@ -3706,6 +4046,490 @@ onTradeEditCancel={handleTradeEditCancel}
 ) : null}
 
     </main>
+  );
+}
+
+function normalizeReferralBalanceSummary(data: unknown): ReferralBalanceSummary {
+  const row = Array.isArray(data) ? data[0] : data;
+
+  if (!row || typeof row !== "object") {
+    return emptyReferralBalance;
+  }
+
+  const value = row as Partial<Record<keyof ReferralBalanceSummary, unknown>>;
+
+  return {
+    total_earned_points: Number(value.total_earned_points || 0),
+    available_points: Number(value.available_points || 0),
+    pending_points: Number(value.pending_points || 0),
+    withdrawn_points: Number(value.withdrawn_points || 0),
+    referral_count: Number(value.referral_count || 0),
+    withdrawal_threshold: Number(value.withdrawal_threshold || 75),
+  };
+}
+
+function formatReferralPoints(value: number) {
+  const rounded = Number.isFinite(value) ? value : 0;
+
+  return `${rounded.toFixed(2).replace(/\.00$/, "")} pts`;
+}
+
+function getReferralDashboardCopy(language: Language) {
+  if (language === "en") {
+    return {
+      withdrawButton: "Withdraw",
+      withdrawBadge: "Referral",
+      withdrawReady: "Available to withdraw",
+      withdrawLocked: "Available from 75 pts",
+      modalTitle: "Withdrawal request",
+      modalText:
+        "Enter the amount, crypto wallet, network and confirmation email. The amount will be reserved as pending after submission.",
+      amount: "Amount",
+      wallet: "Crypto wallet",
+      network: "Network",
+      email: "Confirmation email",
+      send: "Send request",
+      sending: "Sending...",
+      cancel: "Cancel",
+      success: "Withdrawal request sent. The amount is now pending.",
+      failed: "Withdrawal request failed.",
+      amountPlaceholder: "75",
+      walletPlaceholder: "Wallet address",
+      networkPlaceholder: "USDT TRC20 / ERC20 / BTC / ETH",
+      emailPlaceholder: "email@example.com",
+    };
+  }
+
+  if (language === "ua") {
+    return {
+      withdrawButton: "Вивести",
+      withdrawBadge: "Referral",
+      withdrawReady: "Доступно для виводу",
+      withdrawLocked: "Доступно від 75 pts",
+      modalTitle: "Заявка на вивід",
+      modalText:
+        "Вкажіть суму, крипто-гаманець, мережу та email для підтвердження. Після відправки сума буде зарезервована як pending.",
+      amount: "Сума",
+      wallet: "Крипто-гаманець",
+      network: "Мережа",
+      email: "Email для підтвердження",
+      send: "Надіслати заявку",
+      sending: "Надсилаємо...",
+      cancel: "Скасувати",
+      success: "Заявку на вивід надіслано. Сума перейшла в pending.",
+      failed: "Не вдалося надіслати заявку.",
+      amountPlaceholder: "75",
+      walletPlaceholder: "Адреса гаманця",
+      networkPlaceholder: "USDT TRC20 / ERC20 / BTC / ETH",
+      emailPlaceholder: "email@example.com",
+    };
+  }
+
+  return {
+    withdrawButton: "Вывести",
+    withdrawBadge: "Referral",
+    withdrawReady: "Доступно для вывода",
+    withdrawLocked: "Доступно от 75 pts",
+    modalTitle: "Заявка на вывод",
+    modalText:
+      "Укажите сумму, крипто-кошелёк, сеть и email для подтверждения. После отправки сумма будет зарезервирована как pending.",
+    amount: "Сумма",
+    wallet: "Крипто-кошелёк",
+    network: "Сеть",
+    email: "Email для подтверждения",
+    send: "Отправить заявку",
+    sending: "Отправляем...",
+    cancel: "Отмена",
+    success: "Заявка на вывод отправлена. Сумма переведена в pending.",
+    failed: "Не удалось отправить заявку.",
+    amountPlaceholder: "75",
+    walletPlaceholder: "Адрес кошелька",
+    networkPlaceholder: "USDT TRC20 / ERC20 / BTC / ETH",
+    emailPlaceholder: "email@example.com",
+  };
+}
+
+function formatReferralDateTime(value: string | null) {
+  if (!value) return "—";
+
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function maskWallet(value: string) {
+  if (!value) return "—";
+  if (value.length <= 14) return value;
+
+  return `${value.slice(0, 8)}...${value.slice(-6)}`;
+}
+
+function getReferralStatusClass(status: string) {
+  if (status === "paid" || status === "active" || status === "available") {
+    return "border-emerald-300/20 bg-emerald-300/[0.08] text-emerald-100";
+  }
+
+  if (status === "pending" || status === "withdrawal_pending") {
+    return "border-amber-300/20 bg-amber-300/[0.08] text-amber-100";
+  }
+
+  if (status === "rejected" || status === "cancelled" || status === "blocked") {
+    return "border-rose-300/20 bg-rose-300/[0.08] text-rose-100";
+  }
+
+  return "border-white/10 bg-white/[0.05] text-white/60";
+}
+
+function getReferralProgramCopy(language: Language) {
+  if (language === "en") {
+    return {
+      title: "Referral Program",
+      subtitle: "Invite traders and track every reward.",
+      link: "Your referral link",
+      copy: "Copy",
+      copied: "Copied",
+      available: "Available",
+      pending: "Pending",
+      withdrawn: "Withdrawn",
+      invited: "Invited traders",
+      rewards: "Points history",
+      withdrawals: "Withdrawal history",
+      emptyInvites: "No invited traders yet.",
+      emptyRewards: "No rewards yet.",
+      emptyWithdrawals: "No withdrawal requests yet.",
+      trader: "Trader",
+      status: "Status",
+      earned: "Earned",
+      date: "Date",
+      type: "Type",
+      points: "Points",
+      payment: "Payment",
+      amount: "Amount",
+      network: "Network",
+      wallet: "Wallet",
+      processed: "Processed",
+      refresh: "Refresh",
+      loading: "Loading referral data...",
+    };
+  }
+
+  if (language === "ua") {
+    return {
+      title: "Партнерська програма",
+      subtitle: "Запрошуй трейдерів і відстежуй кожне нарахування.",
+      link: "Твоя реферальна ссылка",
+      copy: "Копіювати",
+      copied: "Скопійовано",
+      available: "Available",
+      pending: "Pending",
+      withdrawn: "Withdrawn",
+      invited: "Запрошені трейдери",
+      rewards: "Історія points",
+      withdrawals: "Історія виводів",
+      emptyInvites: "Поки немає запрошених трейдерів.",
+      emptyRewards: "Поки немає нарахувань.",
+      emptyWithdrawals: "Поки немає заявок на вивід.",
+      trader: "Трейдер",
+      status: "Статус",
+      earned: "Зароблено",
+      date: "Дата",
+      type: "Тип",
+      points: "Points",
+      payment: "Платіж",
+      amount: "Сума",
+      network: "Мережа",
+      wallet: "Гаманець",
+      processed: "Оброблено",
+      refresh: "Оновити",
+      loading: "Завантажуємо referral data...",
+    };
+  }
+
+  return {
+    title: "Реферальная программа",
+    subtitle: "Приглашай трейдеров и отслеживай каждое начисление.",
+    link: "Твоя реферальная ссылка",
+    copy: "Копировать",
+    copied: "Скопировано",
+    available: "Available",
+    pending: "Pending",
+    withdrawn: "Withdrawn",
+    invited: "Приглашённые трейдеры",
+    rewards: "История points",
+    withdrawals: "История выводов",
+    emptyInvites: "Пока нет приглашённых трейдеров.",
+    emptyRewards: "Пока нет начислений.",
+    emptyWithdrawals: "Пока нет заявок на вывод.",
+    trader: "Трейдер",
+    status: "Статус",
+    earned: "Заработано",
+    date: "Дата",
+    type: "Тип",
+    points: "Points",
+    payment: "Платёж",
+    amount: "Сумма",
+    network: "Сеть",
+    wallet: "Кошелёк",
+    processed: "Обработано",
+    refresh: "Обновить",
+    loading: "Загружаем referral data...",
+  };
+}
+
+function ReferralProgramCard({
+  data,
+  loading,
+  error,
+  language,
+  onRefresh,
+}: {
+  data: ReferralDashboardData;
+  loading: boolean;
+  error: string;
+  language: Language;
+  onRefresh: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const copy = getReferralProgramCopy(language);
+
+  async function handleCopy() {
+    if (!data.referralLink) return;
+
+    await navigator.clipboard.writeText(data.referralLink);
+    setCopied(true);
+
+    window.setTimeout(() => setCopied(false), 1200);
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 18 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.55, delay: 0.24 }}
+      className="se-dashboard-card rounded-[2rem] p-6"
+    >
+      <div className="relative overflow-hidden rounded-[1.7rem] border border-emerald-200/10 bg-[#071320]/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-emerald-300/12 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-14 h-40 w-40 rounded-full bg-cyan-300/10 blur-3xl" />
+
+        <div className="relative flex items-start justify-between gap-3">
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-white/35">
+              Referral
+            </p>
+            <h3 className="mt-1 text-lg font-black tracking-[-0.03em] text-white">
+              {copy.title}
+            </h3>
+            <p className="mt-2 text-xs font-semibold leading-5 text-white/45">
+              {copy.subtitle}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onRefresh}
+            className="rounded-full border border-cyan-200/15 bg-cyan-200/[0.06] px-3 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-cyan-100/80 transition hover:bg-cyan-200/[0.1]"
+          >
+            {copy.refresh}
+          </button>
+        </div>
+
+        {error ? (
+          <div className="relative mt-4 rounded-2xl border border-rose-300/18 bg-rose-300/[0.08] px-4 py-3 text-xs font-semibold text-rose-100">
+            {error}
+          </div>
+        ) : null}
+
+        <div className="relative mt-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+            {copy.link}
+          </p>
+
+          <div className="mt-2 flex gap-2">
+            <input
+              readOnly
+              value={data.referralLink || "—"}
+              className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-xs font-semibold text-white/70 outline-none"
+            />
+
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="rounded-2xl bg-white px-4 py-3 text-xs font-black text-[#06111d] transition hover:-translate-y-0.5"
+            >
+              {copied ? copy.copied : copy.copy}
+            </button>
+          </div>
+        </div>
+
+        <div className="relative mt-4 grid gap-2 sm:grid-cols-3">
+          {[
+            [copy.available, data.summary.available_points, "text-emerald-100"],
+            [copy.pending, data.summary.pending_points, "text-amber-100"],
+            [copy.withdrawn, data.summary.withdrawn_points, "text-cyan-100"],
+          ].map(([label, value, className]) => (
+            <div
+              key={String(label)}
+              className="rounded-2xl border border-white/10 bg-black/20 p-3"
+            >
+              <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/34">
+                {label}
+              </div>
+              <div className={`mt-2 text-xl font-black ${className}`}>
+                {formatReferralPoints(Number(value))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {loading ? (
+          <div className="relative mt-4 rounded-2xl border border-white/10 bg-black/20 p-5 text-center text-xs font-bold text-white/45">
+            {copy.loading}
+          </div>
+        ) : (
+          <div className="relative mt-5 space-y-5">
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.22em] text-white/40">
+                {copy.invited}
+              </h4>
+
+              {data.invitedTraders.length === 0 ? (
+                <p className="mt-2 rounded-2xl border border-white/10 bg-black/18 p-4 text-xs font-semibold text-white/42">
+                  {copy.emptyInvites}
+                </p>
+              ) : (
+                <div className="mt-2 overflow-x-auto">
+                  <table className="w-full min-w-[520px] text-left text-xs">
+                    <thead className="text-[10px] uppercase tracking-[0.16em] text-white/30">
+                      <tr>
+                        <th className="py-2 pr-3">{copy.trader}</th>
+                        <th className="py-2 pr-3">{copy.status}</th>
+                        <th className="py-2 pr-3">{copy.earned}</th>
+                        <th className="py-2">{copy.date}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.invitedTraders.slice(0, 6).map((item) => (
+                        <tr key={item.id} className="border-t border-white/8">
+                          <td className="py-3 pr-3 font-semibold text-white/62">
+                            {item.email}
+                          </td>
+                          <td className="py-3 pr-3">
+                            <span
+                              className={`rounded-full border px-2 py-1 text-[10px] font-black uppercase ${getReferralStatusClass(
+                                item.status
+                              )}`}
+                            >
+                              {item.status}
+                            </span>
+                          </td>
+                          <td className="py-3 pr-3 font-black text-emerald-100">
+                            {formatReferralPoints(item.totalEarnedPoints)}
+                          </td>
+                          <td className="py-3 text-white/42">
+                            {formatReferralDateTime(item.createdAt)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.22em] text-white/40">
+                {copy.rewards}
+              </h4>
+
+              {data.rewardHistory.length === 0 ? (
+                <p className="mt-2 rounded-2xl border border-white/10 bg-black/18 p-4 text-xs font-semibold text-white/42">
+                  {copy.emptyRewards}
+                </p>
+              ) : (
+                <div className="mt-2 space-y-2">
+                  {data.rewardHistory.slice(0, 6).map((reward) => (
+                    <div
+                      key={reward.id}
+                      className="rounded-2xl border border-white/10 bg-black/18 p-3"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div>
+                          <div className="text-xs font-black text-white/72">
+                            {reward.referredEmail}
+                          </div>
+                          <div className="mt-1 text-[11px] font-semibold text-white/38">
+                            {reward.rewardType} · {reward.rewardPercent}% · $
+                            {reward.paymentAmountUsd}
+                          </div>
+                        </div>
+
+                        <div className="text-right">
+                          <div className="text-sm font-black text-emerald-100">
+                            +{formatReferralPoints(reward.rewardPoints)}
+                          </div>
+                          <div className="mt-1 text-[10px] text-white/35">
+                            {formatReferralDateTime(reward.createdAt)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div>
+              <h4 className="text-xs font-black uppercase tracking-[0.22em] text-white/40">
+                {copy.withdrawals}
+              </h4>
+
+              {data.withdrawalHistory.length === 0 ? (
+                <p className="mt-2 rounded-2xl border border-white/10 bg-black/18 p-4 text-xs font-semibold text-white/42">
+                  {copy.emptyWithdrawals}
+                </p>
+              ) : (
+                <div className="mt-2 space-y-2">
+                  {data.withdrawalHistory.slice(0, 6).map((withdrawal) => (
+                    <div
+                      key={withdrawal.id}
+                      className="rounded-2xl border border-white/10 bg-black/18 p-3"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-sm font-black text-white/75">
+                            {formatReferralPoints(withdrawal.amountPoints)}
+                          </div>
+                          <div className="mt-1 text-[11px] font-semibold text-white/38">
+                            {withdrawal.network} ·{" "}
+                            {maskWallet(withdrawal.walletAddress)}
+                          </div>
+                          <div className="mt-1 text-[10px] text-white/30">
+                            {formatReferralDateTime(withdrawal.createdAt)}
+                          </div>
+                        </div>
+
+                        <span
+                          className={`rounded-full border px-2 py-1 text-[10px] font-black uppercase ${getReferralStatusClass(
+                            withdrawal.status
+                          )}`}
+                        >
+                          {withdrawal.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
   );
 }
 
