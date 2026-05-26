@@ -179,8 +179,7 @@ const dict = {
             "Unlock higher limits, AI reports, premium chart analysis, social/market context and the AI Scanner / AI Market Brief layer.",
           bestFor: "Best for active traders who review seriously and want better setup and mistake discovery.",
           cta: "Upgrade to Edge",
-          features: ["Everything in Core",
-            "Strategy OS: build your own trading strategy", "Up to 2,000 trades", "5 screenshots per trade", "200 AI Coach requests / month", "30 AI reports / month", "AI Scanner / Market Intelligence"],
+          features: ["Everything in Core", "Up to 2,000 trades", "5 screenshots per trade", "200 AI Coach requests / month", "30 AI reports / month", "AI Scanner / Market Intelligence"],
         },
         {
           id: "elite",
@@ -473,8 +472,7 @@ const dict = {
             "Открой повышенные лимиты, AI-отчёты, premium-анализ графиков, рыночный контекст и слой AI-сканера / AI Market Brief.",
           bestFor: "Лучше всего для активных трейдеров, которые серьёзно разбирают сделки и ищут повторяющиеся ошибки и сетапы.",
           cta: "Перейти на Edge",
-          features: ["Всё из Core",
-          "Strategy OS: создание собственной стратегии", "До 2 000 сделок", "5 скриншотов на сделку", "200 запросов к AI-коучу / месяц", "30 AI-отчётов / месяц", "AI-сканер / рыночная разведка"],
+          features: ["Всё из Core", "До 2 000 сделок", "5 скриншотов на сделку", "200 запросов к AI-коучу / месяц", "30 AI-отчётов / месяц", "AI-сканер / рыночная разведка"],
         },
         {
           id: "elite",
@@ -767,8 +765,7 @@ const dict = {
             "Відкрий вищі ліміти, AI-звіти, premium-аналіз графіків, ринковий контекст і шар AI-сканера / AI Market Brief.",
           bestFor: "Найкраще для активних трейдерів, які серйозно розбирають угоди й шукають повторювані помилки та сетапи.",
           cta: "Перейти на Edge",
-          features: ["Усе з Core",
-          "Strategy OS: створення власної торгової стратегії", "До 2 000 угод", "5 скріншотів на угоду", "200 запитів до AI-коуча / місяць", "30 AI-звітів / місяць", "AI-сканер / ринкова розвідка"],
+          features: ["Усе з Core", "До 2 000 угод", "5 скріншотів на угоду", "200 запитів до AI-коуча / місяць", "30 AI-звітів / місяць", "AI-сканер / ринкова розвідка"],
         },
         {
           id: "elite",
@@ -3217,7 +3214,6 @@ function getPricingShowcaseCopy(lang: string) {
           cta: "Upgrade to Edge",
           features: [
             "Everything in Core",
-            "Strategy OS: build your own trading strategy",
             "Market Intelligence",
             "AI Scanner",
             "AI Market Brief",
@@ -3377,7 +3373,6 @@ function getPricingShowcaseCopy(lang: string) {
           cta: "Перейти на Edge",
           features: [
             "Усе з Core",
-          "Strategy OS: створення власної торгової стратегії",
             "Market Intelligence",
             "AI Scanner",
             "AI Market Brief",
@@ -3536,7 +3531,6 @@ function getPricingShowcaseCopy(lang: string) {
         cta: "Перейти на Edge",
         features: [
           "Всё из Core",
-          "Strategy OS: создание собственной стратегии",
           "Market Intelligence",
           "AI Scanner",
           "AI Market Brief",
@@ -4952,26 +4946,18 @@ function PaymentMethodModal({
             },
           };
 
-  const selectedPlanId = String(selection.planId || "").toLowerCase();
-
   const planName =
-    selectedPlanId === "demo"
+    selection.planId === "demo"
       ? "SkillEdge Elite Demo"
-      : selectedPlanId === "starter" || selectedPlanId === "core"
+      : selection.planId === "core"
         ? "SkillEdge Core"
-        : selectedPlanId === "pro" || selectedPlanId === "edge"
+        : selection.planId === "edge"
           ? "SkillEdge Edge"
-          : selectedPlanId === "elite"
-            ? "SkillEdge Elite"
-            : "SkillEdge AI";
+          : "SkillEdge Elite";
 
   const periodLabel =
-    selectedPlanId === "demo"
-      ? language === "en"
-        ? "3 days"
-        : language === "ua"
-          ? "3 дні"
-          : "3 дня"
+    selection.planId === "demo"
+      ? "3 days"
       : copy.billing[selection.billingPeriod];
 
   return (

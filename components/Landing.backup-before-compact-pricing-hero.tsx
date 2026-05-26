@@ -179,8 +179,7 @@ const dict = {
             "Unlock higher limits, AI reports, premium chart analysis, social/market context and the AI Scanner / AI Market Brief layer.",
           bestFor: "Best for active traders who review seriously and want better setup and mistake discovery.",
           cta: "Upgrade to Edge",
-          features: ["Everything in Core",
-            "Strategy OS: build your own trading strategy", "Up to 2,000 trades", "5 screenshots per trade", "200 AI Coach requests / month", "30 AI reports / month", "AI Scanner / Market Intelligence"],
+          features: ["Everything in Core", "Up to 2,000 trades", "5 screenshots per trade", "200 AI Coach requests / month", "30 AI reports / month", "AI Scanner / Market Intelligence"],
         },
         {
           id: "elite",
@@ -473,8 +472,7 @@ const dict = {
             "Открой повышенные лимиты, AI-отчёты, premium-анализ графиков, рыночный контекст и слой AI-сканера / AI Market Brief.",
           bestFor: "Лучше всего для активных трейдеров, которые серьёзно разбирают сделки и ищут повторяющиеся ошибки и сетапы.",
           cta: "Перейти на Edge",
-          features: ["Всё из Core",
-          "Strategy OS: создание собственной стратегии", "До 2 000 сделок", "5 скриншотов на сделку", "200 запросов к AI-коучу / месяц", "30 AI-отчётов / месяц", "AI-сканер / рыночная разведка"],
+          features: ["Всё из Core", "До 2 000 сделок", "5 скриншотов на сделку", "200 запросов к AI-коучу / месяц", "30 AI-отчётов / месяц", "AI-сканер / рыночная разведка"],
         },
         {
           id: "elite",
@@ -767,8 +765,7 @@ const dict = {
             "Відкрий вищі ліміти, AI-звіти, premium-аналіз графіків, ринковий контекст і шар AI-сканера / AI Market Brief.",
           bestFor: "Найкраще для активних трейдерів, які серйозно розбирають угоди й шукають повторювані помилки та сетапи.",
           cta: "Перейти на Edge",
-          features: ["Усе з Core",
-          "Strategy OS: створення власної торгової стратегії", "До 2 000 угод", "5 скріншотів на угоду", "200 запитів до AI-коуча / місяць", "30 AI-звітів / місяць", "AI-сканер / ринкова розвідка"],
+          features: ["Усе з Core", "До 2 000 угод", "5 скріншотів на угоду", "200 запитів до AI-коуча / місяць", "30 AI-звітів / місяць", "AI-сканер / ринкова розвідка"],
         },
         {
           id: "elite",
@@ -1186,7 +1183,7 @@ const backgroundVariant = active === "desk" ? "product" : active;
 
     <TradingBackground variant={backgroundVariant} />
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#07111F]/70 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-8">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-3">
             <BrandMark size="sm" />
             <div className="text-left">
@@ -1321,7 +1318,7 @@ const backgroundVariant = active === "desk" ? "product" : active;
         </AnimatePresence>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-6xl px-4 py-12 md:px-8">
+      <main className="relative z-10 mx-auto max-w-7xl px-4 py-12 md:px-8">
                 <AnimatePresence mode="wait">
           {active === "home" && (
             <motion.div key="home">
@@ -1944,7 +1941,7 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
             {copy.badge}
           </div>
 
-          <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-4xl">
+          <h2 className="mt-5 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
             {copy.title}
           </h2>
 
@@ -2258,7 +2255,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               {copy.badge}
             </div>
 
-            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.95] tracking-[-0.065em] text-white md:text-6xl xl:text-8xl">
+            <h1 className="mt-7 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.065em] text-white md:text-7xl xl:text-8xl">
               {copy.title.split("по структуре.")[0]}
               <span className="bg-gradient-to-r from-[#C8A96B] via-[#00D084] to-[#00C076] bg-clip-text text-transparent">
                 {copy.title.includes("по структуре.") ? "по структуре." : ""}
@@ -2301,7 +2298,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               </button>
             </div>
 
-            <div className="mt-7 grid gap-4 md:grid-cols-3">
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
               {copy.trustItems.map((item) => (
                 <button
                   key={item[0]}
@@ -2360,7 +2357,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
             {copy.proofTitle}
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
             {copy.trustItems.map((item, index) => (
               <button
                 key={`${item[0]}-bottom`}
@@ -2604,7 +2601,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.16, duration: 0.6 }}
-        className="mt-6 max-w-4xl text-4xl font-black leading-[0.9] tracking-[-0.075em] text-white md:text-4xl xl:text-7xl"
+        className="mt-6 max-w-4xl text-5xl font-black leading-[0.9] tracking-[-0.075em] text-white md:text-6xl xl:text-7xl"
       >
         {copy.title}
       </motion.h1>
@@ -2643,7 +2640,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         </button>
       </motion.div>
 
-      <div className="mt-6 grid max-w-4xl gap-3 sm:grid-cols-2">
+      <div className="mt-8 grid max-w-4xl gap-3 sm:grid-cols-2">
         {copy.bullets.map((item, index) => (
           <motion.div
             key={item}
@@ -2706,7 +2703,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         <div className="relative grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
           <div>
             <Badge>{copy.workflowTitle}</Badge>
-            <h2 className="mt-6 text-4xl font-black leading-tight text-white md:text-4xl">
+            <h2 className="mt-6 text-4xl font-black leading-tight text-white md:text-5xl">
               {copy.outcomeTitle}
             </h2>
             <p className="mt-5 max-w-2xl text-sm font-semibold leading-7 text-white/58">
@@ -2736,7 +2733,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       <section className="relative overflow-hidden rounded-[2.4rem] border border-white/10 bg-white/[0.035] p-8 text-center shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-12">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,192,118,0.13),transparent_36%),radial-gradient(circle_at_50%_100%,rgba(200,169,107,0.10),transparent_34%)]" />
         <div className="relative mx-auto max-w-3xl">
-          <h2 className="text-4xl font-black tracking-[-0.05em] text-white md:text-4xl">
+          <h2 className="text-4xl font-black tracking-[-0.05em] text-white md:text-6xl">
             {copy.finalTitle}
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-sm font-semibold leading-7 text-white/58 md:text-base">
@@ -2746,7 +2743,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           <button
             type="button"
             onClick={() => setActive("pricing")}
-            className="group relative mt-6 overflow-hidden rounded-full border border-white/20 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] px-8 py-4 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(0,192,118,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(0,192,118,0.26)]"
+            className="group relative mt-8 overflow-hidden rounded-full border border-white/20 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] px-8 py-4 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(0,192,118,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(0,192,118,0.26)]"
           >
             <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
             <span className="relative">{copy.primary} →</span>
@@ -2833,7 +2830,7 @@ function ProductBuiltForTradersBlock({ lang }: { lang: string }) {
             {copy.eyebrow}
           </div>
 
-          <h2 className="mt-6 max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.055em] text-white md:text-4xl">
+          <h2 className="mt-6 max-w-3xl text-4xl font-black leading-[0.95] tracking-[-0.055em] text-white md:text-5xl">
             {copy.title}
           </h2>
         </div>
@@ -2954,7 +2951,7 @@ function ProductStrategyCreationBlock({
           };
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-[#C8A96B]/24 bg-[#0F172A]/88 p-5 shadow-[0_38px_160px_rgba(0,0,0,0.30)] backdrop-blur-2xl md:p-7 lg:p-8">
+    <section className="relative overflow-hidden rounded-[2.65rem] border border-[#C8A96B]/24 bg-[#0F172A]/88 p-5 shadow-[0_38px_160px_rgba(0,0,0,0.30)] backdrop-blur-2xl md:p-7 lg:p-8">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(200,169,107,0.18),transparent_31%),radial-gradient(circle_at_86%_14%,rgba(0,192,118,0.18),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C8A96B]/70 to-transparent" />
 
@@ -2971,7 +2968,7 @@ function ProductStrategyCreationBlock({
             {copy.eyebrow}
           </div>
 
-          <h2 className="mt-5 max-w-3xl text-3xl font-black leading-[0.96] tracking-[-0.055em] text-white md:text-4xl">
+          <h2 className="mt-5 max-w-3xl text-3xl font-black leading-[0.96] tracking-[-0.055em] text-white md:text-5xl">
             {copy.title}
           </h2>
 
@@ -3117,7 +3114,7 @@ function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => 
 
       <section>
         <SectionTitle eyebrow="AI Trading Desk" title={p.deskTitle} text={p.deskText} />
-        <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {p.deskCards.map(([title, text]: [string, string], index: number) => (
             <InfoCard key={title} title={title} text={text} index={index} />
           ))}
@@ -3127,7 +3124,7 @@ function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => 
       <section className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
           <Badge>{p.flowEyebrow}</Badge>
-          <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-4xl">{p.flowTitle}</h2>
+          <h2 className="mt-6 text-4xl font-semibold leading-tight text-white md:text-5xl">{p.flowTitle}</h2>
           <p className="mt-5 text-base leading-8 text-white/62">{p.flowText}</p>
         </div>
 
@@ -3140,7 +3137,7 @@ function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => 
 
       <section>
         <SectionTitle eyebrow={p.modulesEyebrow} title={p.modulesTitle} text={p.modulesText} />
-        <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {p.modules.map(([title, text, items]: [string, string, string[]], index: number) => (
             <ModuleCard key={title} title={title} text={text} items={items} index={index} />
           ))}
@@ -3149,7 +3146,7 @@ function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => 
 
       <section>
         <SectionTitle eyebrow={p.differentEyebrow} title={p.differentTitle} text={p.differentText} />
-        <div className="mt-6 grid gap-5 lg:grid-cols-3">
+        <div className="mt-8 grid gap-5 lg:grid-cols-3">
           {p.comparisons.map(([title, weak, strong]: [string, string, string], index: number) => (
             <ComparisonCard key={title} title={title} weak={weak} strong={strong} index={index} />
           ))}
@@ -3217,7 +3214,6 @@ function getPricingShowcaseCopy(lang: string) {
           cta: "Upgrade to Edge",
           features: [
             "Everything in Core",
-            "Strategy OS: build your own trading strategy",
             "Market Intelligence",
             "AI Scanner",
             "AI Market Brief",
@@ -3334,6 +3330,7 @@ function getPricingShowcaseCopy(lang: string) {
       billingText:
         "Місячна оплата гнучка. Довші періоди краще підходять для звички review і відстеження прогресу.",
       paymentNotes: [
+        "Оплата карткою: скоро",
       ],
       period: {
         monthly: "/ місяць",
@@ -3377,7 +3374,6 @@ function getPricingShowcaseCopy(lang: string) {
           cta: "Перейти на Edge",
           features: [
             "Усе з Core",
-          "Strategy OS: створення власної торгової стратегії",
             "Market Intelligence",
             "AI Scanner",
             "AI Market Brief",
@@ -3493,6 +3489,7 @@ function getPricingShowcaseCopy(lang: string) {
     billingText:
       "Месячная оплата гибкая. Длинные периоды лучше подходят для привычки review и отслеживания прогресса.",
     paymentNotes: [
+      "Оплата картой: скоро",
     ],
     period: {
       monthly: "/ месяц",
@@ -3536,7 +3533,6 @@ function getPricingShowcaseCopy(lang: string) {
         cta: "Перейти на Edge",
         features: [
           "Всё из Core",
-          "Strategy OS: создание собственной стратегии",
           "Market Intelligence",
           "AI Scanner",
           "AI Market Brief",
@@ -3648,7 +3644,7 @@ function PricingValueBlock({ lang }: { lang: string }) {
     lang === "EN"
       ? {
           eyebrow: "Institutional-grade trading infrastructure",
-          title: "Not another empty shell, but a working tool that turns market context, trades and mistakes into a controlled system.",
+          title: "Not an AI chat. A premium decision system for traders who treat the market as a business.",
           text:
             "SkillEdge AI connects journal, screenshots, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports and Elite Alerts into one premium trading desk — so every decision moves through context, risk, execution and review.",
           strong:
@@ -3665,7 +3661,7 @@ function PricingValueBlock({ lang }: { lang: string }) {
       : lang === "UA"
         ? {
             eyebrow: "Преміальна інфраструктура трейдера",
-            title: "Не чергова пустишка, а робочий інструмент, який перетворює ринок, угоди й помилки на керовану систему.",
+            title: "Не AI-чат. А робочий контур, який перетворює ринок, угоди й помилки на керовану систему.",
             text:
               "SkillEdge AI поєднує журнал, скріншоти, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports і Elite Alerts в один premium trading desk — щоб кожне рішення проходило через контекст, ризик, виконання й розбір.",
             strong:
@@ -3681,7 +3677,7 @@ function PricingValueBlock({ lang }: { lang: string }) {
           }
         : {
             eyebrow: "Премиальная инфраструктура трейдера",
-            title: "Не очередная пустышка, а рабочий инструмент, который превращает рынок, сделки и ошибки в управляемую систему.",
+            title: "Не AI-чат. А рабочий контур, который превращает рынок, сделки и ошибки в управляемую систему.",
             text:
               "SkillEdge AI объединяет журнал, скриншоты, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports и Elite Alerts в один premium trading desk — чтобы каждое решение проходило через контекст, риск, исполнение и разбор.",
             strong:
@@ -3795,7 +3791,7 @@ const demoCopy =
 
   const getPlanAccent = (planId: string) => {
     if (planId === "elite") {
-      return "border-[#C8A96B]/30 bg-[#C8A96B]/[0.085] shadow-[0_34px_150px_rgba(0,192,118,0.2)] lg:-mt-6";
+      return "border-[#C8A96B]/30 bg-[#C8A96B]/[0.085] shadow-[0_34px_150px_rgba(0,192,118,0.2)] lg:-mt-8";
     }
 
     if (planId === "pro") {
@@ -3821,7 +3817,7 @@ const demoCopy =
           <div>
             <Badge>{copy.heroBadge}</Badge>
 
-            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.98] tracking-[-0.06em] text-white md:text-4xl xl:text-7xl">
+            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.98] tracking-[-0.06em] text-white md:text-6xl xl:text-7xl">
               {copy.heroTitle}
             </h1>
 
@@ -3829,7 +3825,7 @@ const demoCopy =
               {copy.heroText}
             </p>
 
-            <div className="mt-6 rounded-[2rem] border border-white/10 bg-black/24 p-3 backdrop-blur-xl">
+            <div className="mt-8 rounded-[2rem] border border-white/10 bg-black/24 p-3 backdrop-blur-xl">
               <div className="px-2 pb-3">
                 <div className="text-sm font-black text-white">{copy.billingTitle}</div>
                 <div className="mt-1 text-xs font-semibold leading-5 text-white/45">
@@ -3888,7 +3884,7 @@ const demoCopy =
           >
             <div className="absolute -inset-10 rounded-[2.4rem] bg-[#00C076]/12 blur-3xl" />
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-[#C8A96B]/20 bg-[#C8A96B]/[0.075] p-5 shadow-[0_40px_150px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-[#C8A96B]/20 bg-[#C8A96B]/[0.075] p-5 shadow-[0_40px_150px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(0,192,118,0.22),transparent_34%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.15),transparent_30%)]" />
 
               <div className="relative z-10">
@@ -3902,7 +3898,7 @@ const demoCopy =
                   </div>
                 </div>
 
-                <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-4xl">
+                <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
                   {copy.elite.title}
                 </h2>
 
@@ -3988,7 +3984,7 @@ const demoCopy =
               </p>
 
               <div className="mt-7 flex items-end gap-2">
-                <span className="text-4xl font-black tracking-[-0.06em] text-white">
+                <span className="text-5xl font-black tracking-[-0.06em] text-white">
                   {getPlanPrice(plan)}
                 </span>
                 <span className="pb-2 text-sm font-bold text-white/45">
@@ -4043,7 +4039,7 @@ const demoCopy =
         ))}
       </section>
 
-<section className="relative -mt-6 overflow-hidden rounded-[2rem] border border-amber-200/16 bg-white/[0.035] p-4 shadow-[0_24px_90px_rgba(0,0,0,0.16)] backdrop-blur-xl md:p-5">
+<section className="relative -mt-8 overflow-hidden rounded-[2rem] border border-amber-200/16 bg-white/[0.035] p-4 shadow-[0_24px_90px_rgba(0,0,0,0.16)] backdrop-blur-xl md:p-5">
   <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(251,191,36,0.12),transparent_30%),radial-gradient(circle_at_92%_20%,rgba(0,192,118,0.10),transparent_32%)]" />
 
   <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -4092,7 +4088,7 @@ const demoCopy =
             text={copy.signal.text}
           />
 
-          <div className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
             {copy.signal.cards.map((item: string[], index: number) => {
               const title = item[0] ?? "";
               const text = item[1] ?? "";
@@ -4133,7 +4129,7 @@ const demoCopy =
             <div>
               <Badge>{copy.comparison.eyebrow}</Badge>
 
-              <h2 className="mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-4xl">
+              <h2 className="mt-6 max-w-4xl text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
                 {copy.comparison.title}
               </h2>
             </div>
@@ -4191,7 +4187,7 @@ const demoCopy =
         >
           <Badge>{copy.recommendation.eyebrow}</Badge>
 
-          <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-4xl">
+          <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
             {copy.recommendation.title}
           </h2>
 
@@ -4728,7 +4724,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           <div>
             <Badge>{copy.badge}</Badge>
 
-            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.96] tracking-[-0.065em] text-white md:text-4xl xl:text-7xl">
+            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.96] tracking-[-0.065em] text-white md:text-6xl xl:text-7xl">
               {copy.title}
             </h1>
 
@@ -4771,7 +4767,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           <div>
             <Badge>{copy.principlesEyebrow}</Badge>
 
-            <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-4xl">
+            <h2 className="mt-6 text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
               {copy.principlesTitle}
             </h2>
           </div>
@@ -4852,7 +4848,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
 
         <div className="relative grid gap-8 lg:grid-cols-[1fr_0.7fr] lg:items-center">
           <div>
-            <h2 className="text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-4xl">
+            <h2 className="text-4xl font-black leading-[1.02] tracking-[-0.055em] text-white md:text-5xl">
               {copy.finalTitle}
             </h2>
 
@@ -4952,26 +4948,18 @@ function PaymentMethodModal({
             },
           };
 
-  const selectedPlanId = String(selection.planId || "").toLowerCase();
-
   const planName =
-    selectedPlanId === "demo"
+    selection.planId === "demo"
       ? "SkillEdge Elite Demo"
-      : selectedPlanId === "starter" || selectedPlanId === "core"
+      : selection.planId === "core"
         ? "SkillEdge Core"
-        : selectedPlanId === "pro" || selectedPlanId === "edge"
+        : selection.planId === "edge"
           ? "SkillEdge Edge"
-          : selectedPlanId === "elite"
-            ? "SkillEdge Elite"
-            : "SkillEdge AI";
+          : "SkillEdge Elite";
 
   const periodLabel =
-    selectedPlanId === "demo"
-      ? language === "en"
-        ? "3 days"
-        : language === "ua"
-          ? "3 дні"
-          : "3 дня"
+    selection.planId === "demo"
+      ? "3 days"
       : copy.billing[selection.billingPeriod];
 
   return (
@@ -5171,7 +5159,7 @@ function SkillEdgeSplashIntro({ language }: { language: Language }) {
           initial={{ opacity: 0, y: 18, letterSpacing: "0.18em" }}
           animate={{ opacity: 1, y: 0, letterSpacing: "-0.055em" }}
           transition={{ delay: 0.55, duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-4 text-4xl font-black text-white md:text-6xl"
+          className="mt-4 text-5xl font-black text-white md:text-7xl"
         >
           SkillEdge AI
         </motion.h1>
@@ -5208,7 +5196,7 @@ function SkillEdgeSplashIntro({ language }: { language: Language }) {
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: 260, opacity: 1 }}
           transition={{ delay: 1.15, duration: 1.15, ease: "easeInOut" }}
-          className="mt-6 h-px overflow-hidden rounded-full bg-white/10"
+          className="mt-8 h-px overflow-hidden rounded-full bg-white/10"
         >
           <motion.div
             initial={{ x: "-100%" }}
@@ -5400,7 +5388,7 @@ function PremiumFooter({
       <div className="absolute -left-32 top-10 h-80 w-80 rounded-full bg-[#C8A96B]/10 blur-3xl" />
       <div className="absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-[#00C076]0/10 blur-3xl" />
 
-      <div className="relative mx-auto max-w-6xl px-4 py-12 md:px-8">
+      <div className="relative mx-auto max-w-7xl px-4 py-12 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_2fr]">
           <div>
             <Link href="/" className="flex items-center gap-3 text-left">
@@ -5672,9 +5660,9 @@ function HeroSection({
       <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
           <Badge>{badge}</Badge>
-          <h1 className="mt-7 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-4xl">{title}</h1>
+          <h1 className="mt-7 max-w-5xl text-4xl font-semibold leading-[1.02] tracking-tight text-white md:text-6xl">{title}</h1>
           <p className="mt-6 max-w-3xl text-base leading-8 text-white/68 md:text-lg">{text}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-wrap gap-3">
             <ButtonX onClick={onPrimary}>{primary}<span className="ml-2">→</span></ButtonX>
             <button onClick={onSecondary} className="rounded-full border border-white/10 bg-white/[0.04] px-6 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white">{secondary}</button>
           </div>
@@ -5707,7 +5695,7 @@ function SectionTitle({ eyebrow, title, text }: { eyebrow: string; title: string
   return (
     <div>
       {eyebrow ? <Badge>{eyebrow}</Badge> : null}
-      <h2 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight md:text-4xl">{title}</h2>
+      <h2 className="mt-5 max-w-4xl text-4xl font-semibold leading-tight md:text-5xl">{title}</h2>
       {text ? <p className="mt-5 max-w-3xl text-base leading-8 text-white/65">{text}</p> : null}
     </div>
   );
@@ -5834,7 +5822,7 @@ function FinalCta({ title, text, checklist, button, onClick }: { title: string; 
     <section className="overflow-hidden rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-[#C8A96B]/15 via-white/[0.04] to-[#E6EDF7]0/10 p-6 md:p-10">
       <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
         <div>
-          <h2 className="text-4xl font-semibold leading-tight text-white md:text-4xl">{title}</h2>
+          <h2 className="text-4xl font-semibold leading-tight text-white md:text-5xl">{title}</h2>
           <p className="mt-5 max-w-3xl text-base leading-8 text-white/68">{text}</p>
         </div>
         <div className="rounded-[2rem] border border-white/10 bg-black/25 p-5">
