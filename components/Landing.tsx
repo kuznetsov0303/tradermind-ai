@@ -283,7 +283,7 @@ const dict = {
       legal: "Legal",
       productLinks: ["Home", "Product", "Pricing", "About us"],
       featureLinks: ["AI Trading Desk", "AI Alerts", "Market Intelligence", "Journal & Screenshots", "Execution Coach", "Outcome Learning", "Playbook", "Reports", "Learning Center", "Support Assistant"],
-      resourceLinks: ["Getting Started", "How SkillEdge Works", "Trading Journal Guide", "AI Alerts Guide", "Referral program", "Contact Support"],
+      resourceLinks: ["Getting Started", "How SkillEdge Works", "Trading Journal Guide", "AI Alerts Guide", "Referral program"],
       legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
       cookieSettings: "Cookie settings",
       choosePlan: "Choose plan",
@@ -576,7 +576,7 @@ const dict = {
       legal: "Документы",
       productLinks: ["Главная", "Продукт", "Тарифы", "О нас"],
       featureLinks: ["AI Trading Desk", "AI-сигналы", "Рыночная разведка", "Журнал и скриншоты", "Коуч исполнения", "Обучение на исходах", "Плейбук", "Отчёты", "Центр обучения", "Помощник поддержки"],
-      resourceLinks: ["Начало работы", "Как работает SkillEdge", "Гайд по журналу сделок", "Гайд по AI-сигналам", "Реферальная программа", "Связаться с поддержкой"],
+      resourceLinks: ["Начало работы", "Как работает SkillEdge", "Гайд по журналу сделок", "Гайд по AI-сигналам", "Реферальная программа"],
       legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
       cookieSettings: "Настройки cookie",
       choosePlan: "Выбрать тариф",
@@ -1176,13 +1176,13 @@ const handleCardPaymentFromModal = () => {
 const backgroundVariant = active === "desk" ? "product" : active;
   
   return (
-  <div className="relative isolate min-h-screen overflow-hidden bg-[#070b16] text-white">
+  <div className="relative isolate min-h-screen overflow-hidden bg-[#07111F] text-white">
     <AnimatePresence>
       {showSplashIntro ? <SkillEdgeSplashIntro language={language} /> : null}
     </AnimatePresence>
 
     <TradingBackground variant={backgroundVariant} />
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#070b16]/70 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#07111F]/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
           <Link href="/" className="flex items-center gap-3">
             <BrandMark size="sm" />
@@ -1257,7 +1257,7 @@ const backgroundVariant = active === "desk" ? "product" : active;
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="border-t border-white/10 bg-[#070b16]/95 px-4 pb-4 md:hidden"
+              className="border-t border-white/10 bg-[#07111F]/95 px-4 pb-4 md:hidden"
             >
               <div className="flex flex-col gap-2 pt-4">
                 <button onClick={cycle} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75">
@@ -1319,19 +1319,40 @@ const backgroundVariant = active === "desk" ? "product" : active;
       </header>
 
       <main className="relative z-10 mx-auto max-w-7xl px-4 py-12 md:px-8">
-        <AnimatePresence mode="wait">
-          {active === "home" && <HomePage key="home" t={t} setActive={setActive} />}
-{active === "desk" && <DeskPage key="desk" t={t} setActive={setActive} />}
-{active === "product" && <ProductPage key="product" t={t} setActive={setActive} />}
-{active === "pricing" && (
-  <PricingPage
-    key="pricing"
-    t={t}
-    handleCheckout={openPaymentModal}
-    checkoutStatus={checkoutStatus}
-  />
-)}
-{active === "team" && <TeamPage key="team" t={t} setActive={setActive} />}
+                <AnimatePresence mode="wait">
+          {active === "home" && (
+            <motion.div key="home">
+              <HomePage t={t} setActive={setActive} />
+            </motion.div>
+          )}
+
+          {active === "desk" && (
+            <motion.div key="desk">
+              <DeskPage t={t} setActive={setActive} />
+            </motion.div>
+          )}
+
+          {active === "product" && (
+            <motion.div key="product">
+              <ProductPage t={t} setActive={setActive} />
+            </motion.div>
+          )}
+
+          {active === "pricing" && (
+            <motion.div key="pricing">
+              <PricingPage
+                t={t}
+                handleCheckout={openPaymentModal}
+                checkoutStatus={checkoutStatus}
+              />
+            </motion.div>
+          )}
+
+          {active === "team" && (
+            <motion.div key="team">
+              <TeamPage t={t} setActive={setActive} />
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
@@ -1393,10 +1414,10 @@ function getHomePremiumCopy(lang: string) {
   if (normalizedLang === "en") {
     return {
       badge: "Built by traders for traders",
-      title: "Trade structure, not noise.",
+      title: "Trading without a system costs more than the subscription.",
       text:
-        "SkillEdge AI connects signals, journal, execution review and market intelligence in one premium trading workspace.",
-      accent: "Structure. Discipline. Advantage.",
+        "SkillEdge AI turns market chaos, trades, screenshots, mistakes and alerts into one trading workflow — so you see structure, not noise.",
+      accent: "Setup. Risk. Execution. Review.",
       primary: "Open product",
       secondary: "View pricing",
       how: "How it works",
@@ -1434,10 +1455,10 @@ function getHomePremiumCopy(lang: string) {
   if (normalizedLang === "ua") {
     return {
       badge: "Створено трейдерами для трейдерів",
-      title: "Торгуй не на шумі, а по структурі.",
+      title: "Трейдинг без системи коштує дорожче за підписку.",
       text:
-        "SkillEdge AI обʼєднує сигнали, журнал, розбір угод і ринкову аналітику в одному преміальному робочому просторі.",
-      accent: "Структура. Дисципліна. Перевага.",
+        "SkillEdge AI перетворює хаос ринку, угоди, скріншоти, помилки й сигнали в єдиний trading workflow — щоб ти бачив структуру, а не шум.",
+      accent: "Setup. Ризик. Виконання. Розбір.",
       primary: "Відкрити продукт",
       secondary: "Дивитися тарифи",
       how: "Як це працює",
@@ -1474,10 +1495,10 @@ function getHomePremiumCopy(lang: string) {
 
   return {
     badge: "Сделано трейдерами для трейдеров",
-    title: "Торгуй не на шуме, а по структуре.",
+    title: "Трейдинг без системы стоит дороже подписки.",
     text:
-      "SkillEdge AI объединяет сигналы, журнал, разбор сделок и рыночную аналитику в едином премиальном рабочем пространстве.",
-    accent: "Структура. Дисциплина. Преимущество.",
+      "SkillEdge AI превращает хаос рынка, сделки, скриншоты, ошибки и сигналы в единый trading workflow — чтобы ты видел не шум, а структуру.",
+    accent: "Setup. Риск. Исполнение. Разбор.",
     primary: "Открыть продукт",
     secondary: "Смотреть тарифы",
     how: "Как это работает",
@@ -1746,7 +1767,7 @@ function ClientResultLineChart({ points }: { points: number[] }) {
   },${height - paddingY}`;
 
   return (
-    <div className="mt-5 overflow-hidden rounded-[1.75rem] border border-cyan-300/15 bg-[#071321]/90 p-4">
+    <div className="mt-5 overflow-hidden rounded-[1.75rem] border border-[#00C076]/15 bg-[#0F172A]/90 p-4">
       <svg viewBox={`0 0 ${width} ${height}`} className="h-[300px] w-full">
         <defs>
           <linearGradient id="clientChartLine" x1="0" x2="1" y1="0" y2="0">
@@ -1803,7 +1824,7 @@ function ClientResultLineChart({ points }: { points: number[] }) {
           cx={toX(points.length - 1)}
           cy={toY(points[points.length - 1])}
           r="13"
-          fill="rgba(56,214,255,0.16)"
+          fill="rgba(0,192,118,0.16)"
         />
 
         {["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"].map(
@@ -1836,9 +1857,9 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
         badge: "Desk standard",
         title: "SkillEdge Trading Desk",
         subtitle: "A structured workflow for serious traders.",
-        main: "From market noise to a clear execution plan.",
+        main: "From market noise to a working trade plan.",
         note:
-          "Every idea must pass context, setup, risk, entry logic, invalidation and journal review.",
+          "Every idea must pass market context, setup quality, trigger, risk, invalidation, R:R and journal review.",
         status: "Risk-first",
         cards: [
           ["01", "Market scan", "Find in-play stocks and crypto with real activity."],
@@ -1857,9 +1878,9 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
           badge: "Desk standard",
           title: "SkillEdge Trading Desk",
           subtitle: "Структурований workflow для серйозних трейдерів.",
-          main: "Від ринкового шуму — до чіткого плану виконання.",
+          main: "Від ринкового шуму — до робочого плану.",
           note:
-            "Кожна ідея проходить контекст, сетап, ризик, логіку входу, invalidation і review журналу.",
+            "Кожна ідея проходить market context, setup quality, trigger, risk, invalidation, R:R і journal review.",
           status: "Risk-first",
           cards: [
             ["01", "Market scan", "Знайти in-play акції та крипту з реальною активністю."],
@@ -1877,9 +1898,9 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
           badge: "Desk standard",
           title: "SkillEdge Trading Desk",
           subtitle: "Структурированный workflow для серьёзных трейдеров.",
-          main: "От рыночного шума — к чёткому плану исполнения.",
+          main: "От рыночного шума — к рабочему плану.",
           note:
-            "Каждая идея проходит контекст, сетап, риск, логику входа, invalidation и разбор в журнале.",
+            "Каждая идея проходит market context, setup quality, trigger, risk, invalidation, R:R и journal review.",
           status: "Risk-first",
           cards: [
             ["01", "Market scan", "Найти in-play акции и крипту с реальной активностью."],
@@ -1901,22 +1922,22 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
       transition={{ delay: 0.12, duration: 0.65 }}
       className="relative z-10 w-full"
     >
-      <div className="absolute -inset-10 rounded-[2.8rem] bg-cyan-300/12 blur-3xl" />
+      <div className="absolute -inset-10 rounded-[2.8rem] bg-[#00C076]/12 blur-3xl" />
 
-      <div className="relative w-full overflow-hidden rounded-[2.6rem] border border-cyan-100/18 bg-[#0d1b2b]/86 p-5 shadow-[0_44px_170px_rgba(8,47,73,0.36)] backdrop-blur-2xl md:p-6 xl:p-7">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(56,214,255,0.22),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(52,211,153,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_44%)]" />
+      <div className="relative w-full overflow-hidden rounded-[2.6rem] border border-white/18 bg-[#111C2D]/86 p-5 shadow-[0_44px_170px_rgba(0,0,0,0.36)] backdrop-blur-2xl md:p-6 xl:p-7">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(0,192,118,0.22),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(200,169,107,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_44%)]" />
 
         <div className="relative z-10 flex items-center justify-between">
           <div className="text-sm font-black text-white/82">SkillEdge AI</div>
 
-          <div className="flex items-center gap-2 rounded-full border border-emerald-300/18 bg-emerald-300/[0.08] px-3 py-1 text-xs font-black text-emerald-100/80">
+          <div className="flex items-center gap-2 rounded-full border border-[#00D084]/18 bg-[#00C076]/[0.08] px-3 py-1 text-xs font-black text-[#DFFFEF]/80">
             {copy.status}
-            <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.9)]" />
+            <span className="h-2 w-2 rounded-full bg-[#00C076] shadow-[0_0_18px_rgba(200,169,107,0.9)]" />
           </div>
         </div>
 
         <div className="relative z-10 mt-5 rounded-[1.8rem] border border-white/10 bg-black/20 p-5">
-          <div className="inline-flex rounded-full border border-cyan-300/18 bg-cyan-300/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-50/68">
+          <div className="inline-flex rounded-full border border-[#00C076]/18 bg-[#00C076]/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/68">
             {copy.badge}
           </div>
 
@@ -1924,11 +1945,11 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
             {copy.title}
           </h2>
 
-          <p className="mt-3 text-sm font-black text-cyan-100/74">
+          <p className="mt-3 text-sm font-black text-[#E6EDF7]/74">
             {copy.subtitle}
           </p>
 
-          <div className="mt-6 rounded-[1.6rem] border border-cyan-200/16 bg-cyan-200/[0.06] p-5">
+          <div className="mt-6 rounded-[1.6rem] border border-[#C8A96B]/16 bg-[#C8A96B]/[0.06] p-5">
             <div className="text-2xl font-black leading-tight tracking-[-0.04em] text-white">
               {copy.main}
             </div>
@@ -1947,7 +1968,7 @@ function HomeClientPnlVisual({ lang }: { lang: string }) {
                 transition={{ delay: 0.22 + index * 0.08, duration: 0.45 }}
                 className="grid grid-cols-[58px_1fr] gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.08] text-xs font-black text-cyan-50">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/15 bg-[#C8A96B]/[0.08] text-xs font-black text-[#E6EDF7]">
                   {number}
                 </div>
 
@@ -2017,13 +2038,13 @@ function ClientResultsCarousel({
   };
 
   return (
-    <section className="relative overflow-hidden rounded-[2.6rem] border border-cyan-200/14 bg-[#0d1b2b]/82 p-5 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-2xl md:p-6 lg:p-7">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.16),transparent_30%),radial-gradient(circle_at_88%_20%,rgba(52,211,153,0.12),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
+    <section className="relative overflow-hidden rounded-[2.6rem] border border-[#C8A96B]/14 bg-[#111C2D]/82 p-5 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-2xl md:p-6 lg:p-7">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.16),transparent_30%),radial-gradient(circle_at_88%_20%,rgba(200,169,107,0.12),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
 
       <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-stretch">
         <div className="flex flex-col justify-between">
           <div>
-            <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-50/76">
+            <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
               {copy.eyebrow}
             </div>
 
@@ -2046,10 +2067,10 @@ function ClientResultsCarousel({
                 key={item[0]}
                 type="button"
                 onClick={() => setActive("product")}
-                className="group rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-3 text-left backdrop-blur-xl transition hover:border-cyan-200/24 hover:bg-cyan-200/[0.07]"
+                className="group rounded-[1.25rem] border border-white/10 bg-white/[0.04] p-3 text-left backdrop-blur-xl transition hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.07]"
               >
                 <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-cyan-200/16 bg-cyan-200/[0.08] text-[10px] font-black text-cyan-50">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#C8A96B]/16 bg-[#C8A96B]/[0.08] text-[10px] font-black text-[#E6EDF7]">
                     0{index + 1}
                   </div>
 
@@ -2072,16 +2093,16 @@ function ClientResultsCarousel({
           animate={{ opacity: 1, x: 0, scale: 1 }}
           transition={{ duration: 0.45 }}
           onClick={openProduct}
-          className="relative cursor-pointer overflow-hidden rounded-[2.25rem] border border-cyan-100/18 bg-[#0b1928]/92 p-5 text-left shadow-[0_34px_140px_rgba(8,47,73,0.34)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-cyan-100/30 md:p-6"
+          className="relative cursor-pointer overflow-hidden rounded-[2.25rem] border border-white/18 bg-[#0F172A]/92 p-5 text-left shadow-[0_34px_140px_rgba(0,0,0,0.34)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-white/30 md:p-6"
         >
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(56,214,255,0.18),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(52,211,153,0.14),transparent_30%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(200,169,107,0.14),transparent_30%)]" />
 
           <div className="relative z-10 flex items-center justify-between">
             <div className="text-sm font-black text-white/82">SkillEdge AI</div>
 
             <div className="flex items-center gap-2 text-xs font-bold text-white/62">
               Live
-              <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(52,211,153,0.9)]" />
+              <span className="h-2 w-2 rounded-full bg-[#00C076] shadow-[0_0_18px_rgba(200,169,107,0.9)]" />
             </div>
           </div>
 
@@ -2095,18 +2116,18 @@ function ClientResultsCarousel({
 
                 <div className="mt-2 text-sm font-semibold text-white/48">
                   {copy.capitalLabel}:{" "}
-                  <span className="text-cyan-100/90">{activeCard.accountSize}</span>
+                  <span className="text-[#E6EDF7]/90">{activeCard.accountSize}</span>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-cyan-200/18 bg-cyan-200/[0.08] px-4 py-2 text-xs font-black text-cyan-50">
+              <div className="rounded-2xl border border-[#C8A96B]/18 bg-[#C8A96B]/[0.08] px-4 py-2 text-xs font-black text-[#E6EDF7]">
                 {copy.weeksLabel}
               </div>
             </div>
 
             <div className="mt-5 grid gap-3 md:grid-cols-4">
               {[
-                [copy.pnlLabel, activeCard.netProfit, activeCard.netProfitValue, "text-emerald-300"],
+                [copy.pnlLabel, activeCard.netProfit, activeCard.netProfitValue, "text-[#00C076]"],
                 [copy.winRateLabel, activeCard.winRate, activeCard.trades, "text-white"],
                 [copy.avgRLabel, activeCard.avgR, "", "text-white"],
                 [copy.drawdownLabel, activeCard.drawdown, "", "text-rose-300"],
@@ -2133,7 +2154,7 @@ function ClientResultsCarousel({
                 {copy.chartLabel}
               </div>
 
-              <div className="rounded-xl border border-cyan-200/18 bg-cyan-200/[0.08] px-3 py-1 text-xs font-black text-cyan-50">
+              <div className="rounded-xl border border-[#C8A96B]/18 bg-[#C8A96B]/[0.08] px-3 py-1 text-xs font-black text-[#E6EDF7]">
                 Week 8 · {activeCard.weeklyValue}
               </div>
             </div>
@@ -2151,7 +2172,7 @@ function ClientResultsCarousel({
                   className="rounded-2xl border border-white/10 bg-white/[0.045] p-4"
                 >
                   <div className="text-xs font-bold text-white/42">{label}</div>
-                  <div className="mt-1 text-sm font-black text-emerald-200">
+                  <div className="mt-1 text-sm font-black text-[#00D084]">
                     {value}
                   </div>
                 </div>
@@ -2163,7 +2184,7 @@ function ClientResultsCarousel({
                 {copy.clickHint}
               </div>
 
-              <div className="rounded-full border border-cyan-200/22 bg-cyan-200/[0.08] px-5 py-3 text-sm font-black text-cyan-50">
+              <div className="rounded-full border border-[#C8A96B]/22 bg-[#C8A96B]/[0.08] px-5 py-3 text-sm font-black text-[#E6EDF7]">
                 {copy.cta}
                 <span className="ml-2">→</span>
               </div>
@@ -2181,7 +2202,7 @@ function ClientResultsCarousel({
               onClick={() => setActiveIndex(index)}
               className={`h-2.5 rounded-full transition-all ${
                 index === activeIndex
-                  ? "w-9 bg-cyan-200"
+                  ? "w-9 bg-[#C8A96B]"
                   : "w-2.5 bg-white/20 hover:bg-white/35"
               }`}
               aria-label={`Show client result ${index + 1}`}
@@ -2193,7 +2214,7 @@ function ClientResultsCarousel({
           <button
             type="button"
             onClick={goPrev}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.045] text-lg font-black text-white/70 transition hover:border-cyan-200/28 hover:bg-cyan-200/[0.09]"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.045] text-lg font-black text-white/70 transition hover:border-[#C8A96B]/28 hover:bg-[#C8A96B]/[0.09]"
             aria-label="Previous client result"
           >
             ←
@@ -2202,7 +2223,7 @@ function ClientResultsCarousel({
           <button
             type="button"
             onClick={goNext}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-200/20 bg-cyan-200/[0.09] text-lg font-black text-cyan-50 transition hover:bg-cyan-200/[0.14]"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#C8A96B]/20 bg-[#C8A96B]/[0.09] text-lg font-black text-[#E6EDF7] transition hover:bg-[#C8A96B]/[0.14]"
             aria-label="Next client result"
           >
             →
@@ -2224,19 +2245,19 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       transition={{ duration: 0.35 }}
       className="mx-auto w-full max-w-[1760px] space-y-14 px-4 pb-24 pt-8 sm:px-6 lg:px-10 xl:px-14 2xl:px-16"
     >
-      <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[2.8rem] border border-cyan-100/14 bg-[#0d1b2b]/82 p-6 shadow-[0_44px_170px_rgba(8,47,73,0.34)] backdrop-blur-2xl md:p-8 lg:p-10 xl:p-14">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(56,214,255,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(52,211,153,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
+      <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[2.8rem] border border-white/14 bg-[#111C2D]/82 p-6 shadow-[0_44px_170px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10 xl:p-14">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(200,169,107,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
 
         <div className="relative grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
           <div>
-            <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-cyan-50/76">
+            <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
               {copy.badge}
             </div>
 
             <h1 className="mt-7 max-w-4xl text-5xl font-black leading-[0.95] tracking-[-0.065em] text-white md:text-7xl xl:text-8xl">
               {copy.title.split("по структуре.")[0]}
-              <span className="bg-gradient-to-r from-cyan-200 via-cyan-300 to-emerald-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#C8A96B] via-[#00D084] to-[#00C076] bg-clip-text text-transparent">
                 {copy.title.includes("по структуре.") ? "по структуре." : ""}
               </span>
             </h1>
@@ -2245,7 +2266,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               {copy.text}
             </p>
 
-            <p className="mt-2 text-lg font-black text-emerald-200">
+            <p className="mt-2 text-lg font-black text-[#00D084]">
               {copy.accent}
             </p>
 
@@ -2253,7 +2274,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               <button
                 type="button"
                 onClick={() => setActive("product")}
-                className="rounded-full bg-white px-7 py-3.5 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(56,214,255,0.25)]"
+                className="rounded-full bg-white px-7 py-3.5 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(0,192,118,0.25)]"
               >
                 {copy.primary}
                 <span className="ml-2">→</span>
@@ -2262,14 +2283,14 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               <button
                 type="button"
                 onClick={() => setActive("pricing")}
-                className="rounded-full border border-cyan-200/22 bg-cyan-200/[0.07] px-7 py-3.5 text-sm font-black text-cyan-50 transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-200/[0.12]"
+                className="rounded-full border border-[#C8A96B]/22 bg-[#C8A96B]/[0.07] px-7 py-3.5 text-sm font-black text-[#E6EDF7] transition duration-300 hover:-translate-y-0.5 hover:bg-[#C8A96B]/[0.12]"
               >
                 {copy.secondary}
               </button>
 
               <button
                 type="button"
-                onClick={() => setActive("product")}
+                onClick={() => { window.location.href = "/dashboard-guide"; }}
                 className="rounded-full border border-white/12 bg-white/[0.04] px-7 py-3.5 text-sm font-black text-white/78 transition duration-300 hover:-translate-y-0.5 hover:bg-white/[0.075]"
               >
                 {copy.how}
@@ -2283,7 +2304,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
                   key={item[0]}
                   type="button"
                   onClick={() => setActive("product")}
-                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-cyan-200/24 hover:bg-cyan-200/[0.07]"
+                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.07]"
                 >
                   <div className="text-sm font-black text-white">{item[0]}</div>
                   <p className="mt-2 text-xs font-semibold leading-5 text-white/48">
@@ -2305,9 +2326,9 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               onClick={() =>
                 setActive(index === 0 ? "pricing" : index === 3 ? "product" : "product")
               }
-              className="group rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-left shadow-[0_18px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/24 hover:bg-cyan-200/[0.075]"
+              className="group rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-left shadow-[0_18px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.075]"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/16 bg-cyan-200/[0.08] text-sm font-black text-cyan-50">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/16 bg-[#C8A96B]/[0.08] text-sm font-black text-[#E6EDF7]">
                 0{index + 1}
               </div>
 
@@ -2317,7 +2338,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
                 {feature[1]}
               </p>
 
-              <div className="mt-5 inline-flex rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-black text-white/66 transition group-hover:border-cyan-200/28 group-hover:text-cyan-50">
+              <div className="mt-5 inline-flex rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-black text-white/66 transition group-hover:border-[#C8A96B]/28 group-hover:text-[#E6EDF7]">
                 {feature[2]}
                 <span className="ml-2">→</span>
               </div>
@@ -2329,7 +2350,7 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       <ClientResultsCarousel lang={t.lang} setActive={setActive} />
 
       <section className="relative overflow-hidden rounded-[2.7rem] border border-white/10 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.12),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(52,211,153,0.1),transparent_30%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.12),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(200,169,107,0.1),transparent_30%)]" />
 
         <div className="relative">
           <div className="text-center text-[11px] font-black uppercase tracking-[0.28em] text-white/38">
@@ -2342,9 +2363,9 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
                 key={`${item[0]}-bottom`}
                 type="button"
                 onClick={() => setActive("product")}
-                className="rounded-[1.6rem] border border-white/10 bg-black/18 p-5 text-left transition hover:border-cyan-200/24 hover:bg-cyan-200/[0.07]"
+                className="rounded-[1.6rem] border border-white/10 bg-black/18 p-5 text-left transition hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.07]"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-xs font-black text-cyan-50">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#C8A96B]/15 bg-[#C8A96B]/[0.07] text-xs font-black text-[#E6EDF7]">
                   0{index + 1}
                 </div>
 
@@ -2369,9 +2390,9 @@ function DeskVideoPreview() {
         initial={{ opacity: 0, y: 24, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ delay: 0.28, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-        className="relative overflow-hidden rounded-[2.8rem] border border-cyan-200/12 bg-[#06111d]/72 p-3 shadow-[0_34px_130px_rgba(8,47,73,0.22)] backdrop-blur-2xl"
+        className="relative overflow-hidden rounded-[2.8rem] border border-[#C8A96B]/12 bg-[#07111F]/72 p-3 shadow-[0_34px_130px_rgba(0,0,0,0.22)] backdrop-blur-2xl"
       >
-        <div className="pointer-events-none absolute inset-0 z-20 rounded-[2.8rem] bg-[radial-gradient(circle_at_20%_0%,rgba(56,214,255,0.16),transparent_34%),radial-gradient(circle_at_90%_20%,rgba(52,211,153,0.11),transparent_32%),linear-gradient(180deg,rgba(3,7,18,0.16),rgba(3,7,18,0.42))]" />
+        <div className="pointer-events-none absolute inset-0 z-20 rounded-[2.8rem] bg-[radial-gradient(circle_at_20%_0%,rgba(0,192,118,0.16),transparent_34%),radial-gradient(circle_at_90%_20%,rgba(200,169,107,0.11),transparent_32%),linear-gradient(180deg,rgba(3,7,18,0.16),rgba(3,7,18,0.42))]" />
 
         <div className="pointer-events-none absolute inset-0 z-30 rounded-[2.8rem] ring-1 ring-inset ring-white/8" />
 
@@ -2379,10 +2400,10 @@ function DeskVideoPreview() {
           aria-hidden
           animate={{ x: ["-25%", "125%"] }}
           transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
-          className="pointer-events-none absolute left-0 top-0 z-30 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/42 to-transparent"
+          className="pointer-events-none absolute left-0 top-0 z-30 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/42 to-transparent"
         />
 
-        <div className="relative z-10 overflow-hidden rounded-[2.25rem] bg-[#020711]">
+        <div className="relative z-10 overflow-hidden rounded-[2.25rem] bg-[#07111F]">
           <video
             src="/media/desk-preview.mp4"
             autoPlay
@@ -2393,14 +2414,14 @@ function DeskVideoPreview() {
             className="h-[620px] w-full object-cover opacity-[0.42] mix-blend-screen saturate-[0.72] contrast-[1.08] brightness-[0.68]"
           />
 
-          <div className="pointer-events-none absolute inset-0 bg-[#06111d]/34" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#06111d] via-[#06111d]/18 to-[#06111d]/45" />
+          <div className="pointer-events-none absolute inset-0 bg-[#07111F]/34" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#07111F] via-[#07111F]/18 to-[#07111F]/45" />
 
-          <div className="pointer-events-none absolute left-5 top-5 rounded-full border border-cyan-200/16 bg-cyan-200/[0.065] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-50/70 backdrop-blur-xl">
+          <div className="pointer-events-none absolute left-5 top-5 rounded-full border border-[#C8A96B]/16 bg-[#C8A96B]/[0.065] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/70 backdrop-blur-xl">
             SkillEdge AI visual layer
           </div>
 
-          <div className="pointer-events-none absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-[#06111d]/62 p-4 backdrop-blur-xl">
+          <div className="pointer-events-none absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-[#07111F]/62 p-4 backdrop-blur-xl">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <div className="text-xs font-black uppercase tracking-[0.22em] text-white/38">
@@ -2411,7 +2432,7 @@ function DeskVideoPreview() {
                 </div>
               </div>
 
-              <div className="rounded-full border border-emerald-200/20 bg-emerald-200/[0.08] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100/75">
+              <div className="rounded-full border border-[#00C076]/20 bg-[#00D084]/[0.08] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#DFFFEF]/75">
                 Active
               </div>
             </div>
@@ -2419,8 +2440,8 @@ function DeskVideoPreview() {
         </div>
       </motion.div>
 
-      <div className="pointer-events-none absolute -right-16 top-12 h-44 w-44 rounded-full bg-cyan-300/10 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-16 left-10 h-52 w-52 rounded-full bg-emerald-300/8 blur-3xl" />
+      <div className="pointer-events-none absolute -right-16 top-12 h-44 w-44 rounded-full bg-[#00C076]/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-16 left-10 h-52 w-52 rounded-full bg-[#00C076]/8 blur-3xl" />
     </div>
   );
 }
@@ -2543,7 +2564,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       transition={{ duration: 0.38 }}
       className="mx-auto w-full max-w-[1700px] space-y-7 px-4 pb-28 pt-8 sm:px-6 lg:px-10 xl:px-14"
     >
-      <section className="relative overflow-hidden rounded-[3.1rem] border border-cyan-100/14 bg-[#071522]/90 p-5 shadow-[0_38px_150px_rgba(8,47,73,0.30)] backdrop-blur-2xl md:p-7 lg:p-10">
+      <section className="relative overflow-hidden rounded-[3.1rem] border border-white/14 bg-[#0F172A]/90 p-5 shadow-[0_38px_150px_rgba(0,0,0,0.30)] backdrop-blur-2xl md:p-7 lg:p-10">
   <video
     src="/media/desk-preview.mp4"
     autoPlay
@@ -2554,15 +2575,15 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
     className="absolute left-0 top-1/2 h-[86%] w-full -translate-y-1/2 object-cover object-center opacity-[0.42] saturate-[0.95] contrast-[1.12] brightness-[0.92]"
   />
 
-  <div className="absolute inset-0 bg-[#06111d]/34" />
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(56,214,255,0.16),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(52,211,153,0.12),transparent_30%),linear-gradient(90deg,rgba(3,7,18,0.82),rgba(3,7,18,0.52)_48%,rgba(3,7,18,0.22)_100%)]" />
+  <div className="absolute inset-0 bg-[#07111F]/34" />
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.16),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(200,169,107,0.12),transparent_30%),linear-gradient(90deg,rgba(3,7,18,0.82),rgba(3,7,18,0.52)_48%,rgba(3,7,18,0.22)_100%)]" />
   <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:66px_66px] opacity-18" />
 
   <motion.div
     aria-hidden
     animate={{ x: ["-20%", "120%"] }}
     transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-    className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent"
+    className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/55 to-transparent"
   />
 
   <div className="relative z-10 flex min-h-[560px] items-center py-8 md:min-h-[610px] lg:py-10">
@@ -2571,7 +2592,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.08, duration: 0.45 }}
-        className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] text-cyan-50/76 backdrop-blur-xl"
+        className="inline-flex rounded-full border border-[#C8A96B]/18 bg-[#C8A96B]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.28em] text-[#E6EDF7]/76 backdrop-blur-xl"
       >
         {copy.eyebrow}
       </motion.div>
@@ -2603,7 +2624,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         <button
           type="button"
           onClick={() => setActive("pricing")}
-          className="group relative overflow-hidden rounded-full border border-cyan-100/20 bg-gradient-to-r from-white via-cyan-50 to-emerald-50 px-7 py-3.5 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(103,232,249,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(103,232,249,0.26)]"
+          className="group relative overflow-hidden rounded-full border border-white/20 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] px-7 py-3.5 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(0,192,118,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(0,192,118,0.26)]"
         >
           <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
           <span className="relative">{copy.primary} →</span>
@@ -2612,7 +2633,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         <button
           type="button"
           onClick={() => setActive("product")}
-          className="rounded-full border border-cyan-200/22 bg-cyan-200/[0.07] px-7 py-3.5 text-sm font-black text-cyan-50 transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-200/[0.12]"
+          className="rounded-full border border-[#C8A96B]/22 bg-[#C8A96B]/[0.07] px-7 py-3.5 text-sm font-black text-[#E6EDF7] transition duration-300 hover:-translate-y-0.5 hover:bg-[#C8A96B]/[0.12]"
         >
           {copy.secondary}
           <span className="ml-2">↗</span>
@@ -2626,9 +2647,9 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.42 + index * 0.08, duration: 0.42 }}
-            className="rounded-2xl border border-white/10 bg-[#06111d]/54 px-4 py-3 text-sm font-black text-white/74 backdrop-blur-xl"
+            className="rounded-2xl border border-white/10 bg-[#07111F]/54 px-4 py-3 text-sm font-black text-white/74 backdrop-blur-xl"
           >
-            <span className="mr-2 text-cyan-200">✓</span>
+            <span className="mr-2 text-[#C8A96B]">✓</span>
             {item}
           </motion.div>
         ))}
@@ -2642,21 +2663,33 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           <motion.button
             key={card[0]}
             type="button"
-            onClick={() => setActive(index === 1 ? "pricing" : "product")}
+            onClick={() => {
+              if (index === 1) {
+                window.location.href = "/ai-guide";
+                return;
+              }
+
+              if (index === 2) {
+                window.location.href = "/journal-guide";
+                return;
+              }
+
+              setActive("product");
+            }}
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ delay: index * 0.08, duration: 0.45 }}
-            className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 text-left shadow-[0_26px_100px_rgba(0,0,0,0.20)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-200/26 hover:bg-cyan-200/[0.07]"
+            className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 text-left shadow-[0_26px_100px_rgba(0,0,0,0.20)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#C8A96B]/26 hover:bg-[#C8A96B]/[0.07]"
           >
-            <div className="absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-300/0 blur-3xl transition duration-500 group-hover:bg-cyan-300/14" />
+            <div className="absolute -right-16 -top-16 h-36 w-36 rounded-full bg-[#00C076]/0 blur-3xl transition duration-500 group-hover:bg-[#00C076]/14" />
             <div className="relative">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/16 bg-cyan-200/[0.08] text-sm font-black text-cyan-50">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/16 bg-[#C8A96B]/[0.08] text-sm font-black text-[#E6EDF7]">
                 0{index + 1}
               </div>
               <h3 className="mt-6 text-xl font-black text-white">{card[0]}</h3>
               <p className="mt-3 text-sm font-semibold leading-7 text-white/55">{card[1]}</p>
-              <div className="mt-6 inline-flex rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-black text-white/62 transition group-hover:border-cyan-200/28 group-hover:text-cyan-50">
+              <div className="mt-6 inline-flex rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-black text-white/62 transition group-hover:border-[#C8A96B]/28 group-hover:text-[#E6EDF7]">
                 Explore <span className="ml-2">→</span>
               </div>
             </div>
@@ -2664,8 +2697,8 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         ))}
       </section>
 
-      <section className="relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-[#081522]/82 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_12%_90%,rgba(16,185,129,0.12),transparent_34%)]" />
+      <section className="relative overflow-hidden rounded-[2.4rem] border border-[#C8A96B]/12 bg-[#0F172A]/82 p-6 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(0,192,118,0.14),transparent_32%),radial-gradient(circle_at_12%_90%,rgba(16,185,129,0.12),transparent_34%)]" />
 
         <div className="relative grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
           <div>
@@ -2688,7 +2721,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
                 transition={{ delay: index * 0.07, duration: 0.42 }}
                 className="grid gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 md:grid-cols-[80px_160px_1fr] md:items-center"
               >
-                <div className="text-sm font-black text-cyan-100/65">{step[0]}</div>
+                <div className="text-sm font-black text-[#E6EDF7]/65">{step[0]}</div>
                 <div className="text-lg font-black text-white">{step[1]}</div>
                 <div className="text-sm font-semibold leading-6 text-white/52">{step[2]}</div>
               </motion.div>
@@ -2698,7 +2731,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       </section>
 
       <section className="relative overflow-hidden rounded-[2.4rem] border border-white/10 bg-white/[0.035] p-8 text-center shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-12">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,214,255,0.13),transparent_36%),radial-gradient(circle_at_50%_100%,rgba(52,211,153,0.10),transparent_34%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(0,192,118,0.13),transparent_36%),radial-gradient(circle_at_50%_100%,rgba(200,169,107,0.10),transparent_34%)]" />
         <div className="relative mx-auto max-w-3xl">
           <h2 className="text-4xl font-black tracking-[-0.05em] text-white md:text-6xl">
             {copy.finalTitle}
@@ -2710,7 +2743,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           <button
             type="button"
             onClick={() => setActive("pricing")}
-            className="group relative mt-8 overflow-hidden rounded-full border border-cyan-100/20 bg-gradient-to-r from-white via-cyan-50 to-emerald-50 px-8 py-4 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(103,232,249,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(103,232,249,0.26)]"
+            className="group relative mt-8 overflow-hidden rounded-full border border-white/20 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] px-8 py-4 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(0,192,118,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(0,192,118,0.26)]"
           >
             <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
             <span className="relative">{copy.primary} →</span>
@@ -2781,19 +2814,19 @@ function ProductBuiltForTradersBlock({ lang }: { lang: string }) {
           };
 
   return (
-    <section className="relative overflow-hidden rounded-[2.8rem] border border-cyan-200/12 bg-[#081522]/82 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.16),transparent_32%),radial-gradient(circle_at_90%_20%,rgba(52,211,153,0.12),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.055),transparent_44%)]" />
+    <section className="relative overflow-hidden rounded-[2.8rem] border border-[#C8A96B]/12 bg-[#0F172A]/82 p-6 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.16),transparent_32%),radial-gradient(circle_at_90%_20%,rgba(200,169,107,0.12),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.055),transparent_44%)]" />
 
       <motion.div
         aria-hidden
         animate={{ x: ["-20%", "120%"] }}
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/55 to-transparent"
+        className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/55 to-transparent"
       />
 
       <div className="relative grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <div>
-          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.075] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/76">
+          <div className="inline-flex rounded-full border border-[#C8A96B]/18 bg-[#C8A96B]/[0.075] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#E6EDF7]/76">
             {copy.eyebrow}
           </div>
 
@@ -2811,7 +2844,7 @@ function ProductBuiltForTradersBlock({ lang }: { lang: string }) {
             {copy.second}
           </p>
 
-          <p className="rounded-[1.5rem] border border-cyan-200/12 bg-cyan-200/[0.055] p-4 text-sm font-semibold leading-7 text-cyan-50/70">
+          <p className="rounded-[1.5rem] border border-[#C8A96B]/12 bg-[#C8A96B]/[0.055] p-4 text-sm font-semibold leading-7 text-[#E6EDF7]/70">
             {copy.third}
           </p>
 
@@ -2824,6 +2857,234 @@ function ProductBuiltForTradersBlock({ lang }: { lang: string }) {
                 {chip}
               </span>
             ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProductStrategyCreationBlock({
+  lang,
+  setActive,
+}: {
+  lang: string;
+  setActive: (value: PageKey) => void;
+}) {
+  const copy =
+    lang === "EN"
+      ? {
+          eyebrow: "Signature feature",
+          title: "Create a real trading strategy — not another note in a document.",
+          text:
+            "Strategy OS turns a trader’s idea into a living playbook: setup logic, rules, evidence, before-trade gate, after-trade debrief, versions and measurable trust score.",
+          punch:
+            "This is the reason Edge becomes a professional workspace: the trader stops jumping between random ideas and starts building one repeatable decision system.",
+          primary: "Unlock Strategy OS",
+          secondary: "Open dashboard guide",
+          center: "Strategy Builder",
+          score: "Strategy Trust",
+          proof: [
+            ["Setup Library", "Choose a professional setup path or create a custom strategy."],
+            ["Evidence Locker", "Save screenshots and examples that prove the setup actually exists."],
+            ["Before-Trade Gate", "Force every trade through rules, risk and invalidation before entry."],
+            ["Version Upgrades", "Improve v1 → v2 → v3 based on journal, reports and outcomes."],
+          ],
+          loop: [
+            ["01", "Choose setup", "Pick the market behavior you want to master."],
+            ["02", "Define rules", "Context, trigger, entry, stop, targets, avoid conditions."],
+            ["03", "Collect evidence", "Build proof from screenshots, trades and missed setups."],
+            ["04", "Trade the playbook", "Use gates, debriefs and reports to improve the version."],
+          ],
+          outcomes: ["Less chaos", "Cleaner execution", "Repeatable playbook", "Personal Edge"],
+        }
+      : lang === "UA"
+        ? {
+            eyebrow: "Ключова функція",
+            title: "Створи реальну торгову стратегію — не чергову нотатку в документі.",
+            text:
+              "Strategy OS перетворює ідею трейдера на живий playbook: логіка setup, правила, evidence, before-trade gate, after-trade debrief, версії та вимірюваний trust score.",
+            punch:
+              "Саме тому Edge стає професійним workspace: трейдер перестає стрибати між випадковими ідеями й починає будувати одну повторювану систему рішень.",
+            primary: "Відкрити Strategy OS",
+            secondary: "Відкрити гайд кабінету",
+            center: "Strategy Builder",
+            score: "Strategy Trust",
+            proof: [
+              ["Setup Library", "Обери професійний setup path або створи власну стратегію."],
+              ["Evidence Locker", "Зберігай скріншоти й приклади, які доводять, що setup реально існує."],
+              ["Before-Trade Gate", "Пропускай кожну угоду через правила, ризик та invalidation до входу."],
+              ["Version Upgrades", "Покращуй v1 → v2 → v3 на основі журналу, звітів і outcomes."],
+            ],
+            loop: [
+              ["01", "Обери setup", "Вибери ринкову поведінку, яку хочеш довести до майстерності."],
+              ["02", "Опиши правила", "Context, trigger, entry, stop, targets, avoid conditions."],
+              ["03", "Збери evidence", "Створи доказову базу зі скріншотів, угод і missed setups."],
+              ["04", "Торгуй playbook", "Використовуй gates, debriefs і reports для покращення версії."],
+            ],
+            outcomes: ["Менше хаосу", "Чистіше виконання", "Повторюваний playbook", "Personal Edge"],
+          }
+        : {
+            eyebrow: "Ключевая функция",
+            title: "Создай реальную торговую стратегию — не очередную заметку в документе.",
+            text:
+              "Strategy OS превращает идею трейдера в живой playbook: логика setup, правила, evidence, before-trade gate, after-trade debrief, версии и измеримый trust score.",
+            punch:
+              "Именно поэтому Edge становится профессиональным workspace: трейдер перестаёт прыгать между случайными идеями и начинает строить одну повторяемую систему решений.",
+            primary: "Открыть Strategy OS",
+            secondary: "Открыть гайд кабинета",
+            center: "Strategy Builder",
+            score: "Strategy Trust",
+            proof: [
+              ["Setup Library", "Выбери профессиональный setup path или создай собственную стратегию."],
+              ["Evidence Locker", "Сохраняй скриншоты и примеры, которые доказывают, что setup реально существует."],
+              ["Before-Trade Gate", "Пропускай каждую сделку через правила, риск и invalidation до входа."],
+              ["Version Upgrades", "Улучшай v1 → v2 → v3 на основе журнала, отчётов и outcomes."],
+            ],
+            loop: [
+              ["01", "Выбери setup", "Определи рыночное поведение, которое хочешь довести до мастерства."],
+              ["02", "Опиши правила", "Context, trigger, entry, stop, targets, avoid conditions."],
+              ["03", "Собери evidence", "Построй доказательную базу из скриншотов, сделок и missed setups."],
+              ["04", "Торгуй playbook", "Используй gates, debriefs и reports для улучшения версии."],
+            ],
+            outcomes: ["Меньше хаоса", "Чище execution", "Повторяемый playbook", "Personal Edge"],
+          };
+
+  return (
+    <section className="relative overflow-hidden rounded-[2.65rem] border border-[#C8A96B]/24 bg-[#0F172A]/88 p-5 shadow-[0_38px_160px_rgba(0,0,0,0.30)] backdrop-blur-2xl md:p-7 lg:p-8">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(200,169,107,0.18),transparent_31%),radial-gradient(circle_at_86%_14%,rgba(0,192,118,0.18),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#C8A96B]/70 to-transparent" />
+
+      <motion.div
+        aria-hidden
+        animate={{ x: ["-20%", "120%"] }}
+        transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+        className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/65 to-transparent"
+      />
+
+      <div className="relative grid gap-7 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+        <div>
+          <div className="inline-flex rounded-full border border-[#C8A96B]/24 bg-[#C8A96B]/[0.09] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#E6EDF7]/80">
+            {copy.eyebrow}
+          </div>
+
+          <h2 className="mt-5 max-w-3xl text-3xl font-black leading-[0.96] tracking-[-0.055em] text-white md:text-5xl">
+            {copy.title}
+          </h2>
+
+          <p className="mt-5 max-w-2xl text-sm font-semibold leading-7 text-white/62">
+            {copy.text}
+          </p>
+
+          <p className="mt-4 rounded-[1.4rem] border border-[#00C076]/18 bg-[#00D084]/[0.07] p-4 text-sm font-black leading-7 text-[#DFFFEF]/80">
+            {copy.punch}
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setActive("pricing")}
+              className="group relative overflow-hidden rounded-full bg-white px-6 py-3.5 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(255,255,255,0.17)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_26px_100px_rgba(0,192,118,0.24)]"
+            >
+              <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-[#00D084]/45 blur-md transition duration-700 group-hover:left-[120%]" />
+              <span className="relative">{copy.primary} →</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                window.location.href = "/dashboard-guide";
+              }}
+              className="rounded-full border border-[#C8A96B]/24 bg-[#C8A96B]/[0.075] px-6 py-3.5 text-sm font-black text-[#E6EDF7] transition duration-300 hover:-translate-y-0.5 hover:bg-[#C8A96B]/[0.13]"
+            >
+              {copy.secondary}
+              <span className="ml-2">↗</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <div className="absolute -inset-6 rounded-[2.2rem] bg-[#00C076]/10 blur-3xl" />
+
+          <div className="relative overflow-hidden rounded-[2.1rem] border border-white/12 bg-[#07111F]/72 p-4 shadow-[0_28px_120px_rgba(0,0,0,0.28)]">
+            <div className="grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
+              <div className="rounded-[1.75rem] border border-[#C8A96B]/16 bg-[#C8A96B]/[0.065] p-5">
+                <div className="mx-auto flex h-40 w-40 items-center justify-center rounded-full border border-white/10 bg-[conic-gradient(from_120deg,rgba(0,192,118,0.92)_0deg,rgba(200,169,107,0.86)_246deg,rgba(255,255,255,0.08)_247deg_360deg)] p-3 shadow-[0_0_80px_rgba(0,192,118,0.18)]">
+                  <div className="flex h-full w-full flex-col items-center justify-center rounded-full border border-white/10 bg-[#07111F] text-center">
+                    <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/40">
+                      {copy.score}
+                    </div>
+                    <div className="mt-1 text-4xl font-black tracking-[-0.05em] text-white">
+                      82
+                    </div>
+                    <div className="text-[10px] font-black text-[#00D084]">
+                      EDGE READY
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 text-center text-xl font-black text-white">
+                  {copy.center}
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2">
+                  {copy.outcomes.map((item: string) => (
+                    <div
+                      key={item}
+                      className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-center text-[11px] font-black text-white/62"
+                    >
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="grid gap-2">
+                {copy.loop.map((item: any, index: number) => {
+                  const [number, title, text] = item;
+
+                  return (
+                    <motion.div
+                      key={number}
+                      initial={{ opacity: 0, x: 18 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-80px" }}
+                      transition={{ delay: index * 0.06, duration: 0.42 }}
+                      className="grid grid-cols-[54px_1fr] gap-3 rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-3"
+                    >
+                      <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#C8A96B]/16 bg-[#C8A96B]/[0.08] text-xs font-black text-[#E6EDF7]">
+                        {number}
+                      </div>
+
+                      <div>
+                        <div className="text-sm font-black text-white">{title}</div>
+                        <p className="mt-1 text-xs font-semibold leading-5 text-white/48">
+                          {text}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-4 grid gap-2 md:grid-cols-2">
+              {copy.proof.map((item: any) => {
+                const [title, text] = item;
+
+                return (
+                  <div
+                    key={title}
+                    className="rounded-[1.25rem] border border-white/10 bg-black/18 p-3"
+                  >
+                    <div className="text-sm font-black text-white">{title}</div>
+                    <p className="mt-1 text-xs font-semibold leading-5 text-white/45">
+                      {text}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
@@ -2848,6 +3109,8 @@ function ProductPage({ t, setActive }: { t: any; setActive: (value: PageKey) => 
       />
 
 <ProductBuiltForTradersBlock lang={t.lang} />
+
+      <ProductStrategyCreationBlock lang={t.lang} setActive={setActive} />
 
       <section>
         <SectionTitle eyebrow="AI Trading Desk" title={p.deskTitle} text={p.deskText} />
@@ -3028,6 +3291,8 @@ function getPricingShowcaseCopy(lang: string) {
           ["Journal analysis", "Limited", "Expanded", "Maximum"],
           ["Chart analysis", "Foundation", "Advanced", "Premium"],
           ["AI Reports", "Basic", "Advanced", "Elite"],
+          ["Strategy OS", "—", "Strategy Builder + Setup Academy", "Strategy OS + Signals workflow"],
+          ["Personal Edge Engine", "—", "Trading DNA + personal rules", "Trading DNA + signal feedback"],
           ["Market Intelligence", "—", "Yes", "Yes"],
           ["AI Scanner", "—", "Yes", "Yes"],
           ["AI Alerts", "—", "—", "Yes"],
@@ -3187,7 +3452,9 @@ function getPricingShowcaseCopy(lang: string) {
           ["Аналіз журналу", "Лімітований", "Розширений", "Максимальний"],
           ["Аналіз графіків", "Базовий", "Advanced", "Premium"],
           ["AI Reports", "Базові", "Advanced", "Elite"],
-          ["Market Intelligence", "—", "Так", "Так"],
+          ["Strategy OS", "—", "Strategy Builder + Setup Academy", "Strategy OS + Signals workflow"],
+        ["Personal Edge Engine", "—", "Trading DNA + особисті правила", "Trading DNA + feedback по сигналах"],
+        ["Market Intelligence", "—", "Так", "Так"],
           ["AI Scanner", "—", "Так", "Так"],
           ["AI Alerts", "—", "—", "Так"],
           ["Signal-to-Journal", "—", "—", "Так"],
@@ -3345,6 +3612,8 @@ function getPricingShowcaseCopy(lang: string) {
         ["Анализ журнала", "Лимитированный", "Расширенный", "Максимальный"],
         ["Анализ графиков", "Базовый", "Advanced", "Premium"],
         ["AI Reports", "Базовые", "Advanced", "Elite"],
+        ["Strategy OS", "—", "Strategy Builder + Setup Academy", "Strategy OS + Signals workflow"],
+        ["Personal Edge Engine", "—", "Trading DNA + личные правила", "Trading DNA + feedback по сигналам"],
         ["Market Intelligence", "—", "Да", "Да"],
         ["AI Scanner", "—", "Да", "Да"],
         ["AI Alerts", "—", "—", "Да"],
@@ -3377,12 +3646,12 @@ function PricingValueBlock({ lang }: { lang: string }) {
   const copy =
     lang === "EN"
       ? {
-          eyebrow: "What you actually get",
-          title: "You are not paying for a simple AI chat. You are activating a trading workflow.",
+          eyebrow: "Institutional-grade trading infrastructure",
+          title: "Not an AI chat. A premium decision system for traders who treat the market as a business.",
           text:
-            "SkillEdge AI connects your journal, screenshots, AI trade review, Market Intelligence, AI Alerts and reports into one execution-focused system.",
+            "SkillEdge AI connects journal, screenshots, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports and Elite Alerts into one premium trading desk — so every decision moves through context, risk, execution and review.",
           strong:
-            "A basic AI tool can answer a question. SkillEdge AI helps build a process: record trades, understand mistakes, track setups, review execution and turn your trading history into usable data.",
+            "A basic AI tool answers a prompt. SkillEdge AI builds infrastructure around the trader: from market scan and trade planning to journal review, outcome tracking and Personal Edge development. This is not a one-trade suggestion — it is a system for making trading measurable.",
           items: [
             "Trading journal",
             "Screenshots",
@@ -3394,12 +3663,12 @@ function PricingValueBlock({ lang }: { lang: string }) {
         }
       : lang === "UA"
         ? {
-            eyebrow: "Що ти реально отримуєш",
-            title: "Ти платиш не за простий AI-чат. Ти активуєш trading workflow.",
+            eyebrow: "Преміальна інфраструктура трейдера",
+            title: "Не AI-чат. А робочий контур, який перетворює ринок, угоди й помилки на керовану систему.",
             text:
-              "SkillEdge AI поєднує журнал, скріншоти, AI-розбір угод, Market Intelligence, AI Alerts і звіти в одну систему навколо виконання.",
+              "SkillEdge AI поєднує журнал, скріншоти, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports і Elite Alerts в один premium trading desk — щоб кожне рішення проходило через контекст, ризик, виконання й розбір.",
             strong:
-              "Звичайний AI-інструмент може відповісти на запит. SkillEdge AI допомагає будувати процес: фіксувати угоди, бачити помилки, відстежувати сетапи, розбирати виконання й перетворювати історію торгівлі на дані.",
+              "Звичайний AI-інструмент відповідає на запит. SkillEdge AI будує інфраструктуру навколо трейдера: від market scan і trade plan до journal review, outcome tracking і розвитку Personal Edge. Це не підказка на одну угоду — це система, яка робить торгівлю вимірюваною.",
             items: [
               "Журнал угод",
               "Скріншоти",
@@ -3410,12 +3679,12 @@ function PricingValueBlock({ lang }: { lang: string }) {
             ],
           }
         : {
-            eyebrow: "Что ты реально получаешь",
-            title: "Ты платишь не за простой AI-чат. Ты активируешь trading workflow.",
+            eyebrow: "Премиальная инфраструктура трейдера",
+            title: "Не AI-чат. А рабочий контур, который превращает рынок, сделки и ошибки в управляемую систему.",
             text:
-              "SkillEdge AI связывает журнал, скриншоты, AI-разбор сделок, Market Intelligence, AI Alerts и отчёты в одну систему вокруг исполнения.",
+              "SkillEdge AI объединяет журнал, скриншоты, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports и Elite Alerts в один premium trading desk — чтобы каждое решение проходило через контекст, риск, исполнение и разбор.",
             strong:
-              "Обычный AI-инструмент может ответить на вопрос. SkillEdge AI помогает строить процесс: фиксировать сделки, видеть ошибки, отслеживать сетапы, разбирать исполнение и превращать историю торговли в данные.",
+              "Обычный AI-инструмент отвечает на запрос. SkillEdge AI строит инфраструктуру вокруг трейдера: от market scan и trade plan до journal review, outcome tracking и развития Personal Edge. Это не подсказка на одну сделку — это система, которая заставляет торговлю становиться измеримой.",
             items: [
               "Журнал сделок",
               "Скриншоты",
@@ -3427,19 +3696,19 @@ function PricingValueBlock({ lang }: { lang: string }) {
           };
 
   return (
-    <section className="relative overflow-hidden rounded-[2.2rem] border border-cyan-200/12 bg-[#081522]/82 p-5 shadow-[0_28px_120px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-7">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.14),transparent_32%),radial-gradient(circle_at_92%_20%,rgba(52,211,153,0.10),transparent_32%)]" />
+    <section className="relative overflow-hidden rounded-[2.2rem] border border-[#C8A96B]/12 bg-[#0F172A]/82 p-5 shadow-[0_28px_120px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-7">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.14),transparent_32%),radial-gradient(circle_at_92%_20%,rgba(200,169,107,0.10),transparent_32%)]" />
 
       <motion.div
         aria-hidden
         animate={{ x: ["-20%", "120%"] }}
         transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-        className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/50 to-transparent"
+        className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/50 to-transparent"
       />
 
       <div className="relative grid gap-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
         <div>
-          <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/74">
+          <div className="inline-flex rounded-full border border-[#C8A96B]/18 bg-[#C8A96B]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/74">
             {copy.eyebrow}
           </div>
 
@@ -3453,7 +3722,7 @@ function PricingValueBlock({ lang }: { lang: string }) {
             {copy.text}
           </p>
 
-          <p className="mt-3 rounded-[1.35rem] border border-cyan-200/12 bg-cyan-200/[0.055] p-4 text-sm font-semibold leading-7 text-cyan-50/70">
+          <p className="mt-3 rounded-[1.35rem] border border-[#C8A96B]/12 bg-[#C8A96B]/[0.055] p-4 text-sm font-semibold leading-7 text-[#E6EDF7]/70">
             {copy.strong}
           </p>
 
@@ -3525,11 +3794,11 @@ const demoCopy =
 
   const getPlanAccent = (planId: string) => {
     if (planId === "elite") {
-      return "border-cyan-200/30 bg-cyan-200/[0.085] shadow-[0_34px_150px_rgba(34,211,238,0.2)] lg:-mt-8";
+      return "border-[#C8A96B]/30 bg-[#C8A96B]/[0.085] shadow-[0_34px_150px_rgba(0,192,118,0.2)] lg:-mt-8";
     }
 
     if (planId === "pro") {
-      return "border-emerald-200/18 bg-emerald-200/[0.055]";
+      return "border-[#00C076]/18 bg-[#00D084]/[0.055]";
     }
 
     return "border-white/10 bg-white/[0.04]";
@@ -3543,8 +3812,8 @@ const demoCopy =
       transition={{ duration: 0.35 }}
       className="mx-auto w-full max-w-[1600px] space-y-16 px-4 pb-28 pt-10 sm:px-6 lg:px-8 xl:px-10"
     >
-      <section className="relative overflow-hidden rounded-[3.2rem] border border-white/10 bg-[#06111d]/88 p-6 shadow-[0_45px_180px_rgba(8,47,73,0.32)] backdrop-blur-2xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(34,211,238,0.16),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(16,185,129,0.15),transparent_30%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.12),transparent_36%)]" />
+      <section className="relative overflow-hidden rounded-[3.2rem] border border-white/10 bg-[#07111F]/88 p-6 shadow-[0_45px_180px_rgba(0,0,0,0.32)] backdrop-blur-2xl md:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.16),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(16,185,129,0.15),transparent_30%),radial-gradient(circle_at_50%_100%,rgba(59,130,246,0.12),transparent_36%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.024)_1px,transparent_1px)] bg-[size:62px_62px] opacity-30" />
 
         <div className="relative grid min-h-[calc(100vh-220px)] gap-12 lg:grid-cols-[0.82fr_1.18fr] lg:items-center">
@@ -3580,7 +3849,7 @@ const demoCopy =
                       onClick={() => setBilling(key)}
                       className={`rounded-[1.35rem] border px-4 py-4 text-left transition duration-300 ${
                         billing === key
-                          ? "border-cyan-200/35 bg-cyan-200/[0.12] shadow-[0_0_40px_rgba(34,211,238,0.14)]"
+                          ? "border-[#C8A96B]/35 bg-[#C8A96B]/[0.12] shadow-[0_0_40px_rgba(0,192,118,0.14)]"
                           : "border-white/10 bg-white/[0.035] hover:border-white/20 hover:bg-white/[0.06]"
                       }`}
                     >
@@ -3601,7 +3870,7 @@ const demoCopy =
                   className={`rounded-full border px-3 py-2 text-xs font-bold ${
                     index === 0
                       ? "border-amber-300/20 bg-amber-300/[0.07] text-amber-50/70"
-                      : "border-emerald-300/20 bg-emerald-300/[0.07] text-emerald-50/70"
+                      : "border-[#00D084]/20 bg-[#00C076]/[0.07] text-[#E6EDF7]/70"
                   }`}
                 >
                   {note}
@@ -3616,14 +3885,14 @@ const demoCopy =
             transition={{ delay: 0.12, duration: 0.6 }}
             className="relative"
           >
-            <div className="absolute -inset-10 rounded-[2.4rem] bg-cyan-300/12 blur-3xl" />
+            <div className="absolute -inset-10 rounded-[2.4rem] bg-[#00C076]/12 blur-3xl" />
 
-            <div className="relative overflow-hidden rounded-[2.5rem] border border-cyan-200/20 bg-cyan-200/[0.075] p-5 shadow-[0_40px_150px_rgba(8,47,73,0.35)] backdrop-blur-2xl">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(34,211,238,0.22),transparent_34%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.15),transparent_30%)]" />
+            <div className="relative overflow-hidden rounded-[2.5rem] border border-[#C8A96B]/20 bg-[#C8A96B]/[0.075] p-5 shadow-[0_40px_150px_rgba(0,0,0,0.35)] backdrop-blur-2xl">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(0,192,118,0.22),transparent_34%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.15),transparent_30%)]" />
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between">
-                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan-50/55">
+                  <div className="text-[10px] font-black uppercase tracking-[0.28em] text-[#E6EDF7]/55">
                     {copy.elite.eyebrow}
                   </div>
 
@@ -3665,7 +3934,7 @@ const demoCopy =
                 <button
                   type="button"
                   onClick={() => handleCheckout("elite", billing)}
-                  className="mt-7 w-full rounded-2xl bg-white px-5 py-4 text-sm font-black text-[#06111d] shadow-[0_22px_90px_rgba(255,255,255,0.22)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_26px_100px_rgba(34,211,238,0.3)]"
+                  className="mt-7 w-full rounded-2xl bg-white px-5 py-4 text-sm font-black text-[#07111F] shadow-[0_22px_90px_rgba(255,255,255,0.22)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_26px_100px_rgba(0,192,118,0.3)]"
                 >
                   {copy.elite.button}
                   <span className="ml-2">→</span>
@@ -3689,12 +3958,12 @@ const demoCopy =
             whileHover={{ y: -8 }}
             className={`group relative flex h-full min-h-[720px] flex-col overflow-hidden rounded-[2.25rem] border p-5 shadow-[0_26px_110px_rgba(0,0,0,0.22)] backdrop-blur-xl transition duration-500 hover:-translate-y-2 hover:scale-[1.015] ${
   plan.id === "elite"
-    ? "border-cyan-200/36 bg-gradient-to-br from-cyan-200/[0.14] via-white/[0.06] to-emerald-200/[0.10] shadow-[0_34px_150px_rgba(34,211,238,0.24)]"
-    : "border-white/10 bg-white/[0.04] hover:border-cyan-200/26 hover:bg-cyan-200/[0.065] hover:shadow-[0_34px_130px_rgba(34,211,238,0.13)]"
+    ? "border-[#C8A96B]/36 bg-gradient-to-br from-[#C8A96B]/[0.14] via-white/[0.06] to-[#00D084]/[0.10] shadow-[0_34px_150px_rgba(0,192,118,0.24)]"
+    : "border-white/10 bg-white/[0.04] hover:border-[#C8A96B]/26 hover:bg-[#C8A96B]/[0.065] hover:shadow-[0_34px_130px_rgba(0,192,118,0.13)]"
 }`}
           >
             {plan.id === "elite" ? (
-  <div className="absolute right-5 top-5 z-20 rounded-full border border-emerald-200/22 bg-emerald-200/[0.10] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100 shadow-[0_0_34px_rgba(52,211,153,0.18)]">
+  <div className="absolute right-5 top-5 z-20 rounded-full border border-[#00C076]/22 bg-[#00D084]/[0.10] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#DFFFEF] shadow-[0_0_34px_rgba(200,169,107,0.18)]">
     {t.lang === "EN"
       ? "Traders choice"
       : t.lang === "UA"
@@ -3705,7 +3974,7 @@ const demoCopy =
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.10),transparent_30%)]" />
 
             <div className="relative">
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/50">
+              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-[#E6EDF7]/50">
                 {plan.badge}
               </div>
 
@@ -3761,8 +4030,8 @@ const demoCopy =
                 onClick={() => handleCheckout(plan.id, billing)}
                 className={`mt-auto w-full rounded-2xl px-5 py-4 text-sm font-black transition duration-300 hover:-translate-y-0.5 ${
                   plan.id === "elite"
-                    ? "bg-white text-[#06111d] shadow-[0_20px_80px_rgba(255,255,255,0.2)] hover:shadow-[0_24px_90px_rgba(34,211,238,0.25)]"
-                    : "border border-white/12 bg-white/[0.055] text-white hover:border-cyan-200/30 hover:bg-cyan-200/[0.09]"
+                    ? "bg-white text-[#07111F] shadow-[0_20px_80px_rgba(255,255,255,0.2)] hover:shadow-[0_24px_90px_rgba(0,192,118,0.25)]"
+                    : "border border-white/12 bg-white/[0.055] text-white hover:border-[#C8A96B]/30 hover:bg-[#C8A96B]/[0.09]"
                 }`}
               >
                 {plan.cta}
@@ -3774,7 +4043,7 @@ const demoCopy =
       </section>
 
 <section className="relative -mt-8 overflow-hidden rounded-[2rem] border border-amber-200/16 bg-white/[0.035] p-4 shadow-[0_24px_90px_rgba(0,0,0,0.16)] backdrop-blur-xl md:p-5">
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(251,191,36,0.12),transparent_30%),radial-gradient(circle_at_92%_20%,rgba(34,211,238,0.10),transparent_32%)]" />
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(251,191,36,0.12),transparent_30%),radial-gradient(circle_at_92%_20%,rgba(0,192,118,0.10),transparent_32%)]" />
 
   <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
     <div className="max-w-4xl">
@@ -3804,7 +4073,7 @@ const demoCopy =
     <button
       type="button"
       onClick={() => handleCheckout("demo", "monthly")}
-      className="inline-flex shrink-0 items-center justify-center rounded-full border border-cyan-100/18 bg-cyan-50 px-5 py-3 text-sm font-black text-[#06111d] shadow-[0_14px_44px_rgba(103,232,249,0.14)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_20px_70px_rgba(103,232,249,0.2)]"
+      className="inline-flex shrink-0 items-center justify-center rounded-full border border-white/18 bg-[#00C076] px-5 py-3 text-sm font-black text-[#07111F] shadow-[0_14px_44px_rgba(0,192,118,0.14)] transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_20px_70px_rgba(0,192,118,0.2)]"
     >
       {demoCopy.button}
       <span className="ml-2">→</span>
@@ -3812,8 +4081,8 @@ const demoCopy =
   </div>
 </section>
 
-      <section className="relative overflow-hidden rounded-[2.8rem] border border-cyan-200/12 bg-[#081522]/78 p-6 shadow-[0_34px_140px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_10%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
+      <section className="relative overflow-hidden rounded-[2.8rem] border border-[#C8A96B]/12 bg-[#0F172A]/78 p-6 shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(0,192,118,0.14),transparent_32%),radial-gradient(circle_at_10%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
 
         <div className="relative">
           <SectionTitle
@@ -3837,7 +4106,7 @@ const demoCopy =
                   whileHover={{ y: -6 }}
                   className="rounded-[1.6rem] border border-white/10 bg-white/[0.045] p-5 backdrop-blur-xl"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-sm font-black text-cyan-50">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#C8A96B]/15 bg-[#C8A96B]/[0.07] text-sm font-black text-[#E6EDF7]">
                     0{index + 1}
                   </div>
 
@@ -3856,7 +4125,7 @@ const demoCopy =
       </section>
 
       <section className="relative overflow-hidden rounded-[2.8rem] border border-white/10 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(34,211,238,0.12),transparent_30%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.13),transparent_32%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(0,192,118,0.12),transparent_30%),radial-gradient(circle_at_90%_18%,rgba(16,185,129,0.13),transparent_32%)]" />
 
         <div className="relative">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -3895,7 +4164,7 @@ const demoCopy =
                       key={`pricing-cell-${rowIndex}-${cellIndex}`}
                       className={`p-4 ${
                         cellIndex === 3
-                          ? "bg-cyan-200/[0.045] text-white/76"
+                          ? "bg-[#C8A96B]/[0.045] text-white/76"
                           : cellIndex === 0
                             ? "bg-white/[0.03] font-black text-white"
                             : ""
@@ -3917,7 +4186,7 @@ const demoCopy =
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.45 }}
-          className="relative overflow-hidden rounded-[2.6rem] border border-emerald-200/14 bg-emerald-200/[0.055] p-6 shadow-[0_34px_140px_rgba(6,78,59,0.22)] backdrop-blur-xl md:p-8"
+          className="relative overflow-hidden rounded-[2.6rem] border border-[#00C076]/14 bg-[#00D084]/[0.055] p-6 shadow-[0_34px_140px_rgba(6,78,59,0.22)] backdrop-blur-xl md:p-8"
         >
           <Badge>{copy.recommendation.eyebrow}</Badge>
 
@@ -3945,7 +4214,7 @@ const demoCopy =
               className="rounded-[1.7rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl"
             >
               <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-xs font-black text-cyan-50">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#C8A96B]/15 bg-[#C8A96B]/[0.07] text-xs font-black text-[#E6EDF7]">
                   0{index + 1}
                 </div>
 
@@ -3962,7 +4231,7 @@ const demoCopy =
           <button
             type="button"
             onClick={() => handleCheckout("elite", billing)}
-            className="rounded-[1.7rem] border border-cyan-200/24 bg-cyan-200/[0.09] p-5 text-left text-sm font-black text-cyan-50 shadow-[0_26px_100px_rgba(34,211,238,0.18)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-200/[0.13]"
+            className="rounded-[1.7rem] border border-[#C8A96B]/24 bg-[#C8A96B]/[0.09] p-5 text-left text-sm font-black text-[#E6EDF7] shadow-[0_26px_100px_rgba(0,192,118,0.18)] transition duration-300 hover:-translate-y-1 hover:bg-[#C8A96B]/[0.13]"
           >
             {copy.elite.button}
             <span className="ml-2">→</span>
@@ -3981,7 +4250,8 @@ type LandingTeamMember = {
   story: string;
   focus: string[];
   initials: string;
-  gradient: string;
+  gradient: string;
+  photoUrl?: string;
 };
 
 function getTeamPageCopy(lang: string) {
@@ -4114,7 +4384,8 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
           : "Аида выросла из fintech-исследований в Алматы до market data design. Она отвечает за логику, которая превращает шумные тикеры в короткий список для трейдера.",
       focus: ["Scanner", "Market context", "In-play filters"],
       initials: "AS",
-      gradient: "linear-gradient(135deg, rgba(34,211,238,0.36), rgba(15,23,42,0.92) 48%, rgba(16,185,129,0.26))",
+      photoUrl: "/team/aida-sarynova.jpg",
+      gradient: "linear-gradient(135deg, rgba(0,192,118,0.36), rgba(15,23,42,0.92) 48%, rgba(16,185,129,0.26))",
     },
     {
       name: "Niamh O’Connor",
@@ -4127,6 +4398,7 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
           : "Нив строит обучающий слой: простые объяснения, playbook и workflow, чтобы сигналы обучали, а не просто давали команду.",
       focus: ["Learning", "Playbooks", "Signal education"],
       initials: "NO",
+      photoUrl: "/team/niamh-oconnor.jpg",
       gradient: "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(59,130,246,0.28))",
     },
     {
@@ -4140,7 +4412,8 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
           : "Оливер фокусируется на US equities, momentum-поведении и правилах, которые отделяют реальный сетап от позднего chase.",
       focus: ["Momentum", "VWAP", "No chase logic"],
       initials: "OR",
-      gradient: "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 50%, rgba(34,211,238,0.26))",
+      photoUrl: "/team/oliver-reed.jpg",
+      gradient: "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 50%, rgba(0,192,118,0.26))",
     },
     {
       name: "James Whitfield",
@@ -4153,6 +4426,7 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
           : "Джеймс строит дисциплину: RR-фильтры, invalidation logic, execution score и feedback, который показывает, где трейдер теряет деньги.",
       focus: ["Risk", "Execution score", "RR quality"],
       initials: "JW",
+      photoUrl: "/team/james-whitfield.jpg",
       gradient: "linear-gradient(135deg, rgba(14,165,233,0.32), rgba(15,23,42,0.92) 50%, rgba(244,114,182,0.18))",
     },
     {
@@ -4166,6 +4440,7 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
           : "Лукас отвечает за надёжность: backend data pipelines, alert delivery, кеширование, rate limits и быструю архитектуру desk.",
       focus: ["Backend", "Market data", "Alerts delivery"],
       initials: "LS",
+      photoUrl: "/team/lukas-schneider.jpg",
       gradient: "linear-gradient(135deg, rgba(6,182,212,0.28), rgba(15,23,42,0.92) 52%, rgba(251,191,36,0.2))",
     },
     {
@@ -4179,6 +4454,7 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
           : "Маркус приносит prop-desk мышление: сначала структура, сначала риск, без слепых сигналов и с review после результата.",
       focus: ["Desk logic", "Trade plans", "Outcome review"],
       initials: "MH",
+      photoUrl: "/team/marcus-hayes.jpg",
       gradient: "linear-gradient(135deg, rgba(37,99,235,0.32), rgba(15,23,42,0.92) 52%, rgba(16,185,129,0.23))",
     },
     {
@@ -4196,8 +4472,9 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
       : "Михал строит scoring-слой для SkillEdge alerts: confluence, свежесть, качество RR, волатильность и confidence thresholds до того, как идея попадёт к трейдеру.",
   focus: ["Alert scoring", "Confluence", "Confidence filters"],
   initials: "MN",
-  gradient:
-    "linear-gradient(135deg, rgba(34,211,238,0.32), rgba(15,23,42,0.92) 48%, rgba(248,113,113,0.22))",
+      photoUrl: "/team/michal-nowak.jpg",
+      gradient:
+    "linear-gradient(135deg, rgba(0,192,118,0.32), rgba(15,23,42,0.92) 48%, rgba(248,113,113,0.22))",
 },
 {
   name: "Jakub Zieliński",
@@ -4214,7 +4491,8 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
       : "Якуб превращает профессиональное поведение трейдера в playbook: VWAP reactions, failed breakouts, momentum continuation, liquidity traps и no-chase правила исполнения.",
   focus: ["Playbooks", "VWAP logic", "Liquidity traps"],
   initials: "JZ",
-  gradient:
+      photoUrl: "/team/jakub-zielinski.jpg",
+      gradient:
     "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 48%, rgba(34,197,94,0.22))",
 },
 {
@@ -4232,7 +4510,8 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
       : "Дильноза отвечает за journal intelligence: лучшие паттерны трейдера, повторяющиеся ошибки, эмоциональные утечки и данные для personal AI alerts.",
   focus: ["Journal patterns", "Personal alerts", "Outcome learning"],
   initials: "DK",
-  gradient:
+      photoUrl: "/team/dilnoza-karimova.jpg",
+      gradient:
     "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(217,70,239,0.2))",
 },
     {
@@ -4246,6 +4525,7 @@ function getSkillEdgeTeamMembers(lang: string): LandingTeamMember[] {
           : "Кенджи проектирует интерфейс вокруг спокойных решений: меньше паники, яснее следующее действие и меньше эмоциональных кликов.",
       focus: ["UX", "Decision clarity", "Trader behavior"],
       initials: "KW",
+      photoUrl: "/team/kenji-watanabe.jpg",
       gradient: "linear-gradient(135deg, rgba(45,212,191,0.3), rgba(15,23,42,0.92) 52%, rgba(248,113,113,0.18))",
     },
   ];
@@ -4288,12 +4568,12 @@ function TeamPhotoCarousel({
   });
 
   return (
-    <div className="relative overflow-hidden rounded-[2.7rem] border border-cyan-200/14 bg-[#06131f]/82 p-4 shadow-[0_40px_160px_rgba(8,47,73,0.32)] backdrop-blur-2xl md:p-5">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.16),transparent_30%),radial-gradient(circle_at_92%_22%,rgba(16,185,129,0.13),transparent_34%)]" />
+    <div className="relative overflow-hidden rounded-[2.7rem] border border-[#C8A96B]/14 bg-[#07111F]/82 p-4 shadow-[0_40px_160px_rgba(0,0,0,0.32)] backdrop-blur-2xl md:p-5">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(0,192,118,0.16),transparent_30%),radial-gradient(circle_at_92%_22%,rgba(16,185,129,0.13),transparent_34%)]" />
 
       <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
         <div>
-          <div className="text-[10px] font-black uppercase tracking-[0.28em] text-cyan-50/50">
+          <div className="text-[10px] font-black uppercase tracking-[0.28em] text-[#E6EDF7]/50">
             {copy.carouselBadge}
           </div>
 
@@ -4306,7 +4586,7 @@ function TeamPhotoCarousel({
           <button
             type="button"
             onClick={goPrev}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] text-lg font-black text-white/70 transition hover:border-cyan-200/30 hover:bg-cyan-200/[0.09] hover:text-white"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] text-lg font-black text-white/70 transition hover:border-[#C8A96B]/30 hover:bg-[#C8A96B]/[0.09] hover:text-white"
             aria-label="Previous team members"
           >
             ←
@@ -4315,7 +4595,7 @@ function TeamPhotoCarousel({
           <button
             type="button"
             onClick={goNext}
-            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-200/20 bg-cyan-200/[0.09] text-lg font-black text-cyan-50 transition hover:bg-cyan-200/[0.14]"
+            className="flex h-11 w-11 items-center justify-center rounded-2xl border border-[#C8A96B]/20 bg-[#C8A96B]/[0.09] text-lg font-black text-[#E6EDF7] transition hover:bg-[#C8A96B]/[0.14]"
             aria-label="Next team members"
           >
             →
@@ -4347,7 +4627,7 @@ function TeamPhotoCarousel({
             onClick={() => setActiveIndex(index)}
             className={`h-2 rounded-full transition-all ${
               index === activeIndex
-                ? "w-8 bg-cyan-200"
+                ? "w-8 bg-[#C8A96B]"
                 : "w-2 bg-white/20 hover:bg-white/35"
             }`}
             aria-label={`Show ${member.name}`}
@@ -4366,21 +4646,33 @@ function TeamPhotoCard({
   index: number;
 }) {
   return (
-    <div className="group relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_28px_110px_rgba(0,0,0,0.26)] backdrop-blur-xl transition duration-300 hover:-translate-y-2 hover:border-cyan-200/28 hover:bg-white/[0.065]">
+    <div className="group relative min-h-[520px] overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-[0_28px_110px_rgba(0,0,0,0.26)] backdrop-blur-xl transition duration-300 hover:-translate-y-2 hover:border-[#C8A96B]/28 hover:bg-white/[0.065]">
       <div
         className="relative h-72 overflow-hidden"
         style={{ background: member.gradient }}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_18%,rgba(255,255,255,0.34),transparent_22%),linear-gradient(180deg,transparent,rgba(0,0,0,0.42))]" />
+        {member.photoUrl ? (
+          <img
+            src={member.photoUrl}
+            alt={member.name}
+            className="absolute inset-0 h-full w-full object-cover object-center grayscale transition duration-700 group-hover:scale-[1.045] group-hover:grayscale-0"
+            loading="lazy"
+          />
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_18%,rgba(255,255,255,0.34),transparent_22%),linear-gradient(180deg,transparent,rgba(0,0,0,0.42))]" />
+            <div className="absolute left-1/2 top-16 h-24 w-24 -translate-x-1/2 rounded-full border border-white/20 bg-white/22 shadow-[0_0_60px_rgba(255,255,255,0.22)] backdrop-blur-md" />
+            <div className="absolute bottom-0 left-1/2 h-40 w-52 -translate-x-1/2 rounded-t-[5rem] border border-white/10 bg-black/28 backdrop-blur-sm" />
+          </>
+        )}
 
-        <div className="absolute left-1/2 top-16 h-24 w-24 -translate-x-1/2 rounded-full border border-white/20 bg-white/22 shadow-[0_0_60px_rgba(255,255,255,0.22)] backdrop-blur-md" />
-        <div className="absolute bottom-0 left-1/2 h-40 w-52 -translate-x-1/2 rounded-t-[5rem] border border-white/10 bg-black/28 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(0,192,118,0.13),transparent_34%),linear-gradient(180deg,rgba(7,17,31,0.03),rgba(7,17,31,0.88))]" />
 
-        <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/22 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/70">
+        <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-black/35 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-white/78 backdrop-blur-xl">
           {String(index + 1).padStart(2, "0")}
         </div>
 
-        <div className="absolute right-5 top-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.08] text-sm font-black text-white">
+        <div className="absolute right-5 top-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.08] text-sm font-black text-white backdrop-blur-xl">
           {member.initials}
         </div>
 
@@ -4388,14 +4680,14 @@ function TeamPhotoCard({
           <div className="text-2xl font-black tracking-[-0.035em] text-white">
             {member.name}
           </div>
-          <div className="mt-1 text-xs font-black uppercase tracking-[0.18em] text-cyan-50/65">
+          <div className="mt-1 text-xs font-black uppercase tracking-[0.18em] text-[#E6EDF7]/72">
             {member.country}
           </div>
         </div>
       </div>
 
       <div className="p-5">
-        <div className="text-sm font-black text-cyan-50">{member.role}</div>
+        <div className="text-sm font-black text-[#E6EDF7]">{member.role}</div>
 
         <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
           {member.story}
@@ -4428,8 +4720,8 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
       transition={{ duration: 0.35 }}
       className="mx-auto w-full max-w-[1600px] space-y-16 px-4 pb-28 pt-10 sm:px-6 lg:px-8 xl:px-10"
     >
-      <section className="relative overflow-hidden rounded-[2.8rem] border border-white/10 bg-[#06111d]/88 p-6 shadow-[0_45px_180px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(34,211,238,0.16),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(16,185,129,0.13),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]" />
+      <section className="relative overflow-hidden rounded-[2.8rem] border border-white/10 bg-[#07111F]/88 p-6 shadow-[0_45px_180px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.16),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(16,185,129,0.13),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]" />
 
         <div className="relative grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
           <div>
@@ -4447,9 +4739,9 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               <button
                 type="button"
                 onClick={() => setActive("pricing")}
-                className="group relative overflow-hidden rounded-full border border-white/20 bg-white px-7 py-3.5 text-sm font-black text-[#06111d] shadow-[0_18px_70px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(34,211,238,0.25)]"
+                className="group relative overflow-hidden rounded-full border border-white/20 bg-white px-7 py-3.5 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(0,192,118,0.25)]"
               >
-                <span className="absolute inset-0 bg-gradient-to-r from-white via-cyan-100 to-emerald-100 opacity-0 transition group-hover:opacity-100" />
+                <span className="absolute inset-0 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] opacity-0 transition group-hover:opacity-100" />
                 <span className="relative">
                   {copy.primary}
                   <span className="ml-2">→</span>
@@ -4459,7 +4751,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               <button
                 type="button"
                 onClick={() => setActive("product")}
-                className="rounded-full border border-cyan-200/20 bg-cyan-200/[0.06] px-7 py-3.5 text-sm font-black text-cyan-50/82 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-100/45 hover:bg-cyan-100/[0.12] hover:text-white"
+                className="rounded-full border border-[#C8A96B]/20 bg-[#C8A96B]/[0.06] px-7 py-3.5 text-sm font-black text-[#E6EDF7]/82 backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-white/45 hover:bg-[#00C076]/[0.12] hover:text-white"
               >
                 {copy.secondary}
                 <span className="ml-2 opacity-70">↗</span>
@@ -4471,8 +4763,8 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         </div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(34,211,238,0.13),transparent_32%),radial-gradient(circle_at_12%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
+      <section className="relative overflow-hidden rounded-[2.4rem] border border-[#C8A96B]/12 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_0%,rgba(0,192,118,0.13),transparent_32%),radial-gradient(circle_at_12%_80%,rgba(16,185,129,0.12),transparent_34%)]" />
 
         <div className="relative grid gap-10 lg:grid-cols-[0.72fr_1.28fr]">
           <div>
@@ -4493,7 +4785,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
                 transition={{ delay: index * 0.06, duration: 0.45 }}
                 className="rounded-[1.7rem] border border-white/10 bg-black/20 p-5 backdrop-blur-xl"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/15 bg-cyan-200/[0.07] text-sm font-black text-cyan-50">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#C8A96B]/15 bg-[#C8A96B]/[0.07] text-sm font-black text-[#E6EDF7]">
                   0{index + 1}
                 </div>
 
@@ -4537,7 +4829,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.45 }}
-          className="relative overflow-hidden rounded-[2.8rem] border border-emerald-300/14 bg-emerald-300/[0.055] p-6 shadow-[0_34px_140px_rgba(6,78,59,0.2)] backdrop-blur-xl md:p-8"
+          className="relative overflow-hidden rounded-[2.8rem] border border-[#00D084]/14 bg-[#00C076]/[0.055] p-6 shadow-[0_34px_140px_rgba(6,78,59,0.2)] backdrop-blur-xl md:p-8"
         >
           <Badge>{copy.buildTitle}</Badge>
 
@@ -4554,8 +4846,8 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         </motion.div>
       </section>
 
-      <section className="relative overflow-hidden rounded-[2.4rem] border border-white/10 bg-[#06131f]/86 p-6 shadow-[0_40px_160px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:p-8 lg:p-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_90%_90%,rgba(16,185,129,0.13),transparent_36%)]" />
+      <section className="relative overflow-hidden rounded-[2.4rem] border border-white/10 bg-[#07111F]/86 p-6 shadow-[0_40px_160px_rgba(0,0,0,0.28)] backdrop-blur-2xl md:p-8 lg:p-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(0,192,118,0.14),transparent_32%),radial-gradient(circle_at_90%_90%,rgba(16,185,129,0.13),transparent_36%)]" />
 
         <div className="relative grid gap-8 lg:grid-cols-[1fr_0.7fr] lg:items-center">
           <div>
@@ -4571,7 +4863,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
           <button
             type="button"
             onClick={() => setActive("pricing")}
-            className="rounded-[1.7rem] border border-cyan-200/24 bg-cyan-200/[0.09] p-5 text-left text-sm font-black text-cyan-50 shadow-[0_26px_100px_rgba(34,211,238,0.18)] transition duration-300 hover:-translate-y-1 hover:bg-cyan-200/[0.13]"
+            className="rounded-[1.7rem] border border-[#C8A96B]/24 bg-[#C8A96B]/[0.09] p-5 text-left text-sm font-black text-[#E6EDF7] shadow-[0_26px_100px_rgba(0,192,118,0.18)] transition duration-300 hover:-translate-y-1 hover:bg-[#C8A96B]/[0.13]"
           >
             {copy.primary}
             <span className="ml-2">→</span>
@@ -4685,14 +4977,14 @@ function PaymentMethodModal({
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 18, scale: 0.96 }}
         transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-3xl overflow-hidden rounded-[2.4rem] border border-cyan-200/16 bg-[#071522]/96 p-5 shadow-[0_34px_140px_rgba(0,0,0,0.5)] backdrop-blur-2xl md:p-6"
+        className="relative w-full max-w-3xl overflow-hidden rounded-[2.4rem] border border-[#C8A96B]/16 bg-[#0F172A]/96 p-5 shadow-[0_34px_140px_rgba(0,0,0,0.5)] backdrop-blur-2xl md:p-6"
       >
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(56,214,255,0.18),transparent_32%),radial-gradient(circle_at_90%_20%,rgba(52,211,153,0.13),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_90%_20%,rgba(200,169,107,0.13),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
 
         <div className="relative">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/74">
+              <div className="inline-flex rounded-full border border-[#C8A96B]/18 bg-[#C8A96B]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.24em] text-[#E6EDF7]/74">
                 {copy.badge}
               </div>
 
@@ -4726,7 +5018,7 @@ function PaymentMethodModal({
                 </div>
               </div>
 
-              <div className="rounded-full border border-emerald-200/18 bg-emerald-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100/76">
+              <div className="rounded-full border border-[#00C076]/18 bg-[#00D084]/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#DFFFEF]/76">
                 {periodLabel}
               </div>
             </div>
@@ -4742,11 +5034,11 @@ function PaymentMethodModal({
             <button
               type="button"
               onClick={onCrypto}
-              className="group relative overflow-hidden rounded-[1.7rem] border border-cyan-200/18 bg-cyan-200/[0.075] p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-cyan-100/36 hover:bg-cyan-200/[0.11] hover:shadow-[0_22px_80px_rgba(34,211,238,0.16)]"
+              className="group relative overflow-hidden rounded-[1.7rem] border border-[#C8A96B]/18 bg-[#C8A96B]/[0.075] p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-white/36 hover:bg-[#C8A96B]/[0.11] hover:shadow-[0_22px_80px_rgba(0,192,118,0.16)]"
             >
-              <span className="absolute -right-14 -top-14 h-32 w-32 rounded-full bg-cyan-300/0 blur-3xl transition group-hover:bg-cyan-300/16" />
+              <span className="absolute -right-14 -top-14 h-32 w-32 rounded-full bg-[#00C076]/0 blur-3xl transition group-hover:bg-[#00C076]/16" />
               <span className="relative">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-200/18 bg-cyan-200/[0.09] text-xl">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/18 bg-[#C8A96B]/[0.09] text-xl">
                   ₮
                 </span>
                 <span className="mt-5 block text-xl font-black text-white">
@@ -4755,7 +5047,7 @@ function PaymentMethodModal({
                 <span className="mt-2 block text-sm font-semibold leading-6 text-white/52">
                   {copy.cryptoText}
                 </span>
-                <span className="mt-5 inline-flex rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-cyan-50/78">
+                <span className="mt-5 inline-flex rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-[#E6EDF7]/78">
                   Continue →
                 </span>
               </span>
@@ -4764,11 +5056,11 @@ function PaymentMethodModal({
             <button
               type="button"
               onClick={onCard}
-              className="group relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.045] p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-emerald-200/28 hover:bg-emerald-200/[0.07]"
+              className="group relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-white/[0.045] p-5 text-left transition duration-300 hover:-translate-y-1 hover:border-[#00C076]/28 hover:bg-[#00D084]/[0.07]"
             >
-              <span className="absolute -right-14 -top-14 h-32 w-32 rounded-full bg-emerald-300/0 blur-3xl transition group-hover:bg-emerald-300/12" />
+              <span className="absolute -right-14 -top-14 h-32 w-32 rounded-full bg-[#00C076]/0 blur-3xl transition group-hover:bg-[#00C076]/12" />
               <span className="relative">
-                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-emerald-200/16 bg-emerald-200/[0.08] text-xl">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#00C076]/16 bg-[#00D084]/[0.08] text-xl">
                   💳
                 </span>
                 <span className="mt-5 block text-xl font-black text-white">
@@ -4821,7 +5113,7 @@ function SkillEdgeSplashIntro({ language }: { language: Language }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: [0.18, 0.32, 0.18] }}
         transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(34,211,238,0.28),transparent_28%),radial-gradient(circle_at_50%_64%,rgba(16,185,129,0.16),transparent_34%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(0,192,118,0.28),transparent_28%),radial-gradient(circle_at_50%_64%,rgba(16,185,129,0.16),transparent_34%)]"
       />
 
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.028)_1px,transparent_1px)] bg-[size:72px_72px] opacity-20" />
@@ -4835,33 +5127,33 @@ function SkillEdgeSplashIntro({ language }: { language: Language }) {
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-200/10"
+          className="absolute left-1/2 top-1/2 h-[360px] w-[360px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#C8A96B]/10"
         />
 
         <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute left-1/2 top-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200/10 border-t-cyan-100/45"
+          className="absolute left-1/2 top-1/2 h-[250px] w-[250px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#00C076]/10 border-t-cyan-100/45"
         />
 
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.55 }}
-          className="relative mb-6 flex h-20 w-20 items-center justify-center rounded-[1.6rem] border border-cyan-200/18 bg-white/[0.045] shadow-[0_0_80px_rgba(34,211,238,0.22)] backdrop-blur-xl"
+          className="relative mb-6 flex h-20 w-20 items-center justify-center rounded-[1.6rem] border border-[#C8A96B]/18 bg-white/[0.045] shadow-[0_0_80px_rgba(0,192,118,0.22)] backdrop-blur-xl"
         >
-          <div className="absolute inset-2 rounded-[1.2rem] bg-gradient-to-br from-cyan-200/20 via-white/5 to-emerald-200/20" />
+          <div className="absolute inset-2 rounded-[1.2rem] bg-gradient-to-br from-[#C8A96B]/20 via-white/5 to-[#00D084]/20" />
           <span className="relative text-xl font-black tracking-[-0.08em] text-white">
             SE
           </span>
-          <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-emerald-300 shadow-[0_0_22px_rgba(110,231,183,0.95)]" />
+          <span className="absolute right-4 top-4 h-2 w-2 rounded-full bg-[#00C076] shadow-[0_0_22px_rgba(110,231,183,0.95)]" />
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.38, duration: 0.65 }}
-          className="text-xs font-black uppercase tracking-[0.42em] text-cyan-100/55"
+          className="text-xs font-black uppercase tracking-[0.42em] text-[#E6EDF7]/55"
         >
           {copy.label}
         </motion.div>
@@ -4913,7 +5205,7 @@ function SkillEdgeSplashIntro({ language }: { language: Language }) {
             initial={{ x: "-100%" }}
             animate={{ x: "120%" }}
             transition={{ delay: 1.25, duration: 1.15, ease: "easeInOut" }}
-            className="h-full w-1/2 bg-gradient-to-r from-transparent via-cyan-100 to-transparent"
+            className="h-full w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7] to-transparent"
           />
         </motion.div>
       </motion.div>
@@ -4976,8 +5268,7 @@ function PremiumFooter({
         { label: "Trading Journal Guide", href: "/product" },
         { label: "AI Signals Guide", href: "/product" },
         { label: "Referral program", href: "/referral" },
-        { label: "Contact Support", href: "/about" },
-      ],
+],
       legalLinks: [
         { label: "Privacy Policy", href: "/legal/privacy-policy" },
         { label: "Terms & Conditions", href: "/legal/terms" },
@@ -5030,8 +5321,7 @@ function PremiumFooter({
         { label: "Гайд по журналу сделок", href: "/product" },
         { label: "Гайд по AI-сигналам", href: "/product" },
         { label: "Реферальная программа", href: "/referral" },
-        { label: "Связаться с поддержкой", href: "/about" },
-      ],
+],
       legalLinks: [
         { label: "Политика конфиденциальности", href: "/legal/privacy-policy" },
         { label: "Условия использования", href: "/legal/terms" },
@@ -5084,8 +5374,7 @@ function PremiumFooter({
         { label: "Гайд по журналу угод", href: "/product" },
         { label: "Гайд по AI-сигналах", href: "/product" },
         { label: "Партнерська програма", href: "/referral" },
-        { label: "Звʼязатися з підтримкою", href: "/about" },
-      ],
+],
       legalLinks: [
         { label: "Політика конфіденційності", href: "/legal/privacy-policy" },
         { label: "Умови використання", href: "/legal/terms" },
@@ -5098,9 +5387,9 @@ function PremiumFooter({
   }[language];
 
   return (
-    <footer className="relative mt-20 overflow-hidden border-t border-white/10 bg-[#070b16]">
-      <div className="absolute -left-32 top-10 h-80 w-80 rounded-full bg-indigo-500/10 blur-3xl" />
-      <div className="absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
+    <footer className="relative mt-20 overflow-hidden border-t border-white/10 bg-[#07111F]">
+      <div className="absolute -left-32 top-10 h-80 w-80 rounded-full bg-[#C8A96B]/10 blur-3xl" />
+      <div className="absolute -right-32 bottom-10 h-80 w-80 rounded-full bg-[#00C076]0/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl px-4 py-12 md:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.15fr_2fr]">
@@ -5142,10 +5431,9 @@ function PremiumFooter({
             </div>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             <FooterColumn title={copy.productColumn} links={copy.productLinks} />
-            <FooterColumn title={copy.featuresColumn} links={copy.featureLinks} />
-            <FooterColumn title={copy.resourcesColumn} links={copy.resourceLinks} />
+<FooterColumn title={copy.resourcesColumn} links={copy.resourceLinks} />
 
             <div>
               <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/35">
@@ -5170,7 +5458,7 @@ function PremiumFooter({
                       new Event("skilledge:open-cookie-settings")
                     );
                   }}
-                  className="block text-left text-sm text-cyan-100/70 transition hover:text-cyan-100"
+                  className="block text-left text-sm text-[#E6EDF7]/70 transition hover:text-[#E6EDF7]"
                 >
                   {copy.cookieSettings}
                 </button>
@@ -5257,7 +5545,7 @@ function FooterColumn({
               <Link
                 key={`${label}-${index}`}
                 href={href}
-                className="block text-sm font-semibold text-white/56 transition hover:text-cyan-100"
+                className="block text-sm font-semibold text-white/56 transition hover:text-[#E6EDF7]"
               >
                 {label}
               </Link>
@@ -5298,8 +5586,8 @@ function AuthModal(props: {
       {authMode && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-4 backdrop-blur-xl">
           <motion.div initial={{ opacity: 0, scale: 0.94, y: 18 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.94, y: 18 }} transition={{ duration: 0.25 }} className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-white/10 bg-[#101522] p-8 text-white shadow-2xl shadow-indigo-950/40">
-            <div className="absolute -left-20 -top-20 h-44 w-44 rounded-full bg-indigo-500/20 blur-3xl" />
-            <div className="absolute -bottom-20 -right-20 h-44 w-44 rounded-full bg-cyan-500/10 blur-3xl" />
+            <div className="absolute -left-20 -top-20 h-44 w-44 rounded-full bg-[#C8A96B]/20 blur-3xl" />
+            <div className="absolute -bottom-20 -right-20 h-44 w-44 rounded-full bg-[#00C076]0/10 blur-3xl" />
 
             <button onClick={closeAuthModal} className="absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/60 transition hover:bg-white/10 hover:text-white" aria-label={authLabels.close}>
               ×
@@ -5356,21 +5644,21 @@ function HeroSection({
   cards: [string, string][];
 }) {
   return (
-    <section className="relative overflow-hidden rounded-[2.75rem] border border-cyan-200/12 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
+    <section className="relative overflow-hidden rounded-[2.75rem] border border-[#C8A96B]/12 bg-white/[0.035] p-6 shadow-2xl shadow-black/30 md:p-10">
   <Glow />
 
   <motion.div
     aria-hidden
     animate={{ x: ["-20%", "120%"] }}
     transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
-    className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-cyan-100/45 to-transparent"
+    className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/45 to-transparent"
   />
 
   <motion.div
     aria-hidden
     animate={{ opacity: [0.18, 0.34, 0.18], scale: [1, 1.08, 1] }}
     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-    className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-cyan-300/12 blur-3xl"
+    className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-[#00C076]/12 blur-3xl"
   />
       <div className="relative grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <div>
@@ -5383,14 +5671,14 @@ function HeroSection({
           </div>
         </div>
 
-        <motion.div initial={{ opacity: 0, scale: 0.96, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.45 }} className="relative rounded-[2.25rem] border border-cyan-300/15 bg-[#0b1220]/90 p-5 shadow-[0_24px_110px_rgba(0,0,0,0.55)]">
-          <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-cyan-400/20 blur-2xl" />
+        <motion.div initial={{ opacity: 0, scale: 0.96, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.45 }} className="relative rounded-[2.25rem] border border-[#00C076]/15 bg-[#0b1220]/90 p-5 shadow-[0_24px_110px_rgba(0,0,0,0.55)]">
+          <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-[#00D084]/20 blur-2xl" />
           <div className="relative flex items-center justify-between border-b border-white/10 pb-4">
             <div>
-              <div className="text-xs uppercase tracking-[0.24em] text-cyan-100/45">SkillEdge AI</div>
+              <div className="text-xs uppercase tracking-[0.24em] text-[#E6EDF7]/45">SkillEdge AI</div>
               <div className="mt-2 text-xl font-semibold text-white">Trading workflow</div>
             </div>
-            <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">Live</div>
+            <div className="rounded-full border border-[#00D084]/20 bg-[#00C076]/10 px-3 py-1 text-xs font-semibold text-[#DFFFEF]">Live</div>
           </div>
           <div className="relative mt-5 grid gap-3">
             {cards.map(([label, value], index) => (
@@ -5422,9 +5710,9 @@ function Badge({ children }: { children: React.ReactNode }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45 }}
-      className="inline-flex items-center gap-2 rounded-full border border-cyan-200/18 bg-cyan-200/[0.075] px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-cyan-100/78 shadow-[0_0_40px_rgba(34,211,238,0.08)]"
+      className="inline-flex items-center gap-2 rounded-full border border-[#C8A96B]/18 bg-[#C8A96B]/[0.075] px-4 py-1.5 text-xs font-black uppercase tracking-[0.22em] text-[#E6EDF7]/78 shadow-[0_0_40px_rgba(0,192,118,0.08)]"
     >
-      <span className="h-1.5 w-1.5 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.9)]" />
+      <span className="h-1.5 w-1.5 rounded-full bg-[#00C076] shadow-[0_0_18px_rgba(110,231,183,0.9)]" />
       {children}
     </motion.div>
   );
@@ -5441,11 +5729,11 @@ function CardBox({
     <motion.div
       whileHover={{ y: -5, scale: 1.01 }}
       transition={{ type: "spring", stiffness: 260, damping: 24 }}
-      className={`group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 transition duration-300 hover:border-cyan-200/22 hover:bg-white/[0.06] hover:shadow-[0_28px_110px_rgba(34,211,238,0.10)] ${className}`}
+      className={`group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20 transition duration-300 hover:border-[#C8A96B]/22 hover:bg-white/[0.06] hover:shadow-[0_28px_110px_rgba(0,192,118,0.10)] ${className}`}
     >
-      <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-cyan-300/0 blur-3xl transition duration-500 group-hover:bg-cyan-300/12" />
+      <div className="pointer-events-none absolute -right-16 -top-16 h-36 w-36 rounded-full bg-[#00C076]/0 blur-3xl transition duration-500 group-hover:bg-[#00C076]/12" />
       <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
-        <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-cyan-100/35 to-transparent" />
+        <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-[#E6EDF7]/35 to-transparent" />
       </div>
 
       <div className="relative z-10">{children}</div>
@@ -5469,7 +5757,7 @@ function ButtonX({
       whileHover={{ y: -2, scale: 1.025 }}
       whileTap={{ scale: 0.975 }}
       transition={{ type: "spring", stiffness: 420, damping: 28 }}
-      className={`group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full border border-cyan-100/20 bg-gradient-to-r from-white via-cyan-50 to-emerald-50 px-6 py-3 text-sm font-black text-[#06111d] shadow-[0_18px_55px_rgba(103,232,249,0.16)] transition duration-300 hover:shadow-[0_24px_80px_rgba(103,232,249,0.24)] ${className}`}
+      className={`group relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full border border-white/20 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] px-6 py-3 text-sm font-black text-[#07111F] shadow-[0_18px_55px_rgba(0,192,118,0.16)] transition duration-300 hover:shadow-[0_24px_80px_rgba(0,192,118,0.24)] ${className}`}
     >
       <span className="pointer-events-none absolute inset-0 opacity-0 transition duration-300 group-hover:opacity-100">
         <span className="absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]" />
@@ -5496,7 +5784,7 @@ function InfoCard({ title, text, index }: { title: string; text: string; index: 
 function StepCard({ step, title, text, index }: { step: string; title: string; text: string; index: number }) {
   return (
     <motion.div initial={{ opacity: 0, x: 24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.05 }} className="grid gap-4 rounded-3xl border border-white/10 bg-white/[0.035] p-5 md:grid-cols-[72px_1fr]">
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-semibold text-cyan-100">{step}</div>
+      <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#00C076]/20 bg-[#00C076]/10 text-sm font-semibold text-[#E6EDF7]">{step}</div>
       <div>
         <div className="text-lg font-semibold text-white">{title}</div>
         <p className="mt-2 text-sm leading-7 text-white/58">{text}</p>
@@ -5513,7 +5801,7 @@ function ModuleCard({ title, text, items, index }: { title: string; text: string
       <div className="mt-5 space-y-3">
         {items.map((item) => (
           <div key={item} className="flex gap-3 text-sm text-white/68">
-            <Icon name="check" className="text-emerald-300" />
+            <Icon name="check" className="text-[#00C076]" />
             {item}
           </div>
         ))}
@@ -5527,14 +5815,14 @@ function ComparisonCard({ title, weak, strong, index }: { title: string; weak: s
     <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-80px" }} transition={{ delay: index * 0.06 }} whileHover={{ y: -4 }} className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/20">
       <div className="text-xl font-semibold text-white">{title}</div>
       <div className="mt-5 rounded-2xl border border-red-300/15 bg-red-300/[0.035] p-4 text-sm leading-6 text-red-50/65">{weak}</div>
-      <div className="mt-3 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.035] p-4 text-sm leading-6 text-emerald-50/72">{strong}</div>
+      <div className="mt-3 rounded-2xl border border-[#00D084]/15 bg-[#00C076]/[0.035] p-4 text-sm leading-6 text-[#E6EDF7]/72">{strong}</div>
     </motion.div>
   );
 }
 
 function FinalCta({ title, text, checklist, button, onClick }: { title: string; text: string; checklist: string[]; button: string; onClick: () => void }) {
   return (
-    <section className="overflow-hidden rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-indigo-500/15 via-white/[0.04] to-cyan-500/10 p-6 md:p-10">
+    <section className="overflow-hidden rounded-[2.75rem] border border-white/10 bg-gradient-to-br from-[#C8A96B]/15 via-white/[0.04] to-[#E6EDF7]0/10 p-6 md:p-10">
       <div className="grid gap-8 lg:grid-cols-[1fr_0.8fr] lg:items-center">
         <div>
           <h2 className="text-4xl font-semibold leading-tight text-white md:text-5xl">{title}</h2>
@@ -5544,7 +5832,7 @@ function FinalCta({ title, text, checklist, button, onClick }: { title: string; 
           <div className="mt-1 space-y-3">
             {checklist.map((item) => (
               <div key={item} className="flex gap-3 text-sm text-white/70">
-                <Icon name="check" className="text-cyan-300" />
+                <Icon name="check" className="text-[#00C076]" />
                 {item}
               </div>
             ))}
@@ -5559,7 +5847,7 @@ function FinalCta({ title, text, checklist, button, onClick }: { title: string; 
 function HeroVisual({ t }: { t: any }) {
   return (
     <div className="relative mx-auto w-full max-w-md">
-      <div className="absolute inset-0 rounded-[2rem] bg-indigo-500/20 blur-3xl" />
+      <div className="absolute inset-0 rounded-[2rem] bg-[#C8A96B]/20 blur-3xl" />
       <div className="relative rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl shadow-black/40">
         <div className="rounded-[1.5rem] border border-white/10 bg-[#111827] p-5">
           <div className="flex items-center justify-between text-xs text-white/45">
@@ -5570,9 +5858,9 @@ function HeroVisual({ t }: { t: any }) {
             <div className="text-sm text-white/45">{t.productPage.flowEyebrow}</div>
             <div className="mt-2 flex items-center justify-between">
               <div className="text-2xl font-semibold">AI Trading Desk</div>
-              <div className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-xs text-emerald-200">Process</div>
+              <div className="rounded-full border border-[#00D084]/30 bg-[#00C076]/10 px-3 py-1 text-xs text-[#00D084]">Process</div>
             </div>
-            <div className="mt-5 h-28 rounded-2xl bg-gradient-to-br from-indigo-500/25 to-fuchsia-500/20 p-4">
+            <div className="mt-5 h-28 rounded-2xl bg-gradient-to-br from-[#C8A96B]/25 to-fuchsia-500/20 p-4">
               <svg viewBox="0 0 280 90" className="h-full w-full">
                 <path d="M0 70 C 45 60, 55 10, 100 35 S 170 85, 220 40 S 260 30, 280 35" fill="none" stroke="currentColor" strokeWidth="4" className="text-indigo-300" />
                 <path d="M0 80 C 40 65, 70 70, 105 58 S 170 55, 220 48 S 255 45, 280 42" fill="none" stroke="currentColor" strokeWidth="3" className="text-fuchsia-300" />
@@ -5588,8 +5876,8 @@ function HeroVisual({ t }: { t: any }) {
 function Glow() {
   return (
     <>
-      <div className="absolute -right-28 -top-28 h-80 w-80 rounded-full bg-cyan-500/20 blur-3xl" />
-      <div className="absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-indigo-500/20 blur-3xl" />
+      <div className="absolute -right-28 -top-28 h-80 w-80 rounded-full bg-[#00C076]0/20 blur-3xl" />
+      <div className="absolute -bottom-28 -left-28 h-80 w-80 rounded-full bg-[#C8A96B]/20 blur-3xl" />
       <div className="absolute left-1/2 top-12 h-48 w-48 -translate-x-1/2 rounded-full bg-fuchsia-500/10 blur-3xl" />
     </>
   );
@@ -5597,11 +5885,11 @@ function Glow() {
 
 function getPlanClasses(accent: "core" | "edge" | "elite") {
   if (accent === "edge") {
-    return "border-indigo-300/45 bg-gradient-to-b from-indigo-500/20 via-white/[0.05] to-white/[0.025] shadow-[0_24px_100px_rgba(79,70,229,0.2)]";
+    return "border-indigo-300/45 bg-gradient-to-b from-[#C8A96B]/20 via-white/[0.05] to-white/[0.025] shadow-[0_24px_100px_rgba(79,70,229,0.2)]";
   }
 
   if (accent === "elite") {
-    return "border-cyan-300/45 bg-gradient-to-b from-cyan-500/20 via-white/[0.055] to-white/[0.025] shadow-[0_24px_120px_rgba(34,211,238,0.22)]";
+    return "border-[#00C076]/45 bg-gradient-to-b from-[#E6EDF7]0/20 via-white/[0.055] to-white/[0.025] shadow-[0_24px_120px_rgba(0,192,118,0.22)]";
   }
 
   return "border-white/10 bg-white/[0.035]";
@@ -5613,7 +5901,7 @@ function getBadgeClasses(accent: "core" | "edge" | "elite") {
   }
 
   if (accent === "elite") {
-    return "border-cyan-300/25 bg-cyan-300/10 text-cyan-100";
+    return "border-[#00C076]/25 bg-[#00C076]/10 text-[#E6EDF7]";
   }
 
   return "border-white/10 bg-white/[0.05] text-white/65";

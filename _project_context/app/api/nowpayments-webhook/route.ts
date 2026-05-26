@@ -1,0 +1,449 @@
+import crypto from "crypto";
+import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { getPlanLimits, normalizePlanId } from "@/lib/plan-limits";
+
+type BillingPeriod = "monthly" | "halfyear" | "yearly";
+
+const ACTIVE_STATUSES = new Set([
+  "finished",
+  "confirmed",
+  "sending",
+  "partially_paid",
+]);
+
+const FAILED_STATUSES = new Set([
+  "failed",
+  "refunded",
+  "expired",
+]);
+
+function sortObject(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(sortObject);
+  }
+
+  if (value && typeof value === "object") {
+    return Object.keys(value as Record<string, unknown>)
+      .sort()
+      .reduce((acc, key) => {
+        acc[key] = sortObject((value as Record<string, unknown>)[key]);
+        return acc;
+      }, {} as Record<string, unknown>);
+  }
+
+  return value;
+}
+
+function verifyNowPaymentsSignature(rawBody: string, signature: string | null) {
+  const ipnSecret = process.env.NOWPAYMENTS_IPN_SECRET;
+
+  if (!ipnSecret) {
+    throw new Error("Missing NOWPAYMENTS_IPN_SECRET");
+  }
+
+  if (!signature) {
+    return false;
+  }
+
+  const parsedBody = JSON.parse(rawBody);
+  const sortedBody = sortObject(parsedBody);
+  const signedPayload = JSON.stringify(sortedBody);
+
+  const expectedSignature = crypto
+    .createHmac("sha512", ipnSecret)
+    .update(signedPayload)
+    .digest("hex");
+
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(expectedSignature, "hex"),
+      Buffer.from(signature, "hex")
+    );
+  } catch {
+    return false;
+  }
+}
+
+function getExpiresAt(period: BillingPeriod, isDemo = false) {
+  const now = new Date();
+
+  if (isDemo) {
+  now.setDate(now.getDate() + 3);
+  return now.toISOString();
+}
+
+  if (period === "monthly") {
+    now.setMonth(now.getMonth() + 1);
+  }
+
+  if (period === "halfyear") {
+    now.setMonth(now.getMonth() + 6);
+  }
+
+  if (period === "yearly") {
+    now.setFullYear(now.getFullYear() + 1);
+  }
+
+  return now.toISOString();
+}
+
+function getAiLimit(planId: string) {
+  const limits = getPlanLimits(planId);
+  return (
+    limits.aiCoachMessagesPerMonth +
+    limits.journalAnalysesPerMonth +
+    limits.chartAnalysesPerMonth +
+    limits.aiReportsPerMonth
+  );
+}
+
+async function createReferralRewardForPayment(payment: {
+  id?: string;
+  user_id: string;
+  order_id: string | null;
+  invoice_id: string | null;
+  amount: number | string | null;
+  is_demo?: boolean | null;
+}) {
+  if (payment.is_demo) {
+    return {
+      created: false,
+      reason: "demo_payment_skipped",
+    };
+  }
+
+  const paymentAmountUsd = Number(payment.amount || 0);
+
+  if (!Number.isFinite(paymentAmountUsd) || paymentAmountUsd <= 0) {
+    return {
+      created: false,
+      reason: "invalid_payment_amount",
+    };
+  }
+
+  const paymentId =
+    payment.invoice_id || payment.order_id || payment.id || `payment_${Date.now()}`;
+
+  const { data: existingReward } = await supabaseAdmin
+    .from("referral_rewards")
+    .select("id")
+    .eq("payment_id", paymentId)
+    .maybeSingle();
+
+  if (existingReward?.id) {
+    return {
+      created: false,
+      reason: "reward_already_exists",
+    };
+  }
+
+  const { data: referral, error: referralError } = await supabaseAdmin
+    .from("referrals")
+    .select("id, referrer_user_id, referred_user_id, status")
+    .eq("referred_user_id", payment.user_id)
+    .eq("status", "active")
+    .maybeSingle();
+
+  if (referralError) {
+    throw new Error(`Referral lookup failed: ${referralError.message}`);
+  }
+
+  if (!referral?.id) {
+    return {
+      created: false,
+      reason: "no_referral",
+    };
+  }
+
+  if (referral.referrer_user_id === payment.user_id) {
+    return {
+      created: false,
+      reason: "self_referral_blocked",
+    };
+  }
+
+  const { count: previousRewardsCount, error: previousRewardsError } =
+    await supabaseAdmin
+      .from("referral_rewards")
+      .select("id", { count: "exact", head: true })
+      .eq("referred_user_id", payment.user_id)
+      .neq("status", "cancelled");
+
+  if (previousRewardsError) {
+    throw new Error(
+      `Previous rewards lookup failed: ${previousRewardsError.message}`
+    );
+  }
+
+  const isFirstPayment = Number(previousRewardsCount || 0) === 0;
+  const rewardPercent = isFirstPayment ? 15 : 5;
+  const rewardPoints = Number(
+    ((paymentAmountUsd * rewardPercent) / 100).toFixed(2)
+  );
+
+  if (rewardPoints <= 0) {
+    return {
+      created: false,
+      reason: "zero_reward",
+    };
+  }
+
+  const { error: rewardInsertError } = await supabaseAdmin
+    .from("referral_rewards")
+    .insert({
+      referral_id: referral.id,
+      referrer_user_id: referral.referrer_user_id,
+      referred_user_id: payment.user_id,
+      payment_id: paymentId,
+      payment_amount_usd: paymentAmountUsd,
+      reward_percent: rewardPercent,
+      reward_points: rewardPoints,
+      reward_type: isFirstPayment ? "first_payment" : "recurring_payment",
+      status: "available",
+      available_at: new Date().toISOString(),
+    });
+
+  if (rewardInsertError) {
+    if (rewardInsertError.code === "23505") {
+      return {
+        created: false,
+        reason: "duplicate_payment_reward",
+      };
+    }
+
+    throw new Error(`Referral reward insert failed: ${rewardInsertError.message}`);
+  }
+
+  return {
+    created: true,
+    rewardPercent,
+    rewardPoints,
+    rewardType: isFirstPayment ? "first_payment" : "recurring_payment",
+  };
+}
+
+async function recordSubscriptionActivationEvent(event: {
+  userId: string;
+  planId: string;
+  billingPeriod: string | null;
+  paymentId: string;
+  paymentAmountUsd: number;
+  isDemo: boolean;
+}) {
+  const normalizedPlanId = event.isDemo ? "demo" : event.planId;
+
+  if (!["demo", "core", "edge", "elite"].includes(normalizedPlanId)) {
+    return { created: false, reason: "unknown_plan" };
+  }
+
+  const { error } = await supabaseAdmin
+    .from("subscription_activation_events")
+    .insert({
+      user_id: event.userId,
+      plan_id: normalizedPlanId,
+      billing_period: event.billingPeriod,
+      payment_id: event.paymentId,
+      payment_amount_usd: event.paymentAmountUsd,
+      source: "nowpayments_webhook",
+      activated_at: new Date().toISOString(),
+    });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { created: false, reason: "activation_event_already_exists" };
+    }
+
+    throw new Error(`Activation event insert failed: ${error.message}`);
+  }
+
+  return { created: true, planId: normalizedPlanId };
+}
+
+export async function POST(req: Request) {
+  try {
+    const rawBody = await req.text();
+    const signature = req.headers.get("x-nowpayments-sig");
+
+    const isValid = verifyNowPaymentsSignature(rawBody, signature);
+
+    if (!isValid) {
+      return NextResponse.json(
+        { error: "Invalid NOWPayments signature" },
+        { status: 401 }
+      );
+    }
+
+    const payload = JSON.parse(rawBody);
+
+    const orderId = payload.order_id ? String(payload.order_id) : null;
+    const invoiceId =
+      payload.invoice_id || payload.payment_id
+        ? String(payload.invoice_id || payload.payment_id)
+        : null;
+
+    const paymentStatus = payload.payment_status
+      ? String(payload.payment_status)
+      : "unknown";
+
+    if (!orderId) {
+      return NextResponse.json(
+        { error: "Missing order_id" },
+        { status: 400 }
+      );
+    }
+
+    const { data: payment, error: paymentFetchError } = await supabaseAdmin
+      .from("payments")
+      .select("*")
+      .eq("order_id", orderId)
+      .single();
+
+    if (paymentFetchError || !payment) {
+      return NextResponse.json(
+        {
+          error: "Payment not found",
+          details: paymentFetchError?.message,
+          orderId,
+        },
+        { status: 404 }
+      );
+    }
+
+    const { error: paymentUpdateError } = await supabaseAdmin
+      .from("payments")
+      .update({
+        payment_status: paymentStatus,
+        invoice_id: invoiceId ?? payment.invoice_id,
+        raw_payload: payload,
+        paid_at: ACTIVE_STATUSES.has(paymentStatus)
+          ? new Date().toISOString()
+          : payment.paid_at,
+      })
+      .eq("order_id", orderId);
+
+    if (paymentUpdateError) {
+      return NextResponse.json(
+        {
+          error: "Failed to update payment",
+          details: paymentUpdateError.message,
+        },
+        { status: 500 }
+      );
+    }
+
+    if (FAILED_STATUSES.has(paymentStatus)) {
+      return NextResponse.json({
+        ok: true,
+        message: "Payment marked as failed/expired/refunded",
+        paymentStatus,
+      });
+    }
+
+    if (!ACTIVE_STATUSES.has(paymentStatus)) {
+      return NextResponse.json({
+        ok: true,
+        message: "Payment updated, subscription not activated yet",
+        paymentStatus,
+      });
+    }
+
+    const planId = normalizePlanId(payment.plan_id);
+    const billingPeriod = payment.billing_period as BillingPeriod;
+    const isDemo = Boolean(payment.is_demo);
+
+    const expiresAt = getExpiresAt(billingPeriod, isDemo);
+    const aiMonthlyLimit = isDemo ? getAiLimit("elite") : getAiLimit(planId);
+
+    const { error: subscriptionDeactivateError } = await supabaseAdmin
+      .from("subscriptions")
+      .update({ status: "cancelled" })
+      .eq("user_id", payment.user_id)
+      .eq("status", "active");
+
+    if (subscriptionDeactivateError) {
+      return NextResponse.json(
+        {
+          error: "Failed to deactivate old subscription",
+          details: subscriptionDeactivateError.message,
+        },
+        { status: 500 }
+      );
+    }
+
+    const { error: subscriptionInsertError } = await supabaseAdmin
+  .from("subscriptions")
+  .insert({
+    user_id: payment.user_id,
+    plan_id: planId,
+    billing_period: billingPeriod,
+    status: "active",
+    ai_monthly_limit: aiMonthlyLimit,
+    ai_used_this_month: 0,
+    started_at: new Date().toISOString(),
+    expires_at: expiresAt,
+    is_demo: isDemo,
+  });
+
+    if (subscriptionInsertError) {
+      return NextResponse.json(
+        {
+          error: "Failed to activate subscription",
+          details: subscriptionInsertError.message,
+        },
+        { status: 500 }
+      );
+    }
+
+let referralRewardResult: unknown = null;
+
+try {
+  referralRewardResult = await createReferralRewardForPayment({
+    id: payment.id,
+    user_id: payment.user_id,
+    order_id: payment.order_id,
+    invoice_id: invoiceId ?? payment.invoice_id,
+    amount: payment.amount,
+    is_demo: isDemo,
+  });
+} catch (referralRewardError) {
+  console.error("Referral reward error:", referralRewardError);
+}
+
+let activationEventResult: unknown = null;
+
+try {
+  activationEventResult = await recordSubscriptionActivationEvent({
+    userId: payment.user_id,
+    planId,
+    billingPeriod,
+    paymentId:
+      invoiceId ||
+      payment.invoice_id ||
+      payment.order_id ||
+      payment.id ||
+      `payment_${Date.now()}`,
+    paymentAmountUsd: Number(payment.amount || 0),
+    isDemo,
+  });
+} catch (activationEventError) {
+  console.error("Activation event error:", activationEventError);
+}
+
+   return NextResponse.json({
+  ok: true,
+  message: "Subscription activated",
+  userId: payment.user_id,
+  planId,
+  billingPeriod,
+  paymentStatus,
+  referralReward: referralRewardResult,
+  activationEvent: activationEventResult,
+});
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Webhook processing error";
+
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}

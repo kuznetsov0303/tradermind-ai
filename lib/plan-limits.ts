@@ -21,6 +21,9 @@ export type PlanLimits = {
   canUseAiScanner: boolean;
   canUseAiAlerts: boolean;
   canUsePremiumChartAnalysis: boolean;
+  canUseStrategyOs: boolean;
+  canUsePersonalEdge: boolean;
+  canUseLearningPlaybook: boolean;
   canExportReports: boolean;
 };
 
@@ -40,6 +43,9 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     canUseAiScanner: false,
     canUseAiAlerts: false,
     canUsePremiumChartAnalysis: false,
+    canUseStrategyOs: false,
+    canUsePersonalEdge: false,
+    canUseLearningPlaybook: false,
     canExportReports: true,
   },
 
@@ -58,6 +64,9 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     canUseAiScanner: true,
     canUseAiAlerts: false,
     canUsePremiumChartAnalysis: true,
+    canUseStrategyOs: true,
+    canUsePersonalEdge: true,
+    canUseLearningPlaybook: true,
     canExportReports: true,
   },
 
@@ -76,6 +85,9 @@ export const PLAN_LIMITS: Record<PlanId, PlanLimits> = {
     canUseAiScanner: true,
     canUseAiAlerts: true,
     canUsePremiumChartAnalysis: true,
+    canUseStrategyOs: true,
+    canUsePersonalEdge: true,
+    canUseLearningPlaybook: true,
     canExportReports: true,
   },
 };
@@ -130,6 +142,9 @@ export function canUseFeature(
     | "ai_scanner"
     | "ai_alerts"
     | "premium_chart_analysis"
+    | "strategy_os"
+    | "personal_edge"
+    | "learning_playbook"
     | "export_reports"
 ): boolean {
   const limits = getPlanLimits(planId);
@@ -156,6 +171,18 @@ export function canUseFeature(
 
   if (feature === "premium_chart_analysis") {
     return limits.canUsePremiumChartAnalysis;
+  }
+
+  if (feature === "strategy_os") {
+    return limits.canUseStrategyOs;
+  }
+
+  if (feature === "personal_edge") {
+    return limits.canUsePersonalEdge;
+  }
+
+  if (feature === "learning_playbook") {
+    return limits.canUseLearningPlaybook;
   }
 
   return limits.canExportReports;

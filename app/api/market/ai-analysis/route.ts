@@ -3,11 +3,12 @@ import OpenAI from "openai";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { canUseFeature, normalizePlanId } from "@/lib/plan-limits";
 import { requireFeatureAccess } from "@/lib/security/feature-gate";
+import { getOptionalServerEnv } from "@/lib/security/server-env";
 import {
   getSkillEdgeMarketBriefPrompt,
   getSkillEdgeConciseOutputRules,
   getSkillEdgeJsonOutputRules,
-} from "@/lib/ai/skill-edge-prompts";
+} from "@/lib/ai/skill-edge-ai-master-prompt";
 
 export const runtime = "nodejs";
 
@@ -38,12 +39,14 @@ type MarketAIAnalysisRequest = {
 type MarketAIAnalysisItem = {
   symbol: string;
   verdict: string;
-  confluence_score: number;
+  confluence_score?: number | null;
+  score?: number | null;
+  direction_bias?: string | null;
   setup_type: string;
   reason: string;
   risk_note: string;
   scenario: string;
-  invalidation: string;
+  invalidation?: string | null;
   action_note: string;
 };
 
@@ -51,10 +54,6 @@ type MarketAIAnalysisResponse = {
   summary: string;
   items: MarketAIAnalysisItem[];
 };
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 function getOpenAIModel(planId: string | null) {
   const normalizedPlanId = String(planId || "").toLowerCase();
@@ -232,6 +231,46 @@ function fallbackAnalysis(items: MarketAIInputItem[]): MarketAIAnalysisResponse 
   };
 }
 
+function getAnalysisScore(item: MarketAIAnalysisItem, inputItem?: MarketAIInputItem) {
+  const explicitScore = Number(item.confluence_score ?? item.score);
+
+  if (Number.isFinite(explicitScore) && explicitScore > 0) {
+    return clampNumber(explicitScore);
+  }
+
+  return clampNumber(inputItem?.combinedScore ?? 0);
+}
+
+function getCleanText(value: unknown, fallback: string, maxLength = 800) {
+  const text = typeof value === "string" ? value.trim() : "";
+  return (text || fallback).slice(0, maxLength);
+}
+
+function getInvalidationFallback(
+  language: string,
+  item: MarketAIAnalysisItem,
+  inputItem?: MarketAIInputItem
+) {
+  const riskText = String(item.risk_note || inputItem?.riskNote || "").trim();
+  const scenarioText = String(item.scenario || "").trim();
+
+  if (language === "ua") {
+    if (riskText) return `Ідея скасовується, якщо підтверджується цей ризик: ${riskText}`;
+    if (scenarioText) return `Без угоди, якщо сценарій не утримується: ${scenarioText}`;
+    return "Invalidation треба визначити до входу. Без чистого рівня — не наздоганяти рух.";
+  }
+
+  if (language === "en") {
+    if (riskText) return `Idea breaks if the listed risk confirms: ${riskText}`;
+    if (scenarioText) return `No trade without the scenario holding: ${scenarioText}`;
+    return "Invalidation must be defined before execution. No chase without a clean level.";
+  }
+
+  if (riskText) return `Идея отменяется, если подтверждается этот риск: ${riskText}`;
+  if (scenarioText) return `Без сделки, если сценарий не удерживается: ${scenarioText}`;
+  return "Отмену идеи нужно определить до входа. Без чистого уровня — не догонять движение.";
+}
+
 export async function POST(request: Request) {
     const gate = await requireFeatureAccess(request, "ai_scanner", {
     rateLimit: {
@@ -260,15 +299,22 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!process.env.OPENAI_API_KEY) {
+    const openaiApiKey = getOptionalServerEnv(
+      "OPENAI_API_KEY",
+      "SkillEdge Market Brief AI provider"
+    );
+
+    if (!openaiApiKey) {
       return NextResponse.json(
         {
           error:
-            "SkillEdge AI analysis is not available right now. Please try again later or contact support.",
+            "SkillEdge Market Brief provider is not configured on the server.",
         },
         { status: 500 }
       );
     }
+
+    const openai = new OpenAI({ apiKey: openaiApiKey });
 
     const body = (await request.json().catch(() => null)) as
       | MarketAIAnalysisRequest
@@ -319,12 +365,13 @@ const systemPrompt = [
   "    {",
   '      "symbol": "TICKER",',
   '      "verdict": "A+ actionable | A actionable | Watch only | Rejected",',
-  '      "score": 0,',
+  '      "confluence_score": 0,',
   '      "setup_type": "specific setup name",',
   '      "direction_bias": "upside | downside | neutral",',
   '      "reason": "why this ticker is in play + why setup matters",',
   '      "risk_note": "main risk / trap / invalidation problem",',
-  '      "scenario": "trigger, entry condition, invalidation and action note",',
+  '      "scenario": "trigger and observation plan",',
+  '      "invalidation": "exact condition that cancels the idea",',
   '      "action_note": "no chase / wait trigger / actionable after confirmation / skip"',
   "    }",
   "  ]",
@@ -337,6 +384,8 @@ const systemPrompt = [
   "- For crypto, use liquidity / sweep / reclaim / rejection / displacement language only when data supports it.",
   "- For stocks, use catalyst/momentum/VWAP/gap/fade/continuation language only when data supports it.",
   "- Do not invent exact entry/stop/targets if the data does not include levels.",
+  "- confluence_score must be 1-100. Never return 0 unless the ticker is unusable/rejected.",
+  "- invalidation is required for every item. If exact level is unavailable, define the structural condition that cancels the idea.",
 ].join("\n");
 
     const response = await openai.responses.create({
@@ -376,13 +425,13 @@ const systemPrompt = [
   items: analysis.items.slice(0, 20).map((item, index) => ({
     symbol: cleanSymbol(item.symbol) || items[index]?.symbol || "UNKNOWN",
     verdict: String(item.verdict || "Watchlist candidate").slice(0, 160),
-    confluence_score: clampNumber(item.confluence_score),
-    setup_type: String(item.setup_type || "Market opportunity").slice(0, 160),
-    reason: String(item.reason || "").slice(0, 800),
-    risk_note: String(item.risk_note || "").slice(0, 800),
-    scenario: String(item.scenario || "").slice(0, 800),
-    invalidation: String(item.invalidation || "").slice(0, 800),
-    action_note: String(item.action_note || "").slice(0, 500),
+    confluence_score: getAnalysisScore(item, items[index]),
+    setup_type: getCleanText(item.setup_type, "Market opportunity", 160),
+    reason: getCleanText(item.reason, items[index]?.reason || "Ticker appeared in Market Intelligence.", 800),
+    risk_note: getCleanText(item.risk_note, items[index]?.riskNote || "Wait for confirmation and avoid late chase.", 800),
+    scenario: getCleanText(item.scenario, "Wait for a clean trigger, confirmation and defined invalidation before action.", 800),
+    invalidation: getCleanText(item.invalidation, getInvalidationFallback(String(body?.language || "ru"), item, items[index]), 800),
+    action_note: getCleanText(item.action_note, "This is market intelligence, not a direct buy/sell signal. Build a trade plan first.", 500),
   })),
 };
 

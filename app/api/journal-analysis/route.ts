@@ -5,7 +5,7 @@ import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
 import {
   getSkillEdgeJournalAnalysisPrompt,
   getSkillEdgeConciseOutputRules,
-} from "@/lib/ai/skill-edge-prompts";
+} from "@/lib/ai/skill-edge-ai-master-prompt";
 
 type Trade = {
   id: string;

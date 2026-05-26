@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import SiteFooter from "@/components/marketing/SiteFooter";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -26,7 +27,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#070b16] px-6 py-10 text-white">
+    <>
+      <main className="min-h-screen bg-[#070b16] px-6 py-10 text-white">
       <div className="mx-auto max-w-md rounded-3xl border border-white/10 bg-white/[0.04] p-8">
         <p className="text-sm uppercase tracking-[0.25em] text-white/40">
           SkillEdge AI
@@ -64,6 +66,8 @@ export default function LoginPage() {
           Нет аккаунта? Зарегистрироваться
         </a>
       </div>
-    </main>
+      </main>
+      <SiteFooter language="ru" />
+    </>
   );
 }

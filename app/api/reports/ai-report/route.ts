@@ -13,7 +13,7 @@ import { requireFeatureAccess } from "@/lib/security/feature-gate";
 import {
   getSkillEdgeAiReportPrompt,
   getSkillEdgeConciseOutputRules,
-} from "@/lib/ai/skill-edge-prompts";
+} from "@/lib/ai/skill-edge-ai-master-prompt";
 
 export const runtime = "nodejs";
 

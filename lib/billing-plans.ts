@@ -36,12 +36,15 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
     name: "Edge",
     publicName: "SkillEdge Edge",
     description:
-      "Advanced review, reports, market intelligence, and AI Market Brief for active traders.",
+      "Professional trading workspace with Strategy OS, Personal Edge, Reports, Market Intelligence, AI Scanner, and AI Market Brief for active traders.",
     monthlyPriceUsd: 99,
     yearlyPriceUsd: 990,
     yearlySavingsLabel: "Save $198 yearly",
     features: [
       "Everything in Core",
+      "Strategy OS",
+      "Setup Academy + Evidence Locker",
+      "Personal Edge Engine",
       "Advanced reports",
       "Market Intelligence",
       "AI Scanner",
@@ -53,12 +56,14 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
     name: "Elite",
     publicName: "SkillEdge Elite",
     description:
-      "A premium AI Trading Desk with alerts, signal workflow, and full execution intelligence.",
+      "Full AI Trading Desk with everything in Edge plus live AI Alerts, signal workflow, outcome tracking, and strategy-based feedback.",
     monthlyPriceUsd: 179,
     yearlyPriceUsd: 1790,
     yearlySavingsLabel: "Save $358 yearly",
     features: [
       "Everything in Edge",
+      "Strategy OS + Signals workflow",
+      "Personal Edge signal feedback",
       "AI Alerts",
       "Floating alerts widget",
       "Signal-to-Journal workflow",

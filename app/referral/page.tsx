@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import SiteFooter from "@/components/marketing/SiteFooter";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -432,14 +433,10 @@ export default function ReferralPage() {
           </Link>
         </section>
 
-        <footer className="mt-10 border-t border-white/10 pb-4 pt-8">
-          <div className="flex flex-col gap-3 text-xs font-semibold text-white/34 md:flex-row md:items-center md:justify-between">
-            <p>{t.footerRights}</p>
-            <p>{t.footerNote}</p>
-          </div>
-        </footer>
+        <SiteFooter language="ru" className="mt-10" />
       </div>
     </main>
   );
 }
+
 

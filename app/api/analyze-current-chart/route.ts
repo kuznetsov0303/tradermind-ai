@@ -3,7 +3,7 @@ import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
 import {
   getSkillEdgeCurrentChartPrompt,
   getSkillEdgeConciseOutputRules,
-} from "@/lib/ai/skill-edge-prompts";
+} from "@/lib/ai/skill-edge-ai-master-prompt";
 
 type AnalyzeCurrentChartBody = {
   symbol?: string;

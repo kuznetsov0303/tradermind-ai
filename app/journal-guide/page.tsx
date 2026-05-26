@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import SiteFooter from "@/components/marketing/SiteFooter";
 import { motion } from "framer-motion";
 
 const features = [
@@ -323,66 +324,8 @@ export default function JournalGuidePage() {
 
 function JournalGuideFooter() {
   return (
-    <footer className="mt-10 border-t border-white/10 pb-4 pt-8">
-      <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
-        <div>
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-cyan-200/18 bg-cyan-200/[0.08] text-xs font-black text-white">
-              SE
-            </div>
-
-            <div>
-              <div className="text-sm font-black text-white">SkillEdge AI</div>
-              <div className="text-[10px] font-black uppercase tracking-[0.24em] text-white/36">
-                Trading journal system
-              </div>
-            </div>
-          </Link>
-
-          <p className="mt-4 max-w-md text-sm font-semibold leading-7 text-white/48">
-            Журнал, скриншоты, AI-разбор и отчёты в одном trading process — чтобы трейдер видел не только PnL, а качество своих решений.
-          </p>
-        </div>
-
-        <div>
-          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">
-            Продукт
-          </h4>
-          <div className="mt-4 space-y-2">
-            <Link href="/" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">Главная</Link>
-            <Link href="/desk" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">AI Trading Desk</Link>
-            <Link href="/product" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">Продукт</Link>
-            <Link href="/pricing" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">Тарифы</Link>
-          </div>
-        </div>
-
-        <div>
-          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">
-            Гайды
-          </h4>
-          <div className="mt-4 space-y-2">
-            <Link href="/journal-guide" className="block text-sm font-semibold text-cyan-100">Гайд по журналу</Link>
-            <Link href="/ai-guide" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">Гайд по AI</Link>
-            <Link href="/dashboard" className="block text-sm font-semibold text-white/48 hover:text-cyan-100">Кабинет</Link>
-          </div>
-        </div>
-
-        <div>
-          <h4 className="text-xs font-black uppercase tracking-[0.24em] text-white/34">
-            Контакты
-          </h4>
-          <div className="mt-4 space-y-2 text-sm font-semibold text-white/48">
-            <p>support@upyourskills.site</p>
-            <p>Dubai / Warsaw / Kyiv</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-8 flex flex-col gap-3 border-t border-white/10 pt-5 text-xs font-semibold text-white/34 md:flex-row md:items-center md:justify-between">
-        <p>© 2026 SkillEdge AI. Все права защищены.</p>
-        <p>Структура. Разбор. Исполнение. Review.</p>
-      </div>
-    </footer>
+<SiteFooter language="ru" className="mt-10" />
   );
 }
+
 

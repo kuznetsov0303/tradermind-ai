@@ -5,7 +5,7 @@ import { requireAiRouteAccess } from "@/lib/security/ai-route-gate";
 import {
   getSkillEdgeAiCoachPrompt,
   getSkillEdgeConciseOutputRules,
-} from "@/lib/ai/skill-edge-prompts";
+} from "@/lib/ai/skill-edge-ai-master-prompt";
 
 type SubscriptionRow = {
   id: string;
@@ -228,11 +228,8 @@ const systemPrompt = [
 
   return NextResponse.json(
     {
-      error:
-        openaiData?.error?.message ||
-        openaiData?.message ||
-        "OpenAI request failed.",
-      details: openaiData,
+      error: "SkillEdge AI request failed. Please try again.",
+      details: process.env.NODE_ENV === "development" ? openaiData : undefined,
     },
     { status: response.status }
   );
