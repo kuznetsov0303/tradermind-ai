@@ -1294,6 +1294,7 @@ function rewriteLifecycleReason(
 
   return next;
 }
+
 function normalizeDraftScoreForLifecycle(
   draft: MarketAlertDraft,
   reason: string
@@ -1316,210 +1317,6 @@ function normalizeDraftScoreForLifecycle(
         reason,
       },
     },
-  };
-}
-type RecentCryptoAlertForCadence = {
-  id?: string | null;
-  alert_key?: string | null;
-  symbol?: string | null;
-  asset_type?: string | null;
-  direction?: string | null;
-  status?: string | null;
-  setup_slug?: string | null;
-  created_at?: string | null;
-  expires_at?: string | null;
-};
-
-function getCryptoSignalFingerprint(input: {
-  asset_type?: string | null;
-  symbol?: string | null;
-  direction?: string | null;
-  setup_slug?: string | null;
-}) {
-  return [
-    input.asset_type || "crypto",
-    normalizeSymbol(input.symbol || ""),
-    input.direction || "neutral",
-    input.setup_slug || "unknown_setup",
-  ].join(":");
-}
-
-function getCryptoCooldownMinutesForStatus(status: string | null | undefined) {
-  if (status === "active") {
-    return readEnvNumber("SIGNAL_CRYPTO_ACTIVE_COOLDOWN_MINUTES", 180);
-  }
-
-  if (status === "armed") {
-    return readEnvNumber("SIGNAL_CRYPTO_ARMED_COOLDOWN_MINUTES", 30);
-  }
-
-  return readEnvNumber("SIGNAL_CRYPTO_WATCH_COOLDOWN_MINUTES", 60);
-}
-
-function isOpenCryptoCadenceAlert(row: RecentCryptoAlertForCadence) {
-  const status = String(row.status || "").toLowerCase();
-
-  if (["expired", "invalidated", "failed", "rejected"].includes(status)) {
-    return false;
-  }
-
-  if (row.expires_at) {
-    const expiresAt = Date.parse(row.expires_at);
-
-    if (Number.isFinite(expiresAt) && expiresAt <= Date.now()) {
-      return false;
-    }
-  }
-
-  return Boolean(row.alert_key && row.symbol && row.setup_slug && row.direction);
-}
-
-function applyCryptoDedupeCooldown(params: {
-  drafts: MarketAlertDraft[];
-  existingRows: RecentCryptoAlertForCadence[];
-}) {
-  const notes: string[] = [];
-  const nowMs = Date.now();
-
-  const maxNewPerRefresh = readEnvNumber("SIGNAL_CRYPTO_MAX_NEW_PER_REFRESH", 1);
-  const maxNewPer24h = readEnvNumber("SIGNAL_CRYPTO_MAX_NEW_PER_24H", 20);
-  const minIntervalMinutes = readEnvNumber(
-    "SIGNAL_CRYPTO_NEW_OPPORTUNITY_MIN_INTERVAL_MINUTES",
-    20
-  );
-
-  const existingByFingerprint = new Map<string, RecentCryptoAlertForCadence>();
-  let latestExistingCreatedAtMs = 0;
-
-  for (const row of params.existingRows) {
-    if (!isOpenCryptoCadenceAlert(row)) continue;
-
-    const fingerprint = getCryptoSignalFingerprint(row);
-    const createdAtMs = row.created_at ? Date.parse(row.created_at) : 0;
-
-    if (Number.isFinite(createdAtMs)) {
-      latestExistingCreatedAtMs = Math.max(latestExistingCreatedAtMs, createdAtMs);
-    }
-
-    const existing = existingByFingerprint.get(fingerprint);
-    const existingCreatedAtMs = existing?.created_at ? Date.parse(existing.created_at) : 0;
-
-    if (!existing || createdAtMs > existingCreatedAtMs) {
-      existingByFingerprint.set(fingerprint, row);
-    }
-  }
-
-  const existingOpenCount = existingByFingerprint.size;
-  const recentNewOpportunityBlocked =
-    latestExistingCreatedAtMs > 0 &&
-    nowMs - latestExistingCreatedAtMs < minIntervalMinutes * 60 * 1000;
-
-  let newCryptoRemainingToday = Math.max(0, maxNewPer24h - existingOpenCount);
-  let newCryptoRemainingThisRefresh = recentNewOpportunityBlocked
-    ? 0
-    : Math.min(maxNewPerRefresh, newCryptoRemainingToday);
-
-  let updatedExisting = 0;
-  let createdNew = 0;
-  let blockedNew = 0;
-
-  const sortedDrafts = [...params.drafts].sort((a, b) => {
-    const lifecycleDiff = getLifecycleRank(b.status) - getLifecycleRank(a.status);
-    if (lifecycleDiff !== 0) return lifecycleDiff;
-    return b.score - a.score;
-  });
-
-  const filtered = sortedDrafts.flatMap((draft) => {
-    if (draft.asset_type !== "crypto") {
-      return [draft];
-    }
-
-    const fingerprint = getCryptoSignalFingerprint(draft);
-    const existing = existingByFingerprint.get(fingerprint);
-
-    if (existing?.alert_key) {
-      const existingCreatedAtMs = existing.created_at ? Date.parse(existing.created_at) : 0;
-      const ageMinutes = Number.isFinite(existingCreatedAtMs)
-        ? (nowMs - existingCreatedAtMs) / 60000
-        : null;
-      const cooldownMinutes = getCryptoCooldownMinutesForStatus(existing.status);
-
-      updatedExisting += 1;
-
-      return [
-        {
-          ...draft,
-          alert_key: existing.alert_key,
-          created_at: existing.created_at || draft.created_at,
-          is_new: false,
-          reason: appendDraftNote(
-            draft.reason,
-            `updated existing crypto opportunity instead of creating duplicate`
-          ),
-          risk_note:
-            ageMinutes !== null && ageMinutes < cooldownMinutes
-              ? appendDraftNote(
-                  draft.risk_note,
-                  `Duplicate blocked by ${cooldownMinutes}m ${draft.status} cooldown.`
-                )
-              : draft.risk_note,
-          source_data: {
-            ...draft.source_data,
-            cryptoDedupeCooldown: {
-              action: "updated_existing_opportunity",
-              fingerprint,
-              existingAlertKey: existing.alert_key,
-              existingStatus: existing.status,
-              existingCreatedAt: existing.created_at,
-              cooldownMinutes,
-              ageMinutes,
-            },
-          },
-        },
-      ];
-    }
-
-    if (newCryptoRemainingThisRefresh <= 0 || newCryptoRemainingToday <= 0) {
-      blockedNew += 1;
-
-      return [];
-    }
-
-    newCryptoRemainingThisRefresh -= 1;
-    newCryptoRemainingToday -= 1;
-    createdNew += 1;
-
-    return [
-      {
-        ...draft,
-        source_data: {
-          ...draft.source_data,
-          cryptoDedupeCooldown: {
-            action: "created_new_crypto_opportunity",
-            fingerprint,
-            maxNewPerRefresh,
-            maxNewPer24h,
-            minIntervalMinutes,
-            existingOpenCount,
-          },
-        },
-      },
-    ];
-  });
-
-  notes.push(
-    `Crypto dedupe/cooldown: updated=${updatedExisting}, new=${createdNew}, blocked=${blockedNew}, existingOpen=${existingOpenCount}, maxNewPerRefresh=${maxNewPerRefresh}, maxNewPer24h=${maxNewPer24h}, minNewInterval=${minIntervalMinutes}m.`
-  );
-
-  if (recentNewOpportunityBlocked) {
-    notes.push(
-      `Crypto new-opportunity cadence active: new fingerprints blocked until ${minIntervalMinutes}m pass from the latest open crypto opportunity.`
-    );
-  }
-
-  return {
-    drafts: filtered,
-    notes,
   };
 }
 
@@ -4041,50 +3838,13 @@ if (
     )
   ).filter((draft): draft is MarketAlertDraft => Boolean(draft));
 
-  const cryptoCadenceLookbackHours = readEnvNumber("SIGNAL_CRYPTO_DEDUPE_LOOKBACK_HOURS", 24);
-  const cryptoCadenceSince = new Date(
-    Date.now() - cryptoCadenceLookbackHours * 60 * 60 * 1000
-  ).toISOString();
-
-  let recentCryptoAlerts: RecentCryptoAlertForCadence[] = [];
-
-  if (assetTypeFilter === "crypto" || assetTypeFilter === "all") {
-    const existingCryptoResult = await supabaseAdmin
-      .from("market_alerts")
-      .select("id, alert_key, symbol, asset_type, direction, status, setup_slug, created_at, expires_at")
-      .eq("asset_type", "crypto")
-      .gte("created_at", cryptoCadenceSince)
-      .order("created_at", { ascending: false })
-      .limit(500);
-
-    if (existingCryptoResult.error) {
-      console.error("Crypto dedupe/cooldown load error:", existingCryptoResult.error);
-      diagnosticNotes.push("Crypto dedupe/cooldown skipped because recent market_alerts load failed.");
-    } else {
-      recentCryptoAlerts = (existingCryptoResult.data || []) as RecentCryptoAlertForCadence[];
-    }
-  }
-
-  const cryptoCadenceResult = applyCryptoDedupeCooldown({
-    drafts: rawDrafts,
-    existingRows: recentCryptoAlerts,
-  });
-
-  diagnosticNotes.push(...cryptoCadenceResult.notes);
-
   if (marketRows.length > 0 && rawDrafts.length === 0) {
     diagnosticNotes.push(
       "No drafts survived the premium filter. Lower SIGNAL_WATCH_MIN_CONFIDENCE or inspect rejection reasons if this repeats."
     );
   }
 
-  if (rawDrafts.length > 0 && cryptoCadenceResult.drafts.length === 0) {
-    diagnosticNotes.push(
-      "Drafts were built, but crypto dedupe/cooldown blocked new duplicates for this refresh."
-    );
-  }
-
-  const drafts = limitSignalLifecycleBatch(cryptoCadenceResult.drafts);
+  const drafts = limitSignalLifecycleBatch(rawDrafts);
   const statusCounts = countDraftStatuses(drafts);
   const diagnostics: AlertGenerationDiagnostics = {
     requestedAssetType: assetTypeFilter,

@@ -345,7 +345,7 @@ function buildFallbackPlan({
       direction,
       entry,
       stop,
-      target: target1,
+      target: target3,
     }),
     vwap: null,
     atr: null,
@@ -486,12 +486,12 @@ export function buildSkillEdgeStructureTradePlan({
       .filter((value): value is number => typeof value === "number" && value < entry)
       .sort((a, b) => b - a);
 
-    const pickDownsideTarget = (minimumR: number) =>
-      downsideCandidates.find((level) => level <= entry - riskToStop * minimumR) ?? null;
+    const pickDownsideTarget = (minimumR: number, fallback: number) =>
+      downsideCandidates.find((level) => level <= entry - riskToStop * minimumR) ?? fallback;
 
-    const target1 = pickDownsideTarget(2);
-    const target2 = pickDownsideTarget(3);
-    const target3 = pickDownsideTarget(4);
+    const target1 = pickDownsideTarget(2, entry - riskToStop * 2);
+    const target2 = pickDownsideTarget(3, entry - riskToStop * 3);
+    const target3 = pickDownsideTarget(4, entry - riskToStop * 4);
 
     structureNotes.push(
       resistance
@@ -563,17 +563,20 @@ export function buildSkillEdgeStructureTradePlan({
       ? Math.min(support.price - atrValue * 0.15, entry - atrValue * 0.35)
       : entry - atrValue * 0.75;
 
-  const riskToStop = Math.abs(entry - stop);
-  const upsideCandidates = [resistance1?.price, resistance2?.price, resistance3?.price]
-    .filter((value): value is number => typeof value === "number" && value > entry)
-    .sort((a, b) => a - b);
+  const target1 =
+    resistance1?.price && resistance1.price > entry
+      ? resistance1.price
+      : entry + atrValue * 1.2;
 
-  const pickUpsideTarget = (minimumR: number) =>
-    upsideCandidates.find((level) => level >= entry + riskToStop * minimumR) ?? null;
+  const target2 =
+    resistance2?.price && resistance2.price > target1
+      ? resistance2.price
+      : entry + atrValue * 2.1;
 
-  const target1 = pickUpsideTarget(2);
-  const target2 = pickUpsideTarget(3);
-  const target3 = pickUpsideTarget(4);
+  const target3 =
+    resistance3?.price && resistance3.price > target2
+      ? resistance3.price
+      : entry + atrValue * 3.1;
 
   structureNotes.push(
     support
@@ -607,7 +610,7 @@ export function buildSkillEdgeStructureTradePlan({
       direction,
       entry,
       stop,
-      target: target1,
+      target: target3,
     }),
     vwap,
     atr,

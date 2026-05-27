@@ -1172,9 +1172,7 @@ const dashboardDict = {
       moversLoading: "Loading movers...",
       moversEmpty: "No clean candidates for this filter.",
       moversStocksNeedKey:
-        "Stock movers are unavailable on the current premium market data layer.",
-      moversSourceNote:
-        "Crypto: Binance USDT pairs. Stocks: 13:00 Kyiv session change + volume.",
+        "Stock movers are waiting for premium market data coverage.",
       chartAnalysisTitle: "Chart review",
       chartAnalysisText:
         "SkillEdge reads ticker, timeframe, candles, volume, levels and risk context as a trading review.",
@@ -1869,9 +1867,7 @@ const dashboardDict = {
       moversLoading: "Загружаем лидеров движения...",
       moversEmpty: "Под этот фильтр нет чистых кандидатов.",
       moversStocksNeedKey:
-        "Stock movers недоступны на текущем premium market data layer.",
-      moversSourceNote:
-        "Крипто: Binance USDT pairs. Акции: движение и объём с 13:00 Киев.",
+        "Stock movers ждут premium market data coverage.",
       chartAnalysisTitle: "Chart review",
       chartAnalysisText:
         "SkillEdge анализирует текущий тикер, таймфрейм, рыночные данные, свечи, объём и контекст риска.",
@@ -2565,9 +2561,7 @@ const dashboardDict = {
       moversLoading: "Завантажуємо лідерів руху...",
       moversEmpty: "Немає інструментів під цей фільтр.",
       moversStocksNeedKey:
-        "Лідери руху по акціях недоступні на поточному premium market data layer.",
-      moversSourceNote:
-        "Крипто: Binance USDT pairs. Акції: рух і обсяг з 13:00 Київ.",
+        "Лідери руху по акціях готуються до підключення преміального покриття ринкових даних.",
       chartAnalysisTitle: "AI-аналіз графіка",
       chartAnalysisText:
         "SkillEdge аналізує поточний тикер, таймфрейм, ринкові дані, свічки, обʼєм і контекст ризику.",
@@ -5853,6 +5847,9 @@ onTradeEditCancel={handleTradeEditCancel}
             
           </aside>
         </motion.section>
+
+        <DashboardFooter language={language} subscription={subscription} />
+
       </div>
 
 {equityExpanded && (
@@ -14021,6 +14018,187 @@ function StrategyTab({
     </div>
   );
 }
+
+function DashboardFooter({
+  language,
+  subscription,
+}: {
+  language: Language;
+  subscription: Subscription;
+}) {
+  const copy =
+    language === "en"
+      ? {
+          badge: "Desk legal center",
+          title: "SkillEdge is a decision-support platform, not a promise of profit.",
+          text:
+            "Use signals, journal analytics and desk reviews as structured trading intelligence. Final decisions, position size and risk are always your responsibility.",
+          plan: "Current access",
+          validUntil: "Valid until",
+          inactive: "Access offline",
+          product: "Product",
+          legal: "Legal",
+          support: "Support",
+          links: {
+            product: "Product overview",
+            journalGuide: "Journal guide",
+            aiGuide: "AI guide",
+            privacy: "Privacy Policy",
+            terms: "Terms & Conditions",
+            disclaimer: "Risk Disclaimer",
+            billing: "Billing & Cancellation",
+            eula: "EULA",
+            supportAssistant: "Support Assistant",
+          },
+          copyright: "All rights reserved.",
+        }
+      : language === "ua"
+        ? {
+            badge: "Юридичний центр кабінету",
+            title: "SkillEdge — платформа підтримки рішень, а не обіцянка прибутку.",
+            text:
+              "Використовуйте сигнали, аналітику журналу та AI-розбори як структуровану трейдинг-інформацію. Фінальне рішення, розмір позиції та ризик завжди залишаються за вами.",
+            plan: "Поточний доступ",
+            validUntil: "Діє до",
+            inactive: "Активного тарифу немає",
+            product: "Продукт",
+            legal: "Документи",
+            support: "Підтримка",
+            links: {
+              product: "Огляд продукту",
+              journalGuide: "Гайд по журналу",
+              aiGuide: "Гайд по AI",
+              privacy: "Privacy Policy",
+              terms: "Terms & Conditions",
+              disclaimer: "Risk Disclaimer",
+              billing: "Billing & Cancellation",
+              eula: "EULA",
+              supportAssistant: "Support Assistant",
+            },
+            copyright: "Усі права захищені.",
+          }
+        : {
+            badge: "Юридический центр кабинета",
+            title: "SkillEdge — платформа поддержки решений, а не обещание прибыли.",
+            text:
+              "Используй сигналы, аналитику журнала и desk reviewы как структурированную трейдинг-информацию. Финальное решение, размер позиции и риск всегда остаются за тобой.",
+            plan: "Текущий доступ",
+            validUntil: "Действует до",
+            inactive: "Активного тарифа нет",
+            product: "Продукт",
+            legal: "Документы",
+            support: "Поддержка",
+            links: {
+              product: "Обзор продукта",
+              journalGuide: "Гайд по журналу",
+              aiGuide: "Гайд по AI",
+              privacy: "Privacy Policy",
+              terms: "Terms & Conditions",
+              disclaimer: "Risk Disclaimer",
+              billing: "Billing & Cancellation",
+              eula: "EULA",
+              supportAssistant: "Support Assistant",
+            },
+            copyright: "Все права защищены.",
+          };
+
+  const currentPlan =
+    subscription.active && subscription.plan
+      ? planNames[subscription.plan]
+      : copy.inactive;
+
+  const linkGroups = [
+    {
+      title: copy.product,
+      items: [
+        [copy.links.product, "/?page=product"],
+        [copy.links.journalGuide, "/journal-guide"],
+        [copy.links.aiGuide, "/ai-guide"],
+      ],
+    },
+    {
+      title: copy.legal,
+      items: [
+        [copy.links.privacy, "/privacy-policy"],
+        [copy.links.terms, "/terms-and-conditions"],
+        [copy.links.disclaimer, "/disclaimer"],
+        [copy.links.billing, "/billing-and-cancellation"],
+        [copy.links.eula, "/eula"],
+      ],
+    },
+  ] as const;
+
+  return (
+    <footer className="se-dashboard-panel mt-6 overflow-hidden rounded-[2rem] p-5 md:p-6">
+      <div className="relative overflow-hidden rounded-[1.7rem] border border-white/10 bg-[#071320]/70 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+        <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-emerald-300/10 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-20 h-52 w-52 rounded-full bg-cyan-300/10 blur-3xl" />
+
+        <div className="relative grid gap-6 xl:grid-cols-[1.2fr_1fr] xl:items-start">
+          <div>
+            <div className="inline-flex rounded-full border border-cyan-200/15 bg-cyan-200/[0.06] px-3 py-1 text-[10px] font-black uppercase tracking-[0.22em] text-cyan-100/70">
+              {copy.badge}
+            </div>
+
+            <h3 className="mt-4 max-w-3xl text-xl font-black tracking-[-0.035em] text-white md:text-2xl">
+              {copy.title}
+            </h3>
+
+            <p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-white/52">
+              {copy.text}
+            </p>
+
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <div className="rounded-full border border-emerald-200/14 bg-emerald-200/[0.06] px-4 py-2 text-xs font-black text-emerald-100/80">
+                {copy.plan}: {currentPlan}
+              </div>
+
+              {subscription.active && subscription.expiresAt ? (
+                <div className="rounded-full border border-white/10 bg-white/[0.045] px-4 py-2 text-xs font-bold text-white/55">
+                  {copy.validUntil}: {formatDate(subscription.expiresAt)}
+                </div>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            {linkGroups.map((group) => (
+              <div key={group.title}>
+                <p className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">
+                  {group.title}
+                </p>
+
+                <div className="mt-3 space-y-2">
+                  {group.items.map(([label, href]) => (
+                    <a
+                      key={href}
+                      href={href}
+                      className="block rounded-2xl border border-white/8 bg-black/18 px-3 py-2 text-xs font-bold text-white/48 transition hover:border-cyan-200/20 hover:bg-cyan-200/[0.06] hover:text-cyan-100"
+                    >
+                      {label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-white/8 pt-4 text-[11px] font-semibold text-white/35">
+          <span>© {new Date().getFullYear()} SkillEdge AI. {copy.copyright}</span>
+          <span>
+            {language === "en"
+              ? "Personal AI Trading Desk · Journal · Signals · Risk-first workflow"
+              : language === "ua"
+                ? "Персональний AI Trading Desk · Журнал · Сигнали · Risk-first workflow"
+                : "Персональный AI Trading Desk · Журнал · Сигналы · Risk-first workflow"}
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 
 function normalizeReferralBalanceSummary(data: unknown): ReferralBalanceSummary {
   const row = Array.isArray(data) ? data[0] : data;
@@ -29193,7 +29371,7 @@ reason: item.reason || "Market Intelligence candidate detected.",
       });
   }, [opportunities, query, assetFilter, signalFilter, sortBy]);
 
-  const topRows = filteredOpportunities.slice(0, 10);
+  const topRows = filteredOpportunities.slice(0, 25);
   const combinedCount =
   marketIntelligenceMetrics?.combined ??
   opportunities.filter((item) => item.signalType === "combined").length;
@@ -33219,11 +33397,7 @@ const handleAnalyzeCurrentChart = async () => {
 )}
       
 
-      <MoversPanel
-        open={moversOpen}
-        onToggle={() => setMoversOpen((current) => !current)}
-        t={t}
-      />
+      <PremiumDashboardTabHero tab="charts" language={language} />
 
       <div id="charts-terminal-command" className="se-dashboard-panel mt-6 scroll-mt-28 rounded-[2.25rem] p-5">
         {chartsError && (
@@ -33479,6 +33653,11 @@ const handleAnalyzeCurrentChart = async () => {
   )}
 </div>    
 
+        <MoversPanel
+  open={moversOpen}
+  onToggle={() => setMoversOpen((current) => !current)}
+  t={t}
+/>
       </div>
     </div>
   );
@@ -33559,8 +33738,6 @@ type ChartWatchlistRow = {
   updated_at: string;
 };
 
-const MOVERS_REFRESH_MS = 5 * 60 * 1000;
-
 type ChartsMoverItem = {
   symbol: string;
   name: string;
@@ -33603,14 +33780,13 @@ function MoversPanel({
       } catch (err) {
         if (!cancelled) {
           setItems([]);
-          const message =
-            err instanceof Error
-              ? err.message
-              : market === "stocks"
-                ? t.charts.moversStocksNeedKey
-                : t.charts.moversLoading;
-
-          setError(message);
+          setError(
+            market === "stocks"
+              ? t.charts.moversStocksNeedKey
+              : err instanceof Error
+                ? err.message
+                : t.charts.moversLoading
+          );
         }
       } finally {
         if (!cancelled) {
@@ -33621,9 +33797,7 @@ function MoversPanel({
 
     load();
 
-    const timer = setInterval(() => {
-      load();
-    }, MOVERS_REFRESH_MS);
+    const timer = setInterval(load, 10000);
 
     return () => {
       cancelled = true;
@@ -33741,7 +33915,11 @@ function MoversPanel({
               </div>
             )}
           </div>
-</>
+
+          <div className="mt-3 text-xs text-white/35">
+  Crypto: Binance USDT pairs. {t.charts.moversStocksNeedKey}
+</div>
+        </>
       )}
     </div>
   );
@@ -33811,60 +33989,16 @@ async function fetchCryptoMovers(
         ? b.changePct - a.changePct
         : a.changePct - b.changePct
     )
-    .slice(0, 10)
+    .slice(0, 25)
     .map(({ rawVolume, ...item }) => item);
 
   return mapped;
 }
 
 async function fetchStockMovers(
-  side: ChartsMoverSide
+  _side: ChartsMoverSide
 ): Promise<ChartsMoverItem[]> {
-  const response = await fetch(
-    `/api/market/chart-movers?market=stocks&side=${side}&limit=25`,
-    {
-      cache: "no-store",
-      headers: {
-        Accept: "application/json",
-      },
-    }
-  );
-
-  const payload = (await response.json()) as {
-    items?: Array<Partial<ChartsMoverItem> & { volume?: string | number | null }>;
-    error?: string;
-  };
-
-  if (!response.ok) {
-    throw new Error(
-      typeof payload?.error === "string"
-        ? payload.error
-        : "Stock movers are unavailable on the current market data stack."
-    );
-  }
-
-  return Array.isArray(payload.items)
-    ? payload.items
-        .map((item) => {
-          const symbol = String(item.symbol || "").trim().toUpperCase();
-          const volume =
-            typeof item.volume === "string"
-              ? item.volume
-              : formatCompactNumber(Number(item.volume ?? 0));
-
-          return {
-            symbol,
-            name: String(item.name || symbol || "US stock"),
-            price:
-              typeof item.price === "number" && Number.isFinite(item.price)
-                ? item.price
-                : null,
-            changePct: Number(item.changePct ?? 0),
-            volume,
-          };
-        })
-        .filter((item) => item.symbol && Number.isFinite(item.changePct))
-    : [];
+  throw new Error("Stock movers are routed through the premium market data layer.");
 }
 
 function parseChangePct(value: unknown): number {

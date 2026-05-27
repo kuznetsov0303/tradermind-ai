@@ -345,14 +345,14 @@ function buildFallbackPlan({
       direction,
       entry,
       stop,
-      target: target1,
+      target: target3,
     }),
     vwap: null,
     atr: null,
     nearest_support: null,
     nearest_resistance: null,
     structure_notes: [
-      "Fallback plan used because candles/VWAP/levels were not available. Signal generator should reject fallback plans before client delivery.",
+      "Fallback plan used because candles/VWAP/levels were not available.",
     ],
     missing_structure_data: ["candles", "VWAP", "swing levels"],
   };
@@ -481,17 +481,20 @@ export function buildSkillEdgeStructureTradePlan({
         ? Math.max(resistance.price + atrValue * 0.15, entry + atrValue * 0.35)
         : entry + atrValue * 0.75;
 
-    const riskToStop = Math.abs(stop - entry);
-    const downsideCandidates = [support1?.price, support2?.price, support3?.price]
-      .filter((value): value is number => typeof value === "number" && value < entry)
-      .sort((a, b) => b - a);
+    const target1 =
+      support1?.price && support1.price < entry
+        ? support1.price
+        : entry - atrValue * 1.2;
 
-    const pickDownsideTarget = (minimumR: number) =>
-      downsideCandidates.find((level) => level <= entry - riskToStop * minimumR) ?? null;
+    const target2 =
+      support2?.price && support2.price < target1
+        ? support2.price
+        : entry - atrValue * 2.1;
 
-    const target1 = pickDownsideTarget(2);
-    const target2 = pickDownsideTarget(3);
-    const target3 = pickDownsideTarget(4);
+    const target3 =
+      support3?.price && support3.price < target2
+        ? support3.price
+        : entry - atrValue * 3.1;
 
     structureNotes.push(
       resistance
@@ -525,7 +528,7 @@ export function buildSkillEdgeStructureTradePlan({
         direction,
         entry,
         stop,
-        target: target1,
+        target: target3,
       }),
       vwap,
       atr,
@@ -563,17 +566,20 @@ export function buildSkillEdgeStructureTradePlan({
       ? Math.min(support.price - atrValue * 0.15, entry - atrValue * 0.35)
       : entry - atrValue * 0.75;
 
-  const riskToStop = Math.abs(entry - stop);
-  const upsideCandidates = [resistance1?.price, resistance2?.price, resistance3?.price]
-    .filter((value): value is number => typeof value === "number" && value > entry)
-    .sort((a, b) => a - b);
+  const target1 =
+    resistance1?.price && resistance1.price > entry
+      ? resistance1.price
+      : entry + atrValue * 1.2;
 
-  const pickUpsideTarget = (minimumR: number) =>
-    upsideCandidates.find((level) => level >= entry + riskToStop * minimumR) ?? null;
+  const target2 =
+    resistance2?.price && resistance2.price > target1
+      ? resistance2.price
+      : entry + atrValue * 2.1;
 
-  const target1 = pickUpsideTarget(2);
-  const target2 = pickUpsideTarget(3);
-  const target3 = pickUpsideTarget(4);
+  const target3 =
+    resistance3?.price && resistance3.price > target2
+      ? resistance3.price
+      : entry + atrValue * 3.1;
 
   structureNotes.push(
     support
@@ -607,7 +613,7 @@ export function buildSkillEdgeStructureTradePlan({
       direction,
       entry,
       stop,
-      target: target1,
+      target: target3,
     }),
     vwap,
     atr,

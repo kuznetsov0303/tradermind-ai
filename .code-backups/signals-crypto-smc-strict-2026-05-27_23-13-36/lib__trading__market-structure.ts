@@ -345,7 +345,7 @@ function buildFallbackPlan({
       direction,
       entry,
       stop,
-      target: target1,
+      target: target3,
     }),
     vwap: null,
     atr: null,
@@ -486,12 +486,12 @@ export function buildSkillEdgeStructureTradePlan({
       .filter((value): value is number => typeof value === "number" && value < entry)
       .sort((a, b) => b - a);
 
-    const pickDownsideTarget = (minimumR: number) =>
-      downsideCandidates.find((level) => level <= entry - riskToStop * minimumR) ?? null;
+    const pickDownsideTarget = (minimumR: number, fallback: number) =>
+      downsideCandidates.find((level) => level <= entry - riskToStop * minimumR) ?? fallback;
 
-    const target1 = pickDownsideTarget(2);
-    const target2 = pickDownsideTarget(3);
-    const target3 = pickDownsideTarget(4);
+    const target1 = pickDownsideTarget(2, entry - riskToStop * 2);
+    const target2 = pickDownsideTarget(3, entry - riskToStop * 3);
+    const target3 = pickDownsideTarget(4, entry - riskToStop * 4);
 
     structureNotes.push(
       resistance
@@ -568,12 +568,12 @@ export function buildSkillEdgeStructureTradePlan({
     .filter((value): value is number => typeof value === "number" && value > entry)
     .sort((a, b) => a - b);
 
-  const pickUpsideTarget = (minimumR: number) =>
-    upsideCandidates.find((level) => level >= entry + riskToStop * minimumR) ?? null;
+  const pickUpsideTarget = (minimumR: number, fallback: number) =>
+    upsideCandidates.find((level) => level >= entry + riskToStop * minimumR) ?? fallback;
 
-  const target1 = pickUpsideTarget(2);
-  const target2 = pickUpsideTarget(3);
-  const target3 = pickUpsideTarget(4);
+  const target1 = pickUpsideTarget(2, entry + riskToStop * 2);
+  const target2 = pickUpsideTarget(3, entry + riskToStop * 3);
+  const target3 = pickUpsideTarget(4, entry + riskToStop * 4);
 
   structureNotes.push(
     support
@@ -607,7 +607,7 @@ export function buildSkillEdgeStructureTradePlan({
       direction,
       entry,
       stop,
-      target: target1,
+      target: target3,
     }),
     vwap,
     atr,

@@ -1294,30 +1294,8 @@ function rewriteLifecycleReason(
 
   return next;
 }
-function normalizeDraftScoreForLifecycle(
-  draft: MarketAlertDraft,
-  reason: string
-): MarketAlertDraft {
-  const previousScore = Number.isFinite(draft.score) ? draft.score : 0;
-  const cappedScore = capSignalScoreForLifecycle(previousScore, draft.status);
 
-  return {
-    ...draft,
-    score: cappedScore,
-    confidence_score: cappedScore,
-    confidence_tier: getConfidenceTierFromScore(cappedScore),
-    reason: rewriteLifecycleReason(draft.reason, draft.status, cappedScore),
-    source_data: {
-      ...draft.source_data,
-      scoreCalibration: {
-        previousScore,
-        cappedScore,
-        status: draft.status,
-        reason,
-      },
-    },
-  };
-}
+$1
 type RecentCryptoAlertForCadence = {
   id?: string | null;
   alert_key?: string | null;

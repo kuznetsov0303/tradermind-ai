@@ -109,19 +109,6 @@ function includesAny(text: string, keywords: string[]) {
   return keywords.some((keyword) => text.includes(keyword));
 }
 
-function isAllowedCryptoSmcIctSetupSlug(slug: string) {
-  return [
-    "crypto_stop_run_reclaim_long",
-    "crypto_stop_run_rejection_short",
-    "session_liquidity_sweep_reversal",
-    "order_block_mitigation_reaction",
-    "breaker_block_retest",
-    "fvg_fill_continuation",
-    "fvg_displacement_continuation",
-    "trendline_pullback_structure_continuation",
-  ].includes(slug);
-}
-
 function normalizeAssetType(value: string | null): SkillEdgeMarketType {
   const normalized = (value ?? "").toLowerCase();
 
@@ -264,11 +251,7 @@ function inferSetupSlug({
     "strategy_slug",
   ]);
 
-  if (
-    explicitSlug &&
-    getSkillEdgeSetupBySlug(explicitSlug) &&
-    (assetType !== "crypto" || isAllowedCryptoSmcIctSetupSlug(explicitSlug))
-  ) {
+  if (explicitSlug && getSkillEdgeSetupBySlug(explicitSlug)) {
     return explicitSlug;
   }
 
@@ -281,62 +264,6 @@ function inferSetupSlug({
     "gapPercent",
     "gap_percent",
   ]);
-
-  if (assetType === "crypto") {
-    if (
-      includesAny(text, [
-        "trendline pullback",
-        "pullback to trendline",
-        "trendline continuation",
-        "structure continuation",
-        "controlled pullback",
-        "pullback into structure",
-      ])
-    ) {
-      return "trendline_pullback_structure_continuation";
-    }
-
-    if (includesAny(text, ["order block", "mitigation"])) {
-      return "order_block_mitigation_reaction";
-    }
-
-    if (includesAny(text, ["breaker block", "breaker retest"])) {
-      return "breaker_block_retest";
-    }
-
-    if (includesAny(text, ["fvg", "fair value gap", "imbalance"])) {
-      return "fvg_fill_continuation";
-    }
-
-    if (
-      includesAny(text, [
-        "buy-side sweep",
-        "sweep high",
-        "swept high",
-        "liquidity grab above",
-        "sweep high rejection",
-        "rejection",
-      ])
-    ) {
-      return "crypto_stop_run_rejection_short";
-    }
-
-    if (
-      includesAny(text, [
-        "stop run",
-        "liquidity sweep",
-        "sell-side sweep",
-        "sweep low",
-        "swept low",
-        "sweep reclaim",
-        "reclaim",
-      ])
-    ) {
-      return "crypto_stop_run_reclaim_long";
-    }
-
-    return "session_liquidity_sweep_reversal";
-  }
 
   if (
     includesAny(text, ["personal premarket", "user fingerprint"]) ||
@@ -354,6 +281,20 @@ function inferSetupSlug({
 
   if (includesAny(text, ["golden zone", "pmh"])) {
     return "pmh_golden_zone_short";
+  }
+
+  if (
+    assetType === "crypto" &&
+    includesAny(text, ["stop run", "liquidity sweep", "sell-side sweep", "sweep low"])
+  ) {
+    return "crypto_stop_run_reclaim_long";
+  }
+
+  if (
+    assetType === "crypto" &&
+    includesAny(text, ["buy-side sweep", "sweep high", "swept high", "liquidity grab above"])
+  ) {
+    return "crypto_stop_run_rejection_short";
   }
 
   if (includesAny(text, ["order block", "mitigation"])) {
@@ -394,47 +335,34 @@ function inferSetupSlug({
   }
 
   if (
-    includesAny(text, [
-      "earnings",
-      "eps",
-      "guidance",
-      "news",
-      "catalyst",
-      "offering",
-      "dilution",
-      "fda",
-      "analyst",
-      "upgrade",
-      "downgrade",
-      "sec filing",
-      "merger",
-      "contract",
-      "partnership",
-    ])
-  ) {
-    if (includesAny(text, ["fade", "short", "failed", "rejection", "stuff"])) {
-      return "catalyst_reaction_fade";
-    }
-
-    if (includesAny(text, ["big cap", "large cap", "mega cap"])) {
-      return "big_cap_catalyst_continuation";
-    }
-
-    return "catalyst_continuation_after_pullback";
+  includesAny(text, [
+    "earnings",
+    "eps",
+    "guidance",
+    "news",
+    "catalyst",
+    "offering",
+    "dilution",
+    "fda",
+    "analyst",
+    "upgrade",
+    "downgrade",
+    "sec filing",
+    "merger",
+    "contract",
+    "partnership",
+  ])
+) {
+  if (includesAny(text, ["fade", "short", "failed", "rejection", "stuff"])) {
+    return "catalyst_reaction_fade";
   }
 
-  if (
-    includesAny(text, [
-      "trendline pullback",
-      "pullback to trendline",
-      "trendline continuation",
-      "structure continuation",
-      "controlled pullback",
-      "pullback into structure",
-    ])
-  ) {
-    return "trendline_pullback_structure_continuation";
+  if (includesAny(text, ["big cap", "large cap", "mega cap"])) {
+    return "big_cap_catalyst_continuation";
   }
+
+  return "catalyst_continuation_after_pullback";
+}
 
   if (includesAny(text, ["lower high", "under vwap"])) {
     return "lower_high_under_vwap_short";
@@ -454,6 +382,12 @@ function inferSetupSlug({
 
   if (includesAny(text, ["daily level", "false break", "retest"])) {
     return "daily_level_false_break_retest";
+  }
+
+  if (assetType === "crypto") {
+    return priceChangePercent !== null && priceChangePercent < -4
+      ? "crypto_dump_reversal_reclaim"
+      : "crypto_squeeze_continuation";
   }
 
   if (sessionWindow === "premarket") {

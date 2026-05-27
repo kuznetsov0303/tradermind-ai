@@ -1174,7 +1174,7 @@ const dashboardDict = {
       moversStocksNeedKey:
         "Stock movers are unavailable on the current premium market data layer.",
       moversSourceNote:
-        "Crypto: Binance USDT pairs. Stocks: 13:00 Kyiv session change + volume.",
+        "Crypto: Binance USDT pairs. Stocks: premium US market data layer.",
       chartAnalysisTitle: "Chart review",
       chartAnalysisText:
         "SkillEdge reads ticker, timeframe, candles, volume, levels and risk context as a trading review.",
@@ -1871,7 +1871,7 @@ const dashboardDict = {
       moversStocksNeedKey:
         "Stock movers недоступны на текущем premium market data layer.",
       moversSourceNote:
-        "Крипто: Binance USDT pairs. Акции: движение и объём с 13:00 Киев.",
+        "Крипто: Binance USDT pairs. Акции: premium US market data layer.",
       chartAnalysisTitle: "Chart review",
       chartAnalysisText:
         "SkillEdge анализирует текущий тикер, таймфрейм, рыночные данные, свечи, объём и контекст риска.",
@@ -2567,7 +2567,7 @@ const dashboardDict = {
       moversStocksNeedKey:
         "Лідери руху по акціях недоступні на поточному premium market data layer.",
       moversSourceNote:
-        "Крипто: Binance USDT pairs. Акції: рух і обсяг з 13:00 Київ.",
+        "Крипто: Binance USDT pairs. Акції: premium US market data layer.",
       chartAnalysisTitle: "AI-аналіз графіка",
       chartAnalysisText:
         "SkillEdge аналізує поточний тикер, таймфрейм, ринкові дані, свічки, обʼєм і контекст ризику.",
@@ -29193,7 +29193,7 @@ reason: item.reason || "Market Intelligence candidate detected.",
       });
   }, [opportunities, query, assetFilter, signalFilter, sortBy]);
 
-  const topRows = filteredOpportunities.slice(0, 10);
+  const topRows = filteredOpportunities.slice(0, 25);
   const combinedCount =
   marketIntelligenceMetrics?.combined ??
   opportunities.filter((item) => item.signalType === "combined").length;
@@ -33559,8 +33559,6 @@ type ChartWatchlistRow = {
   updated_at: string;
 };
 
-const MOVERS_REFRESH_MS = 5 * 60 * 1000;
-
 type ChartsMoverItem = {
   symbol: string;
   name: string;
@@ -33621,9 +33619,7 @@ function MoversPanel({
 
     load();
 
-    const timer = setInterval(() => {
-      load();
-    }, MOVERS_REFRESH_MS);
+    const timer = setInterval(load, 10000);
 
     return () => {
       cancelled = true;
@@ -33741,7 +33737,11 @@ function MoversPanel({
               </div>
             )}
           </div>
-</>
+
+          <div className="mt-3 text-xs text-white/35">
+  {t.charts.moversSourceNote}
+</div>
+        </>
       )}
     </div>
   );
@@ -33811,7 +33811,7 @@ async function fetchCryptoMovers(
         ? b.changePct - a.changePct
         : a.changePct - b.changePct
     )
-    .slice(0, 10)
+    .slice(0, 25)
     .map(({ rawVolume, ...item }) => item);
 
   return mapped;

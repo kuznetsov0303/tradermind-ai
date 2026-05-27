@@ -356,6 +356,20 @@ function inferSetupSlug({
     return "pmh_golden_zone_short";
   }
 
+  if (
+    assetType === "crypto" &&
+    includesAny(text, ["stop run", "liquidity sweep", "sell-side sweep", "sweep low"])
+  ) {
+    return "crypto_stop_run_reclaim_long";
+  }
+
+  if (
+    assetType === "crypto" &&
+    includesAny(text, ["buy-side sweep", "sweep high", "swept high", "liquidity grab above"])
+  ) {
+    return "crypto_stop_run_rejection_short";
+  }
+
   if (includesAny(text, ["order block", "mitigation"])) {
     return "order_block_mitigation_reaction";
   }
@@ -394,6 +408,7 @@ function inferSetupSlug({
   }
 
   if (
+    assetType !== "crypto" &&
     includesAny(text, [
       "earnings",
       "eps",
@@ -454,6 +469,12 @@ function inferSetupSlug({
 
   if (includesAny(text, ["daily level", "false break", "retest"])) {
     return "daily_level_false_break_retest";
+  }
+
+  if (assetType === "crypto") {
+    return includesAny(text, ["sweep high", "buy-side", "liquidity above", "rejection"])
+      ? "crypto_stop_run_rejection_short"
+      : "session_liquidity_sweep_reversal";
   }
 
   if (sessionWindow === "premarket") {

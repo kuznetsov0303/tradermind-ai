@@ -117,9 +117,7 @@ function clamp(value: number, min = 0, max = 100) {
   return Math.max(min, Math.min(max, value));
 }
 
-const DEFAULT_SIGNAL_MIN_STOCK_TRADED_VOLUME = 100_000;
-const DEFAULT_SIGNAL_MIN_CRYPTO_TRADED_VOLUME_USD = 1_000_000;
-const DEFAULT_SIGNAL_MIN_TRADED_VOLUME = DEFAULT_SIGNAL_MIN_STOCK_TRADED_VOLUME;
+const DEFAULT_SIGNAL_MIN_TRADED_VOLUME = 100_000;
 
 type SignalVolumeGate = {
   passed: boolean;
@@ -179,16 +177,11 @@ function getSignalMinimumVolume(assetType: "stock" | "crypto") {
       ? process.env.SIGNAL_MIN_CRYPTO_TRADED_VOLUME_USD
       : process.env.SIGNAL_MIN_STOCK_TRADED_VOLUME;
 
-  const assetSpecificValue = parseFiniteSignalNumber(envValue);
-  const sharedFallback = parseFiniteSignalNumber(process.env.SIGNAL_MIN_TRADED_VOLUME);
-
-  if (assetSpecificValue !== null) return assetSpecificValue;
-
-  if (assetType === "crypto") {
-    return sharedFallback ?? DEFAULT_SIGNAL_MIN_CRYPTO_TRADED_VOLUME_USD;
-  }
-
-  return sharedFallback ?? DEFAULT_SIGNAL_MIN_STOCK_TRADED_VOLUME;
+  return (
+    parseFiniteSignalNumber(envValue) ??
+    parseFiniteSignalNumber(process.env.SIGNAL_MIN_TRADED_VOLUME) ??
+    DEFAULT_SIGNAL_MIN_TRADED_VOLUME
+  );
 }
 
 function getSignalTradedVolume(row: MarketScannerRow, assetType: "stock" | "crypto") {
@@ -374,10 +367,7 @@ function buildStockSeedRow(
   const changePercent = parseFmpChangePct(item);
   const minVolume = getSignalMinimumVolume("stock");
   const minChangePct = getStockSeedMinChangePct();
-  const stockMinPrice = 0.4;
-  const stockMaxPrice = 500;
 
-  if (price === null || price < stockMinPrice || price > stockMaxPrice) return null;
   if (volume === null || volume < minVolume) return null;
 
   if (Math.abs(changePercent) < minChangePct && bucket !== "unusual_volume") {
@@ -1294,6 +1284,7 @@ function rewriteLifecycleReason(
 
   return next;
 }
+
 function normalizeDraftScoreForLifecycle(
   draft: MarketAlertDraft,
   reason: string
@@ -1316,210 +1307,6 @@ function normalizeDraftScoreForLifecycle(
         reason,
       },
     },
-  };
-}
-type RecentCryptoAlertForCadence = {
-  id?: string | null;
-  alert_key?: string | null;
-  symbol?: string | null;
-  asset_type?: string | null;
-  direction?: string | null;
-  status?: string | null;
-  setup_slug?: string | null;
-  created_at?: string | null;
-  expires_at?: string | null;
-};
-
-function getCryptoSignalFingerprint(input: {
-  asset_type?: string | null;
-  symbol?: string | null;
-  direction?: string | null;
-  setup_slug?: string | null;
-}) {
-  return [
-    input.asset_type || "crypto",
-    normalizeSymbol(input.symbol || ""),
-    input.direction || "neutral",
-    input.setup_slug || "unknown_setup",
-  ].join(":");
-}
-
-function getCryptoCooldownMinutesForStatus(status: string | null | undefined) {
-  if (status === "active") {
-    return readEnvNumber("SIGNAL_CRYPTO_ACTIVE_COOLDOWN_MINUTES", 180);
-  }
-
-  if (status === "armed") {
-    return readEnvNumber("SIGNAL_CRYPTO_ARMED_COOLDOWN_MINUTES", 30);
-  }
-
-  return readEnvNumber("SIGNAL_CRYPTO_WATCH_COOLDOWN_MINUTES", 60);
-}
-
-function isOpenCryptoCadenceAlert(row: RecentCryptoAlertForCadence) {
-  const status = String(row.status || "").toLowerCase();
-
-  if (["expired", "invalidated", "failed", "rejected"].includes(status)) {
-    return false;
-  }
-
-  if (row.expires_at) {
-    const expiresAt = Date.parse(row.expires_at);
-
-    if (Number.isFinite(expiresAt) && expiresAt <= Date.now()) {
-      return false;
-    }
-  }
-
-  return Boolean(row.alert_key && row.symbol && row.setup_slug && row.direction);
-}
-
-function applyCryptoDedupeCooldown(params: {
-  drafts: MarketAlertDraft[];
-  existingRows: RecentCryptoAlertForCadence[];
-}) {
-  const notes: string[] = [];
-  const nowMs = Date.now();
-
-  const maxNewPerRefresh = readEnvNumber("SIGNAL_CRYPTO_MAX_NEW_PER_REFRESH", 1);
-  const maxNewPer24h = readEnvNumber("SIGNAL_CRYPTO_MAX_NEW_PER_24H", 20);
-  const minIntervalMinutes = readEnvNumber(
-    "SIGNAL_CRYPTO_NEW_OPPORTUNITY_MIN_INTERVAL_MINUTES",
-    20
-  );
-
-  const existingByFingerprint = new Map<string, RecentCryptoAlertForCadence>();
-  let latestExistingCreatedAtMs = 0;
-
-  for (const row of params.existingRows) {
-    if (!isOpenCryptoCadenceAlert(row)) continue;
-
-    const fingerprint = getCryptoSignalFingerprint(row);
-    const createdAtMs = row.created_at ? Date.parse(row.created_at) : 0;
-
-    if (Number.isFinite(createdAtMs)) {
-      latestExistingCreatedAtMs = Math.max(latestExistingCreatedAtMs, createdAtMs);
-    }
-
-    const existing = existingByFingerprint.get(fingerprint);
-    const existingCreatedAtMs = existing?.created_at ? Date.parse(existing.created_at) : 0;
-
-    if (!existing || createdAtMs > existingCreatedAtMs) {
-      existingByFingerprint.set(fingerprint, row);
-    }
-  }
-
-  const existingOpenCount = existingByFingerprint.size;
-  const recentNewOpportunityBlocked =
-    latestExistingCreatedAtMs > 0 &&
-    nowMs - latestExistingCreatedAtMs < minIntervalMinutes * 60 * 1000;
-
-  let newCryptoRemainingToday = Math.max(0, maxNewPer24h - existingOpenCount);
-  let newCryptoRemainingThisRefresh = recentNewOpportunityBlocked
-    ? 0
-    : Math.min(maxNewPerRefresh, newCryptoRemainingToday);
-
-  let updatedExisting = 0;
-  let createdNew = 0;
-  let blockedNew = 0;
-
-  const sortedDrafts = [...params.drafts].sort((a, b) => {
-    const lifecycleDiff = getLifecycleRank(b.status) - getLifecycleRank(a.status);
-    if (lifecycleDiff !== 0) return lifecycleDiff;
-    return b.score - a.score;
-  });
-
-  const filtered = sortedDrafts.flatMap((draft) => {
-    if (draft.asset_type !== "crypto") {
-      return [draft];
-    }
-
-    const fingerprint = getCryptoSignalFingerprint(draft);
-    const existing = existingByFingerprint.get(fingerprint);
-
-    if (existing?.alert_key) {
-      const existingCreatedAtMs = existing.created_at ? Date.parse(existing.created_at) : 0;
-      const ageMinutes = Number.isFinite(existingCreatedAtMs)
-        ? (nowMs - existingCreatedAtMs) / 60000
-        : null;
-      const cooldownMinutes = getCryptoCooldownMinutesForStatus(existing.status);
-
-      updatedExisting += 1;
-
-      return [
-        {
-          ...draft,
-          alert_key: existing.alert_key,
-          created_at: existing.created_at || draft.created_at,
-          is_new: false,
-          reason: appendDraftNote(
-            draft.reason,
-            `updated existing crypto opportunity instead of creating duplicate`
-          ),
-          risk_note:
-            ageMinutes !== null && ageMinutes < cooldownMinutes
-              ? appendDraftNote(
-                  draft.risk_note,
-                  `Duplicate blocked by ${cooldownMinutes}m ${draft.status} cooldown.`
-                )
-              : draft.risk_note,
-          source_data: {
-            ...draft.source_data,
-            cryptoDedupeCooldown: {
-              action: "updated_existing_opportunity",
-              fingerprint,
-              existingAlertKey: existing.alert_key,
-              existingStatus: existing.status,
-              existingCreatedAt: existing.created_at,
-              cooldownMinutes,
-              ageMinutes,
-            },
-          },
-        },
-      ];
-    }
-
-    if (newCryptoRemainingThisRefresh <= 0 || newCryptoRemainingToday <= 0) {
-      blockedNew += 1;
-
-      return [];
-    }
-
-    newCryptoRemainingThisRefresh -= 1;
-    newCryptoRemainingToday -= 1;
-    createdNew += 1;
-
-    return [
-      {
-        ...draft,
-        source_data: {
-          ...draft.source_data,
-          cryptoDedupeCooldown: {
-            action: "created_new_crypto_opportunity",
-            fingerprint,
-            maxNewPerRefresh,
-            maxNewPer24h,
-            minIntervalMinutes,
-            existingOpenCount,
-          },
-        },
-      },
-    ];
-  });
-
-  notes.push(
-    `Crypto dedupe/cooldown: updated=${updatedExisting}, new=${createdNew}, blocked=${blockedNew}, existingOpen=${existingOpenCount}, maxNewPerRefresh=${maxNewPerRefresh}, maxNewPer24h=${maxNewPer24h}, minNewInterval=${minIntervalMinutes}m.`
-  );
-
-  if (recentNewOpportunityBlocked) {
-    notes.push(
-      `Crypto new-opportunity cadence active: new fingerprints blocked until ${minIntervalMinutes}m pass from the latest open crypto opportunity.`
-    );
-  }
-
-  return {
-    drafts: filtered,
-    notes,
   };
 }
 
@@ -2040,7 +1827,7 @@ function getSignalMinRiskPct(assetType: "stock" | "crypto") {
 
   if (Number.isFinite(parsed) && parsed > 0) return parsed;
 
-  return assetType === "crypto" ? 0.012 : 0.006;
+  return assetType === "crypto" ? 0.004 : 0.006;
 }
 
 function getSignalMinRiskReward() {
@@ -2048,7 +1835,7 @@ function getSignalMinRiskReward() {
 
   if (Number.isFinite(parsed) && parsed > 0) return parsed;
 
-  return 2;
+  return 1.8;
 }
 
 function validateDirectionalTradePlan(params: {
@@ -2067,48 +1854,39 @@ function validateDirectionalTradePlan(params: {
 }) {
   const entry = getTradePlanEntryMid(params.plan);
   const stop = params.plan.stop_price;
-  const target1 = params.plan.target_1;
-  const target2 = params.plan.target_2;
-  const target3 = params.plan.target_3;
+  const targets = [
+    params.plan.target_1,
+    params.plan.target_2,
+    params.plan.target_3,
+  ].filter((value): value is number => value !== null && Number.isFinite(value));
 
-  if (
-    entry === null ||
-    stop === null ||
-    target1 === null ||
-    !Number.isFinite(target1)
-  ) {
+  if (entry === null || stop === null || targets.length === 0) {
     return {
       passed: false,
-      reason: `${params.symbol} rejected: missing TP1 structure target. TP1 must be a valid structure zone with minimum 2R.`,
+      reason: "Missing entry, stop or targets.",
     };
   }
 
   if (params.direction === "downside") {
     const stopIsCorrect = stop > entry;
-    const targetsAreCorrect =
-      target1 < entry &&
-      (target2 === null || target2 < entry) &&
-      (target3 === null || target3 < entry);
+    const targetsAreCorrect = targets.every((target) => target < entry);
 
     if (!stopIsCorrect || !targetsAreCorrect) {
       return {
         passed: false,
-        reason: `${params.symbol} rejected: downside signal has invalid trade plan direction.`,
+        reason: `${params.symbol} rejected: downside signal has invalid long-side trade plan.`,
       };
     }
   }
 
   if (params.direction === "upside") {
     const stopIsCorrect = stop < entry;
-    const targetsAreCorrect =
-      target1 > entry &&
-      (target2 === null || target2 > entry) &&
-      (target3 === null || target3 > entry);
+    const targetsAreCorrect = targets.every((target) => target > entry);
 
     if (!stopIsCorrect || !targetsAreCorrect) {
       return {
         passed: false,
-        reason: `${params.symbol} rejected: upside signal has invalid trade plan direction.`,
+        reason: `${params.symbol} rejected: upside signal has invalid short-side trade plan.`,
       };
     }
   }
@@ -2125,55 +1903,19 @@ function validateDirectionalTradePlan(params: {
     };
   }
 
-  const risk = Math.abs(stop - entry);
-  const rewardRatioForTarget = (target: number | null) => {
-    if (target === null) return null;
+  const rr = params.plan.risk_reward_ratio ?? null;
+  const minRR = getSignalMinRiskReward();
 
-    const reward =
-      params.direction === "upside"
-        ? target - entry
-        : entry - target;
-
-    return reward > 0 && risk > 0 ? reward / risk : 0;
-  };
-
-  const rr1 = rewardRatioForTarget(target1);
-  const rr2 = rewardRatioForTarget(target2);
-  const rr3 = rewardRatioForTarget(target3);
-
-  if (rr1 === null || rr1 < 2) {
+  if (rr === null || rr < minRR) {
     return {
       passed: false,
-      reason: `${params.symbol} rejected: TP1 does not meet minimum 2R policy (${rr1?.toFixed(
-        2
-      ) ?? "n/a"}R).`,
-    };
-  }
-
-  if (rr2 !== null && rr2 < 3) {
-    return {
-      passed: false,
-      reason: `${params.symbol} rejected: TP2 exists but does not meet 3R policy (${rr2.toFixed(
-        2
-      )}R).`,
-    };
-  }
-
-  if (rr3 !== null && rr3 < 4) {
-    return {
-      passed: false,
-      reason: `${params.symbol} rejected: TP3 exists but does not meet 4R policy (${rr3.toFixed(
-        2
-      )}R).`,
+      reason: `${params.symbol} rejected: RR missing or too low (${rr ?? "n/a"}R < ${minRR}R).`,
     };
   }
 
   return {
     passed: true,
-    reason:
-      rr2 !== null && rr3 !== null
-        ? "Trade plan direction, stop distance and full 2R/3R/4R structure target stack passed."
-        : "Trade plan direction, stop distance and TP1 >= 2R passed. Keep as watch/armed until more HTF target room is confirmed.",
+    reason: "Trade plan direction, stop distance and RR passed.",
   };
 }
 
@@ -2336,28 +2078,28 @@ function getSignalTimeframeConfig(assetType: "stock" | "crypto"): SignalTimefram
     };
   }
 
-  const contextTimeframe = readSignalTimeframe("SIGNAL_STOCK_CONTEXT_TIMEFRAME", "1h");
+  const contextTimeframe = readSignalTimeframe("SIGNAL_STOCK_CONTEXT_TIMEFRAME", "15m");
   const confirmationTimeframe = readSignalTimeframe(
     "SIGNAL_STOCK_CONFIRMATION_TIMEFRAME",
-    "4h"
+    "30m"
   );
-  const fastExecutionTimeframe = readSignalTimeframe("SIGNAL_STOCK_FAST_EXECUTION_TIMEFRAME", "5m");
-  const executionTimeframe = readSignalTimeframe("SIGNAL_STOCK_EXECUTION_TIMEFRAME", "5m");
+  const fastExecutionTimeframe = readSignalTimeframe("SIGNAL_STOCK_FAST_EXECUTION_TIMEFRAME", "1m");
+  const executionTimeframe = readSignalTimeframe("SIGNAL_STOCK_EXECUTION_TIMEFRAME", "3m");
 
   return {
     contextTimeframe,
     confirmationTimeframe,
     fastExecutionTimeframe,
     executionTimeframe,
-    contextLimit: readEnvNumber("SIGNAL_STOCK_CONTEXT_CANDLE_LIMIT", 160),
-    confirmationLimit: readEnvNumber("SIGNAL_STOCK_CONFIRMATION_CANDLE_LIMIT", 120),
-    fastExecutionLimit: readEnvNumber("SIGNAL_STOCK_FAST_EXECUTION_CANDLE_LIMIT", 180),
+    contextLimit: readEnvNumber("SIGNAL_STOCK_CONTEXT_CANDLE_LIMIT", 96),
+    confirmationLimit: readEnvNumber("SIGNAL_STOCK_CONFIRMATION_CANDLE_LIMIT", 96),
+    fastExecutionLimit: readEnvNumber("SIGNAL_STOCK_FAST_EXECUTION_CANDLE_LIMIT", 240),
     executionLimit: readEnvNumber("SIGNAL_STOCK_EXECUTION_CANDLE_LIMIT", 180),
-    contextLabel: `${contextTimeframe} structure context`,
-    confirmationLabel: `${confirmationTimeframe} higher-timeframe context`,
-    executionLabel: `${executionTimeframe} execution`,
-    setupTimeframeLabel: `${contextTimeframe}/${confirmationTimeframe} structure / ${executionTimeframe} entry trigger`,
-    confirmationTimeframeLabel: `${contextTimeframe}/${confirmationTimeframe} structure + ${executionTimeframe} execution trigger`,
+    contextLabel: `${contextTimeframe} context`,
+    confirmationLabel: `${confirmationTimeframe} confirmation`,
+    executionLabel: `${fastExecutionTimeframe}/${executionTimeframe} execution`,
+    setupTimeframeLabel: `${contextTimeframe}/${confirmationTimeframe} context / ${fastExecutionTimeframe}-${executionTimeframe} trigger`,
+    confirmationTimeframeLabel: `${contextTimeframe}/${confirmationTimeframe} context + ${fastExecutionTimeframe}/${executionTimeframe} execution`,
   };
 }
 
@@ -2933,23 +2675,23 @@ function buildDirectionalTargets(params: {
           .filter((value): value is number => typeof value === "number" && value > params.entry)
           .sort((a, b) => a - b);
 
-  const rewardRatio = (target: number) => {
-    const reward =
-      params.direction === "downside"
-        ? params.entry - target
-        : target - params.entry;
+  const rTargets =
+    params.direction === "downside"
+      ? [params.entry - params.risk * 1.8, params.entry - params.risk * 2.8, params.entry - params.risk * 4]
+      : [params.entry + params.risk * 1.8, params.entry + params.risk * 2.8, params.entry + params.risk * 4];
 
-    return reward > 0 && params.risk > 0 ? reward / params.risk : 0;
-  };
+  const merged = [...structuralCandidates, ...rTargets]
+    .filter((value, index, array) => {
+      if (!Number.isFinite(value) || value <= 0) return false;
+      return array.findIndex((other) => Math.abs(other - value) / value < 0.001) === index;
+    })
+    .slice(0, 3);
 
-  const pickTarget = (minimumR: number) =>
-    structuralCandidates.find((target) => rewardRatio(target) >= minimumR) ?? null;
+  while (merged.length < 3) {
+    merged.push(rTargets[merged.length]);
+  }
 
-  return [
-    pickTarget(2),
-    pickTarget(3),
-    pickTarget(4),
-  ].map((target) => roundPrice(target));
+  return merged.map((target) => roundPrice(target));
 }
 
 function applyExecutionTriggerToTradePlan(params: {
@@ -3123,106 +2865,6 @@ function getEngineAlertType(params: {
   return params.direction === "downside" ? "dump" : "pump";
 }
 
-function isAllowedCryptoSignalSetupSlug(slug: string) {
-  return [
-    "crypto_stop_run_reclaim_long",
-    "crypto_stop_run_rejection_short",
-    "session_liquidity_sweep_reversal",
-    "order_block_mitigation_reaction",
-    "breaker_block_retest",
-    "fvg_fill_continuation",
-    "fvg_displacement_continuation",
-    "trendline_pullback_structure_continuation",
-  ].includes(slug);
-}
-
-function includesCryptoSignalText(text: string, keywords: string[]) {
-  return keywords.some((keyword) => text.includes(keyword));
-}
-
-function inferCryptoSignalSetupSlugForRow(params: {
-  row: MarketScannerRow;
-  direction: SignalDirection;
-  changePercent: number;
-  priceActionPatterns: SkillEdgePriceActionPatternAnalysis;
-}) {
-  const text = [
-    params.row.scan_bucket,
-    params.row.direction_bias,
-    params.row.catalyst,
-    params.row.risk_label,
-    params.row.source,
-    params.priceActionPatterns.topPatternNames.join(" "),
-    params.priceActionPatterns.patternTags.join(" "),
-    params.priceActionPatterns.notes.join(" "),
-    params.row.raw_data ? JSON.stringify(params.row.raw_data).slice(0, 1500) : "",
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  if (
-    includesCryptoSignalText(text, [
-      "trendline pullback",
-      "pullback to trendline",
-      "trendline continuation",
-      "structure continuation",
-      "controlled pullback",
-      "pullback into structure",
-    ])
-  ) {
-    return "trendline_pullback_structure_continuation";
-  }
-
-  if (includesCryptoSignalText(text, ["order block", "mitigation"])) {
-    return "order_block_mitigation_reaction";
-  }
-
-  if (includesCryptoSignalText(text, ["breaker block", "breaker retest"])) {
-    return "breaker_block_retest";
-  }
-
-  if (includesCryptoSignalText(text, ["fvg", "fair value gap", "imbalance"])) {
-    return "fvg_fill_continuation";
-  }
-
-  if (
-    params.direction === "downside" ||
-    params.changePercent < -3 ||
-    includesCryptoSignalText(text, [
-      "fade",
-      "rejection",
-      "failed",
-      "lower high",
-      "weakness",
-      "dump",
-      "sweep high",
-      "buy-side sweep",
-      "liquidity above",
-    ])
-  ) {
-    return "crypto_stop_run_rejection_short";
-  }
-
-  if (
-    params.direction === "upside" ||
-    params.changePercent > 3 ||
-    includesCryptoSignalText(text, [
-      "reclaim",
-      "higher low",
-      "sweep low",
-      "sell-side sweep",
-      "liquidity below",
-      "continuation",
-      "pullback",
-    ])
-  ) {
-    return "crypto_stop_run_reclaim_long";
-  }
-
-  return "session_liquidity_sweep_reversal";
-}
-
 async function buildAlertDraft(params: {
   row: MarketScannerRow;
   social:
@@ -3251,12 +2893,6 @@ async function buildAlertDraft(params: {
     return null;
   }
 
-  const price = toNumber(params.row.price, 0) || null;
-
-  if (assetType === "stock" && (price === null || price < 0.4 || price > 500)) {
-    return null;
-  }
-
   const volumeGate = buildSignalVolumeGate(params.row, assetType);
 
   if (!volumeGate.passed) {
@@ -3264,6 +2900,7 @@ async function buildAlertDraft(params: {
   }
     
   const changePercent = toNumber(params.row.change_percent);
+  const price = toNumber(params.row.price, 0) || null;
   const marketScore = toNumber(params.row.opportunity_score);
   const socialScore = params.social?.socialScore || 0;
   const mentions24h = params.social?.mentions24h || toNumber(params.row.mentions);
@@ -3367,27 +3004,6 @@ async function buildAlertDraft(params: {
     .filter(Boolean)
     .join(" ");
 
-  const forcedCryptoSetupSlug =
-    assetType === "crypto"
-      ? inferCryptoSignalSetupSlugForRow({
-          row: params.row,
-          direction: workingDirection,
-          changePercent,
-          priceActionPatterns,
-        })
-      : null;
-
-  const engineSetupText =
-    assetType === "crypto"
-      ? [
-          rawText,
-          forcedCryptoSetupSlug,
-          "crypto_smc_ict_only",
-          catalyst ? `attention source: ${catalyst}` : null,
-        ]
-          .filter(Boolean)
-          .join(" ")
-      : rawText;
   const engineAlert = buildSkillEdgeAlertFromCandidate({
     candidate: {
       symbol,
@@ -3395,11 +3011,8 @@ async function buildAlertDraft(params: {
       exchange: params.row.exchange || null,
       assetType: assetType === "crypto" ? "crypto" : "stocks",
       marketType: assetType === "crypto" ? "crypto" : "stocks",
-      setupSlug: forcedCryptoSetupSlug ?? undefined,
-      setup_slug: forcedCryptoSetupSlug ?? undefined,
-      playbook_slug: forcedCryptoSetupSlug ?? undefined,
-      setupText: engineSetupText,
-      reason: engineSetupText,
+      setupText: rawText,
+      reason: rawText,
       directionBias: workingDirection,
       price,
       changePercent,
@@ -3416,9 +3029,9 @@ async function buildAlertDraft(params: {
         ? socialScore
         : null,
       redditScore: params.social?.sources?.includes("reddit") ? socialScore : null,
-      hasNewsCatalyst: assetType !== "crypto" && Boolean(catalyst),
-      catalyst: assetType === "crypto" ? null : catalyst,
-      catalystQuality: assetType === "crypto" ? null : catalyst ? 70 : null,
+      hasNewsCatalyst: Boolean(catalyst),
+      catalyst,
+      catalystQuality: catalyst ? 70 : null,
       marketScore,
       trendQuality: clamp((marketScore + priceActionPatterns.directionAlignmentScore) / 2),
       entryQuality:
@@ -3474,11 +3087,6 @@ async function buildAlertDraft(params: {
 
   const globalSignal = engineAlert.globalSignal;
   const setup = globalSignal.setup;
-
-  if (assetType === "crypto" && !isAllowedCryptoSignalSetupSlug(setup.slug)) {
-    return null;
-  }
-
   const explanation = engineAlert.explanation;
   let finalDirection = globalSignal.direction;
   if (finalDirection !== "upside" && finalDirection !== "downside") {
@@ -3563,10 +3171,6 @@ async function buildAlertDraft(params: {
     return null;
   }
 
-  if (tradePlan.source !== "structure") {
-    return null;
-  }
-
   const entryWindow = validateEntryWindow({
     price,
     direction: finalDirection,
@@ -3578,47 +3182,11 @@ async function buildAlertDraft(params: {
     return null;
   }
 
-  const planEntryMid = getTradePlanEntryMid(tradePlan);
-  const planRisk =
-    planEntryMid !== null && tradePlan.stop_price !== null
-      ? Math.abs(tradePlan.stop_price - planEntryMid)
-      : null;
-
-  const rrForPlanTarget = (target: number | null) => {
-    if (planEntryMid === null || planRisk === null || planRisk <= 0 || target === null) {
-      return null;
-    }
-
-    const reward =
-      finalDirection === "upside"
-        ? target - planEntryMid
-        : planEntryMid - target;
-
-    return reward > 0 ? reward / planRisk : 0;
-  };
-
-  const tp1R = rrForPlanTarget(tradePlan.target_1);
-  const tp2R = rrForPlanTarget(tradePlan.target_2);
-  const tp3R = rrForPlanTarget(tradePlan.target_3);
-  const hasFullTargetStack =
-    tp1R !== null &&
-    tp1R >= 2 &&
-    tp2R !== null &&
-    tp2R >= 3 &&
-    tp3R !== null &&
-    tp3R >= 4;
-
   if (
     lifecycleStatus === "active" &&
     (!executionTrigger.canBeActive || !entryWindow.canBeActive || !setupContext.canBeActive)
   ) {
     lifecycleStatus = "armed";
-  }
-
-  if (assetType === "crypto") {
-    if (!executionTrigger.passed || !entryWindow.canBeActive || !hasFullTargetStack) {
-      lifecycleStatus = "watch";
-    }
   }
 
   const displayConfidenceScore = capSignalScoreForLifecycle(
@@ -3653,11 +3221,6 @@ async function buildAlertDraft(params: {
 
   if (riskRewardRatio) {
     reasonParts.push(`planned RR ${riskRewardRatio}R`);
-  }
-
-  reasonParts.push("target policy: ACTIVE requires TP1 >= 2R and full HTF target stack; WATCH can mark in-play structure before final trigger");
-  if (assetType === "crypto") {
-    reasonParts.push("crypto mode: SMC/ICT only, catalyst/trending is attention not setup");
   }
 
   if (priceActionPatterns.topPatternNames.length > 0) {
@@ -3773,12 +3336,6 @@ if (tradePlan.source === "structure") {
       executionTrigger,
       setupContext,
       entryWindow,
-      targetPolicy: {
-        minimumTp1R: 2,
-        minimumTp2R: 3,
-        minimumTp3R: 4,
-        targetSource: "1H/4H structure-first zones, with 2R/3R/4R minimum filter",
-      },
       social: params.social || null,
       priceActionPatterns,
     marketStructure: {
@@ -4041,50 +3598,13 @@ if (
     )
   ).filter((draft): draft is MarketAlertDraft => Boolean(draft));
 
-  const cryptoCadenceLookbackHours = readEnvNumber("SIGNAL_CRYPTO_DEDUPE_LOOKBACK_HOURS", 24);
-  const cryptoCadenceSince = new Date(
-    Date.now() - cryptoCadenceLookbackHours * 60 * 60 * 1000
-  ).toISOString();
-
-  let recentCryptoAlerts: RecentCryptoAlertForCadence[] = [];
-
-  if (assetTypeFilter === "crypto" || assetTypeFilter === "all") {
-    const existingCryptoResult = await supabaseAdmin
-      .from("market_alerts")
-      .select("id, alert_key, symbol, asset_type, direction, status, setup_slug, created_at, expires_at")
-      .eq("asset_type", "crypto")
-      .gte("created_at", cryptoCadenceSince)
-      .order("created_at", { ascending: false })
-      .limit(500);
-
-    if (existingCryptoResult.error) {
-      console.error("Crypto dedupe/cooldown load error:", existingCryptoResult.error);
-      diagnosticNotes.push("Crypto dedupe/cooldown skipped because recent market_alerts load failed.");
-    } else {
-      recentCryptoAlerts = (existingCryptoResult.data || []) as RecentCryptoAlertForCadence[];
-    }
-  }
-
-  const cryptoCadenceResult = applyCryptoDedupeCooldown({
-    drafts: rawDrafts,
-    existingRows: recentCryptoAlerts,
-  });
-
-  diagnosticNotes.push(...cryptoCadenceResult.notes);
-
   if (marketRows.length > 0 && rawDrafts.length === 0) {
     diagnosticNotes.push(
       "No drafts survived the premium filter. Lower SIGNAL_WATCH_MIN_CONFIDENCE or inspect rejection reasons if this repeats."
     );
   }
 
-  if (rawDrafts.length > 0 && cryptoCadenceResult.drafts.length === 0) {
-    diagnosticNotes.push(
-      "Drafts were built, but crypto dedupe/cooldown blocked new duplicates for this refresh."
-    );
-  }
-
-  const drafts = limitSignalLifecycleBatch(cryptoCadenceResult.drafts);
+  const drafts = limitSignalLifecycleBatch(rawDrafts);
   const statusCounts = countDraftStatuses(drafts);
   const diagnostics: AlertGenerationDiagnostics = {
     requestedAssetType: assetTypeFilter,

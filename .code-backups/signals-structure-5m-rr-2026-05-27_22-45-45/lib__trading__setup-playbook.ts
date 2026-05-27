@@ -2595,76 +2595,7 @@ export const SKILLEDGE_SETUP_PLAYBOOK: SkillEdgeSetupDefinition[] = [
       "Session liquidity sweep reversal works when stops are run above/below session levels and price fails to accept outside the range.",
     tags: ["session_liquidity", "sweep", "reversal", "ict", "smart_money"],
   },
-  {
-    slug: "trendline_pullback_structure_continuation",
-    name: "Trendline Pullback Structure Continuation",
-    family: "momentum",
-    marketTypes: ["stocks", "crypto", "futures"],
-    direction: "both",
-    primaryTimeframes: ["5m", "1h", "4h"],
-    triggerTimeframe: "5m",
-    confirmationTimeframe: "1h",
-    confidenceBase: 72,
-    minimumConfidenceForAlert: 84,
-    description:
-      "Trend continuation setup after the first impulse, a controlled pullback into trendline/structure, and a fresh 5m structure confirmation in the trend direction.",
-    triggerConditions: [
-      "A clear first impulse appears in the trend direction.",
-      "Price pulls back into trendline, VWAP, EMA cluster, or prior structure without fully breaking the trend.",
-      "The pullback is controlled and does not erase the impulse.",
-      "A 5m structure shift confirms continuation in the trend direction.",
-      "Entry is close enough to structure to keep minimum RR 1:2 or better.",
-    ],
-    confirmationConditions: [
-      "1H/4H context does not oppose the trade.",
-      "EMA 20/50/100/200 alignment supports the direction or is being reclaimed/rejected cleanly.",
-      "VWAP behavior confirms trend continuation.",
-      "Volume expands on the 5m continuation trigger.",
-      "Targets exist on 1H/4H/1D structure with TP1 at minimum 2R.",
-    ],
-    entryLogic: [
-      "Enter only after the 5m structure confirms continuation.",
-      "Long after higher low / reclaim / break of 5m continuation structure.",
-      "Short after lower high / rejection / break of 5m continuation structure.",
-      "Do not enter on the first pullback touch without price-action confirmation.",
-    ],
-    stopLogic: [
-      "Stop beyond the 5m structural low for long or structural high for short.",
-      "Invalidate if price breaks and accepts beyond the pullback structure.",
-      "Avoid moving the stop wider after entry.",
-    ],
-    targetLogic: [
-      "TP1 must be at a structural zone with minimum RR 1:2.",
-      "TP2 should target the next 1H/4H structure with minimum RR 1:3.",
-      "TP3 should target extended 4H/1D structure with minimum RR 1:4 or better.",
-    ],
-    riskWarnings: [
-      "A trendline touch without 5m structure confirmation is not enough.",
-      "Avoid if the pullback is too deep and destroys the original impulse.",
-      "Avoid if TP1 is too close and RR is below 1:2.",
-      "Avoid chasing after the continuation candle already travels too far from entry.",
-    ],
-    avoidIf: [
-      "No clean first impulse.",
-      "No controlled pullback.",
-      "No 5m structure confirmation.",
-      "No clear stop behind structure.",
-      "No structural target with at least 2R.",
-    ],
-    checklist: [
-      "In-play market confirmed.",
-      "1H/4H trend/context checked.",
-      "Impulse identified.",
-      "Pullback into trendline/structure confirmed.",
-      "5m structure shift confirmed.",
-      "Entry zone close to structure.",
-      "Stop behind structure.",
-      "TP1 >= 2R, TP2 >= 3R, TP3 >= 4R.",
-    ],
-    educationNote:
-      "Trendline Pullback Structure Continuation is not a blind trendline touch. The edge comes from impulse, controlled pullback, 5m structure confirmation and enough HTF room for at least 2R.",
-    tags: ["trendline", "pullback", "structure", "continuation", "5m_trigger"],
-  },];
+];
 
 export function getSkillEdgeSetupBySlug(slug: string) {
   return SKILLEDGE_SETUP_PLAYBOOK.find((setup) => setup.slug === slug) ?? null;

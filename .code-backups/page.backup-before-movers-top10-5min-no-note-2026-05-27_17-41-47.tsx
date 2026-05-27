@@ -29193,7 +29193,7 @@ reason: item.reason || "Market Intelligence candidate detected.",
       });
   }, [opportunities, query, assetFilter, signalFilter, sortBy]);
 
-  const topRows = filteredOpportunities.slice(0, 10);
+  const topRows = filteredOpportunities.slice(0, 25);
   const combinedCount =
   marketIntelligenceMetrics?.combined ??
   opportunities.filter((item) => item.signalType === "combined").length;
@@ -33559,8 +33559,6 @@ type ChartWatchlistRow = {
   updated_at: string;
 };
 
-const MOVERS_REFRESH_MS = 5 * 60 * 1000;
-
 type ChartsMoverItem = {
   symbol: string;
   name: string;
@@ -33621,9 +33619,7 @@ function MoversPanel({
 
     load();
 
-    const timer = setInterval(() => {
-      load();
-    }, MOVERS_REFRESH_MS);
+    const timer = setInterval(load, 10000);
 
     return () => {
       cancelled = true;
@@ -33741,7 +33737,11 @@ function MoversPanel({
               </div>
             )}
           </div>
-</>
+
+          <div className="mt-3 text-xs text-white/35">
+  {t.charts.moversSourceNote}
+</div>
+        </>
       )}
     </div>
   );
@@ -33811,7 +33811,7 @@ async function fetchCryptoMovers(
         ? b.changePct - a.changePct
         : a.changePct - b.changePct
     )
-    .slice(0, 10)
+    .slice(0, 25)
     .map(({ rawVolume, ...item }) => item);
 
   return mapped;
