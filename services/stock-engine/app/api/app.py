@@ -1840,6 +1840,127 @@ def build_symbol_statistics(items: list[dict[str, Any]]) -> list[dict[str, Any]]
 
     return sorted(rows, key=lambda row: int(row.get("count") or 0), reverse=True)
 
+
+# ---------------------------------------------------------------------------
+# S8.10E Outcome Cleanup / No-Eval Late Session Classification
+# ---------------------------------------------------------------------------
+
+S810E_NO_EVAL_LATE_SESSION_VERSION = "s8_10e_no_eval_late_session_v1"
+
+
+def _s810e_int(value: Any, fallback: int = 0) -> int:
+    try:
+        if value is None:
+            return fallback
+        return int(float(value))
+    except Exception:
+        return fallback
+
+
+def _s810e_is_no_eval_late_session(item: dict[str, Any]) -> bool:
+    if not isinstance(item, dict):
+        return False
+
+    if str(item.get("outcomeEvaluationStatus") or "").upper().strip() == "NO_EVAL_LATE_SESSION":
+        return True
+
+    status = str(item.get("status") or "").upper().strip()
+    reason = str(item.get("reason") or item.get("noEvalReason") or "").lower().strip()
+    result = str(item.get("result") or "").upper().strip()
+    candles_checked = _s810e_int(item.get("candlesChecked"), fallback=-1)
+
+    if status != "EXPIRED_SESSION":
+        return False
+
+    if candles_checked != 0:
+        return False
+
+    if reason == "session_closed_no_future_candles":
+        return True
+
+    # Historical replay stores SESSION_CLOSE as EXPIRED_SESSION. If there were
+    # zero future candles, it is not an evaluated outcome either.
+    if result == "SESSION_CLOSE":
+        return True
+
+    return False
+
+
+def _s810e_mark_no_eval_late_session_item(item: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(item, dict):
+        return item
+
+    out = dict(item)
+
+    if _s810e_is_no_eval_late_session(out):
+        out["outcomeEvaluationStatus"] = "NO_EVAL_LATE_SESSION"
+        out["excludeFromCalibration"] = True
+        out["excludeFromWinRate"] = True
+        out["noEvalReason"] = "no_future_candles_after_late_session_signal"
+        out["outcomeCleanupVersion"] = S810E_NO_EVAL_LATE_SESSION_VERSION
+
+    return out
+
+
+def _s810e_mark_no_eval_late_session_items(items: Any) -> list[dict[str, Any]]:
+    if not isinstance(items, list):
+        return []
+    return [
+        _s810e_mark_no_eval_late_session_item(item)
+        for item in items
+        if isinstance(item, dict)
+    ]
+
+
+def _s810e_no_eval_late_session_items(items: Any) -> list[dict[str, Any]]:
+    if not isinstance(items, list):
+        return []
+    return [item for item in items if isinstance(item, dict) and _s810e_is_no_eval_late_session(item)]
+
+
+def _s810e_evaluable_outcome_items(items: Any) -> list[dict[str, Any]]:
+    if not isinstance(items, list):
+        return []
+    return [item for item in items if isinstance(item, dict) and not _s810e_is_no_eval_late_session(item)]
+
+
+_s810e_build_outcome_summary_raw = build_outcome_summary
+_s810e_build_outcome_statistics_raw = build_outcome_statistics
+
+
+def build_outcome_summary(items: list[dict[str, Any]]) -> dict[str, Any]:
+    raw_items = [item for item in (items or []) if isinstance(item, dict)]
+    no_eval_items = _s810e_no_eval_late_session_items(raw_items)
+    evaluable_items = _s810e_evaluable_outcome_items(raw_items)
+
+    summary = _s810e_build_outcome_summary_raw(evaluable_items)
+    summary["rawCount"] = len(raw_items)
+    summary["evaluableCount"] = len(evaluable_items)
+    summary["noEvalLateSession"] = len(no_eval_items)
+    summary["noEvalLateSessionCount"] = len(no_eval_items)
+    summary["excludedFromCalibrationCount"] = len(no_eval_items)
+    summary["excludedFromWinRateCount"] = len(no_eval_items)
+    summary["outcomeCleanupVersion"] = S810E_NO_EVAL_LATE_SESSION_VERSION
+    return summary
+
+
+def build_outcome_statistics(items: list[dict[str, Any]]) -> dict[str, Any]:
+    raw_items = [item for item in (items or []) if isinstance(item, dict)]
+    no_eval_items = _s810e_no_eval_late_session_items(raw_items)
+    evaluable_items = _s810e_evaluable_outcome_items(raw_items)
+
+    stats = _s810e_build_outcome_statistics_raw(evaluable_items)
+    stats["rawCount"] = len(raw_items)
+    stats["evaluableCount"] = len(evaluable_items)
+    stats["noEvalLateSession"] = len(no_eval_items)
+    stats["noEvalLateSessionCount"] = len(no_eval_items)
+    stats["excludedFromCalibrationCount"] = len(no_eval_items)
+    stats["excludedFromWinRateCount"] = len(no_eval_items)
+    stats["outcomeCleanupVersion"] = S810E_NO_EVAL_LATE_SESSION_VERSION
+    return stats
+
+
+
 @app.post("/engine/backtest/active")
 async def engine_backtest_active(
     interval: str = "5min",
@@ -1864,6 +1985,12 @@ async def engine_backtest_active(
         session_to_close=session_to_close,
     )
 
+    result["outcomes"] = _s810e_mark_no_eval_late_session_items(result.get("outcomes", []))
+    result["outcomeCleanup"] = {
+        "version": S810E_NO_EVAL_LATE_SESSION_VERSION,
+        "noEvalLateSession": len(_s810e_no_eval_late_session_items(result.get("outcomes", []))),
+        "evaluableCount": len(_s810e_evaluable_outcome_items(result.get("outcomes", []))),
+    }
     storage = store_outcome_dataset(result.get("outcomes", []))
     result["storage"] = storage
 
@@ -1913,6 +2040,12 @@ async def engine_outcomes_run_today(
         session_to_close=session_to_close,
     )
 
+    result["outcomes"] = _s810e_mark_no_eval_late_session_items(result.get("outcomes", []))
+    result["outcomeCleanup"] = {
+        "version": S810E_NO_EVAL_LATE_SESSION_VERSION,
+        "noEvalLateSession": len(_s810e_no_eval_late_session_items(result.get("outcomes", []))),
+        "evaluableCount": len(_s810e_evaluable_outcome_items(result.get("outcomes", []))),
+    }
     storage = store_outcome_dataset(result.get("outcomes", []))
     result["storage"] = storage
     result["runtimeCache"] = publish_runtime_cache(reason="outcomes_run_today")
@@ -8573,6 +8706,9 @@ def _s73_filter_items_by_dates(items: list[dict[str, Any]], dates: list[str], *,
             continue
         date_key = _s73_item_date(item)
         if dates and date_key not in date_set:
+            continue
+
+        if _s810e_is_no_eval_late_session(item):
             continue
 
         is_replay = _s73_is_replay_item(item)
