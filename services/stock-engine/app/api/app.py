@@ -3601,6 +3601,8 @@ def _s416_compact_signal_item(item: dict[str, Any], lifecycle_by_symbol: dict[st
         "triggers": payload.get("triggers") if isinstance(payload.get("triggers"), list) else item.get("triggers") or [],
         "createdAt": payload.get("createdAt") or item.get("createdAt"),
         "triggerTime": payload.get("triggerTime") or item.get("triggerTime"),
+        "updatedAt": payload.get("updatedAt") or item.get("updatedAt") or lifecycle.get("evaluatedAt") or payload.get("createdAt") or item.get("createdAt"),
+        "currentPriceUpdatedAt": lifecycle.get("evaluatedAt") or payload.get("updatedAt") or item.get("updatedAt") or payload.get("createdAt") or item.get("createdAt"),
         "lifecycleStatus": lifecycle.get("lifecycleStatus"),
         "entryStatus": lifecycle.get("entryStatus"),
         "currentPrice": lifecycle.get("currentPrice"),
@@ -4425,6 +4427,74 @@ def _s514_reason_penalty(reasons: list[str]) -> int:
     return max(-40, penalty)
 
 
+
+S514_PRICE_FRESH_SECONDS = 900
+S514_PRICE_AGING_SECONDS = 1800
+
+
+def _s514_parse_price_time(value: Any) -> datetime | None:
+    if value is None:
+        return None
+    try:
+        if isinstance(value, datetime):
+            dt = value
+        elif isinstance(value, (int, float)):
+            raw = float(value)
+            if raw > 10_000_000_000:
+                raw = raw / 1000.0
+            dt = datetime.fromtimestamp(raw, tz=timezone.utc)
+        else:
+            text_value = str(value).strip()
+            if not text_value:
+                return None
+            if text_value.endswith("Z"):
+                text_value = text_value[:-1] + "+00:00"
+            dt = datetime.fromisoformat(text_value)
+
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+    except Exception:
+        return None
+
+
+def _s514_price_freshness(updated_at: Any) -> dict[str, Any]:
+    dt = _s514_parse_price_time(updated_at)
+    if dt is None:
+        return {
+            "priceUpdatedAt": updated_at,
+            "priceAgeSeconds": None,
+            "priceFreshness": "UNKNOWN",
+            "priceFreshnessReason": "price_timestamp_missing_or_unparseable",
+            "stalePriceBlocked": True,
+        }
+
+    now = datetime.now(timezone.utc)
+    age = max(0.0, (now - dt).total_seconds())
+
+    if age <= S514_PRICE_FRESH_SECONDS:
+        state = "FRESH"
+        reason = "price_updated_within_fresh_window"
+        blocked = False
+    elif age <= S514_PRICE_AGING_SECONDS:
+        state = "AGING"
+        reason = "price_updated_within_aging_window"
+        blocked = False
+    else:
+        state = "STALE"
+        reason = "price_older_than_stale_window"
+        blocked = True
+
+    return {
+        "priceUpdatedAt": dt.isoformat(),
+        "priceAgeSeconds": round(float(age), 2),
+        "priceFreshness": state,
+        "priceFreshnessReason": reason,
+        "stalePriceBlocked": blocked,
+    }
+
+
+
 def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dict[str, Any]], source: str) -> dict[str, Any]:
     symbol = str(item.get("symbol") or "").upper().strip()
     watch = watch_by_symbol.get(symbol, {})
@@ -4442,19 +4512,21 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
 
     current_price = None
     current_price_source = None
-    for source_name, source_value in (
-        ("item.currentPrice", item.get("currentPrice")),
-        ("item.current_price", item.get("current_price")),
-        ("watch.currentPrice", watch.get("currentPrice")),
-        ("watch.current_price", watch.get("current_price")),
-        ("watch.price", watch.get("price")),
-        ("item.price", item.get("price")),
-        ("guard.metrics.price", metrics.get("price")),
+    current_price_updated_at = None
+    for source_name, source_value, source_time in (
+        ("item.currentPrice", item.get("currentPrice"), item.get("currentPriceUpdatedAt") or item.get("updatedAt") or item.get("createdAt")),
+        ("item.current_price", item.get("current_price"), item.get("current_price_updated_at") or item.get("updatedAt") or item.get("createdAt")),
+        ("watch.currentPrice", watch.get("currentPrice"), watch.get("currentPriceUpdatedAt") or watch.get("updatedAt")),
+        ("watch.current_price", watch.get("current_price"), watch.get("current_price_updated_at") or watch.get("updatedAt")),
+        ("watch.price", watch.get("price"), watch.get("updatedAt")),
+        ("item.price", item.get("price"), item.get("updatedAt") or item.get("createdAt")),
+        ("guard.metrics.price", metrics.get("price"), metrics.get("updatedAt") or metrics.get("priceUpdatedAt") or item.get("updatedAt") or watch.get("updatedAt")),
     ):
         parsed_price = _s514_num(source_value)
         if parsed_price is not None:
             current_price = parsed_price
             current_price_source = source_name
+            current_price_updated_at = source_time
             break
 
     current_r = _s514_num(item.get("currentR") or item.get("current_r"))
@@ -4501,10 +4573,21 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
     management_reasons: list[str] = []
     management_new_entry_ok = False
 
+    price_freshness = _s514_price_freshness(current_price_updated_at)
+    price_updated_at = price_freshness.get("priceUpdatedAt")
+    price_age_seconds = price_freshness.get("priceAgeSeconds")
+    price_freshness_state = str(price_freshness.get("priceFreshness") or "UNKNOWN")
+    price_freshness_reason = str(price_freshness.get("priceFreshnessReason") or "")
+    stale_price_blocked = bool(price_freshness.get("stalePriceBlocked"))
+
     if current_price is None:
         management_state = "UNKNOWN_CURRENT_PRICE"
         trade_action = "monitor_only_until_live_price_available"
         management_reasons.append("current_price_missing")
+    elif stale_price_blocked:
+        management_state = "STALE_PRICE_BLOCKED" if price_freshness_state == "STALE" else "UNKNOWN_PRICE_FRESHNESS"
+        trade_action = "monitor_only_until_fresh_price_available"
+        management_reasons.append(price_freshness_reason or "price_not_fresh")
     elif current_r is None:
         management_state = "UNKNOWN_CURRENT_R"
         trade_action = "monitor_only_until_current_r_available"
@@ -4515,9 +4598,9 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
         management_reasons.append("price_moved_toward_stop")
     elif current_r <= -0.25:
         management_state = "CAUTION_AGAINST_ENTRY"
-        trade_action = "paper_test_only_if_price_reclaims_entry_zone"
+        trade_action = "wait_for_reclaim_before_new_entry"
         management_reasons.append("price_moved_against_entry")
-        management_new_entry_ok = True
+        management_reasons.append("requires_reclaim_before_new_entry")
     elif current_r < 0:
         management_state = "MILD_PULLBACK_STILL_VALID"
         trade_action = "entry_still_valid_but_do_not_chase"
@@ -4532,7 +4615,7 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
         management_state = "MOVED_IN_FAVOR_PULLBACK_ONLY"
         trade_action = "only_on_pullback_or_existing_entry"
         management_reasons.append("price_already_moved_in_favor")
-        management_new_entry_ok = True
+        management_reasons.append("not_a_fresh_entry_wait_pullback")
     else:
         management_state = "EXTENDED_DO_NOT_CHASE"
         trade_action = "avoid_chasing_wait_new_setup"
@@ -4690,6 +4773,8 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
         strict_blocked_reasons.append("closed_or_invalidated")
     if not management_new_entry_ok:
         strict_blocked_reasons.append(f"entry_health:{management_state}")
+    if stale_price_blocked:
+        strict_blocked_reasons.append(f"price_freshness:{price_freshness_state}")
 
     strict_eligible = (
         is_actionable
@@ -4721,6 +4806,11 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
         "tp2": tp2 if tp2 is not None else item.get("tp2"),
         "currentPrice": current_price,
         "currentPriceSource": current_price_source,
+        "priceUpdatedAt": price_updated_at,
+        "priceAgeSeconds": price_age_seconds,
+        "priceFreshness": price_freshness_state,
+        "priceFreshnessReason": price_freshness_reason,
+        "stalePriceBlocked": stale_price_blocked,
         "currentR": current_r,
         "managementState": management_state,
         "tradeAction": trade_action,
@@ -4740,6 +4830,10 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
             "volume": volume,
             "price": price,
             "currentPriceSource": current_price_source,
+            "priceUpdatedAt": price_updated_at,
+            "priceAgeSeconds": price_age_seconds,
+            "priceFreshness": price_freshness_state,
+            "stalePriceBlocked": stale_price_blocked,
             "riskPerShare": risk_per_share,
         },
         "reasons": reasons[:10],
@@ -5302,6 +5396,11 @@ def _s515_compact_best_idea(item: dict[str, Any]) -> dict[str, Any]:
         "tp2": _s515_num(item.get("tp2"), None),
         "currentPrice": _s515_num(item.get("currentPrice"), None),
         "currentPriceSource": item.get("currentPriceSource"),
+        "priceUpdatedAt": item.get("priceUpdatedAt"),
+        "priceAgeSeconds": _s515_num(item.get("priceAgeSeconds"), None),
+        "priceFreshness": item.get("priceFreshness"),
+        "priceFreshnessReason": item.get("priceFreshnessReason"),
+        "stalePriceBlocked": bool(item.get("stalePriceBlocked")),
         "currentR": _s515_num(item.get("currentR"), None),
         "managementState": item.get("managementState"),
         "tradeAction": item.get("tradeAction"),
