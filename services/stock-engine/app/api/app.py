@@ -4495,6 +4495,88 @@ def _s514_price_freshness(updated_at: Any) -> dict[str, Any]:
 
 
 
+
+S514_MIN_NEW_ENTRY_MINUTES_TO_CLOSE = 20.0
+
+
+def _s514_regular_session_end_for(value: Any) -> datetime | None:
+    ref = _s514_parse_price_time(value) or datetime.now(timezone.utc)
+
+    try:
+        if _s415_get_regular_session_end:
+            session_end = _s415_get_regular_session_end(ref)
+        else:
+            session_end = None
+    except Exception:
+        session_end = None
+
+    if session_end is None:
+        session_end = ref.astimezone(timezone.utc).replace(hour=20, minute=0, second=0, microsecond=0)
+
+    if session_end.tzinfo is None:
+        session_end = session_end.replace(tzinfo=timezone.utc)
+
+    return session_end.astimezone(timezone.utc)
+
+
+def _s514_time_to_close_guard(signal_time_value: Any, price_time_value: Any | None = None) -> dict[str, Any]:
+    now = datetime.now(timezone.utc)
+    signal_dt = _s514_parse_price_time(signal_time_value)
+    price_dt = _s514_parse_price_time(price_time_value)
+    reference_dt = signal_dt or price_dt or now
+
+    session_end = _s514_regular_session_end_for(reference_dt)
+    if session_end is None:
+        return {
+            "sessionEnd": None,
+            "signalTimeForSessionGuard": signal_dt.isoformat() if signal_dt else None,
+            "minutesToCloseAtSignal": None,
+            "minutesToCloseNow": None,
+            "lateSessionBlocked": True,
+            "lateSessionReason": "session_end_unavailable",
+            "marketClosedNewEntryBlocked": True,
+        }
+
+    minutes_to_close_at_signal = None
+    if signal_dt is not None:
+        minutes_to_close_at_signal = round(float((session_end - signal_dt).total_seconds() / 60.0), 2)
+
+    minutes_to_close_now = round(float((session_end - now).total_seconds() / 60.0), 2)
+
+    market_closed_blocked = now >= session_end
+    signal_too_late = (
+        minutes_to_close_at_signal is not None
+        and minutes_to_close_at_signal >= 0
+        and minutes_to_close_at_signal <= S514_MIN_NEW_ENTRY_MINUTES_TO_CLOSE
+    )
+    now_too_late = (
+        minutes_to_close_now >= 0
+        and minutes_to_close_now <= S514_MIN_NEW_ENTRY_MINUTES_TO_CLOSE
+    )
+
+    if market_closed_blocked:
+        reason = "market_closed_no_new_entries"
+    elif signal_too_late:
+        reason = "signal_triggered_inside_no_new_entry_window"
+    elif now_too_late:
+        reason = "inside_late_session_no_new_entry_window"
+    else:
+        reason = "new_entry_window_open"
+
+    blocked = bool(market_closed_blocked or signal_too_late or now_too_late)
+
+    return {
+        "sessionEnd": session_end.isoformat(),
+        "signalTimeForSessionGuard": signal_dt.isoformat() if signal_dt else None,
+        "minutesToCloseAtSignal": minutes_to_close_at_signal,
+        "minutesToCloseNow": minutes_to_close_now,
+        "lateSessionBlocked": blocked,
+        "lateSessionReason": reason,
+        "marketClosedNewEntryBlocked": bool(market_closed_blocked),
+    }
+
+
+
 def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dict[str, Any]], source: str) -> dict[str, Any]:
     symbol = str(item.get("symbol") or "").upper().strip()
     watch = watch_by_symbol.get(symbol, {})
@@ -4580,6 +4662,21 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
     price_freshness_reason = str(price_freshness.get("priceFreshnessReason") or "")
     stale_price_blocked = bool(price_freshness.get("stalePriceBlocked"))
 
+    signal_time_for_session_guard = (
+        item.get("triggerTime")
+        or item.get("createdAt")
+        or item.get("updatedAt")
+        or current_price_updated_at
+    )
+    time_to_close_guard = _s514_time_to_close_guard(signal_time_for_session_guard, current_price_updated_at)
+    session_end = time_to_close_guard.get("sessionEnd")
+    signal_time_guard_value = time_to_close_guard.get("signalTimeForSessionGuard")
+    minutes_to_close_at_signal = time_to_close_guard.get("minutesToCloseAtSignal")
+    minutes_to_close_now = time_to_close_guard.get("minutesToCloseNow")
+    late_session_blocked = bool(time_to_close_guard.get("lateSessionBlocked"))
+    late_session_reason = str(time_to_close_guard.get("lateSessionReason") or "")
+    market_closed_new_entry_blocked = bool(time_to_close_guard.get("marketClosedNewEntryBlocked"))
+
     if current_price is None:
         management_state = "UNKNOWN_CURRENT_PRICE"
         trade_action = "monitor_only_until_live_price_available"
@@ -4588,6 +4685,10 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
         management_state = "STALE_PRICE_BLOCKED" if price_freshness_state == "STALE" else "UNKNOWN_PRICE_FRESHNESS"
         trade_action = "monitor_only_until_fresh_price_available"
         management_reasons.append(price_freshness_reason or "price_not_fresh")
+    elif late_session_blocked:
+        management_state = "MARKET_CLOSED_NO_NEW_ENTRY" if market_closed_new_entry_blocked else "LATE_SESSION_NO_NEW_ENTRY"
+        trade_action = "monitor_only_no_new_entries_near_close"
+        management_reasons.append(late_session_reason or "late_session_no_new_entry")
     elif current_r is None:
         management_state = "UNKNOWN_CURRENT_R"
         trade_action = "monitor_only_until_current_r_available"
@@ -4775,6 +4876,8 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
         strict_blocked_reasons.append(f"entry_health:{management_state}")
     if stale_price_blocked:
         strict_blocked_reasons.append(f"price_freshness:{price_freshness_state}")
+    if late_session_blocked:
+        strict_blocked_reasons.append(f"late_session:{late_session_reason}")
 
     strict_eligible = (
         is_actionable
@@ -4811,6 +4914,13 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
         "priceFreshness": price_freshness_state,
         "priceFreshnessReason": price_freshness_reason,
         "stalePriceBlocked": stale_price_blocked,
+        "sessionEnd": session_end,
+        "signalTimeForSessionGuard": signal_time_guard_value,
+        "minutesToCloseAtSignal": minutes_to_close_at_signal,
+        "minutesToCloseNow": minutes_to_close_now,
+        "lateSessionBlocked": late_session_blocked,
+        "lateSessionReason": late_session_reason,
+        "marketClosedNewEntryBlocked": market_closed_new_entry_blocked,
         "currentR": current_r,
         "managementState": management_state,
         "tradeAction": trade_action,
@@ -4834,6 +4944,13 @@ def _s514_rank_compact_idea(item: dict[str, Any], watch_by_symbol: dict[str, dic
             "priceAgeSeconds": price_age_seconds,
             "priceFreshness": price_freshness_state,
             "stalePriceBlocked": stale_price_blocked,
+            "sessionEnd": session_end,
+            "signalTimeForSessionGuard": signal_time_guard_value,
+            "minutesToCloseAtSignal": minutes_to_close_at_signal,
+            "minutesToCloseNow": minutes_to_close_now,
+            "lateSessionBlocked": late_session_blocked,
+            "lateSessionReason": late_session_reason,
+            "marketClosedNewEntryBlocked": market_closed_new_entry_blocked,
             "riskPerShare": risk_per_share,
         },
         "reasons": reasons[:10],
@@ -5401,6 +5518,13 @@ def _s515_compact_best_idea(item: dict[str, Any]) -> dict[str, Any]:
         "priceFreshness": item.get("priceFreshness"),
         "priceFreshnessReason": item.get("priceFreshnessReason"),
         "stalePriceBlocked": bool(item.get("stalePriceBlocked")),
+        "sessionEnd": item.get("sessionEnd"),
+        "signalTimeForSessionGuard": item.get("signalTimeForSessionGuard"),
+        "minutesToCloseAtSignal": _s515_num(item.get("minutesToCloseAtSignal"), None),
+        "minutesToCloseNow": _s515_num(item.get("minutesToCloseNow"), None),
+        "lateSessionBlocked": bool(item.get("lateSessionBlocked")),
+        "lateSessionReason": item.get("lateSessionReason"),
+        "marketClosedNewEntryBlocked": bool(item.get("marketClosedNewEntryBlocked")),
         "currentR": _s515_num(item.get("currentR"), None),
         "managementState": item.get("managementState"),
         "tradeAction": item.get("tradeAction"),
