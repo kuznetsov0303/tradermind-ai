@@ -1,0 +1,11 @@
+[Unit]
+Description=Run SkillEdge Production Live-Day Readiness Check before US premarket
+
+[Timer]
+OnCalendar=Mon..Fri 10:45:00
+AccuracySec=60s
+Persistent=true
+Unit=skilledge-production-readiness.service
+
+[Install]
+WantedBy=timers.target
