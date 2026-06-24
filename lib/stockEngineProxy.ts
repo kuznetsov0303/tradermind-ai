@@ -89,9 +89,15 @@ async function fetchCandidate(path: string, init?: RequestInit) {
 }
 
 function shouldRetryPath(status: number, payload: StockEnginePayload | null, text: string) {
-  if (status === 404) return true;
   const error = String(payload?.error || "");
-  if (status >= 500 && isLikelyHtml(error || text)) return true;
+  const htmlError = isLikelyHtml(error || text);
+
+  // nginx can return HTML 403/404 when a public base URL receives the raw
+  // /engine/* path. In that case retry the public/proxy path without /engine.
+  // JSON 403 from the FastAPI security layer should not be hidden.
+  if ((status === 403 || status === 404) && htmlError) return true;
+
+  if (status >= 500 && htmlError) return true;
   return false;
 }
 
