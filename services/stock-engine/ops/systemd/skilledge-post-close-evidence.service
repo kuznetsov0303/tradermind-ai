@@ -1,0 +1,12 @@
+﻿[Unit]
+Description=SkillEdge Post-Close Evidence Automation
+After=skilledge-stock-engine-api.service
+Wants=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/post_close_evidence_automation.py --base-url http://127.0.0.1:8000 --limit 160 --max-best 5
+User=skilledge
+Group=skilledge
