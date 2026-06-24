@@ -5773,6 +5773,11 @@ def _s515_build_daily_forward_report(
         limit=safe_limit,
         include_candles=False,
     )
+    # S8.12B: production cockpit is stored behind {"ok": true, "value": {...}}.
+    # Forward evidence must read the actual cockpit payload, not the wrapper.
+    if isinstance(cockpit, dict) and isinstance(cockpit.get("value"), dict):
+        cockpit = cockpit.get("value") or {}
+
     best_selector = cockpit.get("bestIdeaSelector") if isinstance(cockpit.get("bestIdeaSelector"), dict) else {}
     raw_selected = best_selector.get("selectedIdeas") if isinstance(best_selector.get("selectedIdeas"), list) else []
     raw_monitor = best_selector.get("monitorOnly") if isinstance(best_selector.get("monitorOnly"), list) else []
