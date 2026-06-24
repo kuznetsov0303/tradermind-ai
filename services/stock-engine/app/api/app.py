@@ -5992,6 +5992,344 @@ def engine_forward_report_cache():
     }
 
 
+
+
+# === S8.12C Investor Evidence Snapshot =======================================
+S812C_EVIDENCE_SNAPSHOT_VERSION = "s8_12c_investor_evidence_snapshot_v1"
+S812C_EVIDENCE_CACHE_KEY = "engine:evidence:today"
+
+
+def _s812c_outcome_date(item: dict[str, Any]) -> str:
+    for key in ("sessionDate", "session_date", "triggerTime", "createdAt", "evaluatedAt", "storedAt", "firstEventAt"):
+        value = item.get(key)
+        if value:
+            return str(value)[:10]
+    return ""
+
+
+def _s812c_filter_outcomes_by_date(items: list[dict[str, Any]], date_key: str) -> list[dict[str, Any]]:
+    return [
+        item for item in (items or [])
+        if isinstance(item, dict) and _s812c_outcome_date(item) == date_key
+    ]
+
+
+def _s812c_compact_idea(row: dict[str, Any]) -> dict[str, Any]:
+    health = row.get("entryHealth") if isinstance(row.get("entryHealth"), dict) else {}
+    outcome = row.get("outcome") if isinstance(row.get("outcome"), dict) else None
+    return {
+        "rank": row.get("rank"),
+        "role": row.get("role"),
+        "symbol": row.get("symbol"),
+        "setupSlug": row.get("setupSlug"),
+        "setupName": row.get("setupName"),
+        "direction": row.get("direction"),
+        "status": row.get("status"),
+        "lifecycleStatus": row.get("lifecycleStatus"),
+        "score": _s515_num(row.get("score"), None),
+        "selectorScore": _s515_num(row.get("selectorScore"), None),
+        "rrToTp1": _s515_num(row.get("rrToTp1"), None),
+        "entry": _s515_num(row.get("entry"), None),
+        "stop": _s515_num(row.get("stop"), None),
+        "tp1": _s515_num(row.get("tp1"), None),
+        "tp2": _s515_num(row.get("tp2"), None),
+        "currentPrice": _s515_num(row.get("currentPrice"), None),
+        "currentR": _s515_num(row.get("currentR"), None),
+        "priceFreshness": row.get("priceFreshness"),
+        "priceAgeSeconds": _s515_num(row.get("priceAgeSeconds"), None),
+        "managementState": row.get("managementState"),
+        "tradeAction": row.get("tradeAction"),
+        "entryHealthState": health.get("state"),
+        "entryHealthAction": health.get("action"),
+        "entryHealthPriorityScore": _s515_num(health.get("priorityScore"), None),
+        "deskPassed": bool(row.get("deskPassed")),
+        "telegramPassed": bool(row.get("telegramPassed")),
+        "strictEligible": bool(row.get("strictEligible")),
+        "isActionable": bool(row.get("isActionable")),
+        "outcome": {
+            "status": outcome.get("status"),
+            "event": outcome.get("event"),
+            "resultR": _s515_num(outcome.get("resultR"), None),
+            "mfeR": _s515_num(outcome.get("mfeR"), None),
+            "maeR": _s515_num(outcome.get("maeR"), None),
+            "firstEventAt": outcome.get("firstEventAt"),
+        } if outcome else None,
+        "whySelected": row.get("whySelected") if isinstance(row.get("whySelected"), list) else [],
+        "whyNotElite": row.get("whyNotElite") if isinstance(row.get("whyNotElite"), list) else [],
+        "cautions": row.get("cautions") if isinstance(row.get("cautions"), list) else [],
+    }
+
+
+def _s812c_compact_setup_stat(row: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "setupSlug": row.get("setupSlug"),
+        "count": row.get("count"),
+        "rawCount": row.get("rawCount"),
+        "evaluableCount": row.get("evaluableCount"),
+        "noEvalLateSession": row.get("noEvalLateSession"),
+        "closed": row.get("closed"),
+        "worked": row.get("worked"),
+        "failed": row.get("failed"),
+        "winRateClosed": row.get("winRateClosed"),
+        "avgResultRClosed": row.get("avgResultRClosed"),
+        "avgMfeR": row.get("avgMfeR"),
+        "avgMaeR": row.get("avgMaeR"),
+    }
+
+
+def _s812c_top_telegram_blockers(monitoring: dict[str, Any], limit: int = 5) -> list[dict[str, Any]]:
+    rows = monitoring.get("telegramBlockedByReason") if isinstance(monitoring, dict) else []
+    if not isinstance(rows, list):
+        return []
+    out = []
+    for row in rows[:limit]:
+        if not isinstance(row, dict):
+            continue
+        out.append({
+            "reason": row.get("reason"),
+            "count": row.get("count"),
+            "examples": row.get("examples") if isinstance(row.get("examples"), list) else [],
+        })
+    return out
+
+
+def _s812c_write_report_file(payload: dict[str, Any]) -> dict[str, Any]:
+    try:
+        import json
+        from pathlib import Path
+        report_dir = Path("reports/investor_evidence")
+        report_dir.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        dated_path = report_dir / f"{stamp}.json"
+        latest_path = report_dir / "latest.json"
+        body = json.dumps(payload, ensure_ascii=False, indent=2)
+        dated_path.write_text(body, encoding="utf-8")
+        latest_path.write_text(body, encoding="utf-8")
+        return {
+            "ok": True,
+            "path": str(dated_path),
+            "latestPath": str(latest_path),
+        }
+    except Exception as error:
+        return {
+            "ok": False,
+            "error": repr(error),
+        }
+
+
+def _s812c_build_investor_evidence_snapshot(
+    *,
+    date: str | None = None,
+    limit: int = 160,
+    max_best: int = 5,
+    publish: bool = False,
+) -> dict[str, Any]:
+    date_key = _s515_date_key(date)
+
+    forward = _s515_build_daily_forward_report(
+        date=date_key,
+        limit=limit,
+        max_best=max_best,
+        publish=publish,
+    )
+
+    selected = forward.get("selectedBestIdeas") if isinstance(forward.get("selectedBestIdeas"), list) else []
+    monitoring = forward.get("monitoring") if isinstance(forward.get("monitoring"), dict) else {}
+    counts = forward.get("counts") if isinstance(forward.get("counts"), dict) else {}
+    desk_state = forward.get("dailyDeskState") if isinstance(forward.get("dailyDeskState"), dict) else {}
+    forward_outcomes = forward.get("outcomes") if isinstance(forward.get("outcomes"), dict) else {}
+
+    try:
+        all_outcomes = load_persistent_outcome_items(limit=5000)
+    except Exception:
+        all_outcomes = []
+
+    today_outcomes = _s812c_filter_outcomes_by_date(all_outcomes, date_key)
+    today_summary = build_outcome_summary(today_outcomes)
+    today_statistics = build_outcome_statistics(today_outcomes)
+
+    global_summary = build_outcome_summary(all_outcomes)
+    global_statistics = build_outcome_statistics(all_outcomes)
+
+    try:
+        setup_rows = build_setup_statistics(all_outcomes)
+    except Exception:
+        setup_rows = []
+
+    setup_rows = [row for row in setup_rows if isinstance(row, dict)]
+    closed_setup_rows = [row for row in setup_rows if int(row.get("closed") or 0) > 0]
+
+    best_setup_rows = sorted(
+        closed_setup_rows,
+        key=lambda row: (
+            float(row.get("avgResultRClosed") if row.get("avgResultRClosed") is not None else -999),
+            float(row.get("winRateClosed") if row.get("winRateClosed") is not None else -999),
+            int(row.get("closed") or 0),
+        ),
+        reverse=True,
+    )[:5]
+
+    weak_setup_rows = sorted(
+        closed_setup_rows,
+        key=lambda row: (
+            float(row.get("avgResultRClosed") if row.get("avgResultRClosed") is not None else 999),
+            float(row.get("winRateClosed") if row.get("winRateClosed") is not None else 999),
+            -int(row.get("closed") or 0),
+        ),
+    )[:5]
+
+    selected_compact = [_s812c_compact_idea(row) for row in selected if isinstance(row, dict)]
+
+    selected_symbols = [
+        str(row.get("symbol") or "").upper().strip()
+        for row in selected_compact
+        if str(row.get("symbol") or "").strip()
+    ]
+
+    telegram_blockers = _s812c_top_telegram_blockers(monitoring)
+
+    matched_selected_outcomes = int(forward_outcomes.get("matchedSelectedOutcomes") or 0)
+    selected_count = len(selected_compact)
+    selected_with_outcomes = len([row for row in selected_compact if row.get("outcome")])
+
+    headline = (
+        f"{selected_count} forward-test desk ideas selected"
+        if selected_count
+        else "No forward-test desk idea selected"
+    )
+
+    evidence_quality = "early_forward_test"
+    if int(global_summary.get("closed") or 0) >= 50:
+        evidence_quality = "growing_live_sample"
+    if int(global_summary.get("closed") or 0) >= 200:
+        evidence_quality = "meaningful_live_sample"
+
+    payload = {
+        "ok": True,
+        "version": S812C_EVIDENCE_SNAPSHOT_VERSION,
+        "date": date_key,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": "forward_report_plus_outcome_statistics",
+        "headline": headline,
+        "investorSummary": {
+            "state": desk_state.get("state"),
+            "evidenceQuality": evidence_quality,
+            "selectedBestCount": selected_count,
+            "selectedSymbols": selected_symbols,
+            "watchCount": counts.get("watchCount"),
+            "activeCount": counts.get("activeCount"),
+            "armedCount": counts.get("armedCount"),
+            "strictEligibleCount": counts.get("strictEligibleCount"),
+            "monitorCount": counts.get("monitorCount"),
+            "telegramEliteReadyCount": desk_state.get("telegramEliteReadyCount"),
+            "whyTelegramMayBeZero": telegram_blockers,
+            "matchedSelectedOutcomes": matched_selected_outcomes,
+            "selectedWithOutcomeRows": selected_with_outcomes,
+            "todayClosedOutcomes": today_summary.get("closed"),
+            "todayWinRateClosed": today_summary.get("winRateClosed"),
+            "todayAvgResultRClosed": today_summary.get("avgResultRClosed"),
+            "globalClosedOutcomes": global_summary.get("closed"),
+            "globalWinRateClosed": global_summary.get("winRateClosed"),
+            "globalAvgResultRClosed": global_summary.get("avgResultRClosed"),
+        },
+        "counts": counts,
+        "dailyDeskState": desk_state,
+        "selectedBestIdeas": selected_compact,
+        "monitoringSummary": {
+            "notSelectedCount": monitoring.get("notSelectedCount"),
+            "entryHealthByState": monitoring.get("entryHealthByState") if isinstance(monitoring.get("entryHealthByState"), dict) else {},
+            "strictBlockedByReason": monitoring.get("strictBlockedByReason") if isinstance(monitoring.get("strictBlockedByReason"), dict) else {},
+            "telegramBlockedByReason": telegram_blockers,
+        },
+        "outcomeEvidence": {
+            "today": {
+                "date": date_key,
+                "count": len(today_outcomes),
+                "summary": today_summary,
+                "statistics": today_statistics,
+            },
+            "global": {
+                "count": len(all_outcomes),
+                "summary": global_summary,
+                "statistics": global_statistics,
+            },
+            "forwardMatchedSelectedOutcomes": matched_selected_outcomes,
+            "note": "Today outcome stats become most useful after the post-close outcomes run.",
+        },
+        "setupEvidence": {
+            "bestByAvgRClosed": [_s812c_compact_setup_stat(row) for row in best_setup_rows],
+            "weakByAvgRClosed": [_s812c_compact_setup_stat(row) for row in weak_setup_rows],
+            "sampleSizeWarning": "Setup rankings are informational until each setup has enough closed live outcomes.",
+        },
+        "learningNotes": forward.get("learningNotes") if isinstance(forward.get("learningNotes"), list) else [],
+        "nextActions": [
+            "Use selectedBestIdeas as paper/forward-test candidates only.",
+            "Run outcomes after session close and refresh this evidence snapshot.",
+            "Do not loosen Telegram/Elite gates until forward evidence has enough closed outcomes.",
+            "Use repeated evidence snapshots for investor reporting and calibration review.",
+        ],
+        "sourceForwardReport": {
+            "version": forward.get("version"),
+            "state": desk_state.get("state"),
+            "generatedAt": forward.get("generatedAt"),
+            "lifecycleSource": forward.get("lifecycleSource"),
+        },
+    }
+
+    if publish:
+        # S8.12C-2: write report metadata before caching so /engine/evidence/cache
+        # returns the same investor evidence payload as /engine/evidence/run.
+        payload["reportFile"] = _s812c_write_report_file(payload)
+        runtime_cache.set_json(S812C_EVIDENCE_CACHE_KEY, payload, ttl_seconds=14 * 24 * 60 * 60)
+
+    return payload
+
+
+@app.get("/engine/evidence/today")
+def engine_evidence_today(date: str | None = None, limit: int = 160, max_best: int = 5, publish: bool = False):
+    payload = _s812c_build_investor_evidence_snapshot(
+        date=date,
+        limit=limit,
+        max_best=max_best,
+        publish=publish,
+    )
+    return {
+        "ok": True,
+        "value": payload,
+        "storageVersion": S812C_EVIDENCE_SNAPSHOT_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+
+@app.post("/engine/evidence/run")
+def engine_evidence_run(date: str | None = None, limit: int = 160, max_best: int = 5, publish: bool = True):
+    payload = _s812c_build_investor_evidence_snapshot(
+        date=date,
+        limit=limit,
+        max_best=max_best,
+        publish=publish,
+    )
+    return {
+        "ok": True,
+        "value": payload,
+        "storageVersion": S812C_EVIDENCE_SNAPSHOT_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+
+@app.get("/engine/evidence/cache")
+def engine_evidence_cache():
+    payload = runtime_cache.get_json(S812C_EVIDENCE_CACHE_KEY)
+    return {
+        "ok": isinstance(payload, dict),
+        "value": payload if isinstance(payload, dict) else None,
+        "storageVersion": S812C_EVIDENCE_SNAPSHOT_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+# === /S8.12C ================================================================
+
+
 # ---------------------------------------------------------------------------
 # S6.1 Historical Replay Foundation / Self-Learning Readiness
 # ---------------------------------------------------------------------------
