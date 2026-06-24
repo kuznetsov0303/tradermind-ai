@@ -2015,6 +2015,8 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
   const [calibrationPreview, setCalibrationPreview] =
     useState<CalibrationPreview | null>(null);
   const [calibrationLoading, setCalibrationLoading] = useState(false);
+  const [evidenceSnapshot, setEvidenceSnapshot] = useState<AnyRecord | null>(null);
+  const [evidenceLoading, setEvidenceLoading] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.add("skill-cockpit-locked");
@@ -2125,6 +2127,35 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
     const timer = window.setInterval(fetchCalibrationPreview, 60_000);
     return () => window.clearInterval(timer);
   }, [fetchCalibrationPreview]);
+
+  const fetchEvidenceSnapshot = useCallback(async () => {
+    setEvidenceLoading(true);
+    try {
+      const response = await fetch("/api/stock-engine/evidence/cache", {
+        cache: "no-store",
+      });
+      const payload: AnyRecord = await response.json();
+      const value = payload?.value || payload;
+
+      if (!response.ok || !payload?.ok || !value?.ok) {
+        throw new Error(
+          payload?.error || payload?.message || "Evidence snapshot unavailable",
+        );
+      }
+
+      setEvidenceSnapshot(value);
+    } catch {
+      setEvidenceSnapshot(null);
+    } finally {
+      setEvidenceLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchEvidenceSnapshot();
+    const timer = window.setInterval(fetchEvidenceSnapshot, 60_000);
+    return () => window.clearInterval(timer);
+  }, [fetchEvidenceSnapshot]);
 
   const fetchOverview = useCallback(async () => {
     setError("");
@@ -2491,6 +2522,27 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
   const calibrationNegativeRows = calibrationPreview?.negativeWatchRows || [];
   const calibrationBlockers =
     calibrationPreview?.safety?.globalBlockers || [];
+  const evidenceSummary = evidenceSnapshot?.investorSummary || {};
+  const evidenceSelected = Array.isArray(evidenceSnapshot?.selectedBestIdeas)
+    ? evidenceSnapshot?.selectedBestIdeas || []
+    : [];
+  const evidenceBestSetups = Array.isArray(
+    evidenceSnapshot?.setupEvidence?.bestByAvgRClosed,
+  )
+    ? evidenceSnapshot?.setupEvidence?.bestByAvgRClosed || []
+    : [];
+  const evidenceWeakSetups = Array.isArray(
+    evidenceSnapshot?.setupEvidence?.weakByAvgRClosed,
+  )
+    ? evidenceSnapshot?.setupEvidence?.weakByAvgRClosed || []
+    : [];
+  const evidenceTelegramBlockers = Array.isArray(
+    evidenceSummary?.whyTelegramMayBeZero,
+  )
+    ? evidenceSummary?.whyTelegramMayBeZero || []
+    : Array.isArray(evidenceSnapshot?.monitoringSummary?.telegramBlockedByReason)
+      ? evidenceSnapshot?.monitoringSummary?.telegramBlockedByReason || []
+      : [];
 
   return (
     <section className="skill-cockpit-terminal fixed inset-0 z-[60] flex h-screen w-screen flex-col overflow-hidden bg-[#05070d] text-white">
@@ -2977,6 +3029,125 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                     </div>
                   </div>
                 ))}
+            </div>
+          </Card>
+
+
+          <Card title="Evidence snapshot" className="mt-3">
+            <div className="rounded-xl border border-emerald-300/18 bg-emerald-300/[0.055] p-3">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-100/62">
+                    Forward-test proof
+                  </div>
+                  <div className="mt-1 line-clamp-2 text-sm font-black leading-5 text-white">
+                    {evidenceSnapshot?.headline ||
+                      (evidenceLoading
+                        ? "Loading evidence..."
+                        : "Evidence snapshot unavailable")}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={fetchEvidenceSnapshot}
+                  disabled={evidenceLoading}
+                  className="shrink-0 rounded-lg border border-white/10 bg-black/24 px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.08em] text-white/62 transition hover:bg-white/[0.07] disabled:opacity-50"
+                >
+                  {evidenceLoading ? "..." : "Refresh"}
+                </button>
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                <SmallMetric
+                  label="Selected"
+                  value={formatNumber(evidenceSummary?.selectedBestCount, 0)}
+                  tone="good"
+                />
+                <SmallMetric
+                  label="Closed"
+                  value={formatNumber(evidenceSummary?.globalClosedOutcomes, 0)}
+                  tone="info"
+                />
+                <SmallMetric
+                  label="Winrate"
+                  value={`${formatNumber(evidenceSummary?.globalWinRateClosed, 2)}%`}
+                  tone="info"
+                />
+                <SmallMetric
+                  label="Avg R"
+                  value={formatSignedR(evidenceSummary?.globalAvgResultRClosed)}
+                  tone={
+                    Number(evidenceSummary?.globalAvgResultRClosed) >= 0
+                      ? "good"
+                      : "bad"
+                  }
+                />
+              </div>
+
+              {evidenceSelected.length ? (
+                <div className="mt-3">
+                  <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/36">
+                    Selected ideas
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {evidenceSelected.slice(0, 5).map((idea: AnyRecord) => (
+                      <span
+                        key={`${idea.symbol}-${idea.setupSlug}-${idea.rank}`}
+                        className="rounded-full border border-white/10 bg-black/24 px-2 py-1 text-[10px] font-black text-white/72"
+                        title={String(idea.setupSlug || "")}
+                      >
+                        {idea.symbol} {formatSignedR(idea.currentR)}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="mt-3 grid gap-2">
+                {evidenceBestSetups.slice(0, 2).map((row: AnyRecord) => (
+                  <div
+                    key={`best-${row.setupSlug}`}
+                    className="rounded-xl border border-emerald-300/14 bg-black/20 px-3 py-2"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-[11px] font-black text-white/76">
+                        {labelFromSnake(row.setupSlug)}
+                      </span>
+                      <span className="shrink-0 text-[11px] font-black text-emerald-200">
+                        {formatSignedR(row.avgResultRClosed)}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-[10px] font-semibold text-white/38">
+                      {formatNumber(row.winRateClosed, 2)}% WR / {formatNumber(row.closed, 0)} closed
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {evidenceTelegramBlockers.length ? (
+                <div className="mt-3 rounded-xl border border-amber-300/16 bg-amber-300/[0.055] p-2">
+                  <div className="text-[10px] font-black uppercase tracking-[0.12em] text-amber-100/70">
+                    Why Telegram = 0
+                  </div>
+                  <div className="mt-1 space-y-1">
+                    {evidenceTelegramBlockers.slice(0, 2).map((row: AnyRecord) => (
+                      <div
+                        key={String(row.reason)}
+                        className="line-clamp-1 text-[11px] font-semibold text-white/58"
+                      >
+                        {labelFromSnake(row.reason)} · {formatNumber(row.count, 0)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {evidenceWeakSetups.length ? (
+                <div className="mt-3 text-[10px] font-semibold leading-4 text-white/36">
+                  Weak watch: {labelFromSnake(evidenceWeakSetups[0]?.setupSlug)}{" "}
+                  {formatSignedR(evidenceWeakSetups[0]?.avgResultRClosed)}
+                </div>
+              ) : null}
             </div>
           </Card>
 
