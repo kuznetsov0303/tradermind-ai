@@ -189,7 +189,20 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "steps": steps,
     }
 
-    report["reportFile"] = write_report(report)
+    # S8.13-2: make the saved latest.json self-contained.
+    # First compute target paths, then write the final report including reportFile.
+    report_dir = Path("reports/post_close_evidence")
+    report_dir.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    dated = report_dir / f"{stamp}.json"
+    latest = report_dir / "latest.json"
+    report["reportFile"] = {
+        "path": str(dated),
+        "latestPath": str(latest),
+    }
+    body = json.dumps(report, ensure_ascii=False, indent=2)
+    dated.write_text(body, encoding="utf-8")
+    latest.write_text(body, encoding="utf-8")
     return report
 
 
