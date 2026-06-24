@@ -213,6 +213,17 @@ type CockpitValue = {
   dataSource?: string;
   runtimeStatus?: AnyRecord;
   summary?: AnyRecord;
+  marketSession?: AnyRecord;
+  bestIdeaSelector?: {
+    selectedIdeas?: AnyRecord[];
+    monitorOnly?: AnyRecord[];
+    totals?: AnyRecord;
+  } | null;
+  clientDesk?: {
+    activeIdeas?: AnyRecord[];
+    waitingIdeas?: AnyRecord[];
+    rejectedDebugIdeas?: AnyRecord[];
+  } | null;
   watchlist?: { count?: number; items?: CockpitWatchItem[] };
   armed?: { count?: number; items?: CockpitSignal[] };
   active?: { count?: number; items?: CockpitSignal[] };
@@ -767,6 +778,212 @@ function confirmationRows(snapshot?: CockpitSnapshot | null) {
     },
   ];
 }
+
+
+function unwrapCockpitValue(payload: AnyRecord): CockpitValue | null {
+  if (!payload) return null;
+
+  const directCandidate =
+    payload.bestIdeaSelector || payload.clientDesk || payload.runtimeStatus;
+
+  return (
+    payload.value ||
+    payload.data ||
+    (directCandidate ? (payload as CockpitValue) : null)
+  );
+}
+
+function toSignalFromIdea(raw: AnyRecord, fallbackStatus = "WATCH"): CockpitSignal {
+  const status = String(
+    raw.status ||
+      raw.lifecycleStatus ||
+      raw.engineStatus ||
+      fallbackStatus ||
+      "WATCH",
+  ).toUpperCase();
+
+  const entryZone =
+    raw.entryZone ||
+    (raw.entryZoneMin !== undefined || raw.entryZoneMax !== undefined
+      ? { min: raw.entryZoneMin ?? null, max: raw.entryZoneMax ?? null }
+      : null);
+
+  return {
+    signalId:
+      raw.signalId ||
+      raw.id ||
+      `${String(raw.symbol || "").toUpperCase()}-${String(raw.setupSlug || "setup")}-${status}`,
+    symbol: String(raw.symbol || "").toUpperCase(),
+    setupSlug: raw.setupSlug ?? raw.setup_slug ?? null,
+    setupName: raw.setupName ?? raw.setup_name ?? null,
+    direction: raw.direction ?? null,
+    status,
+    engineStatus: raw.engineStatus ?? status,
+    qualityStatus: raw.qualityStatus ?? raw.quality_status ?? null,
+    grade: raw.grade ?? raw.signalGrade ?? null,
+    score: raw.score ?? raw.signalScore ?? null,
+    premiumSignal: raw.premiumSignal ?? null,
+    telegramEligible: raw.telegramEligible ?? null,
+
+    entry: raw.entry ?? raw.entryPrice ?? raw.entry_price ?? entryZone?.min ?? null,
+    entryZone,
+    stop: raw.stop ?? raw.stopPrice ?? raw.stop_price ?? null,
+    tp1: raw.tp1 ?? raw.target1 ?? raw.target_1 ?? null,
+    tp1R: raw.tp1R ?? raw.rrToTp1 ?? null,
+    tp2: raw.tp2 ?? raw.target2 ?? raw.target_2 ?? null,
+    tp2R: raw.tp2R ?? raw.rrToTp2 ?? null,
+    rrToTp1: raw.rrToTp1 ?? raw.tp1R ?? null,
+    rrToTp2: raw.rrToTp2 ?? raw.tp2R ?? null,
+
+    primaryTrigger: raw.primaryTrigger ?? null,
+    triggers: raw.triggers ?? null,
+    createdAt: raw.createdAt ?? raw.created_at ?? null,
+    triggerTime: raw.triggerTime ?? raw.trigger_time ?? raw.createdAt ?? null,
+
+    lifecycleStatus: raw.lifecycleStatus ?? status,
+    entryStatus: raw.entryStatus ?? null,
+    currentPrice: raw.currentPrice ?? raw.price ?? null,
+    currentR: raw.currentR ?? null,
+    currentPriceSource: raw.currentPriceSource ?? null,
+    currentPriceUpdatedAt:
+      raw.currentPriceUpdatedAt ?? raw.priceUpdatedAt ?? raw.updatedAt ?? null,
+    priceUpdatedAt: raw.priceUpdatedAt ?? raw.updatedAt ?? null,
+    priceAgeSeconds: raw.priceAgeSeconds ?? null,
+    priceFreshness: raw.priceFreshness ?? null,
+    priceFreshnessReason: raw.priceFreshnessReason ?? null,
+    stalePriceBlocked: raw.stalePriceBlocked ?? null,
+    managementState: raw.managementState ?? null,
+    tradeAction: raw.tradeAction ?? null,
+    managementReasons: raw.managementReasons ?? null,
+    strictEligible: raw.strictEligible ?? null,
+    strictBlockedReasons: raw.strictBlockedReasons ?? null,
+    lateSessionBlocked: raw.lateSessionBlocked ?? null,
+    lateSessionReason: raw.lateSessionReason ?? null,
+    marketClosedNewEntryBlocked: raw.marketClosedNewEntryBlocked ?? null,
+    minutesToCloseNow: raw.minutesToCloseNow ?? null,
+    minutesToCloseAtSignal: raw.minutesToCloseAtSignal ?? null,
+    isActionable: raw.isActionable ?? null,
+    guidance: raw.guidance ?? null,
+    nextActions: raw.nextActions ?? null,
+  };
+}
+
+function toWatchFromIdea(raw: AnyRecord): CockpitWatchItem {
+  return {
+    symbol: String(raw.symbol || "").toUpperCase(),
+    name: raw.name ?? raw.setupName ?? raw.setup_name ?? null,
+    exchange: raw.exchange ?? null,
+    status: raw.status ?? raw.lifecycleStatus ?? "WATCH",
+    engineStatus: raw.engineStatus ?? raw.status ?? raw.lifecycleStatus ?? "WATCH",
+    price: raw.price ?? raw.currentPrice ?? null,
+    changePercent: raw.changePercent ?? raw.change_percent ?? null,
+    volume: raw.volume ?? null,
+    marketCap: raw.marketCap ?? raw.market_cap ?? null,
+    universe: raw.universe ?? null,
+    sourceBucket: raw.sourceBucket ?? null,
+    inPlayScore: raw.inPlayScore ?? raw.score ?? raw.signalScore ?? null,
+    rankReasons: raw.rankReasons ?? null,
+    lifecycleStatus: raw.lifecycleStatus ?? raw.status ?? null,
+    entryStatus: raw.entryStatus ?? null,
+    currentR: raw.currentR ?? null,
+    currentPriceSource: raw.currentPriceSource ?? null,
+    currentPriceUpdatedAt:
+      raw.currentPriceUpdatedAt ?? raw.priceUpdatedAt ?? raw.updatedAt ?? null,
+    priceUpdatedAt: raw.priceUpdatedAt ?? raw.updatedAt ?? null,
+    priceAgeSeconds: raw.priceAgeSeconds ?? null,
+    priceFreshness: raw.priceFreshness ?? null,
+    priceFreshnessReason: raw.priceFreshnessReason ?? null,
+    stalePriceBlocked: raw.stalePriceBlocked ?? null,
+    managementState: raw.managementState ?? null,
+    tradeAction: raw.tradeAction ?? null,
+    managementReasons: raw.managementReasons ?? null,
+    strictEligible: raw.strictEligible ?? null,
+    strictBlockedReasons: raw.strictBlockedReasons ?? null,
+    lateSessionBlocked: raw.lateSessionBlocked ?? null,
+    lateSessionReason: raw.lateSessionReason ?? null,
+    marketClosedNewEntryBlocked: raw.marketClosedNewEntryBlocked ?? null,
+    minutesToCloseNow: raw.minutesToCloseNow ?? null,
+    minutesToCloseAtSignal: raw.minutesToCloseAtSignal ?? null,
+    isActionable: raw.isActionable ?? null,
+    updatedAt: raw.updatedAt ?? raw.currentPriceUpdatedAt ?? null,
+  };
+}
+
+function uniqSignalsBySymbol(items: CockpitSignal[]) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const symbol = getSymbol(item);
+    if (!symbol || seen.has(symbol)) return false;
+    seen.add(symbol);
+    return true;
+  });
+}
+
+function uniqWatchBySymbol(items: CockpitWatchItem[]) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    const symbol = getSymbol(item);
+    if (!symbol || seen.has(symbol)) return false;
+    seen.add(symbol);
+    return true;
+  });
+}
+
+function normalizeCockpitValue(value: CockpitValue | null): CockpitValue | null {
+  if (!value) return null;
+
+  const currentActive = Array.isArray(value.active?.items)
+    ? value.active?.items || []
+    : [];
+  const currentArmed = Array.isArray(value.armed?.items)
+    ? value.armed?.items || []
+    : [];
+  const currentWatch = Array.isArray(value.watchlist?.items)
+    ? value.watchlist?.items || []
+    : [];
+
+  if (currentActive.length || currentArmed.length || currentWatch.length) {
+    return value;
+  }
+
+  const selectedIdeas =
+    value.bestIdeaSelector?.selectedIdeas ||
+    value.clientDesk?.activeIdeas ||
+    [];
+  const monitorIdeas =
+    value.bestIdeaSelector?.monitorOnly ||
+    value.clientDesk?.waitingIdeas ||
+    [];
+  const rejectedIdeas = value.clientDesk?.rejectedDebugIdeas || [];
+
+  const activeItems = uniqSignalsBySymbol(
+    selectedIdeas.map((idea) => toSignalFromIdea(idea, "ACTIVE")),
+  );
+  const armedItems = uniqSignalsBySymbol(
+    monitorIdeas.map((idea) => toSignalFromIdea(idea, "ARMED")),
+  );
+  const watchItems = uniqWatchBySymbol(
+    rejectedIdeas.map((idea) => toWatchFromIdea({ ...idea, status: "WATCH" })),
+  );
+
+  return {
+    ...value,
+    active: {
+      count: activeItems.length,
+      items: activeItems,
+    },
+    armed: {
+      count: armedItems.length,
+      items: armedItems,
+    },
+    watchlist: {
+      count: watchItems.length,
+      items: watchItems,
+    },
+    closed: value.closed || { count: 0, items: [] },
+  };
+}
+
 
 function mergeDeskItems(value: CockpitValue | null) {
   const source: DeskItem[] = [
@@ -1917,7 +2134,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
         cache: "no-store",
       });
       const payload: CockpitApiResponse = await response.json();
-      const value = payload.value || null;
+      const value = normalizeCockpitValue(unwrapCockpitValue(payload as AnyRecord));
       if (!response.ok || !payload.ok || !value)
         throw new Error(
           payload.error || payload.message || "Cockpit unavailable",
@@ -2094,7 +2311,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
           return;
         }
 
-        const value = payload.value || null;
+        const value = normalizeCockpitValue(unwrapCockpitValue(payload as AnyRecord));
         const incomingSelected =
           payload.selected || payload.value?.selected || null;
 
@@ -2982,6 +3199,60 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                     ? setupLabel(item.setupName, item.setupSlug)
                     : item.name || "";
                   const change = Number(changeOf(item));
+                  const managementRecord = item as AnyRecord;
+                  const itemCurrentR = managementRecord.currentR ?? null;
+                  const itemFreshness = String(
+                    managementRecord.priceFreshness || "UNKNOWN",
+                  ).toUpperCase();
+                  const itemManagementState = String(
+                    managementRecord.managementState ||
+                      managementRecord.entryStatus ||
+                      status ||
+                      "",
+                  ).trim();
+                  const itemTradeAction = String(
+                    managementRecord.tradeAction || "",
+                  ).trim();
+                  const itemActionable = managementRecord.isActionable ?? null;
+                  const itemStrictEligible =
+                    managementRecord.strictEligible ?? null;
+                  const itemStaleBlocked = boolish(
+                    managementRecord.stalePriceBlocked,
+                  );
+                  const itemLateBlocked = boolish(
+                    managementRecord.lateSessionBlocked,
+                  );
+                  const itemMarketClosedBlocked = boolish(
+                    managementRecord.marketClosedNewEntryBlocked,
+                  );
+                  const itemStrictReasons = stringList(
+                    managementRecord.strictBlockedReasons,
+                  );
+                  const itemManagementReasons = stringList(
+                    managementRecord.managementReasons,
+                  );
+                  const itemReasons = itemStrictReasons.length
+                    ? itemStrictReasons
+                    : itemManagementReasons;
+                  const itemTone = managementToneFromRecord({
+                    ...managementRecord,
+                    currentR: itemCurrentR,
+                    managementState: itemManagementState,
+                    tradeAction: itemTradeAction,
+                    stalePriceBlocked: itemStaleBlocked,
+                    lateSessionBlocked: itemLateBlocked,
+                    marketClosedNewEntryBlocked: itemMarketClosedBlocked,
+                    isActionable: itemActionable,
+                  });
+                  const itemActionLabel = itemTradeAction
+                    ? labelFromSnake(itemTradeAction)
+                    : itemActionable === true
+                      ? "candidate"
+                      : itemStrictEligible === false
+                        ? "monitor only"
+                        : itemManagementState
+                          ? labelFromSnake(itemManagementState)
+                          : "watch";
                   return (
                     <button
                       key={`${symbol}-${status}-${scoreOf(item)}`}
@@ -3027,6 +3298,57 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                           {formatNumber(scoreOf(item), 0)}
                         </div>
                       </div>
+
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        <span
+                          title={itemActionLabel}
+                          className={`max-w-full truncate rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] ${managementBadgeClass(itemTone)}`}
+                        >
+                          {itemActionLabel}
+                        </span>
+                        <span
+                          className={`rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] ${priceFreshnessClass(itemFreshness)}`}
+                        >
+                          {itemFreshness}
+                        </span>
+                        {Number.isFinite(Number(itemCurrentR)) ? (
+                          <span
+                            className={`rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] ${
+                              Number(itemCurrentR) >= 0
+                                ? "border-emerald-300/20 bg-emerald-300/[0.08] text-emerald-100"
+                                : "border-rose-300/20 bg-rose-300/[0.08] text-rose-100"
+                            }`}
+                          >
+                            {formatSignedR(itemCurrentR)}
+                          </span>
+                        ) : null}
+                        {itemStrictEligible === false ? (
+                          <span className="rounded-full border border-amber-300/20 bg-amber-300/[0.08] px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] text-amber-100">
+                            blocked
+                          </span>
+                        ) : null}
+                        {itemStaleBlocked ? (
+                          <span className="rounded-full border border-rose-300/20 bg-rose-300/[0.08] px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] text-rose-100">
+                            stale
+                          </span>
+                        ) : null}
+                        {itemLateBlocked ? (
+                          <span className="rounded-full border border-amber-300/20 bg-amber-300/[0.08] px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] text-amber-100">
+                            late
+                          </span>
+                        ) : null}
+                        {itemMarketClosedBlocked ? (
+                          <span className="rounded-full border border-rose-300/20 bg-rose-300/[0.08] px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] text-rose-100">
+                            closed
+                          </span>
+                        ) : null}
+                      </div>
+
+                      {itemReasons.length ? (
+                        <div className="mt-2 line-clamp-1 rounded-lg border border-white/10 bg-black/18 px-2 py-1.5 text-[10px] font-semibold leading-4 text-white/46">
+                          {labelFromSnake(itemReasons[0])}
+                        </div>
+                      ) : null}
 
                       <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.07]">
                         <div
