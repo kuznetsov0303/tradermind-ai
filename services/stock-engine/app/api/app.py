@@ -6866,14 +6866,53 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
         and setup_report.get("ok")
     )
 
-    # S8.14D intentionally exposes current raw/premium simulations as risk evidence.
-    # Clean Elite layer will become separate after enough S8.14A/C gated outcomes exist.
+    # S8.15B: Clean Elite is now a real separate ledger, not a placeholder.
+    # It intentionally ignores old raw/premium_signal records and only tracks
+    # selectedBestIdeas that passed current Elite selector gates.
+    try:
+        clean_elite_report = _s815a_clean_elite_stats(
+            initial_capital=50000,
+            risk_pct=0.01,
+            publish=True,
+        )
+    except Exception:
+        clean_elite_report = {}
+
+    clean_elite_summary = (
+        clean_elite_report.get("summary")
+        if isinstance(clean_elite_report.get("summary"), dict)
+        else {}
+    )
+
+    clean_elite_closed = int(_s814d_num(clean_elite_summary.get("closed"), 0) or 0)
+    clean_elite_win_rate = _s814d_num(clean_elite_summary.get("winRateClosed"), None)
+    clean_elite_avg_r = _s814d_num(clean_elite_summary.get("avgResultRClosed"), None)
+
+    if clean_elite_closed >= 100 and clean_elite_win_rate is not None and clean_elite_win_rate >= 65 and clean_elite_avg_r is not None and clean_elite_avg_r > 0:
+        clean_elite_status = "investor_grade_sample_ready"
+    elif clean_elite_closed >= 50:
+        clean_elite_status = "clean_elite_sample_under_review"
+    else:
+        clean_elite_status = "collecting_clean_elite_sample"
+
     clean_elite_snapshot = {
-        "closedTrades": 0,
-        "winRateClosed": None,
-        "avgResultRClosed": None,
-        "status": "collecting_clean_elite_sample",
-        "note": "Clean Elite performance is intentionally separated from raw/premium historical candidate outcomes.",
+        "status": clean_elite_status,
+        "ledgerCount": clean_elite_summary.get("ledgerCount"),
+        "closedTrades": clean_elite_summary.get("closed"),
+        "openTrades": clean_elite_summary.get("open"),
+        "worked": clean_elite_summary.get("worked"),
+        "failed": clean_elite_summary.get("failed"),
+        "winRateClosed": clean_elite_summary.get("winRateClosed"),
+        "avgResultRClosed": clean_elite_summary.get("avgResultRClosed"),
+        "finalEquity": clean_elite_summary.get("finalEquity"),
+        "totalReturnPct": clean_elite_summary.get("totalReturnPct"),
+        "maxDrawdownPct": clean_elite_summary.get("maxDrawdownPct"),
+        "riskPctPerTrade": 1.0,
+        "equityCurve": clean_elite_report.get("equityCurve") if isinstance(clean_elite_report.get("equityCurve"), list) else [],
+        "setupStats": clean_elite_report.get("setupStats") if isinstance(clean_elite_report.get("setupStats"), list) else [],
+        "recent": clean_elite_report.get("recent") if isinstance(clean_elite_report.get("recent"), list) else [],
+        "sourceVersion": clean_elite_report.get("version"),
+        "note": "Clean Elite performance is separated from raw candidates and old premium_signal. This is the future product-performance KPI layer.",
     }
 
     setup_cards = _s814d_setup_cards(setup_rows)
@@ -6907,6 +6946,12 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "selectedBestCount": investor_summary.get("selectedBestCount"),
             "selectedSymbols": investor_summary.get("selectedSymbols"),
             "setupCount": setup_summary.get("setupCount"),
+            "cleanEliteLedgerCount": clean_elite_snapshot.get("ledgerCount"),
+            "cleanEliteClosedTrades": clean_elite_snapshot.get("closedTrades"),
+            "cleanEliteWinRateClosed": clean_elite_snapshot.get("winRateClosed"),
+            "cleanEliteAvgResultRClosed": clean_elite_snapshot.get("avgResultRClosed"),
+            "cleanEliteFinalEquity": clean_elite_snapshot.get("finalEquity"),
+            "cleanEliteMaxDrawdownPct": clean_elite_snapshot.get("maxDrawdownPct"),
         },
         "equitySimulation": {
             "startingCapital": 50000,
@@ -6916,6 +6961,7 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "telegramEligibleClosedOutcomes": telegram_sim,
             "cleanEliteLayer": clean_elite_snapshot,
         },
+        "cleanElitePerformance": clean_elite_snapshot,
         "setupLearning": {
             "promoteForEliteTest": setup_summary.get("promoteForEliteTest"),
             "keepAndTighten": setup_summary.get("keepAndTighten"),
@@ -6932,9 +6978,9 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
         ),
         "investorNarrative": {
             "currentTruth": "The raw/premium historical candidate layer is not investor-grade yet. It is being used to train the selector.",
-            "whatImproved": "S8.14A/C now blocks weak setups from best/elite selection based on entry health, RR, and setup-learning evidence.",
-            "whyNoAggressiveMarketingYet": "Marketing should wait until the clean Elite layer has enough closed outcomes with stable win rate, positive expectancy, and controlled drawdown.",
-            "nextEngineeringStep": "Use this snapshot for Admin Investor Dashboard UI and then track clean Elite-only outcomes separately.",
+            "whatImproved": "S8.14A/C blocks weak setups from best/elite selection, and S8.15A/B now tracks Clean Elite performance in a separate ledger.",
+            "whyNoAggressiveMarketingYet": "Marketing should wait until the clean Elite layer has 50-100+ closed outcomes with stable win rate, positive expectancy, and controlled drawdown.",
+            "nextEngineeringStep": "Accumulate Clean Elite outcomes, then use only Clean Elite metrics for product-performance claims and launch readiness.",
         },
     }
 
