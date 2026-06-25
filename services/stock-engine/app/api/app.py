@@ -5810,10 +5810,134 @@ def _s515_build_daily_forward_report(
             str(row.get("symbol") or ""),
         ),
     )
+    def _s814a_elite_signal_gate(row: dict[str, Any]) -> dict[str, Any]:
+        """Evidence-aware elite gate.
+
+        S8.14A separates product depth from paid/live quality:
+        - weak setups can remain visible as monitor/paper ideas;
+        - selectedBestIdeas must be closer to a professional desk-quality idea;
+        - late-session reclaim/breakout/chase patterns are blocked from best selection.
+        """
+        setup_slug = str(row.get("setupSlug") or "").strip()
+        health = row.get("entryHealth") if isinstance(row.get("entryHealth"), dict) else {}
+        health_state = str(health.get("state") or "").upper().strip()
+
+        rr = float(_s515_num(row.get("rrToTp1"), 0) or 0)
+        score = float(_s515_num(row.get("score"), 0) or 0)
+        selector_score = float(_s515_num(row.get("selectorScore"), 0) or 0)
+        current_r_raw = _s515_num(row.get("currentR"), None)
+        current_r = float(current_r_raw) if current_r_raw is not None else None
+
+        minutes_to_close_raw = _s515_num(row.get("minutesToCloseAtSignal"), None)
+        minutes_to_close = float(minutes_to_close_raw) if minutes_to_close_raw is not None else None
+        late_session_blocked = bool(row.get("lateSessionBlocked"))
+        telegram_passed = bool(row.get("telegramPassed"))
+        strict_eligible = bool(row.get("strictEligible"))
+        desk_passed = bool(row.get("deskPassed"))
+
+        reasons: list[str] = []
+        passed = True
+
+        positive_evidence_setups = {
+            "vwap_rejection_short",
+            "gap_hold_continuation_long",
+            "opening_range_breakdown_short",
+        }
+
+        weak_until_retested_setups = {
+            "vwap_reclaim_long",
+            "large_cap_vwap_trend_long",
+            "gap_and_crap_short",
+            "opening_range_breakout_long",
+            "large_cap_gap_continuation",
+            "orb_pullback_continuation",
+        }
+
+        # Base professional gate.
+        if health.get("paperTestOk") is not True:
+            passed = False
+            reasons.append("s814a_requires_entry_health_paper_test_ok")
+
+        if health_state in {
+            "NEAR_STOP_AVOID",
+            "WEAK_NEAR_STOP_WAIT_REENTRY",
+            "EXTENDED_DO_NOT_CHASE",
+            "DO_NOT_TRADE_CLOSED_OR_INVALID",
+            "CAUTION_AGAINST_ENTRY",
+        }:
+            passed = False
+            reasons.append(f"s814a_blocks_entry_health:{health_state.lower()}")
+
+        if not desk_passed:
+            passed = False
+            reasons.append("s814a_requires_desk_quality_passed")
+
+        if rr < 2.2:
+            passed = False
+            reasons.append("s814a_requires_rr_2_2_plus")
+
+        if score < 88:
+            passed = False
+            reasons.append("s814a_requires_score_88_plus")
+
+        # Late-session psychological/FOMO guard.
+        if late_session_blocked:
+            passed = False
+            reasons.append("s814a_blocks_late_session_new_entry")
+
+        if minutes_to_close is not None and 0 <= minutes_to_close <= 20 and setup_slug in {
+            "vwap_reclaim_long",
+            "opening_range_breakout_long",
+            "large_cap_vwap_trend_long",
+            "large_cap_gap_continuation",
+        }:
+            passed = False
+            reasons.append("s814a_blocks_late_reclaim_or_breakout_long")
+
+        # Do not select weak families unless they are truly super-confirmed.
+        if setup_slug in weak_until_retested_setups:
+            super_confirmed = (
+                telegram_passed
+                and strict_eligible
+                and rr >= 2.5
+                and score >= 95
+                and selector_score >= 90
+                and (current_r is None or current_r >= 0)
+                and not late_session_blocked
+            )
+            if not super_confirmed:
+                passed = False
+                reasons.append(f"s814a_weak_setup_monitor_only_until_super_confirmed:{setup_slug}")
+
+        # Positive-evidence setups still need clean entry and RR, but do not require super confirmation.
+        if setup_slug in positive_evidence_setups:
+            if rr < 2.2:
+                passed = False
+                reasons.append(f"s814a_positive_setup_still_requires_rr_2_2:{setup_slug}")
+
+        return {
+            "passed": bool(passed),
+            "reasons": reasons[:10],
+            "setupEvidenceBucket": (
+                "positive_evidence"
+                if setup_slug in positive_evidence_setups
+                else "weak_until_retested"
+                if setup_slug in weak_until_retested_setups
+                else "neutral"
+            ),
+            "eliteLiveTargetWinRate": 65,
+            "note": "S8.14A gate protects Elite/best selection. Weak setups remain available as monitor/paper/training ideas.",
+        }
+
     def _s516b_selection_ok(row: dict[str, Any]) -> bool:
         health = row.get("entryHealth") if isinstance(row.get("entryHealth"), dict) else {}
         health_state = str(health.get("state") or "").upper().strip()
         if health.get("paperTestOk") is not True:
+            row["s814aEliteGate"] = {
+                "passed": False,
+                "reasons": ["s516b_entry_health_paper_test_not_ok"],
+                "setupEvidenceBucket": "unknown",
+            }
             return False
         if health_state in {
             "NEAR_STOP_AVOID",
@@ -5821,18 +5945,38 @@ def _s515_build_daily_forward_report(
             "EXTENDED_DO_NOT_CHASE",
             "DO_NOT_TRADE_CLOSED_OR_INVALID",
         }:
+            row["s814aEliteGate"] = {
+                "passed": False,
+                "reasons": [f"s516b_entry_health_block:{health_state.lower()}"],
+                "setupEvidenceBucket": "unknown",
+            }
             return False
+
+        base_ok = False
         if row.get("strictEligible") is True:
-            return True
-        # Backward-safe fallback: older compact rows may miss strictEligible even though
-        # they came from S5.14 strict-selected / strict-ranked rows.
-        return (
-            bool(row.get("deskPassed"))
-            and (_s515_num(row.get("score"), 0) or 0) >= 78
-            and (_s515_num(row.get("rrToTp1"), 0) or 0) >= 2
-            and str(row.get("tier") or "") in {"ELITE_READY", "BEST_DESK_IDEA", "NEAR_ELITE"}
-            and bool(row.get("whySelected"))
-        )
+            base_ok = True
+        else:
+            # Backward-safe fallback: older compact rows may miss strictEligible even though
+            # they came from S5.14 strict-selected / strict-ranked rows.
+            base_ok = (
+                bool(row.get("deskPassed"))
+                and (_s515_num(row.get("score"), 0) or 0) >= 78
+                and (_s515_num(row.get("rrToTp1"), 0) or 0) >= 2
+                and str(row.get("tier") or "") in {"ELITE_READY", "BEST_DESK_IDEA", "NEAR_ELITE"}
+                and bool(row.get("whySelected"))
+            )
+
+        gate = _s814a_elite_signal_gate(row)
+        row["s814aEliteGate"] = gate
+
+        if not gate.get("passed"):
+            existing = row.get("strictBlockedReasons") if isinstance(row.get("strictBlockedReasons"), list) else []
+            row["strictBlockedReasons"] = list(existing) + list(gate.get("reasons") or [])
+            if not row.get("whyNotElite"):
+                row["whyNotElite"] = list(gate.get("reasons") or [])
+            return False
+
+        return bool(base_ok)
 
     selected_rows = [
         row for row in ranked_candidate_rows
