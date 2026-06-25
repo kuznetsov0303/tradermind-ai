@@ -5755,6 +5755,199 @@ def _s515_compact_outcome(item: dict[str, Any] | None) -> dict[str, Any] | None:
     }
 
 
+
+# === S8.14C Learning-Aware Selector Penalties ================================
+S814C_SELECTOR_LEARNING_VERSION = "s8_14c_learning_aware_selector_v1"
+
+
+def _s814c_load_setup_learning_map() -> dict[str, dict[str, Any]]:
+    """Load latest setup-learning output for selector penalties.
+
+    This makes S8.14B actionable:
+    the selector does not only report weak setups; it can demote them from
+    selectedBestIdeas until evidence improves.
+    """
+    try:
+        import json
+        from pathlib import Path
+
+        path = Path("reports/setup_learning/latest.json")
+        if not path.exists():
+            return {}
+
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        rows = payload.get("setupLearning") if isinstance(payload, dict) else []
+        if not isinstance(rows, list):
+            return {}
+
+        out: dict[str, dict[str, Any]] = {}
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            slug = str(row.get("setupSlug") or "").strip()
+            if slug:
+                out[slug] = row
+        return out
+    except Exception:
+        return {}
+
+
+def _s814c_pattern_names(learning: dict[str, Any]) -> set[str]:
+    rows = learning.get("topFailurePatterns") if isinstance(learning, dict) else []
+    names: set[str] = set()
+    if isinstance(rows, list):
+        for row in rows:
+            if isinstance(row, dict) and row.get("pattern"):
+                names.add(str(row.get("pattern")))
+    return names
+
+
+def _s814c_learning_gate_for_row(
+    row: dict[str, Any],
+    setup_learning_map: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    setup_slug = str(row.get("setupSlug") or "").strip()
+    learning = setup_learning_map.get(setup_slug) if setup_slug else None
+
+    if not isinstance(learning, dict) or not learning:
+        return {
+            "passed": True,
+            "action": "ALLOW_NO_LEARNING_SAMPLE_YET",
+            "version": S814C_SELECTOR_LEARNING_VERSION,
+            "reasons": [],
+            "setupLearningStatus": "NO_SAMPLE",
+            "note": "No setup-learning row yet; S8.14A base gate still applies.",
+        }
+
+    status = str(learning.get("learningStatus") or "").upper().strip()
+    closed = int(_s515_num(learning.get("closed"), 0) or 0)
+    win_rate = _s515_num(learning.get("winRateClosed"), None)
+    avg_r = _s515_num(learning.get("avgResultRClosed"), None)
+    patterns = _s814c_pattern_names(learning)
+
+    rr = float(_s515_num(row.get("rrToTp1"), 0) or 0)
+    score = float(_s515_num(row.get("score"), 0) or 0)
+    selector_score = float(_s515_num(row.get("selectorScore"), 0) or 0)
+    current_r_raw = _s515_num(row.get("currentR"), None)
+    current_r = float(current_r_raw) if current_r_raw is not None else None
+
+    late_session_blocked = bool(row.get("lateSessionBlocked"))
+    telegram_passed = bool(row.get("telegramPassed"))
+    strict_eligible = bool(row.get("strictEligible"))
+    desk_passed = bool(row.get("deskPassed"))
+
+    passed = True
+    action = "ALLOW"
+    reasons: list[str] = []
+
+    super_confirmed = (
+        telegram_passed
+        and strict_eligible
+        and desk_passed
+        and rr >= 2.5
+        and score >= 95
+        and selector_score >= 90
+        and not late_session_blocked
+        and (current_r is None or current_r >= 0)
+    )
+
+    clean_tightened = (
+        desk_passed
+        and rr >= 2.2
+        and score >= 90
+        and selector_score >= 80
+        and not late_session_blocked
+        and (current_r is None or current_r >= -0.25)
+    )
+
+    if status == "DEMOTE_TO_MONITOR_ONLY" and closed >= 10:
+        if not super_confirmed:
+            passed = False
+            action = "BLOCK_TO_MONITOR_ONLY"
+            reasons.append(f"s814c_learning_demotes_setup:{setup_slug}")
+
+    elif status == "KEEP_AND_TIGHTEN":
+        action = "ALLOW_ONLY_IF_TIGHTENED"
+        if not clean_tightened:
+            passed = False
+            reasons.append(f"s814c_learning_requires_tightened_conditions:{setup_slug}")
+
+        if "fast_stop_within_10m" in patterns and not strict_eligible:
+            passed = False
+            reasons.append("s814c_requires_strict_eligible_after_fast_stop_pattern")
+
+        if "short_entry_before_real_breakdown" in patterns and not telegram_passed:
+            passed = False
+            reasons.append("s814c_requires_telegram_grade_confirmation_after_short_breakdown_failures")
+
+    elif status == "PAPER_ONLY_UNTIL_SAMPLE_GROWS":
+        action = "PAPER_ONLY_UNTIL_SAMPLE_GROWS"
+        if not super_confirmed:
+            passed = False
+            reasons.append(f"s814c_paper_only_until_sample_grows:{setup_slug}")
+
+    elif status == "PROMOTE_FOR_ELITE_TEST":
+        action = "PROMOTE_FOR_ELITE_TEST"
+        if not clean_tightened:
+            passed = False
+            reasons.append(f"s814c_promoted_setup_still_requires_clean_entry:{setup_slug}")
+
+    elif status == "NEUTRAL_RETEST":
+        action = "ALLOW_ONLY_IF_CLEAN_RETEST"
+        if not clean_tightened:
+            passed = False
+            reasons.append(f"s814c_neutral_retest_requires_clean_conditions:{setup_slug}")
+
+    # Universal pattern-specific guards.
+    if "late_session_fomo_long" in patterns and late_session_blocked:
+        passed = False
+        reasons.append("s814c_blocks_known_late_session_fomo_pattern")
+
+    if "rr_below_elite_threshold" in patterns and rr < 2.2:
+        passed = False
+        reasons.append("s814c_blocks_known_low_rr_pattern")
+
+    if "single_reclaim_trigger_needs_hold_confirmation" in patterns:
+        setup = setup_slug
+        if setup == "vwap_reclaim_long" and not super_confirmed:
+            passed = False
+            reasons.append("s814c_reclaim_requires_hold_confirmation_or_super_confirmed")
+
+    return {
+        "passed": bool(passed),
+        "action": action,
+        "version": S814C_SELECTOR_LEARNING_VERSION,
+        "reasons": reasons[:10],
+        "setupLearningStatus": status,
+        "setupClosed": closed,
+        "setupWinRateClosed": win_rate,
+        "setupAvgResultRClosed": avg_r,
+        "topFailurePatterns": sorted(patterns)[:8],
+        "eliteLiveTargetWinRate": 65,
+    }
+
+
+def _s814c_count_learning_blocks(candidate_rows: list[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for row in candidate_rows or []:
+        gate = row.get("s814cLearningGate") if isinstance(row.get("s814cLearningGate"), dict) else {}
+        for reason in gate.get("reasons") or []:
+            key = str(reason)
+            if key:
+                counts[key] = counts.get(key, 0) + 1
+    return counts
+
+
+def _s814c_count_learning_statuses(candidate_rows: list[dict[str, Any]]) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for row in candidate_rows or []:
+        gate = row.get("s814cLearningGate") if isinstance(row.get("s814cLearningGate"), dict) else {}
+        status = str(gate.get("setupLearningStatus") or "UNKNOWN")
+        counts[status] = counts.get(status, 0) + 1
+    return counts
+
+# === /S8.14C ================================================================
+
 def _s515_build_daily_forward_report(
     *,
     date: str | None = None,
@@ -5765,6 +5958,7 @@ def _s515_build_daily_forward_report(
     safe_limit = max(20, min(int(limit or 160), 250))
     safe_max_best = max(1, min(int(max_best or 5), 8))
     date_key = _s515_date_key(date)
+    setup_learning_map = _s814c_load_setup_learning_map()
 
     direct_lifecycle_items, lifecycle_source = _s515_load_lifecycle_items_direct()
 
@@ -5969,11 +6163,21 @@ def _s515_build_daily_forward_report(
         gate = _s814a_elite_signal_gate(row)
         row["s814aEliteGate"] = gate
 
+        learning_gate = _s814c_learning_gate_for_row(row, setup_learning_map)
+        row["s814cLearningGate"] = learning_gate
+
         if not gate.get("passed"):
             existing = row.get("strictBlockedReasons") if isinstance(row.get("strictBlockedReasons"), list) else []
             row["strictBlockedReasons"] = list(existing) + list(gate.get("reasons") or [])
             if not row.get("whyNotElite"):
                 row["whyNotElite"] = list(gate.get("reasons") or [])
+            return False
+
+        if not learning_gate.get("passed"):
+            existing = row.get("strictBlockedReasons") if isinstance(row.get("strictBlockedReasons"), list) else []
+            row["strictBlockedReasons"] = list(existing) + list(learning_gate.get("reasons") or [])
+            if not row.get("whyNotElite"):
+                row["whyNotElite"] = list(learning_gate.get("reasons") or [])
             return False
 
         return bool(base_ok)
@@ -5992,6 +6196,8 @@ def _s515_build_daily_forward_report(
     ])
     candidate_entry_health_counts = _s516_counts_by_entry_health(candidate_rows)
     selected_entry_health_counts = _s516_counts_by_entry_health(selected_rows)
+    s814c_learning_block_counts = _s814c_count_learning_blocks(candidate_rows)
+    s814c_learning_status_counts = _s814c_count_learning_statuses(candidate_rows)
 
     no_trade_reasons: list[str] = []
     strict_blocked = best_selector.get("totals", {}).get("strictBlockedByReason") if isinstance(best_selector.get("totals"), dict) else {}
@@ -6002,6 +6208,9 @@ def _s515_build_daily_forward_report(
         if isinstance(strict_blocked, dict) and strict_blocked:
             top_reasons = sorted(strict_blocked.items(), key=lambda row: int(row[1] or 0), reverse=True)[:5]
             no_trade_reasons.extend([f"blocked:{reason}:{count}" for reason, count in top_reasons])
+        if s814c_learning_block_counts:
+            top_learning_reasons = sorted(s814c_learning_block_counts.items(), key=lambda row: int(row[1] or 0), reverse=True)[:5]
+            no_trade_reasons.extend([f"learning_blocked:{reason}:{count}" for reason, count in top_learning_reasons])
         elif active_items:
             no_trade_reasons.append("active_items_exist_but_none_passed_strict_selector")
         else:
@@ -6060,6 +6269,10 @@ def _s515_build_daily_forward_report(
             "entryHealthByState": candidate_entry_health_counts,
             "strictBlockedByReason": strict_blocked if isinstance(strict_blocked, dict) else {},
             "telegramBlockedByReason": quality.get("byTelegramBlockReason") if isinstance(quality.get("byTelegramBlockReason"), list) else [],
+            "s814cLearningBlockedByReason": s814c_learning_block_counts,
+            "s814cLearningStatusBySetup": s814c_learning_status_counts,
+            "s814cSetupLearningLoaded": len(setup_learning_map),
+            "s814cVersion": S814C_SELECTOR_LEARNING_VERSION,
         },
         "outcomes": {
             "matchedSelectedOutcomes": len([row for row in selected_rows if row.get("outcome")]),
