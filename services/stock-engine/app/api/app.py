@@ -6687,6 +6687,298 @@ def engine_evidence_cache():
 # === /S8.12C ================================================================
 
 
+
+# === S8.14D Investor Dashboard Snapshot API ==================================
+S814D_INVESTOR_DASHBOARD_VERSION = "s8_14d_investor_dashboard_snapshot_v1"
+S814D_INVESTOR_DASHBOARD_CACHE_KEY = "engine:investor_dashboard:snapshot"
+
+
+def _s814d_read_report_json(path_value: str) -> dict[str, Any]:
+    try:
+        import json
+        from pathlib import Path
+
+        path = Path(path_value)
+        if not path.exists():
+            return {}
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else {}
+    except Exception:
+        return {}
+
+
+def _s814d_num(value: Any, default: float | None = None) -> float | None:
+    try:
+        if value is None or value == "":
+            return default
+        out = float(value)
+        if out != out:
+            return default
+        return out
+    except Exception:
+        return default
+
+
+def _s814d_compact_simulation(sim: dict[str, Any] | None) -> dict[str, Any]:
+    if not isinstance(sim, dict):
+        sim = {}
+
+    return {
+        "initialCapital": _s814d_num(sim.get("initialCapital"), 50000),
+        "riskPctPerTrade": _s814d_num(sim.get("riskPctPerTrade"), None),
+        "closedTrades": int(_s814d_num(sim.get("closedTrades"), 0) or 0),
+        "finalEquity": _s814d_num(sim.get("finalEquity"), None),
+        "totalReturnPct": _s814d_num(sim.get("totalReturnPct"), None),
+        "maxDrawdownPct": _s814d_num(sim.get("maxDrawdownPct"), None),
+        "curveSample": sim.get("curveSample") if isinstance(sim.get("curveSample"), list) else [],
+        "note": sim.get("note") or "Paper simulation from stored outcomes only; not a live performance claim.",
+    }
+
+
+def _s814d_setup_cards(setup_learning_rows: list[Any]) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for row in setup_learning_rows:
+        if not isinstance(row, dict):
+            continue
+
+        status = str(row.get("learningStatus") or "UNKNOWN")
+        avg_r = _s814d_num(row.get("avgResultRClosed"), None)
+        win_rate = _s814d_num(row.get("winRateClosed"), None)
+        closed = int(_s814d_num(row.get("closed"), 0) or 0)
+
+        if status == "PROMOTE_FOR_ELITE_TEST":
+            investor_tone = "positive"
+            investor_label = "Candidate for elite testing"
+        elif status == "KEEP_AND_TIGHTEN":
+            investor_tone = "watch"
+            investor_label = "Keep, but tighten rules"
+        elif status == "DEMOTE_TO_MONITOR_ONLY":
+            investor_tone = "risk"
+            investor_label = "Demoted to monitor-only"
+        elif status == "PAPER_ONLY_UNTIL_SAMPLE_GROWS":
+            investor_tone = "neutral"
+            investor_label = "Paper-only until sample grows"
+        else:
+            investor_tone = "neutral"
+            investor_label = "Needs more evidence"
+
+        out.append({
+            "setupSlug": row.get("setupSlug"),
+            "learningStatus": status,
+            "investorTone": investor_tone,
+            "investorLabel": investor_label,
+            "closed": closed,
+            "worked": row.get("worked"),
+            "failed": row.get("failed"),
+            "winRateClosed": win_rate,
+            "avgResultRClosed": avg_r,
+            "avgMfeR": _s814d_num(row.get("avgMfeR"), None),
+            "avgMaeR": _s814d_num(row.get("avgMaeR"), None),
+            "topFailurePatterns": row.get("topFailurePatterns") if isinstance(row.get("topFailurePatterns"), list) else [],
+            "recommendedRules": row.get("recommendedRules") if isinstance(row.get("recommendedRules"), list) else [],
+        })
+
+    return out
+
+
+def _s814d_marketing_readiness(
+    *,
+    automation_ok: bool,
+    setup_summary: dict[str, Any],
+    all_sim: dict[str, Any],
+    elite_snapshot: dict[str, Any],
+) -> dict[str, Any]:
+    closed = int(_s814d_num(setup_summary.get("closed"), 0) or 0)
+    win_rate = _s814d_num(setup_summary.get("winRateClosed"), 0) or 0
+    avg_r = _s814d_num(setup_summary.get("avgResultRClosed"), 0) or 0
+    max_dd = _s814d_num(all_sim.get("maxDrawdownPct"), None)
+    elite_closed = int(_s814d_num(elite_snapshot.get("closedTrades"), 0) or 0)
+    elite_win_rate = _s814d_num(elite_snapshot.get("winRateClosed"), None)
+
+    blockers: list[str] = []
+    positives: list[str] = []
+
+    if automation_ok:
+        positives.append("post_close_automation_and_learning_reports_are_running")
+    else:
+        blockers.append("automation_not_stable_yet")
+
+    if closed >= 500:
+        positives.append("raw_outcome_sample_is_large_enough_for_filter_learning")
+    else:
+        blockers.append("need_more_raw_outcomes_for_learning_confidence")
+
+    if win_rate < 55:
+        blockers.append("raw_layer_win_rate_is_not_marketable")
+    if avg_r <= 0:
+        blockers.append("raw_layer_expectancy_is_not_positive")
+    if max_dd is not None and max_dd < -15:
+        blockers.append("raw_layer_drawdown_is_too_large_for_investor_story")
+
+    if elite_closed < 50:
+        blockers.append("need_50_to_100_closed_clean_elite_signals_before_aggressive_marketing")
+    if elite_win_rate is None or elite_win_rate < 60:
+        blockers.append("need_clean_elite_win_rate_near_60_65_percent")
+
+    if not blockers:
+        status = "READY_FOR_MARKETING_SCALE"
+        recommendation = "Marketing can scale with evidence, risk disclosure, and investor dashboard."
+    elif automation_ok and closed >= 100:
+        status = "PRIVATE_BETA_AND_WAITLIST"
+        recommendation = "Use waitlist, private beta, demos, and behind-the-scenes content. Do not market as finished performance product yet."
+    else:
+        status = "BUILD_AND_COLLECT_EVIDENCE"
+        recommendation = "Keep building automation and forward evidence before marketing."
+
+    return {
+        "status": status,
+        "recommendation": recommendation,
+        "targetEliteWinRate": 65,
+        "minimumEliteClosedSignalsBeforeScale": 50,
+        "preferredEliteClosedSignalsBeforeScale": 100,
+        "positives": positives,
+        "blockers": blockers,
+    }
+
+
+def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
+    setup_report = _s814d_read_report_json("reports/setup_learning/latest.json")
+    post_close_report = _s814d_read_report_json("reports/post_close_evidence/latest.json")
+    evidence_report = _s814d_read_report_json("reports/investor_evidence/latest.json")
+
+    setup_summary = setup_report.get("summary") if isinstance(setup_report.get("summary"), dict) else {}
+    setup_rows = setup_report.get("setupLearning") if isinstance(setup_report.get("setupLearning"), list) else []
+
+    investor_summary = evidence_report.get("investorSummary") if isinstance(evidence_report.get("investorSummary"), dict) else {}
+    post_close_summary = post_close_report.get("summary") if isinstance(post_close_report.get("summary"), dict) else {}
+
+    sim = setup_report.get("investorSimulationDraft") if isinstance(setup_report.get("investorSimulationDraft"), dict) else {}
+    all_sim = _s814d_compact_simulation(sim.get("allClosedOutcomes") if isinstance(sim.get("allClosedOutcomes"), dict) else {})
+    premium_sim = _s814d_compact_simulation(sim.get("premiumClosedOutcomes") if isinstance(sim.get("premiumClosedOutcomes"), dict) else {})
+    telegram_sim = _s814d_compact_simulation(sim.get("telegramEligibleClosedOutcomes") if isinstance(sim.get("telegramEligibleClosedOutcomes"), dict) else {})
+
+    automation_ok = bool(
+        post_close_report.get("ok")
+        and post_close_summary.get("healthOk")
+        and post_close_summary.get("outcomesOk")
+        and post_close_summary.get("forwardReportOk")
+        and post_close_summary.get("evidenceOk")
+        and setup_report.get("ok")
+    )
+
+    # S8.14D intentionally exposes current raw/premium simulations as risk evidence.
+    # Clean Elite layer will become separate after enough S8.14A/C gated outcomes exist.
+    clean_elite_snapshot = {
+        "closedTrades": 0,
+        "winRateClosed": None,
+        "avgResultRClosed": None,
+        "status": "collecting_clean_elite_sample",
+        "note": "Clean Elite performance is intentionally separated from raw/premium historical candidate outcomes.",
+    }
+
+    setup_cards = _s814d_setup_cards(setup_rows)
+
+    payload = {
+        "ok": True,
+        "version": S814D_INVESTOR_DASHBOARD_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "headline": "SkillEdge AI Investor Evidence Dashboard",
+        "productMode": "ai_trading_desk_forward_evidence",
+        "automation": {
+            "postClosePipelineOk": automation_ok,
+            "postCloseGeneratedAt": post_close_report.get("generatedAt"),
+            "setupLearningGeneratedAt": setup_report.get("generatedAt"),
+            "investorEvidenceGeneratedAt": evidence_report.get("generatedAt"),
+            "reports": {
+                "postClose": post_close_report.get("reportFile"),
+                "setupLearning": setup_report.get("reportFile"),
+                "investorEvidence": evidence_report.get("reportFile"),
+            },
+        },
+        "headlineMetrics": {
+            "rawClosedOutcomes": setup_summary.get("closed"),
+            "rawWinRateClosed": setup_summary.get("winRateClosed"),
+            "rawAvgResultRClosed": setup_summary.get("avgResultRClosed"),
+            "rawWorked": setup_summary.get("worked"),
+            "rawFailed": setup_summary.get("failed"),
+            "investorEvidenceClosed": investor_summary.get("globalClosedOutcomes"),
+            "investorEvidenceWinRate": investor_summary.get("globalWinRateClosed"),
+            "investorEvidenceAvgR": investor_summary.get("globalAvgResultRClosed"),
+            "selectedBestCount": investor_summary.get("selectedBestCount"),
+            "selectedSymbols": investor_summary.get("selectedSymbols"),
+            "setupCount": setup_summary.get("setupCount"),
+        },
+        "equitySimulation": {
+            "startingCapital": 50000,
+            "riskDisclosure": "Simulation uses stored outcomes and fixed fractional risk. It is not a live audited track record.",
+            "allClosedOutcomes": all_sim,
+            "premiumClosedOutcomes": premium_sim,
+            "telegramEligibleClosedOutcomes": telegram_sim,
+            "cleanEliteLayer": clean_elite_snapshot,
+        },
+        "setupLearning": {
+            "promoteForEliteTest": setup_summary.get("promoteForEliteTest"),
+            "keepAndTighten": setup_summary.get("keepAndTighten"),
+            "demoteToMonitorOnly": setup_summary.get("demoteToMonitorOnly"),
+            "topGlobalFailurePatterns": setup_summary.get("topGlobalFailurePatterns"),
+            "cards": setup_cards,
+        },
+        "aiLearningLog": setup_report.get("aiLearningLog") if isinstance(setup_report.get("aiLearningLog"), list) else [],
+        "marketingReadiness": _s814d_marketing_readiness(
+            automation_ok=automation_ok,
+            setup_summary=setup_summary,
+            all_sim=all_sim,
+            elite_snapshot=clean_elite_snapshot,
+        ),
+        "investorNarrative": {
+            "currentTruth": "The raw/premium historical candidate layer is not investor-grade yet. It is being used to train the selector.",
+            "whatImproved": "S8.14A/C now blocks weak setups from best/elite selection based on entry health, RR, and setup-learning evidence.",
+            "whyNoAggressiveMarketingYet": "Marketing should wait until the clean Elite layer has enough closed outcomes with stable win rate, positive expectancy, and controlled drawdown.",
+            "nextEngineeringStep": "Use this snapshot for Admin Investor Dashboard UI and then track clean Elite-only outcomes separately.",
+        },
+    }
+
+    return payload
+
+
+@app.get("/engine/investor-dashboard/snapshot")
+def engine_investor_dashboard_snapshot(publish: bool = False):
+    payload = _s814d_build_investor_dashboard_snapshot()
+    if publish:
+        runtime_cache.set_json(S814D_INVESTOR_DASHBOARD_CACHE_KEY, payload, ttl_seconds=24 * 60 * 60)
+    return {
+        "ok": True,
+        "value": payload,
+        "storageVersion": S814D_INVESTOR_DASHBOARD_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+
+@app.post("/engine/investor-dashboard/run")
+def engine_investor_dashboard_run(publish: bool = True):
+    payload = _s814d_build_investor_dashboard_snapshot()
+    if publish:
+        runtime_cache.set_json(S814D_INVESTOR_DASHBOARD_CACHE_KEY, payload, ttl_seconds=24 * 60 * 60)
+    return {
+        "ok": True,
+        "value": payload,
+        "storageVersion": S814D_INVESTOR_DASHBOARD_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+
+@app.get("/engine/investor-dashboard/cache")
+def engine_investor_dashboard_cache():
+    payload = runtime_cache.get_json(S814D_INVESTOR_DASHBOARD_CACHE_KEY)
+    return {
+        "ok": isinstance(payload, dict),
+        "value": payload if isinstance(payload, dict) else None,
+        "storageVersion": S814D_INVESTOR_DASHBOARD_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+# === /S8.14D ================================================================
+
 # ---------------------------------------------------------------------------
 # S6.1 Historical Replay Foundation / Self-Learning Readiness
 # ---------------------------------------------------------------------------
