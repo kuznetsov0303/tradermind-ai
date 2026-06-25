@@ -5758,6 +5758,7 @@ def _s515_compact_outcome(item: dict[str, Any] | None) -> dict[str, Any] | None:
 
 # === S8.14C Learning-Aware Selector Penalties ================================
 S814C_SELECTOR_LEARNING_VERSION = "s8_14c_learning_aware_selector_v1"
+S816A_ELITE_TEST_MODE_VERSION = "s8_16a_elite_test_mode_v1"
 
 
 def _s814c_load_setup_learning_map() -> dict[str, dict[str, Any]]:
@@ -6182,13 +6183,107 @@ def _s515_build_daily_forward_report(
 
         return bool(base_ok)
 
+    def _s816a_row_key(row: dict[str, Any]) -> str:
+        return "|".join([
+            str(row.get("signalId") or row.get("signal_id") or ""),
+            str(row.get("symbol") or ""),
+            str(row.get("setupSlug") or row.get("setup_slug") or ""),
+            str(row.get("triggerTime") or row.get("trigger_time") or row.get("createdAt") or ""),
+        ])
+
+
+    def _s816a_test_gate(row: dict[str, Any]) -> dict[str, Any]:
+        health = row.get("entryHealth") if isinstance(row.get("entryHealth"), dict) else {}
+        health_state = str(health.get("state") or "").upper().strip()
+        lifecycle = row.get("lifecycle") if isinstance(row.get("lifecycle"), dict) else {}
+        lifecycle_status = str(lifecycle.get("status") or row.get("status") or "").upper().strip()
+
+        rr = float(_s515_num(row.get("rrToTp1"), 0) or 0)
+        score = float(_s515_num(row.get("score"), 0) or 0)
+        selector_score = float(_s515_num(row.get("selectorScore"), 0) or 0)
+
+        passed = True
+        reasons: list[str] = []
+
+        if health.get("paperTestOk") is not True:
+            passed = False
+            reasons.append("test_requires_paper_test_ok")
+
+        if health_state not in {"HEALTHY_ENTRY_ZONE", "MILD_PULLBACK_STILL_VALID"}:
+            passed = False
+            reasons.append(f"test_blocks_entry_health:{health_state.lower() or 'unknown'}")
+
+        if lifecycle_status in {"STOP_HIT", "INVALIDATED", "ENTRY_MISSED", "DO_NOT_TRADE_CLOSED_OR_INVALID", "CLOSED"}:
+            passed = False
+            reasons.append(f"test_blocks_lifecycle:{lifecycle_status.lower()}")
+
+        if bool(row.get("lateSessionBlocked")):
+            passed = False
+            reasons.append("test_blocks_late_session")
+
+        if bool(row.get("deskPassed")) is not True:
+            passed = False
+            reasons.append("test_requires_desk_passed")
+
+        if rr < 2.0:
+            passed = False
+            reasons.append("test_requires_rr_2_0_plus")
+
+        if score < 88:
+            passed = False
+            reasons.append("test_requires_score_88_plus")
+
+        if selector_score < 75:
+            passed = False
+            reasons.append("test_requires_selector_score_75_plus")
+
+        return {
+            "passed": passed,
+            "version": S816A_ELITE_TEST_MODE_VERSION,
+            "layer": "CLEAN_ELITE_TEST",
+            "reasons": reasons[:10],
+            "clientVisible": False,
+            "marketingClaimAllowed": False,
+            "note": "Learning-only layer. Excluded from client/investor PnL graph.",
+        }
+
+
     selected_rows = [
         row for row in ranked_candidate_rows
         if _s516b_selection_ok(row)
     ][:safe_max_best]
+
     for index, row in enumerate(selected_rows, start=1):
         row["rank"] = index
         row["role"] = "PRIMARY_IDEA" if index == 1 else "BACKUP_IDEA"
+        row["eliteLayer"] = "CLEAN_ELITE_READY"
+        row["deliveryMode"] = "CLIENT_ELITE_CANDIDATE"
+        row["clientVisible"] = True
+        row["marketingClaimAllowed"] = True
+
+    selected_keys = {_s816a_row_key(row) for row in selected_rows}
+
+    elite_test_rows: list[dict[str, Any]] = []
+    for row in ranked_candidate_rows:
+        if _s816a_row_key(row) in selected_keys:
+            continue
+
+        gate = _s816a_test_gate(row)
+        row["s816aEliteTestGate"] = gate
+
+        if gate.get("passed"):
+            elite_test_rows.append(row)
+
+        if len(elite_test_rows) >= safe_max_best:
+            break
+
+    for index, row in enumerate(elite_test_rows, start=1):
+        row["rank"] = index
+        row["role"] = "ELITE_TEST_IDEA"
+        row["eliteLayer"] = "CLEAN_ELITE_TEST"
+        row["deliveryMode"] = "PAPER_FORWARD_TEST_ONLY"
+        row["clientVisible"] = False
+        row["marketingClaimAllowed"] = False
 
     lifecycle_counts = _s515_status_counts(lifecycle_items)
     selected_status_counts = _s515_status_counts([
@@ -6252,6 +6347,7 @@ def _s515_build_daily_forward_report(
             "paperTestOkCandidateCount": len([row for row in candidate_rows if (row.get("entryHealth") or {}).get("paperTestOk") is True]),
             "entryHealthSelectionEligibleCount": len([row for row in ranked_candidate_rows if _s516b_selection_ok(row)]),
             "selectedBestCount": len(selected_rows),
+            "cleanEliteTestCount": len(elite_test_rows),
             "monitorCount": best_selector.get("totals", {}).get("monitorCount") if isinstance(best_selector.get("totals"), dict) else 0,
         },
         "dailyDeskState": {
@@ -6262,8 +6358,11 @@ def _s515_build_daily_forward_report(
             "selectedEntryHealthByState": selected_entry_health_counts,
             "telegramEliteReadyCount": best_selector.get("totals", {}).get("eliteReadyCount") if isinstance(best_selector.get("totals"), dict) else 0,
             "nearEliteCount": best_selector.get("totals", {}).get("nearEliteCount") if isinstance(best_selector.get("totals"), dict) else 0,
+            "cleanEliteTestCount": len(elite_test_rows),
         },
         "selectedBestIdeas": selected_rows,
+        "cleanEliteTestIdeas": elite_test_rows,
+        "calibrationCandidates": ranked_candidate_rows[:20],
         "monitoring": {
             "notSelectedCount": max(0, int(best_selector.get("totals", {}).get("monitorCount") or 0)),
             "entryHealthByState": candidate_entry_health_counts,
@@ -6273,6 +6372,8 @@ def _s515_build_daily_forward_report(
             "s814cLearningStatusBySetup": s814c_learning_status_counts,
             "s814cSetupLearningLoaded": len(setup_learning_map),
             "s814cVersion": S814C_SELECTOR_LEARNING_VERSION,
+            "s816aVersion": S816A_ELITE_TEST_MODE_VERSION,
+            "s816aEliteTestCount": len(elite_test_rows),
         },
         "outcomes": {
             "matchedSelectedOutcomes": len([row for row in selected_rows if row.get("outcome")]),
