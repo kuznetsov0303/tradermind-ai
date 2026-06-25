@@ -6979,6 +6979,567 @@ def engine_investor_dashboard_cache():
 
 # === /S8.14D ================================================================
 
+
+# === S8.15A Clean Elite Ledger Foundation ====================================
+S815A_CLEAN_ELITE_VERSION = "s8_15a_clean_elite_ledger_v1"
+S815A_CLEAN_ELITE_CACHE_KEY = "engine:clean_elite:stats"
+S815A_FORWARD_CACHE_KEY = "engine:forward_report:today"
+
+
+def _s815a_now_iso() -> str:
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s815a_num(value: Any, default: float | None = None) -> float | None:
+    try:
+        if value is None or value == "":
+            return default
+        out = float(value)
+        if out != out:
+            return default
+        return out
+    except Exception:
+        return default
+
+
+def _s815a_json(value: Any) -> str:
+    import json
+    try:
+        return json.dumps(value, ensure_ascii=False, sort_keys=True)
+    except Exception:
+        return "{}"
+
+
+def _s815a_db_path():
+    from pathlib import Path
+    return Path("data/stock_engine.db")
+
+
+def _s815a_ensure_tables(con) -> None:
+    con.execute(
+        """
+        create table if not exists clean_elite_signals (
+            clean_elite_id text primary key,
+            signal_id text,
+            symbol text not null,
+            setup_slug text not null,
+            session_date text,
+            direction text,
+            selected_at text,
+            trigger_time text,
+            entry real,
+            stop real,
+            tp1 real,
+            tp2 real,
+            rr_to_tp1 real,
+            score real,
+            selector_score real,
+            signal_grade text,
+            quality_status text,
+            source_version text,
+            s814a_gate_json text,
+            s814c_gate_json text,
+            entry_health_json text,
+            payload_json text not null,
+            created_at text,
+            updated_at text
+        )
+        """
+    )
+    con.execute("create index if not exists idx_clean_elite_session on clean_elite_signals(session_date)")
+    con.execute("create index if not exists idx_clean_elite_signal_id on clean_elite_signals(signal_id)")
+    con.execute("create index if not exists idx_clean_elite_setup on clean_elite_signals(setup_slug)")
+    con.execute("create index if not exists idx_clean_elite_symbol on clean_elite_signals(symbol)")
+
+
+def _s815a_unwrap_payload(payload: Any) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        return {}
+    if isinstance(payload.get("value"), dict):
+        payload = payload.get("value") or {}
+    if isinstance(payload.get("value"), dict):
+        payload = payload.get("value") or {}
+    return payload if isinstance(payload, dict) else {}
+
+
+def _s815a_load_forward_payload() -> dict[str, Any]:
+    payload = {}
+    try:
+        cached = runtime_cache.get_json(S815A_FORWARD_CACHE_KEY)
+        payload = _s815a_unwrap_payload(cached)
+    except Exception:
+        payload = {}
+
+    if isinstance(payload.get("selectedBestIdeas"), list):
+        return payload
+
+    # fallback to latest report file if cache was missed
+    try:
+        import json
+        from pathlib import Path
+        for path in [
+            Path("reports/forward_report/latest.json"),
+            Path("reports/post_close_evidence/latest.json"),
+        ]:
+            if not path.exists():
+                continue
+            raw = json.loads(path.read_text(encoding="utf-8"))
+            raw = _s815a_unwrap_payload(raw)
+            if isinstance(raw.get("selectedBestIdeas"), list):
+                return raw
+            summary = raw.get("summary") if isinstance(raw.get("summary"), dict) else {}
+            evidence = summary.get("evidence") if isinstance(summary.get("evidence"), dict) else {}
+            if isinstance(evidence.get("selectedBestIdeas"), list):
+                return evidence
+    except Exception:
+        pass
+
+    return payload if isinstance(payload, dict) else {}
+
+
+def _s815a_target_price(row: dict[str, Any], index: int) -> float | None:
+    key = "tp1" if index == 0 else "tp2"
+    direct = _s815a_num(row.get(key), None)
+    if direct is not None:
+        return direct
+
+    targets = row.get("targets")
+    if isinstance(targets, list) and len(targets) > index and isinstance(targets[index], dict):
+        return _s815a_num(targets[index].get("price"), None)
+
+    return None
+
+
+def _s815a_session_date(row: dict[str, Any]) -> str:
+    from datetime import datetime, timezone
+    explicit = str(row.get("sessionDate") or row.get("session_date") or "").strip()
+    if explicit:
+        return explicit[:10]
+
+    trigger = str(row.get("triggerTime") or row.get("trigger_time") or row.get("createdAt") or "").strip()
+    if len(trigger) >= 10:
+        return trigger[:10]
+
+    return datetime.now(timezone.utc).date().isoformat()
+
+
+def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, Any]:
+    import sqlite3
+
+    forward = _s815a_load_forward_payload()
+    selected = forward.get("selectedBestIdeas") if isinstance(forward.get("selectedBestIdeas"), list) else []
+
+    db_path = _s815a_db_path()
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+
+    now = _s815a_now_iso()
+    captured = 0
+    skipped = 0
+    rows_out: list[dict[str, Any]] = []
+
+    con = sqlite3.connect(str(db_path))
+    try:
+        _s815a_ensure_tables(con)
+
+        for raw in selected:
+            if not isinstance(raw, dict):
+                skipped += 1
+                continue
+
+            symbol = str(raw.get("symbol") or "").strip().upper()
+            setup_slug = str(raw.get("setupSlug") or raw.get("setup_slug") or "").strip()
+            if not symbol or not setup_slug:
+                skipped += 1
+                continue
+
+            signal_id = str(raw.get("signalId") or raw.get("signal_id") or raw.get("storageKey") or "").strip()
+            session_date = _s815a_session_date(raw)
+            trigger_time = str(raw.get("triggerTime") or raw.get("trigger_time") or raw.get("createdAt") or "").strip()
+            clean_elite_id = f"{session_date}:{signal_id or symbol + ':' + setup_slug + ':' + trigger_time}"
+
+            s814a_gate = raw.get("s814aEliteGate") if isinstance(raw.get("s814aEliteGate"), dict) else {}
+            s814c_gate = raw.get("s814cLearningGate") if isinstance(raw.get("s814cLearningGate"), dict) else {}
+            entry_health = raw.get("entryHealth") if isinstance(raw.get("entryHealth"), dict) else {}
+
+            con.execute(
+                """
+                insert into clean_elite_signals (
+                    clean_elite_id,
+                    signal_id,
+                    symbol,
+                    setup_slug,
+                    session_date,
+                    direction,
+                    selected_at,
+                    trigger_time,
+                    entry,
+                    stop,
+                    tp1,
+                    tp2,
+                    rr_to_tp1,
+                    score,
+                    selector_score,
+                    signal_grade,
+                    quality_status,
+                    source_version,
+                    s814a_gate_json,
+                    s814c_gate_json,
+                    entry_health_json,
+                    payload_json,
+                    created_at,
+                    updated_at
+                )
+                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                on conflict(clean_elite_id) do update set
+                    selected_at=excluded.selected_at,
+                    entry=excluded.entry,
+                    stop=excluded.stop,
+                    tp1=excluded.tp1,
+                    tp2=excluded.tp2,
+                    rr_to_tp1=excluded.rr_to_tp1,
+                    score=excluded.score,
+                    selector_score=excluded.selector_score,
+                    signal_grade=excluded.signal_grade,
+                    quality_status=excluded.quality_status,
+                    source_version=excluded.source_version,
+                    s814a_gate_json=excluded.s814a_gate_json,
+                    s814c_gate_json=excluded.s814c_gate_json,
+                    entry_health_json=excluded.entry_health_json,
+                    payload_json=excluded.payload_json,
+                    updated_at=excluded.updated_at
+                """,
+                (
+                    clean_elite_id,
+                    signal_id or None,
+                    symbol,
+                    setup_slug,
+                    session_date,
+                    str(raw.get("direction") or "").strip() or None,
+                    now,
+                    trigger_time or None,
+                    _s815a_num(raw.get("entry"), None),
+                    _s815a_num(raw.get("stop"), None),
+                    _s815a_target_price(raw, 0),
+                    _s815a_target_price(raw, 1),
+                    _s815a_num(raw.get("rrToTp1"), None),
+                    _s815a_num(raw.get("score") or raw.get("signalScore"), None),
+                    _s815a_num(raw.get("selectorScore"), None),
+                    str(raw.get("signalGrade") or raw.get("grade") or "").strip() or None,
+                    str(raw.get("qualityStatus") or "").strip() or None,
+                    str(forward.get("version") or "").strip() or None,
+                    _s815a_json(s814a_gate),
+                    _s815a_json(s814c_gate),
+                    _s815a_json(entry_health),
+                    _s815a_json(raw),
+                    now,
+                    now,
+                ),
+            )
+
+            captured += 1
+            rows_out.append({
+                "cleanEliteId": clean_elite_id,
+                "signalId": signal_id or None,
+                "symbol": symbol,
+                "setupSlug": setup_slug,
+                "sessionDate": session_date,
+                "rrToTp1": _s815a_num(raw.get("rrToTp1"), None),
+                "score": _s815a_num(raw.get("score") or raw.get("signalScore"), None),
+                "selectorScore": _s815a_num(raw.get("selectorScore"), None),
+                "s814aPassed": s814a_gate.get("passed") if isinstance(s814a_gate, dict) else None,
+                "s814cPassed": s814c_gate.get("passed") if isinstance(s814c_gate, dict) else None,
+            })
+
+        con.commit()
+    finally:
+        con.close()
+
+    return {
+        "ok": True,
+        "version": S815A_CLEAN_ELITE_VERSION,
+        "mode": "capture_forward_selected_best",
+        "source": source,
+        "generatedAt": now,
+        "forwardVersion": forward.get("version"),
+        "forwardState": (forward.get("dailyDeskState") or {}).get("state") if isinstance(forward.get("dailyDeskState"), dict) else None,
+        "selectedBestCount": len(selected),
+        "captured": captured,
+        "skipped": skipped,
+        "rows": rows_out[:25],
+        "note": "Only selectedBestIdeas that passed current elite selector are stored. Raw premium_signal is intentionally ignored.",
+    }
+
+
+def _s815a_match_outcome(con, signal_id: str | None, symbol: str, setup_slug: str, session_date: str) -> dict[str, Any] | None:
+    con.row_factory = None
+    row = None
+
+    if signal_id:
+        row = con.execute(
+            """
+            select *
+            from outcome_records
+            where signal_id = ?
+            order by coalesce(evaluated_at, stored_at, trigger_time, '') desc
+            limit 1
+            """,
+            (signal_id,),
+        ).fetchone()
+
+    if row is None:
+        row = con.execute(
+            """
+            select *
+            from outcome_records
+            where symbol = ? and setup_slug = ? and session_date = ?
+            order by coalesce(evaluated_at, stored_at, trigger_time, '') desc
+            limit 1
+            """,
+            (symbol, setup_slug, session_date),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    columns = [col[0] for col in con.execute("pragma table_info(outcome_records)").fetchall()]
+    return dict(zip(columns, row))
+
+
+def _s815a_avg(values: list[float]) -> float | None:
+    clean = [v for v in values if v is not None]
+    if not clean:
+        return None
+    return round(sum(clean) / len(clean), 4)
+
+
+def _s815a_pct(part: int, total: int) -> float | None:
+    if total <= 0:
+        return None
+    return round(part / total * 100, 2)
+
+
+def _s815a_clean_elite_stats(
+    initial_capital: float = 50000,
+    risk_pct: float = 0.01,
+    publish: bool = False,
+) -> dict[str, Any]:
+    import sqlite3
+    import json
+    from collections import defaultdict
+
+    db_path = _s815a_db_path()
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+    try:
+        _s815a_ensure_tables(con)
+
+        rows = [dict(r) for r in con.execute(
+            """
+            select *
+            from clean_elite_signals
+            order by coalesce(session_date, ''), coalesce(trigger_time, selected_at, '')
+            """
+        ).fetchall()]
+
+        enriched: list[dict[str, Any]] = []
+        for row in rows:
+            outcome = _s815a_match_outcome(
+                con,
+                row.get("signal_id"),
+                str(row.get("symbol") or ""),
+                str(row.get("setup_slug") or ""),
+                str(row.get("session_date") or ""),
+            )
+            status = str((outcome or {}).get("status") or "OPEN").upper()
+            result_r = _s815a_num((outcome or {}).get("result_r"), None)
+            mfe_r = _s815a_num((outcome or {}).get("mfe_r"), None)
+            mae_r = _s815a_num((outcome or {}).get("mae_r"), None)
+
+            payload = {}
+            try:
+                payload = json.loads(row.get("payload_json") or "{}")
+            except Exception:
+                payload = {}
+
+            enriched.append({
+                "cleanEliteId": row.get("clean_elite_id"),
+                "signalId": row.get("signal_id"),
+                "symbol": row.get("symbol"),
+                "setupSlug": row.get("setup_slug"),
+                "sessionDate": row.get("session_date"),
+                "triggerTime": row.get("trigger_time"),
+                "direction": row.get("direction"),
+                "rrToTp1": row.get("rr_to_tp1"),
+                "score": row.get("score"),
+                "selectorScore": row.get("selector_score"),
+                "signalGrade": row.get("signal_grade"),
+                "qualityStatus": row.get("quality_status"),
+                "outcomeStatus": status,
+                "resultR": result_r,
+                "mfeR": mfe_r,
+                "maeR": mae_r,
+                "outcomeMatched": outcome is not None,
+                "s814aEliteGate": json.loads(row.get("s814a_gate_json") or "{}"),
+                "s814cLearningGate": json.loads(row.get("s814c_gate_json") or "{}"),
+                "entryHealth": json.loads(row.get("entry_health_json") or "{}"),
+                "sourceVersion": row.get("source_version"),
+                "raw": payload,
+            })
+
+        closed = [r for r in enriched if r.get("outcomeStatus") in {"WORKED", "FAILED"}]
+        worked = [r for r in closed if r.get("outcomeStatus") == "WORKED" or (_s815a_num(r.get("resultR"), 0) or 0) > 0]
+        failed = [r for r in closed if r.get("outcomeStatus") == "FAILED" or (_s815a_num(r.get("resultR"), 0) or 0) < 0]
+        open_rows = [r for r in enriched if r.get("outcomeStatus") not in {"WORKED", "FAILED"}]
+
+        equity = float(initial_capital)
+        peak = equity
+        max_dd = 0.0
+        curve = [{
+            "trade": 0,
+            "sessionDate": None,
+            "symbol": "START",
+            "setupSlug": None,
+            "resultR": 0,
+            "equity": round(equity, 2),
+            "drawdownPct": 0,
+        }]
+
+        for index, row in enumerate(closed, start=1):
+            result_r = float(_s815a_num(row.get("resultR"), 0) or 0)
+            pnl = equity * float(risk_pct) * result_r
+            equity += pnl
+            peak = max(peak, equity)
+            dd = ((equity - peak) / peak * 100) if peak else 0
+            max_dd = min(max_dd, dd)
+            curve.append({
+                "trade": index,
+                "sessionDate": row.get("sessionDate"),
+                "symbol": row.get("symbol"),
+                "setupSlug": row.get("setupSlug"),
+                "resultR": round(result_r, 4),
+                "pnl": round(pnl, 2),
+                "equity": round(equity, 2),
+                "drawdownPct": round(dd, 2),
+            })
+
+        by_setup: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        for row in enriched:
+            by_setup[str(row.get("setupSlug") or "unknown")].append(row)
+
+        setup_stats = []
+        for setup, items in sorted(by_setup.items()):
+            c = [r for r in items if r.get("outcomeStatus") in {"WORKED", "FAILED"}]
+            w = [r for r in c if r.get("outcomeStatus") == "WORKED" or (_s815a_num(r.get("resultR"), 0) or 0) > 0]
+            f = [r for r in c if r.get("outcomeStatus") == "FAILED" or (_s815a_num(r.get("resultR"), 0) or 0) < 0]
+            setup_stats.append({
+                "setupSlug": setup,
+                "count": len(items),
+                "closed": len(c),
+                "worked": len(w),
+                "failed": len(f),
+                "open": len(items) - len(c),
+                "winRateClosed": _s815a_pct(len(w), len(c)),
+                "avgResultRClosed": _s815a_avg([_s815a_num(r.get("resultR"), 0) or 0 for r in c]),
+                "avgMfeR": _s815a_avg([_s815a_num(r.get("mfeR"), 0) or 0 for r in items]),
+                "avgMaeR": _s815a_avg([_s815a_num(r.get("maeR"), 0) or 0 for r in items]),
+            })
+
+        payload = {
+            "ok": True,
+            "version": S815A_CLEAN_ELITE_VERSION,
+            "mode": "clean_elite_stats",
+            "generatedAt": _s815a_now_iso(),
+            "parameters": {
+                "initialCapital": initial_capital,
+                "riskPct": risk_pct,
+                "riskPctLabel": f"{round(risk_pct * 100, 3)}%",
+            },
+            "summary": {
+                "ledgerCount": len(enriched),
+                "closed": len(closed),
+                "open": len(open_rows),
+                "worked": len(worked),
+                "failed": len(failed),
+                "winRateClosed": _s815a_pct(len(worked), len(closed)),
+                "avgResultRClosed": _s815a_avg([_s815a_num(r.get("resultR"), 0) or 0 for r in closed]),
+                "finalEquity": round(equity, 2),
+                "totalReturnPct": round((equity - float(initial_capital)) / float(initial_capital) * 100, 2) if initial_capital else None,
+                "maxDrawdownPct": round(max_dd, 2),
+            },
+            "equityCurve": curve[-250:],
+            "setupStats": setup_stats,
+            "recent": enriched[-25:],
+            "note": "Clean Elite Ledger is separated from raw signal_records and old premium_signal. This is the only layer intended for future product performance claims.",
+        }
+
+        if publish:
+            runtime_cache.set_json(S815A_CLEAN_ELITE_CACHE_KEY, payload, ttl_seconds=7 * 24 * 60 * 60)
+
+        return payload
+    finally:
+        con.close()
+
+
+@app.post("/engine/clean-elite/capture")
+def engine_clean_elite_capture(source: str = "manual", publish: bool = True):
+    capture = _s815a_capture_forward_selected_best(source=source)
+    stats = _s815a_clean_elite_stats(publish=publish)
+    return {
+        "ok": True,
+        "value": {
+            "capture": capture,
+            "stats": stats,
+        },
+        "storageVersion": S815A_CLEAN_ELITE_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+
+@app.get("/engine/clean-elite/stats")
+def engine_clean_elite_stats(initial_capital: float = 50000, risk_pct: float = 0.01, publish: bool = False):
+    payload = _s815a_clean_elite_stats(
+        initial_capital=initial_capital,
+        risk_pct=risk_pct,
+        publish=publish,
+    )
+    return {
+        "ok": True,
+        "value": payload,
+        "storageVersion": S815A_CLEAN_ELITE_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+
+@app.post("/engine/clean-elite/stats/run")
+def engine_clean_elite_stats_run(initial_capital: float = 50000, risk_pct: float = 0.01, publish: bool = True):
+    payload = _s815a_clean_elite_stats(
+        initial_capital=initial_capital,
+        risk_pct=risk_pct,
+        publish=publish,
+    )
+    return {
+        "ok": True,
+        "value": payload,
+        "storageVersion": S815A_CLEAN_ELITE_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+
+@app.get("/engine/clean-elite/cache")
+def engine_clean_elite_cache():
+    payload = runtime_cache.get_json(S815A_CLEAN_ELITE_CACHE_KEY)
+    return {
+        "ok": isinstance(payload, dict),
+        "value": payload if isinstance(payload, dict) else None,
+        "storageVersion": S815A_CLEAN_ELITE_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
+
+# === /S8.15A ================================================================
+
 # ---------------------------------------------------------------------------
 # S6.1 Historical Replay Foundation / Self-Learning Readiness
 # ---------------------------------------------------------------------------
