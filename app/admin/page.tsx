@@ -383,6 +383,34 @@ try {
             disabled
           />
 
+
+          <a
+            href="/admin/investor-dashboard"
+            className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-[#0C1522] p-6 text-left transition hover:-translate-y-0.5 hover:border-emerald-400/30 hover:bg-[#0F1B2A]"
+          >
+            <div className="mb-5 flex items-center justify-between gap-3">
+              <span className="text-[11px] uppercase tracking-[0.22em] text-slate-500">
+                Investor
+              </span>
+              <span className="rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-emerald-200">
+                Ready
+              </span>
+            </div>
+
+            <h3 className="text-[22px] font-black tracking-tight text-white">
+              Investor Dashboard
+            </h3>
+
+            <p className="mt-4 max-w-sm text-[14px] leading-6 text-slate-400">
+              Инвесторская статистика: ценность продукта, AI learning, win rate,
+              PnL simulation, стратегии, readiness и масштабирование.
+            </p>
+
+            <div className="mt-7 inline-flex rounded-full bg-white px-5 py-3 text-[13px] font-black text-[#07111F]">
+              Open
+            </div>
+          </a>
+
           <AdminHubCard
             label="Security"
             title="Admin Access"
