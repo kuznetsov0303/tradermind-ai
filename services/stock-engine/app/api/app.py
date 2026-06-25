@@ -7275,7 +7275,25 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
     import sqlite3
 
     forward = _s815a_load_forward_payload()
-    selected = forward.get("selectedBestIdeas") if isinstance(forward.get("selectedBestIdeas"), list) else []
+
+    ready_selected = forward.get("selectedBestIdeas") if isinstance(forward.get("selectedBestIdeas"), list) else []
+    test_selected = forward.get("cleanEliteTestIdeas") if isinstance(forward.get("cleanEliteTestIdeas"), list) else []
+
+    selected: list[dict[str, Any]] = []
+
+    for raw in ready_selected:
+        if isinstance(raw, dict):
+            item = dict(raw)
+            item["eliteLayer"] = item.get("eliteLayer") or "CLEAN_ELITE_READY"
+            selected.append(item)
+
+    for raw in test_selected:
+        if isinstance(raw, dict):
+            item = dict(raw)
+            item["eliteLayer"] = item.get("eliteLayer") or "CLEAN_ELITE_TEST"
+            item["clientVisible"] = False
+            item["marketingClaimAllowed"] = False
+            selected.append(item)
 
     db_path = _s815a_db_path()
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -7303,7 +7321,8 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
             signal_id = str(raw.get("signalId") or raw.get("signal_id") or raw.get("storageKey") or "").strip()
             session_date = _s815a_session_date(raw)
             trigger_time = str(raw.get("triggerTime") or raw.get("trigger_time") or raw.get("createdAt") or "").strip()
-            clean_elite_id = f"{session_date}:{signal_id or symbol + ':' + setup_slug + ':' + trigger_time}"
+            elite_layer = str(raw.get("eliteLayer") or "CLEAN_ELITE_READY").strip() or "CLEAN_ELITE_READY"
+            clean_elite_id = f"{elite_layer}:{session_date}:{signal_id or symbol + ':' + setup_slug + ':' + trigger_time}"
 
             s814a_gate = raw.get("s814aEliteGate") if isinstance(raw.get("s814aEliteGate"), dict) else {}
             s814c_gate = raw.get("s814cLearningGate") if isinstance(raw.get("s814cLearningGate"), dict) else {}
@@ -7394,8 +7413,10 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
                 "rrToTp1": _s815a_num(raw.get("rrToTp1"), None),
                 "score": _s815a_num(raw.get("score") or raw.get("signalScore"), None),
                 "selectorScore": _s815a_num(raw.get("selectorScore"), None),
+                "eliteLayer": elite_layer,
                 "s814aPassed": s814a_gate.get("passed") if isinstance(s814a_gate, dict) else None,
                 "s814cPassed": s814c_gate.get("passed") if isinstance(s814c_gate, dict) else None,
+                "s816aTestPassed": (raw.get("s816aEliteTestGate") or {}).get("passed") if isinstance(raw.get("s816aEliteTestGate"), dict) else None,
             })
 
         con.commit()
@@ -7410,7 +7431,9 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
         "generatedAt": now,
         "forwardVersion": forward.get("version"),
         "forwardState": (forward.get("dailyDeskState") or {}).get("state") if isinstance(forward.get("dailyDeskState"), dict) else None,
-        "selectedBestCount": len(selected),
+        "selectedBestCount": len(ready_selected),
+        "cleanEliteTestCount": len(test_selected),
+        "captureCandidateCount": len(selected),
         "captured": captured,
         "skipped": skipped,
         "rows": rows_out[:25],
@@ -7532,14 +7555,22 @@ def _s815a_clean_elite_stats(
                 "s814aEliteGate": json.loads(row.get("s814a_gate_json") or "{}"),
                 "s814cLearningGate": json.loads(row.get("s814c_gate_json") or "{}"),
                 "entryHealth": json.loads(row.get("entry_health_json") or "{}"),
+                "eliteLayer": str(payload.get("eliteLayer") or "CLEAN_ELITE_READY"),
                 "sourceVersion": row.get("source_version"),
                 "raw": payload,
             })
 
-        closed = [r for r in enriched if r.get("outcomeStatus") in {"WORKED", "FAILED"}]
+        ready_enriched = [r for r in enriched if str(r.get("eliteLayer") or "CLEAN_ELITE_READY") == "CLEAN_ELITE_READY"]
+        test_enriched = [r for r in enriched if str(r.get("eliteLayer") or "") == "CLEAN_ELITE_TEST"]
+
+        closed = [r for r in ready_enriched if r.get("outcomeStatus") in {"WORKED", "FAILED"}]
         worked = [r for r in closed if r.get("outcomeStatus") == "WORKED" or (_s815a_num(r.get("resultR"), 0) or 0) > 0]
         failed = [r for r in closed if r.get("outcomeStatus") == "FAILED" or (_s815a_num(r.get("resultR"), 0) or 0) < 0]
-        open_rows = [r for r in enriched if r.get("outcomeStatus") not in {"WORKED", "FAILED"}]
+        open_rows = [r for r in ready_enriched if r.get("outcomeStatus") not in {"WORKED", "FAILED"}]
+
+        test_closed = [r for r in test_enriched if r.get("outcomeStatus") in {"WORKED", "FAILED"}]
+        test_worked = [r for r in test_closed if r.get("outcomeStatus") == "WORKED" or (_s815a_num(r.get("resultR"), 0) or 0) > 0]
+        test_failed = [r for r in test_closed if r.get("outcomeStatus") == "FAILED" or (_s815a_num(r.get("resultR"), 0) or 0) < 0]
 
         equity = float(initial_capital)
         peak = equity
@@ -7573,7 +7604,7 @@ def _s815a_clean_elite_stats(
             })
 
         by_setup: dict[str, list[dict[str, Any]]] = defaultdict(list)
-        for row in enriched:
+        for row in ready_enriched:
             by_setup[str(row.get("setupSlug") or "unknown")].append(row)
 
         setup_stats = []
@@ -7606,6 +7637,8 @@ def _s815a_clean_elite_stats(
             },
             "summary": {
                 "ledgerCount": len(enriched),
+                "readyLedgerCount": len(ready_enriched),
+                "testLedgerCount": len(test_enriched),
                 "closed": len(closed),
                 "open": len(open_rows),
                 "worked": len(worked),
@@ -7618,6 +7651,16 @@ def _s815a_clean_elite_stats(
             },
             "equityCurve": curve[-250:],
             "setupStats": setup_stats,
+            "eliteTestSummary": {
+                "count": len(test_enriched),
+                "closed": len(test_closed),
+                "worked": len(test_worked),
+                "failed": len(test_failed),
+                "open": len(test_enriched) - len(test_closed),
+                "winRateClosed": _s815a_pct(len(test_worked), len(test_closed)),
+                "avgResultRClosed": _s815a_avg([_s815a_num(r.get("resultR"), 0) or 0 for r in test_closed]),
+                "note": "CLEAN_ELITE_TEST is learning-only and excluded from investor/client READY performance.",
+            },
             "recent": enriched[-25:],
             "note": "Clean Elite Ledger is separated from raw signal_records and old premium_signal. This is the only layer intended for future product performance claims.",
         }
