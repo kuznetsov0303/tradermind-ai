@@ -6986,6 +6986,17 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
         else {}
     )
 
+    clean_elite_test_summary = (
+        clean_elite_report.get("eliteTestSummary")
+        if isinstance(clean_elite_report.get("eliteTestSummary"), dict)
+        else {}
+    )
+    clean_elite_promotion = (
+        clean_elite_report.get("testToReadyPromotion")
+        if isinstance(clean_elite_report.get("testToReadyPromotion"), dict)
+        else {}
+    )
+
     clean_elite_closed = int(_s814d_num(clean_elite_summary.get("closed"), 0) or 0)
     clean_elite_win_rate = _s814d_num(clean_elite_summary.get("winRateClosed"), None)
     clean_elite_avg_r = _s814d_num(clean_elite_summary.get("avgResultRClosed"), None)
@@ -7009,6 +7020,10 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
         "finalEquity": clean_elite_summary.get("finalEquity"),
         "totalReturnPct": clean_elite_summary.get("totalReturnPct"),
         "maxDrawdownPct": clean_elite_summary.get("maxDrawdownPct"),
+        "readyLedgerCount": clean_elite_summary.get("readyLedgerCount"),
+        "testLedgerCount": clean_elite_summary.get("testLedgerCount"),
+        "eliteTestSummary": clean_elite_test_summary,
+        "testToReadyPromotion": clean_elite_promotion,
         "riskPctPerTrade": 1.0,
         "equityCurve": clean_elite_report.get("equityCurve") if isinstance(clean_elite_report.get("equityCurve"), list) else [],
         "setupStats": clean_elite_report.get("setupStats") if isinstance(clean_elite_report.get("setupStats"), list) else [],
@@ -7054,6 +7069,8 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "cleanEliteAvgResultRClosed": clean_elite_snapshot.get("avgResultRClosed"),
             "cleanEliteFinalEquity": clean_elite_snapshot.get("finalEquity"),
             "cleanEliteMaxDrawdownPct": clean_elite_snapshot.get("maxDrawdownPct"),
+            "cleanEliteTestCount": clean_elite_snapshot.get("testLedgerCount"),
+            "testToReadyPromotionCandidateCount": clean_elite_promotion.get("promotionCandidateCount"),
         },
         "equitySimulation": {
             "startingCapital": 50000,
@@ -7068,6 +7085,7 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "promoteForEliteTest": setup_summary.get("promoteForEliteTest"),
             "keepAndTighten": setup_summary.get("keepAndTighten"),
             "demoteToMonitorOnly": setup_summary.get("demoteToMonitorOnly"),
+            "testToReadyPromotion": clean_elite_promotion,
             "topGlobalFailurePatterns": setup_summary.get("topGlobalFailurePatterns"),
             "cards": setup_cards,
         },
