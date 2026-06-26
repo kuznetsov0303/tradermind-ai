@@ -6599,6 +6599,47 @@ def _s812c_build_investor_evidence_snapshot(
     forward_outcomes = forward.get("outcomes") if isinstance(forward.get("outcomes"), dict) else {}
 
     try:
+        clean_elite_report = _s815a_clean_elite_stats(
+            initial_capital=50000,
+            risk_pct=0.01,
+            publish=publish,
+        )
+    except Exception as exc:
+        clean_elite_report = {
+            "ok": False,
+            "error": str(exc),
+        }
+
+    clean_elite_summary = (
+        clean_elite_report.get("summary")
+        if isinstance(clean_elite_report.get("summary"), dict)
+        else {}
+    )
+    clean_elite_test_summary = (
+        clean_elite_report.get("eliteTestSummary")
+        if isinstance(clean_elite_report.get("eliteTestSummary"), dict)
+        else {}
+    )
+    clean_elite_promotion = (
+        clean_elite_report.get("testToReadyPromotion")
+        if isinstance(clean_elite_report.get("testToReadyPromotion"), dict)
+        else {}
+    )
+    clean_elite_test_promotion = {
+        "mode": "READ_ONLY_NO_GATE_CHANGE",
+        "readyGatesChanged": False,
+        "clientVisible": False,
+        "marketingClaimAllowed": False,
+        "readyLedgerCount": clean_elite_summary.get("readyLedgerCount"),
+        "testLedgerCount": clean_elite_summary.get("testLedgerCount"),
+        "eliteTestSummary": clean_elite_test_summary,
+        "testToReadyPromotion": clean_elite_promotion,
+        "promotionCandidateCount": clean_elite_promotion.get("promotionCandidateCount"),
+        "promotionCandidates": clean_elite_promotion.get("promotionCandidates") if isinstance(clean_elite_promotion.get("promotionCandidates"), list) else [],
+        "note": "Daily/post-close TEST-to-READY review section. It never changes READY gates automatically.",
+    }
+
+    try:
         all_outcomes = load_persistent_outcome_items(limit=5000)
     except Exception:
         all_outcomes = []
@@ -6693,6 +6734,7 @@ def _s812c_build_investor_evidence_snapshot(
         },
         "counts": counts,
         "dailyDeskState": desk_state,
+        "cleanEliteTestPromotion": clean_elite_test_promotion,
         "selectedBestIdeas": selected_compact,
         "monitoringSummary": {
             "notSelectedCount": monitoring.get("notSelectedCount"),
