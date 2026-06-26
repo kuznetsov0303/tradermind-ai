@@ -11,7 +11,7 @@ from typing import Any
 from urllib import error, request
 
 
-VERSION = "s8_13_post_close_evidence_automation_v1"
+VERSION = "s8_16e_post_close_clean_elite_chain_v1"
 
 
 def now_iso() -> str:
@@ -146,6 +146,50 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     forward = call_json(base_url, "POST", forward_path, timeout=args.timeout)
     steps.append({"name": "forward_report_run", **forward})
 
+    # S8.16E: Clean Elite post-close chain.
+    # Keep the 5-minute clean-elite-capture timer lightweight during the session,
+    # but make the true post-close run close the learning loop.
+    clean_timeout = max(int(args.timeout or 180), 420)
+
+    clean_capture = call_json(
+        base_url,
+        "POST",
+        "/engine/clean-elite/capture?source=post_close_evidence&publish=true",
+        timeout=args.timeout,
+    )
+    steps.append({"name": "clean_elite_capture", **clean_capture})
+
+    clean_outcomes = call_json(
+        base_url,
+        "POST",
+        "/engine/clean-elite/outcomes/run?"
+        "elite_layer=CLEAN_ELITE_TEST"
+        "&interval=5min"
+        "&use_trigger_time=true"
+        "&session_to_close=true"
+        "&limit=200"
+        "&capture_first=false"
+        "&publish=true",
+        timeout=clean_timeout,
+    )
+    steps.append({"name": "clean_elite_outcomes_run", **clean_outcomes})
+
+    clean_sync = call_json(
+        base_url,
+        "POST",
+        "/engine/clean-elite/supabase/sync?elite_layer=ALL&limit=1000",
+        timeout=args.timeout,
+    )
+    steps.append({"name": "clean_elite_supabase_sync", **clean_sync})
+
+    clean_stats = call_json(
+        base_url,
+        "POST",
+        "/engine/clean-elite/stats/run?initial_capital=50000&risk_pct=0.01&publish=true",
+        timeout=args.timeout,
+    )
+    steps.append({"name": "clean_elite_stats_run", **clean_stats})
+
     evidence_path = f"/engine/evidence/run?limit={args.limit}&max_best={args.max_best}&publish=true"
     evidence = call_json(base_url, "POST", evidence_path, timeout=args.timeout)
     steps.append({"name": "evidence_run", **evidence})
@@ -154,7 +198,16 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     forward_value = unwrap(forward.get("payload")) if forward.get("ok") else {}
     outcomes_value = unwrap(outcomes.get("payload")) if isinstance(outcomes, dict) else {}
 
-    ok = bool(health.get("ok") and outcomes.get("ok") and forward.get("ok") and evidence.get("ok"))
+    ok = bool(
+        health.get("ok")
+        and outcomes.get("ok")
+        and forward.get("ok")
+        and clean_capture.get("ok")
+        and clean_outcomes.get("ok")
+        and clean_sync.get("ok")
+        and clean_stats.get("ok")
+        and evidence.get("ok")
+    )
 
     report: dict[str, Any] = {
         "ok": ok,
@@ -171,6 +224,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "healthOk": health.get("ok"),
             "outcomesOk": outcomes.get("ok"),
             "forwardReportOk": forward.get("ok"),
+            "cleanEliteCaptureOk": clean_capture.get("ok"),
+            "cleanEliteOutcomesOk": clean_outcomes.get("ok"),
+            "cleanEliteSupabaseSyncOk": clean_sync.get("ok"),
+            "cleanEliteStatsOk": clean_stats.get("ok"),
             "evidenceOk": evidence.get("ok"),
             "forwardState": (forward_value.get("dailyDeskState") or {}).get("state")
                 if isinstance(forward_value.get("dailyDeskState"), dict) else None,
