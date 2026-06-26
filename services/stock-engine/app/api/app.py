@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -3521,7 +3521,7 @@ def engine_lifecycle_notifications_mark_batch(
     }
 
 # ---------------------------------------------------------------------------
-# S4.16 Signal Cockpit API — compact dashboard-ready payload
+# S4.16 Signal Cockpit API РІР‚вЂќ compact dashboard-ready payload
 # ---------------------------------------------------------------------------
 
 S416_COCKPIT_VERSION = "s416d_cockpit_frontend_safety_v1"
@@ -5759,6 +5759,7 @@ def _s515_compact_outcome(item: dict[str, Any] | None) -> dict[str, Any] | None:
 # === S8.14C Learning-Aware Selector Penalties ================================
 S814C_SELECTOR_LEARNING_VERSION = "s8_14c_learning_aware_selector_v1"
 S816A_ELITE_TEST_MODE_VERSION = "s8_16a_elite_test_mode_v1"
+S816B_PROMOTION_VERSION = "s8_16b_test_to_ready_promotion_v1"
 
 
 def _s814c_load_setup_learning_map() -> dict[str, dict[str, Any]]:
@@ -7489,6 +7490,73 @@ def _s815a_pct(part: int, total: int) -> float | None:
     return round(part / total * 100, 2)
 
 
+
+def _s816b_evaluate_test_to_ready_promotion(test_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    from collections import defaultdict
+
+    by_setup: dict[str, list[dict[str, Any]]] = defaultdict(list)
+
+    for row in test_rows or []:
+        setup = str(row.get("setupSlug") or "unknown").strip() or "unknown"
+        by_setup[setup].append(row)
+
+    rows: list[dict[str, Any]] = []
+
+    for setup, items in sorted(by_setup.items()):
+        closed = [r for r in items if r.get("outcomeStatus") in {"WORKED", "FAILED"}]
+        worked = [r for r in closed if r.get("outcomeStatus") == "WORKED" or (_s815a_num(r.get("resultR"), 0) or 0) > 0]
+        failed = [r for r in closed if r.get("outcomeStatus") == "FAILED" or (_s815a_num(r.get("resultR"), 0) or 0) < 0]
+
+        win_rate = _s815a_pct(len(worked), len(closed))
+        avg_r = _s815a_avg([_s815a_num(r.get("resultR"), 0) or 0 for r in closed])
+
+        status = "COLLECT_MORE_TEST_SAMPLE"
+        action = "KEEP_IN_CLEAN_ELITE_TEST"
+        reasons = []
+
+        if len(closed) < 10:
+            reasons.append("needs_min_10_closed_test_outcomes")
+        elif win_rate is not None and avg_r is not None and win_rate >= 65 and avg_r >= 0.35:
+            status = "PROMOTION_CANDIDATE_TO_READY_REVIEW"
+            action = "REVIEW_FOR_READY_GATE_RELAXATION"
+            reasons.append("test_stats_meet_initial_promotion_threshold")
+        elif (win_rate is not None and win_rate < 45) or (avg_r is not None and avg_r < 0):
+            status = "KEEP_TEST_DEMOTE_OR_TIGHTEN"
+            action = "TIGHTEN_SETUP_OR_KEEP_OUT_OF_READY"
+            reasons.append("test_stats_do_not_support_ready_promotion")
+        else:
+            reasons.append("sample_exists_but_not_strong_enough_yet")
+
+        rows.append({
+            "setupSlug": setup,
+            "testCount": len(items),
+            "closed": len(closed),
+            "worked": len(worked),
+            "failed": len(failed),
+            "winRateClosed": win_rate,
+            "avgResultRClosed": avg_r,
+            "status": status,
+            "recommendedAction": action,
+            "reasons": reasons,
+        })
+
+    promotion_candidates = [
+        r for r in rows
+        if r.get("status") == "PROMOTION_CANDIDATE_TO_READY_REVIEW"
+    ]
+
+    return {
+        "version": S816B_PROMOTION_VERSION,
+        "mode": "READ_ONLY_NO_GATE_CHANGE",
+        "promotionCandidateCount": len(promotion_candidates),
+        "promotionCandidates": promotion_candidates,
+        "setupRows": rows,
+        "note": "S8.16B is read-only: it never changes READY gates automatically.",
+    }
+
+
+
+
 def _s815a_clean_elite_stats(
     initial_capital: float = 50000,
     risk_pct: float = 0.01,
@@ -7496,7 +7564,6 @@ def _s815a_clean_elite_stats(
 ) -> dict[str, Any]:
     import sqlite3
     import json
-    from collections import defaultdict
 
     db_path = _s815a_db_path()
     db_path.parent.mkdir(parents=True, exist_ok=True)
@@ -7572,6 +7639,8 @@ def _s815a_clean_elite_stats(
         test_worked = [r for r in test_closed if r.get("outcomeStatus") == "WORKED" or (_s815a_num(r.get("resultR"), 0) or 0) > 0]
         test_failed = [r for r in test_closed if r.get("outcomeStatus") == "FAILED" or (_s815a_num(r.get("resultR"), 0) or 0) < 0]
 
+        promotion_report = _s816b_evaluate_test_to_ready_promotion(test_enriched)
+
         equity = float(initial_capital)
         peak = equity
         max_dd = 0.0
@@ -7603,9 +7672,9 @@ def _s815a_clean_elite_stats(
                 "drawdownPct": round(dd, 2),
             })
 
-        by_setup: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        by_setup: dict[str, list[dict[str, Any]]] = {}
         for row in ready_enriched:
-            by_setup[str(row.get("setupSlug") or "unknown")].append(row)
+            by_setup.setdefault(str(row.get("setupSlug") or "unknown"), []).append(row)
 
         setup_stats = []
         for setup, items in sorted(by_setup.items()):
@@ -7661,6 +7730,7 @@ def _s815a_clean_elite_stats(
                 "avgResultRClosed": _s815a_avg([_s815a_num(r.get("resultR"), 0) or 0 for r in test_closed]),
                 "note": "CLEAN_ELITE_TEST is learning-only and excluded from investor/client READY performance.",
             },
+            "testToReadyPromotion": promotion_report,
             "recent": enriched[-25:],
             "note": "Clean Elite Ledger is separated from raw signal_records and old premium_signal. This is the only layer intended for future product performance claims.",
         }
