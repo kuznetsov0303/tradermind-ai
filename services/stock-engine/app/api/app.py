@@ -7255,10 +7255,58 @@ def _s815a_ensure_tables(con) -> None:
         )
         """
     )
+    existing_cols = {
+        str(row[1])
+        for row in con.execute("pragma table_info(clean_elite_signals)").fetchall()
+    }
+
+    missing_cols = {
+        "elite_layer": "text",
+        "s816a_gate_json": "text",
+    }
+
+    for col_name, col_type in missing_cols.items():
+        if col_name not in existing_cols:
+            con.execute(f"alter table clean_elite_signals add column {col_name} {col_type}")
+
+    con.execute(
+        """
+        update clean_elite_signals
+        set elite_layer = 'CLEAN_ELITE_TEST'
+        where (elite_layer is null or trim(elite_layer) = '')
+          and clean_elite_id like 'CLEAN_ELITE_TEST:%'
+        """
+    )
+    con.execute(
+        """
+        update clean_elite_signals
+        set elite_layer = 'CLEAN_ELITE_READY'
+        where (elite_layer is null or trim(elite_layer) = '')
+          and clean_elite_id like 'CLEAN_ELITE_READY:%'
+        """
+    )
+    con.execute(
+        """
+        update clean_elite_signals
+        set elite_layer = 'CLEAN_ELITE_TEST'
+        where (elite_layer is null or trim(elite_layer) = '')
+          and payload_json like '%CLEAN_ELITE_TEST%'
+        """
+    )
+    con.execute(
+        """
+        update clean_elite_signals
+        set elite_layer = 'CLEAN_ELITE_READY'
+        where elite_layer is null or trim(elite_layer) = ''
+        """
+    )
     con.execute("create index if not exists idx_clean_elite_session on clean_elite_signals(session_date)")
     con.execute("create index if not exists idx_clean_elite_signal_id on clean_elite_signals(signal_id)")
     con.execute("create index if not exists idx_clean_elite_setup on clean_elite_signals(setup_slug)")
     con.execute("create index if not exists idx_clean_elite_symbol on clean_elite_signals(symbol)")
+
+    # S8.16C: persist clean elite schema migrations and legacy elite_layer backfill.
+    con.commit()
 
 
 def _s815a_unwrap_payload(payload: Any) -> dict[str, Any]:
@@ -7801,6 +7849,198 @@ def _s815a_clean_elite_stats(
         return payload
     finally:
         con.close()
+
+
+def _s816c_clean_elite_signal_map(
+    *,
+    session_date: str | None = None,
+    elite_layer: str = "CLEAN_ELITE_TEST",
+    limit: int = 200,
+) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
+    import json
+    import sqlite3
+
+    safe_limit = max(1, min(int(limit or 200), 1000))
+    date_key = str(session_date or "").strip()[:10] or None
+    layer = str(elite_layer or "CLEAN_ELITE_TEST").strip() or "CLEAN_ELITE_TEST"
+
+    db_path = _s815a_db_path()
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+
+    try:
+        _s815a_ensure_tables(con)
+
+        where = []
+        params: list[Any] = []
+
+        if date_key:
+            where.append("session_date = ?")
+            params.append(date_key)
+
+        if layer.upper() != "ALL":
+            where.append("elite_layer = ?")
+            params.append(layer)
+
+        where_sql = ("where " + " and ".join(where)) if where else ""
+
+        rows = [
+            dict(row)
+            for row in con.execute(
+                f"""
+                select *
+                from clean_elite_signals
+                {where_sql}
+                order by coalesce(session_date, '') desc, coalesce(selected_at, '') desc
+                limit ?
+                """,
+                (*params, safe_limit),
+            ).fetchall()
+        ]
+    finally:
+        con.close()
+
+    signal_map: dict[str, dict[str, Any]] = {}
+    samples: list[dict[str, Any]] = []
+    skipped = 0
+
+    for row in rows:
+        try:
+            payload = json.loads(row.get("payload_json") or "{}")
+            if not isinstance(payload, dict):
+                payload = {}
+        except Exception:
+            payload = {}
+
+        clean_elite_id = str(row.get("clean_elite_id") or "").strip()
+        symbol = str(row.get("symbol") or payload.get("symbol") or "").upper().strip()
+        setup_slug = str(row.get("setup_slug") or payload.get("setupSlug") or "").strip()
+        signal_id = str(row.get("signal_id") or payload.get("signalId") or clean_elite_id).strip()
+
+        if not signal_id or not symbol or not setup_slug:
+            skipped += 1
+            continue
+
+        trigger_time = str(row.get("trigger_time") or payload.get("triggerTime") or row.get("selected_at") or "").strip()
+        row_session_date = str(row.get("session_date") or payload.get("sessionDate") or date_key or "").strip()[:10]
+
+        signal = dict(payload)
+        signal["signalId"] = signal_id
+        signal["storageKey"] = signal_id
+        signal["cleanEliteId"] = clean_elite_id
+        signal["eliteLayer"] = str(row.get("elite_layer") or payload.get("eliteLayer") or layer)
+        signal["symbol"] = symbol
+        signal["setupSlug"] = setup_slug
+        signal["setupName"] = signal.get("setupName") or setup_slug
+        signal["sessionDate"] = row_session_date
+        signal["triggerTime"] = trigger_time or signal.get("triggerTime") or signal.get("createdAt")
+        signal["createdAt"] = signal.get("createdAt") or trigger_time or row.get("selected_at")
+        signal["direction"] = signal.get("direction") or row.get("direction")
+        signal["entry"] = _s815a_num(signal.get("entry"), _s815a_num(row.get("entry"), None))
+        signal["stop"] = _s815a_num(signal.get("stop"), _s815a_num(row.get("stop"), None))
+        signal["tp1"] = _s815a_num(signal.get("tp1"), _s815a_num(row.get("tp1"), None))
+        signal["tp2"] = _s815a_num(signal.get("tp2"), _s815a_num(row.get("tp2"), None))
+        signal["premiumSignal"] = False
+        signal["telegramEligible"] = False
+        signal["clientVisible"] = False
+        signal["marketingClaimAllowed"] = False
+        signal["source"] = "clean_elite_ledger"
+
+        signal_map[signal_id] = signal
+        samples.append({
+            "signalId": signal_id,
+            "cleanEliteId": clean_elite_id,
+            "symbol": symbol,
+            "setupSlug": setup_slug,
+            "sessionDate": row_session_date,
+            "eliteLayer": signal.get("eliteLayer"),
+        })
+
+    return signal_map, {
+        "dbPath": str(db_path),
+        "sessionDate": date_key,
+        "eliteLayer": layer,
+        "limit": safe_limit,
+        "rowsLoaded": len(rows),
+        "signalMapCount": len(signal_map),
+        "skipped": skipped,
+        "samples": samples[:8],
+        "mode": "clean_elite_ledger_outcome_source",
+    }
+
+
+@app.post("/engine/clean-elite/outcomes/run")
+async def engine_clean_elite_outcomes_run(
+    session_date: str | None = None,
+    elite_layer: str = "CLEAN_ELITE_TEST",
+    interval: str = "5min",
+    max_candles: int | None = None,
+    use_trigger_time: bool = True,
+    session_to_close: bool = True,
+    limit: int = 200,
+    capture_first: bool = True,
+    publish: bool = True,
+):
+    capture = None
+    if capture_first:
+        capture = _s815a_capture_forward_selected_best(source="clean_elite_outcomes_run")
+
+    client = FmpClient()
+    if not client.is_configured():
+        return {
+            "ok": False,
+            "error": "FMP_API_KEY is missing",
+            "storageVersion": S815A_CLEAN_ELITE_VERSION,
+        }
+
+    signal_map, source_debug = _s816c_clean_elite_signal_map(
+        session_date=session_date,
+        elite_layer=elite_layer,
+        limit=limit,
+    )
+
+    result = await evaluate_active_signals(
+        client,
+        signal_map,
+        interval=interval,
+        max_candles=max_candles,
+        use_trigger_time=use_trigger_time,
+        session_to_close=session_to_close,
+    )
+
+    outcomes = result.get("outcomes") if isinstance(result.get("outcomes"), list) else []
+    for outcome in outcomes:
+        if not isinstance(outcome, dict):
+            continue
+        signal_id = str(outcome.get("signalId") or "")
+        source_signal = signal_map.get(signal_id) if signal_id else {}
+        outcome["source"] = "clean_elite_ledger"
+        outcome["cleanEliteId"] = source_signal.get("cleanEliteId")
+        outcome["eliteLayer"] = source_signal.get("eliteLayer")
+        outcome["clientVisible"] = False
+        outcome["marketingClaimAllowed"] = False
+        outcome["premiumSignal"] = False
+        outcome["telegramEligible"] = False
+        outcome["sessionDate"] = source_signal.get("sessionDate") or outcome.get("sessionDate")
+
+    result["outcomes"] = _s810e_mark_no_eval_late_session_items(outcomes)
+    storage = store_outcome_dataset(result.get("outcomes", []))
+    stats = _s815a_clean_elite_stats(publish=publish)
+
+    result["storage"] = storage
+    result["capture"] = capture
+    result["cleanEliteStats"] = stats
+    result["source"] = "clean_elite_ledger"
+    result["sourceDebug"] = source_debug
+    result["endpoint"] = "/engine/clean-elite/outcomes/run"
+    result["runtimeCache"] = publish_runtime_cache(reason="clean_elite_outcomes_run") if publish else None
+
+    return {
+        "ok": True,
+        "value": result,
+        "storageVersion": S815A_CLEAN_ELITE_VERSION,
+        "cache": runtime_cache.get_status(),
+    }
 
 
 @app.post("/engine/clean-elite/capture")
@@ -11785,3 +12025,6 @@ async def engine_signal_cockpit_history(symbol: str, days: int = 3, interval: st
         "storageVersion": S418E_COCKPIT_HISTORY_VERSION,
         "evaluatedAt": datetime.now(timezone.utc).isoformat(),
     }
+
+
+
