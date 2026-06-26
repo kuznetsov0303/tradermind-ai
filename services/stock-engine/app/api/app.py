@@ -6985,6 +6985,91 @@ def _s814d_marketing_readiness(
     }
 
 
+
+def _s817a_upgrade_investor_dashboard_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        return payload
+
+    headline = payload.get("headlineMetrics")
+    if not isinstance(headline, dict):
+        headline = {}
+        payload["headlineMetrics"] = headline
+
+    ce = payload.get("cleanElitePerformance")
+    if not isinstance(ce, dict):
+        return payload
+
+    test = ce.get("eliteTestSummary")
+    if not isinstance(test, dict):
+        test = {}
+
+    ready_closed = int(_s814d_num(ce.get("closedTrades"), 0) or 0)
+    ready_open = int(_s814d_num(ce.get("openTrades"), 0) or 0)
+    ready_worked = int(_s814d_num(ce.get("worked"), 0) or 0)
+    ready_failed = int(_s814d_num(ce.get("failed"), 0) or 0)
+
+    test_closed = int(_s814d_num(test.get("closed"), 0) or 0)
+    test_open = int(_s814d_num(test.get("open"), 0) or 0)
+    test_worked = int(_s814d_num(test.get("worked"), 0) or 0)
+    test_failed = int(_s814d_num(test.get("failed"), 0) or 0)
+    test_win = _s814d_num(test.get("winRateClosed"), None)
+    test_avg_r = _s814d_num(test.get("avgResultRClosed"), None)
+
+    ready_status = "empty_collecting" if ready_closed == 0 else "collecting_ready_sample"
+    test_status = "learning_only_forward_test" if test_closed > 0 else "collecting_test_sample"
+
+    ce["status"] = "ready_empty_test_layer_collecting" if ready_closed == 0 and test_closed > 0 else ce.get("status")
+
+    ce["readyPerformance"] = {
+        "layer": "CLEAN_ELITE_READY",
+        "clientVisible": True,
+        "marketingClaimAllowed": ready_closed >= 50,
+        "closedTrades": ready_closed,
+        "openTrades": ready_open,
+        "worked": ready_worked,
+        "failed": ready_failed,
+        "winRateClosed": ce.get("winRateClosed"),
+        "avgResultRClosed": ce.get("avgResultRClosed"),
+        "status": ready_status,
+    }
+
+    ce["testPerformance"] = {
+        "layer": "CLEAN_ELITE_TEST",
+        "clientVisible": False,
+        "marketingClaimAllowed": False,
+        "closedTrades": test_closed,
+        "openTrades": test_open,
+        "worked": test_worked,
+        "failed": test_failed,
+        "winRateClosed": test_win,
+        "avgResultRClosed": test_avg_r,
+        "status": test_status,
+        "note": "Internal learning-only layer. Never use as client-visible or investor performance claim.",
+    }
+
+    ce["displaySummary"] = {
+        "readyStatus": ready_status,
+        "testStatus": test_status,
+        "testLayerHasEvidence": test_closed > 0,
+        "message": "READY performance is still empty; TEST layer is collecting internal forward evidence.",
+    }
+
+    headline["cleanEliteTestClosedTrades"] = test_closed
+    headline["cleanEliteTestWorked"] = test_worked
+    headline["cleanEliteTestFailed"] = test_failed
+    headline["cleanEliteTestOpenTrades"] = test_open
+    headline["cleanEliteTestWinRateClosed"] = test_win
+    headline["cleanEliteTestAvgResultRClosed"] = test_avg_r
+    headline["cleanEliteReadyStatus"] = ready_status
+    headline["cleanEliteTestStatus"] = test_status
+    headline["cleanEliteDisplayMessage"] = ce["displaySummary"]["message"]
+
+    payload["cleanElitePerformance"] = ce
+    return payload
+
+
+
+
 def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
     setup_report = _s814d_read_report_json("reports/setup_learning/latest.json")
     post_close_report = _s814d_read_report_json("reports/post_close_evidence/latest.json")
@@ -7146,7 +7231,7 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
         },
     }
 
-    return payload
+    return _s817a_upgrade_investor_dashboard_payload(payload)
 
 
 @app.get("/engine/investor-dashboard/snapshot")
@@ -12583,6 +12668,7 @@ async def engine_signal_cockpit_history(symbol: str, days: int = 3, interval: st
         "storageVersion": S418E_COCKPIT_HISTORY_VERSION,
         "evaluatedAt": datetime.now(timezone.utc).isoformat(),
     }
+
 
 
 
