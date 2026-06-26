@@ -7380,6 +7380,197 @@ def _s815a_session_date(row: dict[str, Any]) -> str:
     return datetime.now(timezone.utc).date().isoformat()
 
 
+
+def _s816d_bool(value: Any, fallback: bool = False) -> bool:
+    if isinstance(value, bool):
+        return value
+    if value is None or value == "":
+        return fallback
+    return str(value).strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _s816d_clean_elite_supabase_row(row: dict[str, Any], payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    payload = dict(payload) if isinstance(payload, dict) else {}
+    elite_layer = str(row.get("elite_layer") or row.get("eliteLayer") or payload.get("eliteLayer") or "CLEAN_ELITE_READY").strip() or "CLEAN_ELITE_READY"
+
+    client_visible = _s816d_bool(payload.get("clientVisible"), fallback=(elite_layer == "CLEAN_ELITE_READY"))
+    marketing_allowed = _s816d_bool(payload.get("marketingClaimAllowed"), fallback=(elite_layer == "CLEAN_ELITE_READY"))
+
+    if elite_layer == "CLEAN_ELITE_TEST":
+        client_visible = False
+        marketing_allowed = False
+
+    return {
+        "clean_elite_id": row.get("clean_elite_id") or row.get("cleanEliteId"),
+        "signal_id": row.get("signal_id") or row.get("signalId"),
+        "symbol": str(row.get("symbol") or payload.get("symbol") or "").upper().strip(),
+        "setup_slug": row.get("setup_slug") or row.get("setupSlug") or payload.get("setupSlug"),
+        "session_date": row.get("session_date") or row.get("sessionDate") or payload.get("sessionDate"),
+        "direction": row.get("direction") or payload.get("direction"),
+        "elite_layer": elite_layer,
+        "selected_at": row.get("selected_at") or row.get("selectedAt"),
+        "trigger_time": row.get("trigger_time") or row.get("triggerTime") or payload.get("triggerTime") or payload.get("createdAt"),
+        "entry": _s815a_num(row.get("entry"), _s815a_num(payload.get("entry"), None)),
+        "stop": _s815a_num(row.get("stop"), _s815a_num(payload.get("stop"), None)),
+        "tp1": _s815a_num(row.get("tp1"), _s815a_target_price(payload, 0)),
+        "tp2": _s815a_num(row.get("tp2"), _s815a_target_price(payload, 1)),
+        "rr_to_tp1": _s815a_num(row.get("rr_to_tp1"), _s815a_num(payload.get("rrToTp1"), None)),
+        "score": _s815a_num(row.get("score"), _s815a_num(payload.get("score") or payload.get("signalScore"), None)),
+        "selector_score": _s815a_num(row.get("selector_score"), _s815a_num(payload.get("selectorScore"), None)),
+        "signal_grade": row.get("signal_grade") or payload.get("signalGrade") or payload.get("grade"),
+        "quality_status": row.get("quality_status") or payload.get("qualityStatus"),
+        "source_version": row.get("source_version") or payload.get("sourceVersion"),
+        "client_visible": client_visible,
+        "marketing_claim_allowed": marketing_allowed,
+        "created_at": row.get("created_at") or row.get("createdAt") or _s815a_now_iso(),
+        "updated_at": row.get("updated_at") or row.get("updatedAt") or _s815a_now_iso(),
+        "payload": payload,
+    }
+
+
+def _s816d_upsert_clean_elite_supabase(row: dict[str, Any]) -> dict[str, Any]:
+    try:
+        from app.storage import SupabaseRestStore
+    except Exception:
+        from storage import SupabaseRestStore  # type: ignore
+
+    store = SupabaseRestStore()
+
+    if not store.enabled:
+        return {
+            "ok": False,
+            "enabled": False,
+            "skipped": True,
+            "lastError": store.last_error,
+            "table": "engine_clean_elite_signals",
+        }
+
+    clean_elite_id = str(row.get("clean_elite_id") or "").strip()
+    if not clean_elite_id:
+        return {
+            "ok": False,
+            "enabled": store.enabled,
+            "skipped": True,
+            "lastError": "missing_clean_elite_id",
+            "table": "engine_clean_elite_signals",
+        }
+
+    store.safe_request(
+        "POST",
+        "engine_clean_elite_signals",
+        params={"on_conflict": "clean_elite_id"},
+        body=row,
+        prefer="resolution=merge-duplicates,return=minimal",
+    )
+
+    return {
+        "ok": store.last_error is None,
+        "enabled": store.enabled,
+        "skipped": False,
+        "lastError": store.last_error,
+        "table": "engine_clean_elite_signals",
+    }
+
+
+def _s816d_sync_clean_elite_sqlite_to_supabase(
+    *,
+    session_date: str | None = None,
+    elite_layer: str = "ALL",
+    limit: int = 1000,
+) -> dict[str, Any]:
+    import json
+    import sqlite3
+
+    safe_limit = max(1, min(int(limit or 1000), 5000))
+    date_key = str(session_date or "").strip()[:10] or None
+    layer = str(elite_layer or "ALL").strip() or "ALL"
+
+    db_path = _s815a_db_path()
+    con = sqlite3.connect(str(db_path))
+    con.row_factory = sqlite3.Row
+
+    try:
+        _s815a_ensure_tables(con)
+
+        where: list[str] = []
+        params: list[Any] = []
+
+        if date_key:
+            where.append("session_date = ?")
+            params.append(date_key)
+
+        if layer.upper() != "ALL":
+            where.append("elite_layer = ?")
+            params.append(layer)
+
+        where_sql = ("where " + " and ".join(where)) if where else ""
+
+        rows = [
+            dict(row)
+            for row in con.execute(
+                f"""
+                select *
+                from clean_elite_signals
+                {where_sql}
+                order by coalesce(session_date, '') desc, coalesce(selected_at, '') desc
+                limit ?
+                """,
+                (*params, safe_limit),
+            ).fetchall()
+        ]
+    finally:
+        con.close()
+
+    synced = 0
+    failed = 0
+    last_error = None
+    samples: list[dict[str, Any]] = []
+
+    for row in rows:
+        try:
+            payload = json.loads(row.get("payload_json") or "{}")
+            if not isinstance(payload, dict):
+                payload = {}
+        except Exception:
+            payload = {}
+
+        supabase_row = _s816d_clean_elite_supabase_row(row, payload)
+        result = _s816d_upsert_clean_elite_supabase(supabase_row)
+
+        if result.get("ok"):
+            synced += 1
+        else:
+            failed += 1
+            last_error = result.get("lastError")
+
+        if len(samples) < 8:
+            samples.append({
+                "cleanEliteId": supabase_row.get("clean_elite_id"),
+                "symbol": supabase_row.get("symbol"),
+                "setupSlug": supabase_row.get("setup_slug"),
+                "sessionDate": supabase_row.get("session_date"),
+                "eliteLayer": supabase_row.get("elite_layer"),
+                "ok": result.get("ok"),
+                "lastError": result.get("lastError"),
+            })
+
+    return {
+        "ok": failed == 0,
+        "version": "s8_16d_clean_elite_supabase_alignment_v1",
+        "mode": "sqlite_to_supabase_clean_elite_sync",
+        "dbPath": str(db_path),
+        "sessionDate": date_key,
+        "eliteLayer": layer,
+        "rowsFound": len(rows),
+        "synced": synced,
+        "failed": failed,
+        "lastError": last_error,
+        "samples": samples,
+    }
+
+
+
+
 def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, Any]:
     import sqlite3
 
@@ -7411,6 +7602,9 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
     captured = 0
     skipped = 0
     rows_out: list[dict[str, Any]] = []
+    supabase_synced = 0
+    supabase_failed = 0
+    supabase_last_error = None
 
     con = sqlite3.connect(str(db_path))
     try:
@@ -7436,6 +7630,7 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
             s814a_gate = raw.get("s814aEliteGate") if isinstance(raw.get("s814aEliteGate"), dict) else {}
             s814c_gate = raw.get("s814cLearningGate") if isinstance(raw.get("s814cLearningGate"), dict) else {}
             entry_health = raw.get("entryHealth") if isinstance(raw.get("entryHealth"), dict) else {}
+            s816a_gate = raw.get("s816aEliteTestGate") if isinstance(raw.get("s816aEliteTestGate"), dict) else {}
 
             con.execute(
                 """
@@ -7458,14 +7653,16 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
                     signal_grade,
                     quality_status,
                     source_version,
+                    elite_layer,
                     s814a_gate_json,
                     s814c_gate_json,
+                    s816a_gate_json,
                     entry_health_json,
                     payload_json,
                     created_at,
                     updated_at
                 )
-                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 on conflict(clean_elite_id) do update set
                     selected_at=excluded.selected_at,
                     entry=excluded.entry,
@@ -7478,8 +7675,10 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
                     signal_grade=excluded.signal_grade,
                     quality_status=excluded.quality_status,
                     source_version=excluded.source_version,
+                    elite_layer=excluded.elite_layer,
                     s814a_gate_json=excluded.s814a_gate_json,
                     s814c_gate_json=excluded.s814c_gate_json,
+                    s816a_gate_json=excluded.s816a_gate_json,
                     entry_health_json=excluded.entry_health_json,
                     payload_json=excluded.payload_json,
                     updated_at=excluded.updated_at
@@ -7503,14 +7702,49 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
                     str(raw.get("signalGrade") or raw.get("grade") or "").strip() or None,
                     str(raw.get("qualityStatus") or "").strip() or None,
                     str(forward.get("version") or "").strip() or None,
+                    elite_layer,
                     _s815a_json(s814a_gate),
                     _s815a_json(s814c_gate),
+                    _s815a_json(s816a_gate),
                     _s815a_json(entry_health),
                     _s815a_json(raw),
                     now,
                     now,
                 ),
             )
+
+            supabase_row = _s816d_clean_elite_supabase_row(
+                {
+                    "clean_elite_id": clean_elite_id,
+                    "signal_id": signal_id or None,
+                    "symbol": symbol,
+                    "setup_slug": setup_slug,
+                    "session_date": session_date,
+                    "direction": str(raw.get("direction") or "").strip() or None,
+                    "selected_at": now,
+                    "trigger_time": trigger_time or None,
+                    "entry": _s815a_num(raw.get("entry"), None),
+                    "stop": _s815a_num(raw.get("stop"), None),
+                    "tp1": _s815a_target_price(raw, 0),
+                    "tp2": _s815a_target_price(raw, 1),
+                    "rr_to_tp1": _s815a_num(raw.get("rrToTp1"), None),
+                    "score": _s815a_num(raw.get("score") or raw.get("signalScore"), None),
+                    "selector_score": _s815a_num(raw.get("selectorScore"), None),
+                    "signal_grade": str(raw.get("signalGrade") or raw.get("grade") or "").strip() or None,
+                    "quality_status": str(raw.get("qualityStatus") or "").strip() or None,
+                    "source_version": str(forward.get("version") or "").strip() or None,
+                    "elite_layer": elite_layer,
+                    "created_at": now,
+                    "updated_at": now,
+                },
+                raw,
+            )
+            supabase_result = _s816d_upsert_clean_elite_supabase(supabase_row)
+            if supabase_result.get("ok"):
+                supabase_synced += 1
+            else:
+                supabase_failed += 1
+                supabase_last_error = supabase_result.get("lastError")
 
             captured += 1
             rows_out.append({
@@ -7546,6 +7780,12 @@ def _s815a_capture_forward_selected_best(source: str = "manual") -> dict[str, An
         "captured": captured,
         "skipped": skipped,
         "rows": rows_out[:25],
+        "supabase": {
+            "table": "engine_clean_elite_signals",
+            "synced": supabase_synced,
+            "failed": supabase_failed,
+            "lastError": supabase_last_error,
+        },
         "note": "Only selectedBestIdeas that passed current elite selector are stored. Raw premium_signal is intentionally ignored.",
     }
 
@@ -7966,6 +8206,26 @@ def _s816c_clean_elite_signal_map(
         "skipped": skipped,
         "samples": samples[:8],
         "mode": "clean_elite_ledger_outcome_source",
+    }
+
+
+
+@app.post("/engine/clean-elite/supabase/sync")
+def engine_clean_elite_supabase_sync(
+    session_date: str | None = None,
+    elite_layer: str = "ALL",
+    limit: int = 1000,
+):
+    payload = _s816d_sync_clean_elite_sqlite_to_supabase(
+        session_date=session_date,
+        elite_layer=elite_layer,
+        limit=limit,
+    )
+    return {
+        "ok": payload.get("ok") is True,
+        "value": payload,
+        "storageVersion": S815A_CLEAN_ELITE_VERSION,
+        "cache": runtime_cache.get_status(),
     }
 
 
@@ -12025,6 +12285,7 @@ async def engine_signal_cockpit_history(symbol: str, days: int = 3, interval: st
         "storageVersion": S418E_COCKPIT_HISTORY_VERSION,
         "evaluatedAt": datetime.now(timezone.utc).isoformat(),
     }
+
 
 
 
