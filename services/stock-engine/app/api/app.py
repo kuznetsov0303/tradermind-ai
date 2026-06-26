@@ -7905,6 +7905,100 @@ def _s816b_evaluate_test_to_ready_promotion(test_rows: list[dict[str, Any]]) -> 
 
 
 
+
+def _s816fc_normalize_outcome_row(record: Any) -> dict[str, Any] | None:
+    if not record:
+        return None
+
+    import json
+
+    row = dict(record)
+    payload = {}
+    try:
+        payload = json.loads(row.get("payload_json") or "{}")
+    except Exception:
+        payload = {}
+
+    if not isinstance(payload, dict):
+        payload = {}
+
+    return {
+        "status": payload.get("status") or row.get("status"),
+        "result_r": payload.get("resultR") if payload.get("resultR") is not None else row.get("result_r"),
+        "mfe_r": payload.get("mfeR") if payload.get("mfeR") is not None else row.get("mfe_r"),
+        "mae_r": payload.get("maeR") if payload.get("maeR") is not None else row.get("mae_r"),
+        "reason": payload.get("reason") or row.get("reason"),
+        "signal_id": payload.get("signalId") or row.get("signal_id"),
+        "cleanEliteId": payload.get("cleanEliteId"),
+        "eliteLayer": payload.get("eliteLayer"),
+        "source": payload.get("source"),
+    }
+
+
+def _s816fc_match_clean_elite_outcome(con: Any, row: dict[str, Any]) -> dict[str, Any] | None:
+    clean_elite_id = str(row.get("clean_elite_id") or "").strip()
+    signal_id = str(row.get("signal_id") or clean_elite_id or "").strip()
+
+    # 1) Strict Clean Elite outcome first. This avoids matching old OPEN rows.
+    if clean_elite_id:
+        try:
+            found = con.execute(
+                """
+                select *
+                from outcome_records
+                where payload_json like ?
+                  and payload_json like '%clean_elite_ledger%'
+                order by rowid desc
+                limit 1
+                """,
+                (f"%{clean_elite_id}%",),
+            ).fetchone()
+            normalized = _s816fc_normalize_outcome_row(found)
+            if normalized:
+                return normalized
+        except Exception:
+            pass
+
+    # 2) Direct signal_id fallback.
+    for candidate_id in [signal_id, clean_elite_id]:
+        if not candidate_id:
+            continue
+        try:
+            found = con.execute(
+                """
+                select *
+                from outcome_records
+                where signal_id = ?
+                order by rowid desc
+                limit 1
+                """,
+                (candidate_id,),
+            ).fetchone()
+            normalized = _s816fc_normalize_outcome_row(found)
+            if normalized:
+                return normalized
+        except Exception:
+            pass
+
+    # 3) Legacy broad matcher last.
+    for candidate_id in [signal_id, clean_elite_id]:
+        if not candidate_id:
+            continue
+        try:
+            matched = _s815a_match_outcome(
+                con,
+                candidate_id,
+                str(row.get("symbol") or ""),
+                str(row.get("setup_slug") or ""),
+                str(row.get("session_date") or ""),
+            )
+            if matched:
+                return matched
+        except Exception:
+            pass
+
+    return None
+
 def _s815a_clean_elite_stats(
     initial_capital: float = 50000,
     risk_pct: float = 0.01,
@@ -7931,13 +8025,7 @@ def _s815a_clean_elite_stats(
 
         enriched: list[dict[str, Any]] = []
         for row in rows:
-            outcome = _s815a_match_outcome(
-                con,
-                row.get("signal_id"),
-                str(row.get("symbol") or ""),
-                str(row.get("setup_slug") or ""),
-                str(row.get("session_date") or ""),
-            )
+            outcome = _s816fc_match_clean_elite_outcome(con, row)
             status = str((outcome or {}).get("status") or "OPEN").upper()
             result_r = _s815a_num((outcome or {}).get("result_r"), None)
             mfe_r = _s815a_num((outcome or {}).get("mfe_r"), None)
@@ -8091,6 +8179,126 @@ def _s815a_clean_elite_stats(
         con.close()
 
 
+
+
+def _s816f_first_text(*values: Any) -> str | None:
+    for value in values:
+        if value is None:
+            continue
+        text = str(value).strip()
+        if text:
+            return text
+    return None
+
+
+def _s816f_num(*values: Any) -> float | None:
+    for value in values:
+        parsed = _s815a_num(value, None)
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def _s816f_target_price(payload: dict[str, Any], index: int) -> float | None:
+    if not isinstance(payload, dict):
+        return None
+
+    if index == 0:
+        direct = _s816f_num(payload.get("tp1"), payload.get("target1"), payload.get("targetPrice1"))
+        if direct is not None:
+            return direct
+
+    if index == 1:
+        direct = _s816f_num(payload.get("tp2"), payload.get("target2"), payload.get("targetPrice2"))
+        if direct is not None:
+            return direct
+
+    targets = payload.get("targets")
+    if isinstance(targets, list) and len(targets) > index:
+        item = targets[index]
+        if isinstance(item, dict):
+            return _s816f_num(item.get("price"), item.get("target"), item.get("value"))
+        return _s816f_num(item)
+
+    return None
+
+
+def _s816f_normalize_clean_elite_payload(row: dict[str, Any], payload: dict[str, Any]) -> dict[str, Any]:
+    payload = dict(payload) if isinstance(payload, dict) else {}
+    metrics = payload.get("metrics") if isinstance(payload.get("metrics"), dict) else {}
+
+    clean_elite_id = _s816f_first_text(row.get("clean_elite_id"), payload.get("cleanEliteId"))
+    symbol = _s816f_first_text(row.get("symbol"), payload.get("symbol"))
+    setup_slug = _s816f_first_text(row.get("setup_slug"), payload.get("setupSlug"))
+    session_date = _s816f_first_text(row.get("session_date"), payload.get("sessionDate"))
+    elite_layer = _s816f_first_text(row.get("elite_layer"), payload.get("eliteLayer"), "CLEAN_ELITE_READY")
+
+    trigger_time = _s816f_first_text(
+        row.get("trigger_time"),
+        payload.get("triggerTime"),
+        payload.get("signalTimeForSessionGuard"),
+        metrics.get("signalTimeForSessionGuard"),
+        payload.get("createdAt"),
+        row.get("selected_at"),
+    )
+
+    entry = _s816f_num(row.get("entry"), payload.get("entry"), payload.get("entryPrice"), payload.get("currentPrice"))
+    stop = _s816f_num(row.get("stop"), payload.get("stop"), payload.get("stopLoss"), payload.get("invalidationPrice"))
+    tp1 = _s816f_num(row.get("tp1"), _s816f_target_price(payload, 0))
+    tp2 = _s816f_num(row.get("tp2"), _s816f_target_price(payload, 1))
+
+    targets: list[dict[str, Any]] = []
+    if tp1 is not None:
+        targets.append({"r": 1, "price": tp1})
+    if tp2 is not None:
+        targets.append({"r": 2, "price": tp2})
+
+    if targets:
+        payload["targets"] = targets
+
+    payload.update({
+        "id": clean_elite_id,
+        "signalId": clean_elite_id,
+        "cleanEliteId": clean_elite_id,
+        "symbol": symbol,
+        "setupSlug": setup_slug,
+        "setup_slug": setup_slug,
+        "sessionDate": session_date,
+        "session_date": session_date,
+        "eliteLayer": elite_layer,
+        "triggerTime": trigger_time,
+        "trigger_time": trigger_time,
+        "createdAt": trigger_time,
+        "entry": entry,
+        "entryPrice": entry,
+        "stop": stop,
+        "stopLoss": stop,
+        "tp1": tp1,
+        "target1": tp1,
+        "tp2": tp2,
+        "target2": tp2,
+        "direction": _s816f_first_text(row.get("direction"), payload.get("direction")),
+        "signalScore": _s816f_num(row.get("score"), payload.get("score"), payload.get("signalScore")),
+        "score": _s816f_num(row.get("score"), payload.get("score"), payload.get("signalScore")),
+        "signalGrade": _s816f_first_text(row.get("signal_grade"), payload.get("signalGrade"), payload.get("grade")),
+        "qualityStatus": _s816f_first_text(row.get("quality_status"), payload.get("qualityStatus"), "PASSED"),
+        "premiumSignal": False,
+        "telegramEligible": False,
+        "clientVisible": False,
+        "marketingClaimAllowed": False,
+        "source": "clean_elite_ledger",
+    })
+
+    # Keep TEST layer impossible to leak into client/investor READY claims.
+    if str(elite_layer or "").upper() == "CLEAN_ELITE_TEST":
+        payload["premiumSignal"] = False
+        payload["telegramEligible"] = False
+        payload["clientVisible"] = False
+        payload["marketingClaimAllowed"] = False
+
+    return payload
+
+
 def _s816c_clean_elite_signal_map(
     *,
     session_date: str | None = None,
@@ -8099,6 +8307,45 @@ def _s816c_clean_elite_signal_map(
 ) -> tuple[dict[str, dict[str, Any]], dict[str, Any]]:
     import json
     import sqlite3
+
+    def first_text(*values: Any) -> str | None:
+        for value in values:
+            if value is None:
+                continue
+            value = str(value).strip()
+            if value:
+                return value
+        return None
+
+    def num(*values: Any) -> float | None:
+        for value in values:
+            parsed = _s815a_num(value, None)
+            if parsed is not None:
+                return parsed
+        return None
+
+    def target_price(src: dict[str, Any], index: int) -> float | None:
+        if not isinstance(src, dict):
+            return None
+
+        if index == 0:
+            direct = num(src.get("tp1"), src.get("target1"), src.get("targetPrice1"), src.get("targetPrice"), src.get("takeProfit"))
+            if direct is not None:
+                return direct
+
+        if index == 1:
+            direct = num(src.get("tp2"), src.get("target2"), src.get("targetPrice2"))
+            if direct is not None:
+                return direct
+
+        targets = src.get("targets")
+        if isinstance(targets, list) and len(targets) > index:
+            item = targets[index]
+            if isinstance(item, dict):
+                return num(item.get("price"), item.get("target"), item.get("value"))
+            return num(item)
+
+        return None
 
     safe_limit = max(1, min(int(limit or 200), 1000))
     date_key = str(session_date or "").strip()[:10] or None
@@ -8152,48 +8399,99 @@ def _s816c_clean_elite_signal_map(
         except Exception:
             payload = {}
 
-        clean_elite_id = str(row.get("clean_elite_id") or "").strip()
-        symbol = str(row.get("symbol") or payload.get("symbol") or "").upper().strip()
-        setup_slug = str(row.get("setup_slug") or payload.get("setupSlug") or "").strip()
-        signal_id = str(row.get("signal_id") or payload.get("signalId") or clean_elite_id).strip()
+        raw = payload.get("raw") if isinstance(payload.get("raw"), dict) else {}
+        metrics = payload.get("metrics") if isinstance(payload.get("metrics"), dict) else {}
+        raw_metrics = raw.get("metrics") if isinstance(raw.get("metrics"), dict) else {}
+
+        clean_elite_id = str(row.get("clean_elite_id") or payload.get("cleanEliteId") or raw.get("cleanEliteId") or "").strip()
+        symbol = first_text(row.get("symbol"), payload.get("symbol"), raw.get("symbol"))
+        setup_slug = first_text(row.get("setup_slug"), payload.get("setupSlug"), raw.get("setupSlug"), payload.get("setup_slug"), raw.get("setup_slug"))
+        signal_id = first_text(row.get("signal_id"), payload.get("signalId"), raw.get("signalId"), clean_elite_id)
 
         if not signal_id or not symbol or not setup_slug:
             skipped += 1
             continue
 
-        trigger_time = str(row.get("trigger_time") or payload.get("triggerTime") or row.get("selected_at") or "").strip()
-        row_session_date = str(row.get("session_date") or payload.get("sessionDate") or date_key or "").strip()[:10]
+        trigger_time = first_text(
+            row.get("trigger_time"),
+            payload.get("triggerTime"),
+            raw.get("triggerTime"),
+            payload.get("signalTimeForSessionGuard"),
+            raw.get("signalTimeForSessionGuard"),
+            metrics.get("signalTimeForSessionGuard"),
+            raw_metrics.get("signalTimeForSessionGuard"),
+            row.get("selected_at"),
+        )
 
-        signal = dict(payload)
-        signal["signalId"] = signal_id
-        signal["storageKey"] = signal_id
-        signal["cleanEliteId"] = clean_elite_id
-        signal["eliteLayer"] = str(row.get("elite_layer") or payload.get("eliteLayer") or layer)
-        signal["symbol"] = symbol
-        signal["setupSlug"] = setup_slug
-        signal["setupName"] = signal.get("setupName") or setup_slug
-        signal["sessionDate"] = row_session_date
-        signal["triggerTime"] = trigger_time or signal.get("triggerTime") or signal.get("createdAt")
-        signal["createdAt"] = signal.get("createdAt") or trigger_time or row.get("selected_at")
-        signal["direction"] = signal.get("direction") or row.get("direction")
-        signal["entry"] = _s815a_num(signal.get("entry"), _s815a_num(row.get("entry"), None))
-        signal["stop"] = _s815a_num(signal.get("stop"), _s815a_num(row.get("stop"), None))
-        signal["tp1"] = _s815a_num(signal.get("tp1"), _s815a_num(row.get("tp1"), None))
-        signal["tp2"] = _s815a_num(signal.get("tp2"), _s815a_num(row.get("tp2"), None))
-        signal["premiumSignal"] = False
-        signal["telegramEligible"] = False
-        signal["clientVisible"] = False
-        signal["marketingClaimAllowed"] = False
-        signal["source"] = "clean_elite_ledger"
+        entry = num(row.get("entry"), payload.get("entry"), raw.get("entry"), payload.get("entryPrice"), raw.get("entryPrice"), payload.get("currentPrice"), raw.get("currentPrice"))
+        stop = num(row.get("stop"), payload.get("stop"), raw.get("stop"), payload.get("stopLoss"), raw.get("stopLoss"))
+        tp1 = num(row.get("tp1"), target_price(payload, 0), target_price(raw, 0))
+        tp2 = num(row.get("tp2"), target_price(payload, 1), target_price(raw, 1))
+        rr_to_tp1 = num(row.get("rr_to_tp1"), payload.get("rrToTp1"), raw.get("rrToTp1"), 2.0)
+
+        signal = dict(raw)
+        signal.update(payload)
+
+        signal.update({
+            "id": signal_id,
+            "signalId": signal_id,
+            "storageKey": signal_id,
+            "cleanEliteId": clean_elite_id,
+            "eliteLayer": first_text(row.get("elite_layer"), payload.get("eliteLayer"), raw.get("eliteLayer"), layer),
+            "symbol": str(symbol).upper().strip(),
+            "setupSlug": setup_slug,
+            "setupName": first_text(payload.get("setupName"), raw.get("setupName"), setup_slug),
+            "sessionDate": first_text(row.get("session_date"), payload.get("sessionDate"), raw.get("sessionDate"), date_key),
+            "triggerTime": trigger_time,
+            "createdAt": trigger_time,
+            "direction": first_text(row.get("direction"), payload.get("direction"), raw.get("direction")),
+            "entry": entry,
+            "entryPrice": entry,
+            "stop": stop,
+            "stopLoss": stop,
+            "tp1": tp1,
+            "target1": tp1,
+            "targetPrice": tp1,
+            "targetPrice1": tp1,
+            "tp2": tp2,
+            "target2": tp2,
+            "targetPrice2": tp2,
+            "rrToTp1": rr_to_tp1,
+            "score": num(row.get("score"), payload.get("score"), raw.get("score"), payload.get("signalScore"), raw.get("signalScore")),
+            "signalScore": num(row.get("score"), payload.get("signalScore"), raw.get("signalScore"), payload.get("score"), raw.get("score")),
+            "signalGrade": first_text(row.get("signal_grade"), payload.get("signalGrade"), raw.get("signalGrade"), payload.get("grade"), raw.get("grade")),
+            "qualityStatus": first_text(row.get("quality_status"), payload.get("qualityStatus"), raw.get("qualityStatus"), "PASSED"),
+            "premiumSignal": False,
+            "telegramEligible": False,
+            "clientVisible": False,
+            "marketingClaimAllowed": False,
+            "source": "clean_elite_ledger",
+        })
+
+        if entry is not None:
+            signal["entryZone"] = {"min": entry, "max": entry}
+            signal["entry_zone"] = {"min": entry, "max": entry}
+
+        targets = []
+        if tp1 is not None:
+            targets.append({"r": rr_to_tp1 or 2.0, "price": tp1})
+        if tp2 is not None:
+            targets.append({"r": (rr_to_tp1 or 2.0) + 1.0, "price": tp2})
+        if targets:
+            signal["targets"] = targets
 
         signal_map[signal_id] = signal
         samples.append({
             "signalId": signal_id,
             "cleanEliteId": clean_elite_id,
-            "symbol": symbol,
+            "symbol": str(symbol).upper().strip(),
             "setupSlug": setup_slug,
-            "sessionDate": row_session_date,
+            "sessionDate": signal.get("sessionDate"),
             "eliteLayer": signal.get("eliteLayer"),
+            "triggerTime": trigger_time,
+            "entry": entry,
+            "stop": stop,
+            "tp1": tp1,
         })
 
     return signal_map, {
@@ -8205,7 +8503,7 @@ def _s816c_clean_elite_signal_map(
         "signalMapCount": len(signal_map),
         "skipped": skipped,
         "samples": samples[:8],
-        "mode": "clean_elite_ledger_outcome_source",
+        "mode": "clean_elite_ledger_outcome_source_s816f",
     }
 
 
@@ -12285,6 +12583,8 @@ async def engine_signal_cockpit_history(symbol: str, days: int = 3, interval: st
         "storageVersion": S418E_COCKPIT_HISTORY_VERSION,
         "evaluatedAt": datetime.now(timezone.utc).isoformat(),
     }
+
+
 
 
 
