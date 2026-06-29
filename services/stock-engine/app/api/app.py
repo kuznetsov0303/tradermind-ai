@@ -216,13 +216,78 @@ def store_active_signals() -> dict[str, Any]:
             record["premiumSignal"] = False
             record["telegramEligible"] = False
 
-        # ACTIVE cards can be shown on the dashboard, but Telegram stays strict.
+        # S8.22A: ACTIVE cards can exist in cockpit, but client delivery stays strictly gated.
         if status == "ACTIVE":
+            client_block_reasons: list[str] = []
+
+            raw_signal = record.get("rawSignal") if isinstance(record.get("rawSignal"), dict) else {}
+
+            try:
+                strategy_config = _s819_strategy_config_for_row(record)
+            except Exception:
+                strategy_config = {}
+
+            registry_status = str(strategy_config.get("registryStatus") or "").upper().strip()
+            product_mode = str(strategy_config.get("productMode") or "").upper().strip()
+            client_visible_mode = str(strategy_config.get("clientVisibleMode") or "").upper().strip()
+
+            record["clientDeliveryPolicy"] = {
+                "version": "s8_22a_strict_client_delivery_gate_v1",
+                "registryStatus": registry_status,
+                "productMode": product_mode,
+                "clientVisibleMode": client_visible_mode,
+                "minRrToTp1": 2.0,
+                "allowedGrades": sorted(TELEGRAM_ALLOWED_GRADES),
+            }
+
+            if registry_status in {"DEMOTE_TO_MONITOR_ONLY", "PAPER_ONLY_UNTIL_SAMPLE_GROWS"}:
+                client_block_reasons.append(f"registry_status_blocks_client_delivery:{registry_status}")
+            if product_mode in {"MONITOR_ONLY", "PAPER_TEST_ONLY"}:
+                client_block_reasons.append(f"product_mode_blocks_client_delivery:{product_mode}")
+            if client_visible_mode == "TEST_ONLY":
+                client_block_reasons.append("client_visible_mode_TEST_ONLY")
+
+            grade = str(record.get("signalGrade") or "").upper().strip()
+            if TELEGRAM_ALLOWED_GRADES and grade not in TELEGRAM_ALLOWED_GRADES:
+                client_block_reasons.append("grade_not_allowed_for_client_delivery")
+
+            try:
+                rr1_float = float(record.get("rrToTp1") if record.get("rrToTp1") is not None else 0)
+            except Exception:
+                rr1_float = 0.0
+            if rr1_float < 2.0:
+                client_block_reasons.append("rrToTp1_below_2R")
+
+            entry_value = record.get("entry") if record.get("entry") is not None else raw_signal.get("entry")
+            stop_value = record.get("stop") if record.get("stop") is not None else raw_signal.get("stop")
+            targets_value = record.get("targets") if isinstance(record.get("targets"), list) else raw_signal.get("targets")
+            targets_value = targets_value if isinstance(targets_value, list) else []
+            tp1_value = targets_value[0].get("price") if targets_value and isinstance(targets_value[0], dict) else None
+            invalidation_value = (
+                record.get("invalidation")
+                or raw_signal.get("invalidation")
+                or raw_signal.get("invalidIf")
+                or raw_signal.get("invalidationReason")
+            )
+
+            if entry_value is None or str(entry_value).strip() == "":
+                client_block_reasons.append("missing_entry")
+            if stop_value is None or str(stop_value).strip() == "":
+                client_block_reasons.append("missing_stop")
+            if tp1_value is None or str(tp1_value).strip() == "":
+                client_block_reasons.append("missing_tp1")
+            if invalidation_value is None or str(invalidation_value).strip() == "":
+                client_block_reasons.append("missing_invalidation")
+
             passed_premium_active = (
                 record.get("qualityStatus") == "PASSED"
                 and record.get("premiumSignal") is True
                 and record.get("telegramEligible") is True
+                and not client_block_reasons
             )
+
+            record["clientDeliveryAllowed"] = bool(passed_premium_active)
+            record["clientDeliveryBlockedReasons"] = client_block_reasons
 
             if not passed_premium_active:
                 record["telegramEligible"] = False
@@ -636,6 +701,53 @@ def evaluate_telegram_quality_firewall(signal: dict[str, Any]) -> dict[str, Any]
     if TELEGRAM_ALLOWED_GRADES and grade not in TELEGRAM_ALLOWED_GRADES:
         passed = False
         reasons.append("grade_not_allowed")
+
+    # S8.22A: final client delivery safety check against strategy registry and required trade plan fields.
+    raw_signal = signal.get("rawSignal") if isinstance(signal.get("rawSignal"), dict) else {}
+
+    try:
+        strategy_config = _s819_strategy_config_for_row(signal)
+    except Exception:
+        strategy_config = {}
+
+    registry_status = str(strategy_config.get("registryStatus") or "").upper().strip()
+    product_mode = str(strategy_config.get("productMode") or "").upper().strip()
+    client_visible_mode = str(strategy_config.get("clientVisibleMode") or "").upper().strip()
+
+    if registry_status in {"DEMOTE_TO_MONITOR_ONLY", "PAPER_ONLY_UNTIL_SAMPLE_GROWS"}:
+        passed = False
+        reasons.append(f"registry_status_blocks_client_delivery:{registry_status}")
+    if product_mode in {"MONITOR_ONLY", "PAPER_TEST_ONLY"}:
+        passed = False
+        reasons.append(f"product_mode_blocks_client_delivery:{product_mode}")
+    if client_visible_mode == "TEST_ONLY":
+        passed = False
+        reasons.append("client_visible_mode_TEST_ONLY")
+
+    entry_value = signal.get("entry") if signal.get("entry") is not None else raw_signal.get("entry")
+    stop_value = signal.get("stop") if signal.get("stop") is not None else raw_signal.get("stop")
+    targets_value = signal.get("targets") if isinstance(signal.get("targets"), list) else raw_signal.get("targets")
+    targets_value = targets_value if isinstance(targets_value, list) else []
+    tp1_value = targets_value[0].get("price") if targets_value and isinstance(targets_value[0], dict) else None
+    invalidation_value = (
+        signal.get("invalidation")
+        or raw_signal.get("invalidation")
+        or raw_signal.get("invalidIf")
+        or raw_signal.get("invalidationReason")
+    )
+
+    if entry_value is None or str(entry_value).strip() == "":
+        passed = False
+        reasons.append("missing_entry")
+    if stop_value is None or str(stop_value).strip() == "":
+        passed = False
+        reasons.append("missing_stop")
+    if tp1_value is None or str(tp1_value).strip() == "":
+        passed = False
+        reasons.append("missing_tp1")
+    if invalidation_value is None or str(invalidation_value).strip() == "":
+        passed = False
+        reasons.append("missing_invalidation")
 
     triggers = get_triggers(signal)
     normalized_triggers = [item.lower() for item in triggers]
