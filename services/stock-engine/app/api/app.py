@@ -6971,6 +6971,89 @@ def engine_night_calibration_recommendations_cache():
         "storageVersion": S820A_NIGHT_CALIBRATION_RECOMMENDATIONS_VERSION,
     }
 
+
+@app.get("/engine/night-calibration/dashboard-card")
+def engine_night_calibration_dashboard_card():
+    cached = runtime_cache.get_json("engine:night_calibration_recommendations:latest")
+    payload = cached if isinstance(cached, dict) and cached.get("ok") else _s820a_build_night_calibration_recommendations(min_closed=5)
+
+    totals = payload.get("totals") if isinstance(payload.get("totals"), dict) else {}
+    decision = payload.get("decisionSummary") if isinstance(payload.get("decisionSummary"), dict) else {}
+    registry = payload.get("registrySummary") if isinstance(payload.get("registrySummary"), dict) else {}
+    admin = decision.get("adminSummary") if isinstance(decision.get("adminSummary"), dict) else {}
+
+    keep = admin.get("keepAndTighten") if isinstance(admin.get("keepAndTighten"), list) else []
+    demoted = admin.get("demotionRequired") if isinstance(admin.get("demotionRequired"), list) else []
+    paper = admin.get("paperOnlyUntilSampleGrows") if isinstance(admin.get("paperOnlyUntilSampleGrows"), list) else []
+    neutral = admin.get("neutralRetest") if isinstance(admin.get("neutralRetest"), list) else []
+
+    top_action = decision.get("topAction") or "KEEP_NO_AUTOMATIC_CHANGES"
+
+    if top_action == "KEEP_PREMARKET_PUMP_SHORT_ONLY":
+        headline = "AI Calibration: keep Premarket Pump Short as the only current best candidate."
+        tone = "focused"
+    elif top_action == "REVIEW_PROMOTION_CANDIDATES_MANUALLY":
+        headline = "AI Calibration: promotion candidates require manual review."
+        tone = "review"
+    elif top_action == "NO_READY_SETUP_KEEP_COLLECTING_DATA":
+        headline = "AI Calibration: no setup is ready; keep collecting evidence."
+        tone = "defensive"
+    else:
+        headline = "AI Calibration: keep gates unchanged and continue collecting evidence."
+        tone = "neutral"
+
+    current_best_setup = keep[0] if keep else None
+
+    return {
+        "ok": True,
+        "version": "s8_21_night_calibration_dashboard_card_v1",
+        "sourceVersion": payload.get("version"),
+        "sourceGeneratedAt": payload.get("generatedAt"),
+        "mode": "ADMIN_INVESTOR_READ_ONLY_CARD",
+        "headline": headline,
+        "tone": tone,
+        "topAction": top_action,
+        "currentBestSetup": current_best_setup,
+        "safeToShowToAdmin": bool(decision.get("safeToShowToAdmin")),
+        "safeToShowToClient": bool(decision.get("safeToShowToClient")),
+        "safeToApplyAutomatically": bool(decision.get("safeToApplyAutomatically")),
+        "autoApplyStatus": "DISABLED_READ_ONLY",
+        "registryCoverage": {
+            "registeredSetupCount": registry.get("registeredSetupCount"),
+            "unregisteredCount": totals.get("unregistered"),
+            "coverageOk": (totals.get("unregistered") == 0),
+            "byRegistryStatus": registry.get("byRegistryStatus"),
+            "byProductMode": registry.get("byProductMode"),
+        },
+        "counts": {
+            "setupCount": totals.get("setupCount"),
+            "promotionCandidates": totals.get("promotionCandidates"),
+            "demotionRequired": totals.get("demotionRequired"),
+            "keepAndTighten": totals.get("keepAndTighten"),
+            "paperOnly": totals.get("paperOnly"),
+            "neutralRetest": totals.get("neutralRetest"),
+            "unregistered": totals.get("unregistered"),
+        },
+        "groups": {
+            "keepAndTighten": keep,
+            "demotionRequired": demoted,
+            "paperOnlyUntilSampleGrows": paper,
+            "neutralRetest": neutral,
+        },
+        "nextActions": [
+            "keep_live_signal_gates_unchanged",
+            "continue_clean_forward_outcome_collection",
+            "use_premarket_pump_short_as_primary_quality_candidate",
+            "do_not_promote_demoted_families_without_new_evidence",
+            "review_paper_only_families_after_sample_size_grows",
+        ],
+        "clientSafety": {
+            "canBeShownToClient": False,
+            "reason": "Calibration is internal/admin evidence until setup performance reaches READY thresholds.",
+        },
+    }
+
+
 @app.get("/engine/strategy-registry")
 def engine_strategy_registry(
     status: str | None = None,
