@@ -6368,6 +6368,49 @@ def _s515_build_daily_forward_report(
         else:
             improvement_notes.append("keep_no_trade_state_until_quality_inputs_exist")
 
+    if selected_rows:
+        s818d_quality_decision = {
+            "version": "s8_18d_quality_decision_v1",
+            "state": "READY_IDEAS_AVAILABLE_REVIEW_REQUIRED",
+            "tradeDecision": "REVIEW_READY_IDEAS",
+            "noTradeIsHealthy": False,
+            "clientVisibleReadyCount": len(selected_rows),
+            "internalTestCount": len(elite_test_rows),
+            "primaryReason": "selected_best_ideas_available",
+        }
+    elif elite_test_rows:
+        s818d_quality_decision = {
+            "version": "s8_18d_quality_decision_v1",
+            "state": "INTERNAL_TEST_ONLY_NO_CLIENT_SIGNAL",
+            "tradeDecision": "PAPER_FORWARD_TEST_ONLY",
+            "noTradeIsHealthy": True,
+            "clientVisibleReadyCount": 0,
+            "internalTestCount": len(elite_test_rows),
+            "primaryReason": "only_clean_elite_test_ideas_available",
+        }
+    elif int(s818c_elite_test_audit.get("candidatePoolCount") or 0) > 0 and int(s818c_elite_test_audit.get("blockedCount") or 0) > 0:
+        s818d_quality_decision = {
+            "version": "s8_18d_quality_decision_v1",
+            "state": "NO_TRADE_OK",
+            "tradeDecision": "DO_NOT_TRADE_LOW_QUALITY_CANDIDATES",
+            "noTradeIsHealthy": True,
+            "clientVisibleReadyCount": 0,
+            "internalTestCount": 0,
+            "primaryReason": "all_candidates_blocked_by_quality_or_learning_gate",
+            "blockedByReason": s818c_elite_test_audit.get("blockedByReason"),
+            "blockedBySetup": s818c_elite_test_audit.get("blockedBySetup"),
+        }
+    else:
+        s818d_quality_decision = {
+            "version": "s8_18d_quality_decision_v1",
+            "state": "NO_TRADE_WAITING_FOR_VALID_SETUP",
+            "tradeDecision": "WAIT",
+            "noTradeIsHealthy": True,
+            "clientVisibleReadyCount": 0,
+            "internalTestCount": 0,
+            "primaryReason": "no_valid_quality_candidate_pool",
+        }
+
     payload = {
         "ok": True,
         "version": S515_DAILY_FORWARD_REPORT_VERSION,
@@ -6405,6 +6448,7 @@ def _s515_build_daily_forward_report(
             "nearEliteCount": best_selector.get("totals", {}).get("nearEliteCount") if isinstance(best_selector.get("totals"), dict) else 0,
             "cleanEliteTestCount": len(elite_test_rows),
         },
+        "qualityDecision": s818d_quality_decision,
         "selectedBestIdeas": selected_rows,
         "cleanEliteTestIdeas": elite_test_rows,
         "calibrationCandidates": ranked_candidate_rows[:20],
