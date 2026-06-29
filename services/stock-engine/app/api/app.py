@@ -6898,12 +6898,52 @@ def _s820a_build_night_calibration_recommendations(min_closed: int = 20) -> dict
         "minClosed": min_closed,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "totals": totals,
+        "decisionSummary": _s820c_night_calibration_decision_summary(recommendations, totals),
         "registrySummary": _s819_strategy_registry_summary(),
         "recommendations": recommendations,
         "notes": [
             "S8.20A is read-only. It does not change strategy registry, selector gates, Telegram eligibility, or client-visible signals.",
             "Promotion requires stronger evidence and a separate controlled apply step.",
         ],
+    }
+
+
+
+def _s820c_night_calibration_decision_summary(recommendations: list[dict[str, Any]], totals: dict[str, Any]) -> dict[str, Any]:
+    keep = [r for r in recommendations if r.get("recommendedStatus") == "KEEP_AND_TIGHTEN"]
+    promote = [r for r in recommendations if r.get("promotionAllowed") is True]
+    demote = [r for r in recommendations if r.get("demotionRequired") is True]
+    paper = [r for r in recommendations if r.get("recommendedStatus") == "PAPER_ONLY_UNTIL_SAMPLE_GROWS"]
+    neutral = [r for r in recommendations if r.get("recommendedStatus") == "NEUTRAL_RETEST"]
+
+    top_action = "KEEP_NO_AUTOMATIC_CHANGES"
+    if keep and not promote:
+        top_action = "KEEP_PREMARKET_PUMP_SHORT_ONLY" if [r.get("setupSlug") for r in keep] == ["premarket_pump_short"] else "KEEP_STRONGEST_SETUPS_ONLY"
+    if promote:
+        top_action = "REVIEW_PROMOTION_CANDIDATES_MANUALLY"
+    if not keep and demote:
+        top_action = "NO_READY_SETUP_KEEP_COLLECTING_DATA"
+
+    return {
+        "version": "s8_20c_night_calibration_decision_summary_v1",
+        "safeToShowToAdmin": True,
+        "safeToShowToClient": False,
+        "safeToApplyAutomatically": False,
+        "topAction": top_action,
+        "adminSummary": {
+            "keepAndTighten": [r.get("setupSlug") for r in keep],
+            "promotionCandidates": [r.get("setupSlug") for r in promote],
+            "demotionRequired": [r.get("setupSlug") for r in demote],
+            "paperOnlyUntilSampleGrows": [r.get("setupSlug") for r in paper],
+            "neutralRetest": [r.get("setupSlug") for r in neutral],
+        },
+        "nextDataNeeded": [
+            "collect_more_clean_forward_test_outcomes",
+            "keep_live_gates_unchanged_until_ready_evidence_exists",
+            "focus_on_premarket_pump_short_as_current_best_candidate",
+            "continue_demoting_weak_long_breakout_reclaim_models",
+        ],
+        "totals": totals,
     }
 
 
