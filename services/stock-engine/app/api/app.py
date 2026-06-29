@@ -7752,6 +7752,26 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
     investor_summary = evidence_report.get("investorSummary") if isinstance(evidence_report.get("investorSummary"), dict) else {}
     post_close_summary = post_close_report.get("summary") if isinstance(post_close_report.get("summary"), dict) else {}
 
+    # S8.20E: expose read-only night calibration decision in investor/admin snapshot.
+    post_close_steps = post_close_report.get("steps") if isinstance(post_close_report.get("steps"), list) else []
+    night_calibration_step = next(
+        (
+            step for step in post_close_steps
+            if isinstance(step, dict) and step.get("name") == "night_calibration_recommendations_run"
+        ),
+        {},
+    )
+    night_calibration_payload = (
+        night_calibration_step.get("payload")
+        if isinstance(night_calibration_step.get("payload"), dict)
+        else {}
+    )
+    night_calibration_decision = (
+        night_calibration_payload.get("decisionSummary")
+        if isinstance(night_calibration_payload.get("decisionSummary"), dict)
+        else {}
+    )
+
     sim = setup_report.get("investorSimulationDraft") if isinstance(setup_report.get("investorSimulationDraft"), dict) else {}
     all_sim = _s814d_compact_simulation(sim.get("allClosedOutcomes") if isinstance(sim.get("allClosedOutcomes"), dict) else {})
     premium_sim = _s814d_compact_simulation(sim.get("premiumClosedOutcomes") if isinstance(sim.get("premiumClosedOutcomes"), dict) else {})
@@ -7843,6 +7863,20 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "postCloseGeneratedAt": post_close_report.get("generatedAt"),
             "setupLearningGeneratedAt": setup_report.get("generatedAt"),
             "investorEvidenceGeneratedAt": evidence_report.get("generatedAt"),
+            "nightCalibration": {
+                "ok": post_close_summary.get("nightCalibrationOk"),
+                "nonFatal": post_close_summary.get("nightCalibrationNonFatal"),
+                "topAction": post_close_summary.get("nightCalibrationTopAction"),
+                "safeToApplyAutomatically": post_close_summary.get("nightCalibrationSafeToApplyAutomatically"),
+                "totals": post_close_summary.get("nightCalibrationTotals"),
+                "decisionSummary": night_calibration_decision,
+                "stepOk": night_calibration_step.get("ok") if isinstance(night_calibration_step, dict) else None,
+                "stepStatus": night_calibration_step.get("status") if isinstance(night_calibration_step, dict) else None,
+                "stepRequired": night_calibration_step.get("required") if isinstance(night_calibration_step, dict) else None,
+                "sourceVersion": night_calibration_payload.get("version"),
+                "sourceGeneratedAt": night_calibration_payload.get("generatedAt"),
+                "registrySummary": night_calibration_payload.get("registrySummary"),
+            },
             "reports": {
                 "postClose": post_close_report.get("reportFile"),
                 "setupLearning": setup_report.get("reportFile"),
