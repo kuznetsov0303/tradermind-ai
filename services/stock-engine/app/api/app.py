@@ -6675,6 +6675,236 @@ def _s515_build_daily_forward_report(
 
 
 
+
+S820A_NIGHT_CALIBRATION_RECOMMENDATIONS_VERSION = "s8_20a_night_calibration_read_only_reranking_v1"
+
+
+def _s820a_to_float(value: Any, default: float = 0.0) -> float:
+    try:
+        if value is None:
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s820a_to_int(value: Any, default: int = 0) -> int:
+    try:
+        if value is None:
+            return default
+        return int(float(value))
+    except Exception:
+        return default
+
+
+def _s820a_learning_metrics(learning: dict[str, Any]) -> dict[str, Any]:
+    closed = _s820a_to_int(
+        learning.get("closed")
+        or learning.get("closedTrades")
+        or learning.get("closedCount")
+        or learning.get("sampleSizeClosed")
+        or learning.get("totalClosed")
+        or learning.get("countClosed")
+        or learning.get("total")
+    )
+    worked = _s820a_to_int(
+        learning.get("worked")
+        or learning.get("workedTrades")
+        or learning.get("tp1Count")
+        or learning.get("wins")
+    )
+    failed = _s820a_to_int(
+        learning.get("failed")
+        or learning.get("failedTrades")
+        or learning.get("stopCount")
+        or learning.get("losses")
+    )
+    win_rate = _s820a_to_float(
+        learning.get("winRateClosed")
+        or learning.get("winRate")
+        or learning.get("win_rate_closed")
+        or learning.get("win_rate")
+    )
+    if win_rate <= 0 and closed > 0 and worked > 0:
+        win_rate = round((worked / closed) * 100.0, 2)
+
+    avg_r = _s820a_to_float(
+        learning.get("avgResultRClosed")
+        or learning.get("avgRClosed")
+        or learning.get("avgResultR")
+        or learning.get("avgR")
+        or learning.get("averageR")
+    )
+
+    return {
+        "sampleSize": closed,
+        "closed": closed,
+        "worked": worked,
+        "failed": failed,
+        "winRate": round(win_rate, 2),
+        "avgR": round(avg_r, 4),
+    }
+
+
+def _s820a_recommend_registry_status(
+    setup_slug: str,
+    current_status: str,
+    metrics: dict[str, Any],
+    min_closed: int,
+) -> dict[str, Any]:
+    closed = _s820a_to_int(metrics.get("closed"))
+    win_rate = _s820a_to_float(metrics.get("winRate"))
+    avg_r = _s820a_to_float(metrics.get("avgR"))
+
+    reasons: list[str] = []
+    confidence = "LOW"
+    recommended = current_status or "UNREGISTERED"
+
+    if closed < min_closed:
+        recommended = "PAPER_ONLY_UNTIL_SAMPLE_GROWS"
+        confidence = "LOW"
+        reasons.append(f"sample_below_min_closed:{closed}<{min_closed}")
+    elif avg_r <= 0 or win_rate < 35:
+        recommended = "DEMOTE_TO_MONITOR_ONLY"
+        confidence = "HIGH" if closed >= 50 else "MEDIUM"
+        if avg_r <= 0:
+            reasons.append(f"negative_or_flat_avg_r:{avg_r}")
+        if win_rate < 35:
+            reasons.append(f"weak_win_rate:{win_rate}")
+    elif win_rate >= 50 and avg_r >= 0.70 and closed >= max(50, min_closed):
+        recommended = "PROMOTE_FOR_ELITE_TEST"
+        confidence = "MEDIUM"
+        reasons.append("strong_sample_candidate_for_controlled_promotion")
+    elif win_rate >= 42 and avg_r >= 0.25:
+        recommended = "KEEP_AND_TIGHTEN"
+        confidence = "MEDIUM" if closed >= min_closed else "LOW"
+        reasons.append("positive_but_still_requires_tight_filters")
+    else:
+        recommended = "NEUTRAL_RETEST"
+        confidence = "MEDIUM"
+        reasons.append("mixed_results_require_retest_conditions")
+
+    promotion_allowed = recommended == "PROMOTE_FOR_ELITE_TEST" and closed >= 50 and win_rate >= 50 and avg_r >= 0.70
+    demotion_required = recommended == "DEMOTE_TO_MONITOR_ONLY"
+
+    return {
+        "recommendedStatus": recommended,
+        "confidence": confidence,
+        "reasons": reasons,
+        "promotionAllowed": bool(promotion_allowed),
+        "demotionRequired": bool(demotion_required),
+        "readOnly": True,
+        "appliesLiveGates": False,
+    }
+
+
+def _s820a_build_night_calibration_recommendations(min_closed: int = 20) -> dict[str, Any]:
+    setup_learning_map = _s814c_load_setup_learning_map()
+    setup_slugs = sorted(set(S819_STRATEGY_REGISTRY.keys()) | set(setup_learning_map.keys()))
+
+    recommendations: list[dict[str, Any]] = []
+    totals = {
+        "setupCount": 0,
+        "promotionCandidates": 0,
+        "demotionRequired": 0,
+        "keepAndTighten": 0,
+        "paperOnly": 0,
+        "neutralRetest": 0,
+        "unregistered": 0,
+    }
+
+    for setup_slug in setup_slugs:
+        registry_config = _s819_strategy_config_for_slug(setup_slug)
+        learning = setup_learning_map.get(setup_slug) if isinstance(setup_learning_map.get(setup_slug), dict) else {}
+        metrics = _s820a_learning_metrics(learning)
+        current_status = str(registry_config.get("registryStatus") or "UNREGISTERED")
+        decision = _s820a_recommend_registry_status(setup_slug, current_status, metrics, min_closed=min_closed)
+        recommended = str(decision.get("recommendedStatus") or "UNKNOWN")
+
+        if recommended == "PROMOTE_FOR_ELITE_TEST":
+            totals["promotionCandidates"] += 1
+        if recommended == "DEMOTE_TO_MONITOR_ONLY":
+            totals["demotionRequired"] += 1
+        if recommended == "KEEP_AND_TIGHTEN":
+            totals["keepAndTighten"] += 1
+        if recommended == "PAPER_ONLY_UNTIL_SAMPLE_GROWS":
+            totals["paperOnly"] += 1
+        if recommended == "NEUTRAL_RETEST":
+            totals["neutralRetest"] += 1
+        if current_status == "UNREGISTERED":
+            totals["unregistered"] += 1
+
+        recommendations.append({
+            "setupSlug": setup_slug,
+            "setupName": registry_config.get("setupName"),
+            "direction": registry_config.get("direction"),
+            "currentRegistryStatus": current_status,
+            "currentProductMode": registry_config.get("productMode"),
+            "recommendedStatus": recommended,
+            "confidence": decision.get("confidence"),
+            "reasons": decision.get("reasons"),
+            "sampleSize": metrics.get("sampleSize"),
+            "closed": metrics.get("closed"),
+            "worked": metrics.get("worked"),
+            "failed": metrics.get("failed"),
+            "winRate": metrics.get("winRate"),
+            "avgR": metrics.get("avgR"),
+            "promotionAllowed": decision.get("promotionAllowed"),
+            "demotionRequired": decision.get("demotionRequired"),
+            "readOnly": True,
+            "appliesLiveGates": False,
+        })
+
+    totals["setupCount"] = len(recommendations)
+
+    recommendations.sort(key=lambda row: (
+        0 if row.get("demotionRequired") else 1,
+        0 if row.get("promotionAllowed") else 1,
+        -_s820a_to_int(row.get("sampleSize")),
+        str(row.get("setupSlug") or ""),
+    ))
+
+    return {
+        "ok": True,
+        "version": S820A_NIGHT_CALIBRATION_RECOMMENDATIONS_VERSION,
+        "mode": "READ_ONLY_RE_RANKING_PREVIEW",
+        "appliesLiveGates": False,
+        "minClosed": min_closed,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "totals": totals,
+        "registrySummary": _s819_strategy_registry_summary(),
+        "recommendations": recommendations,
+        "notes": [
+            "S8.20A is read-only. It does not change strategy registry, selector gates, Telegram eligibility, or client-visible signals.",
+            "Promotion requires stronger evidence and a separate controlled apply step.",
+        ],
+    }
+
+
+@app.get("/engine/night-calibration/recommendations")
+def engine_night_calibration_recommendations(min_closed: int = 20):
+    safe_min_closed = max(5, min(200, int(min_closed or 20)))
+    return _s820a_build_night_calibration_recommendations(min_closed=safe_min_closed)
+
+
+@app.post("/engine/night-calibration/recommendations/run")
+def engine_night_calibration_recommendations_run(min_closed: int = 20, publish: bool = True):
+    payload = _s820a_build_night_calibration_recommendations(min_closed=max(5, min(200, int(min_closed or 20))))
+    if publish:
+        runtime_cache.set_json("engine:night_calibration_recommendations:latest", payload, ttl_seconds=14 * 24 * 60 * 60)
+    return payload
+
+
+@app.get("/engine/night-calibration/recommendations/cache")
+def engine_night_calibration_recommendations_cache():
+    payload = runtime_cache.get_json("engine:night_calibration_recommendations:latest")
+    return {
+        "ok": payload is not None,
+        "key": "engine:night_calibration_recommendations:latest",
+        "value": payload,
+        "storageVersion": S820A_NIGHT_CALIBRATION_RECOMMENDATIONS_VERSION,
+    }
+
 @app.get("/engine/strategy-registry")
 def engine_strategy_registry(
     status: str | None = None,
