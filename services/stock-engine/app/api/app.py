@@ -6238,6 +6238,13 @@ def _s515_build_daily_forward_report(
             passed = False
             reasons.append("test_requires_selector_score_75_plus")
 
+        learning_gate = _s814c_learning_gate_for_row(row, setup_learning_map)
+        row["s816aTestLearningGate"] = learning_gate
+        if not bool(learning_gate.get("passed")):
+            passed = False
+            reasons.append("s818b_learning_gate_blocks_clean_elite_test")
+            reasons.extend(list(learning_gate.get("reasons") or [])[:4])
+
         return {
             "passed": passed,
             "version": S816A_ELITE_TEST_MODE_VERSION,
