@@ -5759,6 +5759,183 @@ def _s515_compact_outcome(item: dict[str, Any] | None) -> dict[str, Any] | None:
 # === S8.14C Learning-Aware Selector Penalties ================================
 S814C_SELECTOR_LEARNING_VERSION = "s8_14c_learning_aware_selector_v1"
 S816A_ELITE_TEST_MODE_VERSION = "s8_16a_elite_test_mode_v1"
+S819_STRATEGY_REGISTRY_VERSION = "s8_19a_strategy_registry_foundation_v1"
+
+S819_STRATEGY_REGISTRY: dict[str, dict[str, Any]] = {
+    "premarket_pump_short": {
+        "setupSlug": "premarket_pump_short",
+        "setupName": "Premarket Pump Short",
+        "direction": "short",
+        "session": ["premarket", "market_open", "regular"],
+        "registryStatus": "KEEP_AND_TIGHTEN",
+        "productMode": "CLEAN_ELITE_TEST_CANDIDATE",
+        "clientVisibleMode": "READY_ONLY_AFTER_EVIDENCE",
+        "minTestRrToTp1": 2.0,
+        "minReadyRrToTp1": 2.2,
+        "requiredConfirmations": ["breakdown_or_lower_high", "vwap_or_ema_loss", "clean_entry_health"],
+        "notes": "Primary short setup. Allowed only through strict learning and entry-health gates.",
+    },
+    "gap_and_crap_short": {
+        "setupSlug": "gap_and_crap_short",
+        "setupName": "Gap and Crap Short",
+        "direction": "short",
+        "session": ["market_open", "regular"],
+        "registryStatus": "DEMOTE_TO_MONITOR_ONLY",
+        "productMode": "MONITOR_ONLY",
+        "clientVisibleMode": "BLOCKED_UNTIL_RETESTED",
+        "minTestRrToTp1": 2.4,
+        "minReadyRrToTp1": 2.6,
+        "requiredConfirmations": ["failed_gap_hold", "clean_breakdown", "no_chase_entry"],
+        "notes": "Currently demoted by learning evidence. Do not route to Clean Elite unless future evidence improves.",
+    },
+    "vwap_reclaim_long": {
+        "setupSlug": "vwap_reclaim_long",
+        "setupName": "VWAP Reclaim Long",
+        "direction": "long",
+        "session": ["market_open", "regular"],
+        "registryStatus": "DEMOTE_TO_MONITOR_ONLY",
+        "productMode": "MONITOR_ONLY",
+        "clientVisibleMode": "BLOCKED_UNTIL_RETESTED",
+        "minTestRrToTp1": 2.4,
+        "minReadyRrToTp1": 2.6,
+        "requiredConfirmations": ["hold_above_vwap", "higher_low", "volume_follow_through"],
+        "notes": "Needs hold confirmation; single reclaim trigger is not enough.",
+    },
+    "opening_range_breakout_long": {
+        "setupSlug": "opening_range_breakout_long",
+        "setupName": "Opening Range Breakout Long",
+        "direction": "long",
+        "session": ["market_open"],
+        "registryStatus": "DEMOTE_TO_MONITOR_ONLY",
+        "productMode": "MONITOR_ONLY",
+        "clientVisibleMode": "BLOCKED_UNTIL_RETESTED",
+        "minTestRrToTp1": 2.4,
+        "minReadyRrToTp1": 2.6,
+        "requiredConfirmations": ["opening_range_break", "hold_retest", "volume_expansion"],
+        "notes": "Demoted until breakout follow-through evidence improves.",
+    },
+    "vwap_rejection_short": {
+        "setupSlug": "vwap_rejection_short",
+        "setupName": "VWAP Rejection Short",
+        "direction": "short",
+        "session": ["market_open", "regular"],
+        "registryStatus": "DEMOTE_TO_MONITOR_ONLY",
+        "productMode": "MONITOR_ONLY",
+        "clientVisibleMode": "BLOCKED_UNTIL_RETESTED",
+        "minTestRrToTp1": 2.4,
+        "minReadyRrToTp1": 2.6,
+        "requiredConfirmations": ["vwap_rejection", "lower_high", "breakdown_follow_through"],
+        "notes": "Demoted until rejection follow-through evidence improves.",
+    },
+    "large_cap_vwap_trend_long": {
+        "setupSlug": "large_cap_vwap_trend_long",
+        "setupName": "Large Cap VWAP Trend Long",
+        "direction": "long",
+        "session": ["regular"],
+        "registryStatus": "DEMOTE_TO_MONITOR_ONLY",
+        "productMode": "MONITOR_ONLY",
+        "clientVisibleMode": "BLOCKED_UNTIL_RETESTED",
+        "minTestRrToTp1": 2.4,
+        "minReadyRrToTp1": 2.6,
+        "requiredConfirmations": ["trend_above_vwap", "pullback_hold", "volume_follow_through"],
+        "notes": "Large-cap trend model remains monitor-only until evidence improves.",
+    },
+    "opening_range_breakdown_short": {
+        "setupSlug": "opening_range_breakdown_short",
+        "setupName": "Opening Range Breakdown Short",
+        "direction": "short",
+        "session": ["market_open", "regular"],
+        "registryStatus": "NEUTRAL_RETEST",
+        "productMode": "CLEAN_RETEST_ONLY",
+        "clientVisibleMode": "TEST_ONLY",
+        "minTestRrToTp1": 2.0,
+        "minReadyRrToTp1": 2.2,
+        "requiredConfirmations": ["opening_range_loss", "failed_reclaim", "clean_retest_entry"],
+        "notes": "Allowed only as clean retest model; blocked if chase, late, or no paper-test entry health.",
+    },
+    "gap_hold_continuation_long": {
+        "setupSlug": "gap_hold_continuation_long",
+        "setupName": "Gap Hold Continuation Long",
+        "direction": "long",
+        "session": ["market_open", "regular"],
+        "registryStatus": "PAPER_ONLY_UNTIL_SAMPLE_GROWS",
+        "productMode": "PAPER_TEST_ONLY",
+        "clientVisibleMode": "TEST_ONLY",
+        "minTestRrToTp1": 2.0,
+        "minReadyRrToTp1": 2.2,
+        "requiredConfirmations": ["gap_hold", "higher_low", "volume_follow_through", "clean_entry_health"],
+        "notes": "Long continuation model stays paper-only until sample size and evidence improve.",
+    },
+}
+
+
+def _s819_strategy_config_for_slug(setup_slug: str) -> dict[str, Any]:
+    slug = str(setup_slug or "").strip()
+    config = S819_STRATEGY_REGISTRY.get(slug)
+    if isinstance(config, dict):
+        return dict(config)
+    return {
+        "setupSlug": slug or "unknown",
+        "setupName": slug or "Unknown Setup",
+        "direction": "unknown",
+        "session": [],
+        "registryStatus": "UNREGISTERED",
+        "productMode": "MONITOR_ONLY",
+        "clientVisibleMode": "BLOCKED_UNTIL_REGISTERED",
+        "minTestRrToTp1": 2.4,
+        "minReadyRrToTp1": 2.6,
+        "requiredConfirmations": ["manual_review_required"],
+        "notes": "Setup is not in S8.19 strategy registry yet.",
+    }
+
+
+def _s819_strategy_config_for_row(row: dict[str, Any]) -> dict[str, Any]:
+    setup_slug = str(row.get("setupSlug") or row.get("setup_slug") or "").strip()
+    config = _s819_strategy_config_for_slug(setup_slug)
+    direction = str(row.get("direction") or "").strip()
+    if direction and config.get("direction") in {"", "unknown"}:
+        config["direction"] = direction
+    return config
+
+
+def _s819_strategy_registry_summary() -> dict[str, Any]:
+    by_status: dict[str, int] = {}
+    by_product_mode: dict[str, int] = {}
+    for config in S819_STRATEGY_REGISTRY.values():
+        status = str(config.get("registryStatus") or "UNKNOWN")
+        mode = str(config.get("productMode") or "UNKNOWN")
+        by_status[status] = int(by_status.get(status, 0) or 0) + 1
+        by_product_mode[mode] = int(by_product_mode.get(mode, 0) or 0) + 1
+    return {
+        "version": S819_STRATEGY_REGISTRY_VERSION,
+        "registeredSetupCount": len(S819_STRATEGY_REGISTRY),
+        "byRegistryStatus": by_status,
+        "byProductMode": by_product_mode,
+        "note": "Foundation registry only. S8.19A adds metadata; it does not loosen live gates.",
+    }
+
+
+def _s819_count_candidate_registry_modes(candidate_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    by_status: dict[str, int] = {}
+    by_product_mode: dict[str, int] = {}
+    unregistered: list[str] = []
+    for row in candidate_rows:
+        config = row.get("s819StrategyConfig") if isinstance(row.get("s819StrategyConfig"), dict) else _s819_strategy_config_for_row(row)
+        status = str(config.get("registryStatus") or "UNKNOWN")
+        mode = str(config.get("productMode") or "UNKNOWN")
+        by_status[status] = int(by_status.get(status, 0) or 0) + 1
+        by_product_mode[mode] = int(by_product_mode.get(mode, 0) or 0) + 1
+        if status == "UNREGISTERED":
+            slug = str(config.get("setupSlug") or "unknown")
+            if slug not in unregistered:
+                unregistered.append(slug)
+    return {
+        "version": S819_STRATEGY_REGISTRY_VERSION,
+        "candidateCount": len(candidate_rows),
+        "byRegistryStatus": by_status,
+        "byProductMode": by_product_mode,
+        "unregisteredSetups": unregistered[:20],
+    }
 S816B_PROMOTION_VERSION = "s8_16b_test_to_ready_promotion_v1"
 
 
@@ -6167,6 +6344,7 @@ def _s515_build_daily_forward_report(
 
         learning_gate = _s814c_learning_gate_for_row(row, setup_learning_map)
         row["s814cLearningGate"] = learning_gate
+        row["s819StrategyConfig"] = _s819_strategy_config_for_row(row)
 
         if not gate.get("passed"):
             existing = row.get("strictBlockedReasons") if isinstance(row.get("strictBlockedReasons"), list) else []
@@ -6371,6 +6549,7 @@ def _s515_build_daily_forward_report(
     if selected_rows:
         s818d_quality_decision = {
             "version": "s8_18d_quality_decision_v1",
+            "strategyRegistryVersion": S819_STRATEGY_REGISTRY_VERSION,
             "state": "READY_IDEAS_AVAILABLE_REVIEW_REQUIRED",
             "tradeDecision": "REVIEW_READY_IDEAS",
             "noTradeIsHealthy": False,
@@ -6381,6 +6560,7 @@ def _s515_build_daily_forward_report(
     elif elite_test_rows:
         s818d_quality_decision = {
             "version": "s8_18d_quality_decision_v1",
+            "strategyRegistryVersion": S819_STRATEGY_REGISTRY_VERSION,
             "state": "INTERNAL_TEST_ONLY_NO_CLIENT_SIGNAL",
             "tradeDecision": "PAPER_FORWARD_TEST_ONLY",
             "noTradeIsHealthy": True,
@@ -6391,6 +6571,7 @@ def _s515_build_daily_forward_report(
     elif int(s818c_elite_test_audit.get("candidatePoolCount") or 0) > 0 and int(s818c_elite_test_audit.get("blockedCount") or 0) > 0:
         s818d_quality_decision = {
             "version": "s8_18d_quality_decision_v1",
+            "strategyRegistryVersion": S819_STRATEGY_REGISTRY_VERSION,
             "state": "NO_TRADE_OK",
             "tradeDecision": "DO_NOT_TRADE_LOW_QUALITY_CANDIDATES",
             "noTradeIsHealthy": True,
@@ -6403,6 +6584,7 @@ def _s515_build_daily_forward_report(
     else:
         s818d_quality_decision = {
             "version": "s8_18d_quality_decision_v1",
+            "strategyRegistryVersion": S819_STRATEGY_REGISTRY_VERSION,
             "state": "NO_TRADE_WAITING_FOR_VALID_SETUP",
             "tradeDecision": "WAIT",
             "noTradeIsHealthy": True,
@@ -6463,6 +6645,8 @@ def _s515_build_daily_forward_report(
             "s814cVersion": S814C_SELECTOR_LEARNING_VERSION,
             "s816aVersion": S816A_ELITE_TEST_MODE_VERSION,
             "s816aEliteTestCount": len(elite_test_rows),
+            "s819StrategyRegistry": _s819_strategy_registry_summary(),
+            "s819CandidateRegistryModes": _s819_count_candidate_registry_modes(candidate_rows),
             "s818cEliteTestAudit": s818c_elite_test_audit,
             "whyNoEliteTestIdeas": (
                 ["no_clean_elite_test_candidate_pool"]
