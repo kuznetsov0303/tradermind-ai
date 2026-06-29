@@ -6271,19 +6271,52 @@ def _s515_build_daily_forward_report(
 
     selected_keys = {_s816a_row_key(row) for row in selected_rows}
 
+    s818c_elite_test_audit: dict[str, Any] = {
+        "version": "s8_18c_clean_elite_test_audit_v1",
+        "candidatePoolCount": len([row for row in ranked_candidate_rows if _s816a_row_key(row) not in selected_keys]),
+        "evaluatedCount": 0,
+        "passedCount": 0,
+        "blockedCount": 0,
+        "blockedByReason": {},
+        "blockedBySetup": {},
+        "blockedSamples": [],
+    }
+
     elite_test_rows: list[dict[str, Any]] = []
     for row in ranked_candidate_rows:
         if _s816a_row_key(row) in selected_keys:
             continue
+
+        s818c_elite_test_audit["evaluatedCount"] += 1
 
         gate = _s816a_test_gate(row)
         row["s816aEliteTestGate"] = gate
 
         if gate.get("passed"):
             elite_test_rows.append(row)
+        else:
+            s818c_elite_test_audit["blockedCount"] += 1
+            setup_slug = str(row.get("setupSlug") or row.get("setup_slug") or "unknown")
+            s818c_elite_test_audit["blockedBySetup"][setup_slug] = int(s818c_elite_test_audit["blockedBySetup"].get(setup_slug, 0) or 0) + 1
+
+            for reason in list(gate.get("reasons") or []):
+                key = str(reason or "unknown")
+                s818c_elite_test_audit["blockedByReason"][key] = int(s818c_elite_test_audit["blockedByReason"].get(key, 0) or 0) + 1
+
+            if len(s818c_elite_test_audit["blockedSamples"]) < 12:
+                s818c_elite_test_audit["blockedSamples"].append({
+                    "symbol": row.get("symbol"),
+                    "setupSlug": setup_slug,
+                    "reasons": list(gate.get("reasons") or [])[:8],
+                    "rrToTp1": row.get("rrToTp1"),
+                    "score": row.get("score"),
+                    "selectorScore": row.get("selectorScore"),
+                })
 
         if len(elite_test_rows) >= safe_max_best:
             break
+
+    s818c_elite_test_audit["passedCount"] = len(elite_test_rows)
 
     for index, row in enumerate(elite_test_rows, start=1):
         row["rank"] = index
@@ -6356,6 +6389,10 @@ def _s515_build_daily_forward_report(
             "entryHealthSelectionEligibleCount": len([row for row in ranked_candidate_rows if _s516b_selection_ok(row)]),
             "selectedBestCount": len(selected_rows),
             "cleanEliteTestCount": len(elite_test_rows),
+            "s818cEliteTestCandidatePoolCount": s818c_elite_test_audit.get("candidatePoolCount"),
+            "s818cEliteTestEvaluatedCount": s818c_elite_test_audit.get("evaluatedCount"),
+            "s818cEliteTestBlockedCount": s818c_elite_test_audit.get("blockedCount"),
+            "s818cEliteTestBlockedByLearningGate": (s818c_elite_test_audit.get("blockedByReason") or {}).get("s818b_learning_gate_blocks_clean_elite_test", 0),
             "monitorCount": best_selector.get("totals", {}).get("monitorCount") if isinstance(best_selector.get("totals"), dict) else 0,
         },
         "dailyDeskState": {
@@ -6382,6 +6419,14 @@ def _s515_build_daily_forward_report(
             "s814cVersion": S814C_SELECTOR_LEARNING_VERSION,
             "s816aVersion": S816A_ELITE_TEST_MODE_VERSION,
             "s816aEliteTestCount": len(elite_test_rows),
+            "s818cEliteTestAudit": s818c_elite_test_audit,
+            "whyNoEliteTestIdeas": (
+                ["no_clean_elite_test_candidate_pool"]
+                if not elite_test_rows and int(s818c_elite_test_audit.get("candidatePoolCount") or 0) == 0
+                else ["all_clean_elite_test_candidates_blocked", s818c_elite_test_audit.get("blockedByReason")]
+                if not elite_test_rows and int(s818c_elite_test_audit.get("blockedCount") or 0) > 0
+                else []
+            ),
         },
         "outcomes": {
             "matchedSelectedOutcomes": len([row for row in selected_rows if row.get("outcome")]),
