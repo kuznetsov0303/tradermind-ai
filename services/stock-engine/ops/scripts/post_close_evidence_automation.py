@@ -11,7 +11,7 @@ from typing import Any
 from urllib import error, request
 
 
-VERSION = "s8_16e_post_close_clean_elite_chain_v1"
+VERSION = "s8_20d_post_close_night_calibration_chain_v1"
 
 
 def now_iso() -> str:
@@ -190,6 +190,16 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     )
     steps.append({"name": "clean_elite_stats_run", **clean_stats})
 
+    # S8.20D: refresh read-only night calibration cache after post-close outcomes/stats.
+    # Non-fatal by design: calibration must never break the post-close evidence chain.
+    night_calibration = call_json(
+        base_url,
+        "POST",
+        "/engine/night-calibration/recommendations/run?publish=true&min_closed=5",
+        timeout=args.timeout,
+    )
+    steps.append({"name": "night_calibration_recommendations_run", "required": False, **night_calibration})
+
     evidence_path = f"/engine/evidence/run?limit={args.limit}&max_best={args.max_best}&publish=true"
     evidence = call_json(base_url, "POST", evidence_path, timeout=args.timeout)
     steps.append({"name": "evidence_run", **evidence})
@@ -197,6 +207,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     evidence_value = unwrap(evidence.get("payload")) if evidence.get("ok") else {}
     forward_value = unwrap(forward.get("payload")) if forward.get("ok") else {}
     outcomes_value = unwrap(outcomes.get("payload")) if isinstance(outcomes, dict) else {}
+    night_calibration_value = unwrap(night_calibration.get("payload")) if night_calibration.get("ok") else {}
+    night_calibration_decision = (
+        night_calibration_value.get("decisionSummary")
+        if isinstance(night_calibration_value.get("decisionSummary"), dict)
+        else {}
+    )
 
     ok = bool(
         health.get("ok")
@@ -228,6 +244,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "cleanEliteOutcomesOk": clean_outcomes.get("ok"),
             "cleanEliteSupabaseSyncOk": clean_sync.get("ok"),
             "cleanEliteStatsOk": clean_stats.get("ok"),
+            "nightCalibrationOk": night_calibration.get("ok"),
+            "nightCalibrationNonFatal": True,
+            "nightCalibrationTopAction": night_calibration_decision.get("topAction"),
+            "nightCalibrationSafeToApplyAutomatically": night_calibration_decision.get("safeToApplyAutomatically"),
+            "nightCalibrationTotals": night_calibration_value.get("totals") if isinstance(night_calibration_value, dict) else None,
             "evidenceOk": evidence.get("ok"),
             "forwardState": (forward_value.get("dailyDeskState") or {}).get("state")
                 if isinstance(forward_value.get("dailyDeskState"), dict) else None,
