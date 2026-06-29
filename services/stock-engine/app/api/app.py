@@ -6986,6 +6986,65 @@ def _s814d_marketing_readiness(
 
 
 
+
+def _s817b_add_evidence_policy(payload: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        return payload
+
+    headline = payload.get("headlineMetrics")
+    if not isinstance(headline, dict):
+        headline = {}
+        payload["headlineMetrics"] = headline
+
+    ce = payload.get("cleanElitePerformance")
+    if not isinstance(ce, dict):
+        ce = {}
+
+    ready = ce.get("readyPerformance") if isinstance(ce.get("readyPerformance"), dict) else {}
+    test = ce.get("testPerformance") if isinstance(ce.get("testPerformance"), dict) else {}
+
+    payload["evidenceLayerPolicy"] = {
+        "version": "s8_17b_evidence_layer_policy_v1",
+        "performanceClaimAllowed": False,
+        "marketablePerformanceLayer": "CLEAN_ELITE_READY",
+        "internalLearningLayer": "CLEAN_ELITE_TEST",
+        "rawLayerUsage": "INTERNAL_TRAINING_EVIDENCE_ONLY",
+        "readyLayer": {
+            "clientVisible": True,
+            "marketingClaimAllowed": False,
+            "closedTrades": ready.get("closedTrades"),
+            "status": ready.get("status"),
+        },
+        "testLayer": {
+            "clientVisible": False,
+            "marketingClaimAllowed": False,
+            "closedTrades": test.get("closedTrades"),
+            "winRateClosed": test.get("winRateClosed"),
+            "avgResultRClosed": test.get("avgResultRClosed"),
+            "status": test.get("status"),
+        },
+        "rule": "Only CLEAN_ELITE_READY can become client/investor performance evidence after enough closed trades and positive expectancy.",
+    }
+
+    headline["performanceClaimAllowed"] = False
+    headline["marketablePerformanceLayer"] = "CLEAN_ELITE_READY"
+    headline["internalLearningLayer"] = "CLEAN_ELITE_TEST"
+    headline["rawLayerUsage"] = "INTERNAL_TRAINING_EVIDENCE_ONLY"
+
+    payload["proLevelGuardrails"] = {
+        "version": "s8_17b_pro_level_guardrails_v1",
+        "noFakeClaims": True,
+        "noRawPerformanceMarketing": True,
+        "noTestLayerClientExposure": True,
+        "readyLayerRequiresEvidence": True,
+        "controlledPromotionOnly": True,
+    }
+
+    return payload
+
+
+
+
 def _s817a_upgrade_investor_dashboard_payload(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(payload, dict):
         return payload
@@ -7231,7 +7290,7 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
         },
     }
 
-    return _s817a_upgrade_investor_dashboard_payload(payload)
+    return _s817b_add_evidence_policy(_s817a_upgrade_investor_dashboard_payload(payload))
 
 
 @app.get("/engine/investor-dashboard/snapshot")
