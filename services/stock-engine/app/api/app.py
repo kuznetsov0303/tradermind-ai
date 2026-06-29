@@ -6674,6 +6674,42 @@ def _s515_build_daily_forward_report(
     return payload
 
 
+
+@app.get("/engine/strategy-registry")
+def engine_strategy_registry(
+    status: str | None = None,
+    product_mode: str | None = None,
+    setup_slug: str | None = None,
+):
+    items: list[dict[str, Any]] = []
+
+    for slug, config in sorted(S819_STRATEGY_REGISTRY.items()):
+        row = dict(config)
+        row["setupSlug"] = row.get("setupSlug") or slug
+
+        if setup_slug and str(row.get("setupSlug") or "") != str(setup_slug):
+            continue
+        if status and str(row.get("registryStatus") or "") != str(status):
+            continue
+        if product_mode and str(row.get("productMode") or "") != str(product_mode):
+            continue
+
+        items.append(row)
+
+    return {
+        "ok": True,
+        "version": S819_STRATEGY_REGISTRY_VERSION,
+        "count": len(items),
+        "filters": {
+            "status": status,
+            "productMode": product_mode,
+            "setupSlug": setup_slug,
+        },
+        "summary": _s819_strategy_registry_summary(),
+        "items": items,
+    }
+
+
 @app.get("/engine/forward-report/today")
 def engine_forward_report_today(date: str | None = None, limit: int = 160, max_best: int = 5, publish: bool = False):
     report = _s515_build_daily_forward_report(date=date, limit=limit, max_best=max_best, publish=publish)
