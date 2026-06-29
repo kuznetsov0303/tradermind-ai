@@ -5866,6 +5866,32 @@ S819_STRATEGY_REGISTRY: dict[str, dict[str, Any]] = {
         "requiredConfirmations": ["gap_hold", "higher_low", "volume_follow_through", "clean_entry_health"],
         "notes": "Long continuation model stays paper-only until sample size and evidence improve.",
     },
+    "large_cap_gap_continuation": {
+        "setupSlug": "large_cap_gap_continuation",
+        "setupName": "Large Cap Gap Continuation",
+        "direction": "long",
+        "session": ["market_open", "regular"],
+        "registryStatus": "PAPER_ONLY_UNTIL_SAMPLE_GROWS",
+        "productMode": "PAPER_TEST_ONLY",
+        "clientVisibleMode": "TEST_ONLY",
+        "minTestRrToTp1": 2.0,
+        "minReadyRrToTp1": 2.2,
+        "requiredConfirmations": ["gap_hold", "vwap_hold", "volume_follow_through", "clean_entry_health"],
+        "notes": "Large-cap continuation model stays paper-only until sample size and evidence improve.",
+    },
+    "orb_pullback_continuation": {
+        "setupSlug": "orb_pullback_continuation",
+        "setupName": "ORB Pullback Continuation",
+        "direction": "long",
+        "session": ["market_open", "regular"],
+        "registryStatus": "PAPER_ONLY_UNTIL_SAMPLE_GROWS",
+        "productMode": "PAPER_TEST_ONLY",
+        "clientVisibleMode": "TEST_ONLY",
+        "minTestRrToTp1": 2.0,
+        "minReadyRrToTp1": 2.2,
+        "requiredConfirmations": ["opening_range_break", "pullback_hold", "second_leg_confirmation", "clean_entry_health"],
+        "notes": "ORB pullback continuation stays paper-only until sample size and evidence improve.",
+    },
 }
 
 
