@@ -302,17 +302,55 @@ def store_active_signals() -> dict[str, Any]:
             if invalidation_value is None or str(invalidation_value).strip() == "":
                 client_block_reasons.append("missing_invalidation")
 
-            passed_premium_active = (
+            # S8.23C: derive client eligibility from the final gate.
+            # Do not depend on stale upstream premiumSignal/telegramEligible flags.
+            base_client_candidate = (
                 record.get("qualityStatus") == "PASSED"
-                and record.get("premiumSignal") is True
-                and record.get("telegramEligible") is True
                 and not client_block_reasons
             )
 
-            record["clientDeliveryAllowed"] = bool(passed_premium_active)
-            record["clientDeliveryBlockedReasons"] = client_block_reasons
+            firewall_passed = False
+            firewall_reasons: list[str] = []
+            firewall_policy: dict[str, Any] = {}
 
-            if not passed_premium_active:
+            if base_client_candidate:
+                firewall_probe = dict(record)
+                firewall_probe["premiumSignal"] = True
+                firewall_probe["telegramEligible"] = True
+
+                try:
+                    firewall_result = evaluate_telegram_quality_firewall(firewall_probe)
+                except Exception as exc:
+                    firewall_result = {
+                        "passed": False,
+                        "reasons": [f"firewall_exception:{type(exc).__name__}"],
+                    }
+
+                firewall_passed = firewall_result.get("passed") is True
+                firewall_reasons = firewall_result.get("reasons") if isinstance(firewall_result.get("reasons"), list) else []
+                firewall_policy = firewall_result.get("policy") if isinstance(firewall_result.get("policy"), dict) else {}
+
+                for reason in firewall_reasons:
+                    reason_value = str(reason or "").strip()
+                    if reason_value and reason_value not in client_block_reasons:
+                        client_block_reasons.append(reason_value)
+
+            passed_client_delivery = bool(base_client_candidate and firewall_passed and not client_block_reasons)
+
+            record["clientDeliveryAllowed"] = passed_client_delivery
+            record["clientDeliveryBlockedReasons"] = client_block_reasons
+            record["clientDeliveryFirewall"] = {
+                "passed": firewall_passed,
+                "reasons": firewall_reasons,
+                "policy": firewall_policy,
+                "derivedFromFinalGate": True,
+                "version": "s8_23c_derive_client_eligibility_from_final_gate_v1",
+            }
+
+            if passed_client_delivery:
+                record["telegramEligible"] = True
+                record["premiumSignal"] = True
+            else:
                 record["telegramEligible"] = False
                 record["premiumSignal"] = False
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { translateSignalRows, translateSignalText } from "@/lib/trading/signal-text-i18n";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
@@ -23,8 +25,20 @@ import {
 } from "@/lib/plan-limits";
 
 import TelegramSignalsConnectButton from "@/components/dashboard/TelegramSignalsConnectButton";
+import SignalCockpitTab from "@/components/dashboard/SignalCockpitTab";
+import {
+  buildSkillEdgeAiValidationUiPanel,
+  type SkillEdgeAiValidationUiPanel,
+  type SkillEdgeAiValidationUiTone,
+} from "@/lib/trading/signal-ai-validation-ui";
 
 type Language = "en" | "ru" | "ua";
+
+/**
+ * Static fallback for accidental out-of-scope translation calls.
+ * Local component-level safeLanguage values still shadow this constant.
+ */
+const safeLanguage: Language = "ru";
 
 type TabId =
   | "overview"
@@ -33,6 +47,7 @@ type TabId =
   | "strategy"
   | "charts"
   | "market"
+  | "cockpit"
   | "alerts"
   | "coach"
   | "learning"
@@ -1174,7 +1189,7 @@ const dashboardDict = {
       moversStocksNeedKey:
         "Stock movers are unavailable on the current premium market data layer.",
       moversSourceNote:
-        "Crypto: Binance USDT pairs. Stocks: 13:00 Kyiv session change + volume.",
+        "Crypto: Binance + Hyperliquid market activity. Stocks: price movement + volume.",
       chartAnalysisTitle: "Chart review",
       chartAnalysisText:
         "SkillEdge reads ticker, timeframe, candles, volume, levels and risk context as a trading review.",
@@ -1692,7 +1707,8 @@ const dashboardDict = {
   strategy: "Strategy OS",
       charts: "Charts",
       market: "Market",
-      alerts: "Signals",
+      cockpit: "Signals",
+      alerts: "AI Alerts",
       coach: "Desk Coach",
       learning: "Learning",
       reports: "Reports Desk",
@@ -1871,7 +1887,7 @@ const dashboardDict = {
       moversStocksNeedKey:
         "Stock movers недоступны на текущем premium market data layer.",
       moversSourceNote:
-        "Крипто: Binance USDT pairs. Акции: движение и объём с 13:00 Киев.",
+        "Крипто: Binance + Hyperliquid market activity. Акции: движение и объём.",
       chartAnalysisTitle: "Chart review",
       chartAnalysisText:
         "SkillEdge анализирует текущий тикер, таймфрейм, рыночные данные, свечи, объём и контекст риска.",
@@ -2389,7 +2405,8 @@ const dashboardDict = {
   strategy: "Strategy OS",
       charts: "Графики",
       market: "Рынок",
-      alerts: "Сигналы",
+      cockpit: "Сигналы",
+      alerts: "AI Alerts",
       coach: "Desk Coach",
       learning: "Обучение",
       reports: "Reports Desk",
@@ -3085,7 +3102,8 @@ const dashboardDict = {
   strategy: "Стратегія",
       charts: "Графіки",
       market: "Ринок",
-      alerts: "Сигнали",
+      cockpit: "Сигнали",
+      alerts: "AI Alerts",
       coach: "Desk Coach",
       learning: "Навчання",
       reports: "Звіти",
@@ -3206,7 +3224,7 @@ const tabs: { id: TabId }[] = [
   { id: "strategy" },
   { id: "charts" },
   { id: "market" },
-  { id: "alerts" },
+  { id: "cockpit" },
   { id: "coach" },
   { id: "learning" },
   { id: "reports" },
@@ -3368,9 +3386,14 @@ const [quickNoteHydrated, setQuickNoteHydrated] = useState(false);
     chart: "charts",
     market: "market",
     scanner: "market",
+    cockpit: "cockpit",
+    "ai-cockpit": "cockpit",
+    "signal-cockpit": "cockpit",
+    "trading-desk": "cockpit",
+    holly: "cockpit",
     alerts: "alerts",
-    signals: "alerts",
-    "ai-alerts": "alerts",
+    signals: "cockpit",
+    "ai-alerts": "cockpit",
     coach: "coach",
     ai: "coach",
     learning: "learning",
@@ -3855,7 +3878,7 @@ const handleQuickOpenStrategy = () => {
 };
 
 const handleQuickOpenSignals = () => {
-  handleGlobalDashboardCommand("alerts-live");
+  handleGlobalDashboardCommand("cockpit-watchlist");
 };
 
 const handleQuickOpenMarket = () => {
@@ -3943,7 +3966,7 @@ const saveQuickNote = async (content = quickNoteContent) => {
 
 const handleOpenAlertsFromWidget = (assetFilter: AlertAssetFilter = "all") => {
   setRequestedAlertAssetFilter(assetFilter);
-  setActiveTab("alerts");
+  setActiveTab("cockpit");
 
   if (typeof window !== "undefined") {
     const params = new URLSearchParams(window.location.search);
@@ -4735,11 +4758,13 @@ const activeFeatureLock =
       !canUseFeature(subscription.plan, "learning_playbook")) ||
     (activeTab === "market" &&
       !canUseFeature(subscription.plan, "ai_scanner")) ||
-    (activeTab === "alerts" &&
+    ((activeTab === "alerts" || activeTab === "cockpit") &&
       !canUseFeature(subscription.plan, "ai_alerts")));
 
 const featureLockCopy = (() => {
   const isAlerts = activeTab === "alerts";
+  const isCockpit = activeTab === "cockpit";
+  const isEliteFeature = isAlerts || isCockpit;
   const isStrategy = activeTab === "strategy";
   const isPersonalEdge = activeTab === "edge";
   const isReports = activeTab === "reports";
@@ -4748,8 +4773,10 @@ const featureLockCopy = (() => {
 
   if (language === "ua") {
     return {
-      label: isAlerts ? "Потрібен Elite" : "Потрібен Edge",
-      title: isAlerts
+      label: isEliteFeature ? "Потрібен Elite" : "Потрібен Edge",
+      title: isCockpit
+        ? "AI Signal Cockpit доступний тільки на SkillEdge Elite."
+        : isAlerts
         ? "AI-сигнали доступні тільки на SkillEdge Elite."
         : isStrategy
           ? "Strategy OS відкривається з SkillEdge Edge."
@@ -4760,8 +4787,8 @@ const featureLockCopy = (() => {
               : isLearning
                 ? "Learning / Playbook відкривається з SkillEdge Edge."
                 : "Ринкова розвідка відкривається з SkillEdge Edge.",
-      text: isAlerts
-        ? "SkillEdge Edge відкриває Strategy OS, Personal Edge, Reports, Learning і Market Intelligence, але live AI Alerts, floating widget, Signal-to-Journal та outcome learning доступні тільки в Elite."
+      text: isEliteFeature
+        ? "SkillEdge Edge відкриває Strategy OS, Personal Edge, Reports, Learning і Market Intelligence, але AI Signal Cockpit, live AI Alerts, floating widget, Signal-to-Journal та outcome learning доступні тільки в Elite."
         : isStrategy
           ? "Core дає базову дисципліну. SkillEdge Edge та Elite відкривають Strategy Builder, Setup Academy, Evidence Locker, Before-Trade Gate, After-Trade Debrief, Strategy Trust і playbook workflow."
           : isPersonalEdge
@@ -4771,14 +4798,16 @@ const featureLockCopy = (() => {
               : isLearning
                 ? "Learning / Playbook — це навчальний шар Strategy OS: setup academy, практичні уроки, progress tracking і підготовка до повторюваного процесу. Доступно на Edge та Elite."
                 : "На Core доступний лише попередній перегляд. SkillEdge Edge та Elite відкривають AI-сканер, ринкову розвідку, ринковий контекст, відстежувану увагу та AI Market Brief.",
-      button: isAlerts ? "Перейти на Elite" : "Перейти на Edge",
+      button: isEliteFeature ? "Перейти на Elite" : "Перейти на Edge",
     };
   }
 
   if (language === "en") {
     return {
-      label: isAlerts ? "Elite required" : "Edge required",
-      title: isAlerts
+      label: isEliteFeature ? "Elite required" : "Edge required",
+      title: isCockpit
+        ? "AI Signal Cockpit is available only on SkillEdge Elite."
+        : isAlerts
         ? "AI Alerts are available only on SkillEdge Elite."
         : isStrategy
           ? "Strategy OS unlocks from SkillEdge Edge."
@@ -4789,8 +4818,8 @@ const featureLockCopy = (() => {
               : isLearning
                 ? "Learning / Playbook unlocks from SkillEdge Edge."
                 : "Market Intelligence unlocks from SkillEdge Edge.",
-      text: isAlerts
-        ? "SkillEdge Edge unlocks Strategy OS, Personal Edge, Reports, Learning and Market Intelligence, but live AI Alerts, the floating widget, Signal-to-Journal and outcome learning are reserved for Elite."
+      text: isEliteFeature
+        ? "SkillEdge Edge unlocks Strategy OS, Personal Edge, Reports, Learning and Market Intelligence, but AI Signal Cockpit, live AI Alerts, the floating widget, Signal-to-Journal and outcome learning are reserved for Elite."
         : isStrategy
           ? "Core gives basic discipline. SkillEdge Edge and Elite unlock Strategy Builder, Setup Academy, Evidence Locker, Before-Trade Gate, After-Trade Debrief, Strategy Trust and playbook workflow."
           : isPersonalEdge
@@ -4800,13 +4829,15 @@ const featureLockCopy = (() => {
               : isLearning
                 ? "Learning / Playbook is the education layer of Strategy OS: setup academy, practical lessons, progress tracking and repeatable process training. Available on Edge and Elite."
                 : "Core users can see the preview. SkillEdge Edge and Elite unlock AI Scanner, Market Intelligence, tracked attention, market context and AI Market Brief.",
-      button: isAlerts ? "Upgrade to Elite" : "Upgrade to Edge",
+      button: isEliteFeature ? "Upgrade to Elite" : "Upgrade to Edge",
     };
   }
 
   return {
-    label: isAlerts ? "Нужен Elite" : "Нужен Edge",
-    title: isAlerts
+    label: isEliteFeature ? "Нужен Elite" : "Нужен Edge",
+    title: isCockpit
+      ? "AI Signal Cockpit доступен только на SkillEdge Elite."
+      : isAlerts
       ? "AI-сигналы доступны только на SkillEdge Elite."
       : isStrategy
         ? "Strategy OS открывается с SkillEdge Edge."
@@ -4817,8 +4848,8 @@ const featureLockCopy = (() => {
             : isLearning
               ? "Learning / Playbook открывается с SkillEdge Edge."
               : "Рыночная разведка открывается с SkillEdge Edge.",
-    text: isAlerts
-      ? "SkillEdge Edge открывает Strategy OS, Personal Edge, Reports, Learning и Market Intelligence, но live AI Alerts, floating widget, Signal-to-Journal и outcome learning доступны только в Elite."
+    text: isEliteFeature
+      ? "SkillEdge Edge открывает Strategy OS, Personal Edge, Reports, Learning и Market Intelligence, но AI Signal Cockpit, live AI Alerts, floating widget, Signal-to-Journal и outcome learning доступны только в Elite."
       : isStrategy
         ? "Core даёт базовую дисциплину. SkillEdge Edge и Elite открывают Strategy Builder, Setup Academy, Evidence Locker, Before-Trade Gate, After-Trade Debrief, Strategy Trust и playbook workflow."
         : isPersonalEdge
@@ -4828,7 +4859,7 @@ const featureLockCopy = (() => {
             : isLearning
               ? "Learning / Playbook — это обучающий слой Strategy OS: setup academy, практические уроки, progress tracking и подготовка повторяемого процесса. Доступно на Edge и Elite."
               : "На Core доступен только предварительный просмотр. SkillEdge Edge и Elite открывают AI-сканер, рыночную разведку, рыночный контекст, отслеживаемое внимание и AI Market Brief.",
-    button: isAlerts ? "Перейти на Elite" : "Перейти на Edge",
+    button: isEliteFeature ? "Перейти на Elite" : "Перейти на Edge",
   };
 })();
 
@@ -4863,6 +4894,10 @@ const handleGlobalDashboardCommand = (target: string) => {
   if (target === "strategy-cockpit") return setTabAndScroll("strategy", "strategy-command-center");
   if (target === "strategy-library") return setTabAndScroll("strategy", "strategy-portfolio-command");
   if (target === "strategy-drill") return setTabAndScroll("strategy", "strategy-drill-command");
+
+  if (target === "cockpit-watchlist") return setTabAndScroll("cockpit", "cockpit-watchlist");
+  if (target === "cockpit-lifecycle") return setTabAndScroll("cockpit", "cockpit-lifecycle");
+  if (target === "cockpit-ai") return setTabAndScroll("cockpit", "cockpit-ai");
 
   if (target === "charts-terminal") return setTabAndScroll("charts", "charts-terminal-command");
   if (target === "charts-watchlist") return setTabAndScroll("charts", "charts-watchlist-command");
@@ -4916,7 +4951,7 @@ const getActiveTabRequiredPlan = (tabId: TabId): "edge" | "elite" | null => {
     return "edge";
   }
 
-  if (tabId === "alerts" && !canUseFeature(subscription.plan, "ai_alerts")) {
+  if ((tabId === "alerts" || tabId === "cockpit") && !canUseFeature(subscription.plan, "ai_alerts")) {
     return "elite";
   }
 
@@ -5166,6 +5201,198 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
           color: #07111F;
           background: rgba(0, 208, 132, 0.82);
         }
+        .se-signals-premium-shell {
+          width: 100%;
+          max-width: 100%;
+          overflow: visible;
+        }
+
+        /* 3B-4F-3: Signals readability pass.
+           Keep the premium compact layout, but remove painful micro-text. */
+        .se-signal-card,
+        .se-signal-drawer {
+          -webkit-font-smoothing: antialiased;
+          text-rendering: geometricPrecision;
+        }
+
+        .se-signal-card .text-\[8px\],
+        .se-signal-drawer .text-\[8px\] {
+          font-size: 10.5px !important;
+          line-height: 14px !important;
+        }
+
+        .se-signal-card .text-\[9px\],
+        .se-signal-drawer .text-\[9px\] {
+          font-size: 11px !important;
+          line-height: 15px !important;
+        }
+
+        .se-signal-card .text-\[10px\],
+        .se-signal-drawer .text-\[10px\] {
+          font-size: 12px !important;
+          line-height: 17px !important;
+        }
+
+        .se-signal-card .text-\[11px\],
+        .se-signal-drawer .text-\[11px\] {
+          font-size: 13px !important;
+          line-height: 19px !important;
+        }
+
+        .se-signal-card .text-\[12px\],
+        .se-signal-drawer .text-\[12px\] {
+          font-size: 14px !important;
+          line-height: 20px !important;
+        }
+
+        .se-signal-card .text-xs,
+        .se-signal-drawer .text-xs {
+          font-size: 14px !important;
+          line-height: 21px !important;
+        }
+
+        .se-signal-card .text-sm,
+        .se-signal-drawer .text-sm {
+          font-size: 15px !important;
+          line-height: 22px !important;
+        }
+
+        .se-signal-card .tracking-\[0\.22em\],
+        .se-signal-card .tracking-\[0\.16em\],
+        .se-signal-card .tracking-\[0\.14em\],
+        .se-signal-card .tracking-\[0\.12em\],
+        .se-signal-card .tracking-\[0\.1em\],
+        .se-signal-drawer .tracking-\[0\.22em\],
+        .se-signal-drawer .tracking-\[0\.16em\],
+        .se-signal-drawer .tracking-\[0\.14em\],
+        .se-signal-drawer .tracking-\[0\.12em\],
+        .se-signal-drawer .tracking-\[0\.1em\] {
+          letter-spacing: 0.075em !important;
+        }
+
+        .se-signal-card .leading-\[10px\],
+        .se-signal-drawer .leading-\[10px\] {
+          line-height: 15px !important;
+        }
+
+        .se-signal-card .leading-4,
+        .se-signal-drawer .leading-4 {
+          line-height: 19px !important;
+        }
+
+        .se-signal-card .leading-5,
+        .se-signal-drawer .leading-5 {
+          line-height: 22px !important;
+        }
+
+        .se-signal-card .opacity-70,
+        .se-signal-drawer .opacity-70 {
+          opacity: 0.82 !important;
+        }
+
+        .se-signal-card .text-white\/34,
+        .se-signal-drawer .text-white\/34,
+        .se-signal-card .text-white\/38,
+        .se-signal-drawer .text-white\/38,
+        .se-signal-card .text-white\/42,
+        .se-signal-drawer .text-white\/42 {
+          color: rgba(230, 237, 247, 0.58) !important;
+        }
+
+        .se-signal-card .text-white\/48,
+        .se-signal-drawer .text-white\/48,
+        .se-signal-card .text-white\/52,
+        .se-signal-drawer .text-white\/52 {
+          color: rgba(230, 237, 247, 0.68) !important;
+        }
+
+        .se-signal-card .text-white\/62,
+        .se-signal-drawer .text-white\/62,
+        .se-signal-card .text-white\/64,
+        .se-signal-drawer .text-white\/64 {
+          color: rgba(230, 237, 247, 0.76) !important;
+        }
+
+        .se-signal-card .truncate,
+        .se-signal-drawer .truncate {
+          min-width: 0;
+        }
+
+        /* 3B-4F-4: real customer readability for $150/mo Signals drawer. */
+        .se-signal-drawer {
+          font-size: 15px;
+          line-height: 1.65;
+        }
+
+        .se-signal-drawer p,
+        .se-signal-drawer div,
+        .se-signal-drawer span,
+        .se-signal-drawer button {
+          text-shadow: none;
+        }
+
+        .se-signal-drawer .text-\[8px\],
+        .se-signal-drawer .text-\[9px\],
+        .se-signal-drawer .text-\[10px\] {
+          font-size: 12.5px !important;
+          line-height: 18px !important;
+        }
+
+        .se-signal-drawer .text-\[11px\],
+        .se-signal-drawer .text-\[12px\],
+        .se-signal-drawer .text-xs {
+          font-size: 14.5px !important;
+          line-height: 23px !important;
+        }
+
+        .se-signal-drawer .text-\[13px\],
+        .se-signal-drawer .text-\[14px\],
+        .se-signal-drawer .text-sm {
+          font-size: 15.5px !important;
+          line-height: 25px !important;
+        }
+
+        .se-signal-drawer .text-base {
+          font-size: 17px !important;
+          line-height: 28px !important;
+        }
+
+        .se-signal-drawer .text-lg {
+          font-size: 20px !important;
+          line-height: 30px !important;
+        }
+
+        .se-signal-drawer .tracking-\[0\.22em\],
+        .se-signal-drawer .tracking-\[0\.16em\],
+        .se-signal-drawer .tracking-\[0\.14em\],
+        .se-signal-drawer .tracking-\[0\.12em\],
+        .se-signal-drawer .tracking-\[0\.1em\] {
+          letter-spacing: 0.065em !important;
+        }
+
+        .se-signal-drawer .text-white\/34,
+        .se-signal-drawer .text-white\/38,
+        .se-signal-drawer .text-white\/42,
+        .se-signal-drawer .text-white\/44,
+        .se-signal-drawer .text-white\/46,
+        .se-signal-drawer .text-white\/48 {
+          color: rgba(230, 237, 247, 0.70) !important;
+        }
+
+        .se-signal-drawer .text-white\/52,
+        .se-signal-drawer .text-white\/58,
+        .se-signal-drawer .text-white\/60,
+        .se-signal-drawer .text-white\/62,
+        .se-signal-drawer .text-white\/64 {
+          color: rgba(230, 237, 247, 0.78) !important;
+        }
+
+        .se-signal-drawer .text-white\/68,
+        .se-signal-drawer .text-white\/70,
+        .se-signal-drawer .text-white\/74,
+        .se-signal-drawer .text-white\/76 {
+          color: rgba(230, 237, 247, 0.86) !important;
+        }
         .se-dashboard-bg *::-webkit-scrollbar { width: 9px; height: 9px; }
         .se-dashboard-bg *::-webkit-scrollbar-track { background: rgba(230,237,247,0.04); border-radius: 999px; }
         .se-dashboard-bg *::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.32); border-radius: 999px; }
@@ -5229,7 +5456,8 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
       `}</style>
       
 
-      <div className="relative z-10 mx-auto w-full max-w-[1760px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10">
+      <div className={`relative z-10 mx-auto w-full ${activeTab === "cockpit" ? "max-w-none h-screen overflow-hidden p-2" : "max-w-[1760px] px-4 py-6 sm:px-6 lg:px-8 xl:px-10"}`}>
+        {activeTab !== "cockpit" && (
         <motion.header
   initial={{ opacity: 0, y: -18 }}
   animate={{ opacity: 1, y: 0 }}
@@ -5328,7 +5556,9 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
     </div>
   </div>
 </motion.header>
+        )}
 
+        {activeTab !== "cockpit" && (
         <GlobalDashboardActionQueue
           activeTab={activeTab}
           language={language}
@@ -5341,15 +5571,16 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
           isPlanActive={subscription.active}
           onCommand={handleGlobalDashboardCommand}
         />
+        )}
 
 
         <motion.section
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.08 }}
-          className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_360px]"
+          className={activeTab === "cockpit" ? "block h-full overflow-hidden" : "mt-6 grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px] 2xl:grid-cols-[minmax(0,1fr)_360px]"}
         >
-          <section className="se-dashboard-panel relative overflow-hidden rounded-[1.75rem] p-3 sm:rounded-[2.25rem] sm:p-4 md:p-6">
+          <section className={activeTab === "cockpit" ? "relative h-full overflow-hidden rounded-none border-0 bg-transparent p-0 shadow-none" : "se-dashboard-panel relative overflow-hidden rounded-[1.75rem] p-3 sm:rounded-[2.25rem] sm:p-4 md:p-6"}>
             <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-indigo-300/40 to-transparent" />
 
             {!loading && locked && activeTab !== "billing" && (
@@ -5468,8 +5699,8 @@ const getTabRequiredPlanLabel = (tabId: TabId) => {
     scrollDashboardTop();
   }}
   onOpenAlerts={() => {
-    setActiveTab("alerts");
-    updateDashboardUrlTab("alerts");
+    setActiveTab("cockpit");
+    updateDashboardUrlTab("signals");
     scrollDashboardTop();
   }}
   onOpenCoach={() => {
@@ -5552,6 +5783,10 @@ onTradeEditCancel={handleTradeEditCancel}
               {activeTab === "market" && (
   <MarketTab subscription={subscription} language={language} t={t} />
 )}
+{activeTab === "cockpit" && (
+  <SignalCockpitTab language={language} />
+)}
+
 {activeTab === "alerts" && (
   <AlertsTab
     subscription={subscription}
@@ -5614,6 +5849,7 @@ onTradeEditCancel={handleTradeEditCancel}
             </motion.div>
           </section>
 
+          {activeTab !== "cockpit" && (
           <aside className="space-y-6">
             <motion.div
               initial={{ opacity: 0, x: 18 }}
@@ -5852,6 +6088,7 @@ onTradeEditCancel={handleTradeEditCancel}
             </motion.div>
             
           </aside>
+          )}
         </motion.section>
       </div>
 
@@ -11294,8 +11531,8 @@ function StrategyTab({
                 return (
                   <div key={item.key} className="rounded-2xl border border-white/8 bg-white/[0.035] p-4">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-[13px] font-black text-white/78">{item.label}</p>
-                      <span className="rounded-full border border-white/10 bg-white/[0.045] px-2 py-1 text-[12px] font-black text-white/58">{item.value}/{item.target}</span>
+                      <p className="text-[13px] font-black text-white/78">{translateSignalText(item.label, language)}</p>
+                      <span className="rounded-full border border-white/10 bg-white/[0.045] px-2 py-1 text-[12px] font-black text-white/58">{translateSignalText(String(item.value), language)}/{item.target}</span>
                     </div>
                     <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
                       <div className="h-full rounded-full bg-gradient-to-r from-cyan-200 to-emerald-200" style={{ width: `${progress}%` }} />
@@ -11323,9 +11560,9 @@ function StrategyTab({
                 <div key={item.key} className={`rounded-2xl border p-4 ${item.done ? "border-emerald-200/14 bg-emerald-200/[0.055]" : "border-white/10 bg-white/[0.035]"}`}>
                   <div className="flex items-center justify-between gap-3">
                     <span className={`h-2.5 w-2.5 rounded-full ${item.done ? "bg-emerald-200" : "bg-white/22"}`} />
-                    <span className="text-[12px] font-black text-white/58">{item.value}</span>
+                    <span className="text-[12px] font-black text-white/58">{translateSignalText(String(item.value), language)}</span>
                   </div>
-                  <p className="mt-3 text-[13px] font-black leading-6 text-white/76">{item.label}</p>
+                  <p className="mt-3 text-[13px] font-black leading-6 text-white/76">{translateSignalText(item.label, language)}</p>
                 </div>
               ))}
             </div>
@@ -12473,7 +12710,7 @@ function StrategyTab({
                                 <div className={`mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-[13px] font-black ${item.status === "done" ? "border-emerald-200/25 bg-emerald-300/[0.12] text-emerald-100" : item.status === "progress" ? "border-amber-200/25 bg-amber-300/[0.12] text-amber-100" : "border-white/12 bg-white/[0.06] text-white/50"}`}>{item.status === "done" ? "✓" : index + 1}</div>
                                 <div>
                                   <p className="text-[17px] font-black text-white/86">{item.title}</p>
-                                  <p className="mt-1 text-[15px] font-semibold leading-7 text-white/56">{item.value}</p>
+                                  <p className="mt-1 text-[15px] font-semibold leading-7 text-white/56">{translateSignalText(String(item.value), language)}</p>
                                 </div>
                               </div>
                               <button type="button" onClick={() => item.onClick()} disabled={!currentStrategy && index > 1} className="rounded-full border border-cyan-200/16 bg-cyan-200/[0.07] px-4 py-2.5 text-[14px] font-black text-cyan-100/78 transition hover:bg-cyan-200/[0.11] disabled:cursor-not-allowed disabled:opacity-50">
@@ -15831,7 +16068,7 @@ const downloadTradesXlsx = () => {
               },
             ].map((item) => (
               <div
-                key={item.label}
+                key={translateSignalText(item.label, language)}
                 className={`rounded-[1.45rem] border p-4 ${
                   item.tone === "emerald"
                     ? "border-emerald-300/18 bg-emerald-300/[0.06]"
@@ -15843,10 +16080,10 @@ const downloadTradesXlsx = () => {
                 }`}
               >
                 <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/38">
-                  {item.label}
+                  {translateSignalText(item.label, language)}
                 </div>
                 <div className="mt-3 text-2xl font-black tracking-[-0.04em] text-white">
-                  {item.value}
+                  {translateSignalText(String(item.value), language)}
                 </div>
                 <p className="mt-1 line-clamp-2 text-xs font-semibold leading-5 text-white/48">
                   {item.text}
@@ -16154,7 +16391,7 @@ const downloadTradesXlsx = () => {
 
     <div className="mt-4 grid gap-3 md:grid-cols-4">
       <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           {signalDraftCopy.entry}
         </div>
         <div className="mt-2 text-sm font-black text-white/82">
@@ -16165,7 +16402,7 @@ const downloadTradesXlsx = () => {
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-black/20 p-3">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           {signalDraftCopy.stop}
         </div>
         <div className="mt-2 text-sm font-black text-rose-100">
@@ -16174,7 +16411,7 @@ const downloadTradesXlsx = () => {
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-black/20 p-3 md:col-span-2">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           {signalDraftCopy.targets}
         </div>
         <div className="mt-2 text-sm font-black text-emerald-100">
@@ -16741,7 +16978,7 @@ const downloadTradesXlsx = () => {
 
         <div className="mt-4 grid gap-3 md:grid-cols-4">
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+            <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
               {signalCopy.entryQuality}
             </div>
 
@@ -16764,7 +17001,7 @@ const downloadTradesXlsx = () => {
           </div>
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+            <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
               {signalCopy.stopAdherence}
             </div>
 
@@ -16782,7 +17019,7 @@ const downloadTradesXlsx = () => {
           </div>
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+            <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
               {signalCopy.targetResult}
             </div>
 
@@ -16796,7 +17033,7 @@ const downloadTradesXlsx = () => {
           </div>
 
           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+            <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
               {signalCopy.direction}
             </div>
 
@@ -18182,6 +18419,133 @@ function getAlertRiskReward(alert: DashboardMarketAlert) {
   return Number((reward / risk).toFixed(2));
 }
 
+function getAiValidationToneClass(tone?: SkillEdgeAiValidationUiTone | null) {
+  if (tone === "premium") return "border-[#C8A96B]/22 bg-[#C8A96B]/[0.09] text-[#F4E8C8]";
+  if (tone === "success") return "border-[#00C076]/22 bg-[#00C076]/[0.08] text-[#DFFFEF]";
+  if (tone === "warning") return "border-[#F59E0B]/22 bg-[#F59E0B]/[0.08] text-[#FFE9BE]";
+  if (tone === "danger") return "border-[#FF5A5F]/22 bg-[#FF5A5F]/[0.08] text-[#FFD7D9]";
+
+  return "border-white/10 bg-white/[0.035] text-white/58";
+}
+
+function getAiValidationCompactPanelClass(panel: SkillEdgeAiValidationUiPanel) {
+  if (!panel.available) return "border-white/10 bg-white/[0.025]";
+  if (panel.deliveryEligible) return "border-[#00C076]/18 bg-[#00C076]/[0.045]";
+  if (panel.verdict === "approved") return "border-[#C8A96B]/18 bg-[#C8A96B]/[0.045]";
+  if (panel.verdict === "rejected") return "border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.045]";
+  if (panel.verdict === "needs_confirmation") return "border-[#F59E0B]/18 bg-[#F59E0B]/[0.045]";
+
+  return "border-white/10 bg-white/[0.025]";
+}
+
+function getAiValidationCompactCopy(panel: SkillEdgeAiValidationUiPanel, language: Language) {
+  const gatesPassed = panel.gates.filter((gate) => gate.passed).length;
+  const gatesTotal = panel.gates.length;
+  const gateText = gatesTotal > 0 ? `${gatesPassed}/${gatesTotal}` : "—";
+
+  const deliveryText = panel.deliveryEligible
+    ? language === "en"
+      ? "Delivery ready"
+      : language === "ua"
+        ? "Готовий до відправки"
+        : "Готов к отправке"
+    : language === "en"
+      ? "Site only"
+      : language === "ua"
+        ? "Тільки сайт"
+        : "Только сайт";
+
+  const compactReason =
+    panel.deliveryEligible
+      ? panel.managementPlan[0] || panel.rrReview || panel.shortSummary
+      : panel.blockedReasons[0] ||
+        panel.missingConfirmations[0] ||
+        panel.weakPoints[0] ||
+        panel.deliveryBadge.description ||
+        panel.shortSummary;
+
+  return {
+    gateText,
+    deliveryText,
+    compactReason,
+    title:
+      language === "en"
+        ? "AI Validation"
+        : language === "ua"
+          ? "AI-валідація"
+          : "AI-валидация",
+    gates:
+      language === "en"
+        ? "Gates"
+        : language === "ua"
+          ? "Гейти"
+          : "Гейты",
+  };
+}
+
+function translateSignalValidationText(text: string | null | undefined, language: Language) {
+  if (!text) return "—";
+
+  if (language === "en") return text;
+
+  let value = text;
+
+  const replacements: Array<[RegExp, string, string]> = [
+    [/Approved: Grade A\. Delivery eligible\. Validator score (\d+)\. Signal passed strict gates\./gi, "Одобрено: Grade A. Готов к отправке. Оценка валидатора $1. Сигнал прошёл строгие гейты.", "Схвалено: Grade A. Готовий до відправки. Оцінка валідатора $1. Сигнал пройшов строгі гейти."],
+    [/Approved: Grade B\. Delivery eligible\. Validator score (\d+)\. Signal passed strict gates\./gi, "Одобрено: Grade B. Готов к отправке. Оценка валидатора $1. Сигнал прошёл строгие гейты.", "Схвалено: Grade B. Готовий до відправки. Оцінка валідатора $1. Сигнал пройшов строгі гейти."],
+    [/Signal passed strict gates\./gi, "Сигнал прошёл строгие гейты.", "Сигнал пройшов строгі гейти."],
+    [/Strict playbook gates, risk review and delivery readiness for this signal\./gi, "Строгие playbook-гейты, риск-ревью и готовность сигнала к отправке.", "Строгі playbook-гейти, ризик-рев’ю та готовність сигналу до відправки."],
+
+    [/Candidate must match a known SkillEdge setup playbook\./gi, "Кандидат должен соответствовать известному сетапу SkillEdge.", "Кандидат має відповідати відомому сетапу SkillEdge."],
+    [/WATCH candidates are observations, not premium actionable alerts\./gi, "WATCH-кандидаты — это наблюдения, а не premium actionable alerts.", "WATCH-кандидати — це спостереження, а не premium actionable alerts."],
+    [/No approval without entry or trigger area\./gi, "Нельзя одобрять сигнал без зоны входа или триггера.", "Не можна схвалювати сигнал без зони входу або тригера."],
+    [/No approval without invalidation\./gi, "Нельзя одобрять сигнал без invalidation/стопа.", "Не можна схвалювати сигнал без invalidation/стопу."],
+    [/No approval without reward side\./gi, "Нельзя одобрять сигнал без целей.", "Не можна схвалювати сигнал без цілей."],
+    [/Premium signals require at least 2R structure\./gi, "Premium-сигнал требует структуру минимум 2R.", "Premium-сигнал потребує структуру мінімум 2R."],
+    [/Critical data fields must be present before approval\./gi, "Перед одобрением должны быть ключевые данные.", "Перед схваленням мають бути ключові дані."],
+    [/Setup must fit playbook logic\./gi, "Сетап должен соответствовать логике playbook.", "Сетап має відповідати логіці playbook."],
+    [/Low completeness means validator should downgrade\./gi, "Низкая полнота данных должна понижать оценку.", "Низька повнота даних має знижувати оцінку."],
+    [/Risk profile must be acceptable\./gi, "Риск-профиль должен быть приемлемым.", "Ризик-профіль має бути прийнятним."],
+    [/Low source confidence should prevent premium delivery\./gi, "Низкая уверенность источника блокирует premium delivery.", "Низька впевненість джерела блокує premium delivery."],
+
+    [/Entry\/trigger present:/gi, "Вход/триггер есть:" , "Вхід/тригер є:"],
+    [/Validate only if price is not extended and confirmation is current\./gi, "Валидно только если цена не растянута и подтверждение актуально.", "Валідно тільки якщо ціна не розтягнута і підтвердження актуальне."],
+    [/Stop\/invalidation present:/gi, "Стоп/invalidation есть:" , "Стоп/invalidation є:"],
+    [/Signal must be invalidated if this level breaks\./gi, "Сигнал отменяется при пробое этого уровня.", "Сигнал скасовується при пробої цього рівня."],
+    [/Targets present:/gi, "Цели есть:" , "Цілі є:"],
+    [/RR detected:/gi, "R:R:" , "R:R:"],
+    [/Meets minimum 2R structure\./gi, "Минимум 2R соблюдён.", "Мінімум 2R дотримано."],
+
+    [/Treat as ACTIVE only if entry\/stop\/targets are still valid and RR has not compressed\./gi, "Считать ACTIVE только если вход/стоп/цели всё ещё валидны и R:R не сжался.", "Вважати ACTIVE тільки якщо вхід/стоп/цілі ще валідні і R:R не стиснувся."],
+    [/Maintain 2R\+ structure\. If entry worsens and RR drops below 2R, downgrade\./gi, "Сохранять структуру 2R+. Если вход ухудшился и R:R упал ниже 2R — понизить сигнал.", "Зберігати структуру 2R+. Якщо вхід погіршився і R:R впав нижче 2R — знизити сигнал."],
+    [/If invalidation triggers, the idea is dead; do not average down or reframe the setup\./gi, "Если сработал invalidation — идея отменена. Не усредняться и не переобъяснять сетап.", "Якщо спрацював invalidation — ідею скасовано. Не усереднюватися і не переосмислювати сетап."],
+
+    [/Risk warnings:/gi, "Риски:" , "Ризики:"],
+    [/Failed short if price reclaims sweep high\./gi, "Short ломается, если цена вернёт sweep high.", "Short ламається, якщо ціна поверне sweep high."],
+    [/Avoid strong BTC\/ETH squeeze\./gi, "Избегать при сильном squeeze BTC/ETH.", "Уникати при сильному squeeze BTC/ETH."],
+    [/Do not chase far from rejection\./gi, "Не догонять далеко от rejection-зоны.", "Не наздоганяти далеко від rejection-зони."],
+    [/Avoid conditions:/gi, "Не торговать, если:" , "Не торгувати, якщо:"],
+    [/No rejection\./gi, "Нет rejection.", "Немає rejection."],
+    [/No 5m confirmation\./gi, "Нет 5m confirmation.", "Немає 5m confirmation."],
+    [/BTC\/ETH strongly against idea\./gi, "BTC/ETH сильно против идеи.", "BTC/ETH сильно проти ідеї."],
+    [/TP1 below 2R\./gi, "TP1 ниже 2R.", "TP1 нижче 2R."],
+    [/Move is already heavily extended; late entries need stricter confirmation\./gi, "Движение уже сильно растянуто; поздние входы требуют более строгого подтверждения.", "Рух уже сильно розтягнутий; пізні входи потребують суворішого підтвердження."],
+
+    [/Candidate is WATCH-only: setup interest exists, but trade trigger is not confirmed\./gi, "Кандидат только WATCH: интерес к сетапу есть, но trade trigger ещё не подтверждён.", "Кандидат тільки WATCH: інтерес до сетапу є, але trade trigger ще не підтверджений."],
+    [/RR is below 2R, so it cannot be a premium approved alert\./gi, "R:R ниже 2R, поэтому сигнал не может быть premium approved.", "R:R нижче 2R, тому сигнал не може бути premium approved."],
+  ];
+
+  for (const [pattern, ru, ua] of replacements) {
+    value = value.replace(pattern, language === "ua" ? ua : ru);
+  }
+
+  return value;
+}
+
+function translateSignalValidationRows(rows: string[], language: Language) {
+  return rows.map((row) => translateSignalValidationText(row, language));
+}
+
 
 type AlertOutcomeGroup = "worked" | "failed" | "neutral" | "pending";
 
@@ -18967,7 +19331,7 @@ function AlertStructurePanel({
 
       <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             {copy.vwap}
           </div>
           <div className="mt-1 text-sm font-semibold text-white">
@@ -18976,7 +19340,7 @@ function AlertStructurePanel({
         </div>
 
         <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             {copy.atr}
           </div>
           <div className="mt-1 text-sm font-semibold text-white">
@@ -18985,7 +19349,7 @@ function AlertStructurePanel({
         </div>
 
         <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             {copy.support}
           </div>
           <div className="mt-1 text-sm font-semibold text-white">
@@ -18996,7 +19360,7 @@ function AlertStructurePanel({
         </div>
 
         <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             {copy.resistance}
           </div>
           <div className="mt-1 text-sm font-semibold text-white">
@@ -19107,6 +19471,14 @@ type AlertFilter =
   | "all"
   | "actionable"
   | "watchlist"
+  | "ai_approved"
+  | "ai_delivery_ready"
+  | "ai_needs_confirmation"
+  | "ai_watch_only"
+  | "ai_rejected"
+  | "lifecycle_active"
+  | "lifecycle_armed"
+  | "lifecycle_watch"
   | "decision_watching"
   | "decision_taken"
   | "decision_skipped"
@@ -19135,6 +19507,40 @@ type AlertFilter =
   | "short"
   | "crypto"
   | "stocks";
+
+type SignalSortMode =
+  | "smart"
+  | "newest"
+  | "validation_score"
+  | "confidence"
+  | "rr"
+  | "delivery_ready";
+
+function getAlertAiValidationPanel(alert: DashboardMarketAlert) {
+  return buildSkillEdgeAiValidationUiPanel(alert.source_data);
+}
+
+function getAlertAiValidationScore(alert: DashboardMarketAlert) {
+  const panel = getAlertAiValidationPanel(alert);
+
+  return panel.score ?? -1;
+}
+
+function getAlertAiValidationVerdict(alert: DashboardMarketAlert) {
+  return getAlertAiValidationPanel(alert).verdict;
+}
+
+function isAlertAiDeliveryReady(alert: DashboardMarketAlert) {
+  return getAlertAiValidationPanel(alert).deliveryEligible;
+}
+
+function getAlertConfidenceSortValue(alert: DashboardMarketAlert) {
+  return Number(alert.confidence_score ?? alert.score ?? 0) || 0;
+}
+
+function getAlertSortCreatedAt(alert: DashboardMarketAlert) {
+  return new Date(alert.created_at || 0).getTime();
+}
 
   function getAlertImportanceScore(alert: DashboardMarketAlert) {
   const baseScore =
@@ -19856,7 +20262,7 @@ quiet: "Waiting for quality setup",
       filterStocks: "Акції",
       filterCrypto: "Крипто",
     },
-  }[safeLanguage];
+  }[language];
 
   const hasAccess =
   subscription.active && canUseFeature(subscription.plan, "ai_alerts");
@@ -20158,7 +20564,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
                       : "text-white/55 hover:bg-white/[0.06] hover:text-white"
                   }`}
                 >
-                  {item.label} <span className="opacity-70">{item.count}</span>
+                  {translateSignalText(item.label, language)} <span className="opacity-70">{item.count}</span>
                 </button>
               ))}
             </div>
@@ -20279,7 +20685,7 @@ const shouldPulse = newAlerts.length > 0 && !open;
                         <span className="text-white/70">
                           {alert.entry_zone_min && alert.entry_zone_max
                             ? `${alert.entry_zone_min}–${alert.entry_zone_max}`
-                            : getAlertUiCopy(safeLanguage).waitTrigger}
+                            : getAlertUiCopy(language).waitTrigger}
                         </span>
                       </div>
                       <div>
@@ -20363,6 +20769,7 @@ useEffect(() => {
 }, []);
 
 const [alertFilter, setAlertFilter] = useState<AlertFilter>("all");
+const [signalSortMode, setSignalSortMode] = useState<SignalSortMode>("smart");
 const [signalsControlPanelOpen, setSignalsControlPanelOpen] = useState(false);
 const [decisionReasonFilter, setDecisionReasonFilter] = useState<string | null>(
   null
@@ -23287,6 +23694,38 @@ const visibleAlerts = assetFilteredAlerts.filter((alert) => {
 
   if (alertFilter === "all") return true;
 
+if (alertFilter === "ai_approved") {
+  return getAlertAiValidationVerdict(alert) === "approved";
+}
+
+if (alertFilter === "ai_delivery_ready") {
+  return isAlertAiDeliveryReady(alert);
+}
+
+if (alertFilter === "ai_needs_confirmation") {
+  return getAlertAiValidationVerdict(alert) === "needs_confirmation";
+}
+
+if (alertFilter === "ai_watch_only") {
+  return getAlertAiValidationVerdict(alert) === "watch_only";
+}
+
+if (alertFilter === "ai_rejected") {
+  return getAlertAiValidationVerdict(alert) === "rejected";
+}
+
+if (alertFilter === "lifecycle_active") {
+  return getAlertLifecycleBucket(alert) === "active";
+}
+
+if (alertFilter === "lifecycle_armed") {
+  return getAlertLifecycleBucket(alert) === "armed";
+}
+
+if (alertFilter === "lifecycle_watch") {
+  return getAlertLifecycleBucket(alert) === "watch";
+}
+
 if (alertFilter === "actionable") {
   return getAlertLifecycleBucket(alert) === "active" || alert.signal_mode === "actionable";
 }
@@ -23524,19 +23963,49 @@ const decisionReasonItems = Object.entries(decisionReasonCounts)
 const topDecisionReason = decisionReasonItems[0] || null;
 
 const rankedVisibleAlerts = [...visibleAlerts].sort((a, b) => {
+  if (signalSortMode === "delivery_ready") {
+    const deliveryDiff = Number(isAlertAiDeliveryReady(b)) - Number(isAlertAiDeliveryReady(a));
+    if (deliveryDiff !== 0) return deliveryDiff;
+
+    const validationDiff = getAlertAiValidationScore(b) - getAlertAiValidationScore(a);
+    if (validationDiff !== 0) return validationDiff;
+  }
+
+  if (signalSortMode === "validation_score") {
+    const validationDiff = getAlertAiValidationScore(b) - getAlertAiValidationScore(a);
+    if (validationDiff !== 0) return validationDiff;
+  }
+
+  if (signalSortMode === "confidence") {
+    const confidenceDiff = getAlertConfidenceSortValue(b) - getAlertConfidenceSortValue(a);
+    if (confidenceDiff !== 0) return confidenceDiff;
+  }
+
+  if (signalSortMode === "rr") {
+    const rrDiff = (getAlertRiskReward(b) ?? -1) - (getAlertRiskReward(a) ?? -1);
+    if (rrDiff !== 0) return rrDiff;
+  }
+
+  if (signalSortMode === "newest") {
+    return getAlertSortCreatedAt(b) - getAlertSortCreatedAt(a);
+  }
+
   const lifecycleDiff = getAlertLifecycleRankValue(b) - getAlertLifecycleRankValue(a);
 
   if (lifecycleDiff !== 0) return lifecycleDiff;
+
+  const deliveryDiff = Number(isAlertAiDeliveryReady(b)) - Number(isAlertAiDeliveryReady(a));
+  if (deliveryDiff !== 0) return deliveryDiff;
+
+  const validationDiff = getAlertAiValidationScore(b) - getAlertAiValidationScore(a);
+  if (validationDiff !== 0) return validationDiff;
 
   const importanceDiff =
     getAlertImportanceScore(b) - getAlertImportanceScore(a);
 
   if (importanceDiff !== 0) return importanceDiff;
 
-  return (
-    new Date(b.created_at || 0).getTime() -
-    new Date(a.created_at || 0).getTime()
-  );
+  return getAlertSortCreatedAt(b) - getAlertSortCreatedAt(a);
 });
 
 const displayedAlerts = rankedVisibleAlerts.slice(0, visibleAlertsCount);
@@ -23547,10 +24016,13 @@ const hiddenAlertsCount = Math.max(
 );
 
 const hasActiveAlertFilters =
-  alertFilter !== "all" || Boolean(decisionReasonFilter);
+  alertFilter !== "all" ||
+  signalSortMode !== "smart" ||
+  Boolean(decisionReasonFilter);
 
 const resetAlertFilters = () => {
   setAlertFilter("all");
+  setSignalSortMode("smart");
   setDecisionReasonFilter(null);
   setVisibleAlertsCount(5);
   setExpandedAlertId(null);
@@ -24085,8 +24557,120 @@ const missedOpportunityActionPlan = [
   copy.missedOpportunityActionThree,
 ];
 
+const signalSortCopy =
+  safeLanguage === "en"
+    ? {
+        title: "Sorting",
+        smart: "Smart",
+        newest: "New",
+        validation: "AI score",
+        confidence: "Confidence",
+        rr: "Best R:R",
+        delivery: "Ready first",
+      }
+    : safeLanguage === "ua"
+      ? {
+          title: "Сортування",
+          smart: "Smart",
+          newest: "Нові",
+          validation: "AI score",
+          confidence: "Впевненість",
+          rr: "R:R",
+          delivery: "Готові першими",
+        }
+      : {
+          title: "Сортировка",
+          smart: "Smart",
+          newest: "Новые",
+          validation: "AI score",
+          confidence: "Уверенность",
+          rr: "R:R",
+          delivery: "Готовые первыми",
+        };
+
+const signalSortOptions: { id: SignalSortMode; label: string }[] = [
+  { id: "smart", label: signalSortCopy.smart },
+  { id: "delivery_ready", label: signalSortCopy.delivery },
+  { id: "validation_score", label: signalSortCopy.validation },
+  { id: "confidence", label: signalSortCopy.confidence },
+  { id: "rr", label: signalSortCopy.rr },
+  { id: "newest", label: signalSortCopy.newest },
+];
+
+const aiValidationCounts = {
+  approved: alerts.filter((alert) => getAlertAiValidationVerdict(alert) === "approved").length,
+  deliveryReady: alerts.filter((alert) => isAlertAiDeliveryReady(alert)).length,
+  needsConfirmation: alerts.filter((alert) => getAlertAiValidationVerdict(alert) === "needs_confirmation").length,
+  watchOnly: alerts.filter((alert) => getAlertAiValidationVerdict(alert) === "watch_only").length,
+  rejected: alerts.filter((alert) => getAlertAiValidationVerdict(alert) === "rejected").length,
+};
+
+const aiFilterCopy =
+  safeLanguage === "en"
+    ? {
+        approved: "Approved",
+        deliveryReady: "Delivery ready",
+        needsConfirmation: "Needs confirmation",
+        watchOnly: "Watch only",
+        rejected: "Rejected",
+        active: "Active",
+        armed: "Armed",
+        watch: "Watch",
+      }
+    : safeLanguage === "ua"
+      ? {
+          approved: "Схвалені",
+          deliveryReady: "Готові до відправки",
+          needsConfirmation: "Потребують підтвердження",
+          watchOnly: "Тільки watch",
+          rejected: "Відхилені",
+          active: "Active",
+          armed: "Armed",
+          watch: "Watch",
+        }
+      : {
+          approved: "Одобрены",
+          deliveryReady: "Готовы к отправке",
+          needsConfirmation: "Нужно подтверждение",
+          watchOnly: "Только watch",
+          rejected: "Отклонены",
+          active: "Active",
+          armed: "Armed",
+          watch: "Watch",
+        };
+
 const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = [
   { id: "all", label: copy.filterAll, count: alerts.length },
+  {
+    id: "ai_delivery_ready",
+    label: aiFilterCopy.deliveryReady,
+    count: aiValidationCounts.deliveryReady,
+  },
+  {
+    id: "ai_approved",
+    label: aiFilterCopy.approved,
+    count: aiValidationCounts.approved,
+  },
+  {
+    id: "ai_needs_confirmation",
+    label: aiFilterCopy.needsConfirmation,
+    count: aiValidationCounts.needsConfirmation,
+  },
+  {
+    id: "lifecycle_active",
+    label: aiFilterCopy.active,
+    count: allSignalLifecycleCounts.active,
+  },
+  {
+    id: "lifecycle_armed",
+    label: aiFilterCopy.armed,
+    count: allSignalLifecycleCounts.armed,
+  },
+  {
+    id: "lifecycle_watch",
+    label: aiFilterCopy.watch,
+    count: allSignalLifecycleCounts.watch,
+  },
   {
   id: "actionable",
   label: copy.filterActionable,
@@ -24229,6 +24813,25 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   },
 ];
 
+const primarySignalFilterIds: AlertFilter[] = [
+  "all",
+  "ai_delivery_ready",
+  "ai_approved",
+  "ai_needs_confirmation",
+  "lifecycle_active",
+  "lifecycle_armed",
+  "lifecycle_watch",
+  "crypto",
+  "stocks",
+];
+
+const compactAlertFilterOptions = alertFilterOptions.filter((filter) => {
+  if (primarySignalFilterIds.includes(filter.id)) return true;
+  if (filter.id === alertFilter) return true;
+
+  return filter.count > 0;
+});
+
   if (!hasAccess) {
     return (
       <section className="se-dashboard-panel rounded-[2rem] p-6">
@@ -24248,7 +24851,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   }
 
   return (
-    <section className="se-dashboard-panel rounded-[2.25rem] p-5 font-sans sm:p-6">
+    <section className="se-dashboard-panel se-signals-premium-shell rounded-[2.25rem] p-4 font-sans sm:p-5 xl:p-6">
       <PremiumDashboardTabHero tab="alerts" language={language} />
 
       <div className="mb-5 rounded-[1.5rem] border border-white/10 bg-black/20 p-3">
@@ -24276,7 +24879,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     : "text-white/55 hover:bg-white/[0.06] hover:text-white"
                 }`}
               >
-                {item.label} <span className="opacity-70">{item.count}</span>
+                {translateSignalText(item.label, safeLanguage)} <span className="opacity-70">{item.count}</span>
               </button>
             ))}
           </div>
@@ -24899,7 +25502,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
       return (
         <div key={String(label)} className="rounded-2xl border border-white/10 bg-black/22 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             {label}
           </div>
           <div
@@ -25017,8 +25620,38 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 </div>
 
 <div className="mt-5 overflow-hidden rounded-[1.25rem] border border-white/10 bg-black/20 p-3">
+  <div className="mb-3 rounded-2xl border border-[#C8A96B]/12 bg-[#C8A96B]/[0.035] p-2.5">
+    <div className="mb-2 text-[11px] font-black uppercase tracking-[0.12em] text-[#F4E8C8]/62">
+      {signalSortCopy.title}
+    </div>
+
+    <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] sm:flex-wrap sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
+      {signalSortOptions.map((option) => {
+        const isActive = signalSortMode === option.id;
+
+        return (
+          <button
+            key={option.id}
+            type="button"
+            onClick={() => {
+              setSignalSortMode(option.id);
+              setVisibleAlertsCount(5);
+            }}
+            className={`shrink-0 rounded-full border px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.075em] transition ${
+              isActive
+                ? "border-[#C8A96B]/35 bg-[#C8A96B]/16 text-[#F4E8C8]"
+                : "border-white/10 bg-white/[0.035] text-white/55 hover:bg-white/[0.07] hover:text-white"
+            }`}
+          >
+            {option.label}
+          </button>
+        );
+      })}
+    </div>
+  </div>
+
   <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] sm:flex-wrap sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
-    {alertFilterOptions.map((filter) => {
+    {compactAlertFilterOptions.map((filter) => {
       const isActive = alertFilter === filter.id;
 
       return (
@@ -25040,6 +25673,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
   <div className="mt-3 text-xs text-white/35">
     {signalLifecycleCopy.showingPrefix} {visibleAlerts.length} {signalLifecycleCopy.showingOf} {assetFilteredAlerts.length} {signalLifecycleCopy.showingSuffix} · {signalLifecycleCopy.active} {signalLifecycleCounts.active} / {signalLifecycleCopy.armed} {signalLifecycleCounts.armed} / {signalLifecycleCopy.watch} {signalLifecycleCounts.watch}
+{` · ${signalSortCopy.title}: ${signalSortOptions.find((option) => option.id === signalSortMode)?.label || signalSortCopy.smart}`}
 {decisionReasonFilter ? ` · ${safeLanguage === "en" ? "Reason" : safeLanguage === "ua" ? "Причина" : "Причина"}: ${decisionReasonFilter}` : ""}
   </div>
 </div>
@@ -25064,7 +25698,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   </div>
 
   <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+    <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
       {copy.pending}
     </div>
     <div className="mt-2 text-2xl font-semibold text-white">
@@ -25073,7 +25707,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   </div>
 
   <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+    <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
       {copy.neutral}
     </div>
     <div className="mt-2 text-2xl font-semibold text-white">
@@ -25109,7 +25743,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   </div>
 
   <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+    <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
       {safeLanguage === "ua" ? "TP / Стоп" : safeLanguage === "en" ? "TP / Stop" : "TP / Стоп"}
     </div>
     <div className="mt-2 text-lg font-semibold text-white">
@@ -25179,7 +25813,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           Pattern PnL
         </div>
         <div className="mt-2 text-2xl font-semibold text-white">
@@ -25188,7 +25822,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           Top pattern
         </div>
         <div className="mt-2 truncate text-sm font-semibold text-white">
@@ -25337,7 +25971,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 {Array.isArray(pattern.matching_keywords) &&
                 pattern.matching_keywords.length > 0 ? (
                   <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                    <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+                    <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
                       {copy.keywords}
                     </div>
 
@@ -25432,7 +26066,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           {copy.neutralProfile}
         </div>
         <div className="mt-2 text-2xl font-semibold text-white">
@@ -25712,7 +26346,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                           key={`${setup.id}-confirm-${index}`}
                           className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs leading-5 text-cyan-50/75"
                         >
-                          ✓ {item}
+                          ✓ {translateSignalText(item, safeLanguage)}
                         </div>
                       ))}
                     </div>
@@ -26197,7 +26831,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     : "border-white/10 bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white"
                 }`}
               >
-                {item.label} · {item.count}
+                {translateSignalText(item.label, safeLanguage)} · {item.count}
               </button>
             ))}
           </div>
@@ -26437,7 +27071,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     : "border-white/10 bg-white/[0.04] text-white/55 hover:bg-white/[0.08] hover:text-white"
                 }`}
               >
-                {item.label} · {item.count}
+                {translateSignalText(item.label, safeLanguage)} · {item.count}
               </button>
             ))}
           </div>
@@ -26732,7 +27366,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
     <div className="mt-5 grid gap-3 md:grid-cols-3">
       <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           {copy.selectedFilter}
         </div>
 
@@ -26743,7 +27377,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           {copy.totalAlerts}
         </div>
 
@@ -26753,7 +27387,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-        <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
           {copy.lastChecked}
         </div>
 
@@ -26809,6 +27443,9 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
     const outcomeStats = getAlertOutcomeShortStats(alert, safeLanguage);
     const linkedTradesForAlert = trades.filter((trade) => trade.source_alert_id === alert.id);
     const signalOutcomeIntel = getSignalOutcomeIntelligence(alert, safeLanguage, linkedTradesForAlert);
+    const aiValidationPanel = buildSkillEdgeAiValidationUiPanel(alert.source_data);
+    const aiValidationCompact = getAiValidationCompactCopy(aiValidationPanel, safeLanguage);
+    const cardMarketStructure = getAlertMarketStructure(alert);
     const targets = [alert.target_1, alert.target_2, alert.target_3]
       .filter(Boolean)
       .join(" / ");
@@ -26935,11 +27572,21 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       },
       {
         label: safeLanguage === "en" ? "Candles" : safeLanguage === "ua" ? "Свічки" : "Свечи",
-        value: typeof alert.candles_checked === "number" ? String(alert.candles_checked) : "—",
+        value:
+          typeof alert.candles_checked === "number"
+            ? String(alert.candles_checked)
+            : typeof cardMarketStructure?.candlesCount === "number"
+              ? `${cardMarketStructure.candlesCount} used`
+              : "—",
       },
       {
         label: safeLanguage === "en" ? "Provider" : safeLanguage === "ua" ? "Джерело" : "Источник",
-        value: [alert.outcome_provider, alert.outcome_interval].filter(Boolean).join(" / ") || "—",
+        value:
+          [alert.outcome_provider, alert.outcome_interval].filter(Boolean).join(" / ") ||
+          [cardMarketStructure?.candlesProvider, cardMarketStructure?.candlesInterval]
+            .filter(Boolean)
+            .join(" / ") ||
+          "—",
       },
     ];
 
@@ -26967,7 +27614,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
         ) : null}
 
         <div
-          className="group relative overflow-hidden rounded-[1.35rem] border border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,0.96),rgba(7,17,31,0.96))] px-3 py-3 font-sans tracking-[-0.01em] shadow-[0_18px_60px_rgba(0,0,0,0.26),inset_0_1px_0_rgba(255,255,255,0.045)] transition hover:border-[#00C076]/24 hover:shadow-[0_22px_70px_rgba(0,0,0,0.32),0_0_0_1px_rgba(0,192,118,0.05)] sm:rounded-[1.55rem] sm:px-4"
+          className="se-signal-card group relative overflow-hidden rounded-[1.35rem] border border-white/10 bg-[linear-gradient(135deg,rgba(15,23,42,0.97),rgba(7,17,31,0.97))] px-3.5 py-3.5 font-sans tracking-[-0.01em] shadow-[0_18px_60px_rgba(0,0,0,0.26),inset_0_1px_0_rgba(255,255,255,0.045)] transition hover:border-[#00C076]/24 hover:shadow-[0_22px_70px_rgba(0,0,0,0.32),0_0_0_1px_rgba(0,192,118,0.05)] sm:rounded-[1.55rem] sm:px-4 xl:px-5"
           style={{
             fontFamily:
               'Montserrat, "Segoe UI", Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
@@ -26975,8 +27622,8 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
         >
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(0,192,118,0.42),rgba(200,169,107,0.36),transparent)]" />
 
-          <div className="grid gap-3 xl:grid-cols-[minmax(168px,0.20fr)_minmax(0,1.80fr)] 2xl:grid-cols-[minmax(190px,0.23fr)_minmax(0,1.77fr)]">
-            <div className="relative isolate min-w-0 overflow-hidden rounded-2xl border border-[#00C076]/15 bg-[radial-gradient(circle_at_18%_0%,rgba(0,192,118,0.18),transparent_36%),linear-gradient(145deg,rgba(0,192,118,0.08),rgba(255,255,255,0.026),rgba(7,17,31,0.32))] px-3 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+          <div className="grid gap-3 xl:grid-cols-[220px_minmax(0,1fr)] 2xl:grid-cols-[238px_minmax(0,1fr)]">
+            <div className="relative isolate min-w-0 overflow-hidden rounded-2xl border border-[#00C076]/15 bg-[radial-gradient(circle_at_18%_0%,rgba(0,192,118,0.18),transparent_36%),linear-gradient(145deg,rgba(0,192,118,0.08),rgba(255,255,255,0.026),rgba(7,17,31,0.32))] px-3.5 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
               <div className="flex items-center justify-between gap-2">
                 <div className="truncate text-[10px] font-black uppercase tracking-[0.14em] text-white/44">
                   {alert.asset_type} · {alert.exchange || "—"}
@@ -27027,8 +27674,8 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
               </div>
             </div>
 
-            <div className="min-w-0 space-y-2 rounded-2xl border border-white/8 bg-white/[0.018] p-2.5">
-              <div className="grid gap-2 xl:grid-cols-[minmax(0,1fr)_minmax(280px,0.42fr)]">
+            <div className="min-w-0 max-w-full space-y-2.5 overflow-visible rounded-2xl border border-white/8 bg-white/[0.018] p-2.5 xl:p-3">
+              <div className="grid gap-2 2xl:grid-cols-[minmax(0,1fr)_minmax(335px,0.34fr)]">
                 <div className="min-w-0">
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <span
@@ -27059,16 +27706,62 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     ) : null}
                   </div>
 
-                  <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3 xl:grid-cols-6">
+                  {aiValidationPanel.available ? (
+                    <div
+                      className={`mt-2 rounded-xl border px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)] ${getAiValidationCompactPanelClass(aiValidationPanel)}`}
+                    >
+                      <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+                        <span className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] text-white/42">
+                          {aiValidationCompact.title}
+                        </span>
+
+                        <span
+                          className={`rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] ${getAiValidationToneClass(aiValidationPanel.headlineBadge.tone)}`}
+                          title={aiValidationPanel.headlineBadge.description}
+                        >
+                          {aiValidationPanel.verdict === "approved"
+                            ? "Approved"
+                            : aiValidationPanel.verdict === "needs_confirmation"
+                              ? "Needs confirmation"
+                              : aiValidationPanel.verdict === "watch_only"
+                                ? "Watch only"
+                                : aiValidationPanel.verdict === "rejected"
+                                  ? "Rejected"
+                                  : "Validated"}
+                          {aiValidationPanel.grade ? ` · ${aiValidationPanel.grade}` : ""}
+                          {aiValidationPanel.score !== null ? ` · ${aiValidationPanel.score}` : ""}
+                        </span>
+
+                        <span
+                          className={`rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] ${getAiValidationToneClass(aiValidationPanel.deliveryBadge.tone)}`}
+                          title={aiValidationPanel.deliveryBadge.description}
+                        >
+                          {aiValidationCompact.deliveryText}
+                        </span>
+
+                        <span className="rounded-full border border-white/10 bg-black/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] text-white/48">
+                          {aiValidationCompact.gates}: {aiValidationCompact.gateText}
+                        </span>
+                      </div>
+
+                      {aiValidationCompact.compactReason ? (
+                        <div className="mt-1 truncate text-[10px] font-semibold leading-4 text-white/48">
+                          {translateSignalValidationText(aiValidationCompact.compactReason, safeLanguage)}
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3 2xl:grid-cols-6">
                     {planTiles.map((tile) => (
                       <div
                         key={tile.label}
-                        className={`min-w-0 rounded-xl border px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)] ${tile.className}`}
+                        className={`min-w-0 rounded-xl border px-2.5 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)] ${tile.className}`}
                       >
-                        <div className="text-[8px] font-black uppercase tracking-[0.12em] text-white/34">
+                        <div className="text-[8px] font-black uppercase leading-[10px] tracking-[0.12em] text-white/34">
                           {tile.label}
                         </div>
-                        <div className={`mt-1 truncate text-[13px] font-black ${tile.valueClassName}`} title={String(tile.value)}>
+                        <div className={`mt-1 min-h-[16px] break-words text-[13px] font-black leading-4 ${tile.valueClassName}`} title={String(tile.value)}>
                           {tile.value}
                         </div>
                       </div>
@@ -27089,7 +27782,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         <span className={`rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] ${getSignalOutcomeGradeClass(signalOutcomeIntel.grade)}`}>
                           {signalOutcomeIntel.grade}
                         </span>
-                        <span className={`max-w-[150px] truncate rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.08em] ${getSignalOutcomeReactionClass(signalOutcomeIntel.reaction)}`}>
+                        <span className={`max-w-full rounded-full border px-2 py-0.5 text-[10px] font-black uppercase leading-4 tracking-[0.08em] ${getSignalOutcomeReactionClass(signalOutcomeIntel.reaction)}`}>
                           {signalOutcomeIntel.reactionLabel}
                         </span>
                       </div>
@@ -27102,7 +27795,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
                       return (
                         <div
-                          key={item.label}
+                          key={translateSignalText(item.label, safeLanguage)}
                           className={`rounded-xl border px-1.5 py-1.5 text-center ${
                             item.muted
                               ? "border-white/10 bg-black/24"
@@ -27112,7 +27805,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                           }`}
                         >
                           <div className="truncate text-[8px] font-black uppercase tracking-[0.08em] text-white/35">
-                            {item.label}
+                            {translateSignalText(item.label, safeLanguage)}
                           </div>
                           <div
                             className={`mt-0.5 text-[10px] font-black ${
@@ -27132,51 +27825,70 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 </div>
               </div>
 
-              <div className="grid gap-2 xl:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
-                <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+              <div className="rounded-2xl border border-white/8 bg-black/16 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="text-[9px] font-black uppercase tracking-[0.14em] text-white/38">
+                    {safeLanguage === "en" ? "Telemetry dock" : safeLanguage === "ua" ? "Телеметрія" : "Телеметрия"}
+                  </div>
+                  <div className="text-[9px] font-bold text-white/30">
+                    {safeLanguage === "en" ? "reserved slots" : safeLanguage === "ua" ? "резервні слоти" : "резервные слоты"}
+                  </div>
+                </div>
+
+                <div className="mt-2 grid grid-cols-2 gap-1.5 sm:grid-cols-3 2xl:grid-cols-6">
                   {outcomeMetricTiles.map((metric) => (
-                    <div key={metric.label} className="min-w-0 rounded-xl border border-white/8 bg-black/18 px-2.5 py-2">
-                      <div className="text-[8px] font-black uppercase tracking-[0.1em] text-white/34">
+                    <div
+                      key={metric.label}
+                      className="min-w-0 rounded-xl border border-white/8 bg-white/[0.025] px-2.5 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.018)]"
+                    >
+                      <div
+                        className="min-h-[20px] text-[8px] font-black uppercase leading-[10px] tracking-[0.1em] text-white/34"
+                        title={String(metric.label)}
+                      >
                         {metric.label}
                       </div>
-                      <div className="mt-0.5 truncate text-[11px] font-black text-white/72" title={String(metric.value)}>
+                      <div
+                        className="mt-1 min-h-[18px] break-words text-[13px] font-black leading-5 text-white/78"
+                        title={String(metric.value)}
+                      >
                         {metric.value}
                       </div>
                     </div>
                   ))}
                 </div>
+              </div>
 
-                <div className="grid gap-1.5 lg:grid-cols-[minmax(0,1fr)_minmax(190px,0.42fr)]">
-                  <div className="min-w-0 rounded-xl border border-white/8 bg-black/18 px-3 py-2">
-                    <div className="flex items-start gap-1.5 text-[11px] font-semibold leading-4 text-[#F4E8C8]/82">
-                      <span className="shrink-0 font-black text-[#F4E8C8]">Desk:</span>
-                      <span className="min-w-0 line-clamp-2">
-                        {signalOutcomeIntel.marketVerdict}
-                      </span>
+              <div className="grid gap-2 2xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)]">
+                <div className="min-w-0 rounded-xl border border-white/8 bg-black/18 px-3 py-2.5">
+                  <div className="flex items-start gap-1.5 text-[11px] font-semibold leading-4 text-[#F4E8C8]/82">
+                    <span className="shrink-0 font-black text-[#F4E8C8]">Desk:</span>
+                    <span className="min-w-0 line-clamp-2">
+                      {signalOutcomeIntel.marketVerdict}
+                    </span>
+                  </div>
+                  {(edgeReason || alert.personal_edge_reason || alert.personalization_note) ? (
+                    <div className="mt-1 line-clamp-1 text-[10px] font-bold text-white/42">
+                      {edgeReason || alert.personal_edge_reason || alert.personalization_note}
                     </div>
-                    {(edgeReason || alert.personal_edge_reason || alert.personalization_note) ? (
-                      <div className="mt-1 truncate text-[10px] font-bold text-white/42">
-                        {edgeReason || alert.personal_edge_reason || alert.personalization_note}
-                      </div>
-                    ) : null}
+                  ) : null}
+                </div>
+
+                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                  <div className="rounded-xl border border-white/8 bg-white/[0.025] px-2.5 py-2">
+                    <div className="min-h-[20px] text-[8px] font-black uppercase leading-[10px] tracking-[0.12em] text-white/34">
+                      {copy.direction} / {copy.trigger}
+                    </div>
+                    <div className="mt-1 line-clamp-2 min-h-[28px] text-[11px] font-bold leading-4 text-white/68">
+                      {alert.direction} · {alert.trigger_label || getAlertUiCopy(safeLanguage).waitConfirmation}
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-1.5">
-                    <div className="rounded-xl border border-white/8 bg-white/[0.025] px-2 py-1.5">
-                      <div className="text-[8px] font-black uppercase tracking-[0.12em] text-white/34">
-                        {copy.direction} / {copy.trigger}
-                      </div>
-                      <div className="mt-0.5 truncate text-[11px] font-bold text-white/68">
-                        {alert.direction} · {alert.trigger_label || getAlertUiCopy(safeLanguage).waitConfirmation}
-                      </div>
+                  <div className="rounded-xl border border-[#C8A96B]/14 bg-[#C8A96B]/[0.045] px-2.5 py-2">
+                    <div className="min-h-[20px] text-[8px] font-black uppercase leading-[10px] tracking-[0.12em] text-[#F4E8C8]/44">
+                      Edge / Risk
                     </div>
-                    <div className="rounded-xl border border-[#C8A96B]/14 bg-[#C8A96B]/[0.045] px-2 py-1.5">
-                      <div className="text-[8px] font-black uppercase tracking-[0.12em] text-[#F4E8C8]/44">
-                        Edge / Risk
-                      </div>
-                      <div className="mt-0.5 truncate text-[11px] font-bold text-[#F4E8C8]/84">
-                        {edgeScore !== null ? `${edgeScore}%` : "—"} · {riskSummary || (safeLanguage === "en" ? "clear" : safeLanguage === "ua" ? "чисто" : "чисто")}
-                      </div>
+                    <div className="mt-1 line-clamp-2 min-h-[28px] text-[11px] font-bold leading-4 text-[#F4E8C8]/84">
+                      {edgeScore !== null ? `${edgeScore}%` : "—"} · {riskSummary || (safeLanguage === "en" ? "clear" : safeLanguage === "ua" ? "чисто" : "чисто")}
                     </div>
                   </div>
                 </div>
@@ -27295,7 +28007,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
   onClick={() => setExpandedAlertId(null)}
 >
         <div
-  className="relative w-[min(1180px,calc(100vw-24px))] max-h-[88vh] overflow-y-auto rounded-[2rem] border border-white/10 bg-[#10131d] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.85)] [scrollbar-width:none] [-ms-overflow-style:none] sm:p-5 [&::-webkit-scrollbar]:hidden"
+  className="se-signal-drawer relative w-[min(1280px,calc(100vw-24px))] max-h-[88vh] overflow-y-auto rounded-[2rem] border border-white/10 bg-[#10131d] p-4 shadow-[0_30px_120px_rgba(0,0,0,0.85)] [scrollbar-width:none] [-ms-overflow-style:none] sm:p-5 [&::-webkit-scrollbar]:hidden"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
@@ -27398,6 +28110,292 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             />
           </div>
 
+          {(() => {
+            const panel = buildSkillEdgeAiValidationUiPanel(breakdownAlert.source_data);
+            const title =
+              safeLanguage === "en"
+                ? "AI Validation"
+                : safeLanguage === "ua"
+                  ? "AI-валідація"
+                  : "AI-валидация";
+            const subtitle =
+              safeLanguage === "en"
+                ? "Strict playbook gates, risk review and delivery readiness for this signal."
+                : safeLanguage === "ua"
+                  ? "Строгі playbook-гейти, ризик-рев’ю та готовність сигналу до відправки."
+                  : "Строгие playbook-гейты, риск-ревью и готовность сигнала к отправке.";
+            const passedGateCount = panel.gates.filter((gate) => gate.passed).length;
+            const failedGateCount = panel.gates.filter((gate) => !gate.passed).length;
+            const topRisks = translateSignalValidationRows([
+              ...panel.blockedReasons,
+              ...panel.missingConfirmations,
+              ...panel.weakPoints,
+              ...panel.riskWarnings,
+            ].filter(Boolean).slice(0, 5), safeLanguage);
+            const managementRows = panel.managementPlan.length > 0
+              ? translateSignalValidationRows(panel.managementPlan.slice(0, 5), safeLanguage)
+              : [
+                  safeLanguage === "en"
+                    ? "No management plan available yet."
+                    : safeLanguage === "ua"
+                      ? "План управління ще недоступний."
+                      : "План управления пока недоступен.",
+                ];
+            const validationLabels = {
+              notAvailable:
+                safeLanguage === "en"
+                  ? "Validation not available"
+                  : safeLanguage === "ua"
+                    ? "Валідація ще недоступна"
+                    : "Валидация пока недоступна",
+              deliveryReady:
+                safeLanguage === "en"
+                  ? "Delivery ready"
+                  : safeLanguage === "ua"
+                    ? "Готовий до відправки"
+                    : "Готов к отправке",
+              siteOnly:
+                safeLanguage === "en"
+                  ? "Site only"
+                  : safeLanguage === "ua"
+                    ? "Тільки сайт"
+                    : "Только сайт",
+              gates:
+                safeLanguage === "en"
+                  ? "Gate checklist"
+                  : safeLanguage === "ua"
+                    ? "Перевірка гейтів"
+                    : "Проверка гейтов",
+              passed:
+                safeLanguage === "en" ? "passed" : safeLanguage === "ua" ? "пройдено" : "пройдено",
+              failed:
+                safeLanguage === "en" ? "failed" : safeLanguage === "ua" ? "провалено" : "не пройдено",
+              pass:
+                safeLanguage === "en" ? "pass" : safeLanguage === "ua" ? "ок" : "ок",
+              blocker:
+                safeLanguage === "en" ? "blocker" : safeLanguage === "ua" ? "блокер" : "блокер",
+              warning:
+                safeLanguage === "en" ? "warning" : safeLanguage === "ua" ? "ризик" : "риск",
+              entry:
+                safeLanguage === "en" ? "Entry" : safeLanguage === "ua" ? "Вхід" : "Вход",
+              stop:
+                safeLanguage === "en" ? "Stop" : safeLanguage === "ua" ? "Стоп" : "Стоп",
+              targets:
+                safeLanguage === "en" ? "Targets" : safeLanguage === "ua" ? "Цілі" : "Цели",
+              rr:
+                safeLanguage === "en" ? "R:R" : safeLanguage === "ua" ? "R:R" : "R:R",
+              noGates:
+                safeLanguage === "en"
+                  ? "No gate data yet."
+                  : safeLanguage === "ua"
+                    ? "Даних по гейтах ще немає."
+                    : "Данных по гейтам пока нет.",
+              noBlockers:
+                safeLanguage === "en"
+                  ? "No blockers detected by validator."
+                  : safeLanguage === "ua"
+                    ? "Валідатор не знайшов блокерів."
+                    : "Валидатор не нашёл блокеров.",
+              signalDeskNote:
+                safeLanguage === "en" ? "Signal desk note" : safeLanguage === "ua" ? "Нотатка desk" : "Заметка desk",
+            };
+
+            return (
+              <div className="mt-5 overflow-hidden rounded-[1.75rem] border border-[#C8A96B]/16 bg-[radial-gradient(circle_at_12%_0%,rgba(200,169,107,0.13),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.045),rgba(7,17,31,0.50))] shadow-[inset_0_1px_0_rgba(255,255,255,0.045)]">
+                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/8 px-4 py-4 sm:px-5">
+                  <div>
+                    <div className="text-[11px] font-black uppercase leading-4 tracking-[0.22em] text-[#F4E8C8]/56">
+                      {title}
+                    </div>
+
+                    <div className="mt-2 text-lg font-black leading-6 text-white">
+                      {panel.available ? panel.headlineBadge.label : validationLabels.notAvailable}
+                    </div>
+
+                    <p className="mt-1 max-w-3xl text-[14px] font-semibold leading-6 text-white/68">
+                      {panel.available ? translateSignalValidationText(panel.shortSummary, safeLanguage) : subtitle}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <span
+                      className={`rounded-full border px-3 py-1.5 text-[12px] font-black uppercase tracking-[0.08em] ${getAiValidationToneClass(panel.headlineBadge.tone)}`}
+                      title={panel.headlineBadge.description}
+                    >
+                      {panel.verdict || "not validated"}
+                      {panel.grade ? ` · ${panel.grade}` : ""}
+                      {panel.score !== null ? ` · ${panel.score}` : ""}
+                    </span>
+
+                    <span
+                      className={`rounded-full border px-3 py-1.5 text-[12px] font-black uppercase tracking-[0.08em] ${getAiValidationToneClass(panel.deliveryBadge.tone)}`}
+                      title={panel.deliveryBadge.description}
+                    >
+                      {panel.deliveryEligible ? validationLabels.deliveryReady : validationLabels.siteOnly}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 p-4 sm:p-5 xl:grid-cols-[minmax(0,0.88fr)_minmax(360px,0.52fr)]">
+                  <div className="min-w-0 space-y-3">
+                    <div className="grid gap-2 sm:grid-cols-3">
+                      {panel.qualityBadges.map((badge) => (
+                        <div
+                          key={badge.label}
+                          className={`rounded-2xl border px-3 py-3 ${getAiValidationToneClass(badge.tone)}`}
+                          title={translateSignalValidationText(badge.description, safeLanguage)}
+                        >
+                          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.12em] opacity-75">
+                            {badge.label.split(":")[0]}
+                          </div>
+                          <div className="mt-1 text-lg font-black leading-none">
+                            {badge.label.includes(":") ? badge.label.split(":").slice(1).join(":").trim() : "—"}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="rounded-2xl border border-white/8 bg-black/18 p-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+                          {validationLabels.gates}
+                        </div>
+
+                        <div className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1 text-[11px] font-black uppercase tracking-[0.08em] text-white/62">
+                          {passedGateCount}/{panel.gates.length || 0} {validationLabels.passed} · {failedGateCount} {validationLabels.failed}
+                        </div>
+                      </div>
+
+                      <div className="mt-3 grid gap-1.5 sm:grid-cols-2">
+                        {panel.gates.length > 0 ? (
+                          panel.gates.map((gate) => (
+                            <div
+                              key={`${gate.label}-${translateSignalValidationText(gate.reason, safeLanguage)}`}
+                              className={`rounded-xl border px-3 py-2 ${
+                                gate.passed
+                                  ? "border-[#00C076]/14 bg-[#00C076]/[0.045]"
+                                  : gate.severity === "blocker"
+                                    ? "border-[#FF5A5F]/16 bg-[#FF5A5F]/[0.045]"
+                                    : "border-[#F59E0B]/16 bg-[#F59E0B]/[0.045]"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="min-w-0 truncate text-[12px] font-black text-white/88">
+                                  {gate.label}
+                                </div>
+                                <div
+                                  className={`shrink-0 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.08em] ${
+                                    gate.passed
+                                      ? "border-[#00C076]/18 bg-[#00C076]/10 text-[#DFFFEF]"
+                                      : "border-white/10 bg-black/20 text-white/54"
+                                  }`}
+                                >
+                                  {gate.passed ? validationLabels.pass : gate.severity === "blocker" ? validationLabels.blocker : gate.severity === "warning" ? validationLabels.warning : gate.severity}
+                                </div>
+                              </div>
+
+                              <div className="mt-1 line-clamp-2 text-[11px] font-semibold leading-5 text-white/52">
+                                {translateSignalValidationText(gate.reason, safeLanguage)}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="rounded-xl border border-white/8 bg-white/[0.025] px-3 py-2 text-xs font-semibold text-white/45">
+                            {safeLanguage === "en"
+  }
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {[
+                        {
+                          label: validationLabels.entry,
+                          value: translateSignalValidationText(panel.entryReview, safeLanguage),
+                        },
+                        {
+                          label: validationLabels.stop,
+                          value: translateSignalValidationText(panel.stopReview, safeLanguage),
+                        },
+                        {
+                          label: validationLabels.targets,
+                          value: translateSignalValidationText(panel.targetReview, safeLanguage),
+                        },
+                        {
+                          label: validationLabels.rr,
+                          value: translateSignalValidationText(panel.rrReview, safeLanguage),
+                        },
+                      ].map((item) => (
+                        <div key={translateSignalText(item.label, safeLanguage)} className="rounded-2xl border border-white/8 bg-white/[0.025] p-3">
+                          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.14em] text-white/44">
+                            {translateSignalText(item.label, safeLanguage)}
+                          </div>
+                          <div className="mt-2 text-[14px] font-semibold leading-6 text-white/74">
+                            {translateSignalText(String(item.value), safeLanguage)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="min-w-0 space-y-3">
+                    <div className="rounded-2xl border border-[#FF5A5F]/12 bg-[#FF5A5F]/[0.035] p-4">
+                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-[#FFD7D9]/48">
+                        {safeLanguage === "en" ? "Risk / blockers" : safeLanguage === "ua" ? "Ризики / блокери" : "Риски / блокеры"}
+                      </div>
+
+                      <div className="mt-3 space-y-2">
+                        {topRisks.length > 0 ? (
+                          topRisks.map((risk, riskIndex) => (
+                            <div
+                              key={`${risk}-${riskIndex}`}
+                              className="rounded-xl border border-white/8 bg-black/18 px-3 py-2.5 text-[14px] font-semibold leading-6 text-white/74"
+                            >
+                              {risk}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="rounded-xl border border-white/8 bg-black/18 px-3 py-2.5 text-[14px] font-semibold leading-6 text-white/68">
+                            {safeLanguage === "en"
+  }
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-[#00C076]/12 bg-[#00C076]/[0.035] p-4">
+                      <div className="text-[10px] font-black uppercase tracking-[0.16em] text-[#DFFFEF]/48">
+                        {safeLanguage === "en" ? "Management plan" : safeLanguage === "ua" ? "План ведення" : "План ведения"}
+                      </div>
+
+                      <div className="mt-3 space-y-2">
+                        {managementRows.map((row, rowIndex) => (
+                          <div
+                            key={`${row}-${rowIndex}`}
+                            className="rounded-xl border border-white/8 bg-black/18 px-3 py-2.5 text-[14px] font-semibold leading-6 text-white/76"
+                          >
+                            {row}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-white/8 bg-black/18 p-4">
+                      <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+                        {validationLabels.signalDeskNote}
+                      </div>
+
+                      <div className="mt-2 text-[13px] font-semibold leading-6 text-white/60">
+                        {subtitle}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
           <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.035] p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -27446,7 +28444,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         : "border-white/10 bg-black/20 text-white/55 hover:bg-white/[0.07] hover:text-white"
                     }`}
                   >
-                    {item.label}
+                    {translateSignalText(item.label, safeLanguage)}
                   </button>
                 );
               })}
@@ -27899,7 +28897,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {intelligence.checkItems.map((item) => (
           <div
-            key={item.label}
+            key={translateSignalText(item.label, safeLanguage)}
             className={`rounded-xl border p-3 ${
               item.passed
                 ? "border-[#00C076]/16 bg-[#00C076]/[0.055]"
@@ -27907,7 +28905,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
             }`}
           >
             <div className="text-[10px] font-black uppercase tracking-[0.14em] text-white/35">
-              {item.label}
+              {translateSignalText(item.label, safeLanguage)}
             </div>
             <div className="mt-1 text-sm font-black text-white">
               {item.passed
@@ -27990,7 +28988,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
         </div>
 
         <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             {copy.outcomeLearningLabel}
           </div>
 
@@ -28075,7 +29073,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 </div>
 
                 <div className="mt-2 text-lg font-semibold text-white">
-                  {breakdownAlert.signal_mode_label || "Signal review"}
+                  {translateSignalText(breakdownAlert.signal_mode_label || "Signal review", safeLanguage)}
                 </div>
 
                 <p className="mt-2 text-sm leading-6 text-white/62">
@@ -28095,7 +29093,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                       {copy.direction}
                     </div>
                     <div className="mt-1 text-sm font-semibold text-white">
-                      {breakdownAlert.direction || "—"}
+                      {translateSignalText(breakdownAlert.direction || "—", safeLanguage)}
                     </div>
                   </div>
 
@@ -28153,7 +29151,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     <span className="font-semibold text-white/85">
                       {copy.management}:
                     </span>{" "}
-                    {breakdownAlert.management_plan}
+                    {translateSignalText(breakdownAlert.management_plan, safeLanguage)}
                   </div>
                 ) : null}
               </div>
@@ -28164,9 +29162,12 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 </div>
 
                 <p className="mt-2 text-sm leading-6 text-white/65">
-                  {breakdownAlert.why_signal_fired ||
-                    breakdownAlert.reason ||
-                    "SkillEdge detected market activity, setup context and R:R conditions that made this ticker worth reviewing."}
+                  {translateSignalText(
+                    breakdownAlert.why_signal_fired ||
+                      breakdownAlert.reason ||
+                      "SkillEdge detected market activity, setup context and R:R conditions that made this ticker worth reviewing.",
+                    safeLanguage
+                  )}
                 </p>
               </div>
             </div>
@@ -28192,7 +29193,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                 <div className="mt-4 grid gap-3">
                   {getAlertTransparencyItems(breakdownAlert).map((item) => (
                     <div
-                      key={`${breakdownAlert.id}-${item.label}`}
+                      key={`${breakdownAlert.id}-${translateSignalText(item.label, safeLanguage)}`}
                       className={`rounded-xl border p-3 ${
                         item.type === "positive"
                           ? "border-emerald-300/15 bg-emerald-300/[0.035]"
@@ -28203,16 +29204,16 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="text-[10px] uppercase tracking-[0.16em] text-white/35">
-                          {item.label}
+                          {translateSignalText(item.label, safeLanguage)}
                         </div>
 
                         <div className="rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-semibold text-white/65">
-                          {item.value}
+                          {translateSignalText(String(item.value), safeLanguage)}
                         </div>
                       </div>
 
                       <div className="mt-2 text-xs leading-5 text-white/58">
-                        {item.note}
+                        {translateSignalText(item.note, safeLanguage)}
                       </div>
                     </div>
                   ))}
@@ -28232,7 +29233,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                         key={`${breakdownAlert.id}-modal-confirm-${index}`}
                         className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-xs leading-5 text-emerald-50/75"
                       >
-                        ✓ {item}
+                        ✓ {translateSignalText(item, safeLanguage)}
                       </div>
                     ))}
                   </div>
@@ -28271,13 +29272,13 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
 
               {breakdownAlert.lesson_summary ? (
                 <p className="mt-3 text-sm leading-6 text-white/65">
-                  {breakdownAlert.lesson_summary}
+                  {translateSignalText(breakdownAlert.lesson_summary, safeLanguage)}
                 </p>
               ) : null}
 
               {breakdownAlert.setup_description ? (
                 <p className="mt-3 text-xs leading-5 text-white/55">
-                  {breakdownAlert.setup_description}
+                  {translateSignalText(breakdownAlert.setup_description, safeLanguage)}
                 </p>
               ) : null}
 
@@ -28286,7 +29287,7 @@ const alertFilterOptions: { id: AlertFilter; label: string; count: number }[] = 
                   <span className="font-semibold text-red-100">
                     {copy.commonMistakeLabel}
                   </span>{" "}
-                  {breakdownAlert.setup_common_mistake}
+                  {translateSignalText(breakdownAlert.setup_common_mistake, safeLanguage)}
                 </div>
               ) : null}
             </div>
@@ -29522,7 +30523,7 @@ const getAiRiskText = (item: MarketAIAnalysisItem) =>
             <div className="text-[10px] uppercase tracking-[0.2em] text-white/38">
               {marketCockpitCopy.freshness}
             </div>
-            <div className="mt-2 text-sm font-semibold text-white">
+            <div className="mt-2 text-lg font-black leading-6 text-white">
               {marketFreshnessLabel}
             </div>
             <div className="mt-2 text-xs leading-5 text-white/45">
@@ -29757,7 +30758,7 @@ const getAiRiskText = (item: MarketAIAnalysisItem) =>
           </div>
 
           <div>
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+            <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
               {safeLanguage === "en" ? "Setup" : safeLanguage === "ua" ? "Сетап" : "Сетап"}
             </div>
 
@@ -29772,7 +30773,7 @@ const getAiRiskText = (item: MarketAIAnalysisItem) =>
 
           <div className="grid gap-3 lg:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+              <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
                 {safeLanguage === "en" ? "Reason" : safeLanguage === "ua" ? "Причина" : "Причина"}
               </div>
               <div className="mt-2 text-xs leading-5 text-white/65">
@@ -29956,7 +30957,7 @@ const getAiRiskText = (item: MarketAIAnalysisItem) =>
           </div>
 
           <div>
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+            <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
               {safeLanguage === "en" ? "Setup" : safeLanguage === "ua" ? "Сетап" : "Сетап"}
             </div>
 
@@ -29971,7 +30972,7 @@ const getAiRiskText = (item: MarketAIAnalysisItem) =>
 
           <div className="grid gap-3 lg:grid-cols-2">
             <div className="rounded-xl border border-white/10 bg-black/20 p-3">
-              <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+              <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
                 {safeLanguage === "en" ? "Reason" : safeLanguage === "ua" ? "Причина" : "Причина"}
               </div>
               <div className="mt-2 text-xs leading-5 text-white/65">
@@ -31600,9 +32601,9 @@ function OverviewTab({
             <div className="mt-6 grid gap-3 md:grid-cols-3">
               {commandMetrics.map((item) => (
                 <MetricCard
-                  key={item.label}
-                  label={item.label}
-                  value={item.value}
+                  key={translateSignalText(item.label, safeLanguage)}
+                  label={translateSignalText(item.label, safeLanguage)}
+                  value={translateSignalText(String(item.value), safeLanguage)}
                   helper={item.helper}
                   accent={item.accent}
                 />
@@ -31814,7 +32815,7 @@ function OverviewTab({
                 ).map((item) => (
                   <div key={item.key} className="rounded-2xl border border-white/10 bg-black/18 p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="text-sm font-black text-white/84">{item.label}</div>
+                      <div className="text-sm font-black text-white/84">{translateSignalText(item.label, safeLanguage)}</div>
                       <div className="text-xs font-black text-white/45">{item.count}</div>
                     </div>
                     <p className="mt-1 text-xs font-semibold leading-5 text-white/45">{item.mission}</p>
@@ -32027,6 +33028,20 @@ function getPremiumDashboardTabCopy(tab: TabId, language: Language) {
           ? "SkillEdge ранжує рух, обʼєм, catalyst context і відстежувану увагу в shortlist для роботи."
           : "SkillEdge ранжирует движение, объём, catalyst context и отслеживаемое внимание в shortlist для работы.",
       points: ["Scanner", "Catalysts", "AI brief"],
+    },
+    cockpit: {
+      badge: "SkillEdge Holly AI",
+      title: isEn
+        ? "Manage ideas like a trading desk, not a chat feed."
+        : isUa
+          ? "Керуй ідеями як trading desk, а не як стрічкою повідомлень."
+          : "Управляй идеями как trading desk, а не как лентой сообщений.",
+      text: isEn
+        ? "AI Watchlist, ARMED setups, ACTIVE ideas, lifecycle, chart levels and next actions stay in one cockpit."
+        : isUa
+          ? "AI Watchlist, ARMED setups, ACTIVE ideas, lifecycle, рівні графіка і next actions в одному cockpit."
+          : "AI Watchlist, ARMED setups, ACTIVE ideas, lifecycle, уровни графика и next actions в одном cockpit.",
+      points: ["Watch", "Lifecycle", "Ask AI"],
     },
     alerts: {
       badge: isEn ? "AI Trading Desk" : isUa ? "AI Trading Desk" : "AI Trading Desk",
@@ -32288,6 +33303,16 @@ function getGlobalCommandCopy(tab: TabId, language: Language): {
         { title: "Market scan", text: isEn ? "Refresh candidates." : isUa ? "Оновити кандидатів." : "Обновить кандидатов.", target: "market-scan", meta: common.open },
         { title: "AI Market Brief", text: isEn ? "Analyze top opportunities." : isUa ? "Розібрати top opportunities." : "Разобрать top opportunities.", target: "market-brief", meta: common.open },
         { title: isEn ? "Source coverage" : isUa ? "Покриття джерел" : "Покрытие источников", text: isEn ? "Market, social and news layers." : isUa ? "Market, social і news layers." : "Market, social и news layers.", target: "market-sources", meta: common.open },
+      ],
+    },
+    cockpit: {
+      label: "SkillEdge Holly AI",
+      title: isEn ? "Run the signal desk from lifecycle, not noise." : isUa ? "Керуй сигналами через lifecycle, а не шум." : "Управляй сигналами через lifecycle, а не шум.",
+      text: isEn ? "Open a symbol, read status, check levels, wait for confirmation and manage the idea from one AI cockpit." : isUa ? "Відкрий тикер, прочитай статус, перевір рівні, дочекайся підтвердження і керуй ідеєю в одному AI cockpit." : "Открой тикер, прочитай статус, проверь уровни, дождись подтверждения и управляй идеей в одном AI cockpit.",
+      cards: [
+        { title: "AI Watchlist", text: isEn ? "WATCH / ARMED / ACTIVE symbols." : isUa ? "WATCH / ARMED / ACTIVE тикери." : "WATCH / ARMED / ACTIVE тикеры.", target: "cockpit-watchlist", meta: common.open },
+        { title: "Lifecycle", text: isEn ? "Entry valid, missed, invalidated or closed." : isUa ? "Entry valid, missed, invalidated або closed." : "Entry valid, missed, invalidated или closed.", target: "cockpit-lifecycle", meta: common.open },
+        { title: "Ask AI", text: isEn ? "Rules-first questions inside the trade." : isUa ? "Rules-first питання всередині угоди." : "Rules-first вопросы внутри сделки.", target: "cockpit-ai", meta: common.open },
       ],
     },
     alerts: {
@@ -33265,8 +34290,8 @@ const handleAnalyzeCurrentChart = async () => {
         className="h-12 w-full rounded-2xl border border-white/10 bg-black/30 px-4 text-sm font-medium text-white outline-none transition focus:border-cyan-300/40 focus:bg-black/40"
       >
         {chartIntervalOptions.map((item) => (
-          <option key={item.value} value={item.value} className="bg-[#0b0f1a] text-white">
-            {item.label}
+          <option key={translateSignalText(String(item.value), safeLanguage)} value={translateSignalText(String(item.value), safeLanguage)} className="bg-[#0b0f1a] text-white">
+            {translateSignalText(item.label, safeLanguage)}
           </option>
         ))}
       </select>
@@ -33650,7 +34675,7 @@ function MoversPanel({
                     : "text-white/70 hover:text-white"
                 }`}
               >
-                {item.label}
+                {translateSignalText(item.label, safeLanguage)}
               </button>
             ))}
           </div>
@@ -33670,7 +34695,7 @@ function MoversPanel({
                     : "text-white/70 hover:text-white"
                 }`}
               >
-                {item.label}
+                {translateSignalText(item.label, safeLanguage)}
               </button>
             ))}
           </div>
@@ -33705,7 +34730,7 @@ function MoversPanel({
               </div>
             ) : items.length === 0 ? (
               <div className="px-4 py-8 text-sm text-white/50">
-  {t.charts.moversEmpty} {side === "gainers" ? "+10%" : "-10%"}.
+  {t.charts.moversEmpty}
 </div>
             ) : (
               <div className="divide-y divide-white/10">
@@ -33750,71 +34775,51 @@ function MoversPanel({
 async function fetchCryptoMovers(
   side: ChartsMoverSide
 ): Promise<ChartsMoverItem[]> {
-  const response = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+  const response = await fetch(
+    `/api/market/chart-movers?market=crypto&side=${side}&limit=25`,
+    {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    }
+  );
+
+  const payload = (await response.json()) as {
+    items?: Array<Partial<ChartsMoverItem> & { volume?: string | number | null }>;
+    error?: string;
+  };
 
   if (!response.ok) {
-    throw new Error("Binance crypto movers are unavailable right now.");
+    throw new Error(
+      typeof payload?.error === "string"
+        ? payload.error
+        : "Crypto movers are unavailable on the current market data stack."
+    );
   }
 
-  const data = await response.json();
+  return Array.isArray(payload.items)
+    ? payload.items
+        .map((item) => {
+          const symbol = String(item.symbol || "").trim().toUpperCase();
+          const volume =
+            typeof item.volume === "string"
+              ? item.volume
+              : formatCompactNumber(Number(item.volume ?? 0));
 
-  if (!Array.isArray(data)) {
-    throw new Error("Binance returned invalid movers data.");
-  }
-
-  const mapped: ChartsMoverItem[] = data
-    .filter((item: any) => {
-      const symbol = String(item.symbol || "");
-
-      return (
-        symbol.endsWith("USDT") &&
-        !symbol.includes("UPUSDT") &&
-        !symbol.includes("DOWNUSDT") &&
-        !symbol.includes("BULLUSDT") &&
-        !symbol.includes("BEARUSDT")
-      );
-    })
-    .map((item: any) => {
-      const symbol = String(item.symbol || "");
-      const baseSymbol = symbol.replace("USDT", "");
-      const changePct = Number(item.priceChangePercent ?? 0);
-      const quoteVolume = Number(item.quoteVolume ?? 0);
-
-      return {
-        symbol: baseSymbol,
-        name: `${baseSymbol}/USDT`,
-        price: Number(item.lastPrice ?? 0),
-        changePct,
-        volume: formatCompactNumber(quoteVolume),
-        rawVolume: quoteVolume,
-      };
-    })
-    .filter((item: ChartsMoverItem & { rawVolume?: number }) => {
-      const volume = item.rawVolume ?? 0;
-
-      if (!Number.isFinite(item.changePct) || !Number.isFinite(volume)) {
-        return false;
-      }
-
-      if (volume < 500000) {
-        return false;
-      }
-
-      if (side === "gainers") {
-        return item.changePct >= 10;
-      }
-
-      return item.changePct <= -10;
-    })
-    .sort((a, b) =>
-      side === "gainers"
-        ? b.changePct - a.changePct
-        : a.changePct - b.changePct
-    )
-    .slice(0, 10)
-    .map(({ rawVolume, ...item }) => item);
-
-  return mapped;
+          return {
+            symbol,
+            name: String(item.name || symbol || "Crypto"),
+            price:
+              typeof item.price === "number" && Number.isFinite(item.price)
+                ? item.price
+                : null,
+            changePct: Number(item.changePct ?? 0),
+            volume,
+          };
+        })
+        .filter((item) => item.symbol && Number.isFinite(item.changePct))
+    : [];
 }
 
 async function fetchStockMovers(
@@ -35799,14 +36804,14 @@ const openLearningWorkspace = (workspace: "roadmap" | "modules" | "lesson") => {
                   <div className="text-xs uppercase tracking-[0.2em] text-cyan-100/45">
                     {t.learning.nextLessonLabel}
                   </div>
-                  <div className="mt-2 text-sm font-semibold text-white">{nextLesson}</div>
+                  <div className="mt-2 text-lg font-black leading-6 text-white">{nextLesson}</div>
                 </div>
 
                 <div className="rounded-3xl border border-cyan-100/10 bg-black/20 p-4">
                   <div className="text-xs uppercase tracking-[0.2em] text-cyan-100/45">
                     {t.learning.progressLabel}
                   </div>
-                  <div className="mt-2 text-sm font-semibold text-white">{activeModule.progress}%</div>
+                  <div className="mt-2 text-lg font-black leading-6 text-white">{activeModule.progress}%</div>
                 </div>
               </div>
 
@@ -37921,7 +38926,7 @@ const reportsCockpitCards = [
     <>
       <div className="mt-5 grid gap-3 md:grid-cols-4 xl:grid-cols-8">
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             Linked
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
@@ -37930,7 +38935,7 @@ const reportsCockpitCards = [
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             Adoption
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
@@ -37957,7 +38962,7 @@ const reportsCockpitCards = [
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             Avg PnL
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
@@ -37968,7 +38973,7 @@ const reportsCockpitCards = [
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             Long signals
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
@@ -37980,7 +38985,7 @@ const reportsCockpitCards = [
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-          <div className="text-[10px] font-black uppercase tracking-[0.16em] text-white/38">
+          <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
             Short signals
           </div>
           <div className="mt-2 text-2xl font-semibold text-white">
@@ -38343,15 +39348,15 @@ function ReportListCard({
         <div className="mt-5 grid gap-3">
           {items.map((item) => (
             <div
-              key={item.label}
+              key={translateSignalText(item.label, safeLanguage)}
               className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/20 p-4"
             >
               <div className="min-w-0 truncate text-sm text-white/70">
-                {item.label}
+                {translateSignalText(item.label, safeLanguage)}
               </div>
 
               <div className="shrink-0 text-sm font-medium text-white">
-                {item.value}
+                {translateSignalText(String(item.value), safeLanguage)}
               </div>
             </div>
           ))}
@@ -38676,7 +39681,7 @@ const accountReferralCopy =
                     : "border-white/10 bg-white/[0.04] text-white/56 hover:border-white/20 hover:text-white/82"
                 }`}
               >
-                {item.label}
+                {translateSignalText(item.label, safeLanguage)}
               </button>
             ))}
           </div>
@@ -38685,7 +39690,7 @@ const accountReferralCopy =
         <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {accountCockpitStats.map((item) => (
             <div
-              key={item.label}
+              key={translateSignalText(item.label, safeLanguage)}
               className={`rounded-[1.4rem] border p-4 ${
                 item.tone === "emerald"
                   ? "border-emerald-300/20 bg-emerald-400/[0.08]"
@@ -38699,10 +39704,10 @@ const accountReferralCopy =
               }`}
             >
               <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/38">
-                {item.label}
+                {translateSignalText(item.label, safeLanguage)}
               </div>
               <div className="mt-2 truncate text-lg font-black text-white">
-                {item.value}
+                {translateSignalText(String(item.value), safeLanguage)}
               </div>
               <div className="mt-1 truncate text-xs font-bold text-white/45">
                 {item.sub}
