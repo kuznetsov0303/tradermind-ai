@@ -3836,7 +3836,8 @@ const updateDashboardUrlTab = (tab: string) => {
   if (typeof window === "undefined") return;
 
   const params = new URLSearchParams(window.location.search);
-  params.set("tab", tab);
+  const publicTab = tab === "cockpit" || tab === "alerts" ? "signals" : tab;
+  params.set("tab", publicTab);
   window.history.pushState({}, "", `/dashboard?${params.toString()}`);
 };
 
