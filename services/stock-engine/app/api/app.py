@@ -93,6 +93,27 @@ def normalize_signal_record(item: dict[str, Any], fallback_key: str | None = Non
     targets = payload.get("targets") if isinstance(payload.get("targets"), list) else item.get("targets")
     targets = targets if isinstance(targets, list) else []
 
+    # S8.23A: every client candidate needs a clear invalidation.
+    # If the setup engine did not provide a text invalidation, derive it from the hard stop.
+    direction_value = str(payload.get("direction") or item.get("direction") or "").lower().strip()
+    stop_value = payload.get("stop") if payload.get("stop") is not None else item.get("stop")
+    invalidation_value = (
+        payload.get("invalidation")
+        or item.get("invalidation")
+        or payload.get("invalidIf")
+        or item.get("invalidIf")
+        or payload.get("invalidationReason")
+        or item.get("invalidationReason")
+    )
+
+    if (invalidation_value is None or str(invalidation_value).strip() == "") and stop_value is not None:
+        if direction_value == "long":
+            invalidation_value = f"Invalid if price loses the stop level at {stop_value}."
+        elif direction_value == "short":
+            invalidation_value = f"Invalid if price reclaims above the stop level at {stop_value}."
+        else:
+            invalidation_value = f"Invalid if price trades through the stop level at {stop_value}."
+
     record = {
         "signalId": signal_id,
         "assetType": payload.get("assetType") or "stock",
@@ -105,6 +126,8 @@ def normalize_signal_record(item: dict[str, Any], fallback_key: str | None = Non
         "entryZone": payload.get("entryZone") or item.get("entryZone"),
         "stop": payload.get("stop") or item.get("stop"),
         "targets": targets,
+        "invalidation": invalidation_value,
+        "invalidIf": invalidation_value,
         "rrToTp1": payload.get("rrToTp1") or item.get("rrToTp1"),
         "rrToTp2": payload.get("rrToTp2") or item.get("rrToTp2"),
         "entryDistancePct": payload.get("entryDistancePct") or item.get("entryDistancePct"),
