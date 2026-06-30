@@ -1706,6 +1706,95 @@ def engine_telegram_signals(limit: int = 100):
     }
 
 
+
+@app.get("/engine/signals/client-delivery-audit")
+def engine_signals_client_delivery_audit(limit: int = 100, include_items: bool = True):
+    store_result = store_active_signals()
+    items = sorted_signal_items(limit=limit, premium_only=False, telegram_only=False)
+
+    audited: list[dict[str, Any]] = []
+    allowed: list[dict[str, Any]] = []
+    blocked: list[dict[str, Any]] = []
+    reason_counts: dict[str, int] = {}
+
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+
+        firewall = evaluate_telegram_quality_firewall(item)
+        firewall_reasons = firewall.get("reasons") if isinstance(firewall.get("reasons"), list) else []
+        client_reasons = item.get("clientDeliveryBlockedReasons") if isinstance(item.get("clientDeliveryBlockedReasons"), list) else []
+
+        reasons = []
+        for reason in [*client_reasons, *firewall_reasons]:
+            value = str(reason or "").strip()
+            if value and value not in reasons:
+                reasons.append(value)
+
+        firewall_passed = firewall.get("passed") is True or firewall.get("ok") is True
+        client_allowed = bool(
+            item.get("clientDeliveryAllowed") is True
+            and item.get("telegramEligible") is True
+            and item.get("premiumSignal") is True
+            and firewall_passed
+            and not reasons
+        )
+
+        row = {
+            "signalId": item.get("signalId"),
+            "symbol": item.get("symbol"),
+            "setupSlug": item.get("setupSlug"),
+            "setupName": item.get("setupName"),
+            "direction": item.get("direction"),
+            "status": item.get("status"),
+            "qualityStatus": item.get("qualityStatus"),
+            "signalGrade": item.get("signalGrade"),
+            "signalScore": item.get("signalScore"),
+            "rrToTp1": item.get("rrToTp1"),
+            "premiumSignal": item.get("premiumSignal"),
+            "telegramEligible": item.get("telegramEligible"),
+            "clientDeliveryAllowed": item.get("clientDeliveryAllowed"),
+            "clientDeliveryPolicy": item.get("clientDeliveryPolicy"),
+            "firewallPassed": firewall_passed,
+            "blockedReasons": reasons,
+        }
+
+        audited.append(row)
+
+        if client_allowed:
+            allowed.append(row)
+        else:
+            blocked.append(row)
+            for reason in reasons or ["blocked_without_explicit_reason"]:
+                reason_counts[reason] = reason_counts.get(reason, 0) + 1
+
+    decision = "CLIENT_SIGNALS_ALLOWED" if allowed else "NO_TRADE_OK"
+
+    return {
+        "ok": True,
+        "version": "s8_22b_real_client_delivery_audit_v1",
+        "decision": decision,
+        "noTradeIsHealthy": not bool(allowed),
+        "storeResult": store_result,
+        "counts": {
+            "totalSignals": len(items),
+            "allowedForClient": len(allowed),
+            "blockedForClient": len(blocked),
+            "telegramEligibleRuntime": sum(1 for item in items if isinstance(item, dict) and item.get("telegramEligible") is True),
+            "premiumRuntime": sum(1 for item in items if isinstance(item, dict) and item.get("premiumSignal") is True),
+        },
+        "blockedReasonCounts": dict(sorted(reason_counts.items(), key=lambda kv: kv[1], reverse=True)),
+        "allowed": allowed[:20] if include_items else [],
+        "blocked": blocked[:50] if include_items else [],
+        "policy": {
+            "source": "runtime_SIGNALS_after_store_active_signals",
+            "finalFirewall": "evaluate_telegram_quality_firewall",
+            "clientGate": "s8_22a_strict_client_delivery_gate_v1",
+            "principle": "No signal is better than a weak signal.",
+        },
+    }
+
+
 @app.delete("/engine/signals")
 def engine_signals_clear():
     cleared = len(SIGNALS)
