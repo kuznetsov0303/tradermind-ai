@@ -13719,9 +13719,340 @@ async def engine_signal_cockpit_history(symbol: str, days: int = 3, interval: st
         "evaluatedAt": datetime.now(timezone.utc).isoformat(),
     }
 
+# === S8.25A Cockpit live management enrichment ===
+# Enrich compact cockpit ACTIVE/ARMED rows and selected.symbol payload with live watch price,
+# derived currentR, price freshness and stop-breach management state.
+try:
+    _s825a_original_compact_signal_item = _s416_compact_signal_item
+except Exception:
+    _s825a_original_compact_signal_item = None
+
+try:
+    _s825a_original_build_selected_symbol = _s416_build_selected_symbol
+except Exception:
+    _s825a_original_build_selected_symbol = None
 
 
+def _s825a_float(value):
+    if value is None or value == "":
+        return None
+    try:
+        parsed = float(value)
+        if parsed != parsed:
+            return None
+        return parsed
+    except Exception:
+        return None
 
 
+def _s825a_first_present(*values):
+    for value in values:
+        if value is not None and value != "":
+            return value
+    return None
 
+
+def _s825a_find_watch(symbol: str) -> dict[str, Any]:
+    wanted = str(symbol or "").upper().strip()
+    if not wanted:
+        return {}
+    try:
+        for item in _s416_watchlist_items():
+            if not isinstance(item, dict):
+                continue
+            item_symbol = str(item.get("symbol") or item.get("ticker") or "").upper().strip()
+            if item_symbol == wanted:
+                return dict(item)
+    except Exception:
+        return {}
+    return {}
+
+
+def _s825a_price_age_seconds(time_value):
+    if not time_value:
+        return None
+    try:
+        from datetime import datetime, timezone
+
+        raw = str(time_value).strip()
+        if not raw:
+            return None
+        normalized = raw.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(normalized)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return max(0, int((datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds()))
+    except Exception:
+        return None
+
+
+def _s825a_price_freshness(age_seconds):
+    if age_seconds is None:
+        return "FRESH"
+    try:
+        age = int(age_seconds)
+    except Exception:
+        return "FRESH"
+    if age <= 900:
+        return "FRESH"
+    if age <= 1800:
+        return "DELAYED"
+    return "STALE"
+
+
+def _s825a_current_r(entry, stop, price, direction):
+    entry_f = _s825a_float(entry)
+    stop_f = _s825a_float(stop)
+    price_f = _s825a_float(price)
+    side = str(direction or "").lower().strip()
+
+    if entry_f is None or stop_f is None or price_f is None:
+        return None
+
+    risk = abs(entry_f - stop_f)
+    if risk <= 0:
+        return None
+
+    if side == "short":
+        return round((entry_f - price_f) / risk, 2)
+    if side == "long":
+        return round((price_f - entry_f) / risk, 2)
+
+    return None
+
+
+def _s825a_stop_breached(entry, stop, price, direction):
+    stop_f = _s825a_float(stop)
+    price_f = _s825a_float(price)
+    side = str(direction or "").lower().strip()
+
+    if stop_f is None or price_f is None:
+        return False
+
+    if side == "short":
+        return price_f >= stop_f
+    if side == "long":
+        return price_f <= stop_f
+
+    return False
+
+
+def _s825a_append_unique(row: dict[str, Any], key: str, value: str):
+    items = row.get(key)
+    if not isinstance(items, list):
+        items = []
+    if value not in items:
+        items.append(value)
+    row[key] = items
+
+
+def _s825a_enrich_signal_management(
+    row: dict[str, Any],
+    *,
+    watch: dict[str, Any] | None = None,
+    lifecycle: dict[str, Any] | None = None,
+    chart: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    if not isinstance(row, dict):
+        return row
+
+    enriched = dict(row)
+    watch = watch if isinstance(watch, dict) else {}
+    lifecycle = lifecycle if isinstance(lifecycle, dict) else {}
+    chart = chart if isinstance(chart, dict) else {}
+    snapshot = chart.get("snapshot") if isinstance(chart.get("snapshot"), dict) else {}
+
+    symbol = str(
+        enriched.get("symbol")
+        or watch.get("symbol")
+        or watch.get("ticker")
+        or lifecycle.get("symbol")
+        or ""
+    ).upper().strip()
+
+    if not symbol:
+        return enriched
+
+    if not watch:
+        watch = _s825a_find_watch(symbol)
+
+    current_price = _s825a_first_present(
+        enriched.get("currentPrice"),
+        enriched.get("current_price"),
+        lifecycle.get("currentPrice"),
+        lifecycle.get("current_price"),
+        watch.get("price"),
+        watch.get("currentPrice"),
+        watch.get("current_price"),
+        snapshot.get("latestPrice"),
+        enriched.get("price"),
+    )
+
+    if current_price is not None:
+        price_f = _s825a_float(current_price)
+        enriched["currentPrice"] = price_f if price_f is not None else current_price
+        enriched["price"] = price_f if price_f is not None else current_price
+        enriched["currentPriceSource"] = (
+            enriched.get("currentPriceSource")
+            or lifecycle.get("currentPriceSource")
+            or "watch.price"
+        )
+
+    if watch.get("changePercent") is not None and enriched.get("changePercent") is None:
+        enriched["changePercent"] = watch.get("changePercent")
+    if watch.get("volume") is not None and enriched.get("volume") is None:
+        enriched["volume"] = watch.get("volume")
+    if watch.get("marketCap") is not None and enriched.get("marketCap") is None:
+        enriched["marketCap"] = watch.get("marketCap")
+    if watch.get("universe") is not None and enriched.get("universe") is None:
+        enriched["universe"] = watch.get("universe")
+    if watch.get("sourceBucket") is not None and enriched.get("sourceBucket") is None:
+        enriched["sourceBucket"] = watch.get("sourceBucket")
+    if watch.get("inPlayScore") is not None and enriched.get("inPlayScore") is None:
+        enriched["inPlayScore"] = watch.get("inPlayScore")
+
+    price_time = _s825a_first_present(
+        enriched.get("currentPriceUpdatedAt"),
+        lifecycle.get("currentPriceUpdatedAt"),
+        watch.get("currentPriceUpdatedAt"),
+        watch.get("priceUpdatedAt"),
+        watch.get("updatedAt"),
+        enriched.get("updatedAt"),
+    )
+    age_seconds = _s825a_price_age_seconds(price_time)
+
+    if price_time is not None:
+        enriched["currentPriceUpdatedAt"] = price_time
+        enriched["priceUpdatedAt"] = _s825a_first_present(enriched.get("priceUpdatedAt"), price_time)
+    if age_seconds is not None:
+        enriched["priceAgeSeconds"] = age_seconds
+
+    if current_price is not None:
+        enriched["priceFreshness"] = _s825a_price_freshness(age_seconds)
+        enriched["priceFreshnessReason"] = (
+            enriched.get("priceFreshnessReason")
+            or "live_watch_price_available"
+        )
+
+    entry = _s825a_first_present(enriched.get("entry"), lifecycle.get("entry"))
+    stop = _s825a_first_present(enriched.get("stop"), lifecycle.get("stop"))
+    direction = _s825a_first_present(enriched.get("direction"), lifecycle.get("direction"))
+
+    current_r = _s825a_first_present(
+        enriched.get("currentR"),
+        enriched.get("current_r"),
+        lifecycle.get("currentR"),
+        lifecycle.get("current_r"),
+    )
+    if current_r is None:
+        current_r = _s825a_current_r(entry, stop, current_price, direction)
+
+    if current_r is not None:
+        enriched["currentR"] = current_r
+
+    stop_breached = _s825a_stop_breached(entry, stop, current_price, direction)
+    enriched["liveManagementEnriched"] = True
+    enriched["isLiveStopBreached"] = bool(stop_breached)
+
+    if stop_breached:
+        enriched["lifecycleStatus"] = "STOP_HIT"
+        enriched["managementState"] = "STOP_HIT"
+        enriched["entryStatus"] = "INVALIDATED"
+        enriched["tradeAction"] = "STOP_INVALIDATED"
+        enriched["isActionable"] = False
+        enriched["strictEligible"] = False
+        enriched["clientDeliveryAllowed"] = False
+        enriched["telegramEligible"] = False
+        enriched["stalePriceBlocked"] = False
+        _s825a_append_unique(enriched, "strictBlockedReasons", "stop_breached_live_price")
+        _s825a_append_unique(enriched, "clientDeliveryBlockReasons", "stop_breached_live_price")
+        _s825a_append_unique(enriched, "managementReasons", "Live price breached the stop level.")
+        _s825a_append_unique(enriched, "guidance", "Stop level was breached by live price. The original signal is invalidated.")
+        _s825a_append_unique(enriched, "nextActions", "Do not treat this as a fresh entry. Wait for a new setup and confirmation.")
+    else:
+        if enriched.get("managementState") in {None, ""}:
+            enriched["managementState"] = "ACTIVE_MONITOR"
+        if enriched.get("tradeAction") in {None, ""}:
+            enriched["tradeAction"] = "MANAGE_ACTIVE"
+        if enriched.get("entryStatus") in {None, ""}:
+            enriched["entryStatus"] = "LIVE_PRICE_TRACKED"
+
+    return enriched
+
+
+def _s825a_enrich_watch_from_signal(watch: dict[str, Any], signal: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(watch, dict):
+        watch = {}
+    if not isinstance(signal, dict):
+        signal = {}
+
+    enriched = dict(watch)
+
+    for key in [
+        "currentPrice",
+        "currentR",
+        "currentPriceSource",
+        "currentPriceUpdatedAt",
+        "priceUpdatedAt",
+        "priceAgeSeconds",
+        "priceFreshness",
+        "priceFreshnessReason",
+        "managementState",
+        "entryStatus",
+        "tradeAction",
+        "isLiveStopBreached",
+        "liveManagementEnriched",
+    ]:
+        if signal.get(key) is not None:
+            enriched[key] = signal.get(key)
+
+    return enriched
+
+
+if _s825a_original_compact_signal_item is not None:
+    def _s416_compact_signal_item(item: dict[str, Any], lifecycle_by_symbol: dict[str, dict[str, Any]]) -> dict[str, Any]:
+        row = _s825a_original_compact_signal_item(item, lifecycle_by_symbol)
+        payload = item.get("signal") if isinstance(item, dict) and isinstance(item.get("signal"), dict) else item
+        payload = payload if isinstance(payload, dict) else {}
+        symbol = str(row.get("symbol") or payload.get("symbol") or "").upper().strip() if isinstance(row, dict) else ""
+        lifecycle = lifecycle_by_symbol.get(symbol, {}) if isinstance(lifecycle_by_symbol, dict) else {}
+        watch = _s825a_find_watch(symbol)
+        return _s825a_enrich_signal_management(row, watch=watch, lifecycle=lifecycle)
+
+
+if _s825a_original_build_selected_symbol is not None:
+    def _s416_build_selected_symbol(symbol: str | None, lifecycle_by_symbol: dict[str, dict[str, Any]], include_candles: bool = False) -> dict[str, Any] | None:
+        selected = _s825a_original_build_selected_symbol(symbol, lifecycle_by_symbol, include_candles=include_candles)
+        if not isinstance(selected, dict):
+            return selected
+
+        watch = selected.get("watchItem") if isinstance(selected.get("watchItem"), dict) else {}
+        if not watch:
+            watch = _s825a_find_watch(str(symbol or "").upper().strip())
+
+        lifecycle = selected.get("lifecycle") if isinstance(selected.get("lifecycle"), dict) else {}
+        signal = selected.get("signal") if isinstance(selected.get("signal"), dict) else {}
+        chart = selected.get("chart") if isinstance(selected.get("chart"), dict) else {}
+
+        enriched_signal = _s825a_enrich_signal_management(
+            signal,
+            watch=watch,
+            lifecycle=lifecycle,
+            chart=chart,
+        )
+
+        selected["signal"] = enriched_signal
+        selected["watchItem"] = _s825a_enrich_watch_from_signal(watch, enriched_signal)
+
+        ai_panel = selected.get("aiPanel")
+        if isinstance(ai_panel, dict):
+            if not ai_panel.get("guidance") and enriched_signal.get("guidance"):
+                ai_panel["guidance"] = enriched_signal.get("guidance")
+            if not ai_panel.get("nextActions") and enriched_signal.get("nextActions"):
+                ai_panel["nextActions"] = enriched_signal.get("nextActions")
+            selected["aiPanel"] = ai_panel
+
+        return selected
+
+# === /S8.25A Cockpit live management enrichment ===
 
