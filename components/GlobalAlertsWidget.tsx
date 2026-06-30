@@ -39,19 +39,19 @@ type GlobalAlert = {
 
 const globalAlertsCopy = {
   en: {
-    eyebrow: "SkillEdge AI Alerts",
+    eyebrow: "SkillEdge AI Signals",
     title: "Live trading desk",
     checking: "Checking alerts...",
     latestOpportunities: "Latest opportunities",
     all: "All",
     stocks: "Stocks",
     crypto: "Crypto",
-    noAlertsTitle: "No active alerts yet",
+    noAlertsTitle: "No active signal yet",
 noAlertsText:
   "The desk is online. When a high-quality setup appears, it will show here.",
     opensFullCenter: "Opens full Alerts Center",
     openDashboard: "Open dashboard",
-    collapsedTitle: "AI Alerts",
+    collapsedTitle: "AI Signals",
     latest: "latest",
     defaultSetup: "AI alert",
     defaultMarket: "Market",
