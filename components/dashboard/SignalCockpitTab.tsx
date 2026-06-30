@@ -475,6 +475,7 @@ function formatPrice(value: unknown) {
 }
 
 function formatPercent(value: unknown) {
+  if (value === null || value === undefined || value === "") return "—";
   const n = Number(value);
   if (!Number.isFinite(n)) return "—";
   return `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
@@ -1034,14 +1035,81 @@ function normalizeCockpitValue(value: CockpitValue | null): CockpitValue | null 
 
 
 function mergeDeskItems(value: CockpitValue | null) {
+  const watchBySymbol = new Map<string, CockpitWatchItem>();
+
+  for (const watchItem of value?.watchlist?.items || []) {
+    const symbol = getSymbol(watchItem);
+    if (symbol && !watchBySymbol.has(symbol)) {
+      watchBySymbol.set(symbol, watchItem);
+    }
+  }
+
   const source: DeskItem[] = [
     ...(value?.active?.items || []),
     ...(value?.armed?.items || []),
     ...(value?.watchlist?.items || []),
     ...(value?.closed?.items || []),
   ];
+
+  const enrichedSource = source.map((item) => {
+    const symbol = getSymbol(item);
+    const watchItem = symbol ? watchBySymbol.get(symbol) : null;
+    if (!watchItem) return item;
+
+    const record = item as AnyRecord;
+    const watchRecord = watchItem as AnyRecord;
+
+    return {
+      ...watchRecord,
+      ...record,
+      watchItem: record.watchItem ?? watchItem,
+      name: record.name ?? watchItem.name ?? null,
+      price:
+        record.price ??
+        record.currentPrice ??
+        watchItem.price ??
+        null,
+      changePercent:
+        record.changePercent ??
+        record.changePct ??
+        record.percentChange ??
+        record.change_percent ??
+        record.priceChangePercent ??
+        watchItem.changePercent ??
+        watchRecord.changePct ??
+        watchRecord.percentChange ??
+        watchRecord.change_percent ??
+        watchRecord.priceChangePercent ??
+        null,
+      volume:
+        record.volume ??
+        watchItem.volume ??
+        null,
+      marketCap:
+        record.marketCap ??
+        record.market_cap ??
+        watchItem.marketCap ??
+        watchRecord.market_cap ??
+        null,
+      universe:
+        record.universe ??
+        watchItem.universe ??
+        null,
+      sourceBucket:
+        record.sourceBucket ??
+        watchItem.sourceBucket ??
+        null,
+      inPlayScore:
+        record.inPlayScore ??
+        record.score ??
+        record.signalScore ??
+        watchItem.inPlayScore ??
+        null,
+    } as DeskItem;
+  });
+
   const seen = new Set<string>();
-  return source.filter((item) => {
+  return enrichedSource.filter((item) => {
     const symbol = getSymbol(item);
     if (!symbol || seen.has(symbol)) return false;
     seen.add(symbol);
@@ -2006,8 +2074,8 @@ function TickerTape({ items }: { items: DeskItem[] }) {
     <div className="se-ticker-tape h-[34px] shrink-0 overflow-hidden border-t border-white/10 bg-[#080d15] text-[11px] font-black text-white/70">
       <div className="se-ticker-track flex h-full min-w-max items-center gap-6 px-4">
         {[...tape, ...tape].map((item, index) => {
-          const change = Number(changeOf(item));
-          const positive = Number.isFinite(change) && change >= 0;
+          const change = changeOf(item);
+          const positive = Number.isFinite(Number(change)) && Number(change) >= 0;
           return (
             <div
               key={`${getSymbol(item)}-${index}`}
@@ -2664,8 +2732,8 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
 
         <div className="ml-4 hidden min-w-0 flex-1 items-center gap-2 overflow-hidden xl:flex">
           {deskItems.slice(0, 10).map((item) => {
-            const change = Number(changeOf(item));
-            const positive = Number.isFinite(change) && change >= 0;
+            const change = changeOf(item);
+            const positive = Number.isFinite(Number(change)) && Number(change) >= 0;
             return (
               <button
                 key={`top-${getSymbol(item)}`}
@@ -3417,7 +3485,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                   const name = isSignal(item)
                     ? setupLabel(item.setupName, item.setupSlug)
                     : item.name || "";
-                  const change = Number(changeOf(item));
+                  const change = changeOf(item);
                   const managementRecord = item as AnyRecord;
                   const itemCurrentR = managementRecord.currentR ?? null;
                   const itemFreshness = String(
@@ -3503,7 +3571,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                         <div>{formatPrice(priceOf(item))}</div>
                         <div
                           className={
-                            Number.isFinite(change) && change >= 0
+                            Number.isFinite(Number(change)) && Number(change) >= 0
                               ? "text-emerald-300"
                               : "text-rose-300"
                           }
