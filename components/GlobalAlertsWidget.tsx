@@ -41,7 +41,7 @@ const globalAlertsCopy = {
   en: {
     eyebrow: "SkillEdge AI Signals",
     title: "Live trading desk",
-    checking: "Checking alerts...",
+    checking: "Checking signals...",
     latestOpportunities: "Latest opportunities",
     all: "All",
     stocks: "Stocks",
@@ -49,11 +49,11 @@ const globalAlertsCopy = {
     noAlertsTitle: "No active signal yet",
 noAlertsText:
   "The desk is online. When a high-quality setup appears, it will show here.",
-    opensFullCenter: "Opens full Alerts Center",
+    opensFullCenter: "Opens AI Signal Cockpit",
     openDashboard: "Open dashboard",
     collapsedTitle: "AI Signals",
     latest: "latest",
-    defaultSetup: "AI alert",
+    defaultSetup: "AI signal",
     defaultMarket: "Market",
     defaultMeta: "New trading desk alert",
     priority: "Priority",
