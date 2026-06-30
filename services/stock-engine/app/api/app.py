@@ -14056,3 +14056,101 @@ if _s825a_original_build_selected_symbol is not None:
 
 # === /S8.25A Cockpit live management enrichment ===
 
+# === S8.25C Cockpit lifecycle status actionability alignment ===
+# Make lifecycleStatus authoritative for Cockpit management/actionability.
+# A WAIT_FOR_REENTRY/TP/STOP/INVALIDATED lifecycle row must not look like a fresh actionable ACTIVE trade.
+try:
+    _s825c_original_enrich_signal_management = _s825a_enrich_signal_management
+except Exception:
+    _s825c_original_enrich_signal_management = None
+
+
+def _s825c_status(value):
+    return str(value or "").upper().strip()
+
+
+def _s825c_apply_lifecycle_actionability(row: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(row, dict):
+        return row
+
+    enriched = dict(row)
+    lifecycle_status = _s825c_status(
+        enriched.get("lifecycleStatus")
+        or enriched.get("status")
+        or enriched.get("managementState")
+    )
+
+    if lifecycle_status in {"WAIT_FOR_REENTRY", "REENTRY_ONLY", "LATE_ENTRY", "ENTRY_TOO_LATE"}:
+        enriched["managementState"] = "WAIT_FOR_REENTRY"
+        enriched["entryStatus"] = "WAIT_FOR_REENTRY"
+        enriched["tradeAction"] = "WAIT_FOR_REENTRY"
+        enriched["isActionable"] = False
+        enriched["strictEligible"] = False
+        enriched["clientDeliveryAllowed"] = False
+        enriched["telegramEligible"] = False
+        _s825a_append_unique(enriched, "managementReasons", "Lifecycle says wait for a separate re-entry setup.")
+        _s825a_append_unique(enriched, "guidance", "The original entry is no longer fresh. Wait for a new re-entry setup.")
+        _s825a_append_unique(enriched, "nextActions", "Do not chase the old signal. Require a new trigger and confirmation.")
+
+    elif lifecycle_status in {"TP1_HIT", "PARTIAL_PROFIT", "MANAGEMENT_MODE"}:
+        enriched["managementState"] = "TP1_HIT"
+        enriched["entryStatus"] = "MANAGEMENT_MODE"
+        enriched["tradeAction"] = "REDUCE_RISK"
+        enriched["isActionable"] = False
+        enriched["strictEligible"] = False
+        enriched["clientDeliveryAllowed"] = False
+        enriched["telegramEligible"] = False
+        _s825a_append_unique(enriched, "managementReasons", "TP1 was reached; this is management mode, not a fresh entry.")
+
+    elif lifecycle_status in {"TP2_HIT", "TARGET_COMPLETE", "MANAGEMENT_COMPLETE"}:
+        enriched["managementState"] = "TP2_HIT"
+        enriched["entryStatus"] = "MANAGEMENT_COMPLETE"
+        enriched["tradeAction"] = "TRADE_COMPLETE"
+        enriched["isActionable"] = False
+        enriched["strictEligible"] = False
+        enriched["clientDeliveryAllowed"] = False
+        enriched["telegramEligible"] = False
+        _s825a_append_unique(enriched, "managementReasons", "Target sequence completed; the original idea is no longer actionable.")
+
+    elif lifecycle_status in {"STOP_HIT", "INVALIDATED", "STOP_INVALIDATED"}:
+        enriched["lifecycleStatus"] = "STOP_HIT" if lifecycle_status == "STOP_HIT" else "INVALIDATED"
+        enriched["managementState"] = "STOP_HIT" if lifecycle_status == "STOP_HIT" else "INVALIDATED"
+        enriched["entryStatus"] = "INVALIDATED"
+        enriched["tradeAction"] = "STOP_INVALIDATED"
+        enriched["isActionable"] = False
+        enriched["strictEligible"] = False
+        enriched["clientDeliveryAllowed"] = False
+        enriched["telegramEligible"] = False
+        _s825a_append_unique(enriched, "managementReasons", "Lifecycle invalidated the original signal.")
+
+    elif lifecycle_status in {"ENTRY_STILL_VALID", "ACTIVE", "STILL_VALID"}:
+        if enriched.get("managementState") in {None, "", "ACTIVE_MONITOR"}:
+            enriched["managementState"] = "ACTIVE_MONITOR"
+        if enriched.get("tradeAction") in {None, "", "MANAGE_ACTIVE"}:
+            enriched["tradeAction"] = "MANAGE_ACTIVE"
+        if enriched.get("entryStatus") in {None, "", "LIVE_PRICE_TRACKED"}:
+            enriched["entryStatus"] = "ENTRY_STILL_VALID"
+        if enriched.get("isLiveStopBreached") is not True:
+            enriched["isActionable"] = True
+
+    return enriched
+
+
+if _s825c_original_enrich_signal_management is not None:
+    def _s825a_enrich_signal_management(
+        row: dict[str, Any],
+        *,
+        watch: dict[str, Any] | None = None,
+        lifecycle: dict[str, Any] | None = None,
+        chart: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        enriched = _s825c_original_enrich_signal_management(
+            row,
+            watch=watch,
+            lifecycle=lifecycle,
+            chart=chart,
+        )
+        return _s825c_apply_lifecycle_actionability(enriched)
+
+# === /S8.25C Cockpit lifecycle status actionability alignment ===
+
