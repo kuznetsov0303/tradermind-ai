@@ -606,6 +606,50 @@ function changeOf(item?: DeskItem | null) {
   );
 }
 
+function toFiniteNumberOrNull(value: unknown) {
+  if (value === null || value === undefined || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function firstFiniteNumber(...values: unknown[]) {
+  for (const value of values) {
+    const n = toFiniteNumberOrNull(value);
+    if (n !== null) return n;
+  }
+  return null;
+}
+
+function deriveCurrentRFromTrade({
+  currentPrice,
+  entry,
+  stop,
+  direction,
+}: {
+  currentPrice: unknown;
+  entry: unknown;
+  stop: unknown;
+  direction?: string | null;
+}) {
+  const price = toFiniteNumberOrNull(currentPrice);
+  const entryPrice = toFiniteNumberOrNull(entry);
+  const stopPrice = toFiniteNumberOrNull(stop);
+
+  if (price === null || entryPrice === null || stopPrice === null) return null;
+
+  const risk = Math.abs(entryPrice - stopPrice);
+  if (!Number.isFinite(risk) || risk <= 0) return null;
+
+  const side = String(direction || "").toLowerCase();
+  const rawR = side.includes("short")
+    ? (entryPrice - price) / risk
+    : (price - entryPrice) / risk;
+
+  if (!Number.isFinite(rawR)) return null;
+  return Math.round(rawR * 100) / 100;
+}
+
+
 function statusTone(status?: string | null) {
   const s = normalizeStatus(status);
   if (
@@ -671,6 +715,7 @@ function labelFromSnake(value?: string | null) {
 }
 
 function formatSignedR(value: unknown) {
+  if (value === null || value === undefined || value === "") return "—";
   const n = Number(value);
   if (!Number.isFinite(n)) return "—";
   return `${n >= 0 ? "+" : ""}${n.toFixed(2)}R`;
@@ -2578,24 +2623,98 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
     selected?.status ||
     selectedSignal?.qualityStatus ||
     "WATCH";
-  const currentPrice =
-    selectedSignal?.currentPrice ??
-    selectedLifecycle?.currentPrice ??
-    selectedWatch?.price ??
-    snapshot?.latestPrice ??
-    selectedSignal?.entry ??
-    selectedWatch?.entry ??
-    null;
-  const currentR =
-    selectedSignal?.currentR ??
-    selectedLifecycle?.currentR ??
-    selectedWatch?.currentR ??
-    null;
+  const selectedSignalRecord = (selectedSignal || {}) as AnyRecord;
+  const selectedLifecycleRecord = (selectedLifecycle || {}) as AnyRecord;
+  const selectedWatchRecord = (selectedWatch || {}) as AnyRecord;
 
-  const tradeManagement = (selectedSignal ||
-    selectedLifecycle ||
-    selectedWatch ||
-    {}) as AnyRecord;
+  const currentPrice = firstFiniteNumber(
+    selectedSignalRecord.currentPrice,
+    selectedLifecycleRecord.currentPrice,
+    selectedWatchRecord.price,
+    selectedWatchRecord.currentPrice,
+    snapshot?.latestPrice,
+    selectedSignalRecord.entry,
+  );
+
+  const currentR =
+    firstFiniteNumber(
+      selectedSignalRecord.currentR,
+      selectedLifecycleRecord.currentR,
+      selectedWatchRecord.currentR,
+    ) ??
+    deriveCurrentRFromTrade({
+      currentPrice,
+      entry: levels?.entry ?? selectedSignalRecord.entry,
+      stop: levels?.stop ?? selectedSignalRecord.stop,
+      direction:
+        selectedSignalRecord.direction ??
+        selectedLifecycleRecord.direction ??
+        selectedWatchRecord.direction,
+    });
+
+  const tradeManagement = {
+    ...selectedWatchRecord,
+    ...selectedLifecycleRecord,
+    ...selectedSignalRecord,
+    watchItem: selectedWatch,
+    currentPrice,
+    currentR,
+    currentPriceSource:
+      selectedSignalRecord.currentPriceSource ??
+      selectedLifecycleRecord.currentPriceSource ??
+      selectedWatchRecord.currentPriceSource ??
+      (selectedWatchRecord.price !== null && selectedWatchRecord.price !== undefined
+        ? "watch.price"
+        : null),
+    currentPriceUpdatedAt:
+      selectedSignalRecord.currentPriceUpdatedAt ??
+      selectedLifecycleRecord.currentPriceUpdatedAt ??
+      selectedWatchRecord.currentPriceUpdatedAt ??
+      selectedWatchRecord.priceUpdatedAt ??
+      selectedWatchRecord.updatedAt ??
+      null,
+    priceUpdatedAt:
+      selectedSignalRecord.priceUpdatedAt ??
+      selectedLifecycleRecord.priceUpdatedAt ??
+      selectedWatchRecord.priceUpdatedAt ??
+      selectedWatchRecord.updatedAt ??
+      null,
+    priceAgeSeconds:
+      selectedSignalRecord.priceAgeSeconds ??
+      selectedLifecycleRecord.priceAgeSeconds ??
+      selectedWatchRecord.priceAgeSeconds ??
+      null,
+    priceFreshness:
+      selectedSignalRecord.priceFreshness ??
+      selectedLifecycleRecord.priceFreshness ??
+      selectedWatchRecord.priceFreshness ??
+      (selectedWatchRecord.price !== null && selectedWatchRecord.price !== undefined
+        ? "FRESH"
+        : null),
+    priceFreshnessReason:
+      selectedSignalRecord.priceFreshnessReason ??
+      selectedLifecycleRecord.priceFreshnessReason ??
+      selectedWatchRecord.priceFreshnessReason ??
+      null,
+    stalePriceBlocked:
+      selectedSignalRecord.stalePriceBlocked ??
+      selectedLifecycleRecord.stalePriceBlocked ??
+      selectedWatchRecord.stalePriceBlocked ??
+      false,
+    managementState:
+      selectedSignalRecord.managementState ??
+      selectedLifecycleRecord.managementState ??
+      selectedWatchRecord.managementState ??
+      selectedSignalRecord.entryStatus ??
+      selectedLifecycleRecord.entryStatus ??
+      selectedWatchRecord.entryStatus ??
+      selectedStatus,
+    entryStatus:
+      selectedSignalRecord.entryStatus ??
+      selectedLifecycleRecord.entryStatus ??
+      selectedWatchRecord.entryStatus ??
+      null,
+  } as AnyRecord;
   const managementState = String(
     tradeManagement.managementState || tradeManagement.entryStatus || selectedStatus || "",
   ).trim();
@@ -2962,7 +3081,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
             <div className="mt-3 grid grid-cols-2 gap-2">
               <SmallMetric
                 label="R сейчас"
-                value={formatNumber(currentR, 2)}
+                value={formatSignedR(currentR)}
                 tone={Number(currentR) >= 0 ? "good" : "bad"}
               />
               <SmallMetric
@@ -3333,7 +3452,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                   <SmallMetric label="Цена" value={formatPrice(currentPrice)} />
                   <SmallMetric
                     label="R"
-                    value={formatNumber(currentR, 2)}
+                    value={formatSignedR(currentR)}
                     tone={Number(currentR) >= 0 ? "good" : "bad"}
                   />
                   <SmallMetric
