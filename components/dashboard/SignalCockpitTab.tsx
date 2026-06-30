@@ -564,7 +564,45 @@ function priceOf(item?: CockpitWatchItem | CockpitSignal | null) {
 }
 
 function changeOf(item?: DeskItem | null) {
-  return (item as CockpitWatchItem | undefined)?.changePercent ?? null;
+  if (!item) return null;
+
+  const record = item as AnyRecord;
+  const watchItem = record.watchItem as AnyRecord | undefined;
+  const signal = record.signal as AnyRecord | undefined;
+  const signalWatchItem = signal?.watchItem as AnyRecord | undefined;
+  const source = record.source as AnyRecord | undefined;
+  const sourceWatchItem = source?.watchItem as AnyRecord | undefined;
+  const quote = record.quote as AnyRecord | undefined;
+  const market = record.market as AnyRecord | undefined;
+
+  return (
+    record.changePercent ??
+    record.changePct ??
+    record.percentChange ??
+    record.change_percent ??
+    record.priceChangePercent ??
+    watchItem?.changePercent ??
+    watchItem?.changePct ??
+    watchItem?.percentChange ??
+    watchItem?.change_percent ??
+    signalWatchItem?.changePercent ??
+    signalWatchItem?.changePct ??
+    signalWatchItem?.percentChange ??
+    signalWatchItem?.change_percent ??
+    sourceWatchItem?.changePercent ??
+    sourceWatchItem?.changePct ??
+    sourceWatchItem?.percentChange ??
+    sourceWatchItem?.change_percent ??
+    quote?.changePercent ??
+    quote?.changePct ??
+    quote?.percentChange ??
+    quote?.change_percent ??
+    market?.changePercent ??
+    market?.changePct ??
+    market?.percentChange ??
+    market?.change_percent ??
+    null
+  );
 }
 
 function statusTone(status?: string | null) {
@@ -876,7 +914,17 @@ function toWatchFromIdea(raw: AnyRecord): CockpitWatchItem {
     status: raw.status ?? raw.lifecycleStatus ?? "WATCH",
     engineStatus: raw.engineStatus ?? raw.status ?? raw.lifecycleStatus ?? "WATCH",
     price: raw.price ?? raw.currentPrice ?? null,
-    changePercent: raw.changePercent ?? raw.change_percent ?? null,
+    changePercent:
+      raw.changePercent ??
+      raw.changePct ??
+      raw.percentChange ??
+      raw.change_percent ??
+      raw.priceChangePercent ??
+      raw.watchItem?.changePercent ??
+      raw.watchItem?.changePct ??
+      raw.watchItem?.percentChange ??
+      raw.watchItem?.change_percent ??
+      null,
     volume: raw.volume ?? null,
     marketCap: raw.marketCap ?? raw.market_cap ?? null,
     universe: raw.universe ?? null,
