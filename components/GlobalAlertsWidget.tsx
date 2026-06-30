@@ -55,7 +55,7 @@ noAlertsText:
     latest: "latest",
     defaultSetup: "AI signal",
     defaultMarket: "Market",
-    defaultMeta: "New trading desk alert",
+    defaultMeta: "New trading desk signal",
     priority: "Priority",
     confidence: "Confidence",
     personalMatch: "Personal Edge",
