@@ -3385,7 +3385,11 @@ def _s831a_feature_row(item: dict[str, Any]) -> dict[str, Any]:
     tp1 = _s831a_target_price(item, payload, 0)
     tp2 = _s831a_target_price(item, payload, 1)
     risk = _s831a_num(_s831a_first(item.get("risk"), payload.get("risk")), _s831a_risk(entry, stop, direction))
-    risk_pct = _s831a_pct_distance(risk, entry) if risk is not None and entry else None
+    risk_pct = (
+        round((abs(float(risk)) / abs(float(entry))) * 100.0, 4)
+        if risk is not None and entry not in (None, 0)
+        else None
+    )
 
     current_price = _s831a_num(_s831a_first(
         item.get("currentPrice"),
