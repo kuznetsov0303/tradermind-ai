@@ -2880,6 +2880,177 @@ def engine_promotion_evidence_setup(
 # === /S8.28B Compact promotion evidence endpoint ===
 
 
+
+
+# === S8.29A Promotion evidence board endpoint ===
+@app.get("/engine/promotion/evidence")
+def engine_promotion_evidence_board(
+    min_closed: int = 30,
+    preferred_closed: int = 50,
+    min_win_rate: float = 55.0,
+    min_avg_r: float = 0.35,
+    max_stop_rate: float = 45.0,
+    include_grades: bool = False,
+):
+    min_closed = max(1, int(min_closed or 30))
+    preferred_closed = max(1, int(preferred_closed or 50))
+    min_win_rate = float(min_win_rate or 55.0)
+    min_avg_r = float(min_avg_r or 0.35)
+    max_stop_rate = float(max_stop_rate or 45.0)
+
+    items = load_persistent_outcome_items()
+    stats_rows = build_setup_statistics(items)
+
+    stats_by_slug: dict[str, dict[str, Any]] = {}
+    if isinstance(stats_rows, list):
+        for row in stats_rows:
+            if isinstance(row, dict):
+                slug = str(row.get("setupSlug") or "").strip()
+                if slug:
+                    stats_by_slug[slug] = row
+
+    registry = globals().get("S819_STRATEGY_REGISTRY")
+    registry_slugs = set(registry.keys()) if isinstance(registry, dict) else set()
+    all_slugs = sorted(set(stats_by_slug.keys()) | registry_slugs)
+
+    rows: list[dict[str, Any]] = []
+
+    for slug in all_slugs:
+        row = stats_by_slug.get(slug) or {}
+        registry_row = _s828b_registry_row(slug)
+
+        decision = _s828b_quality_decision(
+            row=row,
+            registry=registry_row,
+            min_closed=min_closed,
+            preferred_closed=preferred_closed,
+            min_win_rate=min_win_rate,
+            min_avg_r=min_avg_r,
+            max_stop_rate=max_stop_rate,
+        )
+
+        closed = _s828b_int(row.get("closed"), 0)
+
+        if decision.get("promotionDecision") == "PROMOTION_REVIEW_READY_NOT_AUTO":
+            board_bucket = "PROMOTION_REVIEW_READY"
+        elif decision.get("sampleOk") is False:
+            board_bucket = "COLLECT_SAMPLE"
+        elif decision.get("performanceOk") is False:
+            board_bucket = "WEAK_EVIDENCE"
+        elif decision.get("registryAllowsReview") is False or decision.get("productAllowsReview") is False:
+            board_bucket = "REGISTRY_BLOCKED"
+        else:
+            board_bucket = "ADMIN_REVIEW"
+
+        compact = {
+            "setupSlug": slug,
+            "setupName": row.get("setupName") or registry_row.get("setupName") or slug.replace("_", " ").title(),
+            "registryStatus": registry_row.get("registryStatus"),
+            "productMode": registry_row.get("productMode"),
+            "clientVisibleMode": registry_row.get("clientVisibleMode"),
+
+            "count": row.get("count"),
+            "rawCount": row.get("rawCount"),
+            "evaluableCount": row.get("evaluableCount"),
+            "closed": closed,
+            "worked": row.get("worked"),
+            "failed": row.get("failed"),
+            "open": row.get("open"),
+            "expiredSession": row.get("expiredSession"),
+
+            "winRateClosed": row.get("winRateClosed"),
+            "avgResultRClosed": row.get("avgResultRClosed"),
+            "stopRateClosed": row.get("stopRateClosed"),
+            "telegramEligibleRate": row.get("telegramEligibleRate"),
+            "premiumSignalRate": row.get("premiumSignalRate"),
+
+            "sampleGapToMinClosed": max(0, min_closed - closed),
+            "sampleGapToPreferredClosed": max(0, preferred_closed - closed),
+
+            "sampleOk": decision.get("sampleOk"),
+            "performanceOk": decision.get("performanceOk"),
+            "registryAllowsReview": decision.get("registryAllowsReview"),
+            "productAllowsReview": decision.get("productAllowsReview"),
+
+            "promotionDecision": decision.get("promotionDecision"),
+            "nextAction": decision.get("nextAction"),
+            "boardBucket": board_bucket,
+            "reasons": decision.get("reasons") or [],
+
+            "autoPromotionAllowed": False,
+            "clientDeliveryChangeAllowed": False,
+            "safeToApplyAutomatically": False,
+        }
+
+        if include_grades and row:
+            compact["gradeEvidence"] = _s828b_compact_grade_rows(row)
+
+        rows.append(compact)
+
+    rows = sorted(
+        rows,
+        key=lambda r: (
+            0 if r.get("promotionDecision") == "PROMOTION_REVIEW_READY_NOT_AUTO" else 1,
+            -int(r.get("closed") or 0),
+            -float(r.get("avgResultRClosed") or -999),
+            str(r.get("setupSlug") or ""),
+        ),
+    )
+
+    bucket_counts: dict[str, int] = {}
+    decision_counts: dict[str, int] = {}
+
+    for row in rows:
+        bucket = str(row.get("boardBucket") or "UNKNOWN")
+        decision_name = str(row.get("promotionDecision") or "UNKNOWN")
+        bucket_counts[bucket] = bucket_counts.get(bucket, 0) + 1
+        decision_counts[decision_name] = decision_counts.get(decision_name, 0) + 1
+
+    promotion_ready = [
+        row for row in rows
+        if row.get("promotionDecision") == "PROMOTION_REVIEW_READY_NOT_AUTO"
+    ]
+
+    board_state = (
+        "PROMOTION_REVIEW_READY_NOT_AUTO"
+        if promotion_ready
+        else "NO_SETUP_READY_FOR_CLIENT_DELIVERY"
+    )
+
+    return {
+        "ok": True,
+        "storageVersion": "s8_29a_promotion_evidence_board_v1",
+        "evaluatedAt": datetime.now(timezone.utc).isoformat(),
+        "boardState": board_state,
+        "topAction": "ADMIN_REVIEW_REQUIRED_NO_AUTO_DELIVERY" if promotion_ready else "KEEP_COLLECTING_OUTCOMES_AND_TIGHTEN_EXECUTION",
+        "thresholds": {
+            "minClosed": min_closed,
+            "preferredClosed": preferred_closed,
+            "minWinRateClosed": min_win_rate,
+            "minAvgResultRClosed": min_avg_r,
+            "maxStopRateClosed": max_stop_rate,
+        },
+        "summary": {
+            "setupCount": len(rows),
+            "promotionReadyCount": len(promotion_ready),
+            "bucketCounts": dict(sorted(bucket_counts.items())),
+            "decisionCounts": dict(sorted(decision_counts.items())),
+        },
+        "promotionReady": promotion_ready[:20],
+        "items": rows,
+        "policy": {
+            "mode": "READ_ONLY_PROMOTION_EVIDENCE_BOARD",
+            "doesNotChangeRegistry": True,
+            "doesNotEnableClientDelivery": True,
+            "doesNotSendTelegram": True,
+            "autoPromotionAllowed": False,
+            "principle": "Promotion board is evidence-only. Client delivery remains blocked until sample and performance thresholds pass.",
+        },
+    }
+
+# === /S8.29A Promotion evidence board endpoint ===
+
+
 @app.delete("/engine/outcomes")
 def engine_outcomes_clear():
     runtime_cleared = len(BACKTEST_OUTCOMES)
