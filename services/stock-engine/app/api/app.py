@@ -3051,6 +3051,174 @@ def engine_promotion_evidence_board(
 # === /S8.29A Promotion evidence board endpoint ===
 
 
+
+
+# === S8.30C Stale stock OPEN outcome repair ===
+S830C_STALE_STOCK_OPEN_REPAIR_VERSION = "s8_30c_stale_stock_open_repair_v1"
+
+
+def _s830c_parse_stock_signal_id(signal_id: str) -> dict[str, Any]:
+    raw = str(signal_id or "").strip()
+    parts = raw.split(":", 3)
+
+    if len(parts) != 4 or parts[0] != "stock":
+        return {}
+
+    symbol = parts[1].upper().strip()
+    setup_slug = parts[2].strip()
+    iso_time = parts[3].strip()
+
+    if not symbol or not setup_slug or len(iso_time) < 10:
+        return {}
+
+    return {
+        "symbol": symbol,
+        "setupSlug": setup_slug,
+        "triggerTime": iso_time,
+        "createdAt": iso_time,
+        "sessionDate": iso_time[:10],
+    }
+
+
+def _s830c_is_open_outcome(item: dict[str, Any]) -> bool:
+    status = str(item.get("status") or "").upper().strip()
+    result = str(item.get("result") or "").upper().strip()
+
+    if status == "OPEN" or result == "OPEN":
+        return True
+
+    if not result and status not in {"WORKED", "FAILED", "EXPIRED_SESSION", "NO_EVAL_LATE_SESSION"}:
+        return True
+
+    return False
+
+
+def _s830c_age_days(session_date: str) -> int | None:
+    try:
+        day = datetime.fromisoformat(str(session_date)[:10]).date()
+        return (datetime.now(timezone.utc).date() - day).days
+    except Exception:
+        return None
+
+
+def _s830c_finalize_stale_stock_open(item: dict[str, Any]) -> dict[str, Any]:
+    repaired = dict(item)
+    signal_id = str(repaired.get("signalId") or "").strip()
+    parsed = _s830c_parse_stock_signal_id(signal_id)
+
+    for key, value in parsed.items():
+        if not repaired.get(key):
+            repaired[key] = value
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    repaired["status"] = "EXPIRED_SESSION"
+    repaired["result"] = "SESSION_CLOSE"
+    repaired["firstEvent"] = repaired.get("firstEvent") or "SESSION_CLOSE"
+    repaired["firstEventAt"] = repaired.get("firstEventAt") or None
+    repaired["resultR"] = repaired.get("resultR") if repaired.get("resultR") is not None else 0
+    repaired["evaluatedAt"] = now_iso
+    repaired["repairAppliedAt"] = now_iso
+    repaired["repairVersion"] = S830C_STALE_STOCK_OPEN_REPAIR_VERSION
+    repaired["repairReason"] = "stale_stock_open_missing_metadata_session_close_finalized"
+    repaired["storageVersion"] = S830C_STALE_STOCK_OPEN_REPAIR_VERSION
+
+    return repaired
+
+
+@app.post("/engine/outcomes/repair-stale-stock-open")
+def engine_outcomes_repair_stale_stock_open(
+    dry_run: bool = True,
+    min_age_days: int = 1,
+    limit: int = 5000,
+):
+    items = load_persistent_outcome_items(limit=max(1, min(int(limit or 5000), 20000)))
+
+    scanned = 0
+    candidates = 0
+    finalized = 0
+    applied = 0
+    skipped = 0
+    by_setup: dict[str, int] = {}
+    samples: list[dict[str, Any]] = []
+
+    for item in items:
+        if not isinstance(item, dict):
+            skipped += 1
+            continue
+
+        scanned += 1
+        signal_id = str(item.get("signalId") or "").strip()
+
+        if not signal_id.startswith("stock:"):
+            continue
+
+        if not _s830c_is_open_outcome(item):
+            continue
+
+        parsed = _s830c_parse_stock_signal_id(signal_id)
+        if not parsed:
+            skipped += 1
+            continue
+
+        session_date = str(item.get("sessionDate") or parsed.get("sessionDate") or "")[:10]
+        age_days = _s830c_age_days(session_date)
+
+        if age_days is None or age_days < int(min_age_days or 1):
+            continue
+
+        candidates += 1
+        setup_slug = str(item.get("setupSlug") or parsed.get("setupSlug") or "unknown")
+        by_setup[setup_slug] = by_setup.get(setup_slug, 0) + 1
+
+        repaired = _s830c_finalize_stale_stock_open(item)
+        finalized += 1
+
+        if len(samples) < 20:
+            samples.append({
+                "signalId": signal_id,
+                "symbol": repaired.get("symbol"),
+                "setupSlug": repaired.get("setupSlug"),
+                "fromStatus": item.get("status"),
+                "fromResult": item.get("result"),
+                "toStatus": repaired.get("status"),
+                "toResult": repaired.get("result"),
+                "sessionDate": repaired.get("sessionDate"),
+                "ageDays": age_days,
+                "dryRun": dry_run,
+            })
+
+        if not dry_run:
+            BACKTEST_OUTCOMES[str(signal_id)] = repaired
+            db.upsert_outcome(repaired)
+            applied += 1
+
+    return {
+        "ok": True,
+        "storageVersion": S830C_STALE_STOCK_OPEN_REPAIR_VERSION,
+        "dryRun": dry_run,
+        "evaluatedAt": datetime.now(timezone.utc).isoformat(),
+        "scanned": scanned,
+        "candidates": candidates,
+        "finalized": finalized,
+        "applied": applied,
+        "skipped": skipped,
+        "minAgeDays": min_age_days,
+        "bySetup": dict(sorted(by_setup.items(), key=lambda kv: kv[1], reverse=True)),
+        "samples": samples,
+        "policy": {
+            "mode": "metadata_repair_and_session_close_finalizer",
+            "onlySignalIdPrefix": "stock:",
+            "onlyOpenOutcomes": True,
+            "doesNotEnableClientDelivery": True,
+            "doesNotChangeRegistry": True,
+            "dryRunDefault": True,
+        },
+    }
+
+# === /S8.30C Stale stock OPEN outcome repair ===
+
+
 @app.delete("/engine/outcomes")
 def engine_outcomes_clear():
     runtime_cleared = len(BACKTEST_OUTCOMES)
