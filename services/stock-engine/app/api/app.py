@@ -3219,6 +3219,508 @@ def engine_outcomes_repair_stale_stock_open(
 # === /S8.30C Stale stock OPEN outcome repair ===
 
 
+
+
+# === S8.31A AI Research Feature Matrix ===
+S831A_FEATURE_MATRIX_VERSION = "s8_31a_ai_research_feature_matrix_v1"
+
+
+def _s831a_first(*values: Any) -> Any:
+    for value in values:
+        if value is None:
+            continue
+        if isinstance(value, str) and not value.strip():
+            continue
+        return value
+    return None
+
+
+def _s831a_num(value: Any, fallback: float | None = None) -> float | None:
+    if value is None or isinstance(value, bool):
+        return fallback
+    try:
+        if isinstance(value, str):
+            cleaned = value.strip().replace("%", "").replace(",", "")
+            if not cleaned:
+                return fallback
+            return float(cleaned)
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s831a_text(value: Any, fallback: str | None = None) -> str | None:
+    if value is None:
+        return fallback
+    text = str(value).strip()
+    return text if text else fallback
+
+
+def _s831a_nested(obj: dict[str, Any], *paths: str) -> Any:
+    for path in paths:
+        cur: Any = obj
+        ok = True
+        for part in path.split("."):
+            if isinstance(cur, dict) and part in cur:
+                cur = cur.get(part)
+            else:
+                ok = False
+                break
+        if ok and cur is not None and not (isinstance(cur, str) and not cur.strip()):
+            return cur
+    return None
+
+
+def _s831a_parse_dt(value: Any):
+    raw = str(value or "").strip()
+    if not raw:
+        return None
+    try:
+        if raw.endswith("Z"):
+            raw = raw[:-1] + "+00:00"
+        return datetime.fromisoformat(raw)
+    except Exception:
+        return None
+
+
+def _s831a_target_price(item: dict[str, Any], payload: dict[str, Any], index: int) -> float | None:
+    direct_keys = [
+        f"tp{index + 1}",
+        f"target{index + 1}",
+        f"target{index + 1}Price",
+    ]
+    for key in direct_keys:
+        value = _s831a_first(item.get(key), payload.get(key))
+        parsed = _s831a_num(value)
+        if parsed is not None:
+            return parsed
+
+    targets = _s831a_first(item.get("targets"), payload.get("targets"))
+    if isinstance(targets, list) and len(targets) > index:
+        target = targets[index]
+        if isinstance(target, dict):
+            return _s831a_num(_s831a_first(target.get("price"), target.get("target"), target.get("value")))
+        return _s831a_num(target)
+
+    return None
+
+
+def _s831a_risk(entry: float | None, stop: float | None, direction: str | None) -> float | None:
+    if entry is None or stop is None:
+        return None
+    risk = abs(float(entry) - float(stop))
+    if risk <= 0:
+        return None
+    return risk
+
+
+def _s831a_pct_distance(a: float | None, b: float | None) -> float | None:
+    if a is None or b is None or b == 0:
+        return None
+    return round(((float(a) - float(b)) / float(b)) * 100.0, 4)
+
+
+def _s831a_outcome_class(item: dict[str, Any]) -> str:
+    status = str(item.get("status") or "").upper().strip()
+    result = str(item.get("result") or "").upper().strip()
+
+    if status == "WORKED" or result in {"TP1", "TP2", "WORKED"}:
+        return "WIN"
+    if status == "FAILED" or result in {"FAILED_STOP", "STOP", "STOP_HIT"}:
+        return "LOSS"
+    if status == "EXPIRED_SESSION" or result == "SESSION_CLOSE":
+        return "EXPIRED"
+    if status == "NO_EVAL_LATE_SESSION":
+        return "NO_EVAL_LATE_SESSION"
+    if status == "OPEN":
+        return "OPEN"
+    return status or result or "UNKNOWN"
+
+
+def _s831a_feature_row(item: dict[str, Any]) -> dict[str, Any]:
+    payload = item.get("rawSignal") if isinstance(item.get("rawSignal"), dict) else {}
+
+    signal_id = _s831a_text(_s831a_first(item.get("signalId"), payload.get("signalId")))
+    symbol = _s831a_text(_s831a_first(item.get("symbol"), payload.get("symbol")), "UNKNOWN")
+    if symbol:
+        symbol = symbol.upper()
+
+    setup_slug = _s831a_text(_s831a_first(item.get("setupSlug"), payload.get("setupSlug")), "unknown")
+    setup_name = _s831a_text(_s831a_first(item.get("setupName"), payload.get("setupName")), setup_slug)
+    direction = _s831a_text(_s831a_first(item.get("direction"), payload.get("direction")))
+    if direction:
+        direction = direction.lower()
+
+    trigger_time = _s831a_text(_s831a_first(
+        item.get("triggerTime"),
+        payload.get("triggerTime"),
+        item.get("createdAt"),
+        payload.get("createdAt"),
+        item.get("storedAt"),
+        payload.get("storedAt"),
+    ))
+
+    session_date = _s831a_text(_s831a_first(
+        item.get("sessionDate"),
+        payload.get("sessionDate"),
+        trigger_time[:10] if trigger_time and len(trigger_time) >= 10 else None,
+        item.get("storedAt")[:10] if item.get("storedAt") and len(str(item.get("storedAt"))) >= 10 else None,
+    ))
+
+    dt = _s831a_parse_dt(trigger_time)
+
+    entry = _s831a_num(_s831a_first(
+        item.get("entry"),
+        item.get("entryPrice"),
+        payload.get("entry"),
+        payload.get("entryPrice"),
+        _s831a_nested(payload, "entryZone.min"),
+    ))
+    stop = _s831a_num(_s831a_first(
+        item.get("stop"),
+        item.get("stopLoss"),
+        payload.get("stop"),
+        payload.get("stopLoss"),
+    ))
+    tp1 = _s831a_target_price(item, payload, 0)
+    tp2 = _s831a_target_price(item, payload, 1)
+    risk = _s831a_num(_s831a_first(item.get("risk"), payload.get("risk")), _s831a_risk(entry, stop, direction))
+    risk_pct = _s831a_pct_distance(risk, entry) if risk is not None and entry else None
+
+    current_price = _s831a_num(_s831a_first(
+        item.get("currentPrice"),
+        item.get("price"),
+        payload.get("currentPrice"),
+        payload.get("price"),
+    ))
+
+    vwap = _s831a_num(_s831a_first(
+        item.get("vwap"),
+        payload.get("vwap"),
+        _s831a_nested(item, "source.candleContext.vwap", "candleContext.vwap"),
+        _s831a_nested(payload, "source.candleContext.vwap", "candleContext.vwap"),
+    ))
+    ema20 = _s831a_num(_s831a_first(
+        item.get("ema20_5m"),
+        payload.get("ema20_5m"),
+        _s831a_nested(item, "source.candleContext.ema20_5m", "candleContext.ema20_5m"),
+        _s831a_nested(payload, "source.candleContext.ema20_5m", "candleContext.ema20_5m"),
+    ))
+    atr14 = _s831a_num(_s831a_first(
+        item.get("atr14_5m"),
+        payload.get("atr14_5m"),
+        _s831a_nested(item, "source.candleContext.atr14_5m", "candleContext.atr14_5m"),
+        _s831a_nested(payload, "source.candleContext.atr14_5m", "candleContext.atr14_5m"),
+    ))
+    rsi14 = _s831a_num(_s831a_first(
+        item.get("rsi14_5m"),
+        payload.get("rsi14_5m"),
+        _s831a_nested(item, "source.candleContext.rsi14_5m", "candleContext.rsi14_5m"),
+        _s831a_nested(payload, "source.candleContext.rsi14_5m", "candleContext.rsi14_5m"),
+    ))
+    volume_accel = _s831a_num(_s831a_first(
+        item.get("volumeAcceleration"),
+        payload.get("volumeAcceleration"),
+        _s831a_nested(item, "source.candleContext.volumeAcceleration", "candleContext.volumeAcceleration"),
+        _s831a_nested(payload, "source.candleContext.volumeAcceleration", "candleContext.volumeAcceleration"),
+    ))
+    distance_from_vwap_pct = _s831a_num(_s831a_first(
+        item.get("distanceFromVwapPct"),
+        payload.get("distanceFromVwapPct"),
+        _s831a_nested(item, "source.candleContext.distanceFromVwapPct", "candleContext.distanceFromVwapPct"),
+        _s831a_nested(payload, "source.candleContext.distanceFromVwapPct", "candleContext.distanceFromVwapPct"),
+        _s831a_pct_distance(entry, vwap),
+    ))
+
+    gap_pct = _s831a_num(_s831a_first(
+        item.get("gapPct"),
+        item.get("gapPercent"),
+        payload.get("gapPct"),
+        payload.get("gapPercent"),
+        payload.get("gap"),
+    ))
+    change_pct = _s831a_num(_s831a_first(
+        item.get("changePercent"),
+        item.get("changePct"),
+        payload.get("changePercent"),
+        payload.get("changePct"),
+        payload.get("changesPercentage"),
+    ))
+    rvol = _s831a_num(_s831a_first(
+        item.get("rvol"),
+        item.get("relativeVolume"),
+        payload.get("rvol"),
+        payload.get("relativeVolume"),
+    ))
+    volume = _s831a_num(_s831a_first(item.get("volume"), payload.get("volume")))
+    premarket_volume = _s831a_num(_s831a_first(
+        item.get("premarketVolume"),
+        item.get("preMarketVolume"),
+        payload.get("premarketVolume"),
+        payload.get("preMarketVolume"),
+    ))
+    spread_pct = _s831a_num(_s831a_first(
+        item.get("spreadPct"),
+        item.get("spreadPercent"),
+        payload.get("spreadPct"),
+        payload.get("spreadPercent"),
+    ))
+    market_cap = _s831a_num(_s831a_first(item.get("marketCap"), payload.get("marketCap")))
+    float_shares = _s831a_num(_s831a_first(
+        item.get("float"),
+        item.get("floatShares"),
+        payload.get("float"),
+        payload.get("floatShares"),
+    ))
+    short_float = _s831a_num(_s831a_first(
+        item.get("shortFloat"),
+        item.get("shortFloatPct"),
+        payload.get("shortFloat"),
+        payload.get("shortFloatPct"),
+    ))
+
+    result_r = _s831a_num(item.get("resultR"))
+    mfe_r = _s831a_num(_s831a_first(item.get("mfeR"), item.get("maxFavorableExcursionR")))
+    mae_r = _s831a_num(_s831a_first(item.get("maeR"), item.get("maxAdverseExcursionR")))
+
+    outcome_class = _s831a_outcome_class(item)
+    is_win = outcome_class == "WIN"
+    is_loss = outcome_class == "LOSS"
+    is_expired = outcome_class == "EXPIRED"
+
+    critical = {
+        "entry": entry,
+        "stop": stop,
+        "tp1": tp1,
+        "risk": risk,
+        "vwap": vwap,
+        "ema20_5m": ema20,
+        "atr14_5m": atr14,
+        "rsi14_5m": rsi14,
+        "volumeAcceleration": volume_accel,
+        "distanceFromVwapPct": distance_from_vwap_pct,
+        "gapPct": gap_pct,
+        "changePct": change_pct,
+        "rvol": rvol,
+        "spreadPct": spread_pct,
+    }
+    missing_critical = [key for key, value in critical.items() if value is None]
+
+    row = {
+        "signalId": signal_id,
+        "symbol": symbol,
+        "setupSlug": setup_slug,
+        "setupName": setup_name,
+        "direction": direction,
+        "sessionDate": session_date,
+        "triggerTime": trigger_time,
+        "hourUtc": dt.hour if dt else None,
+        "minuteUtc": dt.minute if dt else None,
+
+        "status": item.get("status"),
+        "result": item.get("result"),
+        "outcomeClass": outcome_class,
+        "isWin": is_win,
+        "isLoss": is_loss,
+        "isExpired": is_expired,
+        "resultR": result_r,
+        "mfeR": mfe_r,
+        "maeR": mae_r,
+
+        "entry": entry,
+        "stop": stop,
+        "tp1": tp1,
+        "tp2": tp2,
+        "risk": risk,
+        "riskPct": risk_pct,
+        "currentPrice": current_price,
+
+        "score": _s831a_num(_s831a_first(item.get("score"), payload.get("score"), payload.get("signalScore"))),
+        "confidence": _s831a_num(_s831a_first(item.get("confidence"), payload.get("confidence"))),
+        "signalGrade": _s831a_text(_s831a_first(item.get("signalGrade"), payload.get("signalGrade"), payload.get("grade"))),
+        "qualityStatus": _s831a_text(_s831a_first(item.get("qualityStatus"), payload.get("qualityStatus"))),
+        "premiumSignal": bool(_s831a_first(item.get("premiumSignal"), payload.get("premiumSignal"), False)),
+        "telegramEligible": bool(_s831a_first(item.get("telegramEligible"), payload.get("telegramEligible"), False)),
+
+        "vwap": vwap,
+        "ema20_5m": ema20,
+        "atr14_5m": atr14,
+        "rsi14_5m": rsi14,
+        "volumeAcceleration": volume_accel,
+        "distanceFromVwapPct": distance_from_vwap_pct,
+
+        "gapPct": gap_pct,
+        "changePct": change_pct,
+        "rvol": rvol,
+        "volume": volume,
+        "premarketVolume": premarket_volume,
+        "spreadPct": spread_pct,
+        "marketCap": market_cap,
+        "floatShares": float_shares,
+        "shortFloatPct": short_float,
+
+        "psychology": {
+            "isExtendedFromVwap": abs(distance_from_vwap_pct) >= 2.0 if distance_from_vwap_pct is not None else None,
+            "isNearVwap": abs(distance_from_vwap_pct) <= 1.2 if distance_from_vwap_pct is not None else None,
+            "hasVolumeAcceleration": volume_accel >= 1.2 if volume_accel is not None else None,
+            "hasHighRvol": rvol >= 2.0 if rvol is not None else None,
+            "isTightRisk": risk_pct <= 1.0 if risk_pct is not None else None,
+            "isWideRisk": risk_pct >= 3.0 if risk_pct is not None else None,
+            "isLateUtc": dt.hour >= 19 if dt else None,
+        },
+
+        "featureQuality": {
+            "criticalFeatureCount": len(critical),
+            "missingCriticalCount": len(missing_critical),
+            "missingCriticalFields": missing_critical,
+            "hasEnoughForFailureAnalysis": len(missing_critical) <= 6,
+        },
+
+        "source": _s831a_text(_s831a_first(item.get("source"), payload.get("source"))),
+        "storageVersion": S831A_FEATURE_MATRIX_VERSION,
+    }
+
+    return row
+
+
+def _s831a_feature_matrix_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    by_setup: dict[str, dict[str, Any]] = {}
+
+    for row in rows:
+        setup_slug = str(row.get("setupSlug") or "unknown")
+        stat = by_setup.setdefault(setup_slug, {
+            "setupSlug": setup_slug,
+            "count": 0,
+            "closed": 0,
+            "wins": 0,
+            "losses": 0,
+            "expired": 0,
+            "avgResultRClosed": None,
+            "winRateClosed": None,
+            "avgMissingCritical": None,
+            "readyForFailureAnalysis": 0,
+            "_resultR": [],
+            "_missing": [],
+        })
+
+        stat["count"] += 1
+
+        if row.get("isWin") or row.get("isLoss"):
+            stat["closed"] += 1
+            if row.get("isWin"):
+                stat["wins"] += 1
+            if row.get("isLoss"):
+                stat["losses"] += 1
+            if row.get("resultR") is not None:
+                stat["_resultR"].append(float(row.get("resultR")))
+
+        if row.get("isExpired"):
+            stat["expired"] += 1
+
+        fq = row.get("featureQuality") if isinstance(row.get("featureQuality"), dict) else {}
+        stat["_missing"].append(int(fq.get("missingCriticalCount") or 0))
+        if fq.get("hasEnoughForFailureAnalysis") is True:
+            stat["readyForFailureAnalysis"] += 1
+
+    result: list[dict[str, Any]] = []
+    for stat in by_setup.values():
+        closed = int(stat.get("closed") or 0)
+        wins = int(stat.get("wins") or 0)
+        result_r = stat.pop("_resultR", [])
+        missing = stat.pop("_missing", [])
+
+        stat["winRateClosed"] = round((wins / closed) * 100, 2) if closed else None
+        stat["avgResultRClosed"] = round(sum(result_r) / len(result_r), 4) if result_r else None
+        stat["avgMissingCritical"] = round(sum(missing) / len(missing), 2) if missing else None
+        stat["failureAnalysisCoveragePct"] = round((float(stat.get("readyForFailureAnalysis") or 0) / float(stat.get("count") or 1)) * 100, 2)
+        result.append(stat)
+
+    return {
+        "setupCount": len(result),
+        "bySetup": sorted(result, key=lambda row: (int(row.get("closed") or 0), int(row.get("count") or 0)), reverse=True),
+    }
+
+
+@app.get("/engine/research/feature-matrix")
+def engine_research_feature_matrix(
+    limit: int = 5000,
+    include_rows: bool = False,
+    max_rows: int = 200,
+    publish: bool = True,
+):
+    safe_limit = max(1, min(int(limit or 5000), 50000))
+    rows_limit = max(1, min(int(max_rows or 200), 2000))
+
+    items = load_persistent_outcome_items(limit=safe_limit)
+    rows = [_s831a_feature_row(item) for item in items if isinstance(item, dict)]
+    summary = _s831a_feature_matrix_summary(rows)
+
+    publish_info: dict[str, Any] = {
+        "requested": bool(publish),
+        "ok": False,
+        "path": None,
+        "latestPath": None,
+        "error": None,
+    }
+
+    payload = {
+        "ok": True,
+        "storageVersion": S831A_FEATURE_MATRIX_VERSION,
+        "evaluatedAt": datetime.now(timezone.utc).isoformat(),
+        "limit": safe_limit,
+        "rowsBuilt": len(rows),
+        "rowsReturned": len(rows[:rows_limit]) if include_rows else 0,
+        "setupCount": summary.get("setupCount"),
+        "summary": {
+            "setupCount": summary.get("setupCount"),
+            "rowsBuilt": len(rows),
+            "criticalFeatureCount": 14,
+            "purpose": "AI Research Lab feature matrix for failure analysis, setup calibration, strategy validation and future virtual trader readiness.",
+        },
+        "bySetup": summary.get("bySetup"),
+        "policy": {
+            "mode": "READ_ONLY_FEATURE_MATRIX",
+            "doesNotChangeRegistry": True,
+            "doesNotEnableClientDelivery": True,
+            "doesNotSendTelegram": True,
+            "doesNotExecuteTrades": True,
+        },
+    }
+
+    if include_rows:
+        payload["rows"] = rows[:rows_limit]
+
+    if publish:
+        try:
+            import json
+            from pathlib import Path
+
+            out_dir = Path("reports") / "ai_research" / "feature_matrix"
+            out_dir.mkdir(parents=True, exist_ok=True)
+            stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+            report_path = out_dir / f"{stamp}.json"
+            latest_path = out_dir / "latest.json"
+
+            report_payload = dict(payload)
+            report_payload["rows"] = rows
+
+            report_path.write_text(json.dumps(report_payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+            latest_path.write_text(json.dumps(report_payload, ensure_ascii=False, indent=2, default=str), encoding="utf-8")
+
+            publish_info.update({
+                "ok": True,
+                "path": str(report_path),
+                "latestPath": str(latest_path),
+            })
+        except Exception as exc:
+            publish_info["error"] = str(exc)
+
+    payload["publish"] = publish_info
+    return payload
+
+# === /S8.31A AI Research Feature Matrix ===
+
+
 @app.delete("/engine/outcomes")
 def engine_outcomes_clear():
     runtime_cleared = len(BACKTEST_OUTCOMES)
