@@ -2634,6 +2634,252 @@ def engine_stats_symbols():
     }
 
 
+
+
+# === S8.28B Compact promotion evidence endpoint ===
+def _s828b_num(value: Any, default: float | None = None) -> float | None:
+    try:
+        if value is None or value == "":
+            return default
+        out = float(value)
+        if out != out:
+            return default
+        return out
+    except Exception:
+        return default
+
+
+def _s828b_int(value: Any, default: int = 0) -> int:
+    try:
+        if value is None or value == "":
+            return default
+        return int(float(value))
+    except Exception:
+        return default
+
+
+def _s828b_find_setup_stat(setup_slug: str) -> dict[str, Any]:
+    wanted = str(setup_slug or "").strip()
+    if not wanted:
+        return {}
+
+    items = load_persistent_outcome_items()
+    rows = build_setup_statistics(items)
+    if not isinstance(rows, list):
+        return {}
+
+    for row in rows:
+        if isinstance(row, dict) and str(row.get("setupSlug") or "").strip() == wanted:
+            return row
+
+    return {}
+
+
+def _s828b_registry_row(setup_slug: str) -> dict[str, Any]:
+    wanted = str(setup_slug or "").strip()
+    registry = globals().get("S819_STRATEGY_REGISTRY")
+    if isinstance(registry, dict) and wanted in registry and isinstance(registry.get(wanted), dict):
+        row = dict(registry.get(wanted) or {})
+        row["setupSlug"] = row.get("setupSlug") or wanted
+        return row
+
+    return {
+        "setupSlug": wanted,
+        "registryStatus": "UNREGISTERED",
+        "productMode": "MONITOR_ONLY",
+        "clientVisibleMode": "BLOCKED_UNTIL_REGISTERED",
+    }
+
+
+def _s828b_compact_grade_rows(row: dict[str, Any]) -> list[dict[str, Any]]:
+    grades = row.get("byGrade") if isinstance(row.get("byGrade"), list) else []
+    compact: list[dict[str, Any]] = []
+
+    for grade in grades:
+        if not isinstance(grade, dict):
+            continue
+
+        compact.append({
+            "signalGrade": grade.get("signalGrade"),
+            "count": grade.get("count"),
+            "closed": grade.get("closed"),
+            "worked": grade.get("worked"),
+            "failed": grade.get("failed"),
+            "open": grade.get("open"),
+            "expiredSession": grade.get("expiredSession"),
+            "winRateClosed": grade.get("winRateClosed"),
+            "avgResultRClosed": grade.get("avgResultRClosed"),
+            "stopRateClosed": grade.get("stopRateClosed"),
+            "avgMfeR": grade.get("avgMfeR"),
+            "avgMaeR": grade.get("avgMaeR"),
+            "sampleGapTo30Closed": max(0, 30 - _s828b_int(grade.get("closed"), 0)),
+        })
+
+    return compact
+
+
+def _s828b_quality_decision(
+    *,
+    row: dict[str, Any],
+    registry: dict[str, Any],
+    min_closed: int,
+    preferred_closed: int,
+    min_win_rate: float,
+    min_avg_r: float,
+    max_stop_rate: float,
+) -> dict[str, Any]:
+    closed = _s828b_int(row.get("closed"), 0)
+    win_rate = _s828b_num(row.get("winRateClosed"), None)
+    avg_r = _s828b_num(row.get("avgResultRClosed"), None)
+    stop_rate = _s828b_num(row.get("stopRateClosed"), None)
+
+    registry_status = str(registry.get("registryStatus") or "UNKNOWN").upper().strip()
+    product_mode = str(registry.get("productMode") or "UNKNOWN").upper().strip()
+    client_visible_mode = str(registry.get("clientVisibleMode") or "UNKNOWN").upper().strip()
+
+    reasons: list[str] = []
+
+    sample_ok = closed >= int(min_closed)
+    preferred_sample_ok = closed >= int(preferred_closed)
+    win_rate_ok = win_rate is not None and win_rate >= float(min_win_rate)
+    avg_r_ok = avg_r is not None and avg_r >= float(min_avg_r)
+    stop_rate_ok = stop_rate is not None and stop_rate <= float(max_stop_rate)
+
+    if not sample_ok:
+        reasons.append(f"closed_sample_below_min:{closed}<{int(min_closed)}")
+    if not preferred_sample_ok:
+        reasons.append(f"closed_sample_below_preferred:{closed}<{int(preferred_closed)}")
+    if not win_rate_ok:
+        reasons.append(f"win_rate_below_min:{win_rate}")
+    if not avg_r_ok:
+        reasons.append(f"avg_r_below_min:{avg_r}")
+    if not stop_rate_ok:
+        reasons.append(f"stop_rate_above_max_or_missing:{stop_rate}")
+
+    if registry_status in {"DEMOTE_TO_MONITOR_ONLY", "PAPER_ONLY_UNTIL_SAMPLE_GROWS", "UNREGISTERED"}:
+        reasons.append(f"registry_status_blocks_promotion:{registry_status}")
+    if product_mode in {"MONITOR_ONLY", "PAPER_TEST_ONLY", "TEST_ONLY"}:
+        reasons.append(f"product_mode_blocks_client_delivery:{product_mode}")
+    if client_visible_mode in {"TEST_ONLY", "BLOCKED_UNTIL_REGISTERED"}:
+        reasons.append(f"client_visible_mode_blocks_client_delivery:{client_visible_mode}")
+
+    performance_ok = bool(sample_ok and win_rate_ok and avg_r_ok and stop_rate_ok)
+    registry_allows_review = registry_status not in {"DEMOTE_TO_MONITOR_ONLY", "UNREGISTERED"}
+    product_allows_review = product_mode not in {"MONITOR_ONLY", "TEST_ONLY"}
+
+    if not row:
+        promotion_decision = "NO_DATA_KEEP_MONITOR_ONLY"
+        next_action = "COLLECT_OUTCOMES"
+    elif not sample_ok:
+        promotion_decision = "DO_NOT_PROMOTE_SAMPLE_TOO_SMALL"
+        next_action = "COLLECT_MORE_CLOSED_OUTCOMES"
+    elif not performance_ok:
+        promotion_decision = "DO_NOT_PROMOTE_WEAK_EVIDENCE"
+        next_action = "TIGHTEN_SETUP_OR_EXECUTION_CONFIRMATION"
+    elif not registry_allows_review or not product_allows_review:
+        promotion_decision = "PROMOTION_REVIEW_BLOCKED_BY_REGISTRY_MODE"
+        next_action = "ADMIN_REVIEW_ONLY_NO_AUTO_PROMOTION"
+    else:
+        promotion_decision = "PROMOTION_REVIEW_READY_NOT_AUTO"
+        next_action = "ADMIN_REVIEW_REQUIRED"
+
+    return {
+        "sampleOk": bool(sample_ok),
+        "preferredSampleOk": bool(preferred_sample_ok),
+        "performanceOk": bool(performance_ok),
+        "registryAllowsReview": bool(registry_allows_review),
+        "productAllowsReview": bool(product_allows_review),
+        "promotionDecision": promotion_decision,
+        "nextAction": next_action,
+        "reasons": reasons[:20],
+        "autoPromotionAllowed": False,
+        "clientDeliveryChangeAllowed": False,
+        "safeToApplyAutomatically": False,
+    }
+
+
+@app.get("/engine/promotion/evidence/{setup_slug}")
+def engine_promotion_evidence_setup(
+    setup_slug: str,
+    min_closed: int = 30,
+    preferred_closed: int = 50,
+    min_win_rate: float = 55.0,
+    min_avg_r: float = 0.35,
+    max_stop_rate: float = 45.0,
+):
+    wanted = str(setup_slug or "").strip()
+    row = _s828b_find_setup_stat(wanted)
+    registry = _s828b_registry_row(wanted)
+    decision = _s828b_quality_decision(
+        row=row,
+        registry=registry,
+        min_closed=max(1, int(min_closed or 30)),
+        preferred_closed=max(1, int(preferred_closed or 50)),
+        min_win_rate=float(min_win_rate or 55.0),
+        min_avg_r=float(min_avg_r or 0.35),
+        max_stop_rate=float(max_stop_rate or 45.0),
+    )
+
+    compact = {
+        "setupSlug": wanted,
+        "setupName": row.get("setupName") or registry.get("setupName") or wanted,
+        "registryStatus": registry.get("registryStatus"),
+        "productMode": registry.get("productMode"),
+        "clientVisibleMode": registry.get("clientVisibleMode"),
+        "count": row.get("count"),
+        "rawCount": row.get("rawCount"),
+        "evaluableCount": row.get("evaluableCount"),
+        "closed": row.get("closed"),
+        "worked": row.get("worked"),
+        "failed": row.get("failed"),
+        "open": row.get("open"),
+        "expiredSession": row.get("expiredSession"),
+        "winRateClosed": row.get("winRateClosed"),
+        "avgResultRClosed": row.get("avgResultRClosed"),
+        "tp1HitRateClosed": row.get("tp1HitRateClosed"),
+        "tp2HitRateClosed": row.get("tp2HitRateClosed"),
+        "stopRateClosed": row.get("stopRateClosed"),
+        "avgMfeR": row.get("avgMfeR"),
+        "avgMaeR": row.get("avgMaeR"),
+        "bestResultR": row.get("bestResultR"),
+        "worstResultR": row.get("worstResultR"),
+        "telegramEligibleCount": row.get("telegramEligibleCount"),
+        "telegramEligibleRate": row.get("telegramEligibleRate"),
+        "premiumSignalCount": row.get("premiumSignalCount"),
+        "premiumSignalRate": row.get("premiumSignalRate"),
+        "sampleGapToMinClosed": max(0, max(1, int(min_closed or 30)) - _s828b_int(row.get("closed"), 0)),
+        "sampleGapToPreferredClosed": max(0, max(1, int(preferred_closed or 50)) - _s828b_int(row.get("closed"), 0)),
+    }
+
+    return {
+        "ok": True,
+        "storageVersion": "s8_28b_compact_promotion_evidence_v1",
+        "evaluatedAt": datetime.now(timezone.utc).isoformat(),
+        "setupSlug": wanted,
+        "found": bool(row),
+        "thresholds": {
+            "minClosed": max(1, int(min_closed or 30)),
+            "preferredClosed": max(1, int(preferred_closed or 50)),
+            "minWinRateClosed": float(min_win_rate or 55.0),
+            "minAvgResultRClosed": float(min_avg_r or 0.35),
+            "maxStopRateClosed": float(max_stop_rate or 45.0),
+        },
+        "evidence": compact,
+        "decision": decision,
+        "gradeEvidence": _s828b_compact_grade_rows(row) if row else [],
+        "registry": registry,
+        "policy": {
+            "mode": "READ_ONLY_PROMOTION_EVIDENCE_AUDIT",
+            "doesNotChangeRegistry": True,
+            "doesNotEnableClientDelivery": True,
+            "doesNotSendTelegram": True,
+            "principle": "No setup is promoted without enough closed outcomes and positive expectancy.",
+        },
+    }
+
+# === /S8.28B Compact promotion evidence endpoint ===
+
+
 @app.delete("/engine/outcomes")
 def engine_outcomes_clear():
     runtime_cleared = len(BACKTEST_OUTCOMES)
