@@ -1863,6 +1863,205 @@ def engine_signals_client_delivery_audit(limit: int = 100, include_items: bool =
     }
 
 
+
+
+# === S8.27B Why no client signals / promotion readiness audit ===
+@app.get("/engine/signals/why-no-client-signals")
+def engine_signals_why_no_client_signals(limit: int = 300, include_items: bool = True):
+    audit = engine_signals_client_delivery_audit(limit=limit, include_items=True)
+
+    allowed = audit.get("allowed") if isinstance(audit.get("allowed"), list) else []
+    blocked = audit.get("blocked") if isinstance(audit.get("blocked"), list) else []
+    reason_counts = audit.get("reasonCounts") if isinstance(audit.get("reasonCounts"), dict) else {}
+    evaluated_at = datetime.now(timezone.utc).isoformat()
+
+    registry_reason_prefixes = (
+        "registry_status_blocks_client_delivery:",
+        "product_mode_blocks_client_delivery:",
+        "client_visible_mode_TEST_ONLY",
+    )
+    derived_delivery_reasons = {
+        "telegramEligible_not_true",
+        "premiumSignal_not_true",
+    }
+
+    def _s827b_reason_list(row: dict[str, Any]) -> list[str]:
+        raw = row.get("blockedReasons")
+        if isinstance(raw, list):
+            return [str(item or "").strip() for item in raw if str(item or "").strip()]
+        return []
+
+    def _s827b_rr(row: dict[str, Any]) -> float:
+        try:
+            return float(row.get("rrToTp1") if row.get("rrToTp1") is not None else 0)
+        except Exception:
+            return 0.0
+
+    def _s827b_is_near_ready(row: dict[str, Any]) -> bool:
+        return bool(
+            str(row.get("status") or "").upper().strip() == "ACTIVE"
+            and str(row.get("qualityStatus") or "").upper().strip() == "PASSED"
+            and str(row.get("signalGrade") or "").upper().strip() in {"A", "A+"}
+            and _s827b_rr(row) >= 2.0
+        )
+
+    def _s827b_classify_block(row: dict[str, Any]) -> dict[str, Any]:
+        reasons = _s827b_reason_list(row)
+
+        registry_reasons = [
+            reason for reason in reasons
+            if reason.startswith(registry_reason_prefixes)
+        ]
+        derived_reasons = [reason for reason in reasons if reason in derived_delivery_reasons]
+        execution_reasons = [
+            reason for reason in reasons
+            if reason not in registry_reasons and reason not in derived_reasons
+        ]
+
+        if execution_reasons:
+            review_state = "BLOCKED_BY_EXECUTION_OR_QUALITY"
+            recommendation = "WAIT_FOR_STRONGER_CONFIRMATION"
+        elif registry_reasons:
+            review_state = "BLOCKED_BY_REGISTRY_OR_PRODUCT_MODE"
+            recommendation = "REGISTRY_REVIEW_ONLY_NO_AUTO_PROMOTION"
+        else:
+            review_state = "BLOCKED_BY_DELIVERY_FLAGS"
+            recommendation = "KEEP_BLOCKED_UNTIL_FINAL_FIREWALL_PASSES"
+
+        return {
+            "registryReasons": registry_reasons,
+            "executionOrQualityReasons": execution_reasons,
+            "derivedDeliveryReasons": derived_reasons,
+            "reviewState": review_state,
+            "recommendation": recommendation,
+            "autoPromotionAllowed": False,
+        }
+
+    near_ready: list[dict[str, Any]] = []
+    by_setup: dict[str, dict[str, Any]] = {}
+
+    for row in blocked:
+        if not isinstance(row, dict):
+            continue
+
+        setup_slug = str(row.get("setupSlug") or row.get("setup_slug") or "unknown")
+        setup_name = str(row.get("setupName") or setup_slug)
+
+        setup = by_setup.setdefault(setup_slug, {
+            "setupSlug": setup_slug,
+            "setupName": setup_name,
+            "blockedCount": 0,
+            "nearReadyCount": 0,
+            "activePassedCount": 0,
+            "topReasons": {},
+            "examples": [],
+        })
+
+        setup["blockedCount"] += 1
+
+        reasons = _s827b_reason_list(row)
+        for reason in reasons:
+            setup["topReasons"][reason] = int(setup["topReasons"].get(reason, 0) or 0) + 1
+
+        if (
+            str(row.get("status") or "").upper().strip() == "ACTIVE"
+            and str(row.get("qualityStatus") or "").upper().strip() == "PASSED"
+        ):
+            setup["activePassedCount"] += 1
+
+        if _s827b_is_near_ready(row):
+            setup["nearReadyCount"] += 1
+            classification = _s827b_classify_block(row)
+            candidate = {
+                "symbol": row.get("symbol"),
+                "setupSlug": setup_slug,
+                "setupName": setup_name,
+                "direction": row.get("direction"),
+                "status": row.get("status"),
+                "qualityStatus": row.get("qualityStatus"),
+                "signalGrade": row.get("signalGrade"),
+                "signalScore": row.get("signalScore"),
+                "rrToTp1": row.get("rrToTp1"),
+                "premiumSignal": row.get("premiumSignal"),
+                "telegramEligible": row.get("telegramEligible"),
+                "clientDeliveryAllowed": row.get("clientDeliveryAllowed"),
+                "blockedReasons": reasons,
+                **classification,
+            }
+            near_ready.append(candidate)
+
+            if len(setup["examples"]) < 5:
+                setup["examples"].append(candidate)
+
+    setup_rows = []
+    for setup in by_setup.values():
+        setup["topReasons"] = dict(sorted(setup["topReasons"].items(), key=lambda kv: kv[1], reverse=True)[:12])
+        setup_rows.append(setup)
+
+    setup_rows = sorted(
+        setup_rows,
+        key=lambda row: (int(row.get("nearReadyCount") or 0), int(row.get("blockedCount") or 0)),
+        reverse=True,
+    )
+
+    registry_only_candidates = [
+        row for row in near_ready
+        if row.get("reviewState") == "BLOCKED_BY_REGISTRY_OR_PRODUCT_MODE"
+    ]
+    execution_blocked_candidates = [
+        row for row in near_ready
+        if row.get("reviewState") == "BLOCKED_BY_EXECUTION_OR_QUALITY"
+    ]
+
+    if allowed:
+        decision_state = "CLIENT_SIGNALS_READY"
+        decision = "DELIVER_ALLOWED_SIGNALS"
+        no_trade_is_healthy = False
+    elif near_ready:
+        decision_state = "NO_CLIENT_SIGNALS_PROMOTION_REVIEW_REQUIRED"
+        decision = "KEEP_BLOCKED_REVIEW_NEAR_READY_SETUPS"
+        no_trade_is_healthy = True
+    elif blocked:
+        decision_state = "NO_CLIENT_SIGNALS_SAFE_MODE"
+        decision = "DO_NOT_DELIVER_LOW_QUALITY_OR_TEST_MODE_CANDIDATES"
+        no_trade_is_healthy = True
+    else:
+        decision_state = "NO_CANDIDATES"
+        decision = "WAIT_FOR_VALID_SETUP"
+        no_trade_is_healthy = True
+
+    return {
+        "ok": True,
+        "storageVersion": "s8_27b_why_no_client_signals_v1",
+        "evaluatedAt": evaluated_at,
+        "decisionState": decision_state,
+        "decision": decision,
+        "noTradeIsHealthy": no_trade_is_healthy,
+        "summary": {
+            "total": audit.get("total"),
+            "allowedCount": audit.get("allowedCount"),
+            "blockedCount": audit.get("blockedCount"),
+            "nearReadyCount": len(near_ready),
+            "registryOnlyNearReadyCount": len(registry_only_candidates),
+            "executionBlockedNearReadyCount": len(execution_blocked_candidates),
+        },
+        "reasonCounts": reason_counts,
+        "nearReadyCandidates": near_ready[:30] if include_items else [],
+        "registryOnlyNearReadyCandidates": registry_only_candidates[:30] if include_items else [],
+        "executionBlockedNearReadyCandidates": execution_blocked_candidates[:30] if include_items else [],
+        "setupReadiness": setup_rows[:30],
+        "policy": {
+            "source": "/engine/signals/client-delivery-audit",
+            "clientGate": "s8_22a_strict_client_delivery_gate_v1",
+            "promotionMode": "audit_only_no_auto_promotion",
+            "principle": "No client signal is better than a weak or unproven signal.",
+            "autoPromotionAllowed": False,
+        },
+    }
+
+# === /S8.27B Why no client signals / promotion readiness audit ===
+
+
 @app.delete("/engine/signals")
 def engine_signals_clear():
     cleared = len(SIGNALS)
