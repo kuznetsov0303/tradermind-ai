@@ -2870,16 +2870,63 @@ S831A4_OUTCOME_FEATURE_BRIDGE_VERSION = "s8_31a4_outcome_feature_snapshot_bridge
 
 def _s831a4_signal_records_for_bridge(limit: int = 10000) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
+    safe_limit = max(1, min(int(limit or 10000), 20000))
 
-    loader = globals().get("load_persistent_signal_items")
-    if callable(loader):
+    # S8.31A4B: most important source for post-close run-today.
+    # /engine/outcomes/run-today selected runtime_active, so we must read ACTIVE/SIGNALS too.
+    for name in ("ACTIVE", "SIGNALS", "ARMED", "WATCHLIST"):
+        value = globals().get(name)
+
+        if isinstance(value, dict):
+            for row in value.values():
+                if isinstance(row, dict):
+                    records.append(row)
+
+        elif isinstance(value, list):
+            for row in value:
+                if isinstance(row, dict):
+                    records.append(row)
+
+    # Same source as public/live audit, if available.
+    fetch_http = globals().get("_s831a5_fetch_engine_signals_http")
+    if callable(fetch_http):
         try:
-            loaded = loader(limit=limit)
+            loaded = fetch_http(safe_limit)
             if isinstance(loaded, list):
                 records.extend([row for row in loaded if isinstance(row, dict)])
         except Exception:
             pass
 
+    # Internal route fallback.
+    fn = globals().get("engine_signals")
+    if callable(fn):
+        try:
+            try:
+                response = fn(limit=safe_limit)
+            except TypeError:
+                response = fn()
+
+            extractor = globals().get("_s831a5_extract_signal_items_from_response")
+            if callable(extractor):
+                loaded = extractor(response)
+                if isinstance(loaded, list):
+                    records.extend([row for row in loaded if isinstance(row, dict)])
+            elif isinstance(response, dict) and isinstance(response.get("items"), list):
+                records.extend([row for row in response.get("items") if isinstance(row, dict)])
+        except Exception:
+            pass
+
+    # Persistent signal storage fallback.
+    loader = globals().get("load_persistent_signal_items")
+    if callable(loader):
+        try:
+            loaded = loader(limit=safe_limit)
+            if isinstance(loaded, list):
+                records.extend([row for row in loaded if isinstance(row, dict)])
+        except Exception:
+            pass
+
+    # Legacy/global fallbacks.
     for name in ("SIGNAL_RECORDS", "ACTIVE_SIGNAL_RECORDS", "ACTIVE_SIGNALS", "BACKTEST_SIGNALS"):
         value = globals().get(name)
 
@@ -2888,16 +2935,21 @@ def _s831a4_signal_records_for_bridge(limit: int = 10000) -> list[dict[str, Any]
                 if isinstance(row, dict):
                     records.append(row)
 
-        if isinstance(value, list):
+        elif isinstance(value, list):
             for row in value:
                 if isinstance(row, dict):
                     records.append(row)
 
     deduped: dict[str, dict[str, Any]] = {}
+    fallback_index = 0
+
     for row in records:
         signal_id = str(row.get("signalId") or row.get("id") or "").strip()
         if signal_id:
             deduped[signal_id] = row
+        else:
+            fallback_index += 1
+            deduped[f"fallback:{fallback_index}"] = row
 
     return list(deduped.values())
 
