@@ -2862,6 +2862,146 @@ async def engine_backtest_active(
     return result
 
 
+
+
+# === S8.31A4 Outcome Feature Snapshot Bridge ===
+S831A4_OUTCOME_FEATURE_BRIDGE_VERSION = "s8_31a4_outcome_feature_snapshot_bridge_v1"
+
+
+def _s831a4_signal_records_for_bridge(limit: int = 10000) -> list[dict[str, Any]]:
+    records: list[dict[str, Any]] = []
+
+    loader = globals().get("load_persistent_signal_items")
+    if callable(loader):
+        try:
+            loaded = loader(limit=limit)
+            if isinstance(loaded, list):
+                records.extend([row for row in loaded if isinstance(row, dict)])
+        except Exception:
+            pass
+
+    for name in ("SIGNAL_RECORDS", "ACTIVE_SIGNAL_RECORDS", "ACTIVE_SIGNALS", "BACKTEST_SIGNALS"):
+        value = globals().get(name)
+
+        if isinstance(value, dict):
+            for row in value.values():
+                if isinstance(row, dict):
+                    records.append(row)
+
+        if isinstance(value, list):
+            for row in value:
+                if isinstance(row, dict):
+                    records.append(row)
+
+    deduped: dict[str, dict[str, Any]] = {}
+    for row in records:
+        signal_id = str(row.get("signalId") or row.get("id") or "").strip()
+        if signal_id:
+            deduped[signal_id] = row
+
+    return list(deduped.values())
+
+
+def _s831a4_signal_index(records: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    index: dict[str, dict[str, Any]] = {}
+
+    for row in records:
+        if not isinstance(row, dict):
+            continue
+
+        signal_id = str(row.get("signalId") or "").strip()
+        if signal_id:
+            index[f"id:{signal_id}"] = row
+
+        symbol = str(row.get("symbol") or "").upper().strip()
+        setup = str(row.get("setupSlug") or "").strip()
+        session_date = str(row.get("sessionDate") or row.get("createdAt") or row.get("triggerTime") or "")[:10]
+
+        if symbol and setup and session_date:
+            index[f"key:{symbol}:{setup}:{session_date}"] = row
+
+    return index
+
+
+def _s831a4_match_signal_for_outcome(outcome: dict[str, Any], index: dict[str, dict[str, Any]]) -> dict[str, Any] | None:
+    signal_id = str(outcome.get("signalId") or "").strip()
+    if signal_id and f"id:{signal_id}" in index:
+        return index[f"id:{signal_id}"]
+
+    symbol = str(outcome.get("symbol") or "").upper().strip()
+    setup = str(outcome.get("setupSlug") or "").strip()
+    session_date = str(outcome.get("sessionDate") or outcome.get("createdAt") or outcome.get("triggerTime") or outcome.get("storedAt") or "")[:10]
+
+    if symbol and setup and session_date:
+        return index.get(f"key:{symbol}:{setup}:{session_date}")
+
+    return None
+
+
+def _s831a4_snapshot_missing_count(snapshot: Any) -> int:
+    if not isinstance(snapshot, dict):
+        return 999
+    try:
+        return int(snapshot.get("missingCriticalCount"))
+    except Exception:
+        return 999
+
+
+def _s831a4_enrich_outcome_with_signal(outcome: dict[str, Any], signal: dict[str, Any] | None) -> dict[str, Any]:
+    item = dict(outcome)
+
+    if not isinstance(signal, dict):
+        return item
+
+    signal_snapshot = signal.get("featureSnapshot") if isinstance(signal.get("featureSnapshot"), dict) else None
+    existing_snapshot = item.get("featureSnapshot") if isinstance(item.get("featureSnapshot"), dict) else None
+
+    if signal_snapshot and _s831a4_snapshot_missing_count(signal_snapshot) < _s831a4_snapshot_missing_count(existing_snapshot):
+        item["featureSnapshot"] = signal_snapshot
+        item["featureSnapshotVersion"] = signal.get("featureSnapshotVersion") or signal_snapshot.get("version") or S831A4_OUTCOME_FEATURE_BRIDGE_VERSION
+
+    for key in ("source", "candleContext", "marketContext", "rawSignal"):
+        if key not in item or item.get(key) in (None, {}, []):
+            value = signal.get(key)
+            if value not in (None, {}, []):
+                item[key] = value
+
+    item["featureSnapshotBridgeVersion"] = S831A4_OUTCOME_FEATURE_BRIDGE_VERSION
+    item["featureSnapshotAttachedAt"] = datetime.now(timezone.utc).isoformat()
+
+    return item
+
+
+def _s831a4_enrich_outcomes(outcomes: Any) -> Any:
+    if not isinstance(outcomes, list):
+        return outcomes
+
+    signals = _s831a4_signal_records_for_bridge()
+    index = _s831a4_signal_index(signals)
+
+    enriched: list[dict[str, Any]] = []
+
+    for outcome in outcomes:
+        if not isinstance(outcome, dict):
+            enriched.append(outcome)
+            continue
+
+        signal = _s831a4_match_signal_for_outcome(outcome, index)
+        enriched.append(_s831a4_enrich_outcome_with_signal(outcome, signal))
+
+    return enriched
+
+
+_s831a4_original_store_outcome_dataset = store_outcome_dataset
+
+
+def store_outcome_dataset(outcomes: list[dict[str, Any]], *args: Any, **kwargs: Any):
+    enriched = _s831a4_enrich_outcomes(outcomes)
+    return _s831a4_original_store_outcome_dataset(enriched, *args, **kwargs)
+
+# === /S8.31A4 Outcome Feature Snapshot Bridge ===
+
+
 @app.post("/engine/outcomes/run-today")
 async def engine_outcomes_run_today(
     interval: str = "5min",
