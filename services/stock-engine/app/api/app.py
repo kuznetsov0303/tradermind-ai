@@ -146,7 +146,7 @@ def normalize_signal_record(item: dict[str, Any], fallback_key: str | None = Non
         "sessionDate": session_date,
         "storedAt": now_iso,
         "engineVersion": payload.get("engineVersion") or item.get("engineVersion") or settings.engine_version,
-        "rawSignal": payload,,
+        "rawSignal": payload,
         "source": _s831a2_source_dict(payload, item),
         "candleContext": _s831a2_candle_context(payload, item),
         "marketContext": _s831a2_market_context(payload, item),
