@@ -16239,3 +16239,311 @@ if _s825c_original_enrich_signal_management is not None:
 
 # === /S8.25C Cockpit lifecycle status actionability alignment ===
 
+
+# === S8.31B Failure Pattern Analyzer ===
+
+S831B_STORAGE_VERSION = "s8_31b_failure_pattern_analyzer_v1"
+
+
+def _s831b_float(value: Any, default: float | None = None) -> float | None:
+    try:
+        if value is None:
+            return default
+        parsed = float(value)
+        if parsed != parsed:
+            return default
+        return parsed
+    except Exception:
+        return default
+
+
+def _s831b_classify_outcome(item: dict[str, Any]) -> str:
+    raw = str(item.get("result") or item.get("status") or "").upper()
+
+    if "WORKED" in raw or "TP1" in raw or "TP2" in raw:
+        return "WIN"
+
+    if "FAILED" in raw or "STOP" in raw:
+        return "LOSS"
+
+    if "EXPIRED" in raw or "SESSION_CLOSE" in raw:
+        return "EXPIRED"
+
+    return "OTHER"
+
+
+def _s831b_bucket(name: str, value: Any) -> str | None:
+    v = _s831b_float(value)
+    if v is None:
+        return None
+
+    if name == "riskPct":
+        if v <= 1:
+            return "riskPct <= 1"
+        if v <= 3:
+            return "riskPct 1-3"
+        if v <= 6:
+            return "riskPct 3-6"
+        if v <= 10:
+            return "riskPct 6-10"
+        return "riskPct > 10"
+
+    if name == "distanceFromVwapPct":
+        av = abs(v)
+        if av <= 1:
+            return "vwapDistance <= 1"
+        if av <= 3:
+            return "vwapDistance 1-3"
+        if av <= 6:
+            return "vwapDistance 3-6"
+        return "vwapDistance > 6"
+
+    if name == "gapPct":
+        if v < 0:
+            return "gapPct < 0"
+        if v <= 5:
+            return "gapPct 0-5"
+        if v <= 20:
+            return "gapPct 5-20"
+        if v <= 50:
+            return "gapPct 20-50"
+        return "gapPct > 50"
+
+    if name == "changePct":
+        if v < 0:
+            return "changePct < 0"
+        if v <= 10:
+            return "changePct 0-10"
+        if v <= 30:
+            return "changePct 10-30"
+        if v <= 70:
+            return "changePct 30-70"
+        return "changePct > 70"
+
+    if name == "volume":
+        if v < 500_000:
+            return "volume < 500k"
+        if v < 1_000_000:
+            return "volume 500k-1m"
+        if v < 5_000_000:
+            return "volume 1m-5m"
+        if v < 20_000_000:
+            return "volume 5m-20m"
+        return "volume > 20m"
+
+    if name == "marketCap":
+        if v < 50_000_000:
+            return "marketCap nano <50m"
+        if v < 300_000_000:
+            return "marketCap micro 50m-300m"
+        if v < 2_000_000_000:
+            return "marketCap small 300m-2b"
+        if v < 10_000_000_000:
+            return "marketCap mid 2b-10b"
+        if v < 200_000_000_000:
+            return "marketCap large 10b-200b"
+        return "marketCap mega >200b"
+
+    return None
+
+
+def _s831b_load_outcomes(limit: int = 5000) -> list[dict[str, Any]]:
+    loader = globals().get("load_persistent_outcome_items")
+    if callable(loader):
+        try:
+            loaded = loader(limit=max(1, min(int(limit or 5000), 20000)))
+            if isinstance(loaded, list):
+                return [x for x in loaded if isinstance(x, dict)]
+        except Exception:
+            pass
+
+    value = globals().get("BACKTEST_OUTCOMES")
+    if isinstance(value, dict):
+        return [x for x in value.values() if isinstance(x, dict)]
+
+    return []
+
+
+def _s831b_snapshot(item: dict[str, Any]) -> dict[str, Any]:
+    snap = item.get("featureSnapshot")
+    return snap if isinstance(snap, dict) else {}
+
+
+def _s831b_is_ready(item: dict[str, Any]) -> bool:
+    snap = _s831b_snapshot(item)
+    return bool(
+        item.get("featureSnapshotBridgeVersion")
+        and snap
+        and snap.get("hasEnoughForFailureAnalysis") is True
+    )
+
+
+def _s831b_avg(values: list[float]) -> float | None:
+    return round(sum(values) / len(values), 4) if values else None
+
+
+def _s831b_analyze_setup(setup_slug: str, rows: list[dict[str, Any]], min_closed: int, min_bucket_size: int) -> dict[str, Any]:
+    wins = [x for x in rows if x["_class"] == "WIN"]
+    losses = [x for x in rows if x["_class"] == "LOSS"]
+    expired = [x for x in rows if x["_class"] == "EXPIRED"]
+    closed = wins + losses
+    result_rs = [x["_resultR"] for x in closed if x["_resultR"] is not None]
+
+    buckets: dict[str, list[dict[str, Any]]] = {}
+    features = ["riskPct", "distanceFromVwapPct", "gapPct", "changePct", "volume", "marketCap"]
+
+    for row in rows:
+        snap = row["_snapshot"]
+        for feature in features:
+            bucket = _s831b_bucket(feature, snap.get(feature))
+            if bucket:
+                buckets.setdefault(bucket, []).append(row)
+
+    weakness = []
+    strength = []
+
+    for bucket, items in buckets.items():
+        if len(items) < min_bucket_size:
+            continue
+
+        bucket_wins = [x for x in items if x["_class"] == "WIN"]
+        bucket_losses = [x for x in items if x["_class"] == "LOSS"]
+        bucket_closed = bucket_wins + bucket_losses
+        bucket_rs = [x["_resultR"] for x in bucket_closed if x["_resultR"] is not None]
+
+        if not bucket_closed:
+            continue
+
+        win_rate = round(len(bucket_wins) / len(bucket_closed) * 100, 2)
+        loss_rate = round(len(bucket_losses) / len(bucket_closed) * 100, 2)
+        avg_r = _s831b_avg(bucket_rs)
+
+        payload = {
+            "pattern": bucket,
+            "count": len(items),
+            "closed": len(bucket_closed),
+            "wins": len(bucket_wins),
+            "losses": len(bucket_losses),
+            "winRate": win_rate,
+            "lossRate": loss_rate,
+            "avgResultR": avg_r,
+            "confidence": "LOW_SAMPLE" if len(bucket_closed) < 10 else "NORMAL_SAMPLE",
+        }
+
+        if len(bucket_losses) > 0 and loss_rate >= 60:
+            weakness.append(payload)
+
+        if len(bucket_wins) > 0 and win_rate >= 60 and (avg_r or 0) > 0:
+            strength.append(payload)
+
+    weakness = sorted(weakness, key=lambda x: (x["lossRate"], x["losses"], x["count"]), reverse=True)[:8]
+    strength = sorted(strength, key=lambda x: (x["winRate"], x["wins"], x["count"]), reverse=True)[:8]
+
+    state = "READY" if len(closed) >= min_closed else "WAITING_FOR_MORE_OUTCOMES"
+
+    recommendations = []
+    for item in weakness[:3]:
+        recommendations.append({
+            "type": "AVOID_OR_DEMOTE_CONDITION",
+            "text": f"{setup_slug}: review or demote when {item['pattern']} appears. Loss rate {item['lossRate']}% on {item['closed']} closed samples.",
+            "confidence": item["confidence"],
+        })
+
+    for item in strength[:3]:
+        recommendations.append({
+            "type": "KEEP_OR_PRIORITIZE_CONDITION",
+            "text": f"{setup_slug}: keep watching {item['pattern']}. Win rate {item['winRate']}% on {item['closed']} closed samples.",
+            "confidence": item["confidence"],
+        })
+
+    return {
+        "setupSlug": setup_slug,
+        "state": state,
+        "sample": {
+            "total": len(rows),
+            "featureReadyCount": len(rows),
+            "closed": len(closed),
+            "wins": len(wins),
+            "losses": len(losses),
+            "expired": len(expired),
+            "winRateClosed": round(len(wins) / len(closed) * 100, 2) if closed else None,
+            "avgResultRClosed": _s831b_avg(result_rs),
+        },
+        "weaknessPatterns": weakness,
+        "strengthPatterns": strength,
+        "recommendations": recommendations,
+    }
+
+
+@app.get("/engine/research/failure-patterns")
+def engine_research_failure_patterns(
+    limit: int = 5000,
+    min_closed: int = 2,
+    min_bucket_size: int = 2,
+    include_rows: bool = False,
+):
+    raw_items = _s831b_load_outcomes(limit=limit)
+    ready_items = [x for x in raw_items if _s831b_is_ready(x)]
+
+    rows: list[dict[str, Any]] = []
+    for item in ready_items:
+        snap = _s831b_snapshot(item)
+        result_r = _s831b_float(item.get("resultR"))
+
+        rows.append({
+            "signalId": item.get("signalId"),
+            "symbol": item.get("symbol"),
+            "setupSlug": item.get("setupSlug"),
+            "status": item.get("status"),
+            "result": item.get("result"),
+            "resultR": result_r,
+            "sessionDate": item.get("sessionDate"),
+            "storedAt": item.get("storedAt"),
+            "featureSnapshotBridgeVersion": item.get("featureSnapshotBridgeVersion"),
+            "_class": _s831b_classify_outcome(item),
+            "_resultR": result_r,
+            "_snapshot": snap,
+        })
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        setup = str(row.get("setupSlug") or "unknown")
+        grouped.setdefault(setup, []).append(row)
+
+    by_setup = [
+        _s831b_analyze_setup(setup, setup_rows, min_closed=min_closed, min_bucket_size=min_bucket_size)
+        for setup, setup_rows in sorted(grouped.items())
+    ]
+
+    ready_setups = [x for x in by_setup if x.get("state") == "READY"]
+
+    response = {
+        "ok": True,
+        "storageVersion": S831B_STORAGE_VERSION,
+        "evaluatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "outcomesTotal": len(raw_items),
+            "featureReadyOutcomes": len(ready_items),
+            "setupsAnalyzed": len(by_setup),
+            "readySetups": len(ready_setups),
+            "waitingSetups": len(by_setup) - len(ready_setups),
+            "minClosed": min_closed,
+            "minBucketSize": min_bucket_size,
+        },
+        "bySetup": by_setup,
+        "policy": {
+            "mode": "READ_ONLY_FAILURE_PATTERN_ANALYZER",
+            "doesNotChangeRegistry": True,
+            "doesNotEnableClientDelivery": True,
+            "doesNotSendTelegram": True,
+            "doesNotExecuteTrades": True,
+        },
+    }
+
+    if include_rows:
+        response["rows"] = rows[:500]
+
+    return response
+
+# === /S8.31B Failure Pattern Analyzer ===
+
