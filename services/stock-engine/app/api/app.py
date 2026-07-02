@@ -355,6 +355,241 @@ def _s831a2_feature_snapshot(payload: dict[str, Any], item: dict[str, Any]) -> d
 # === /S8.31A2 Persistent signal feature snapshot capture ===
 
 
+
+# === S8.31A3 Feature Snapshot Enrichment ===
+S831A3_FEATURE_SNAPSHOT_ENRICHMENT_VERSION = "s8_31a3_feature_snapshot_enrichment_v1"
+
+
+def _s831a3_pct(numerator: Any, denominator: Any) -> float | None:
+    a = _s831a2_num(numerator)
+    b = _s831a2_num(denominator)
+    if a is None or b in (None, 0):
+        return None
+    return round(((float(a) - float(b)) / float(b)) * 100.0, 4)
+
+
+def _s831a3_watch_candidate(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    source = _s831a2_source_dict(payload, item)
+
+    for candidate in (
+        source.get("watchCandidate"),
+        payload.get("watchCandidate"),
+        item.get("watchCandidate"),
+        _s831a2_nested(payload, "source.watchCandidate"),
+        _s831a2_nested(item, "source.watchCandidate"),
+    ):
+        if isinstance(candidate, dict) and candidate:
+            return dict(candidate)
+
+    return {}
+
+
+def _s831a3_raw_quote(watch: dict[str, Any]) -> dict[str, Any]:
+    raw = watch.get("raw") if isinstance(watch.get("raw"), dict) else {}
+    quote = raw.get("quote") if isinstance(raw.get("quote"), dict) else {}
+
+    merged: dict[str, Any] = {}
+    for src in (quote, raw, watch):
+        if isinstance(src, dict):
+            for key, value in src.items():
+                if key not in merged and value is not None:
+                    merged[key] = value
+
+    return merged
+
+
+def _s831a2_market_context(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    explicit: dict[str, Any] = {}
+
+    for candidate in (
+        payload.get("marketContext"),
+        item.get("marketContext"),
+        _s831a2_nested(payload, "source.marketContext"),
+        _s831a2_nested(item, "source.marketContext"),
+    ):
+        if isinstance(candidate, dict) and candidate:
+            explicit.update(candidate)
+
+    watch = _s831a3_watch_candidate(payload, item)
+    quote = _s831a3_raw_quote(watch)
+
+    open_price = _s831a2_first(quote.get("open"), watch.get("open"))
+    previous_close = _s831a2_first(
+        quote.get("previousClose"),
+        quote.get("previous_close"),
+        watch.get("previousClose"),
+        watch.get("previous_close"),
+    )
+
+    gap_pct = _s831a2_first(
+        explicit.get("gapPct"),
+        explicit.get("gapPercent"),
+        quote.get("gapPct"),
+        quote.get("gapPercent"),
+        _s831a3_pct(open_price, previous_close),
+    )
+
+    return {
+        **explicit,
+        "price": _s831a2_first(explicit.get("price"), quote.get("price"), watch.get("price")),
+        "open": open_price,
+        "previousClose": previous_close,
+        "gapPct": gap_pct,
+        "changePct": _s831a2_first(
+            explicit.get("changePct"),
+            explicit.get("changePercent"),
+            watch.get("changePercent"),
+            watch.get("changePct"),
+            quote.get("changePercentage"),
+            quote.get("changesPercentage"),
+            quote.get("changePercent"),
+            quote.get("changePct"),
+        ),
+        "volume": _s831a2_first(
+            explicit.get("volume"),
+            watch.get("volume"),
+            quote.get("volume"),
+        ),
+        "marketCap": _s831a2_first(
+            explicit.get("marketCap"),
+            watch.get("marketCap"),
+            quote.get("marketCap"),
+        ),
+        "dayHigh": _s831a2_first(quote.get("dayHigh"), watch.get("dayHigh")),
+        "dayLow": _s831a2_first(quote.get("dayLow"), watch.get("dayLow")),
+        "yearHigh": _s831a2_first(quote.get("yearHigh"), watch.get("yearHigh")),
+        "yearLow": _s831a2_first(quote.get("yearLow"), watch.get("yearLow")),
+        "universe": _s831a2_first(watch.get("universe"), explicit.get("universe")),
+        "sourceBucket": _s831a2_first(watch.get("sourceBucket"), explicit.get("sourceBucket")),
+        "inPlayScore": _s831a2_first(watch.get("inPlayScore"), explicit.get("inPlayScore")),
+    }
+
+
+def _s831a2_candle_context(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    source = _s831a2_source_dict(payload, item)
+
+    candle: dict[str, Any] = {}
+
+    for candidate in (
+        source.get("candleContext"),
+        payload.get("candleContext"),
+        item.get("candleContext"),
+        _s831a2_nested(payload, "source.candleContext"),
+        _s831a2_nested(item, "source.candleContext"),
+    ):
+        if isinstance(candidate, dict) and candidate:
+            candle.update(candidate)
+
+    confirmation = payload.get("confirmation") if isinstance(payload.get("confirmation"), dict) else {}
+    if not confirmation and isinstance(item.get("confirmation"), dict):
+        confirmation = item.get("confirmation")
+
+    ema_loss = confirmation.get("ema20Loss5m") if isinstance(confirmation.get("ema20Loss5m"), dict) else {}
+    vwap_rejection = confirmation.get("vwapRejection5m") if isinstance(confirmation.get("vwapRejection5m"), dict) else {}
+    failed_hod = confirmation.get("failedHodReclaim5m") if isinstance(confirmation.get("failedHodReclaim5m"), dict) else {}
+
+    if candle.get("vwap") is None:
+        candle["vwap"] = _s831a2_first(vwap_rejection.get("vwap"), payload.get("vwap"), item.get("vwap"))
+
+    if candle.get("ema20_5m") is None:
+        candle["ema20_5m"] = _s831a2_first(ema_loss.get("ema20_5m"), payload.get("ema20_5m"), item.get("ema20_5m"))
+
+    if candle.get("hod") is None:
+        candle["hod"] = _s831a2_first(failed_hod.get("hod"), payload.get("hod"), item.get("hod"))
+
+    if candle.get("latestPrice") is None:
+        candle["latestPrice"] = _s831a2_first(payload.get("currentPrice"), payload.get("price"), item.get("currentPrice"), item.get("price"), payload.get("entry"), item.get("entry"))
+
+    if candle.get("distanceFromVwapPct") is None:
+        entry = _s831a2_first(payload.get("entry"), item.get("entry"))
+        candle["distanceFromVwapPct"] = _s831a3_pct(entry, candle.get("vwap"))
+
+    if candle:
+        candle["enrichmentVersion"] = S831A3_FEATURE_SNAPSHOT_ENRICHMENT_VERSION
+
+    return candle
+
+
+def _s831a2_feature_snapshot(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    source = _s831a2_source_dict(payload, item)
+    candle = _s831a2_candle_context(payload, item)
+    market = _s831a2_market_context(payload, item)
+
+    entry = _s831a2_num(_s831a2_first(payload.get("entry"), item.get("entry"), _s831a2_nested(payload, "entryZone.min")))
+    stop = _s831a2_num(_s831a2_first(payload.get("stop"), item.get("stop")))
+
+    risk = abs(float(entry) - float(stop)) if entry is not None and stop is not None else None
+    risk_pct = round((abs(float(risk)) / abs(float(entry))) * 100.0, 4) if risk is not None and entry not in (None, 0) else None
+
+    vwap = _s831a2_num(_s831a2_first(candle.get("vwap"), payload.get("vwap"), item.get("vwap")))
+    distance_from_vwap_pct = _s831a2_num(_s831a2_first(
+        candle.get("distanceFromVwapPct"),
+        payload.get("distanceFromVwapPct"),
+        item.get("distanceFromVwapPct"),
+    ))
+
+    if distance_from_vwap_pct is None and entry is not None and vwap not in (None, 0):
+        distance_from_vwap_pct = round(((float(entry) - float(vwap)) / float(vwap)) * 100.0, 4)
+
+    snapshot = {
+        "version": S831A3_FEATURE_SNAPSHOT_ENRICHMENT_VERSION,
+        "capturedAt": datetime.now(timezone.utc).isoformat(),
+
+        "entry": entry,
+        "stop": stop,
+        "risk": risk,
+        "riskPct": risk_pct,
+
+        "vwap": vwap,
+        "ema20_5m": _s831a2_num(_s831a2_first(candle.get("ema20_5m"), payload.get("ema20_5m"), item.get("ema20_5m"))),
+        "atr14_5m": _s831a2_num(_s831a2_first(candle.get("atr14_5m"), payload.get("atr14_5m"), item.get("atr14_5m"))),
+        "rsi14_5m": _s831a2_num(_s831a2_first(candle.get("rsi14_5m"), payload.get("rsi14_5m"), item.get("rsi14_5m"))),
+        "hod": _s831a2_num(_s831a2_first(candle.get("hod"), payload.get("hod"), item.get("hod"))),
+        "lod": _s831a2_num(_s831a2_first(candle.get("lod"), payload.get("lod"), item.get("lod"))),
+        "volumeAcceleration": _s831a2_num(_s831a2_first(candle.get("volumeAcceleration"), payload.get("volumeAcceleration"), item.get("volumeAcceleration"))),
+        "distanceFromVwapPct": distance_from_vwap_pct,
+
+        "gapPct": _s831a2_num(_s831a2_first(market.get("gapPct"), payload.get("gapPct"), payload.get("gapPercent"), item.get("gapPct"), item.get("gapPercent"))),
+        "changePct": _s831a2_num(_s831a2_first(market.get("changePct"), market.get("changePercent"), payload.get("changePct"), payload.get("changePercent"), item.get("changePct"), item.get("changePercent"))),
+        "rvol": _s831a2_num(_s831a2_first(market.get("rvol"), market.get("relativeVolume"), payload.get("rvol"), payload.get("relativeVolume"), item.get("rvol"), item.get("relativeVolume"))),
+        "volume": _s831a2_num(_s831a2_first(market.get("volume"), payload.get("volume"), item.get("volume"))),
+        "premarketVolume": _s831a2_num(_s831a2_first(market.get("premarketVolume"), market.get("preMarketVolume"), payload.get("premarketVolume"), item.get("premarketVolume"))),
+        "spreadPct": _s831a2_num(_s831a2_first(market.get("spreadPct"), market.get("spreadPercent"), payload.get("spreadPct"), item.get("spreadPct"))),
+        "marketCap": _s831a2_num(_s831a2_first(market.get("marketCap"), payload.get("marketCap"), item.get("marketCap"))),
+        "floatShares": _s831a2_num(_s831a2_first(market.get("floatShares"), market.get("float"), payload.get("floatShares"), payload.get("float"), item.get("floatShares"), item.get("float"))),
+        "shortFloatPct": _s831a2_num(_s831a2_first(market.get("shortFloatPct"), market.get("shortFloat"), payload.get("shortFloatPct"), payload.get("shortFloat"), item.get("shortFloatPct"), item.get("shortFloat"))),
+
+        "sourceAvailable": bool(source),
+        "candleContextAvailable": bool(candle),
+        "marketContextAvailable": bool(market),
+    }
+
+    critical = [
+        "entry",
+        "stop",
+        "risk",
+        "vwap",
+        "ema20_5m",
+        "atr14_5m",
+        "rsi14_5m",
+        "volumeAcceleration",
+        "distanceFromVwapPct",
+        "gapPct",
+        "changePct",
+        "rvol",
+        "spreadPct",
+    ]
+
+    missing = [key for key in critical if snapshot.get(key) is None]
+    snapshot["missingCriticalFields"] = missing
+    snapshot["missingCriticalCount"] = len(missing)
+    snapshot["hasEnoughForFailureAnalysis"] = len(missing) <= 6
+
+    return snapshot
+
+# === /S8.31A3 Feature Snapshot Enrichment ===
+
+
 def store_active_signals() -> dict[str, Any]:
     """Rebuild runtime signal storage from current ARMED + ACTIVE candidates.
 
