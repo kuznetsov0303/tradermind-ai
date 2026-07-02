@@ -146,7 +146,12 @@ def normalize_signal_record(item: dict[str, Any], fallback_key: str | None = Non
         "sessionDate": session_date,
         "storedAt": now_iso,
         "engineVersion": payload.get("engineVersion") or item.get("engineVersion") or settings.engine_version,
-        "rawSignal": payload,
+        "rawSignal": payload,,
+        "source": _s831a2_source_dict(payload, item),
+        "candleContext": _s831a2_candle_context(payload, item),
+        "marketContext": _s831a2_market_context(payload, item),
+        "featureSnapshot": _s831a2_feature_snapshot(payload, item),
+        "featureSnapshotVersion": S831A2_FEATURE_SNAPSHOT_VERSION
     }
 
     return record
@@ -191,6 +196,163 @@ def should_replace_signal(existing: dict[str, Any] | None, incoming: dict[str, A
     old_created = str(existing.get("createdAt") or existing.get("storedAt") or "")
     new_created = str(incoming.get("createdAt") or incoming.get("storedAt") or "")
     return new_created >= old_created
+
+
+
+# === S8.31A2 Persistent signal feature snapshot capture ===
+S831A2_FEATURE_SNAPSHOT_VERSION = "s8_31a2_persistent_signal_feature_snapshot_v1"
+
+
+def _s831a2_num(value: Any, fallback: float | None = None) -> float | None:
+    if value is None or isinstance(value, bool):
+        return fallback
+    try:
+        if isinstance(value, str):
+            cleaned = value.strip().replace("%", "").replace(",", "")
+            if not cleaned:
+                return fallback
+            return float(cleaned)
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s831a2_nested(obj: dict[str, Any], path: str) -> Any:
+    cur: Any = obj
+    for part in str(path or "").split("."):
+        if isinstance(cur, dict) and part in cur:
+            cur = cur.get(part)
+        else:
+            return None
+    return cur
+
+
+def _s831a2_first(*values: Any) -> Any:
+    for value in values:
+        if value is None:
+            continue
+        if isinstance(value, str) and not value.strip():
+            continue
+        return value
+    return None
+
+
+def _s831a2_source_dict(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    for candidate in (
+        payload.get("source"),
+        item.get("source"),
+        _s831a2_nested(payload, "rawSignal.source"),
+        _s831a2_nested(item, "rawSignal.source"),
+    ):
+        if isinstance(candidate, dict) and candidate:
+            return dict(candidate)
+    return {}
+
+
+def _s831a2_candle_context(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    source = _s831a2_source_dict(payload, item)
+    for candidate in (
+        source.get("candleContext"),
+        payload.get("candleContext"),
+        item.get("candleContext"),
+        _s831a2_nested(payload, "source.candleContext"),
+        _s831a2_nested(item, "source.candleContext"),
+    ):
+        if isinstance(candidate, dict) and candidate:
+            return dict(candidate)
+    return {}
+
+
+def _s831a2_market_context(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    for candidate in (
+        payload.get("marketContext"),
+        item.get("marketContext"),
+        _s831a2_nested(payload, "source.marketContext"),
+        _s831a2_nested(item, "source.marketContext"),
+    ):
+        if isinstance(candidate, dict) and candidate:
+            return dict(candidate)
+    return {}
+
+
+def _s831a2_feature_snapshot(payload: dict[str, Any], item: dict[str, Any]) -> dict[str, Any]:
+    source = _s831a2_source_dict(payload, item)
+    candle = _s831a2_candle_context(payload, item)
+    market = _s831a2_market_context(payload, item)
+
+    entry = _s831a2_num(_s831a2_first(payload.get("entry"), item.get("entry"), _s831a2_nested(payload, "entryZone.min")))
+    stop = _s831a2_num(_s831a2_first(payload.get("stop"), item.get("stop")))
+
+    risk = abs(float(entry) - float(stop)) if entry is not None and stop is not None else None
+    risk_pct = round((abs(float(risk)) / abs(float(entry))) * 100.0, 4) if risk is not None and entry not in (None, 0) else None
+
+    vwap = _s831a2_num(_s831a2_first(candle.get("vwap"), payload.get("vwap"), item.get("vwap")))
+    distance_from_vwap_pct = _s831a2_num(_s831a2_first(
+        candle.get("distanceFromVwapPct"),
+        payload.get("distanceFromVwapPct"),
+        item.get("distanceFromVwapPct"),
+    ))
+
+    if distance_from_vwap_pct is None and entry is not None and vwap not in (None, 0):
+        distance_from_vwap_pct = round(((float(entry) - float(vwap)) / float(vwap)) * 100.0, 4)
+
+    snapshot = {
+        "version": S831A2_FEATURE_SNAPSHOT_VERSION,
+        "capturedAt": datetime.now(timezone.utc).isoformat(),
+
+        "entry": entry,
+        "stop": stop,
+        "risk": risk,
+        "riskPct": risk_pct,
+
+        "vwap": vwap,
+        "ema20_5m": _s831a2_num(_s831a2_first(candle.get("ema20_5m"), payload.get("ema20_5m"), item.get("ema20_5m"))),
+        "atr14_5m": _s831a2_num(_s831a2_first(candle.get("atr14_5m"), payload.get("atr14_5m"), item.get("atr14_5m"))),
+        "rsi14_5m": _s831a2_num(_s831a2_first(candle.get("rsi14_5m"), payload.get("rsi14_5m"), item.get("rsi14_5m"))),
+        "hod": _s831a2_num(_s831a2_first(candle.get("hod"), payload.get("hod"), item.get("hod"))),
+        "lod": _s831a2_num(_s831a2_first(candle.get("lod"), payload.get("lod"), item.get("lod"))),
+        "volumeAcceleration": _s831a2_num(_s831a2_first(candle.get("volumeAcceleration"), payload.get("volumeAcceleration"), item.get("volumeAcceleration"))),
+        "distanceFromVwapPct": distance_from_vwap_pct,
+
+        "gapPct": _s831a2_num(_s831a2_first(market.get("gapPct"), payload.get("gapPct"), payload.get("gapPercent"), item.get("gapPct"), item.get("gapPercent"))),
+        "changePct": _s831a2_num(_s831a2_first(market.get("changePct"), market.get("changePercent"), payload.get("changePct"), payload.get("changePercent"), item.get("changePct"), item.get("changePercent"))),
+        "rvol": _s831a2_num(_s831a2_first(market.get("rvol"), market.get("relativeVolume"), payload.get("rvol"), payload.get("relativeVolume"), item.get("rvol"), item.get("relativeVolume"))),
+        "volume": _s831a2_num(_s831a2_first(market.get("volume"), payload.get("volume"), item.get("volume"))),
+        "premarketVolume": _s831a2_num(_s831a2_first(market.get("premarketVolume"), market.get("preMarketVolume"), payload.get("premarketVolume"), item.get("premarketVolume"))),
+        "spreadPct": _s831a2_num(_s831a2_first(market.get("spreadPct"), market.get("spreadPercent"), payload.get("spreadPct"), item.get("spreadPct"))),
+        "marketCap": _s831a2_num(_s831a2_first(market.get("marketCap"), payload.get("marketCap"), item.get("marketCap"))),
+        "floatShares": _s831a2_num(_s831a2_first(market.get("floatShares"), market.get("float"), payload.get("floatShares"), payload.get("float"), item.get("floatShares"), item.get("float"))),
+        "shortFloatPct": _s831a2_num(_s831a2_first(market.get("shortFloatPct"), market.get("shortFloat"), payload.get("shortFloatPct"), payload.get("shortFloat"), item.get("shortFloatPct"), item.get("shortFloat"))),
+
+        "sourceAvailable": bool(source),
+        "candleContextAvailable": bool(candle),
+        "marketContextAvailable": bool(market),
+    }
+
+    critical = [
+        "entry",
+        "stop",
+        "risk",
+        "vwap",
+        "ema20_5m",
+        "atr14_5m",
+        "rsi14_5m",
+        "volumeAcceleration",
+        "distanceFromVwapPct",
+        "gapPct",
+        "changePct",
+        "rvol",
+        "spreadPct",
+    ]
+
+    missing = [key for key in critical if snapshot.get(key) is None]
+    snapshot["missingCriticalFields"] = missing
+    snapshot["missingCriticalCount"] = len(missing)
+    snapshot["hasEnoughForFailureAnalysis"] = len(missing) <= 6
+
+    return snapshot
+
+# === /S8.31A2 Persistent signal feature snapshot capture ===
 
 
 def store_active_signals() -> dict[str, Any]:
@@ -3339,6 +3501,9 @@ def _s831a_outcome_class(item: dict[str, Any]) -> str:
 
 def _s831a_feature_row(item: dict[str, Any]) -> dict[str, Any]:
     payload = item.get("rawSignal") if isinstance(item.get("rawSignal"), dict) else {}
+    feature_snapshot = item.get("featureSnapshot") if isinstance(item.get("featureSnapshot"), dict) else {}
+    if feature_snapshot:
+        payload = {**payload, **{key: value for key, value in feature_snapshot.items() if value is not None}}
 
     signal_id = _s831a_text(_s831a_first(item.get("signalId"), payload.get("signalId")))
     symbol = _s831a_text(_s831a_first(item.get("symbol"), payload.get("symbol")), "UNKNOWN")
