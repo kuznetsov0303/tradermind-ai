@@ -4265,6 +4265,145 @@ def engine_research_feature_matrix(
 # === /S8.31A AI Research Feature Matrix ===
 
 
+
+
+# === S8.31A5 Live Feature Snapshot Audit ===
+S831A5_LIVE_FEATURE_AUDIT_VERSION = "s8_31a5_live_feature_snapshot_audit_v1"
+
+
+def _s831a5_load_live_signal_rows(limit: int = 5000) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+
+    loader = globals().get("load_persistent_signal_items")
+    if callable(loader):
+        try:
+            loaded = loader(limit=max(1, min(int(limit or 5000), 20000)))
+            if isinstance(loaded, list):
+                rows.extend([item for item in loaded if isinstance(item, dict)])
+        except Exception:
+            pass
+
+    if not rows:
+        try:
+            response = engine_signals(limit=max(1, min(int(limit or 5000), 20000)))
+            items = response.get("items") if isinstance(response, dict) else None
+            if isinstance(items, list):
+                rows.extend([item for item in items if isinstance(item, dict)])
+        except Exception:
+            pass
+
+    deduped: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        signal_id = str(row.get("signalId") or "").strip()
+        if signal_id:
+            deduped[signal_id] = row
+
+    return list(deduped.values())
+
+
+def _s831a5_missing_count(row: dict[str, Any]) -> int:
+    snapshot = row.get("featureSnapshot") if isinstance(row.get("featureSnapshot"), dict) else {}
+    try:
+        return int(snapshot.get("missingCriticalCount"))
+    except Exception:
+        return 999
+
+
+def _s831a5_ready(row: dict[str, Any]) -> bool:
+    snapshot = row.get("featureSnapshot") if isinstance(row.get("featureSnapshot"), dict) else {}
+    return snapshot.get("hasEnoughForFailureAnalysis") is True
+
+
+@app.get("/engine/research/live-feature-audit")
+def engine_research_live_feature_audit(limit: int = 5000):
+    rows = _s831a5_load_live_signal_rows(limit=limit)
+
+    by_setup: dict[str, dict[str, Any]] = {}
+
+    for row in rows:
+        setup = str(row.get("setupSlug") or "unknown")
+        snapshot = row.get("featureSnapshot") if isinstance(row.get("featureSnapshot"), dict) else {}
+        missing = _s831a5_missing_count(row)
+        ready = _s831a5_ready(row)
+
+        stat = by_setup.setdefault(setup, {
+            "setupSlug": setup,
+            "count": 0,
+            "ready": 0,
+            "missingTotal": 0,
+            "missingMin": None,
+            "missingMax": None,
+        })
+
+        stat["count"] += 1
+        stat["missingTotal"] += missing if missing != 999 else 0
+        stat["ready"] += 1 if ready else 0
+        stat["missingMin"] = missing if stat["missingMin"] is None else min(stat["missingMin"], missing)
+        stat["missingMax"] = missing if stat["missingMax"] is None else max(stat["missingMax"], missing)
+
+    setup_rows: list[dict[str, Any]] = []
+    for stat in by_setup.values():
+        count = int(stat.get("count") or 0)
+        ready = int(stat.get("ready") or 0)
+        setup_rows.append({
+            "setupSlug": stat.get("setupSlug"),
+            "count": count,
+            "ready": ready,
+            "readyPct": round((ready / count) * 100, 2) if count else 0,
+            "avgMissing": round((float(stat.get("missingTotal") or 0) / count), 2) if count else None,
+            "missingMin": stat.get("missingMin"),
+            "missingMax": stat.get("missingMax"),
+        })
+
+    total = len(rows)
+    ready_total = sum(1 for row in rows if _s831a5_ready(row))
+    missing_values = [_s831a5_missing_count(row) for row in rows if _s831a5_missing_count(row) != 999]
+
+    samples = []
+    for row in rows[:50]:
+        snapshot = row.get("featureSnapshot") if isinstance(row.get("featureSnapshot"), dict) else {}
+        samples.append({
+            "signalId": row.get("signalId"),
+            "symbol": row.get("symbol"),
+            "setupSlug": row.get("setupSlug"),
+            "status": row.get("status"),
+            "entry": row.get("entry"),
+            "stop": row.get("stop"),
+            "vwap": snapshot.get("vwap"),
+            "ema20_5m": snapshot.get("ema20_5m"),
+            "gapPct": snapshot.get("gapPct"),
+            "changePct": snapshot.get("changePct"),
+            "volume": snapshot.get("volume"),
+            "marketCap": snapshot.get("marketCap"),
+            "missingCriticalCount": snapshot.get("missingCriticalCount"),
+            "hasEnoughForFailureAnalysis": snapshot.get("hasEnoughForFailureAnalysis"),
+            "snapshotVersion": snapshot.get("version"),
+        })
+
+    return {
+        "ok": True,
+        "storageVersion": S831A5_LIVE_FEATURE_AUDIT_VERSION,
+        "evaluatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "total": total,
+            "ready": ready_total,
+            "readyPct": round((ready_total / total) * 100, 2) if total else 0,
+            "avgMissing": round(sum(missing_values) / len(missing_values), 2) if missing_values else None,
+        },
+        "bySetup": sorted(setup_rows, key=lambda item: (item.get("ready", 0), item.get("count", 0)), reverse=True),
+        "samples": samples,
+        "policy": {
+            "mode": "READ_ONLY_LIVE_FEATURE_AUDIT",
+            "doesNotChangeRegistry": True,
+            "doesNotEnableClientDelivery": True,
+            "doesNotSendTelegram": True,
+            "doesNotExecuteTrades": True,
+        },
+    }
+
+# === /S8.31A5 Live Feature Snapshot Audit ===
+
+
 @app.delete("/engine/outcomes")
 def engine_outcomes_clear():
     runtime_cleared = len(BACKTEST_OUTCOMES)
