@@ -4271,26 +4271,83 @@ def engine_research_feature_matrix(
 S831A5_LIVE_FEATURE_AUDIT_VERSION = "s8_31a5_live_feature_snapshot_audit_v1"
 
 
+def _s831a5_extract_signal_items_from_response(response: Any) -> list[dict[str, Any]]:
+    try:
+        if isinstance(response, list):
+            return [item for item in response if isinstance(item, dict)]
+
+        if isinstance(response, dict):
+            for key in ("items", "signals", "data"):
+                value = response.get(key)
+                if isinstance(value, list):
+                    return [item for item in value if isinstance(item, dict)]
+
+        body = getattr(response, "body", None)
+        if body:
+            import json
+            if isinstance(body, bytes):
+                body = body.decode("utf-8")
+            parsed = json.loads(body)
+            if isinstance(parsed, dict):
+                value = parsed.get("items") or parsed.get("signals") or parsed.get("data")
+                if isinstance(value, list):
+                    return [item for item in value if isinstance(item, dict)]
+    except Exception:
+        return []
+
+    return []
+
+
+def _s831a5_fetch_engine_signals_http(limit: int) -> list[dict[str, Any]]:
+    try:
+        import json
+        import urllib.request
+
+        safe_limit = max(1, min(int(limit or 5000), 20000))
+        url = f"http://127.0.0.1:8000/engine/signals?limit={safe_limit}"
+
+        with urllib.request.urlopen(url, timeout=10) as response:
+            parsed = json.loads(response.read().decode("utf-8"))
+
+        if isinstance(parsed, dict):
+            items = parsed.get("items")
+            if isinstance(items, list):
+                return [item for item in items if isinstance(item, dict)]
+    except Exception:
+        return []
+
+    return []
+
+
 def _s831a5_load_live_signal_rows(limit: int = 5000) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
 
-    loader = globals().get("load_persistent_signal_items")
-    if callable(loader):
+    # Most reliable source: the same HTTP route that the dashboard/debug uses.
+    rows.extend(_s831a5_fetch_engine_signals_http(limit))
+
+    # Internal route fallback.
+    if not rows:
         try:
-            loaded = loader(limit=max(1, min(int(limit or 5000), 20000)))
-            if isinstance(loaded, list):
-                rows.extend([item for item in loaded if isinstance(item, dict)])
+            fn = globals().get("engine_signals")
+            if callable(fn):
+                try:
+                    response = fn(limit=max(1, min(int(limit or 5000), 20000)))
+                except TypeError:
+                    response = fn()
+                rows.extend(_s831a5_extract_signal_items_from_response(response))
         except Exception:
             pass
 
+    # Persistent storage fallback.
     if not rows:
-        try:
-            response = engine_signals(limit=max(1, min(int(limit or 5000), 20000)))
-            items = response.get("items") if isinstance(response, dict) else None
-            if isinstance(items, list):
-                rows.extend([item for item in items if isinstance(item, dict)])
-        except Exception:
-            pass
+        loader = globals().get("load_persistent_signal_items")
+        if callable(loader):
+            try:
+                loaded = loader(limit=max(1, min(int(limit or 5000), 20000)))
+                if isinstance(loaded, list):
+                    rows.extend([item for item in loaded if isinstance(item, dict)])
+            except Exception:
+                pass
 
     deduped: dict[str, dict[str, Any]] = {}
     for row in rows:
