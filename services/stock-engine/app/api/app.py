@@ -16547,3 +16547,108 @@ def engine_research_failure_patterns(
 
 # === /S8.31B Failure Pattern Analyzer ===
 
+
+# === S8.31C Research Readiness Guard ===
+
+S831C_STORAGE_VERSION = "s8_31c_research_readiness_guard_v1"
+
+
+@app.get("/engine/research/readiness")
+def engine_research_readiness(
+    limit: int = 5000,
+    min_closed: int = 2,
+):
+    raw_items = _s831b_load_outcomes(limit=limit)
+    feature_ready = [x for x in raw_items if _s831b_is_ready(x)]
+
+    rows = []
+    for item in feature_ready:
+        outcome_class = _s831b_classify_outcome(item)
+        rows.append({
+            "signalId": item.get("signalId"),
+            "symbol": item.get("symbol"),
+            "setupSlug": item.get("setupSlug") or "unknown",
+            "status": item.get("status"),
+            "result": item.get("result"),
+            "resultR": _s831b_float(item.get("resultR")),
+            "storedAt": item.get("storedAt"),
+            "class": outcome_class,
+            "featureSnapshotBridgeVersion": item.get("featureSnapshotBridgeVersion"),
+        })
+
+    wins = [x for x in rows if x["class"] == "WIN"]
+    losses = [x for x in rows if x["class"] == "LOSS"]
+    expired = [x for x in rows if x["class"] == "EXPIRED"]
+    closed = wins + losses
+
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for row in rows:
+        grouped.setdefault(str(row.get("setupSlug") or "unknown"), []).append(row)
+
+    by_setup = []
+    ready_setups = 0
+
+    for setup_slug, setup_rows in sorted(grouped.items()):
+        setup_wins = [x for x in setup_rows if x["class"] == "WIN"]
+        setup_losses = [x for x in setup_rows if x["class"] == "LOSS"]
+        setup_expired = [x for x in setup_rows if x["class"] == "EXPIRED"]
+        setup_closed = setup_wins + setup_losses
+
+        setup_state = "READY_FOR_FAILURE_ANALYSIS" if len(setup_closed) >= min_closed else "WAITING_FOR_CLOSED_OUTCOMES"
+        if setup_state == "READY_FOR_FAILURE_ANALYSIS":
+            ready_setups += 1
+
+        by_setup.append({
+            "setupSlug": setup_slug,
+            "state": setup_state,
+            "total": len(setup_rows),
+            "closed": len(setup_closed),
+            "wins": len(setup_wins),
+            "losses": len(setup_losses),
+            "expired": len(setup_expired),
+            "needsClosed": max(0, min_closed - len(setup_closed)),
+        })
+
+    if not feature_ready:
+        state = "WAITING_FOR_FEATURE_READY_OUTCOMES"
+        next_action = "Collect outcomes with featureSnapshotBridgeVersion before running failure analysis."
+    elif not closed:
+        state = "WAITING_FOR_CLOSED_OUTCOMES"
+        next_action = "Wait for a normal market session or run read-only replay to collect WORKED/FAILED enriched outcomes."
+    elif ready_setups <= 0:
+        state = "WAITING_FOR_MORE_CLOSED_OUTCOMES"
+        next_action = "Collect more closed enriched outcomes per setup before trusting weakness/strength patterns."
+    else:
+        state = "FAILURE_ANALYZER_READY"
+        next_action = "Failure Pattern Analyzer can start producing setup-level weakness/strength patterns."
+
+    return {
+        "ok": True,
+        "storageVersion": S831C_STORAGE_VERSION,
+        "evaluatedAt": datetime.now(timezone.utc).isoformat(),
+        "state": state,
+        "summary": {
+            "outcomesTotal": len(raw_items),
+            "featureReadyOutcomes": len(feature_ready),
+            "closedFeatureReadyOutcomes": len(closed),
+            "winFeatureReadyOutcomes": len(wins),
+            "lossFeatureReadyOutcomes": len(losses),
+            "expiredFeatureReadyOutcomes": len(expired),
+            "setupsTracked": len(by_setup),
+            "readySetups": ready_setups,
+            "waitingSetups": max(0, len(by_setup) - ready_setups),
+            "minClosedPerSetup": min_closed,
+        },
+        "bySetup": by_setup,
+        "nextAction": next_action,
+        "policy": {
+            "mode": "READ_ONLY_RESEARCH_READINESS_GUARD",
+            "doesNotChangeRegistry": True,
+            "doesNotEnableClientDelivery": True,
+            "doesNotSendTelegram": True,
+            "doesNotExecuteTrades": True,
+        },
+    }
+
+# === /S8.31C Research Readiness Guard ===
+
