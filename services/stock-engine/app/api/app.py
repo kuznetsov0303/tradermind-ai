@@ -17030,3 +17030,243 @@ async def engine_research_signal_feature_rebuild_dry_run(signal_id: str):
         "featureSnapshot": feature_snapshot,
     }
 
+
+
+# === S8.32C Batch Replay + Feature Rebuild Dry Run ===
+S832C_BATCH_REBUILD_DRY_RUN_VERSION = "s8_32c_batch_replay_feature_rebuild_dry_run_v1"
+
+
+def _s832c_load_signal_rows(session_date=None, setup_slug=None, symbol=None, limit=25):
+    import sqlite3
+
+    safe_limit = max(1, min(int(limit or 25), 100))
+    where = []
+    params = []
+
+    if session_date:
+        where.append("session_date = ?")
+        params.append(str(session_date))
+
+    if setup_slug:
+        where.append("setup_slug = ?")
+        params.append(str(setup_slug))
+
+    if symbol:
+        where.append("symbol = ?")
+        params.append(str(symbol).upper())
+
+    sql = "select * from signal_records"
+    if where:
+        sql += " where " + " and ".join(where)
+    sql += " order by stored_at desc limit ?"
+    params.append(safe_limit)
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    rows = [dict(r) for r in con.execute(sql, params).fetchall()]
+    try:
+        con.close()
+    except Exception:
+        pass
+    return rows
+
+
+@app.get("/engine/research/signal-batch-rebuild-dry-run")
+async def engine_research_signal_batch_rebuild_dry_run(
+    session_date: str | None = None,
+    setup_slug: str | None = None,
+    symbol: str | None = None,
+    limit: int = 25,
+):
+    import json
+    from datetime import datetime, time
+    from zoneinfo import ZoneInfo
+
+    rows = _s832c_load_signal_rows(
+        session_date=session_date,
+        setup_slug=setup_slug,
+        symbol=symbol,
+        limit=limit,
+    )
+
+    client = FmpClient()
+    if not client.is_configured():
+        return {
+            "ok": False,
+            "storageVersion": S832C_BATCH_REBUILD_DRY_RUN_VERSION,
+            "error": "FMP_API_KEY is missing",
+        }
+
+    cache = {}
+    results = []
+    summary = {
+        "signalsLoaded": len(rows),
+        "processed": 0,
+        "replayOk": 0,
+        "featureReady": 0,
+        "featurePartial": 0,
+        "featureMissing": 0,
+        "errors": 0,
+        "bySetup": {},
+    }
+
+    for row in rows:
+        signal_id = row.get("signal_id")
+        try:
+            payload = json.loads(row.get("payload_json") or "{}")
+        except Exception:
+            payload = {}
+
+        try:
+            sym = row.get("symbol") or payload.get("symbol")
+            setup = row.get("setup_slug") or payload.get("setupSlug") or payload.get("setup_slug")
+            sess = row.get("session_date") or payload.get("sessionDate") or payload.get("session_date")
+            trigger_raw = row.get("trigger_time") or payload.get("triggerTime") or payload.get("trigger_time")
+            trigger_ny = _s832a2_parse_dt(trigger_raw)
+
+            if not sym or not sess or not trigger_ny:
+                raise ValueError("missing_symbol_session_or_trigger")
+
+            cache_key = f"{sym}|1min"
+            if cache_key not in cache:
+                cache[cache_key] = await client.get_intraday_candles(sym, interval="1min")
+            candle_rows = cache.get(cache_key) or []
+
+            pit = _s62_filter_candles_point_in_time(
+                candle_rows,
+                session_date=sess,
+                cutoff_ny=trigger_ny,
+            )
+            before = pit.get("items") if isinstance(pit, dict) and isinstance(pit.get("items"), list) else []
+
+            session_snapshot = build_session_snapshot(before)
+
+            item = {
+                "symbol": sym,
+                "setupSlug": setup,
+                "entry": payload.get("entry") or row.get("entry"),
+                "stop": payload.get("stop") or row.get("stop"),
+                "source": {
+                    "candleContext": session_snapshot,
+                    "marketContext": payload.get("marketContext") or {},
+                },
+            }
+
+            feature_snapshot = _s831a2_feature_snapshot(payload, item)
+            missing_count = _s831a4_snapshot_missing_count(feature_snapshot)
+
+            if missing_count <= 2:
+                readiness = "READY"
+                summary["featureReady"] += 1
+            elif missing_count <= 6:
+                readiness = "PARTIAL_READY_FOR_FAILURE_ANALYSIS"
+                summary["featurePartial"] += 1
+            else:
+                readiness = "MISSING_CRITICAL_DATA"
+                summary["featureMissing"] += 1
+
+            close_ny = datetime.combine(trigger_ny.date(), time(16, 0), tzinfo=ZoneInfo("America/New_York"))
+            timestamp_mode = pit.get("timestampMode") if isinstance(pit, dict) else None
+
+            future = _s64_future_candles(
+                candle_rows,
+                session_date=sess,
+                cutoff_ny=trigger_ny,
+                close_ny=close_ny,
+                timestamp_mode=timestamp_mode,
+            )
+
+            direction = str(payload.get("direction") or row.get("direction") or "").strip().lower()
+            entry = _s832a2_num(payload.get("entry") or row.get("entry"))
+            stop = _s832a2_num(payload.get("stop") or row.get("stop"))
+            tp1 = _s832a2_num(payload.get("tp1")) or _s832a2_pick_target(payload, 0)
+            tp2 = _s832a2_num(payload.get("tp2")) or _s832a2_pick_target(payload, 1)
+            risk = abs(float(entry) - float(stop)) if entry is not None and stop is not None else None
+
+            candidate = {
+                "symbol": sym,
+                "setupSlug": setup,
+                "setupName": payload.get("setupName") or payload.get("setup_name"),
+                "direction": direction,
+                "sessionDate": sess,
+                "entry": entry,
+                "stop": stop,
+                "tp1": tp1,
+                "tp2": tp2,
+                "risk": risk,
+                "qualityScore": payload.get("qualityScore"),
+                "score": payload.get("score") or row.get("signal_score"),
+                "grade": payload.get("grade") or row.get("signal_grade"),
+                "qualityGate": payload.get("qualityGate") or row.get("quality_status"),
+            }
+
+            outcome = _s64_evaluate_candidate_outcome(candidate, future, session_close_ny=close_ny)
+
+            if isinstance(outcome, dict) and outcome.get("ok"):
+                summary["replayOk"] += 1
+
+            summary["processed"] += 1
+            setup_key = setup or "unknown"
+            summary["bySetup"].setdefault(setup_key, {"count": 0, "ready": 0, "worked": 0, "failed": 0, "sessionClose": 0})
+            summary["bySetup"][setup_key]["count"] += 1
+            if readiness == "READY":
+                summary["bySetup"][setup_key]["ready"] += 1
+
+            result = outcome.get("result") if isinstance(outcome, dict) else None
+            if result and str(result).startswith("WORKED"):
+                summary["bySetup"][setup_key]["worked"] += 1
+            elif result == "FAILED_STOP":
+                summary["bySetup"][setup_key]["failed"] += 1
+            elif result == "SESSION_CLOSE":
+                summary["bySetup"][setup_key]["sessionClose"] += 1
+
+            results.append({
+                "signalId": signal_id,
+                "symbol": sym,
+                "setupSlug": setup,
+                "sessionDate": sess,
+                "triggerTime": trigger_raw,
+                "candles": {
+                    "rawRows": len(candle_rows),
+                    "beforeTriggerRows": len(before),
+                    "futureRowsAfterTrigger": len(future),
+                    "timestampMode": timestamp_mode,
+                },
+                "featureReadiness": {
+                    "status": readiness,
+                    "missingCriticalCount": missing_count,
+                    "missingCriticalFields": feature_snapshot.get("missingCriticalFields"),
+                    "hasEnoughForFailureAnalysis": feature_snapshot.get("hasEnoughForFailureAnalysis"),
+                },
+                "outcome": outcome,
+            })
+
+        except Exception as error:
+            summary["errors"] += 1
+            results.append({
+                "signalId": signal_id,
+                "ok": False,
+                "error": repr(error),
+            })
+
+    return {
+        "ok": True,
+        "storageVersion": S832C_BATCH_REBUILD_DRY_RUN_VERSION,
+        "mode": "batch_replay_feature_rebuild_dry_run",
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+        },
+        "filters": {
+            "sessionDate": session_date,
+            "setupSlug": setup_slug,
+            "symbol": symbol,
+            "limit": limit,
+        },
+        "summary": summary,
+        "results": results,
+    }
+
