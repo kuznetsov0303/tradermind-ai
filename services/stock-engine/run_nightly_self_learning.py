@@ -12,7 +12,7 @@ from ops.runner_utils import (
 )
 
 
-VERSION = "s8_0_nightly_self_learning_runner_v1"
+VERSION = "s8_33a_nightly_learning_memory_rebuild_v1"
 
 
 def parse_dates(raw: str | None, lookback_days: int) -> list[str]:
@@ -73,6 +73,20 @@ def run_nightly(args: argparse.Namespace) -> dict[str, Any]:
                 timeout=args.replay_timeout,
             )
         )
+
+    steps.append(
+        step(
+            "research_rebuild_outcomes",
+            "POST",
+            "/engine/research/rebuild-outcomes",
+            params={
+                "session_date": dates[-1] if dates else None,
+                "limit": min(args.limit, 50),
+                "apply": "true",
+            },
+            timeout=300,
+        )
+    )
 
     steps.append(
         step(
