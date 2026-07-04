@@ -16652,3 +16652,243 @@ def engine_research_readiness(
 
 # === /S8.31C Research Readiness Guard ===
 
+
+
+# === S8.32A2 Signal-Anchored Replay Dry Run ===
+S832A2_SIGNAL_REPLAY_DRY_RUN_VERSION = "s8_32a2_signal_anchored_replay_dry_run_v1"
+
+
+def _s832a2_num(value):
+    try:
+        if value is None or value == "":
+            return None
+        return float(value)
+    except Exception:
+        return None
+
+
+def _s832a2_parse_dt(value):
+    from datetime import datetime, timezone
+    from zoneinfo import ZoneInfo
+
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(ZoneInfo("America/New_York"))
+    except Exception:
+        return None
+
+
+def _s832a2_pick_target(payload, index):
+    targets = payload.get("targets") or payload.get("takeProfits") or payload.get("take_profits") or []
+    if isinstance(targets, list) and len(targets) > index and isinstance(targets[index], dict):
+        item = targets[index]
+        return _s832a2_num(item.get("price") or item.get("target") or item.get("level"))
+    return None
+
+
+def _s832a2_db_path():
+    import os
+    from pathlib import Path
+
+    env_path = os.getenv("STOCK_ENGINE_DB_PATH") or os.getenv("SQLITE_DB_PATH")
+    if env_path and Path(env_path).exists():
+        return str(Path(env_path))
+    return "/opt/skilledge/stock-engine/data/stock_engine.db"
+
+
+def _s832a2_load_signal(signal_id: str):
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    row = con.execute('select * from signal_records where signal_id=?', (signal_id,)).fetchone()
+    try:
+        con.close()
+    except Exception:
+        pass
+
+    if not row:
+        return None, {}
+
+    data = dict(row)
+    try:
+        payload = json.loads(data.get("payload_json") or "{}")
+    except Exception:
+        payload = {}
+
+    return data, payload
+
+
+@app.get("/engine/research/signal-replay-dry-run")
+async def engine_research_signal_replay_dry_run(signal_id: str):
+    from datetime import datetime, time
+    from zoneinfo import ZoneInfo
+
+    row, payload = _s832a2_load_signal(signal_id)
+    if not row:
+        return {
+            "ok": False,
+            "storageVersion": S832A2_SIGNAL_REPLAY_DRY_RUN_VERSION,
+            "error": "signal_not_found",
+            "signalId": signal_id,
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+                "changesRegistry": False,
+            },
+        }
+
+    symbol = row.get("symbol") or payload.get("symbol")
+    setup_slug = row.get("setup_slug") or payload.get("setupSlug") or payload.get("setup_slug")
+    direction = str(payload.get("direction") or row.get("direction") or "").strip().lower()
+    session_date = row.get("session_date") or payload.get("sessionDate") or payload.get("session_date")
+    trigger_raw = row.get("trigger_time") or payload.get("triggerTime") or payload.get("trigger_time")
+
+    entry = _s832a2_num(payload.get("entry") or row.get("entry"))
+    stop = _s832a2_num(payload.get("stop") or row.get("stop"))
+    tp1 = _s832a2_num(payload.get("tp1")) or _s832a2_pick_target(payload, 0)
+    tp2 = _s832a2_num(payload.get("tp2")) or _s832a2_pick_target(payload, 1)
+
+    trigger_ny = _s832a2_parse_dt(trigger_raw)
+
+    if not symbol or not setup_slug or direction not in {"long", "short"} or not session_date or not trigger_ny:
+        return {
+            "ok": False,
+            "storageVersion": S832A2_SIGNAL_REPLAY_DRY_RUN_VERSION,
+            "error": "missing_required_signal_fields",
+            "signalId": signal_id,
+            "fields": {
+                "symbol": symbol,
+                "setupSlug": setup_slug,
+                "direction": direction,
+                "sessionDate": session_date,
+                "triggerTime": trigger_raw,
+                "entry": entry,
+                "stop": stop,
+                "tp1": tp1,
+                "tp2": tp2,
+            },
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+                "changesRegistry": False,
+            },
+        }
+
+    close_ny = datetime.combine(trigger_ny.date(), time(16, 0), tzinfo=ZoneInfo("America/New_York"))
+
+    client = FmpClient()
+    if not client.is_configured():
+        return {
+            "ok": False,
+            "storageVersion": S832A2_SIGNAL_REPLAY_DRY_RUN_VERSION,
+            "error": "FMP_API_KEY is missing",
+            "signalId": signal_id,
+        }
+
+    rows = await client.get_intraday_candles(symbol, interval="1min")
+
+    pit = _s62_filter_candles_point_in_time(
+        rows,
+        session_date=session_date,
+        cutoff_ny=trigger_ny,
+    )
+    timestamp_mode = pit.get("timestampMode") if isinstance(pit, dict) else None
+
+    future = _s64_future_candles(
+        rows,
+        session_date=session_date,
+        cutoff_ny=trigger_ny,
+        close_ny=close_ny,
+        timestamp_mode=timestamp_mode,
+    )
+
+    risk = abs(float(entry) - float(stop)) if entry is not None and stop is not None else None
+
+    candidate = {
+        "symbol": symbol,
+        "setupSlug": setup_slug,
+        "setupName": payload.get("setupName") or payload.get("setup_name"),
+        "direction": direction,
+        "sessionDate": session_date,
+        "entry": entry,
+        "stop": stop,
+        "tp1": tp1,
+        "tp2": tp2,
+        "risk": risk,
+        "qualityScore": payload.get("qualityScore"),
+        "score": payload.get("score") or row.get("signal_score"),
+        "grade": payload.get("grade") or row.get("signal_grade"),
+        "qualityGate": payload.get("qualityGate") or row.get("quality_status"),
+    }
+
+    outcome = _s64_evaluate_candidate_outcome(
+        candidate,
+        future,
+        session_close_ny=close_ny,
+    )
+
+    last_close = None
+    manual_session_close_r = None
+    if future:
+        try:
+            last_close = float(future[-1].get("close"))
+            if risk and risk > 0:
+                manual_session_close_r = (
+                    (float(entry) - last_close) / float(risk)
+                    if direction == "short"
+                    else (last_close - float(entry)) / float(risk)
+                )
+        except Exception:
+            pass
+
+    return {
+        "ok": True,
+        "storageVersion": S832A2_SIGNAL_REPLAY_DRY_RUN_VERSION,
+        "mode": "signal_anchored_replay_dry_run",
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+        },
+        "signal": {
+            "signalId": signal_id,
+            "symbol": symbol,
+            "setupSlug": setup_slug,
+            "direction": direction,
+            "sessionDate": session_date,
+            "triggerTime": trigger_raw,
+            "triggerNy": trigger_ny.isoformat(),
+            "entry": entry,
+            "stop": stop,
+            "tp1": tp1,
+            "tp2": tp2,
+            "risk": risk,
+        },
+        "candles": {
+            "rawRows": len(rows or []),
+            "timestampMode": timestamp_mode,
+            "pointInTimeRowsBeforeTrigger": len(pit.get("items") or []) if isinstance(pit, dict) else 0,
+            "futureRowsAfterTrigger": len(future or []),
+            "firstFuture": future[0] if future else None,
+            "lastFuture": future[-1] if future else None,
+        },
+        "validation": {
+            "lastFutureClose": last_close,
+            "manualExpectedSessionCloseR": round(float(manual_session_close_r), 4) if manual_session_close_r is not None else None,
+            "outcomeResultR": outcome.get("resultR") if isinstance(outcome, dict) else None,
+        },
+        "dryRunOutcome": outcome,
+    }
+
