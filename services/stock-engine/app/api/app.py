@@ -17443,3 +17443,99 @@ async def engine_research_rebuild_outcomes(
         "summary": summary,
     }
 
+
+
+# === S8.33B Nightly Learning Status ===
+S833B_NIGHTLY_STATUS_VERSION = "s8_33b_nightly_learning_status_v1"
+
+
+@app.get("/engine/research/nightly-status")
+def engine_research_nightly_status():
+    import json
+    import sqlite3
+    from pathlib import Path
+    from datetime import datetime, timezone
+
+    report_dirs = [
+        Path("/opt/skilledge/stock-engine/reports/nightly_self_learning"),
+        Path("reports/nightly_self_learning"),
+    ]
+
+    latest_file = None
+    for folder in report_dirs:
+        try:
+            files = sorted(folder.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+            if files:
+                latest_file = files[0]
+                break
+        except Exception:
+            pass
+
+    report = None
+    report_error = None
+
+    if latest_file:
+        try:
+            report = json.loads(latest_file.read_text(encoding="utf-8"))
+        except Exception as error:
+            report_error = repr(error)
+
+    table_counts = {}
+    try:
+        con = sqlite3.connect(_s832a2_db_path())
+        for table in ["research_runs", "research_rebuilt_outcomes", "research_feature_snapshots", "signal_records", "outcome_records"]:
+            try:
+                table_counts[table] = con.execute(f"select count(*) from {table}").fetchone()[0]
+            except Exception:
+                table_counts[table] = None
+        con.close()
+    except Exception as error:
+        table_counts["error"] = repr(error)
+
+    steps = []
+    if isinstance(report, dict):
+        for item in report.get("steps") or []:
+            if isinstance(item, dict):
+                steps.append({
+                    "name": item.get("name"),
+                    "ok": item.get("ok"),
+                    "method": item.get("method"),
+                    "path": item.get("path"),
+                    "status": item.get("status") or item.get("statusCode"),
+                    "duration": item.get("duration") or item.get("durationSec"),
+                    "error": item.get("error"),
+                })
+
+    failed_steps = [s for s in steps if not s.get("ok")]
+
+    return {
+        "ok": bool(report) and not failed_steps,
+        "storageVersion": S833B_NIGHTLY_STATUS_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "latestReport": {
+            "exists": bool(latest_file),
+            "path": str(latest_file) if latest_file else None,
+            "fileName": latest_file.name if latest_file else None,
+            "readError": report_error,
+            "reportOk": report.get("ok") if isinstance(report, dict) else None,
+            "reportVersion": report.get("version") if isinstance(report, dict) else None,
+            "generatedAtKyiv": report.get("generatedAtKyiv") if isinstance(report, dict) else None,
+            "sessionDates": report.get("sessionDates") if isinstance(report, dict) else None,
+        },
+        "steps": {
+            "total": len(steps),
+            "failed": len(failed_steps),
+            "items": steps,
+        },
+        "learningMemory": {
+            "tableCounts": table_counts,
+        },
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+        },
+    }
+
