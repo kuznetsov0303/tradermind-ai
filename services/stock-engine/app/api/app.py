@@ -17270,3 +17270,176 @@ async def engine_research_signal_batch_rebuild_dry_run(
         "results": results,
     }
 
+
+
+# === S8.32D Research Rebuild Persist ===
+S832D_RESEARCH_REBUILD_PERSIST_VERSION = "s8_32d_research_rebuild_persist_v1"
+
+
+@app.post("/engine/research/rebuild-outcomes")
+async def engine_research_rebuild_outcomes(
+    session_date: str | None = None,
+    setup_slug: str | None = None,
+    symbol: str | None = None,
+    limit: int = 10,
+    apply: bool = False,
+):
+    import json
+    import sqlite3
+    from datetime import datetime, timezone
+
+    batch = await engine_research_signal_batch_rebuild_dry_run(
+        session_date=session_date,
+        setup_slug=setup_slug,
+        symbol=symbol,
+        limit=limit,
+    )
+
+    if not isinstance(batch, dict) or not batch.get("ok"):
+        return {
+            "ok": False,
+            "storageVersion": S832D_RESEARCH_REBUILD_PERSIST_VERSION,
+            "error": "batch_rebuild_failed",
+            "batch": batch,
+        }
+
+    now = datetime.now(timezone.utc).isoformat()
+    run_id = "research_rebuild:" + now
+    results = batch.get("results") if isinstance(batch.get("results"), list) else []
+    summary = batch.get("summary") if isinstance(batch.get("summary"), dict) else {}
+
+    if not apply:
+        return {
+            "ok": True,
+            "storageVersion": S832D_RESEARCH_REBUILD_PERSIST_VERSION,
+            "mode": "preview_only",
+            "apply": False,
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+                "changesRegistry": False,
+            },
+            "summary": summary,
+            "preview": {
+                "runId": run_id,
+                "wouldPersist": {
+                    "researchRuns": 1,
+                    "rebuiltOutcomes": len(results),
+                    "featureSnapshots": len(results),
+                },
+            },
+        }
+
+    con = sqlite3.connect(_s832a2_db_path())
+
+    inserted_outcomes = 0
+    inserted_features = 0
+
+    con.execute("""
+      insert or replace into research_runs (
+        run_id, run_type, status, session_date, source_version,
+        signals_processed, outcomes_rebuilt, features_rebuilt, errors_count,
+        created_at, completed_at, payload_json
+      ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        run_id,
+        "signal_anchored_rebuild",
+        "completed",
+        session_date,
+        S832D_RESEARCH_REBUILD_PERSIST_VERSION,
+        int(summary.get("processed") or 0),
+        int(summary.get("replayOk") or 0),
+        int(summary.get("featureReady") or 0) + int(summary.get("featurePartial") or 0),
+        int(summary.get("errors") or 0),
+        now,
+        now,
+        json.dumps(batch, default=str),
+    ))
+
+    for item in results:
+        signal_id = item.get("signalId")
+        if not signal_id:
+            continue
+
+        outcome = item.get("outcome") if isinstance(item.get("outcome"), dict) else {}
+        feature = item.get("featureReadiness") if isinstance(item.get("featureReadiness"), dict) else {}
+
+        con.execute("""
+          insert or replace into research_rebuilt_outcomes (
+            rebuild_id, run_id, signal_id, symbol, setup_slug, session_date,
+            direction, trigger_time, result, result_r, mfe_r, mae_r,
+            candles_checked, feature_readiness, missing_critical_count,
+            source_version, research_only, client_visible, telegram_eligible,
+            created_at, payload_json
+          ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, 0, 0, ?, ?)
+        """, (
+            f"{run_id}:outcome:{signal_id}",
+            run_id,
+            signal_id,
+            item.get("symbol"),
+            item.get("setupSlug"),
+            item.get("sessionDate"),
+            outcome.get("direction"),
+            item.get("triggerTime"),
+            outcome.get("result"),
+            outcome.get("resultR"),
+            outcome.get("mfeR"),
+            outcome.get("maeR"),
+            outcome.get("candlesChecked"),
+            feature.get("status"),
+            feature.get("missingCriticalCount"),
+            S832D_RESEARCH_REBUILD_PERSIST_VERSION,
+            now,
+            json.dumps(item, default=str),
+        ))
+        inserted_outcomes += 1
+
+        con.execute("""
+          insert or replace into research_feature_snapshots (
+            snapshot_id, run_id, signal_id, symbol, setup_slug, session_date,
+            trigger_time, readiness, missing_critical_count,
+            has_enough_for_failure_analysis, source_version, created_at, payload_json
+          ) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            f"{run_id}:feature:{signal_id}",
+            run_id,
+            signal_id,
+            item.get("symbol"),
+            item.get("setupSlug"),
+            item.get("sessionDate"),
+            item.get("triggerTime"),
+            feature.get("status"),
+            feature.get("missingCriticalCount"),
+            1 if feature.get("hasEnoughForFailureAnalysis") else 0,
+            S832D_RESEARCH_REBUILD_PERSIST_VERSION,
+            now,
+            json.dumps(item, default=str),
+        ))
+        inserted_features += 1
+
+    con.commit()
+    con.close()
+
+    return {
+        "ok": True,
+        "storageVersion": S832D_RESEARCH_REBUILD_PERSIST_VERSION,
+        "mode": "persisted",
+        "apply": True,
+        "policy": {
+            "writesDb": True,
+            "researchOnly": True,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+        },
+        "runId": run_id,
+        "persisted": {
+            "researchRuns": 1,
+            "rebuiltOutcomes": inserted_outcomes,
+            "featureSnapshots": inserted_features,
+        },
+        "summary": summary,
+    }
+
