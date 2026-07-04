@@ -16892,3 +16892,141 @@ async def engine_research_signal_replay_dry_run(signal_id: str):
         "dryRunOutcome": outcome,
     }
 
+
+
+# === S8.32B Signal Feature Snapshot Rebuild Dry Run ===
+S832B_SIGNAL_FEATURE_REBUILD_VERSION = "s8_32b_signal_feature_rebuild_dry_run_v1"
+
+
+@app.get("/engine/research/signal-feature-rebuild-dry-run")
+async def engine_research_signal_feature_rebuild_dry_run(signal_id: str):
+    row, payload = _s832a2_load_signal(signal_id)
+    if not row:
+        return {
+            "ok": False,
+            "storageVersion": S832B_SIGNAL_FEATURE_REBUILD_VERSION,
+            "error": "signal_not_found",
+            "signalId": signal_id,
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+                "changesRegistry": False,
+            },
+        }
+
+    symbol = row.get("symbol") or payload.get("symbol")
+    setup_slug = row.get("setup_slug") or payload.get("setupSlug") or payload.get("setup_slug")
+    session_date = row.get("session_date") or payload.get("sessionDate") or payload.get("session_date")
+    trigger_raw = row.get("trigger_time") or payload.get("triggerTime") or payload.get("trigger_time")
+    trigger_ny = _s832a2_parse_dt(trigger_raw)
+
+    if not symbol or not session_date or not trigger_ny:
+        return {
+            "ok": False,
+            "storageVersion": S832B_SIGNAL_FEATURE_REBUILD_VERSION,
+            "error": "missing_required_signal_fields",
+            "signalId": signal_id,
+            "fields": {
+                "symbol": symbol,
+                "setupSlug": setup_slug,
+                "sessionDate": session_date,
+                "triggerTime": trigger_raw,
+            },
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+                "changesRegistry": False,
+            },
+        }
+
+    client = FmpClient()
+    if not client.is_configured():
+        return {
+            "ok": False,
+            "storageVersion": S832B_SIGNAL_FEATURE_REBUILD_VERSION,
+            "error": "FMP_API_KEY is missing",
+            "signalId": signal_id,
+        }
+
+    rows = await client.get_intraday_candles(symbol, interval="1min")
+
+    pit = _s62_filter_candles_point_in_time(
+        rows,
+        session_date=session_date,
+        cutoff_ny=trigger_ny,
+    )
+
+    before = pit.get("items") if isinstance(pit, dict) and isinstance(pit.get("items"), list) else []
+    session_snapshot = build_session_snapshot(before)
+
+    item = {
+        "symbol": symbol,
+        "setupSlug": setup_slug,
+        "entry": payload.get("entry") or row.get("entry"),
+        "stop": payload.get("stop") or row.get("stop"),
+        "source": {
+            "candleContext": session_snapshot,
+            "marketContext": payload.get("marketContext") or {},
+        },
+    }
+
+    feature_snapshot = _s831a2_feature_snapshot(payload, item)
+    missing_count = _s831a4_snapshot_missing_count(feature_snapshot)
+
+    if missing_count <= 2:
+        readiness = "READY"
+    elif missing_count <= 6:
+        readiness = "PARTIAL_READY_FOR_FAILURE_ANALYSIS"
+    else:
+        readiness = "MISSING_CRITICAL_DATA"
+
+    return {
+        "ok": True,
+        "storageVersion": S832B_SIGNAL_FEATURE_REBUILD_VERSION,
+        "mode": "signal_feature_rebuild_dry_run",
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+        },
+        "signal": {
+            "signalId": signal_id,
+            "symbol": symbol,
+            "setupSlug": setup_slug,
+            "sessionDate": session_date,
+            "triggerTime": trigger_raw,
+            "triggerNy": trigger_ny.isoformat(),
+        },
+        "candles": {
+            "rawRows": len(rows or []),
+            "timestampMode": pit.get("timestampMode") if isinstance(pit, dict) else None,
+            "beforeTriggerRows": len(before),
+        },
+        "sessionSnapshot": {
+            "oneMinuteCount": session_snapshot.get("oneMinuteCount"),
+            "fiveMinuteCount": session_snapshot.get("fiveMinuteCount"),
+            "latestPrice": session_snapshot.get("latestPrice"),
+            "latestCandleAt": session_snapshot.get("latestCandleAt"),
+            "vwap": session_snapshot.get("vwap"),
+            "ema20_5m": session_snapshot.get("ema20_5m"),
+            "atr14_5m": session_snapshot.get("atr14_5m"),
+            "rsi14_5m": session_snapshot.get("rsi14_5m"),
+            "hod": session_snapshot.get("hod"),
+            "lod": session_snapshot.get("lod"),
+            "volumeAcceleration": session_snapshot.get("volumeAcceleration"),
+        },
+        "featureReadiness": {
+            "status": readiness,
+            "missingCriticalCount": missing_count,
+            "missingCriticalFields": feature_snapshot.get("missingCriticalFields"),
+            "hasEnoughForFailureAnalysis": feature_snapshot.get("hasEnoughForFailureAnalysis"),
+        },
+        "featureSnapshot": feature_snapshot,
+    }
+
