@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import InvestorDashboardSection from "@/components/admin/InvestorDashboardSection";
 
@@ -35,5 +35,6 @@ export default function AdminInvestorDashboardPage() {
     </main>
   );
 }
+
 
 
