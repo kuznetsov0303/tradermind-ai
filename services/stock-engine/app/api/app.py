@@ -20673,3 +20673,435 @@ async def engine_outcomes_repair_probe_v2(
 
 # === /S8.40B2 Outcome OPEN Replay Probe V2 ===
 
+
+# === S8.40C No-Eval Missing Future Candles Classifier ===
+S840C_NO_EVAL_MISSING_CANDLES_VERSION = "s8_40c_no_eval_missing_future_candles_classifier_v1"
+
+
+def _s840c_num(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s840c_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s840c_now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s840c_parse_payload(raw):
+    import json
+
+    if isinstance(raw, dict):
+        return dict(raw), None
+    try:
+        return json.loads(raw or "{}"), None
+    except Exception as error:
+        return {}, repr(error)
+
+
+def _s840c_age_days(session_date):
+    try:
+        day = datetime.fromisoformat(str(session_date)[:10]).date()
+        return (datetime.now(timezone.utc).date() - day).days
+    except Exception:
+        return None
+
+
+def _s840c_ensure_audit_tables(con):
+    con.execute(
+        """
+        create table if not exists outcome_repair_audit (
+            audit_id text primary key,
+            repair_version text not null,
+            mode text not null,
+            dry_run integer not null default 1,
+            applied integer not null default 0,
+            signal_id text,
+            symbol text,
+            setup_slug text,
+            session_date text,
+            old_status text,
+            new_status text,
+            reason text,
+            created_at text not null,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute(
+        """
+        create table if not exists outcome_records_s840c_backup (
+            backup_id text primary key,
+            backup_at text not null,
+            repair_version text not null,
+            signal_id text not null,
+            original_row_json text not null
+        )
+        """
+    )
+    con.execute(
+        "create index if not exists idx_outcome_repair_audit_signal on outcome_repair_audit(signal_id)"
+    )
+    con.execute(
+        "create index if not exists idx_outcome_repair_audit_version on outcome_repair_audit(repair_version, created_at desc)"
+    )
+    con.execute(
+        "create index if not exists idx_outcome_records_s840c_backup_signal on outcome_records_s840c_backup(signal_id)"
+    )
+
+
+def _s840c_load_open_candidates(con, *, setup_slug=None, symbol=None, session_date=None, min_age_days=1, limit=100, only_stock_prefix=True):
+    safe_limit = max(1, min(int(limit or 100), 1000))
+    safe_min_age_days = max(0, int(min_age_days or 0))
+
+    where = ["upper(coalesce(status,'')) = 'OPEN'"]
+    params = []
+
+    if only_stock_prefix:
+        where.append("signal_id like 'stock:%'")
+
+    if setup_slug:
+        where.append("setup_slug = ?")
+        params.append(str(setup_slug).strip())
+
+    if symbol:
+        where.append("upper(symbol) = upper(?)")
+        params.append(str(symbol).strip())
+
+    if session_date:
+        where.append("session_date = ?")
+        params.append(str(session_date).strip()[:10])
+
+    sql = """
+        select signal_id, symbol, setup_slug, session_date, status, result_r, mfe_r, mae_r,
+               tp1_hit, tp2_hit, stop_hit, trigger_time, evaluated_at, stored_at, payload_json
+        from outcome_records
+        where {where_sql}
+        order by stored_at desc
+        limit ?
+    """.format(where_sql=" and ".join(where))
+
+    params.append(safe_limit)
+
+    rows = []
+    for row in con.execute(sql, params).fetchall():
+        item = dict(row)
+        age_days = _s840c_age_days(item.get("session_date"))
+        item["_age_days"] = age_days
+        if age_days is None or age_days < safe_min_age_days:
+            continue
+        rows.append(item)
+
+    return rows
+
+
+def _s840c_is_missing_future_candles_candidate(row, payload, *, require_zero_candles_checked=True):
+    if str(row.get("status") or "").upper().strip() != "OPEN":
+        return False, "status_not_open"
+
+    if str(row.get("signal_id") or "").startswith("replay:"):
+        return False, "replay_rows_are_not_classified_by_s840c"
+
+    if require_zero_candles_checked:
+        candles_checked = _s840c_int(payload.get("candlesChecked"), 0)
+        if candles_checked != 0:
+            return False, "candles_checked_not_zero"
+
+    result_r = _s840c_num(row.get("result_r"), 0.0)
+    mfe_r = _s840c_num(row.get("mfe_r"), 0.0)
+    mae_r = _s840c_num(row.get("mae_r"), 0.0)
+
+    if result_r not in (0, 0.0) or mfe_r not in (0, 0.0) or mae_r not in (0, 0.0):
+        return False, "non_zero_r_values_need_manual_review"
+
+    if payload.get("entry") is None:
+        return False, "missing_entry_in_payload"
+
+    direction = str(payload.get("direction") or "").lower().strip()
+    if direction not in {"long", "short"}:
+        return False, "missing_direction_in_payload"
+
+    return True, "open_outcome_with_zero_candles_checked_no_future_replay_available"
+
+
+def _s840c_build_no_eval_payload(row, payload, *, reason, now_iso):
+    original_snapshot = {
+        "status": row.get("status"),
+        "resultR": row.get("result_r"),
+        "mfeR": row.get("mfe_r"),
+        "maeR": row.get("mae_r"),
+        "tp1Hit": row.get("tp1_hit"),
+        "tp2Hit": row.get("tp2_hit"),
+        "stopHit": row.get("stop_hit"),
+        "triggerTime": row.get("trigger_time"),
+        "evaluatedAt": row.get("evaluated_at"),
+        "storedAt": row.get("stored_at"),
+    }
+
+    repaired = dict(payload or {})
+    repaired["result"] = "NO_EVAL"
+    repaired["status"] = "NO_EVAL_MISSING_FUTURE_CANDLES"
+    repaired["outcomeEvaluationStatus"] = "NO_EVAL_MISSING_FUTURE_CANDLES"
+    repaired["noEvalReason"] = reason
+    repaired["excludeFromWinRate"] = True
+    repaired["excludeFromCalibration"] = True
+    repaired["excludeFromInvestorStats"] = True
+    repaired["excludeFromPromotionEvidence"] = True
+    repaired["sessionClosed"] = None
+    repaired["resultR"] = None
+    repaired["mfeR"] = None
+    repaired["maeR"] = None
+    repaired["firstEvent"] = "NO_EVAL"
+    repaired["firstEventAt"] = None
+    repaired["evaluatedAt"] = now_iso
+    repaired["repairAppliedAt"] = now_iso
+    repaired["repairVersion"] = S840C_NO_EVAL_MISSING_CANDLES_VERSION
+    repaired["repairReason"] = reason
+    repaired["repairPolicy"] = {
+        "doesNotCreateWinLoss": True,
+        "doesNotInferTpStop": True,
+        "reason": "historical future candles unavailable or timestamp filter produced zero future rows",
+    }
+    repaired["previousOutcomeSnapshot"] = original_snapshot
+
+    return repaired
+
+
+@app.post("/engine/outcomes/classify-no-eval-missing-candles")
+def engine_outcomes_classify_no_eval_missing_candles(
+    setup_slug: str | None = None,
+    symbol: str | None = None,
+    session_date: str | None = None,
+    min_age_days: int = 1,
+    limit: int = 100,
+    dry_run: bool = True,
+    confirm: bool = False,
+    require_zero_candles_checked: bool = True,
+):
+    import json
+    import sqlite3
+    import uuid
+
+    safe_limit = max(1, min(int(limit or 100), 1000))
+    now_iso = _s840c_now_iso()
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s840c_ensure_audit_tables(con)
+
+    rows = _s840c_load_open_candidates(
+        con,
+        setup_slug=setup_slug,
+        symbol=symbol,
+        session_date=session_date,
+        min_age_days=min_age_days,
+        limit=safe_limit,
+        only_stock_prefix=True,
+    )
+
+    scanned = len(rows)
+    candidates = 0
+    applied = 0
+    skipped = 0
+    by_setup = {}
+    skip_reasons = {}
+    samples = []
+
+    can_write = (dry_run is False and confirm is True)
+
+    for row in rows:
+        payload, payload_error = _s840c_parse_payload(row.get("payload_json"))
+        if payload_error:
+            skipped += 1
+            skip_reasons["payload_parse_error"] = skip_reasons.get("payload_parse_error", 0) + 1
+            continue
+
+        is_candidate, reason = _s840c_is_missing_future_candles_candidate(
+            row,
+            payload,
+            require_zero_candles_checked=require_zero_candles_checked,
+        )
+
+        if not is_candidate:
+            skipped += 1
+            skip_reasons[reason] = skip_reasons.get(reason, 0) + 1
+            continue
+
+        candidates += 1
+        setup_key = str(row.get("setup_slug") or "unknown")
+        by_setup[setup_key] = by_setup.get(setup_key, 0) + 1
+
+        repaired_payload = _s840c_build_no_eval_payload(
+            row,
+            payload,
+            reason=reason,
+            now_iso=now_iso,
+        )
+
+        sample = {
+            "signalId": row.get("signal_id"),
+            "symbol": row.get("symbol"),
+            "setupSlug": row.get("setup_slug"),
+            "sessionDate": row.get("session_date"),
+            "ageDays": row.get("_age_days"),
+            "fromStatus": row.get("status"),
+            "toStatus": "NO_EVAL_MISSING_FUTURE_CANDLES",
+            "fromResultR": row.get("result_r"),
+            "toResultR": None,
+            "reason": reason,
+            "dryRun": bool(dry_run),
+            "wouldWrite": bool(can_write),
+            "payloadKeys": sorted(list(payload.keys()))[:30] if isinstance(payload, dict) else [],
+        }
+
+        if len(samples) < 25:
+            samples.append(sample)
+
+        audit_payload = {
+            "sample": sample,
+            "oldPayload": payload,
+            "newPayload": repaired_payload,
+            "policy": {
+                "doesNotCreateWinLoss": True,
+                "doesNotInferTpStop": True,
+                "manualConfirmRequiredForWrites": True,
+            },
+        }
+
+        if can_write:
+            signal_id = str(row.get("signal_id") or "").strip()
+            backup_id = f"s840c:{signal_id}:{uuid.uuid4().hex}"
+
+            con.execute(
+                """
+                insert into outcome_records_s840c_backup
+                (backup_id, backup_at, repair_version, signal_id, original_row_json)
+                values (?, ?, ?, ?, ?)
+                """,
+                (
+                    backup_id,
+                    now_iso,
+                    S840C_NO_EVAL_MISSING_CANDLES_VERSION,
+                    signal_id,
+                    json.dumps({k: v for k, v in row.items() if not k.startswith("_")}, ensure_ascii=False),
+                ),
+            )
+
+            con.execute(
+                """
+                update outcome_records
+                set status = ?,
+                    result_r = null,
+                    mfe_r = null,
+                    mae_r = null,
+                    tp1_hit = 0,
+                    tp2_hit = 0,
+                    stop_hit = 0,
+                    evaluated_at = ?,
+                    payload_json = ?
+                where signal_id = ?
+                  and upper(coalesce(status,'')) = 'OPEN'
+                """,
+                (
+                    "NO_EVAL_MISSING_FUTURE_CANDLES",
+                    now_iso,
+                    json.dumps(repaired_payload, ensure_ascii=False),
+                    signal_id,
+                ),
+            )
+
+            con.execute(
+                """
+                insert into outcome_repair_audit
+                (audit_id, repair_version, mode, dry_run, applied, signal_id, symbol, setup_slug,
+                 session_date, old_status, new_status, reason, created_at, payload_json)
+                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    f"s840c:audit:{uuid.uuid4().hex}",
+                    S840C_NO_EVAL_MISSING_CANDLES_VERSION,
+                    "classify_no_eval_missing_future_candles",
+                    0,
+                    1,
+                    signal_id,
+                    row.get("symbol"),
+                    row.get("setup_slug"),
+                    row.get("session_date"),
+                    row.get("status"),
+                    "NO_EVAL_MISSING_FUTURE_CANDLES",
+                    reason,
+                    now_iso,
+                    json.dumps(audit_payload, ensure_ascii=False),
+                ),
+            )
+
+            applied += 1
+
+    if can_write:
+        con.commit()
+    else:
+        con.rollback()
+
+    try:
+        con.close()
+    except Exception:
+        pass
+
+    return {
+        "ok": True,
+        "storageVersion": S840C_NO_EVAL_MISSING_CANDLES_VERSION,
+        "generatedAt": now_iso,
+        "mode": "no_eval_missing_future_candles_classifier",
+        "dryRun": bool(dry_run),
+        "confirm": bool(confirm),
+        "filters": {
+            "setupSlug": setup_slug,
+            "symbol": symbol,
+            "sessionDate": session_date,
+            "minAgeDays": min_age_days,
+            "limit": safe_limit,
+            "requireZeroCandlesChecked": bool(require_zero_candles_checked),
+            "onlySignalIdPrefix": "stock:",
+        },
+        "summary": {
+            "scanned": scanned,
+            "candidates": candidates,
+            "applied": applied,
+            "skipped": skipped,
+            "bySetup": dict(sorted(by_setup.items(), key=lambda kv: kv[1], reverse=True)),
+            "skipReasons": dict(sorted(skip_reasons.items(), key=lambda kv: kv[1], reverse=True)),
+        },
+        "policy": {
+            "dryRunDefault": True,
+            "writeRequiresDryRunFalseAndConfirmTrue": True,
+            "writesDb": bool(can_write),
+            "changesOutcomes": bool(can_write),
+            "doesNotTouchWorkedFailed": True,
+            "doesNotCreateWinLoss": True,
+            "doesNotInferTpStop": True,
+            "setsExcludeFromWinRate": True,
+            "setsExcludeFromCalibration": True,
+            "changesClientDelivery": False,
+            "sendsTelegram": False,
+            "changesRegistry": False,
+            "createsBackupBeforeUpdate": bool(can_write),
+            "writesAuditRecord": bool(can_write),
+        },
+        "samples": samples,
+        "nextAllowedStep": "After classification, rerun repair-plan, strategy evidence, promotion readiness and investor dashboard to verify OPEN dirty rows dropped without creating fake wins/losses.",
+    }
+
+# === /S8.40C No-Eval Missing Future Candles Classifier ===
+
