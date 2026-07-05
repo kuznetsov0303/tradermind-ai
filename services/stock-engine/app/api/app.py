@@ -19672,3 +19672,354 @@ def engine_strategies_manual_approval_upsert(payload: dict):
 
 # === /S8.39A Strategy Manual Approval Storage ===
 
+
+# === S8.40A Outcome Pipeline Repair Planner ===
+S840A_OUTCOME_REPAIR_PLANNER_VERSION = "s8_40a_outcome_pipeline_repair_planner_v1_1"
+
+
+def _s840a_has_table(con, table_name):
+    row = con.execute(
+        "select name from sqlite_master where type='table' and name=?",
+        (table_name,),
+    ).fetchone()
+    return bool(row)
+
+
+def _s840a_columns(con, table_name):
+    if not _s840a_has_table(con, table_name):
+        return []
+    rows = con.execute(f"pragma table_info({table_name})").fetchall()
+    return [row["name"] for row in rows]
+
+
+def _s840a_col(columns, *names):
+    for name in names:
+        if name in columns:
+            return name
+    return None
+
+
+def _s840a_num(value, fallback=0.0):
+    try:
+        if value is None:
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s840a_int(value, fallback=0):
+    try:
+        if value is None:
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s840a_ratio(part, total):
+    total = _s840a_num(total)
+    if total <= 0:
+        return 0.0
+    return round((_s840a_num(part) / total) * 100.0, 2)
+
+
+def _s840a_status_bucket(status):
+    s = str(status or "").strip().upper()
+    if s in {"WORKED", "TP1", "TP2", "TARGET", "TARGET_HIT", "WIN"}:
+        return "worked"
+    if s in {"FAILED", "STOP", "STOPPED", "STOP_HIT", "LOSS"}:
+        return "failed"
+    if s in {"SESSION_CLOSE", "EXPIRED", "EXPIRED_SESSION", "SESSION_EXPIRED", "TIMEOUT", "NO_DECISION"}:
+        return "session_close"
+    if s in {"OPEN", "ACTIVE", "PENDING", "UNKNOWN", ""}:
+        return "open"
+    return "other"
+
+
+def _s840a_safe_query_value(row, key, fallback=None):
+    try:
+        return row[key]
+    except Exception:
+        return fallback
+
+
+@app.get("/engine/outcomes/repair-plan")
+def engine_outcomes_repair_plan(
+    limit: int = 20,
+    min_total: int = 1,
+    dirty_open_ratio: float = 20.0,
+    dirty_session_close_ratio: float = 20.0,
+    include_samples: bool = True,
+):
+    import json
+    import sqlite3
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 20), 100))
+    safe_min_total = max(1, int(min_total or 1))
+    safe_dirty_open_ratio = max(0.0, float(dirty_open_ratio))
+    safe_dirty_session_close_ratio = max(0.0, float(dirty_session_close_ratio))
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+
+    if not _s840a_has_table(con, "outcome_records"):
+        con.close()
+        return {
+            "ok": False,
+            "storageVersion": S840A_OUTCOME_REPAIR_PLANNER_VERSION,
+            "error": "outcome_records table not found",
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "changesClientDelivery": False,
+                "sendsTelegram": False,
+            },
+        }
+
+    outcome_columns = _s840a_columns(con, "outcome_records")
+    signal_id_col = _s840a_col(outcome_columns, "signal_id", "id")
+    setup_col = _s840a_col(outcome_columns, "setup_slug", "setup")
+    symbol_col = _s840a_col(outcome_columns, "symbol", "ticker")
+    status_col = _s840a_col(outcome_columns, "status", "result")
+    session_date_col = _s840a_col(outcome_columns, "session_date", "date")
+    trigger_time_col = _s840a_col(outcome_columns, "trigger_time", "created_at", "evaluated_at", "stored_at")
+    payload_col = _s840a_col(outcome_columns, "payload_json", "payload")
+
+    required_missing = [
+        name for name, col in {
+            "signal_id": signal_id_col,
+            "setup_slug": setup_col,
+            "status": status_col,
+        }.items()
+        if not col
+    ]
+
+    if required_missing:
+        con.close()
+        return {
+            "ok": False,
+            "storageVersion": S840A_OUTCOME_REPAIR_PLANNER_VERSION,
+            "error": "outcome_records missing required columns",
+            "missingColumns": required_missing,
+            "actualColumns": outcome_columns,
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "changesClientDelivery": False,
+                "sendsTelegram": False,
+            },
+        }
+
+    select_parts = [
+        f"{setup_col} as setup_slug",
+        "count(*) as total",
+        f"sum(case when upper(coalesce({status_col}, '')) in ('WORKED','TP1','TP2','TARGET','TARGET_HIT','WIN') then 1 else 0 end) as worked",
+        f"sum(case when upper(coalesce({status_col}, '')) in ('FAILED','STOP','STOPPED','STOP_HIT','LOSS') then 1 else 0 end) as failed",
+        f"sum(case when upper(coalesce({status_col}, '')) in ('OPEN','ACTIVE','PENDING','UNKNOWN','') then 1 else 0 end) as open_count",
+        f"sum(case when upper(coalesce({status_col}, '')) in ('SESSION_CLOSE','EXPIRED','EXPIRED_SESSION','SESSION_EXPIRED','TIMEOUT','NO_DECISION') then 1 else 0 end) as session_close_count",
+        f"sum(case when upper(coalesce({status_col}, '')) not in ('WORKED','TP1','TP2','TARGET','TARGET_HIT','WIN','FAILED','STOP','STOPPED','STOP_HIT','LOSS','OPEN','ACTIVE','PENDING','UNKNOWN','','SESSION_CLOSE','EXPIRED','EXPIRED_SESSION','SESSION_EXPIRED','TIMEOUT','NO_DECISION') then 1 else 0 end) as other_count",
+    ]
+
+    if payload_col:
+        select_parts.append(f"sum(case when {payload_col} is not null and length(trim({payload_col})) > 2 then 1 else 0 end) as rows_with_payload")
+    else:
+        select_parts.append("0 as rows_with_payload")
+
+    if trigger_time_col:
+        select_parts.append(f"sum(case when {trigger_time_col} is not null and length(trim({trigger_time_col})) > 0 then 1 else 0 end) as rows_with_trigger_time")
+    else:
+        select_parts.append("0 as rows_with_trigger_time")
+
+    if session_date_col:
+        select_parts.append(f"min({session_date_col}) as first_session_date")
+        select_parts.append(f"max({session_date_col}) as latest_session_date")
+    else:
+        select_parts.append("null as first_session_date")
+        select_parts.append("null as latest_session_date")
+
+    rows = con.execute(
+        f"""
+        select
+            {", ".join(select_parts)}
+        from outcome_records
+        where {setup_col} is not null and trim({setup_col}) != ''
+        group by {setup_col}
+        having count(*) >= ?
+        order by
+            (sum(case when upper(coalesce({status_col}, '')) in ('OPEN','ACTIVE','PENDING','UNKNOWN','') then 1 else 0 end)
+            + sum(case when upper(coalesce({status_col}, '')) in ('SESSION_CLOSE','EXPIRED','EXPIRED_SESSION','SESSION_EXPIRED','TIMEOUT','NO_DECISION') then 1 else 0 end)) desc,
+            count(*) desc
+        limit ?
+        """,
+        (safe_min_total, safe_limit),
+    ).fetchall()
+
+    total_outcomes = int(con.execute("select count(*) as c from outcome_records").fetchone()["c"])
+    total_by_status_rows = con.execute(
+        f"""
+        select upper(coalesce({status_col}, 'UNKNOWN')) as status, count(*) as c
+        from outcome_records
+        group by upper(coalesce({status_col}, 'UNKNOWN'))
+        order by c desc
+        """
+    ).fetchall()
+    total_by_status = {str(row["status"] or "UNKNOWN"): int(row["c"] or 0) for row in total_by_status_rows}
+
+    persisted_signal_table_exists = _s840a_has_table(con, "persisted_signal_records")
+    signal_columns = _s840a_columns(con, "persisted_signal_records") if persisted_signal_table_exists else []
+    signal_id_signal_col = _s840a_col(signal_columns, "signal_id", "id") if signal_columns else None
+
+    items = []
+    dirty_count = 0
+    repair_candidate_total = 0
+    not_repairable_total = 0
+
+    for row in rows:
+        total = _s840a_int(row["total"])
+        worked = _s840a_int(row["worked"])
+        failed = _s840a_int(row["failed"])
+        open_count = _s840a_int(row["open_count"])
+        session_close_count = _s840a_int(row["session_close_count"])
+        other_count = _s840a_int(row["other_count"])
+        closed = worked + failed
+        dirty_total = open_count + session_close_count
+        open_ratio = _s840a_ratio(open_count, total)
+        session_close_ratio = _s840a_ratio(session_close_count, total)
+        dirty_ratio = _s840a_ratio(dirty_total, total)
+        rows_with_payload = _s840a_int(row["rows_with_payload"])
+        rows_with_trigger_time = _s840a_int(row["rows_with_trigger_time"])
+
+        is_dirty = open_ratio >= safe_dirty_open_ratio or session_close_ratio >= safe_dirty_session_close_ratio
+        if is_dirty:
+            dirty_count += 1
+
+        repairable_score = 0
+        if rows_with_payload > 0:
+            repairable_score += 1
+        if rows_with_trigger_time > 0:
+            repairable_score += 1
+        if persisted_signal_table_exists and signal_id_signal_col:
+            repairable_score += 1
+
+        if dirty_total <= 0:
+            repair_mode = "NO_REPAIR_NEEDED"
+        elif repairable_score >= 2:
+            repair_mode = "REPLAY_FROM_SIGNAL_PAYLOAD_AND_CANDLES"
+        elif repairable_score == 1:
+            repair_mode = "PARTIAL_REPLAY_REQUIRES_PAYLOAD_AUDIT"
+        else:
+            repair_mode = "NOT_REPAIRABLE_WITH_CURRENT_DATA"
+
+        if repair_mode in {"REPLAY_FROM_SIGNAL_PAYLOAD_AND_CANDLES", "PARTIAL_REPLAY_REQUIRES_PAYLOAD_AUDIT"}:
+            repair_candidate_total += dirty_total
+        elif dirty_total > 0:
+            not_repairable_total += dirty_total
+
+        warnings = []
+        if open_ratio >= safe_dirty_open_ratio:
+            warnings.append("High OPEN ratio. Replay completeness must be checked.")
+        if session_close_ratio >= safe_dirty_session_close_ratio:
+            warnings.append("High SESSION_CLOSE/EXPIRED ratio. These rows must not be treated as wins/losses.")
+        if closed <= 0:
+            warnings.append("No closed TP/STOP decisions for this setup.")
+        if repair_mode == "NOT_REPAIRABLE_WITH_CURRENT_DATA":
+            warnings.append("Current stored rows do not expose enough payload/trigger data for safe replay.")
+
+        samples = []
+        if include_samples and is_dirty:
+            sample_rows = con.execute(
+                f"""
+                select *
+                from outcome_records
+                where {setup_col}=?
+                  and upper(coalesce({status_col}, '')) in ('OPEN','ACTIVE','PENDING','UNKNOWN','','SESSION_CLOSE','EXPIRED','EXPIRED_SESSION','SESSION_EXPIRED','TIMEOUT','NO_DECISION')
+                order by coalesce({trigger_time_col if trigger_time_col else signal_id_col}, '') desc
+                limit 5
+                """,
+                (row["setup_slug"],),
+            ).fetchall()
+
+            for sample in sample_rows:
+                payload = {}
+                if payload_col:
+                    try:
+                        payload = json.loads(sample[payload_col] or "{}")
+                    except Exception:
+                        payload = {}
+
+                samples.append({
+                    "signalId": _s840a_safe_query_value(sample, signal_id_col),
+                    "symbol": _s840a_safe_query_value(sample, symbol_col) if symbol_col else None,
+                    "setupSlug": _s840a_safe_query_value(sample, setup_col),
+                    "status": _s840a_safe_query_value(sample, status_col),
+                    "sessionDate": _s840a_safe_query_value(sample, session_date_col) if session_date_col else None,
+                    "triggerTime": _s840a_safe_query_value(sample, trigger_time_col) if trigger_time_col else None,
+                    "hasPayload": bool(payload),
+                    "payloadKeys": sorted(list(payload.keys()))[:20] if isinstance(payload, dict) else [],
+                })
+
+        items.append({
+            "setupSlug": row["setup_slug"],
+            "totalOutcomes": total,
+            "worked": worked,
+            "failed": failed,
+            "closedTpStop": closed,
+            "open": open_count,
+            "sessionCloseOrExpired": session_close_count,
+            "other": other_count,
+            "dirtyRows": dirty_total,
+            "openRatioPct": open_ratio,
+            "sessionCloseRatioPct": session_close_ratio,
+            "dirtyRatioPct": dirty_ratio,
+            "firstSessionDate": row["first_session_date"],
+            "latestSessionDate": row["latest_session_date"],
+            "rowsWithPayload": rows_with_payload,
+            "rowsWithTriggerTime": rows_with_trigger_time,
+            "repairMode": repair_mode,
+            "isDirtyPipeline": is_dirty,
+            "warnings": warnings,
+            "sampleDirtyRows": samples,
+        })
+
+    con.close()
+
+    return {
+        "ok": True,
+        "storageVersion": S840A_OUTCOME_REPAIR_PLANNER_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "totalOutcomes": total_outcomes,
+            "returnedSetups": len(items),
+            "dirtySetupsReturned": dirty_count,
+            "dirtyRowsInReturnedSetups": sum(int(item["dirtyRows"]) for item in items),
+            "repairCandidateRowsInReturnedSetups": repair_candidate_total,
+            "notRepairableRowsInReturnedSetups": not_repairable_total,
+            "thresholds": {
+                "minTotal": safe_min_total,
+                "dirtyOpenRatioPct": safe_dirty_open_ratio,
+                "dirtySessionCloseRatioPct": safe_dirty_session_close_ratio,
+            },
+            "tables": {
+                "outcomeRecords": True,
+                "persistedSignalRecords": persisted_signal_table_exists,
+            },
+            "totalByStatus": total_by_status,
+        },
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "changesOutcomes": False,
+            "changesClientDelivery": False,
+            "sendsTelegram": False,
+            "autoPromotesStrategies": False,
+            "plannerOnly": True,
+        },
+        "nextAllowedStep": "Build controlled repair executor only after this plan confirms replayable rows and safe backup strategy.",
+        "items": items,
+    }
+
+# === /S8.40A Outcome Pipeline Repair Planner ===
+
+
