@@ -22034,3 +22034,420 @@ def engine_research_evidence_baseline_latest():
     return payload
 
 # === /S8.41 Recalibrated Evidence Baseline ===
+# === S8.43 Strategy Filter Review / Negative Edge Triage ===
+S843_STRATEGY_FILTER_REVIEW_VERSION = "s8_43_strategy_filter_review_negative_edge_triage_v1"
+
+
+def _s843_now_iso():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s843_num(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s843_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def _s843_slug_rules(slug, direction=None):
+    slug = str(slug or "").strip()
+
+    generic = [
+        "Keep strategy research-only until closed TP/STOP evidence improves.",
+        "Require stronger trigger confirmation before ARMED -> ACTIVE.",
+        "Block weak primary_trigger variants in shadow/paper first; do not change client delivery.",
+        "Reject late-session/chase entries unless RR, structure and trigger quality are exceptional.",
+        "Keep manual approval required even if filters improve the sample.",
+    ]
+
+    specific = {
+        "vwap_reclaim_long": [
+            "Require reclaim candle to hold above VWAP and EMA20, not just touch/reclaim for one candle.",
+            "Block ema20_reclaim_5m and vwap_reclaim_5m variants until shadow evidence improves.",
+            "Require higher-low confirmation after reclaim instead of buying first reclaim candle.",
+            "Reject reclaim longs with weak RVOL/spread data or missing liquidity confirmation.",
+        ],
+        "gap_and_crap_short": [
+            "Require confirmed lower high after failed push, not immediate short after gap.",
+            "Block vwap_rejection_5m, ema20_loss_5m and lower_high_5m variants in shadow if trigger-level WR remains below threshold.",
+            "Reject shorts after the move is already extended into support unless TP1 has clean structural room.",
+            "Require clean liquidity/spread and avoid crowded late entries.",
+        ],
+        "vwap_rejection_short": [
+            "Require rejection from VWAP plus lower-high structure, not only a VWAP touch/fade.",
+            "Block UNKNOWN primary_trigger rows from promotion evidence and client delivery.",
+            "Require price to stay below VWAP/EMA20 after rejection before ACTIVE.",
+            "Reject shorts with weak liquidity/spread context or poor structural stop location.",
+        ],
+        "opening_range_breakout_long": [
+            "Require ORB retest/hold or strong continuation candle instead of first breakout touch.",
+            "Reject breakout longs where TP1 room is too small after spread/ATR adjustment.",
+            "Block weak trigger variants and avoid late-session breakouts without volume expansion.",
+            "Require RVOL/volume acceleration confirmation before ACTIVE.",
+        ],
+        "premarket_pump_short": [
+            "Keep positive avgR but low win-rate setup research-only until trigger precision improves.",
+            "Require lower-high + VWAP/EMA loss confirmation together before ACTIVE.",
+            "Avoid early shorts into first parabolic extension without failed reclaim confirmation.",
+            "Reject late entries where stop distance expands and entry is too far from invalidation.",
+        ],
+    }
+
+    return generic + specific.get(slug, [])
+
+
+def _s843_trigger_action(trigger):
+    closed = _s843_int((trigger or {}).get("closedDecisionCount"))
+    win_rate = _s843_num((trigger or {}).get("winRateClosed"), 0.0)
+    avg_r = _s843_num((trigger or {}).get("avgRClosed"), 0.0)
+
+    if closed >= 5 and (win_rate < 35.0 or avg_r < 0.0):
+        return "BLOCK_OR_DEMOTE_IN_SHADOW_TEST"
+    if closed >= 5 and win_rate < 50.0:
+        return "TIGHTEN_CONFIRMATION_IN_SHADOW_TEST"
+    return "OBSERVE_MORE_SAMPLE"
+
+
+def _s843_setup_decision(item, min_closed=30):
+    evidence = item.get("evidence") or {}
+    closed = _s843_int(evidence.get("closedDecisionCount"))
+    win_rate = _s843_num(evidence.get("winRateClosed"))
+    avg_r = _s843_num(evidence.get("avgRClosed"))
+
+    demotion = bool(item.get("demotionCandidate"))
+    failure_status = str(item.get("failureStatus") or "")
+    weak_triggers = item.get("weakTriggerVariants") or []
+
+    if demotion or failure_status == "DEMOTION_CANDIDATE_RESEARCH_ONLY":
+        return "KEEP_RESEARCH_ONLY_DEMOTION_CANDIDATE"
+
+    if closed >= min_closed and (win_rate is None or win_rate < 65.0 or avg_r is None or avg_r <= 0.0):
+        return "KEEP_BLOCKED_FILTER_REVIEW_REQUIRED"
+
+    if weak_triggers:
+        return "KEEP_PAPER_EVIDENCE_BUILDING_TRIGGER_REVIEW"
+
+    return "OBSERVE_ONLY"
+
+
+def _s843_build_filter_review(limit=200, min_closed=30, min_trigger_closed=5):
+    import uuid
+    from datetime import datetime, timezone
+
+    created_at = datetime.now(timezone.utc).isoformat()
+    report_id = "strategy_filter_review:" + created_at + ":" + uuid.uuid4().hex[:10]
+
+    try:
+        failure = engine_research_failure_analysis(
+            limit=limit,
+            include_all=False,
+            min_closed=min_closed,
+            min_trigger_closed=min_trigger_closed,
+        )
+    except TypeError:
+        failure = engine_research_failure_analysis(
+            limit=limit,
+            min_closed=min_closed,
+            min_trigger_closed=min_trigger_closed,
+        )
+
+    items = failure.get("items") or []
+    reviewed = []
+
+    for item in items:
+        evidence = item.get("evidence") or {}
+        closed = _s843_int(evidence.get("closedDecisionCount"))
+        win_rate = _s843_num(evidence.get("winRateClosed"))
+        avg_r = _s843_num(evidence.get("avgRClosed"))
+        demotion = bool(item.get("demotionCandidate"))
+
+        has_negative_edge = (
+            closed >= min_closed
+            and (
+                win_rate is None
+                or avg_r is None
+                or win_rate < 65.0
+                or avg_r <= 0.0
+            )
+        )
+
+        if not demotion and not has_negative_edge:
+            continue
+
+        weak_triggers = []
+        for trigger in item.get("weakTriggerVariants") or []:
+            weak_triggers.append({
+                "primaryTrigger": trigger.get("primaryTrigger"),
+                "total": trigger.get("total"),
+                "closedDecisionCount": trigger.get("closedDecisionCount"),
+                "worked": trigger.get("worked"),
+                "failed": trigger.get("failed"),
+                "winRateClosed": trigger.get("winRateClosed"),
+                "avgRClosed": trigger.get("avgRClosed"),
+                "stopRateClosed": trigger.get("stopRateClosed"),
+                "recommendedShadowAction": _s843_trigger_action(trigger),
+                "sourceRecommendedAction": trigger.get("recommendedAction"),
+            })
+
+        decision = _s843_setup_decision(item, min_closed=min_closed)
+        reviewed.append({
+            "setupSlug": item.get("setupSlug"),
+            "setupName": item.get("setupName"),
+            "family": item.get("family"),
+            "assetType": item.get("assetType"),
+            "direction": item.get("direction"),
+            "enabled": item.get("enabled"),
+            "executionStatus": item.get("executionStatus"),
+            "failureStatus": item.get("failureStatus"),
+            "severity": item.get("severity"),
+            "decision": decision,
+            "clientVisible": False,
+            "manualApprovalRequired": True,
+            "demotionCandidate": demotion,
+            "evidence": {
+                "total": evidence.get("total"),
+                "closedDecisionCount": closed,
+                "worked": evidence.get("worked"),
+                "failed": evidence.get("failed"),
+                "winRateClosed": win_rate,
+                "avgRClosed": avg_r,
+                "stopRateClosed": evidence.get("stopRateClosed"),
+                "openPct": evidence.get("openPct"),
+                "evidenceSessionClosePct": evidence.get("evidenceSessionClosePct") or evidence.get("sessionCloseEvidencePct"),
+                "otherPct": evidence.get("otherPct"),
+            },
+            "featureCoverage": item.get("featureCoverage"),
+            "weakTriggerVariants": weak_triggers,
+            "issues": item.get("issues") or [],
+            "filtersToTest": list(dict.fromkeys((item.get("filtersToTest") or []) + _s843_slug_rules(item.get("setupSlug"), item.get("direction")))),
+            "riskControls": list(dict.fromkeys((item.get("riskControls") or []) + [
+                "Keep risk/client visibility at zero until new clean closed evidence improves.",
+                "Do not approve client-visible delivery from this report alone.",
+            ])),
+            "pipelineFixes": item.get("pipelineFixes") or [],
+            "rulesContext": item.get("rulesContext") or {},
+        })
+
+    reviewed = sorted(
+        reviewed,
+        key=lambda x: (
+            0 if x.get("demotionCandidate") else 1,
+            -_s843_int((x.get("evidence") or {}).get("closedDecisionCount")),
+            _s843_num((x.get("evidence") or {}).get("winRateClosed"), 999.0),
+        ),
+    )
+
+    trigger_blocks = 0
+    for setup in reviewed:
+        for trigger in setup.get("weakTriggerVariants") or []:
+            if trigger.get("recommendedShadowAction") == "BLOCK_OR_DEMOTE_IN_SHADOW_TEST":
+                trigger_blocks += 1
+
+    summary = {
+        "reviewedSetups": len(reviewed),
+        "demotionCandidates": len([x for x in reviewed if x.get("demotionCandidate")]),
+        "negativeEdgeSetups": len([x for x in reviewed if _s843_int((x.get("evidence") or {}).get("closedDecisionCount")) >= min_closed]),
+        "triggerBlocksToTest": trigger_blocks,
+        "clientVisibleApproved": 0,
+        "manualApprovalRequired": len(reviewed),
+        "pipelineFixesRequired": len([x for x in reviewed if len(x.get("pipelineFixes") or []) > 0]),
+        "sourceFailureSummary": failure.get("summary") or {},
+    }
+
+    return {
+        "ok": True,
+        "storageVersion": S843_STRATEGY_FILTER_REVIEW_VERSION,
+        "reportId": report_id,
+        "createdAt": created_at,
+        "mode": "strategy_filter_review_negative_edge_triage",
+        "thresholds": {
+            "minClosed": min_closed,
+            "minTriggerClosed": min_trigger_closed,
+            "promotionWinRateMin": 65.0,
+            "promotionAvgRMin": 0.0,
+        },
+        "summary": summary,
+        "items": reviewed,
+        "policy": {
+            "researchOnly": True,
+            "noClientVisibleChanges": True,
+            "doesNotChangeOutcomes": True,
+            "doesNotSendTelegram": True,
+            "doesNotPromoteStrategies": True,
+            "doesNotApplyAdjustments": True,
+            "manualApprovalStillRequired": True,
+            "writesReportOnly": True,
+        },
+        "nextAction": {
+            "engineering": "Create shadow/paper filter experiments for the reviewed weak trigger variants.",
+            "ops": "Keep all reviewed setups blocked from client visibility until new evidence passes gates.",
+            "investor": "Use this report as internal triage evidence only, not as marketing claims.",
+        },
+    }
+
+
+def _s843_ensure_report_table(con):
+    con.execute(
+        """
+        create table if not exists strategy_filter_review_reports (
+            report_id text primary key,
+            created_at text not null,
+            storage_version text not null,
+            reviewed_setups integer not null default 0,
+            demotion_candidates integer not null default 0,
+            negative_edge_setups integer not null default 0,
+            trigger_blocks_to_test integer not null default 0,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute(
+        "create index if not exists idx_strategy_filter_review_reports_created on strategy_filter_review_reports(created_at desc)"
+    )
+
+
+def _s843_reports_dir():
+    import os
+    from pathlib import Path
+
+    preferred = Path("/opt/skilledge/stock-engine/reports/strategy_filter_review")
+    try:
+        if Path("/opt/skilledge/stock-engine").exists():
+            preferred.mkdir(parents=True, exist_ok=True)
+            return preferred
+    except Exception:
+        pass
+
+    fallback = Path(os.getcwd()) / "reports" / "strategy_filter_review"
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+def _s843_persist_report(report):
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s843_ensure_report_table(con)
+
+    summary = report.get("summary") or {}
+    con.execute(
+        """
+        insert or replace into strategy_filter_review_reports
+        (report_id, created_at, storage_version, reviewed_setups, demotion_candidates,
+         negative_edge_setups, trigger_blocks_to_test, payload_json)
+        values (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            report.get("reportId"),
+            report.get("createdAt"),
+            report.get("storageVersion"),
+            _s843_int(summary.get("reviewedSetups")),
+            _s843_int(summary.get("demotionCandidates")),
+            _s843_int(summary.get("negativeEdgeSetups")),
+            _s843_int(summary.get("triggerBlocksToTest")),
+            json.dumps(report, ensure_ascii=False),
+        ),
+    )
+    con.commit()
+    con.close()
+
+    out_dir = _s843_reports_dir()
+    latest_path = out_dir / "latest.json"
+    stamp = str(report.get("createdAt") or "").replace(":", "-").replace(".", "-")
+    snapshot_path = out_dir / f"{stamp}.json"
+
+    text = json.dumps(report, ensure_ascii=False, indent=2)
+    latest_path.write_text(text, encoding="utf-8")
+    snapshot_path.write_text(text, encoding="utf-8")
+
+    return {
+        "dbPersisted": True,
+        "filePersisted": True,
+        "latestPath": str(latest_path),
+        "snapshotPath": str(snapshot_path),
+    }
+
+
+@app.post("/engine/research/strategy-filter-review/run")
+def engine_research_strategy_filter_review_run(
+    publish: bool = True,
+    limit: int = 200,
+    min_closed: int = 30,
+    min_trigger_closed: int = 5,
+):
+    report = _s843_build_filter_review(
+        limit=limit,
+        min_closed=min_closed,
+        min_trigger_closed=min_trigger_closed,
+    )
+
+    persistence = {
+        "dbPersisted": False,
+        "filePersisted": False,
+        "latestPath": None,
+        "snapshotPath": None,
+    }
+
+    if publish:
+        persistence = _s843_persist_report(report)
+
+    report["publish"] = bool(publish)
+    report["persistence"] = persistence
+    return report
+
+
+@app.get("/engine/research/strategy-filter-review/latest")
+def engine_research_strategy_filter_review_latest():
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s843_ensure_report_table(con)
+
+    row = con.execute(
+        """
+        select payload_json
+        from strategy_filter_review_reports
+        order by created_at desc
+        limit 1
+        """
+    ).fetchone()
+    con.close()
+
+    if not row:
+        return {
+            "ok": False,
+            "storageVersion": S843_STRATEGY_FILTER_REVIEW_VERSION,
+            "error": "strategy_filter_review_not_found",
+            "nextAction": "Run POST /engine/research/strategy-filter-review/run?publish=true first.",
+        }
+
+    try:
+        payload = json.loads(row["payload_json"] or "{}")
+    except Exception as error:
+        return {
+            "ok": False,
+            "storageVersion": S843_STRATEGY_FILTER_REVIEW_VERSION,
+            "error": "strategy_filter_review_payload_parse_failed",
+            "details": repr(error),
+        }
+
+    payload["source"] = "db_latest"
+    return payload
+
+# === /S8.43 Strategy Filter Review / Negative Edge Triage ===
