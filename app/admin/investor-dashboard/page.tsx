@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import InvestorDashboardSection from "@/components/admin/InvestorDashboardSection";
 
@@ -12,7 +12,7 @@ export default function AdminInvestorDashboardPage() {
               href="/admin"
               className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[13px] font-bold text-slate-300 transition hover:bg-white/[0.08]"
             >
-              ← Back to Admin Hub
+              {"<- Back to Admin Hub"}
             </a>
 
             <h1 className="mt-5 text-[34px] font-black tracking-tight text-white">
@@ -20,8 +20,8 @@ export default function AdminInvestorDashboardPage() {
             </h1>
 
             <p className="mt-2 max-w-3xl text-[14px] leading-6 text-slate-400">
-              Закрытый investor-grade раздел: продуктовая ценность, AI learning,
-              PnL simulation, win rate, стратегии, readiness и масштабирование.
+              Private investor-grade dashboard: product value, AI learning, evidence quality,
+              readiness, blockers and the path to scalable client delivery.
             </p>
           </div>
 
@@ -35,3 +35,5 @@ export default function AdminInvestorDashboardPage() {
     </main>
   );
 }
+
+

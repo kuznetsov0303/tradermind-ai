@@ -17,7 +17,7 @@ function arr(value: unknown): unknown[] {
   return Array.isArray(value) ? value : [];
 }
 
-function str(value: unknown, fallback = "—") {
+function str(value: unknown, fallback = "-") {
   return typeof value === "string" && value.trim() ? value : fallback;
 }
 
@@ -26,7 +26,12 @@ function strings(value: unknown): string[] {
     .map((item) => {
       if (typeof item === "string") return item;
       const record = rec(item);
-      return str(record.label, "") || str(record.title, "") || str(record.message, "") || str(record.note, "");
+      return (
+        str(record.label, "") ||
+        str(record.title, "") ||
+        str(record.message, "") ||
+        str(record.note, "")
+      );
     })
     .filter(Boolean);
 }
@@ -42,19 +47,23 @@ function num(value: unknown): number | null {
 
 function pct(value: unknown) {
   const n = num(value);
-  return n === null ? "—" : `${n.toFixed(2)}%`;
+  return n === null ? "-" : `${n.toFixed(2)}%`;
 }
 
 function r(value: unknown) {
   const n = num(value);
-  if (n === null) return "—";
+  if (n === null) return "-";
   return `${n >= 0 ? "+" : ""}${n.toFixed(3)}R`;
 }
 
 function usd(value: unknown) {
   const n = num(value);
-  if (n === null) return "—";
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  if (n === null) return "-";
+  return n.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
 }
 
 function unwrap(raw: unknown): Json | null {
@@ -83,7 +92,7 @@ function Kpi({ label, value, sub }: { label: string; value: string; sub: string 
     <div className="rounded-[24px] border border-white/10 bg-white/[0.035] p-5">
       <div className="text-[11px] uppercase tracking-[0.2em] text-slate-500">{label}</div>
       <div className="mt-3 text-[28px] font-black text-white">{value}</div>
-      <div className="mt-1 text-[13px] text-slate-400">{sub}</div>
+      <div className="mt-1 text-[13px] leading-5 text-slate-400">{sub}</div>
     </div>
   );
 }
@@ -110,16 +119,14 @@ function Widget({
           <p className="mt-1 text-[13px] leading-5 text-slate-400">{subtitle}</p>
         </div>
         <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[12px] text-slate-300 group-open:hidden">
-          раскрыть
+          open
         </span>
         <span className="hidden rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-[12px] text-emerald-200 group-open:inline-flex">
-          открыто
+          opened
         </span>
       </summary>
 
-      <div className="mt-5 border-t border-white/10 pt-5">
-        {children}
-      </div>
+      <div className="mt-5 border-t border-white/10 pt-5">{children}</div>
     </details>
   );
 }
@@ -127,8 +134,42 @@ function Widget({
 function InfoTile({ title, text }: { title: string; text: string }) {
   return (
     <div className="rounded-[20px] border border-white/10 bg-white/[0.035] p-4">
-      <div className="text-[12px] font-black uppercase tracking-[0.16em] text-emerald-200">{title}</div>
+      <div className="text-[12px] font-black uppercase tracking-[0.16em] text-emerald-200">
+        {title}
+      </div>
       <p className="mt-3 text-[14px] leading-6 text-slate-300">{text}</p>
+    </div>
+  );
+}
+
+function Mini({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+      <div className="text-[10px] uppercase tracking-[0.16em] text-slate-500">{label}</div>
+      <div className="mt-1 text-[15px] font-black text-white">{value}</div>
+    </div>
+  );
+}
+
+function SmallList({
+  title,
+  items,
+  tone,
+}: {
+  title: string;
+  items: string[];
+  tone: "green" | "red";
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+      <div className={tone === "green" ? "text-emerald-200" : "text-red-200"}>{title}</div>
+      <div className="mt-2 space-y-1">
+        {(items.length ? items.slice(0, 6) : ["-"]).map((item) => (
+          <div key={item} className="text-[12px] leading-5 text-slate-400">
+            {item}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -192,6 +233,7 @@ export default function InvestorDashboardSection() {
     const readiness = rec(data.marketingReadiness);
     const narrative = rec(data.investorNarrative);
     const learning = rec(data.setupLearning);
+    const learningSummary = rec(learning.summary);
 
     const strategyRows = arr(learning.cards).filter(isJson);
     const curveRows = arr(all.curveSample).filter(isJson);
@@ -203,8 +245,8 @@ export default function InvestorDashboardSection() {
       label: str(row.date, `T${index + 1}`),
       equity: num(row.equity),
       pnl: num(row.resultR),
-      setup: str(row.setupSlug, "—"),
-      symbol: str(row.symbol, "—"),
+      setup: str(row.setupSlug, "-"),
+      symbol: str(row.symbol, "-"),
     }));
 
     const rowsByPeriod =
@@ -220,32 +262,58 @@ export default function InvestorDashboardSection() {
       rawWinRate: metrics.rawWinRateClosed,
       rawAvgR: metrics.rawAvgResultRClosed,
       rawClosed: metrics.rawClosedOutcomes,
+      registryTotal: metrics.registryTotal,
+      withClosedEvidence: metrics.withClosedEvidence,
+      withMeaningfulSample: metrics.withMeaningfulSample,
+      dirtyOutcomePipelines: metrics.dirtyOutcomePipelines,
+      negativeEdgeSetups: metrics.negativeEdgeSetups,
+      promotionCandidates: metrics.promotionCandidates,
+      clientVisibleApproved: metrics.clientVisibleApproved,
       finalEquity: all.finalEquity,
       totalReturnPct: all.totalReturnPct,
       maxDrawdownPct: all.maxDrawdownPct,
+      equityStatus: str(all.status, "DISABLED_UNTIL_CLEAN_CLIENT_VISIBLE_SAMPLE"),
       cleanEliteClosed: elite.closedTrades,
       cleanEliteStatus: str(elite.status, "collecting clean elite sample"),
-      readinessStatus: str(readiness.status, "PRIVATE_BETA_AND_WAITLIST"),
-      recommendation: str(readiness.recommendation, "Private beta / waitlist до clean elite sample."),
+      readinessStatus: str(readiness.status, "PRIVATE_BETA_EVIDENCE_BUILDING"),
+      recommendation: str(
+        readiness.recommendation,
+        "Private beta only. Keep collecting clean evidence before scale marketing.",
+      ),
       positives: strings(readiness.positives),
       blockers: strings(readiness.blockers),
-      currentTruth: str(narrative.currentTruth, "Raw historical layer используется как обучающая база, а clean Elite layer набирает статистику отдельно."),
-      whatImproved: str(narrative.whatImproved, "S8.14A/C блокирует слабые сетапы из best/elite selection на основе entry health, RR и setup-learning evidence."),
-      whyNotFullMarketing: str(narrative.whyNoAggressiveMarketingYet, "Нужно 50–100 закрытых clean Elite signals с устойчивым win rate, положительным expectancy и контролируемым drawdown."),
-      nextStep: str(narrative.nextEngineeringStep, "Наращиваем clean Elite sample, расширяем strategy library и делаем investor-grade daily analytics."),
+      currentTruth: str(
+        narrative.currentTruth,
+        "SkillEdge AI is in private beta with evidence collection and promotion guardrails.",
+      ),
+      whatImproved: str(
+        narrative.whatImproved,
+        "The system separates registry, research evidence, failure analysis and client-visible approval.",
+      ),
+      whyNotFullMarketing: str(
+        narrative.whyNoAggressiveMarketingYet,
+        "Investor-grade claims require repaired outcomes, clean sample and manual approval storage.",
+      ),
+      nextStep: str(
+        narrative.nextEngineeringStep,
+        "Repair outcomes, add manual approval storage and continue collecting clean closed evidence.",
+      ),
       strategyRows,
       curveValues,
       dailyRows: rowsByPeriod,
       aiLearningLog: strings(data.aiLearningLog),
+      learningSummary,
     };
   }, [snapshot, period]);
 
-  const path = linePath(view.curveValues.length > 1 ? view.curveValues : [50000, num(view.finalEquity) ?? 50000]);
+  const path = linePath(
+    view.curveValues.length > 1 ? view.curveValues : [50000, num(view.finalEquity) ?? 50000],
+  );
 
   if (loading) {
     return (
       <section className="rounded-[28px] border border-white/10 bg-[#07111F] p-6 text-slate-300">
-        Загружаем Investor Dashboard…
+        Loading Investor Dashboard
       </section>
     );
   }
@@ -268,8 +336,8 @@ export default function InvestorDashboardSection() {
           </h2>
 
           <p className="mt-2 max-w-4xl text-[14px] leading-6 text-slate-400">
-            Аккуратный закрытый раздел для инвестора: ценность продукта, уникальность,
-            путь масштабирования, AI learning, PnL simulation, win rate и стратегия развития.
+            Honest private investor view: product value, AI learning, evidence quality, readiness,
+            blockers and the next engineering steps before scale.
           </p>
         </div>
 
@@ -279,7 +347,7 @@ export default function InvestorDashboardSection() {
           disabled={refreshing}
           className="rounded-full border border-emerald-400/35 bg-emerald-400/10 px-4 py-2 text-[13px] font-bold text-emerald-100 disabled:opacity-60"
         >
-          {refreshing ? "Обновляем…" : "Обновить snapshot"}
+          {refreshing ? "Refreshing" : "Refresh snapshot"}
         </button>
       </div>
 
@@ -290,41 +358,66 @@ export default function InvestorDashboardSection() {
       ) : null}
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <Kpi label="Общий win rate" value={pct(view.rawWinRate)} sub={`${view.rawClosed ?? "—"} closed outcomes`} />
-        <Kpi label="Средний результат" value={r(view.rawAvgR)} sub="avg R per closed trade" />
-        <Kpi label="$50k simulation" value={usd(view.finalEquity)} sub={`${pct(view.totalReturnPct)} return / ${pct(view.maxDrawdownPct)} DD`} />
-        <Kpi label="Clean Elite layer" value={String(view.cleanEliteClosed ?? 0)} sub={view.cleanEliteStatus} />
+        <Kpi
+          label="Research win rate"
+          value={pct(view.rawWinRate)}
+          sub={`${view.rawClosed ?? "-"} closed TP/STOP outcomes`}
+        />
+        <Kpi label="Average result" value={r(view.rawAvgR)} sub="avg R per closed outcome" />
+        <Kpi
+          label="Investor equity curve"
+          value={usd(view.finalEquity)}
+          sub={
+            view.finalEquity === null || view.finalEquity === undefined
+              ? "disabled until clean client-visible sample"
+              : `${pct(view.totalReturnPct)} return / ${pct(view.maxDrawdownPct)} DD`
+          }
+        />
+        <Kpi
+          label="Client-visible layer"
+          value={String(view.clientVisibleApproved ?? 0)}
+          sub={view.cleanEliteStatus}
+        />
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-6">
+        <Mini label="Registry" value={String(view.registryTotal ?? "-")} />
+        <Mini label="Closed evidence" value={String(view.withClosedEvidence ?? "-")} />
+        <Mini label="Meaningful samples" value={String(view.withMeaningfulSample ?? "-")} />
+        <Mini label="Dirty pipelines" value={String(view.dirtyOutcomePipelines ?? "-")} />
+        <Mini label="Negative edge" value={String(view.negativeEdgeSetups ?? "-")} />
+        <Mini label="Promotion candidates" value={String(view.promotionCandidates ?? "-")} />
       </div>
 
       <div className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
         <Widget
-          title="Продуктовая и инвестиционная ценность"
-          subtitle="Короткие ответы на ключевые вопросы инвестора."
+          title="Product and investment value"
+          subtitle="Short answers to the main investor questions."
           defaultOpen
         >
           <div className="grid gap-3 md:grid-cols-2">
             <InfoTile
-              title="1) Ценность для клиентов"
-              text="Клиент получает не поток случайных сигналов, а trading desk: готовые сценарии, entry/stop/targets, фильтр качества, объяснение идеи и контроль риска."
+              title="1) Client value"
+              text="Clients do not receive random alerts. They receive a trading desk workflow: setups, entry/stop/targets, quality filters, explanation and risk control."
             />
             <InfoTile
-              title="2) Уникальность"
-              text="SkillEdge объединяет scanner, setup engine, strict gates, AI Cockpit, post-close outcomes и self-learning loop. Система не только даёт идеи, но и каждый день проверяет себя."
+              title="2) Differentiation"
+              text="SkillEdge combines scanner, setup engine, strict gates, AI Cockpit, post-close outcomes and a self-learning loop. Every market day becomes training data."
             />
             <InfoTile
-              title="3) Интерес для инвестора"
-              text="Это масштабируемый SaaS с подписочной моделью, высокой маржинальностью, расширяемой strategy library и потенциальным ростом LTV по мере улучшения AI."
+              title="3) Investor interest"
+              text="This is a scalable SaaS with subscription pricing, a growing strategy library, research memory and potential LTV expansion as the engine improves."
             />
             <InfoTile
-              title="4) Как AI учится"
-              text="После рынка система закрывает outcomes, считает R, MFE/MAE, win rate, failure patterns, демотит слабые условия и усиливает сетапы, которые показывают evidence."
+              title="4) How AI learns"
+              text="After market close the system evaluates outcomes, calculates R, MFE/MAE, win rate and failure patterns, then blocks weak conditions and tracks evidence."
             />
           </div>
         </Widget>
 
         <Widget
           title="Marketing readiness"
-          subtitle="Когда можно запускать маркетинг и что пока блокирует scale."
+          subtitle="When marketing can scale and what currently blocks investor-grade claims."
           defaultOpen
         >
           <div className="rounded-2xl border border-amber-400/20 bg-amber-400/10 p-4 text-[14px] leading-6 text-amber-100">
@@ -332,7 +425,7 @@ export default function InvestorDashboardSection() {
           </div>
 
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <SmallList title="Плюсы" items={view.positives} tone="green" />
+            <SmallList title="Positives" items={view.positives} tone="green" />
             <SmallList title="Blockers" items={view.blockers} tone="red" />
           </div>
         </Widget>
@@ -341,7 +434,7 @@ export default function InvestorDashboardSection() {
       <div className="grid gap-5 xl:grid-cols-[1.25fr_0.75fr]">
         <Widget
           title="PnL / Equity simulation"
-          subtitle="Наглядная модель: клиент входит во все сигналы, риск 1% от депозита."
+          subtitle="Disabled until clean client-visible evidence exists."
           defaultOpen
         >
           <div className="rounded-[22px] border border-white/10 bg-[#040B14] p-4">
@@ -381,12 +474,16 @@ export default function InvestorDashboardSection() {
               <Mini label="Return" value={pct(view.totalReturnPct)} />
               <Mini label="Max DD" value={pct(view.maxDrawdownPct)} />
             </div>
+
+            <p className="mt-3 rounded-2xl border border-amber-400/20 bg-amber-400/10 p-3 text-[13px] leading-5 text-amber-100">
+              {view.equityStatus}
+            </p>
           </div>
         </Widget>
 
         <Widget
-          title="Дневная статистика"
-          subtitle="Маленькое окно с выбором периода."
+          title="Daily statistics"
+          subtitle="A compact window for future clean snapshot/outcome rows."
           defaultOpen
         >
           <div className="mb-3 flex flex-wrap gap-2">
@@ -418,14 +515,16 @@ export default function InvestorDashboardSection() {
                     <span className="text-slate-300">{usd(row.equity)}</span>
                   </div>
                   <div className="mt-1 flex justify-between gap-3 text-slate-500">
-                    <span>{row.symbol} · {row.setup}</span>
+                    <span>
+                      {row.symbol} - {row.setup}
+                    </span>
                     <span>{r(row.pnl)}</span>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-[13px] text-slate-400">
-                Daily rows появятся после накопления новых snapshot/outcome данных.
+              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4 text-[13px] leading-5 text-slate-400">
+                Daily rows will appear after clean client-visible snapshot/outcome data is accumulated.
               </div>
             )}
           </div>
@@ -434,12 +533,12 @@ export default function InvestorDashboardSection() {
 
       <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr]">
         <Widget
-          title="Win rate по стратегиям"
-          subtitle="Общая таблица сетапов без длинных списков."
+          title="Strategy evidence"
+          subtitle="Closed TP/STOP statistics only. OPEN and SESSION_CLOSE are not counted as wins."
           defaultOpen
         >
           <div className="overflow-hidden rounded-2xl border border-white/10">
-            <div className="grid grid-cols-[1.3fr_0.6fr_0.6fr_0.6fr] bg-white/[0.04] px-3 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
+            <div className="grid grid-cols-[minmax(220px,2fr)_0.7fr_0.7fr_0.7fr] gap-3 bg-white/[0.04] px-3 py-3 text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">
               <div>Strategy</div>
               <div>WR</div>
               <div>Avg R</div>
@@ -449,12 +548,12 @@ export default function InvestorDashboardSection() {
             {view.strategyRows.slice(0, 10).map((row) => (
               <div
                 key={str(row.setupSlug, str(row.setupName))}
-                className="grid grid-cols-[1.3fr_0.6fr_0.6fr_0.6fr] border-t border-white/10 px-3 py-3 text-[13px] text-slate-300"
+                className="grid grid-cols-[minmax(220px,2fr)_0.7fr_0.7fr_0.7fr] gap-3 border-t border-white/10 px-3 py-3 text-[13px] text-slate-300"
               >
                 <div className="font-bold text-white">{str(row.setupSlug, str(row.setupName))}</div>
                 <div>{pct(row.winRateClosed)}</div>
                 <div>{r(row.avgResultRClosed)}</div>
-                <div>{String(row.closed ?? "—")}</div>
+                <div>{String(row.closed ?? "-")}</div>
               </div>
             ))}
           </div>
@@ -462,15 +561,18 @@ export default function InvestorDashboardSection() {
 
         <Widget
           title="AI learning log"
-          subtitle="Что система поняла и как меняет правила."
+          subtitle="What the system learned and which guardrails are active."
           defaultOpen
         >
           <div className="space-y-2">
-            {(view.aiLearningLog.length > 0 ? view.aiLearningLog.slice(0, 6) : [
-              "AI отделяет raw candidates от clean Elite layer.",
-              "Слабые setups уходят в monitor/paper до улучшения evidence.",
-              "Каждый post-close report превращается в penalties/boosts для selector.",
-            ]).map((item) => (
+            {(view.aiLearningLog.length > 0
+              ? view.aiLearningLog.slice(0, 6)
+              : [
+                  "AI separates raw research candidates from client-visible strategy approval.",
+                  "Weak setups stay in monitor/paper until evidence improves.",
+                  "Every post-close report creates penalties, boosts or repair tasks for the selector.",
+                ]
+            ).map((item) => (
               <div
                 key={item}
                 className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 text-[13px] leading-5 text-slate-300"
@@ -483,10 +585,7 @@ export default function InvestorDashboardSection() {
         </Widget>
       </div>
 
-      <Widget
-        title="Investor narrative"
-        subtitle="Короткий executive summary без перегруза."
-      >
+      <Widget title="Investor narrative" subtitle="Executive summary without overclaiming.">
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <InfoTile title="Current truth" text={view.currentTruth} />
           <InfoTile title="What improved" text={view.whatImproved} />
@@ -498,36 +597,3 @@ export default function InvestorDashboardSection() {
   );
 }
 
-function Mini({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-      <div className="text-[10px] uppercase tracking-[0.16em] text-slate-500">{label}</div>
-      <div className="mt-1 text-[15px] font-black text-white">{value}</div>
-    </div>
-  );
-}
-
-function SmallList({
-  title,
-  items,
-  tone,
-}: {
-  title: string;
-  items: string[];
-  tone: "green" | "red";
-}) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3">
-      <div className={tone === "green" ? "text-emerald-200" : "text-red-200"}>
-        {title}
-      </div>
-      <div className="mt-2 space-y-1">
-        {(items.length ? items.slice(0, 5) : ["—"]).map((item) => (
-          <div key={item} className="text-[12px] leading-5 text-slate-400">
-            {item}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
