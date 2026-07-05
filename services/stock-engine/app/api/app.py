@@ -18045,3 +18045,587 @@ def engine_strategies_evidence(limit: int = 100):
         "items": items,
     }
 
+# === S8.35A Failure Analysis Agent ===
+S835A_FAILURE_ANALYSIS_VERSION = "s8_35a_failure_analysis_agent_v1"
+
+
+def _s835a_float(value, default=None):
+    try:
+        if value is None:
+            return default
+        parsed = float(value)
+        if parsed != parsed:
+            return default
+        return parsed
+    except Exception:
+        return default
+
+
+def _s835a_round(value, digits=4):
+    parsed = _s835a_float(value)
+    return round(parsed, digits) if parsed is not None else None
+
+
+def _s835a_pct(part, total):
+    total = int(total or 0)
+    return None if total <= 0 else round(float(part or 0) / float(total) * 100.0, 2)
+
+
+def _s835a_severity_rank(severity):
+    return {"CRITICAL": 4, "HIGH": 3, "MEDIUM": 2, "LOW": 1, "INFO": 0}.get(str(severity or "").upper(), 0)
+
+
+def _s835a_collect_missing_fields(payload):
+    fields = []
+
+    def walk(obj):
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                key_l = str(key).lower()
+                if key_l in ("missingcriticalfields", "missing_critical_fields", "missingfields", "missing_fields"):
+                    if isinstance(value, list):
+                        for item in value:
+                            if item is not None:
+                                fields.append(str(item))
+                    elif isinstance(value, str) and value:
+                        fields.append(value)
+                else:
+                    walk(value)
+        elif isinstance(obj, list):
+            for item in obj:
+                walk(item)
+
+    try:
+        walk(payload if isinstance(payload, (dict, list)) else {})
+    except Exception:
+        pass
+
+    return fields
+
+
+def _s835a_add_issue(issues, code, severity, message, action, evidence=None):
+    issues.append({
+        "code": code,
+        "severity": severity,
+        "message": message,
+        "recommendedAction": action,
+        "evidence": evidence or {},
+    })
+
+
+@app.get("/engine/research/failure-analysis")
+def engine_research_failure_analysis(
+    limit: int = 100,
+    min_closed: int = 30,
+    min_trigger_closed: int = 5,
+    include_all: bool = False,
+):
+    import json
+    import sqlite3
+    from collections import Counter
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 100), 200))
+    min_closed = max(1, int(min_closed or 30))
+    min_trigger_closed = max(1, int(min_trigger_closed or 5))
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+
+    registry_rows = [
+        dict(r)
+        for r in con.execute(
+            """
+            select setup_slug, setup_name, family, asset_type, direction, enabled,
+                   execution_status, calibration_enabled, updated_at, payload_json
+            from algorithm_registry
+            order by enabled desc, setup_slug asc
+            """
+        ).fetchall()
+    ]
+
+    live_sql = """
+    with b as (
+      select setup_slug, result_r,
+        case
+          when upper(coalesce(status,''))='OPEN' then 'open'
+          when upper(coalesce(status,''))='EXPIRED_SESSION' or upper(coalesce(first_event,''))='SESSION_CLOSE' then 'sessionClose'
+          when upper(coalesce(status,''))='FAILED' or upper(coalesce(first_event,''))='STOP' or coalesce(stop_hit,0)=1 then 'failed'
+          when upper(coalesce(status,''))='WORKED' or upper(coalesce(first_event,'')) in ('TP1','TP2') or coalesce(tp1_hit,0)=1 or coalesce(tp2_hit,0)=1 then 'worked'
+          else 'other'
+        end as bucket
+      from outcome_records
+      where setup_slug is not null and trim(setup_slug) != ''
+    )
+    select setup_slug,
+      count(*) as total,
+      sum(case when bucket='worked' then 1 else 0 end) as worked,
+      sum(case when bucket='failed' then 1 else 0 end) as failed,
+      sum(case when bucket='open' then 1 else 0 end) as open,
+      sum(case when bucket='sessionClose' then 1 else 0 end) as sessionClose,
+      sum(case when bucket='other' then 1 else 0 end) as other,
+      avg(case when bucket in ('worked','failed') then result_r end) as avgRClosed
+    from b
+    group by setup_slug
+    """
+
+    research_sql = """
+    with b as (
+      select setup_slug, result_r,
+        case
+          when upper(coalesce(result,'')) in ('OPEN','PENDING') then 'open'
+          when upper(coalesce(result,'')) in ('SESSION_CLOSE','EXPIRED_SESSION','EXPIRED') then 'sessionClose'
+          when upper(coalesce(result,'')) like '%STOP%' or upper(coalesce(result,'')) like '%FAILED%' then 'failed'
+          when upper(coalesce(result,'')) like '%TP1%' or upper(coalesce(result,'')) like '%TP2%' or upper(coalesce(result,'')) like '%WORKED%' then 'worked'
+          else 'other'
+        end as bucket
+      from research_rebuilt_outcomes
+      where setup_slug is not null and trim(setup_slug) != ''
+    )
+    select setup_slug,
+      count(*) as total,
+      sum(case when bucket='worked' then 1 else 0 end) as worked,
+      sum(case when bucket='failed' then 1 else 0 end) as failed,
+      sum(case when bucket='open' then 1 else 0 end) as open,
+      sum(case when bucket='sessionClose' then 1 else 0 end) as sessionClose,
+      sum(case when bucket='other' then 1 else 0 end) as other,
+      avg(case when bucket in ('worked','failed') then result_r end) as avgRClosed
+    from b
+    group by setup_slug
+    """
+
+    live_raw = {
+        r["setup_slug"]: _s834a_finish_stats(dict(r))
+        for r in con.execute(live_sql).fetchall()
+    }
+    research_raw = {
+        r["setup_slug"]: _s834a_finish_stats(dict(r))
+        for r in con.execute(research_sql).fetchall()
+    }
+
+    trigger_sql = """
+    with b as (
+      select setup_slug, coalesce(primary_trigger, 'UNKNOWN') as primary_trigger, result_r,
+        case
+          when upper(coalesce(status,''))='FAILED' or upper(coalesce(first_event,''))='STOP' or coalesce(stop_hit,0)=1 then 'failed'
+          when upper(coalesce(status,''))='WORKED' or upper(coalesce(first_event,'')) in ('TP1','TP2') or coalesce(tp1_hit,0)=1 or coalesce(tp2_hit,0)=1 then 'worked'
+          else 'nonClosed'
+        end as bucket
+      from outcome_records
+      where setup_slug is not null and trim(setup_slug) != ''
+    )
+    select setup_slug, primary_trigger,
+      count(*) as total,
+      sum(case when bucket='worked' then 1 else 0 end) as worked,
+      sum(case when bucket='failed' then 1 else 0 end) as failed,
+      avg(case when bucket in ('worked','failed') then result_r end) as avgRClosed
+    from b
+    group by setup_slug, primary_trigger
+    """
+
+    trigger_rows_by_setup = {}
+    for row in con.execute(trigger_sql).fetchall():
+        d = dict(row)
+        worked = int(d.get("worked") or 0)
+        failed = int(d.get("failed") or 0)
+        closed = worked + failed
+        if closed < min_trigger_closed:
+            continue
+
+        item = {
+            "primaryTrigger": d.get("primary_trigger") or "UNKNOWN",
+            "total": int(d.get("total") or 0),
+            "closedDecisionCount": closed,
+            "worked": worked,
+            "failed": failed,
+            "winRateClosed": _s835a_pct(worked, closed),
+            "avgRClosed": _s835a_round(d.get("avgRClosed")),
+            "stopRateClosed": _s835a_pct(failed, closed),
+        }
+        trigger_rows_by_setup.setdefault(d.get("setup_slug"), []).append(item)
+
+    for setup, rows in trigger_rows_by_setup.items():
+        rows.sort(key=lambda x: (
+            x["avgRClosed"] if x["avgRClosed"] is not None else 999,
+            x["winRateClosed"] if x["winRateClosed"] is not None else 999,
+            -x["closedDecisionCount"],
+        ))
+
+    feature_sql = """
+    select setup_slug,
+      count(*) as total,
+      sum(case when upper(coalesce(readiness,''))='READY' then 1 else 0 end) as ready,
+      sum(case when coalesce(has_enough_for_failure_analysis,0)=1 then 1 else 0 end) as failureReady,
+      avg(coalesce(missing_critical_count,0)) as avgMissingCritical,
+      max(coalesce(missing_critical_count,0)) as maxMissingCritical
+    from research_feature_snapshots
+    where setup_slug is not null and trim(setup_slug) != ''
+    group by setup_slug
+    """
+
+    feature_by_setup = {}
+    for row in con.execute(feature_sql).fetchall():
+        d = dict(row)
+        total = int(d.get("total") or 0)
+        feature_by_setup[d.get("setup_slug")] = {
+            "total": total,
+            "ready": int(d.get("ready") or 0),
+            "readyPct": _s835a_pct(d.get("ready"), total),
+            "failureReady": int(d.get("failureReady") or 0),
+            "failureReadyPct": _s835a_pct(d.get("failureReady"), total),
+            "avgMissingCritical": _s835a_round(d.get("avgMissingCritical"), 2),
+            "maxMissingCritical": int(d.get("maxMissingCritical") or 0),
+            "topMissingCriticalFields": [],
+        }
+
+    missing_counters = {}
+    feature_payload_rows = con.execute(
+        """
+        select setup_slug, payload_json
+        from research_feature_snapshots
+        where setup_slug is not null and trim(setup_slug) != ''
+        order by created_at desc
+        limit 5000
+        """
+    ).fetchall()
+
+    for row in feature_payload_rows:
+        slug = row["setup_slug"]
+        try:
+            payload = json.loads(row["payload_json"] or "{}")
+        except Exception:
+            payload = {}
+        fields = _s835a_collect_missing_fields(payload)
+        if fields:
+            missing_counters.setdefault(slug, Counter()).update(fields)
+
+    for slug, counter in missing_counters.items():
+        if slug in feature_by_setup:
+            feature_by_setup[slug]["topMissingCriticalFields"] = [
+                {"field": name, "count": count}
+                for name, count in counter.most_common(8)
+            ]
+
+    latest_adjustment_by_setup = {}
+    latest_adjustment_by_trigger = {}
+    for row in con.execute(
+        """
+        select *
+        from setup_adjustments
+        order by updated_at desc
+        """
+    ).fetchall():
+        d = dict(row)
+        slug = d.get("setup_slug")
+        scope = d.get("scope")
+        trigger = d.get("primary_trigger") or "UNKNOWN"
+
+        if scope == "setup" and slug and slug not in latest_adjustment_by_setup:
+            latest_adjustment_by_setup[slug] = d
+
+        if scope == "setup_trigger" and slug:
+            key = (slug, trigger)
+            if key not in latest_adjustment_by_trigger:
+                latest_adjustment_by_trigger[key] = d
+
+    empty = _s834a_finish_stats({})
+    items = []
+    counts = {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "negativeEdge": 0,
+        "dirtyOutcomePipeline": 0,
+        "featureIssues": 0,
+        "demotionCandidates": 0,
+        "triggerWeaknesses": 0,
+    }
+
+    for row in registry_rows:
+        slug = row.get("setup_slug")
+        live = live_raw.get(slug) or dict(empty)
+        research = research_raw.get(slug) or dict(empty)
+        combined = _s834a_finish_stats(_s834a_merge_stats(live, research))
+        feature = feature_by_setup.get(slug) or {
+            "total": 0,
+            "ready": 0,
+            "readyPct": None,
+            "failureReady": 0,
+            "failureReadyPct": None,
+            "avgMissingCritical": None,
+            "maxMissingCritical": 0,
+            "topMissingCriticalFields": [],
+        }
+
+        closed = int(combined.get("closedDecisionCount") or 0)
+        win_rate = _s835a_float(combined.get("winRateClosed"))
+        avg_r = _s835a_float(combined.get("avgRClosed"))
+        open_pct = _s835a_float(live.get("openPct"), 0.0)
+        session_close_pct = _s835a_float(live.get("sessionClosePct"), 0.0)
+
+        issues = []
+        filters_to_test = []
+        risk_controls = []
+        pipeline_fixes = []
+
+        if int(live.get("total") or 0) >= 20 and open_pct >= 50.0:
+            _s835a_add_issue(
+                issues,
+                "HIGH_OPEN_RATIO",
+                "CRITICAL",
+                f"{slug} has {open_pct}% OPEN records in live outcome_records.",
+                "Run outcome cleanup/re-evaluation before judging edge. OPEN rows must not be counted as wins or losses.",
+                {"liveTotal": live.get("total"), "open": live.get("open"), "openPct": live.get("openPct")},
+            )
+            pipeline_fixes.append("Re-run persisted outcome evaluation for old OPEN rows and verify trigger_time/session_to_close handling.")
+
+        if int(live.get("total") or 0) >= 20 and session_close_pct >= 30.0:
+            _s835a_add_issue(
+                issues,
+                "HIGH_SESSION_CLOSE_RATIO",
+                "HIGH",
+                f"{slug} has {session_close_pct}% SESSION_CLOSE/EXPIRED records.",
+                "Check whether targets/stops are too wide, triggers are too late, or future candles are missing.",
+                {"liveTotal": live.get("total"), "sessionClose": live.get("sessionClose"), "sessionClosePct": live.get("sessionClosePct")},
+            )
+            pipeline_fixes.append("Separate SESSION_CLOSE outcomes from TP/STOP win rate and inspect late-session triggers.")
+
+        if closed <= 0:
+            _s835a_add_issue(
+                issues,
+                "NO_CLOSED_DECISIONS",
+                "MEDIUM",
+                f"{slug} has no closed TP/STOP decisions.",
+                "Keep in registry/research only. Do not promote or show client-facing until closed evidence exists.",
+                {"total": combined.get("total")},
+            )
+        elif closed < min_closed:
+            _s835a_add_issue(
+                issues,
+                "THIN_CLOSED_SAMPLE",
+                "LOW",
+                f"{slug} has only {closed} closed TP/STOP decisions.",
+                f"Collect at least {min_closed} closed decisions before promotion review.",
+                {"closedDecisionCount": closed, "minClosed": min_closed},
+            )
+
+        if closed >= min_closed and win_rate is not None and win_rate < 65.0:
+            _s835a_add_issue(
+                issues,
+                "LOW_WIN_RATE_CLOSED",
+                "HIGH",
+                f"{slug} win rate on closed decisions is {win_rate}%.",
+                "Run stricter confirmation filters and block weak trigger variants before promotion.",
+                {"winRateClosed": win_rate, "minWinRate": 65.0},
+            )
+            filters_to_test.append("Require stronger trigger confirmation before ARMED -> ACTIVE.")
+            filters_to_test.append("Block entries after weak/late session structure unless RR and trigger quality improve.")
+
+        if closed >= min_closed and avg_r is not None and avg_r <= 0:
+            _s835a_add_issue(
+                issues,
+                "NEGATIVE_AVG_R_CLOSED",
+                "HIGH",
+                f"{slug} avg R on closed decisions is {avg_r}.",
+                "Treat as negative edge until filters improve avg R above zero on closed decisions.",
+                {"avgRClosed": avg_r, "minAvgR": 0.0},
+            )
+            filters_to_test.append("Tighten setup-specific entry location and avoid chasing extended candles.")
+            risk_controls.append("Reduce score/risk or keep research-only until avgRClosed is positive.")
+
+        if int(feature.get("total") or 0) > 0 and _s835a_float(feature.get("failureReadyPct"), 100.0) < 80.0:
+            _s835a_add_issue(
+                issues,
+                "LOW_FEATURE_FAILURE_ANALYSIS_COVERAGE",
+                "MEDIUM",
+                f"{slug} feature snapshots are not consistently failure-analysis ready.",
+                "Improve feature snapshot completeness before trusting fine-grained failure patterns.",
+                feature,
+            )
+
+        if int(feature.get("total") or 0) > 0 and _s835a_float(feature.get("avgMissingCritical"), 0.0) > 2.0:
+            _s835a_add_issue(
+                issues,
+                "MISSING_CRITICAL_FEATURES",
+                "MEDIUM",
+                f"{slug} has avg missing critical features {feature.get('avgMissingCritical')}.",
+                "Prioritize missing feature fields before setup promotion or precise pattern analysis.",
+                feature,
+            )
+
+        trigger_rows = trigger_rows_by_setup.get(slug) or []
+        weak_triggers = []
+        for tr in trigger_rows:
+            tr_win = _s835a_float(tr.get("winRateClosed"))
+            tr_avg = _s835a_float(tr.get("avgRClosed"))
+            if (tr_win is not None and tr_win < 40.0) or (tr_avg is not None and tr_avg < 0.0):
+                trigger_adj = latest_adjustment_by_trigger.get((slug, tr.get("primaryTrigger") or "UNKNOWN")) or {}
+                weak_triggers.append({
+                    **tr,
+                    "latestAdjustment": {
+                        "status": trigger_adj.get("status"),
+                        "action": trigger_adj.get("action"),
+                        "scoreAdjustment": trigger_adj.get("score_adjustment"),
+                        "strictnessAdjustment": trigger_adj.get("strictness_adjustment"),
+                        "riskAdjustment": trigger_adj.get("risk_adjustment"),
+                        "updatedAt": trigger_adj.get("updated_at"),
+                    },
+                    "recommendedAction": "Test demotion/blocking for this trigger variant in shadow/research before live client delivery.",
+                })
+
+        if weak_triggers:
+            _s835a_add_issue(
+                issues,
+                "WEAK_TRIGGER_VARIANTS",
+                "HIGH",
+                f"{slug} has {len(weak_triggers)} weak trigger variants.",
+                "Run trigger-level failure review and test blocking/demotion rules.",
+                {"weakTriggerCount": len(weak_triggers), "minTriggerClosed": min_trigger_closed},
+            )
+            filters_to_test.append("Block/demote weak primary_trigger variants with low closed win rate or negative avg R.")
+
+        setup_adj = latest_adjustment_by_setup.get(slug) or {}
+        demotion_candidate = bool(
+            closed >= min_closed
+            and (
+                (win_rate is not None and win_rate < 40.0 and avg_r is not None and avg_r <= 0.0)
+                or len(weak_triggers) >= 2
+            )
+        )
+
+        if demotion_candidate:
+            risk_controls.append("Candidate for demotion to research-only until new evidence improves.")
+            counts["demotionCandidates"] += 1
+
+        if any(i["code"] in ("HIGH_OPEN_RATIO", "HIGH_SESSION_CLOSE_RATIO") for i in issues):
+            counts["dirtyOutcomePipeline"] += 1
+        if any(i["code"] in ("LOW_WIN_RATE_CLOSED", "NEGATIVE_AVG_R_CLOSED") for i in issues):
+            counts["negativeEdge"] += 1
+        if any(i["code"] in ("LOW_FEATURE_FAILURE_ANALYSIS_COVERAGE", "MISSING_CRITICAL_FEATURES") for i in issues):
+            counts["featureIssues"] += 1
+        if weak_triggers:
+            counts["triggerWeaknesses"] += 1
+
+        if not issues and not include_all:
+            continue
+
+        severity = "INFO"
+        if issues:
+            severity = max((i["severity"] for i in issues), key=_s835a_severity_rank)
+            counts[str(severity).lower()] = counts.get(str(severity).lower(), 0) + 1
+
+        status = "OK_NO_FAILURE_ACTION"
+        if any(i["code"] == "HIGH_OPEN_RATIO" for i in issues):
+            status = "PIPELINE_REPAIR_REQUIRED"
+        elif any(i["code"] == "HIGH_SESSION_CLOSE_RATIO" for i in issues):
+            status = "OUTCOME_QUALITY_REVIEW_REQUIRED"
+        elif demotion_candidate:
+            status = "DEMOTION_CANDIDATE_RESEARCH_ONLY"
+        elif any(i["code"] in ("LOW_WIN_RATE_CLOSED", "NEGATIVE_AVG_R_CLOSED") for i in issues):
+            status = "NEGATIVE_EDGE_FILTER_REQUIRED"
+        elif any(i["code"] == "WEAK_TRIGGER_VARIANTS" for i in issues):
+            status = "TRIGGER_FILTER_TEST_REQUIRED"
+        elif any(i["code"] in ("NO_CLOSED_DECISIONS", "THIN_CLOSED_SAMPLE") for i in issues):
+            status = "EVIDENCE_BUILDING"
+
+        if not filters_to_test and status == "OK_NO_FAILURE_ACTION":
+            filters_to_test.append("No failure filter required from current evidence. Continue monitoring.")
+
+        try:
+            payload = json.loads(row.get("payload_json") or "{}")
+        except Exception:
+            payload = {}
+
+        items.append({
+            "setupSlug": slug,
+            "setupName": row.get("setup_name"),
+            "family": row.get("family") or "unknown",
+            "assetType": row.get("asset_type"),
+            "direction": row.get("direction"),
+            "enabled": bool(row.get("enabled")),
+            "executionStatus": row.get("execution_status") or "UNKNOWN",
+            "failureStatus": status,
+            "severity": severity,
+            "demotionCandidate": demotion_candidate,
+            "clientVisible": False,
+            "manualApprovalRequired": True,
+            "evidence": combined,
+            "liveEvidence": live,
+            "researchEvidence": research,
+            "featureCoverage": feature,
+            "weakTriggerVariants": weak_triggers[:8],
+            "latestSetupAdjustment": {
+                "status": setup_adj.get("status"),
+                "action": setup_adj.get("action"),
+                "scoreAdjustment": setup_adj.get("score_adjustment"),
+                "strictnessAdjustment": setup_adj.get("strictness_adjustment"),
+                "riskAdjustment": setup_adj.get("risk_adjustment"),
+                "sampleCount": setup_adj.get("sample_count"),
+                "closedCount": setup_adj.get("closed_count"),
+                "winRateClosed": setup_adj.get("win_rate_closed"),
+                "avgResultRClosed": setup_adj.get("avg_result_r_closed"),
+                "updatedAt": setup_adj.get("updated_at"),
+            },
+            "issues": sorted(issues, key=lambda x: _s835a_severity_rank(x["severity"]), reverse=True),
+            "filtersToTest": list(dict.fromkeys(filters_to_test))[:8],
+            "riskControls": list(dict.fromkeys(risk_controls))[:8],
+            "pipelineFixes": list(dict.fromkeys(pipeline_fixes))[:8],
+            "rulesContext": {
+                "contextRules": payload.get("contextRules"),
+                "triggerRules": payload.get("triggerRules"),
+                "riskRules": payload.get("riskRules"),
+            },
+        })
+
+    con.close()
+
+    items.sort(key=lambda x: (
+        _s835a_severity_rank(x.get("severity")),
+        1 if x.get("demotionCandidate") else 0,
+        int((x.get("evidence") or {}).get("closedDecisionCount") or 0),
+    ), reverse=True)
+
+    returned = items[:safe_limit]
+
+    return {
+        "ok": True,
+        "storageVersion": S835A_FAILURE_ANALYSIS_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "registryTotal": len(registry_rows),
+            "returned": len(returned),
+            "includeAll": bool(include_all),
+            "minClosed": min_closed,
+            "minTriggerClosed": min_trigger_closed,
+            "critical": counts.get("critical", 0),
+            "high": counts.get("high", 0),
+            "medium": counts.get("medium", 0),
+            "low": counts.get("low", 0),
+            "negativeEdgeSetups": counts.get("negativeEdge", 0),
+            "dirtyOutcomePipelineSetups": counts.get("dirtyOutcomePipeline", 0),
+            "featureIssueSetups": counts.get("featureIssues", 0),
+            "demotionCandidates": counts.get("demotionCandidates", 0),
+            "triggerWeaknessSetups": counts.get("triggerWeaknesses", 0),
+        },
+        "agent": {
+            "name": "Failure Analysis Agent",
+            "purpose": "Find real setup/trigger/pipeline weaknesses from live outcomes, rebuilt research outcomes, feature snapshots, and setup adjustments.",
+            "doesNotAutoChangeStrategy": True,
+            "doesNotAutoPromote": True,
+            "doesNotSendTelegram": True,
+        },
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+            "autoDemotesStrategies": False,
+            "autoPromotesStrategies": False,
+            "manualApprovalRequired": True,
+        },
+        "items": returned,
+    }
+
+# === /S8.35A Failure Analysis Agent ===
