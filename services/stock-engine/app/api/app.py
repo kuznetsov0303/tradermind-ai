@@ -22899,3 +22899,414 @@ def engine_research_shadow_filter_experiments_latest():
 
 # === /S8.44 Shadow Filter Experiment Plan ===
 
+
+# === S8.45 Shadow Filter Evaluator ===
+S845_SHADOW_FILTER_EVALUATOR_VERSION = "s8_45_shadow_filter_evaluator_v1"
+
+
+def _s845_now_iso():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s845_q(name):
+    return '"' + str(name).replace('"', '""') + '"'
+
+
+def _s845_text(value, fallback=""):
+    value = str(value or "").strip()
+    return value if value else fallback
+
+
+def _s845_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def _s845_float(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s845_json(value):
+    import json
+    if isinstance(value, dict):
+        return value
+    if not value:
+        return {}
+    try:
+        return json.loads(value)
+    except Exception:
+        return {}
+
+
+def _s845_nested(data, keys, default=None):
+    cur = data
+    for key in keys:
+        if not isinstance(cur, dict):
+            return default
+        cur = cur.get(key)
+    return cur if cur is not None else default
+
+
+def _s845_extract_primary_trigger(row, payload):
+    candidates = [
+        row.get("primary_trigger"),
+        payload.get("primaryTrigger"),
+        payload.get("primary_trigger"),
+        _s845_nested(payload, ["rawSignal", "primaryTrigger"]),
+        _s845_nested(payload, ["rawSignal", "primary_trigger"]),
+        _s845_nested(payload, ["confirmation", "primaryTrigger"]),
+        _s845_nested(payload, ["confirmation", "primary_trigger"]),
+    ]
+    for value in candidates:
+        value = _s845_text(value)
+        if value and value.lower() not in ("none", "null", "unknown"):
+            return value
+
+    triggers = payload.get("triggers") or _s845_nested(payload, ["confirmation", "triggers"]) or _s845_nested(payload, ["rawSignal", "triggers"])
+    if isinstance(triggers, list):
+        clean = [_s845_text(x) for x in triggers if _s845_text(x)]
+        if clean:
+            return clean[0]
+    return "UNKNOWN"
+
+
+def _s845_signal_time(row, payload):
+    for key in ("created_at", "trigger_time", "stored_at", "updated_at", "selected_at", "evaluated_at"):
+        value = _s845_text(row.get(key))
+        if value:
+            return value
+    for key in ("createdAt", "triggerTime", "signalTime", "storedAt", "updatedAt"):
+        value = _s845_text(payload.get(key))
+        if value:
+            return value
+    return None
+
+
+def _s845_signal_id(row, payload, source):
+    value = row.get("signal_id") or payload.get("signalId") or payload.get("signal_id") or row.get("clean_elite_id") or row.get("storage_key") or row.get("rebuild_id")
+    if value:
+        return _s845_text(value)
+    symbol = _s845_text(row.get("symbol") or payload.get("symbol"), "UNKNOWN")
+    setup = _s845_text(row.get("setup_slug") or payload.get("setupSlug") or payload.get("setup_slug"), "UNKNOWN_SETUP")
+    ts = _s845_text(_s845_signal_time(row, payload), "UNKNOWN_TIME")
+    return f"{source}:{symbol}:{setup}:{ts}"
+
+
+def _s845_table_cols(con, table):
+    try:
+        rows = con.execute(f"pragma table_info({_s845_q(table)})").fetchall()
+        return [str(r["name"]) for r in rows]
+    except Exception:
+        return []
+
+
+def _s845_latest_experiments(con):
+    rows = con.execute(
+        """
+        select * from shadow_filter_experiments
+        where status='PLANNED_SHADOW_ONLY'
+        order by created_at desc
+        """
+    ).fetchall()
+    out = {}
+    for row in rows:
+        key = (_s845_text(row["setup_slug"]), _s845_text(row["primary_trigger"], "UNKNOWN"))
+        if key not in out:
+            out[key] = dict(row)
+    return out
+
+
+def _s845_load_source_rows(con, source="signal_records", limit=500, lookback_days=45):
+    from datetime import datetime, timedelta, timezone
+    source = _s845_text(source, "signal_records")
+    if source not in ("signal_records", "clean_elite_signals", "outcome_records", "research_rebuilt_outcomes"):
+        source = "signal_records"
+    cols = _s845_table_cols(con, source)
+    if not cols:
+        return [], source
+    time_col = None
+    for candidate in ("created_at", "trigger_time", "stored_at", "updated_at", "selected_at", "evaluated_at"):
+        if candidate in cols:
+            time_col = candidate
+            break
+    q = _s845_q(source)
+    params = []
+    where = ""
+    if time_col and int(lookback_days or 0) > 0:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=int(lookback_days))).isoformat()
+        where = f" where coalesce({time_col}, '') >= ? "
+        params.append(cutoff)
+    order = time_col or "rowid"
+    params.append(int(limit or 500))
+    try:
+        rows = con.execute(f"select * from {q}{where} order by coalesce({order}, '') desc limit ?", params).fetchall()
+    except Exception:
+        rows = con.execute(f"select * from {q} limit ?", (int(limit or 500),)).fetchall()
+    return rows, source
+
+
+def _s845_match(exp_map, setup_slug, primary_trigger):
+    setup_slug = _s845_text(setup_slug)
+    primary_trigger = _s845_text(primary_trigger, "UNKNOWN")
+    exact = exp_map.get((setup_slug, primary_trigger))
+    if exact:
+        return exact
+    if primary_trigger in ("", "UNKNOWN", "None", "null"):
+        return exp_map.get((setup_slug, "UNKNOWN"))
+    return None
+
+
+def _s845_ensure_tables(con):
+    con.execute(
+        """
+        create table if not exists shadow_filter_evaluation_runs (
+            run_id text primary key,
+            created_at text not null,
+            storage_version text not null,
+            source_table text not null,
+            source_rows_loaded integer not null default 0,
+            evaluated_rows integer not null default 0,
+            matched_rows integer not null default 0,
+            would_shadow_block integer not null default 0,
+            would_shadow_demote integer not null default 0,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute("create index if not exists idx_shadow_filter_eval_runs_created on shadow_filter_evaluation_runs(created_at desc)")
+    con.execute(
+        """
+        create table if not exists shadow_filter_evaluations (
+            evaluation_id text primary key,
+            run_id text not null,
+            created_at text not null,
+            source_table text not null,
+            signal_id text,
+            symbol text,
+            setup_slug text not null,
+            primary_trigger text,
+            experiment_id text,
+            shadow_action text,
+            strictness_level text,
+            evaluation_status text not null,
+            lifecycle_status text,
+            quality_status text,
+            signal_grade text,
+            signal_score real,
+            premium_signal integer not null default 0,
+            telegram_eligible integer not null default 0,
+            signal_time text,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute("create index if not exists idx_shadow_filter_evals_run on shadow_filter_evaluations(run_id)")
+    con.execute("create index if not exists idx_shadow_filter_evals_setup_trigger on shadow_filter_evaluations(setup_slug, primary_trigger)")
+    con.execute("create index if not exists idx_shadow_filter_evals_status on shadow_filter_evaluations(evaluation_status)")
+
+
+def _s845_reports_dir():
+    import os
+    from pathlib import Path
+    preferred = Path("/opt/skilledge/stock-engine/reports/shadow_filter_evaluations")
+    try:
+        if Path("/opt/skilledge/stock-engine").exists():
+            preferred.mkdir(parents=True, exist_ok=True)
+            return preferred
+    except Exception:
+        pass
+    fallback = Path(os.getcwd()) / "reports" / "shadow_filter_evaluations"
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+def _s845_evaluate(source="signal_records", limit=500, lookback_days=45):
+    import sqlite3, uuid
+    created_at = _s845_now_iso()
+    run_id = "shadow_filter_eval:" + created_at + ":" + uuid.uuid4().hex[:10]
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    experiments = _s845_latest_experiments(con)
+    rows, source = _s845_load_source_rows(con, source=source, limit=limit, lookback_days=lookback_days)
+    evaluated = []
+    matches = []
+    for row in rows:
+        row = dict(row)
+        payload = _s845_json(row.get("payload_json"))
+        setup_slug = _s845_text(row.get("setup_slug") or payload.get("setupSlug") or payload.get("setup_slug"))
+        if not setup_slug:
+            continue
+        primary_trigger = _s845_extract_primary_trigger(row, payload)
+        exp = _s845_match(experiments, setup_slug, primary_trigger)
+        status = "NO_SHADOW_MATCH"
+        shadow_action = None
+        strictness = None
+        experiment_id = None
+        if exp:
+            shadow_action = _s845_text(exp.get("shadow_action"))
+            strictness = _s845_text(exp.get("strictness_level"))
+            experiment_id = _s845_text(exp.get("experiment_id"))
+            if shadow_action == "SHADOW_BLOCK":
+                status = "WOULD_SHADOW_BLOCK"
+            elif shadow_action == "SHADOW_DEMOTE":
+                status = "WOULD_SHADOW_DEMOTE"
+            else:
+                status = "WOULD_SHADOW_TIGHTEN"
+        rec = {
+            "evaluationId": "shadow_eval:" + uuid.uuid4().hex,
+            "runId": run_id,
+            "sourceTable": source,
+            "signalId": _s845_signal_id(row, payload, source),
+            "symbol": row.get("symbol") or payload.get("symbol"),
+            "setupSlug": setup_slug,
+            "primaryTrigger": primary_trigger,
+            "experimentId": experiment_id,
+            "shadowAction": shadow_action,
+            "strictnessLevel": strictness,
+            "evaluationStatus": status,
+            "lifecycleStatus": row.get("lifecycle_status") or payload.get("lifecycleStatus"),
+            "qualityStatus": row.get("quality_status") or payload.get("qualityStatus"),
+            "signalGrade": row.get("signal_grade") or payload.get("signalGrade") or payload.get("grade"),
+            "signalScore": _s845_float(row.get("signal_score") or payload.get("signalScore") or payload.get("score")),
+            "premiumSignal": bool(row.get("premium_signal") or payload.get("premiumSignal") or False),
+            "telegramEligible": bool(row.get("telegram_eligible") or payload.get("telegramEligible") or False),
+            "signalTime": _s845_signal_time(row, payload),
+            "createdAt": created_at,
+            "policy": {
+                "wouldOnly": True,
+                "doesNotBlockLive": True,
+                "doesNotChangeSignal": True,
+                "doesNotChangeOutcome": True,
+                "doesNotSendTelegram": True,
+                "doesNotPromoteStrategy": True,
+            },
+        }
+        evaluated.append(rec)
+        if exp:
+            matches.append(rec)
+    by_status = {}
+    by_setup = {}
+    for rec in evaluated:
+        by_status[rec["evaluationStatus"]] = by_status.get(rec["evaluationStatus"], 0) + 1
+        if rec["evaluationStatus"] != "NO_SHADOW_MATCH":
+            by_setup[rec["setupSlug"]] = by_setup.get(rec["setupSlug"], 0) + 1
+    summary = {
+        "sourceTable": source,
+        "sourceRowsLoaded": len(rows),
+        "evaluatedRows": len(evaluated),
+        "matchedRows": len(matches),
+        "wouldShadowBlock": len([x for x in matches if x["evaluationStatus"] == "WOULD_SHADOW_BLOCK"]),
+        "wouldShadowDemote": len([x for x in matches if x["evaluationStatus"] == "WOULD_SHADOW_DEMOTE"]),
+        "wouldShadowTighten": len([x for x in matches if x["evaluationStatus"] == "WOULD_SHADOW_TIGHTEN"]),
+        "noShadowMatch": by_status.get("NO_SHADOW_MATCH", 0),
+        "byStatus": by_status,
+        "bySetup": by_setup,
+        "activeExperiments": len(experiments),
+        "lookbackDays": int(lookback_days or 0),
+    }
+    con.close()
+    return {
+        "ok": True,
+        "storageVersion": S845_SHADOW_FILTER_EVALUATOR_VERSION,
+        "runId": run_id,
+        "createdAt": created_at,
+        "mode": "shadow_filter_evaluator_would_only",
+        "summary": summary,
+        "matches": matches[:300],
+        "sampleEvaluated": evaluated[:20],
+        "policy": {
+            "researchOnly": True,
+            "wouldOnly": True,
+            "noClientVisibleChanges": True,
+            "doesNotChangeOutcomes": True,
+            "doesNotSendTelegram": True,
+            "doesNotPromoteStrategies": True,
+            "doesNotApplyFiltersToLiveEngine": True,
+            "writesEvaluationOnly": True,
+        },
+        "nextAction": {
+            "paper": "Run this evaluator after signal cycles to compare would-block/would-demote candidates against later outcomes.",
+            "engineering": "Later join these evaluations to outcomes after enough new forward evidence exists.",
+            "ops": "Keep reviewed setups blocked from client visibility until shadow evidence and manual approval pass.",
+        },
+    }
+
+
+def _s845_persist(result):
+    import json, sqlite3
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s845_ensure_tables(con)
+    s = result.get("summary") or {}
+    con.execute(
+        """
+        insert or replace into shadow_filter_evaluation_runs
+        (run_id, created_at, storage_version, source_table, source_rows_loaded,
+         evaluated_rows, matched_rows, would_shadow_block, would_shadow_demote, payload_json)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (result.get("runId"), result.get("createdAt"), result.get("storageVersion"), s.get("sourceTable"), _s845_int(s.get("sourceRowsLoaded")), _s845_int(s.get("evaluatedRows")), _s845_int(s.get("matchedRows")), _s845_int(s.get("wouldShadowBlock")), _s845_int(s.get("wouldShadowDemote")), json.dumps(result, ensure_ascii=False)),
+    )
+    for rec in result.get("matches") or []:
+        con.execute(
+            """
+            insert or replace into shadow_filter_evaluations
+            (evaluation_id, run_id, created_at, source_table, signal_id, symbol, setup_slug,
+             primary_trigger, experiment_id, shadow_action, strictness_level, evaluation_status,
+             lifecycle_status, quality_status, signal_grade, signal_score, premium_signal,
+             telegram_eligible, signal_time, payload_json)
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (rec.get("evaluationId"), rec.get("runId"), rec.get("createdAt"), rec.get("sourceTable"), rec.get("signalId"), rec.get("symbol"), rec.get("setupSlug"), rec.get("primaryTrigger"), rec.get("experimentId"), rec.get("shadowAction"), rec.get("strictnessLevel"), rec.get("evaluationStatus"), rec.get("lifecycleStatus"), rec.get("qualityStatus"), rec.get("signalGrade"), _s845_float(rec.get("signalScore")), 1 if rec.get("premiumSignal") else 0, 1 if rec.get("telegramEligible") else 0, rec.get("signalTime"), json.dumps(rec, ensure_ascii=False)),
+        )
+    con.commit()
+    con.close()
+    out_dir = _s845_reports_dir()
+    latest = out_dir / "latest.json"
+    stamp = str(result.get("createdAt") or "").replace(":", "-").replace(".", "-")
+    snap = out_dir / f"{stamp}.json"
+    text = json.dumps(result, ensure_ascii=False, indent=2)
+    latest.write_text(text, encoding="utf-8")
+    snap.write_text(text, encoding="utf-8")
+    return {"dbPersisted": True, "filePersisted": True, "latestPath": str(latest), "snapshotPath": str(snap)}
+
+
+@app.post("/engine/research/shadow-filter-experiments/evaluate")
+def engine_research_shadow_filter_experiments_evaluate(publish: bool = True, source: str = "signal_records", limit: int = 500, lookback_days: int = 45):
+    result = _s845_evaluate(source=source, limit=limit, lookback_days=lookback_days)
+    persistence = {"dbPersisted": False, "filePersisted": False, "latestPath": None, "snapshotPath": None}
+    if publish:
+        persistence = _s845_persist(result)
+    result["publish"] = bool(publish)
+    result["persistence"] = persistence
+    return result
+
+
+@app.get("/engine/research/shadow-filter-experiments/evaluations/latest")
+def engine_research_shadow_filter_experiments_evaluations_latest():
+    import json, sqlite3
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s845_ensure_tables(con)
+    row = con.execute("select payload_json from shadow_filter_evaluation_runs order by created_at desc limit 1").fetchone()
+    con.close()
+    if not row:
+        return {"ok": False, "storageVersion": S845_SHADOW_FILTER_EVALUATOR_VERSION, "error": "shadow_filter_evaluation_not_found", "nextAction": "Run POST /engine/research/shadow-filter-experiments/evaluate?publish=true first."}
+    try:
+        payload = json.loads(row["payload_json"] or "{}")
+    except Exception as error:
+        return {"ok": False, "storageVersion": S845_SHADOW_FILTER_EVALUATOR_VERSION, "error": "shadow_filter_evaluation_payload_parse_failed", "details": repr(error)}
+    payload["source"] = "db_latest"
+    return payload
+
+# === /S8.45 Shadow Filter Evaluator ===
