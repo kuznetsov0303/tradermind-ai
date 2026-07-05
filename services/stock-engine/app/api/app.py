@@ -20023,3 +20023,653 @@ def engine_outcomes_repair_plan(
 # === /S8.40A Outcome Pipeline Repair Planner ===
 
 
+
+# === S8.40B Outcome OPEN Replay Probe ===
+S840B_OUTCOME_OPEN_REPLAY_PROBE_VERSION = "s8_40b_outcome_open_replay_probe_v1"
+
+
+def _s840b_upper(value):
+    return str(value or "").strip().upper()
+
+
+def _s840b_result_bucket(result):
+    raw = _s840b_upper(result)
+    if raw.startswith("WORKED"):
+        return "worked"
+    if raw.startswith("FAILED") or raw in {"STOP_HIT", "AMBIGUOUS_STOP_FIRST"}:
+        return "failed"
+    if raw in {"SESSION_CLOSE", "EXPIRED_SESSION"}:
+        return "sessionClose"
+    if raw.startswith("INVALID"):
+        return "invalid"
+    if raw in {"OPEN", "ACTIVE", "PENDING", "UNKNOWN", ""}:
+        return "open"
+    return "other"
+
+
+def _s840b_load_dirty_open_outcome_rows(setup_slug=None, symbol=None, session_date=None, limit=10):
+    import sqlite3
+
+    safe_limit = max(1, min(int(limit or 10), 50))
+
+    where = ["upper(coalesce(status,'')) = 'OPEN'"]
+    params = []
+
+    if setup_slug:
+        where.append("setup_slug = ?")
+        params.append(str(setup_slug).strip())
+
+    if symbol:
+        where.append("upper(symbol) = upper(?)")
+        params.append(str(symbol).strip())
+
+    if session_date:
+        where.append("session_date = ?")
+        params.append(str(session_date).strip()[:10])
+
+    sql = """
+        select signal_id, symbol, setup_slug, session_date, status, result_r, mfe_r, mae_r,
+               trigger_time, evaluated_at, stored_at, payload_json
+        from outcome_records
+        where {where_sql}
+        order by stored_at desc
+        limit ?
+    """.format(where_sql=" and ".join(where))
+
+    params.append(safe_limit)
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    rows = [dict(row) for row in con.execute(sql, params).fetchall()]
+    con.close()
+
+    return rows
+
+
+@app.get("/engine/outcomes/repair-probe")
+async def engine_outcomes_repair_probe(
+    setup_slug: str | None = None,
+    symbol: str | None = None,
+    session_date: str | None = None,
+    limit: int = 10,
+):
+    import json
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 10), 50))
+    rows = _s840b_load_dirty_open_outcome_rows(
+        setup_slug=setup_slug,
+        symbol=symbol,
+        session_date=session_date,
+        limit=safe_limit,
+    )
+
+    summary = {
+        "dirtyOpenRowsLoaded": len(rows),
+        "probed": 0,
+        "replayOk": 0,
+        "worked": 0,
+        "failed": 0,
+        "sessionClose": 0,
+        "invalid": 0,
+        "open": 0,
+        "other": 0,
+        "errors": 0,
+        "signalNotFound": 0,
+        "missingRequiredFields": 0,
+        "futureRowsZero": 0,
+        "wouldBecomeClosedTpStop": 0,
+        "wouldRemainSessionClose": 0,
+        "bySetup": {},
+    }
+
+    results = []
+
+    for row in rows:
+        signal_id = str(row.get("signal_id") or "").strip()
+        setup_key = str(row.get("setup_slug") or "unknown")
+        summary["bySetup"].setdefault(setup_key, {
+            "rows": 0,
+            "replayOk": 0,
+            "worked": 0,
+            "failed": 0,
+            "sessionClose": 0,
+            "invalid": 0,
+            "errors": 0,
+            "signalNotFound": 0,
+            "missingRequiredFields": 0,
+        })
+        summary["bySetup"][setup_key]["rows"] += 1
+
+        try:
+            probe = await engine_research_signal_replay_dry_run(signal_id=signal_id)
+            summary["probed"] += 1
+
+            if not isinstance(probe, dict):
+                summary["errors"] += 1
+                summary["bySetup"][setup_key]["errors"] += 1
+                results.append({
+                    "signalId": signal_id,
+                    "ok": False,
+                    "error": "probe_returned_non_dict",
+                    "sourceOutcome": {
+                        "symbol": row.get("symbol"),
+                        "setupSlug": row.get("setup_slug"),
+                        "sessionDate": row.get("session_date"),
+                        "status": row.get("status"),
+                        "triggerTime": row.get("trigger_time"),
+                    },
+                })
+                continue
+
+            if probe.get("error") == "signal_not_found":
+                summary["signalNotFound"] += 1
+                summary["bySetup"][setup_key]["signalNotFound"] += 1
+
+            if probe.get("error") == "missing_required_signal_fields":
+                summary["missingRequiredFields"] += 1
+                summary["bySetup"][setup_key]["missingRequiredFields"] += 1
+
+            candles = probe.get("candles") if isinstance(probe.get("candles"), dict) else {}
+            future_rows = int(candles.get("futureRowsAfterTrigger") or 0) if isinstance(candles, dict) else 0
+            if future_rows <= 0:
+                summary["futureRowsZero"] += 1
+
+            outcome = probe.get("dryRunOutcome") if isinstance(probe.get("dryRunOutcome"), dict) else {}
+            result = outcome.get("result") if isinstance(outcome, dict) else None
+            bucket = _s840b_result_bucket(result)
+
+            if probe.get("ok") and outcome.get("ok"):
+                summary["replayOk"] += 1
+                summary["bySetup"][setup_key]["replayOk"] += 1
+
+            if bucket in {"worked", "failed", "sessionClose", "invalid", "open", "other"}:
+                summary[bucket] += 1
+                if bucket in summary["bySetup"][setup_key]:
+                    summary["bySetup"][setup_key][bucket] += 1
+
+            if bucket in {"worked", "failed"}:
+                summary["wouldBecomeClosedTpStop"] += 1
+            elif bucket == "sessionClose":
+                summary["wouldRemainSessionClose"] += 1
+
+            payload = {}
+            try:
+                payload = json.loads(row.get("payload_json") or "{}")
+            except Exception:
+                payload = {}
+
+            results.append({
+                "signalId": signal_id,
+                "ok": bool(probe.get("ok")),
+                "error": probe.get("error"),
+                "sourceOutcome": {
+                    "symbol": row.get("symbol"),
+                    "setupSlug": row.get("setup_slug"),
+                    "sessionDate": row.get("session_date"),
+                    "status": row.get("status"),
+                    "resultR": row.get("result_r"),
+                    "mfeR": row.get("mfe_r"),
+                    "maeR": row.get("mae_r"),
+                    "triggerTime": row.get("trigger_time"),
+                    "storedAt": row.get("stored_at"),
+                    "payloadHasEntry": payload.get("entry") is not None,
+                    "payloadHasStop": payload.get("stop") is not None,
+                    "payloadHasTp1": payload.get("tp1") is not None or bool(payload.get("targets")),
+                    "payloadKeys": sorted(list(payload.keys()))[:30] if isinstance(payload, dict) else [],
+                },
+                "replaySignal": probe.get("signal"),
+                "candles": probe.get("candles"),
+                "validation": probe.get("validation"),
+                "dryRunOutcome": outcome,
+                "resultBucket": bucket,
+                "wouldRepairTo": {
+                    "status": "WORKED" if bucket == "worked" else "FAILED" if bucket == "failed" else "EXPIRED_SESSION" if bucket == "sessionClose" else "UNCHANGED",
+                    "result": result,
+                    "resultR": outcome.get("resultR") if isinstance(outcome, dict) else None,
+                    "mfeR": outcome.get("mfeR") if isinstance(outcome, dict) else None,
+                    "maeR": outcome.get("maeR") if isinstance(outcome, dict) else None,
+                    "firstEvent": outcome.get("firstEvent") if isinstance(outcome, dict) else None,
+                    "firstEventAt": outcome.get("firstEventAt") if isinstance(outcome, dict) else None,
+                    "candlesChecked": outcome.get("candlesChecked") if isinstance(outcome, dict) else None,
+                },
+            })
+
+        except Exception as error:
+            summary["errors"] += 1
+            summary["bySetup"][setup_key]["errors"] += 1
+            results.append({
+                "signalId": signal_id,
+                "ok": False,
+                "error": repr(error),
+                "sourceOutcome": {
+                    "symbol": row.get("symbol"),
+                    "setupSlug": row.get("setup_slug"),
+                    "sessionDate": row.get("session_date"),
+                    "status": row.get("status"),
+                    "triggerTime": row.get("trigger_time"),
+                },
+            })
+
+    return {
+        "ok": True,
+        "storageVersion": S840B_OUTCOME_OPEN_REPLAY_PROBE_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "mode": "open_outcome_replay_probe_read_only",
+        "filters": {
+            "setupSlug": setup_slug,
+            "symbol": symbol,
+            "sessionDate": session_date,
+            "limit": safe_limit,
+        },
+        "summary": summary,
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "changesOutcomes": False,
+            "changesClientDelivery": False,
+            "sendsTelegram": False,
+            "changesRegistry": False,
+            "usesExistingSignalReplayDryRun": True,
+            "probeOnly": True,
+        },
+        "nextAllowedStep": "If probe shows reliable WORKED/FAILED/SESSION_CLOSE rebuilds, build S8.40C controlled executor with backup table, setup filter, dryRun default and confirm=true writes.",
+        "results": results,
+    }
+
+# === /S8.40B Outcome OPEN Replay Probe ===
+
+
+# === S8.40B2 Outcome OPEN Replay Probe V2 (outcome-row fallback) ===
+S840B2_OUTCOME_OPEN_REPLAY_PROBE_VERSION = "s8_40b2_outcome_open_replay_probe_v2_outcome_row_fallback"
+
+
+def _s840b2_num(value):
+    try:
+        if value is None or value == "":
+            return None
+        return float(value)
+    except Exception:
+        return None
+
+
+def _s840b2_pick_target(payload, index=0):
+    if not isinstance(payload, dict):
+        return None
+
+    direct_keys = ["tp1", "target1", "target"]
+    if index == 1:
+        direct_keys = ["tp2", "target2"]
+
+    for key in direct_keys:
+        value = _s840b2_num(payload.get(key))
+        if value is not None:
+            return value
+
+    targets = payload.get("targets")
+    if isinstance(targets, list) and len(targets) > index:
+        item = targets[index]
+        if isinstance(item, dict):
+            for key in ["price", "value", "target"]:
+                value = _s840b2_num(item.get(key))
+                if value is not None:
+                    return value
+        else:
+            value = _s840b2_num(item)
+            if value is not None:
+                return value
+
+    return None
+
+
+def _s840b2_result_bucket(result):
+    raw = str(result or "").strip().upper()
+    if raw.startswith("WORKED"):
+        return "worked"
+    if raw.startswith("FAILED") or raw in {"STOP_HIT", "AMBIGUOUS_STOP_FIRST"}:
+        return "failed"
+    if raw in {"SESSION_CLOSE", "EXPIRED_SESSION"}:
+        return "sessionClose"
+    if raw.startswith("INVALID"):
+        return "invalid"
+    if raw in {"OPEN", "ACTIVE", "PENDING", "UNKNOWN", ""}:
+        return "open"
+    return "other"
+
+
+def _s840b2_payload_level_summary(payload, direction, entry):
+    stop = _s840b2_num(payload.get("stop"))
+    risk = _s840b2_num(payload.get("risk"))
+
+    if stop is None and risk is not None and entry is not None and risk > 0:
+        if direction == "long":
+            stop = float(entry) - float(risk)
+        elif direction == "short":
+            stop = float(entry) + float(risk)
+
+    tp1 = _s840b2_pick_target(payload, 0)
+    tp2 = _s840b2_pick_target(payload, 1)
+
+    return {
+        "entry": entry,
+        "stop": stop,
+        "tp1": tp1,
+        "tp2": tp2,
+        "risk": risk if risk is not None else abs(float(entry) - float(stop)) if entry is not None and stop is not None else None,
+        "hasEntry": entry is not None,
+        "hasStop": stop is not None,
+        "hasTp1": tp1 is not None,
+        "hasTp2": tp2 is not None,
+        "stopDerivedFromRisk": payload.get("stop") is None and stop is not None,
+    }
+
+
+@app.get("/engine/outcomes/repair-probe-v2")
+async def engine_outcomes_repair_probe_v2(
+    setup_slug: str | None = None,
+    symbol: str | None = None,
+    session_date: str | None = None,
+    limit: int = 10,
+):
+    import json
+    from datetime import datetime, time, timezone
+    from zoneinfo import ZoneInfo
+
+    safe_limit = max(1, min(int(limit or 10), 50))
+
+    rows = _s840b_load_dirty_open_outcome_rows(
+        setup_slug=setup_slug,
+        symbol=symbol,
+        session_date=session_date,
+        limit=safe_limit,
+    )
+
+    client = FmpClient()
+    if not client.is_configured():
+        return {
+            "ok": False,
+            "storageVersion": S840B2_OUTCOME_OPEN_REPLAY_PROBE_VERSION,
+            "error": "FMP_API_KEY is missing",
+            "policy": {
+                "readOnly": True,
+                "writesDb": False,
+                "changesOutcomes": False,
+                "changesClientDelivery": False,
+                "sendsTelegram": False,
+                "changesRegistry": False,
+            },
+        }
+
+    cache = {}
+
+    summary = {
+        "dirtyOpenRowsLoaded": len(rows),
+        "probed": 0,
+        "replayOk": 0,
+        "worked": 0,
+        "failed": 0,
+        "sessionClose": 0,
+        "invalid": 0,
+        "open": 0,
+        "other": 0,
+        "errors": 0,
+        "missingRequiredFields": 0,
+        "futureRowsZero": 0,
+        "wouldBecomeClosedTpStop": 0,
+        "wouldRemainSessionClose": 0,
+        "levels": {
+            "hasEntry": 0,
+            "hasStop": 0,
+            "hasTp1": 0,
+            "hasTp2": 0,
+            "stopDerivedFromRisk": 0,
+        },
+        "bySetup": {},
+    }
+
+    results = []
+
+    for row in rows:
+        signal_id = str(row.get("signal_id") or "").strip()
+        setup_key = str(row.get("setup_slug") or "unknown")
+        summary["bySetup"].setdefault(setup_key, {
+            "rows": 0,
+            "replayOk": 0,
+            "worked": 0,
+            "failed": 0,
+            "sessionClose": 0,
+            "invalid": 0,
+            "errors": 0,
+            "missingRequiredFields": 0,
+            "futureRowsZero": 0,
+        })
+        summary["bySetup"][setup_key]["rows"] += 1
+
+        try:
+            payload = {}
+            try:
+                payload = json.loads(row.get("payload_json") or "{}")
+            except Exception as payload_error:
+                payload = {"_payload_error": repr(payload_error)}
+
+            sym = str(row.get("symbol") or payload.get("symbol") or "").upper().strip()
+            setup = str(row.get("setup_slug") or payload.get("setupSlug") or payload.get("setup_slug") or "").strip()
+            sess = str(row.get("session_date") or payload.get("sessionDate") or payload.get("session_date") or "").strip()[:10]
+            direction = str(payload.get("direction") or "").strip().lower()
+            trigger_raw = row.get("trigger_time") or payload.get("triggerTime") or payload.get("trigger_time") or payload.get("outcomeStartTime") or payload.get("createdAt")
+
+            entry = _s840b2_num(payload.get("entry"))
+            levels = _s840b2_payload_level_summary(payload, direction, entry)
+
+            for level_key in ["hasEntry", "hasStop", "hasTp1", "hasTp2", "stopDerivedFromRisk"]:
+                if levels.get(level_key):
+                    summary["levels"][level_key] += 1
+
+            trigger_ny = _s832a2_parse_dt(trigger_raw)
+
+            missing = []
+            if not sym:
+                missing.append("symbol")
+            if not setup:
+                missing.append("setupSlug")
+            if not sess:
+                missing.append("sessionDate")
+            if direction not in {"long", "short"}:
+                missing.append("direction")
+            if not trigger_ny:
+                missing.append("triggerTime")
+            if levels.get("entry") is None:
+                missing.append("entry")
+            if levels.get("stop") is None:
+                missing.append("stop")
+            if levels.get("tp1") is None:
+                missing.append("tp1")
+
+            if missing:
+                summary["missingRequiredFields"] += 1
+                summary["bySetup"][setup_key]["missingRequiredFields"] += 1
+                results.append({
+                    "signalId": signal_id,
+                    "ok": False,
+                    "error": "missing_required_outcome_payload_fields",
+                    "missingFields": missing,
+                    "source": "outcome_records_payload",
+                    "sourceOutcome": {
+                        "symbol": row.get("symbol"),
+                        "setupSlug": row.get("setup_slug"),
+                        "sessionDate": row.get("session_date"),
+                        "status": row.get("status"),
+                        "triggerTime": row.get("trigger_time"),
+                        "payloadKeys": sorted(list(payload.keys()))[:40] if isinstance(payload, dict) else [],
+                    },
+                    "levelSummary": levels,
+                    "resultBucket": "open",
+                    "wouldRepairTo": {
+                        "status": "UNCHANGED",
+                        "reason": "missing_required_fields",
+                    },
+                })
+                continue
+
+            cache_key = f"{sym}|1min"
+            if cache_key not in cache:
+                cache[cache_key] = await client.get_intraday_candles(sym, interval="1min")
+
+            candle_rows = cache.get(cache_key) or []
+
+            pit = _s62_filter_candles_point_in_time(
+                candle_rows,
+                session_date=sess,
+                cutoff_ny=trigger_ny,
+            )
+            timestamp_mode = pit.get("timestampMode") if isinstance(pit, dict) else None
+            before = pit.get("items") if isinstance(pit, dict) and isinstance(pit.get("items"), list) else []
+
+            close_ny = datetime.combine(trigger_ny.date(), time(16, 0), tzinfo=ZoneInfo("America/New_York"))
+
+            future = _s64_future_candles(
+                candle_rows,
+                session_date=sess,
+                cutoff_ny=trigger_ny,
+                close_ny=close_ny,
+                timestamp_mode=timestamp_mode,
+            )
+
+            if len(future or []) <= 0:
+                summary["futureRowsZero"] += 1
+                summary["bySetup"][setup_key]["futureRowsZero"] += 1
+
+            candidate = {
+                "symbol": sym,
+                "setupSlug": setup,
+                "setupName": payload.get("setupName") or payload.get("setup_name"),
+                "direction": direction,
+                "sessionDate": sess,
+                "entry": levels.get("entry"),
+                "stop": levels.get("stop"),
+                "tp1": levels.get("tp1"),
+                "tp2": levels.get("tp2"),
+                "risk": levels.get("risk"),
+                "qualityScore": payload.get("qualityScore"),
+                "score": payload.get("score"),
+                "grade": payload.get("grade"),
+                "qualityGate": payload.get("qualityGate") or payload.get("qualityStatus"),
+            }
+
+            outcome = _s64_evaluate_candidate_outcome(candidate, future, session_close_ny=close_ny)
+            summary["probed"] += 1
+
+            result = outcome.get("result") if isinstance(outcome, dict) else None
+            bucket = _s840b2_result_bucket(result)
+
+            if isinstance(outcome, dict) and outcome.get("ok"):
+                summary["replayOk"] += 1
+                summary["bySetup"][setup_key]["replayOk"] += 1
+
+            if bucket in {"worked", "failed", "sessionClose", "invalid", "open", "other"}:
+                summary[bucket] += 1
+                if bucket in summary["bySetup"][setup_key]:
+                    summary["bySetup"][setup_key][bucket] += 1
+
+            if bucket in {"worked", "failed"}:
+                summary["wouldBecomeClosedTpStop"] += 1
+            elif bucket == "sessionClose":
+                summary["wouldRemainSessionClose"] += 1
+
+            results.append({
+                "signalId": signal_id,
+                "ok": bool(isinstance(outcome, dict) and outcome.get("ok")),
+                "source": "outcome_records_payload",
+                "sourceOutcome": {
+                    "symbol": row.get("symbol"),
+                    "setupSlug": row.get("setup_slug"),
+                    "sessionDate": row.get("session_date"),
+                    "status": row.get("status"),
+                    "resultR": row.get("result_r"),
+                    "mfeR": row.get("mfe_r"),
+                    "maeR": row.get("mae_r"),
+                    "triggerTime": row.get("trigger_time"),
+                    "storedAt": row.get("stored_at"),
+                    "payloadKeys": sorted(list(payload.keys()))[:40] if isinstance(payload, dict) else [],
+                },
+                "levelSummary": levels,
+                "signal": {
+                    "symbol": sym,
+                    "setupSlug": setup,
+                    "direction": direction,
+                    "sessionDate": sess,
+                    "triggerTime": trigger_raw,
+                    "triggerNy": trigger_ny.isoformat() if trigger_ny else None,
+                },
+                "candles": {
+                    "rawRows": len(candle_rows),
+                    "timestampMode": timestamp_mode,
+                    "beforeTriggerRows": len(before),
+                    "futureRowsAfterTrigger": len(future or []),
+                    "firstFuture": future[0] if future else None,
+                    "lastFuture": future[-1] if future else None,
+                },
+                "dryRunOutcome": outcome,
+                "resultBucket": bucket,
+                "wouldRepairTo": {
+                    "status": "WORKED" if bucket == "worked" else "FAILED" if bucket == "failed" else "EXPIRED_SESSION" if bucket == "sessionClose" else "UNCHANGED",
+                    "result": result,
+                    "resultR": outcome.get("resultR") if isinstance(outcome, dict) else None,
+                    "mfeR": outcome.get("mfeR") if isinstance(outcome, dict) else None,
+                    "maeR": outcome.get("maeR") if isinstance(outcome, dict) else None,
+                    "firstEvent": outcome.get("firstEvent") if isinstance(outcome, dict) else None,
+                    "firstEventAt": outcome.get("firstEventAt") if isinstance(outcome, dict) else None,
+                    "candlesChecked": outcome.get("candlesChecked") if isinstance(outcome, dict) else None,
+                },
+            })
+
+        except Exception as error:
+            summary["errors"] += 1
+            summary["bySetup"][setup_key]["errors"] += 1
+            results.append({
+                "signalId": signal_id,
+                "ok": False,
+                "error": repr(error),
+                "source": "outcome_records_payload",
+                "sourceOutcome": {
+                    "symbol": row.get("symbol"),
+                    "setupSlug": row.get("setup_slug"),
+                    "sessionDate": row.get("session_date"),
+                    "status": row.get("status"),
+                    "triggerTime": row.get("trigger_time"),
+                },
+                "resultBucket": "open",
+                "wouldRepairTo": {
+                    "status": "UNCHANGED",
+                    "reason": "exception",
+                },
+            })
+
+    return {
+        "ok": True,
+        "storageVersion": S840B2_OUTCOME_OPEN_REPLAY_PROBE_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "mode": "open_outcome_replay_probe_v2_outcome_row_fallback_read_only",
+        "filters": {
+            "setupSlug": setup_slug,
+            "symbol": symbol,
+            "sessionDate": session_date,
+            "limit": safe_limit,
+        },
+        "summary": summary,
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "changesOutcomes": False,
+            "changesClientDelivery": False,
+            "sendsTelegram": False,
+            "changesRegistry": False,
+            "usesOutcomeRecordPayloadFallback": True,
+            "probeOnly": True,
+        },
+        "nextAllowedStep": "If v2 probe shows reliable WORKED/FAILED/SESSION_CLOSE rebuilds, build S8.40C controlled executor with backup table, setup filter, dryRun default and confirm=true writes.",
+        "results": results,
+    }
+
+# === /S8.40B2 Outcome OPEN Replay Probe V2 ===
+
