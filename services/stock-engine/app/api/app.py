@@ -17539,3 +17539,509 @@ def engine_research_nightly_status():
         },
     }
 
+
+
+# === S8.34A Strategy Registry Status API ===
+S834A_STRATEGY_REGISTRY_STATUS_VERSION = "s8_34a_strategy_registry_status_v1"
+
+
+@app.get("/engine/strategies/registry")
+def engine_strategies_registry(limit: int = 100):
+    import json
+    import sqlite3
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 100), 200))
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+
+    registry_rows = [
+        dict(r)
+        for r in con.execute(
+            """
+            select *
+            from algorithm_registry
+            order by enabled desc, setup_slug asc
+            limit ?
+            """,
+            (safe_limit,),
+        ).fetchall()
+    ]
+
+    adjustment_rows = [
+        dict(r)
+        for r in con.execute(
+            """
+            select *
+            from setup_adjustments
+            where scope='setup'
+            order by updated_at desc
+            """
+        ).fetchall()
+    ]
+
+    latest_adjustment_by_setup = {}
+    for row in adjustment_rows:
+        slug = row.get("setup_slug")
+        if slug and slug not in latest_adjustment_by_setup:
+            latest_adjustment_by_setup[slug] = row
+
+    items = []
+    by_family = {}
+    by_execution_status = {}
+    by_research_status = {}
+
+    for row in registry_rows:
+        payload = {}
+        try:
+            payload = json.loads(row.get("payload_json") or "{}")
+        except Exception:
+            payload = {}
+
+        slug = row.get("setup_slug")
+        adj = latest_adjustment_by_setup.get(slug) or {}
+
+        enabled = bool(row.get("enabled"))
+        execution_status = row.get("execution_status") or "UNKNOWN"
+
+        sample_count = adj.get("sample_count")
+        closed_count = adj.get("closed_count")
+        win_rate = adj.get("win_rate_closed")
+        avg_r = adj.get("avg_result_r_closed")
+        stop_rate = adj.get("stop_rate_closed")
+
+        candidate_ready = (
+            closed_count is not None
+            and int(closed_count or 0) >= 30
+            and win_rate is not None
+            and float(win_rate or 0) >= 65
+            and avg_r is not None
+            and float(avg_r or 0) > 0
+        )
+
+        if candidate_ready:
+            research_status = "PROMOTE_CANDIDATE"
+        elif enabled and execution_status == "LIVE_FOUNDATION":
+            research_status = "PAPER_FORWARD"
+        elif enabled:
+            research_status = "ACTIVE_RESEARCH"
+        else:
+            research_status = "SHADOW_RESEARCH"
+
+        client_visible = False
+
+        family = row.get("family") or "unknown"
+        by_family[family] = by_family.get(family, 0) + 1
+        by_execution_status[execution_status] = by_execution_status.get(execution_status, 0) + 1
+        by_research_status[research_status] = by_research_status.get(research_status, 0) + 1
+
+        items.append({
+            "setupSlug": slug,
+            "setupName": row.get("setup_name"),
+            "family": family,
+            "assetType": row.get("asset_type"),
+            "direction": row.get("direction"),
+            "enabled": enabled,
+            "executionStatus": execution_status,
+            "calibrationEnabled": bool(row.get("calibration_enabled")),
+            "researchStatus": research_status,
+            "clientVisible": client_visible,
+            "manualApprovalRequired": True,
+            "stats": {
+                "sampleCount": sample_count,
+                "closedCount": closed_count,
+                "workedCount": adj.get("worked_count"),
+                "failedCount": adj.get("failed_count"),
+                "winRateClosed": win_rate,
+                "avgResultRClosed": avg_r,
+                "stopRateClosed": stop_rate,
+                "latestAdjustmentStatus": adj.get("status"),
+                "latestAdjustmentAction": adj.get("action"),
+                "latestRunId": adj.get("run_id"),
+                "latestUpdatedAt": adj.get("updated_at"),
+            },
+            "promotionGate": {
+                "minClosedTrades": 30,
+                "minWinRateClosed": 65,
+                "minAvgR": 0,
+                "candidateReady": candidate_ready,
+                "manualApproval": False,
+                "liveClientEligible": False,
+                "reason": (
+                    "Meets numeric threshold but requires manual approval."
+                    if candidate_ready
+                    else "Insufficient evidence for client visibility."
+                ),
+            },
+            "rules": {
+                "contextRules": payload.get("contextRules"),
+                "triggerRules": payload.get("triggerRules"),
+                "riskRules": payload.get("riskRules"),
+                "exitRules": payload.get("exitRules"),
+            },
+            "updatedAt": row.get("updated_at"),
+        })
+
+    con.close()
+
+    return {
+        "ok": True,
+        "storageVersion": S834A_STRATEGY_REGISTRY_STATUS_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "totalStrategies": len(items),
+            "enabled": sum(1 for x in items if x.get("enabled")),
+            "clientVisible": sum(1 for x in items if x.get("clientVisible")),
+            "promotionCandidates": sum(1 for x in items if x.get("researchStatus") == "PROMOTE_CANDIDATE"),
+            "byFamily": by_family,
+            "byExecutionStatus": by_execution_status,
+            "byResearchStatus": by_research_status,
+        },
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+        },
+        "items": items,
+    }
+
+
+# === S8.34A Strategy Evidence Engine ===
+S834A_STRATEGY_EVIDENCE_VERSION = "s8_34a_strategy_evidence_engine_v1"
+S834A_MIN_CLOSED_FOR_PROMOTION = 30
+S834A_MIN_WIN_RATE_FOR_PROMOTION = 65.0
+S834A_MIN_AVG_R_FOR_PROMOTION = 0.0
+
+
+def _s834a_pct(part, total):
+    total = int(total or 0)
+    return None if total <= 0 else round((float(part or 0) / float(total)) * 100.0, 2)
+
+
+def _s834a_quality(closed):
+    closed = int(closed or 0)
+    if closed <= 0:
+        return "NO_CLOSED_DECISIONS"
+    if closed < 5:
+        return "VERY_THIN_SAMPLE"
+    if closed < 15:
+        return "THIN_SAMPLE"
+    if closed < S834A_MIN_CLOSED_FOR_PROMOTION:
+        return "EARLY_SAMPLE"
+    return "MEANINGFUL_SAMPLE"
+
+
+def _s834a_finish_stats(raw):
+    total = int(raw.get("total") or 0)
+    worked = int(raw.get("worked") or 0)
+    failed = int(raw.get("failed") or 0)
+    closed = worked + failed
+    avg_r = raw.get("avgRClosed")
+    return {
+        "total": total,
+        "closedDecisionCount": closed,
+        "worked": worked,
+        "failed": failed,
+        "winRateClosed": _s834a_pct(worked, closed),
+        "avgRClosed": round(float(avg_r), 4) if avg_r is not None else None,
+        "open": int(raw.get("open") or 0),
+        "openPct": _s834a_pct(raw.get("open"), total),
+        "sessionClose": int(raw.get("sessionClose") or 0),
+        "sessionClosePct": _s834a_pct(raw.get("sessionClose"), total),
+        "other": int(raw.get("other") or 0),
+        "otherPct": _s834a_pct(raw.get("other"), total),
+    }
+
+
+def _s834a_merge_stats(a, b):
+    values = {}
+    for key in ("total", "worked", "failed", "open", "sessionClose", "other"):
+        values[key] = int((a or {}).get(key) or 0) + int((b or {}).get(key) or 0)
+
+    parts = []
+    a_closed = int((a or {}).get("worked") or 0) + int((a or {}).get("failed") or 0)
+    b_closed = int((b or {}).get("worked") or 0) + int((b or {}).get("failed") or 0)
+
+    if (a or {}).get("avgRClosed") is not None and a_closed > 0:
+        parts.append((float(a.get("avgRClosed")), a_closed))
+    if (b or {}).get("avgRClosed") is not None and b_closed > 0:
+        parts.append((float(b.get("avgRClosed")), b_closed))
+
+    if parts:
+        total_count = sum(count for _, count in parts)
+        values["avgRClosed"] = sum(avg * count for avg, count in parts) / total_count if total_count else None
+    else:
+        values["avgRClosed"] = None
+
+    return values
+
+
+def _s834a_status(combined, live, research):
+    total = int(combined.get("total") or 0)
+    closed = int(combined.get("closedDecisionCount") or 0)
+    live_total = int(live.get("total") or 0)
+
+    if total <= 0:
+        return "REGISTRY_ONLY"
+
+    if live_total <= 0 and int(research.get("closedDecisionCount") or 0) > 0:
+        return "RESEARCH_ONLY"
+
+    if live_total >= 20 and (
+        float(live.get("openPct") or 0) >= 50.0
+        or float(live.get("sessionClosePct") or 0) >= 30.0
+    ):
+        return "OUTCOME_PIPELINE_DIRTY_TOO_MANY_OPEN"
+
+    if closed < S834A_MIN_CLOSED_FOR_PROMOTION:
+        return "PAPER_EVIDENCE_BUILDING"
+
+    if (
+        combined.get("winRateClosed") is not None
+        and combined.get("avgRClosed") is not None
+        and float(combined["winRateClosed"]) >= S834A_MIN_WIN_RATE_FOR_PROMOTION
+        and float(combined["avgRClosed"]) > S834A_MIN_AVG_R_FOR_PROMOTION
+    ):
+        return "PROMOTION_CANDIDATE_MANUAL_REVIEW"
+
+    return "NEGATIVE_EDGE_FILTER_REQUIRED"
+
+
+def _s834a_warnings(combined, live, research):
+    warnings = []
+    closed = int(combined.get("closedDecisionCount") or 0)
+
+    if closed <= 0:
+        warnings.append("No closed TP/STOP decisions. Do not use total rows as win/loss evidence.")
+
+    if int(combined.get("total") or 0) > 0 and float(combined.get("openPct") or 0) >= 50.0:
+        warnings.append("High OPEN ratio. Outcome pipeline/replay completeness must be checked.")
+
+    if int(combined.get("total") or 0) > 0 and float(combined.get("sessionClosePct") or 0) >= 30.0:
+        warnings.append("High SESSION_CLOSE/EXPIRED ratio. Separate this from win/loss evidence.")
+
+    if closed < S834A_MIN_CLOSED_FOR_PROMOTION:
+        warnings.append("Closed TP/STOP sample below promotion threshold.")
+
+    if (
+        closed >= 5
+        and combined.get("winRateClosed") is not None
+        and float(combined["winRateClosed"]) < S834A_MIN_WIN_RATE_FOR_PROMOTION
+    ):
+        warnings.append("Win rate on closed decisions is below promotion threshold.")
+
+    if (
+        closed >= 5
+        and combined.get("avgRClosed") is not None
+        and float(combined["avgRClosed"]) <= S834A_MIN_AVG_R_FOR_PROMOTION
+    ):
+        warnings.append("Average R on closed decisions is not positive. Filter/failure analysis required.")
+
+    if (
+        int(live.get("total") or 0) > 0
+        and int(live.get("closedDecisionCount") or 0) <= 0
+        and int(research.get("closedDecisionCount") or 0) > 0
+    ):
+        warnings.append("Research-only closed evidence exists, but live outcome_records have no closed TP/STOP sample.")
+
+    return warnings
+
+
+def _s834a_action(status):
+    return {
+        "REGISTRY_ONLY": "Keep in registry/research. Collect paper outcomes before any client delivery.",
+        "RESEARCH_ONLY": "Use research sandbox evidence only. Require live/paper forward validation.",
+        "OUTCOME_PIPELINE_DIRTY_TOO_MANY_OPEN": "Fix outcome pipeline completeness before judging edge or promotion.",
+        "NEGATIVE_EDGE_FILTER_REQUIRED": "Run failure analysis and test stricter filters before promotion review.",
+        "PROMOTION_CANDIDATE_MANUAL_REVIEW": "Manual admin review required. Do not auto-promote or enable client visibility.",
+    }.get(status, "Continue paper evidence collection until closed TP/STOP sample is meaningful.")
+
+
+@app.get("/engine/strategies/evidence")
+def engine_strategies_evidence(limit: int = 100):
+    import json
+    import sqlite3
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 100), 200))
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+
+    registry_rows = [
+        dict(r)
+        for r in con.execute(
+            """
+            select setup_slug, setup_name, family, asset_type, direction, enabled,
+                   execution_status, calibration_enabled, updated_at, payload_json
+            from algorithm_registry
+            order by enabled desc, setup_slug asc
+            limit ?
+            """,
+            (safe_limit,),
+        ).fetchall()
+    ]
+
+    registry_total = int(con.execute("select count(*) as c from algorithm_registry").fetchone()["c"])
+
+    live_sql = """
+    with b as (
+      select setup_slug, result_r,
+        case
+          when upper(coalesce(status,''))='OPEN' then 'open'
+          when upper(coalesce(status,''))='EXPIRED_SESSION' or upper(coalesce(first_event,''))='SESSION_CLOSE' then 'sessionClose'
+          when upper(coalesce(status,''))='FAILED' or upper(coalesce(first_event,''))='STOP' or coalesce(stop_hit,0)=1 then 'failed'
+          when upper(coalesce(status,''))='WORKED' or upper(coalesce(first_event,'')) in ('TP1','TP2') or coalesce(tp1_hit,0)=1 or coalesce(tp2_hit,0)=1 then 'worked'
+          else 'other'
+        end as bucket
+      from outcome_records
+      where setup_slug is not null and trim(setup_slug) != ''
+    )
+    select setup_slug,
+      count(*) as total,
+      sum(case when bucket='worked' then 1 else 0 end) as worked,
+      sum(case when bucket='failed' then 1 else 0 end) as failed,
+      sum(case when bucket='open' then 1 else 0 end) as open,
+      sum(case when bucket='sessionClose' then 1 else 0 end) as sessionClose,
+      sum(case when bucket='other' then 1 else 0 end) as other,
+      avg(case when bucket in ('worked','failed') then result_r end) as avgRClosed
+    from b
+    group by setup_slug
+    """
+
+    live_raw = {
+        r["setup_slug"]: _s834a_finish_stats(dict(r))
+        for r in con.execute(live_sql).fetchall()
+    }
+
+    research_sql = """
+    with b as (
+      select setup_slug, result_r,
+        case
+          when upper(coalesce(result,'')) in ('OPEN','PENDING') then 'open'
+          when upper(coalesce(result,'')) in ('SESSION_CLOSE','EXPIRED_SESSION','EXPIRED') then 'sessionClose'
+          when upper(coalesce(result,'')) like '%STOP%' or upper(coalesce(result,'')) like '%FAILED%' then 'failed'
+          when upper(coalesce(result,'')) like '%TP1%' or upper(coalesce(result,'')) like '%TP2%' or upper(coalesce(result,'')) like '%WORKED%' then 'worked'
+          else 'other'
+        end as bucket
+      from research_rebuilt_outcomes
+      where setup_slug is not null and trim(setup_slug) != ''
+    )
+    select setup_slug,
+      count(*) as total,
+      sum(case when bucket='worked' then 1 else 0 end) as worked,
+      sum(case when bucket='failed' then 1 else 0 end) as failed,
+      sum(case when bucket='open' then 1 else 0 end) as open,
+      sum(case when bucket='sessionClose' then 1 else 0 end) as sessionClose,
+      sum(case when bucket='other' then 1 else 0 end) as other,
+      avg(case when bucket in ('worked','failed') then result_r end) as avgRClosed
+    from b
+    group by setup_slug
+    """
+
+    research_raw = {
+        r["setup_slug"]: _s834a_finish_stats(dict(r))
+        for r in con.execute(research_sql).fetchall()
+    }
+
+    empty = _s834a_finish_stats({})
+    items = []
+    by_quality = {}
+    by_status = {}
+    dirty = 0
+    candidates = 0
+    any_closed = 0
+    meaningful = 0
+
+    for row in registry_rows:
+        slug = row.get("setup_slug")
+        live = live_raw.get(slug) or dict(empty)
+        research = research_raw.get(slug) or dict(empty)
+        combined = _s834a_finish_stats(_s834a_merge_stats(live, research))
+        quality = _s834a_quality(combined.get("closedDecisionCount"))
+        status = _s834a_status(combined, live, research)
+        candidate_ready = status == "PROMOTION_CANDIDATE_MANUAL_REVIEW"
+
+        dirty += 1 if status == "OUTCOME_PIPELINE_DIRTY_TOO_MANY_OPEN" else 0
+        candidates += 1 if candidate_ready else 0
+        any_closed += 1 if int(combined.get("closedDecisionCount") or 0) > 0 else 0
+        meaningful += 1 if quality == "MEANINGFUL_SAMPLE" else 0
+        by_quality[quality] = by_quality.get(quality, 0) + 1
+        by_status[status] = by_status.get(status, 0) + 1
+
+        try:
+            payload = json.loads(row.get("payload_json") or "{}")
+        except Exception:
+            payload = {}
+
+        items.append({
+            "setupSlug": slug,
+            "setupName": row.get("setup_name"),
+            "family": row.get("family") or "unknown",
+            "assetType": row.get("asset_type"),
+            "direction": row.get("direction"),
+            "enabled": bool(row.get("enabled")),
+            "executionStatus": row.get("execution_status") or "UNKNOWN",
+            "calibrationEnabled": bool(row.get("calibration_enabled")),
+            "clientVisible": False,
+            "manualApprovalRequired": True,
+            "evidence": {
+                **combined,
+                "minClosedForPromotion": S834A_MIN_CLOSED_FOR_PROMOTION,
+                "minWinRateForPromotion": S834A_MIN_WIN_RATE_FOR_PROMOTION,
+                "minAvgRForPromotion": S834A_MIN_AVG_R_FOR_PROMOTION,
+            },
+            "liveEvidence": live,
+            "researchEvidence": research,
+            "evidenceQuality": quality,
+            "promotionStatus": status,
+            "recommendedAction": _s834a_action(status),
+            "warnings": _s834a_warnings(combined, live, research),
+            "promotionGate": {
+                "closedDecisionCountGteMin": int(combined.get("closedDecisionCount") or 0) >= S834A_MIN_CLOSED_FOR_PROMOTION,
+                "winRateGteMin": combined.get("winRateClosed") is not None and float(combined["winRateClosed"]) >= S834A_MIN_WIN_RATE_FOR_PROMOTION,
+                "avgRGtMin": combined.get("avgRClosed") is not None and float(combined["avgRClosed"]) > S834A_MIN_AVG_R_FOR_PROMOTION,
+                "candidateReady": candidate_ready,
+                "manualApproval": False,
+                "liveClientEligible": False,
+                "reason": "Numeric evidence candidate only; manual approval is still required." if candidate_ready else "Insufficient approved evidence for client visibility.",
+            },
+            "rules": {
+                "contextRules": payload.get("contextRules"),
+                "triggerRules": payload.get("triggerRules"),
+                "riskRules": payload.get("riskRules"),
+            },
+            "updatedAt": row.get("updated_at"),
+        })
+
+    con.close()
+
+    return {
+        "ok": True,
+        "storageVersion": S834A_STRATEGY_EVIDENCE_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "registryTotal": registry_total,
+            "returned": len(items),
+            "clientVisible": 0,
+            "manualApprovalRequired": len(items),
+            "promotionCandidates": candidates,
+            "dirtyOutcomePipelines": dirty,
+            "withAnyClosedEvidence": any_closed,
+            "withMeaningfulSample": meaningful,
+            "byEvidenceQuality": by_quality,
+            "byPromotionStatus": by_status,
+        },
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+            "autoPromotesStrategies": False,
+        },
+        "items": items,
+    }
+
