@@ -23310,3 +23310,531 @@ def engine_research_shadow_filter_experiments_evaluations_latest():
     return payload
 
 # === /S8.45 Shadow Filter Evaluator ===
+
+# === S8.46 Shadow Outcome Attribution ===
+S846_SHADOW_OUTCOME_ATTRIBUTION_VERSION = "s8_46_shadow_outcome_attribution_v1"
+
+
+def _s846_now_iso():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s846_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def _s846_float(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s846_round(value, digits=4):
+    try:
+        if value is None or value == "":
+            return None
+        return round(float(value), int(digits))
+    except Exception:
+        return None
+
+
+def _s846_pct(part, total):
+    try:
+        p = float(part or 0)
+        t = float(total or 0)
+        if t <= 0:
+            return None
+        return round((p / t) * 100.0, 2)
+    except Exception:
+        return None
+
+
+def _s846_latest_eval_run_id(con):
+    row = con.execute(
+        """
+        select run_id
+        from shadow_filter_evaluation_runs
+        order by created_at desc
+        limit 1
+        """
+    ).fetchone()
+    if not row:
+        return None
+    return row["run_id"]
+
+
+def _s846_status_bucket(status):
+    s = str(status or "").strip().upper()
+    if s == "WORKED":
+        return "WORKED"
+    if s == "FAILED":
+        return "FAILED"
+    if s in ("EXPIRED_SESSION", "SESSION_CLOSE", "EXPIRED", "SESSION_EXPIRED"):
+        return "SESSION_CLOSE_EVIDENCE_GAP"
+    if s.startswith("NO_EVAL"):
+        return "NO_EVAL_EVIDENCE_GAP"
+    if not s:
+        return "NO_OUTCOME_JOIN"
+    return "OTHER_NON_CLOSED"
+
+
+def _s846_table_exists(con, table_name):
+    row = con.execute(
+        "select name from sqlite_master where type='table' and name=?",
+        (str(table_name),),
+    ).fetchone()
+    return bool(row)
+
+
+def _s846_build_attribution(run_id=None, sample_limit=80):
+    import sqlite3
+    import uuid
+    from datetime import datetime, timezone
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+
+    if not _s846_table_exists(con, "shadow_filter_evaluations"):
+        con.close()
+        return {
+            "ok": False,
+            "storageVersion": S846_SHADOW_OUTCOME_ATTRIBUTION_VERSION,
+            "error": "shadow_filter_evaluations_table_missing",
+            "nextAction": "Run S8.45 shadow filter evaluator first.",
+        }
+
+    if not _s846_table_exists(con, "outcome_records"):
+        con.close()
+        return {
+            "ok": False,
+            "storageVersion": S846_SHADOW_OUTCOME_ATTRIBUTION_VERSION,
+            "error": "outcome_records_table_missing",
+        }
+
+    selected_run_id = str(run_id or "").strip() or _s846_latest_eval_run_id(con)
+    if not selected_run_id:
+        con.close()
+        return {
+            "ok": False,
+            "storageVersion": S846_SHADOW_OUTCOME_ATTRIBUTION_VERSION,
+            "error": "no_shadow_evaluation_run",
+            "nextAction": "Run POST /engine/research/shadow-filter-experiments/evaluate?publish=true first.",
+        }
+
+    created_at = datetime.now(timezone.utc).isoformat()
+    report_id = "shadow_outcome_attr:" + created_at + ":" + uuid.uuid4().hex[:10]
+
+    summary_rows = con.execute(
+        """
+        select
+          e.evaluation_status,
+          count(*) as shadow_rows,
+          sum(case when o.signal_id is not null then 1 else 0 end) as joined_outcomes,
+          sum(case when upper(coalesce(o.status,''))='WORKED' then 1 else 0 end) as worked,
+          sum(case when upper(coalesce(o.status,''))='FAILED' then 1 else 0 end) as failed,
+          sum(case when upper(coalesce(o.status,'')) in ('WORKED','FAILED') then 1 else 0 end) as closed,
+          sum(case when upper(coalesce(o.status,'')) in ('EXPIRED_SESSION','SESSION_CLOSE','EXPIRED','SESSION_EXPIRED') then 1 else 0 end) as session_close_evidence_gap,
+          sum(case when upper(coalesce(o.status,'')) like 'NO_EVAL%%' then 1 else 0 end) as no_eval_evidence_gap,
+          sum(case when o.signal_id is null then 1 else 0 end) as no_join,
+          avg(case when upper(coalesce(o.status,'')) in ('WORKED','FAILED') then o.result_r else null end) as avg_r_closed
+        from shadow_filter_evaluations e
+        left join outcome_records o on o.signal_id = e.signal_id
+        where e.run_id = ?
+        group by e.evaluation_status
+        order by shadow_rows desc
+        """,
+        (selected_run_id,),
+    ).fetchall()
+
+    by_setup_rows = con.execute(
+        """
+        select
+          e.setup_slug,
+          e.primary_trigger,
+          e.evaluation_status,
+          e.shadow_action,
+          count(*) as shadow_rows,
+          sum(case when o.signal_id is not null then 1 else 0 end) as joined_outcomes,
+          sum(case when upper(coalesce(o.status,''))='WORKED' then 1 else 0 end) as worked,
+          sum(case when upper(coalesce(o.status,''))='FAILED' then 1 else 0 end) as failed,
+          sum(case when upper(coalesce(o.status,'')) in ('WORKED','FAILED') then 1 else 0 end) as closed,
+          sum(case when upper(coalesce(o.status,'')) in ('EXPIRED_SESSION','SESSION_CLOSE','EXPIRED','SESSION_EXPIRED') then 1 else 0 end) as session_close_evidence_gap,
+          sum(case when upper(coalesce(o.status,'')) like 'NO_EVAL%%' then 1 else 0 end) as no_eval_evidence_gap,
+          sum(case when o.signal_id is null then 1 else 0 end) as no_join,
+          avg(case when upper(coalesce(o.status,'')) in ('WORKED','FAILED') then o.result_r else null end) as avg_r_closed
+        from shadow_filter_evaluations e
+        left join outcome_records o on o.signal_id = e.signal_id
+        where e.run_id = ?
+        group by e.setup_slug, e.primary_trigger, e.evaluation_status, e.shadow_action
+        order by closed desc, shadow_rows desc
+        """,
+        (selected_run_id,),
+    ).fetchall()
+
+    samples_rows = con.execute(
+        """
+        select
+          e.evaluation_id,
+          e.setup_slug,
+          e.primary_trigger,
+          e.evaluation_status,
+          e.shadow_action,
+          e.strictness_level,
+          e.symbol,
+          e.signal_id,
+          e.signal_time,
+          e.lifecycle_status,
+          e.quality_status,
+          e.signal_grade,
+          e.signal_score,
+          e.telegram_eligible,
+          o.status as outcome_status,
+          o.result_r,
+          o.first_event,
+          o.trigger_time as outcome_trigger_time,
+          o.stored_at as outcome_stored_at
+        from shadow_filter_evaluations e
+        left join outcome_records o on o.signal_id = e.signal_id
+        where e.run_id = ?
+        order by
+          case when upper(coalesce(o.status,'')) in ('WORKED','FAILED') then 0 else 1 end,
+          case when o.signal_id is not null then 0 else 1 end,
+          e.setup_slug,
+          e.primary_trigger,
+          e.signal_time desc
+        limit ?
+        """,
+        (selected_run_id, int(sample_limit or 80)),
+    ).fetchall()
+
+    summary = []
+    total_shadow_rows = 0
+    total_joined = 0
+    total_closed = 0
+    total_worked = 0
+    total_failed = 0
+    total_session_gap = 0
+    total_no_eval_gap = 0
+    total_no_join = 0
+
+    for row in summary_rows:
+        shadow_rows = _s846_int(row["shadow_rows"])
+        joined = _s846_int(row["joined_outcomes"])
+        closed = _s846_int(row["closed"])
+        worked = _s846_int(row["worked"])
+        failed = _s846_int(row["failed"])
+        session_gap = _s846_int(row["session_close_evidence_gap"])
+        no_eval_gap = _s846_int(row["no_eval_evidence_gap"])
+        no_join = _s846_int(row["no_join"])
+
+        total_shadow_rows += shadow_rows
+        total_joined += joined
+        total_closed += closed
+        total_worked += worked
+        total_failed += failed
+        total_session_gap += session_gap
+        total_no_eval_gap += no_eval_gap
+        total_no_join += no_join
+
+        summary.append({
+            "evaluationStatus": row["evaluation_status"],
+            "shadowRows": shadow_rows,
+            "joinedOutcomes": joined,
+            "joinedOutcomePct": _s846_pct(joined, shadow_rows),
+            "worked": worked,
+            "failed": failed,
+            "closed": closed,
+            "closedPctOfShadowRows": _s846_pct(closed, shadow_rows),
+            "winRateClosed": _s846_pct(worked, closed),
+            "avgRClosed": _s846_round(row["avg_r_closed"], 4),
+            "sessionCloseEvidenceGap": session_gap,
+            "noEvalEvidenceGap": no_eval_gap,
+            "noOutcomeJoin": no_join,
+            "potentialFailedAvoided": failed,
+            "potentialWinnersMissed": worked,
+        })
+
+    by_setup_trigger = []
+    for row in by_setup_rows:
+        shadow_rows = _s846_int(row["shadow_rows"])
+        joined = _s846_int(row["joined_outcomes"])
+        closed = _s846_int(row["closed"])
+        worked = _s846_int(row["worked"])
+        failed = _s846_int(row["failed"])
+
+        by_setup_trigger.append({
+            "setupSlug": row["setup_slug"],
+            "primaryTrigger": row["primary_trigger"],
+            "evaluationStatus": row["evaluation_status"],
+            "shadowAction": row["shadow_action"],
+            "shadowRows": shadow_rows,
+            "joinedOutcomes": joined,
+            "joinedOutcomePct": _s846_pct(joined, shadow_rows),
+            "worked": worked,
+            "failed": failed,
+            "closed": closed,
+            "closedPctOfShadowRows": _s846_pct(closed, shadow_rows),
+            "winRateClosed": _s846_pct(worked, closed),
+            "avgRClosed": _s846_round(row["avg_r_closed"], 4),
+            "sessionCloseEvidenceGap": _s846_int(row["session_close_evidence_gap"]),
+            "noEvalEvidenceGap": _s846_int(row["no_eval_evidence_gap"]),
+            "noOutcomeJoin": _s846_int(row["no_join"]),
+            "potentialFailedAvoided": failed,
+            "potentialWinnersMissed": worked,
+        })
+
+    samples = []
+    for row in samples_rows:
+        outcome_status = row["outcome_status"]
+        samples.append({
+            "evaluationId": row["evaluation_id"],
+            "setupSlug": row["setup_slug"],
+            "primaryTrigger": row["primary_trigger"],
+            "evaluationStatus": row["evaluation_status"],
+            "shadowAction": row["shadow_action"],
+            "strictnessLevel": row["strictness_level"],
+            "symbol": row["symbol"],
+            "signalId": row["signal_id"],
+            "signalTime": row["signal_time"],
+            "lifecycleStatus": row["lifecycle_status"],
+            "qualityStatus": row["quality_status"],
+            "signalGrade": row["signal_grade"],
+            "signalScore": _s846_float(row["signal_score"]),
+            "telegramEligible": bool(row["telegram_eligible"]),
+            "outcomeStatus": outcome_status,
+            "outcomeBucket": _s846_status_bucket(outcome_status),
+            "resultR": _s846_float(row["result_r"]),
+            "firstEvent": row["first_event"],
+            "outcomeTriggerTime": row["outcome_trigger_time"],
+            "outcomeStoredAt": row["outcome_stored_at"],
+        })
+
+    if total_closed <= 0:
+        conclusion_status = "FORWARD_OUTCOME_SAMPLE_NOT_READY"
+        conclusion = "Shadow filters matched signals, but the joined outcomes do not yet contain closed WORKED/FAILED decisions. Do not claim avoided losses or missed winners yet."
+    elif total_failed > total_worked and total_closed >= 30:
+        conclusion_status = "PROMISING_SHADOW_FILTER_NEEDS_MORE_FORWARD_SAMPLE"
+        conclusion = "Shadow filters would have removed more failed closed decisions than winners, but still require forward sample and manual approval."
+    else:
+        conclusion_status = "INSUFFICIENT_OR_MIXED_SHADOW_ATTRIBUTION"
+        conclusion = "Closed attribution is insufficient or mixed. Keep filters in shadow/paper."
+
+    headline = {
+        "runId": selected_run_id,
+        "shadowRows": total_shadow_rows,
+        "joinedOutcomes": total_joined,
+        "joinedOutcomePct": _s846_pct(total_joined, total_shadow_rows),
+        "closed": total_closed,
+        "worked": total_worked,
+        "failed": total_failed,
+        "winRateClosed": _s846_pct(total_worked, total_closed),
+        "avgRClosed": None,
+        "sessionCloseEvidenceGap": total_session_gap,
+        "noEvalEvidenceGap": total_no_eval_gap,
+        "noOutcomeJoin": total_no_join,
+        "potentialFailedAvoided": total_failed,
+        "potentialWinnersMissed": total_worked,
+        "conclusionStatus": conclusion_status,
+    }
+
+    con.close()
+
+    return {
+        "ok": True,
+        "storageVersion": S846_SHADOW_OUTCOME_ATTRIBUTION_VERSION,
+        "reportId": report_id,
+        "createdAt": created_at,
+        "mode": "shadow_filter_outcome_attribution",
+        "headline": headline,
+        "summary": summary,
+        "bySetupTrigger": by_setup_trigger,
+        "samples": samples,
+        "conclusion": conclusion,
+        "policy": {
+            "researchOnly": True,
+            "wouldOnly": True,
+            "noClientVisibleChanges": True,
+            "doesNotChangeOutcomes": True,
+            "doesNotSendTelegram": True,
+            "doesNotPromoteStrategies": True,
+            "doesNotApplyFiltersToLiveEngine": True,
+            "doesNotClaimAvoidedLossesWithoutClosedOutcomes": True,
+            "writesReportOnly": True,
+        },
+        "nextAction": {
+            "paper": "Keep collecting forward outcomes for shadow-matched signals.",
+            "engineering": "Attach this attribution to daily/nightly reports after post-close outcome evaluation.",
+            "approval": "Only use manual approval after enough closed WORKED/FAILED attribution exists and promotion gates pass.",
+        },
+    }
+
+
+def _s846_ensure_table(con):
+    con.execute(
+        """
+        create table if not exists shadow_filter_outcome_attribution_reports (
+            report_id text primary key,
+            created_at text not null,
+            storage_version text not null,
+            run_id text not null,
+            shadow_rows integer not null default 0,
+            joined_outcomes integer not null default 0,
+            closed integer not null default 0,
+            worked integer not null default 0,
+            failed integer not null default 0,
+            conclusion_status text not null,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute(
+        "create index if not exists idx_shadow_filter_outcome_attr_created on shadow_filter_outcome_attribution_reports(created_at desc)"
+    )
+    con.execute(
+        "create index if not exists idx_shadow_filter_outcome_attr_run on shadow_filter_outcome_attribution_reports(run_id)"
+    )
+
+
+def _s846_reports_dir():
+    import os
+    from pathlib import Path
+
+    preferred = Path("/opt/skilledge/stock-engine/reports/shadow_filter_outcome_attribution")
+    try:
+        if Path("/opt/skilledge/stock-engine").exists():
+            preferred.mkdir(parents=True, exist_ok=True)
+            return preferred
+    except Exception:
+        pass
+
+    fallback = Path(os.getcwd()) / "reports" / "shadow_filter_outcome_attribution"
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+def _s846_persist_report(report):
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s846_ensure_table(con)
+
+    headline = report.get("headline") or {}
+    con.execute(
+        """
+        insert or replace into shadow_filter_outcome_attribution_reports
+        (report_id, created_at, storage_version, run_id, shadow_rows, joined_outcomes,
+         closed, worked, failed, conclusion_status, payload_json)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            report.get("reportId"),
+            report.get("createdAt"),
+            report.get("storageVersion"),
+            headline.get("runId"),
+            _s846_int(headline.get("shadowRows")),
+            _s846_int(headline.get("joinedOutcomes")),
+            _s846_int(headline.get("closed")),
+            _s846_int(headline.get("worked")),
+            _s846_int(headline.get("failed")),
+            headline.get("conclusionStatus"),
+            json.dumps(report, ensure_ascii=False),
+        ),
+    )
+    con.commit()
+    con.close()
+
+    out_dir = _s846_reports_dir()
+    latest_path = out_dir / "latest.json"
+    stamp = str(report.get("createdAt") or "").replace(":", "-").replace(".", "-")
+    snapshot_path = out_dir / f"{stamp}.json"
+
+    text = json.dumps(report, ensure_ascii=False, indent=2)
+    latest_path.write_text(text, encoding="utf-8")
+    snapshot_path.write_text(text, encoding="utf-8")
+
+    return {
+        "dbPersisted": True,
+        "filePersisted": True,
+        "latestPath": str(latest_path),
+        "snapshotPath": str(snapshot_path),
+    }
+
+
+@app.post("/engine/research/shadow-filter-outcome-attribution/run")
+def engine_research_shadow_filter_outcome_attribution_run(
+    publish: bool = True,
+    run_id: str = "",
+    sample_limit: int = 80,
+):
+    report = _s846_build_attribution(
+        run_id=run_id,
+        sample_limit=sample_limit,
+    )
+
+    persistence = {
+        "dbPersisted": False,
+        "filePersisted": False,
+        "latestPath": None,
+        "snapshotPath": None,
+    }
+    if report.get("ok") and publish:
+        persistence = _s846_persist_report(report)
+
+    report["publish"] = bool(publish)
+    report["persistence"] = persistence
+    return report
+
+
+@app.get("/engine/research/shadow-filter-outcome-attribution/latest")
+def engine_research_shadow_filter_outcome_attribution_latest():
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s846_ensure_table(con)
+
+    row = con.execute(
+        """
+        select payload_json
+        from shadow_filter_outcome_attribution_reports
+        order by created_at desc
+        limit 1
+        """
+    ).fetchone()
+    con.close()
+
+    if not row:
+        return {
+            "ok": False,
+            "storageVersion": S846_SHADOW_OUTCOME_ATTRIBUTION_VERSION,
+            "error": "shadow_filter_outcome_attribution_not_found",
+            "nextAction": "Run POST /engine/research/shadow-filter-outcome-attribution/run?publish=true first.",
+        }
+
+    try:
+        payload = json.loads(row["payload_json"] or "{}")
+    except Exception as error:
+        return {
+            "ok": False,
+            "storageVersion": S846_SHADOW_OUTCOME_ATTRIBUTION_VERSION,
+            "error": "shadow_filter_outcome_attribution_payload_parse_failed",
+            "details": repr(error),
+        }
+
+    payload["source"] = "db_latest"
+    return payload
+
+# === /S8.46 Shadow Outcome Attribution ===
+
