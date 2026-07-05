@@ -19328,3 +19328,347 @@ def engine_admin_ops_status():
 
 # === /S8.37A Admin Ops Commander Status ===
 
+
+# === S8.39A Strategy Manual Approval Storage ===
+S839A_MANUAL_APPROVAL_STORAGE_VERSION = "s8_39a_strategy_manual_approval_storage_v1"
+
+S839A_ALLOWED_APPROVAL_STATUSES = {
+    "PENDING",
+    "APPROVED",
+    "CLIENT_VISIBLE_APPROVED",
+    "REJECTED",
+    "REVOKED",
+}
+
+
+def _s839a_now():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s839a_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    return str(value).strip().lower() in {"1", "true", "yes", "y", "approved", "client_visible", "enabled"}
+
+
+def _s839a_text(value, fallback=""):
+    text = str(value or "").strip()
+    return text if text else fallback
+
+
+def _s839a_ensure_manual_approval_table(con):
+    con.execute(
+        """
+        create table if not exists strategy_manual_approvals (
+            approval_id text primary key,
+            setup_slug text not null,
+            status text not null,
+            approved integer default 0,
+            client_visible integer default 0,
+            reviewed_by text,
+            reason text,
+            notes text,
+            source text,
+            created_at text not null,
+            updated_at text not null,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute(
+        """
+        create index if not exists idx_strategy_manual_approvals_setup_updated
+        on strategy_manual_approvals(setup_slug, updated_at desc)
+        """
+    )
+    con.execute(
+        """
+        create index if not exists idx_strategy_manual_approvals_status
+        on strategy_manual_approvals(status)
+        """
+    )
+
+
+def _s839a_registry_setup_exists(con, setup_slug):
+    row = con.execute(
+        "select setup_slug, setup_name, enabled, execution_status from algorithm_registry where setup_slug=?",
+        (setup_slug,),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def _s839a_latest_manual_approval_rows(con, limit):
+    _s839a_ensure_manual_approval_table(con)
+    rows = con.execute(
+        """
+        select *
+        from strategy_manual_approvals
+        order by updated_at desc
+        limit ?
+        """,
+        (int(limit or 100),),
+    ).fetchall()
+
+    return [dict(row) for row in rows]
+
+
+def _s839a_latest_by_setup(con):
+    _s839a_ensure_manual_approval_table(con)
+    rows = con.execute(
+        """
+        select a.*
+        from strategy_manual_approvals a
+        join (
+            select setup_slug, max(updated_at) as max_updated_at
+            from strategy_manual_approvals
+            group by setup_slug
+        ) latest
+          on latest.setup_slug = a.setup_slug
+         and latest.max_updated_at = a.updated_at
+        order by a.updated_at desc
+        """
+    ).fetchall()
+    return {row["setup_slug"]: dict(row) for row in rows}
+
+
+@app.get("/engine/strategies/manual-approvals")
+def engine_strategies_manual_approvals(limit: int = 100):
+    import sqlite3
+    import json
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 100), 300))
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s839a_ensure_manual_approval_table(con)
+    con.commit()
+
+    latest_by_setup = _s839a_latest_by_setup(con)
+    rows = _s839a_latest_manual_approval_rows(con, safe_limit)
+
+    registry_total = int(con.execute("select count(*) as c from algorithm_registry").fetchone()["c"])
+    total_records = int(con.execute("select count(*) as c from strategy_manual_approvals").fetchone()["c"])
+
+    by_status = {}
+    approved_count = 0
+    client_visible_count = 0
+
+    for row in latest_by_setup.values():
+        status = str(row.get("status") or "UNKNOWN").upper()
+        by_status[status] = by_status.get(status, 0) + 1
+        if int(row.get("approved") or 0) == 1:
+            approved_count += 1
+        if int(row.get("client_visible") or 0) == 1:
+            client_visible_count += 1
+
+    items = []
+    for row in rows:
+        setup = _s839a_registry_setup_exists(con, row.get("setup_slug")) or {}
+        payload = {}
+        try:
+            payload = json.loads(row.get("payload_json") or "{}")
+        except Exception:
+            payload = {}
+
+        items.append({
+            "approvalId": row.get("approval_id"),
+            "setupSlug": row.get("setup_slug"),
+            "setupName": setup.get("setup_name"),
+            "status": row.get("status"),
+            "approved": bool(row.get("approved")),
+            "clientVisibleApproved": bool(row.get("client_visible")) and bool(row.get("approved")),
+            "reviewedBy": row.get("reviewed_by"),
+            "reason": row.get("reason"),
+            "notes": row.get("notes"),
+            "source": row.get("source"),
+            "createdAt": row.get("created_at"),
+            "updatedAt": row.get("updated_at"),
+            "registry": {
+                "exists": bool(setup),
+                "enabled": bool(setup.get("enabled")) if setup else None,
+                "executionStatus": setup.get("execution_status") if setup else None,
+            },
+            "payload": payload,
+        })
+
+    con.close()
+
+    return {
+        "ok": True,
+        "storageVersion": S839A_MANUAL_APPROVAL_STORAGE_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "approvalTableExists": True,
+            "registryTotal": registry_total,
+            "totalApprovalRecords": total_records,
+            "setupsWithApprovalRecord": len(latest_by_setup),
+            "latestApprovedSetups": approved_count,
+            "latestClientVisibleApprovedSetups": client_visible_count,
+            "byLatestStatus": by_status,
+        },
+        "policy": {
+            "adminOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+            "autoPromotesStrategies": False,
+            "manualApprovalStorageOnly": True,
+        },
+        "items": items,
+    }
+
+
+@app.post("/engine/strategies/manual-approvals")
+def engine_strategies_manual_approval_upsert(payload: dict):
+    import json
+    import sqlite3
+    import uuid
+    from datetime import datetime, timezone
+
+    payload = payload if isinstance(payload, dict) else {}
+
+    setup_slug = _s839a_text(payload.get("setupSlug") or payload.get("setup_slug"))
+    if not setup_slug:
+        return {
+            "ok": False,
+            "storageVersion": S839A_MANUAL_APPROVAL_STORAGE_VERSION,
+            "error": "setupSlug is required",
+        }
+
+    requested_status = _s839a_text(payload.get("status"), "PENDING").upper()
+    if requested_status not in S839A_ALLOWED_APPROVAL_STATUSES:
+        return {
+            "ok": False,
+            "storageVersion": S839A_MANUAL_APPROVAL_STORAGE_VERSION,
+            "error": f"Unsupported status: {requested_status}",
+            "allowedStatuses": sorted(S839A_ALLOWED_APPROVAL_STATUSES),
+        }
+
+    requested_approved = _s839a_bool(payload.get("approved")) or requested_status in {
+        "APPROVED",
+        "CLIENT_VISIBLE_APPROVED",
+    }
+
+    requested_client_visible = (
+        _s839a_bool(payload.get("clientVisible"))
+        or _s839a_bool(payload.get("client_visible"))
+        or requested_status == "CLIENT_VISIBLE_APPROVED"
+    )
+
+    # Safety: client-visible approval can never exist without approved=True.
+    approved = bool(requested_approved)
+    client_visible = bool(requested_client_visible and approved)
+
+    if requested_status in {"REJECTED", "REVOKED", "PENDING"}:
+        if requested_status != "PENDING":
+            approved = False
+            client_visible = False
+        if requested_status == "PENDING" and not _s839a_bool(payload.get("approved")):
+            approved = False
+            client_visible = False
+
+    reviewed_by = _s839a_text(payload.get("reviewedBy") or payload.get("reviewed_by"), "admin")
+    reason = _s839a_text(payload.get("reason"), "")
+    notes = _s839a_text(payload.get("notes"), "")
+    source = _s839a_text(payload.get("source"), "admin_manual")
+
+    now = _s839a_now()
+    approval_id = _s839a_text(payload.get("approvalId") or payload.get("approval_id"), f"manual_approval:{setup_slug}:{now}:{uuid.uuid4().hex[:10]}")
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s839a_ensure_manual_approval_table(con)
+
+    setup = _s839a_registry_setup_exists(con, setup_slug)
+    if not setup:
+        con.close()
+        return {
+            "ok": False,
+            "storageVersion": S839A_MANUAL_APPROVAL_STORAGE_VERSION,
+            "error": "setupSlug does not exist in algorithm_registry",
+            "setupSlug": setup_slug,
+        }
+
+    stored_payload = {
+        "input": payload,
+        "safety": {
+            "clientVisibleRequiresApproved": True,
+            "doesNotChangeClientDelivery": True,
+            "doesNotChangeRegistry": True,
+            "doesNotSendTelegram": True,
+            "promotionGuardMustStillPassNumericAndPipelineGates": True,
+        },
+    }
+
+    con.execute(
+        """
+        insert or replace into strategy_manual_approvals (
+            approval_id, setup_slug, status, approved, client_visible, reviewed_by,
+            reason, notes, source, created_at, updated_at, payload_json
+        )
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            approval_id,
+            setup_slug,
+            requested_status,
+            1 if approved else 0,
+            1 if client_visible else 0,
+            reviewed_by,
+            reason,
+            notes,
+            source,
+            now,
+            now,
+            json.dumps(stored_payload, ensure_ascii=False, sort_keys=True),
+        ),
+    )
+    con.commit()
+
+    row = con.execute(
+        "select * from strategy_manual_approvals where approval_id=?",
+        (approval_id,),
+    ).fetchone()
+    saved = dict(row) if row else {}
+    con.close()
+
+    return {
+        "ok": True,
+        "storageVersion": S839A_MANUAL_APPROVAL_STORAGE_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "saved": {
+            "approvalId": saved.get("approval_id"),
+            "setupSlug": saved.get("setup_slug"),
+            "status": saved.get("status"),
+            "approved": bool(saved.get("approved")),
+            "clientVisibleApproved": bool(saved.get("client_visible")) and bool(saved.get("approved")),
+            "reviewedBy": saved.get("reviewed_by"),
+            "reason": saved.get("reason"),
+            "notes": saved.get("notes"),
+            "source": saved.get("source"),
+            "createdAt": saved.get("created_at"),
+            "updatedAt": saved.get("updated_at"),
+        },
+        "registry": {
+            "setupName": setup.get("setup_name"),
+            "enabled": bool(setup.get("enabled")),
+            "executionStatus": setup.get("execution_status"),
+        },
+        "policy": {
+            "adminOnly": True,
+            "writesDb": True,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+            "autoPromotesStrategies": False,
+            "manualApprovalStorageOnly": True,
+        },
+    }
+
+# === /S8.39A Strategy Manual Approval Storage ===
+
