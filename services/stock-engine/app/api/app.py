@@ -18629,3 +18629,393 @@ def engine_research_failure_analysis(
     }
 
 # === /S8.35A Failure Analysis Agent ===
+
+# === S8.36A Strategy Promotion Guard ===
+S836A_PROMOTION_GUARD_VERSION = "s8_36a_strategy_promotion_guard_v1"
+
+
+def _s836a_float(value, default=None):
+    try:
+        if value is None:
+            return default
+        parsed = float(value)
+        if parsed != parsed:
+            return default
+        return parsed
+    except Exception:
+        return default
+
+
+def _s836a_int(value, default=0):
+    try:
+        return int(value or default)
+    except Exception:
+        return default
+
+
+def _s836a_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    text = str(value).strip().lower()
+    return text in {"1", "true", "yes", "y", "approved", "client_visible", "enabled"}
+
+
+def _s836a_table_names(con):
+    try:
+        return {
+            str(row["name"])
+            for row in con.execute("select name from sqlite_master where type='table'").fetchall()
+            if row["name"]
+        }
+    except Exception:
+        return set()
+
+
+def _s836a_manual_approval_state(con, setup_slug, table_names=None):
+    table_names = table_names or _s836a_table_names(con)
+
+    candidate_tables = [
+        "strategy_manual_approvals",
+        "strategy_promotion_approvals",
+        "strategy_approvals",
+        "manual_strategy_approvals",
+    ]
+
+    for table in candidate_tables:
+        if table not in table_names:
+            continue
+
+        try:
+            columns = [
+                str(col[1])
+                for col in con.execute(f"pragma table_info({table})").fetchall()
+            ]
+            if "setup_slug" not in columns:
+                continue
+
+            row = con.execute(
+                f"select * from {table} where setup_slug=? order by updated_at desc limit 1",
+                (setup_slug,),
+            ).fetchone()
+
+            if not row:
+                return {
+                    "status": "NO_MANUAL_APPROVAL_RECORD",
+                    "approved": False,
+                    "clientVisibleApproved": False,
+                    "sourceTable": table,
+                    "updatedAt": None,
+                }
+
+            data = dict(row)
+            status = str(data.get("status") or data.get("approval_status") or "").upper()
+            approved = _s836a_bool(data.get("approved")) or status in {"APPROVED", "MANUALLY_APPROVED"}
+            client_visible = (
+                _s836a_bool(data.get("client_visible"))
+                or _s836a_bool(data.get("clientVisible"))
+                or status in {"CLIENT_VISIBLE_APPROVED", "LIVE_CLIENT_APPROVED"}
+            )
+
+            return {
+                "status": status or ("APPROVED" if approved else "PENDING_OR_UNKNOWN"),
+                "approved": bool(approved),
+                "clientVisibleApproved": bool(client_visible and approved),
+                "sourceTable": table,
+                "updatedAt": data.get("updated_at") or data.get("updatedAt"),
+                "reviewedBy": data.get("reviewed_by") or data.get("reviewedBy"),
+            }
+        except Exception as error:
+            return {
+                "status": "APPROVAL_TABLE_READ_ERROR",
+                "approved": False,
+                "clientVisibleApproved": False,
+                "sourceTable": table,
+                "error": repr(error),
+            }
+
+    return {
+        "status": "NO_APPROVAL_TABLE",
+        "approved": False,
+        "clientVisibleApproved": False,
+        "sourceTable": None,
+        "updatedAt": None,
+    }
+
+
+def _s836a_issue_codes(failure_item):
+    codes = set()
+    for issue in (failure_item or {}).get("issues") or []:
+        if isinstance(issue, dict) and issue.get("code"):
+            codes.add(str(issue.get("code")))
+    return codes
+
+
+def _s836a_decide(evidence_item, failure_item, manual_state, min_closed, min_win_rate, min_avg_r):
+    evidence = (evidence_item or {}).get("evidence") or {}
+    live = (evidence_item or {}).get("liveEvidence") or {}
+    research = (evidence_item or {}).get("researchEvidence") or {}
+    feature = (failure_item or {}).get("featureCoverage") or {}
+
+    closed = _s836a_int(evidence.get("closedDecisionCount"))
+    total = _s836a_int(evidence.get("total"))
+    live_total = _s836a_int(live.get("total"))
+    research_closed = _s836a_int(research.get("closedDecisionCount"))
+    win_rate = _s836a_float(evidence.get("winRateClosed"))
+    avg_r = _s836a_float(evidence.get("avgRClosed"))
+
+    failure_status = str((failure_item or {}).get("failureStatus") or "").upper()
+    evidence_status = str((evidence_item or {}).get("promotionStatus") or "").upper()
+    issue_codes = _s836a_issue_codes(failure_item)
+
+    blockers = []
+    gates = {
+        "minClosed": closed >= min_closed,
+        "minWinRateClosed": win_rate is not None and win_rate >= min_win_rate,
+        "minAvgRClosed": avg_r is not None and avg_r > min_avg_r,
+        "noPipelineRepairBlocker": True,
+        "noNegativeEdgeBlocker": True,
+        "featureCoverageOk": True,
+        "manualApprovalApproved": bool((manual_state or {}).get("approved")),
+        "clientVisibleApproved": bool((manual_state or {}).get("clientVisibleApproved")),
+    }
+
+    if failure_status in {"PIPELINE_REPAIR_REQUIRED", "OUTCOME_QUALITY_REVIEW_REQUIRED"} or evidence_status == "OUTCOME_PIPELINE_DIRTY_TOO_MANY_OPEN":
+        gates["noPipelineRepairBlocker"] = False
+        blockers.append("Pipeline/outcome quality repair required before promotion.")
+
+    if (
+        bool((failure_item or {}).get("demotionCandidate"))
+        or "LOW_WIN_RATE_CLOSED" in issue_codes
+        or "NEGATIVE_AVG_R_CLOSED" in issue_codes
+        or (closed >= min_closed and win_rate is not None and win_rate < min_win_rate)
+        or (closed >= min_closed and avg_r is not None and avg_r <= min_avg_r)
+    ):
+        gates["noNegativeEdgeBlocker"] = False
+        blockers.append("Negative edge or weak closed-decision performance blocks promotion.")
+
+    feature_total = _s836a_int(feature.get("total"))
+    feature_ready_pct = _s836a_float(feature.get("failureReadyPct"), 100.0)
+    if feature_total > 0 and feature_ready_pct < 80.0:
+        gates["featureCoverageOk"] = False
+        blockers.append("Feature coverage is not reliable enough for promotion guard.")
+
+    if total <= 0:
+        readiness_status = "REGISTRY_ONLY"
+        next_action = "Keep in registry/research. Collect live or research outcomes first."
+    elif live_total <= 0 and research_closed > 0:
+        readiness_status = "RESEARCH_ONLY"
+        next_action = "Use research evidence only. Require live/paper forward validation before promotion."
+    elif not gates["noPipelineRepairBlocker"]:
+        readiness_status = "PIPELINE_REPAIR_REQUIRED"
+        next_action = "Fix/rebuild outcome pipeline quality before judging promotion."
+    elif not gates["noNegativeEdgeBlocker"]:
+        readiness_status = "NEGATIVE_EDGE_BLOCKED"
+        next_action = "Run failure analysis filters and keep strategy out of client delivery."
+    elif not gates["featureCoverageOk"]:
+        readiness_status = "FEATURE_COVERAGE_BLOCKED"
+        next_action = "Improve feature snapshot coverage before promotion review."
+    elif closed < min_closed:
+        readiness_status = "PAPER_EVIDENCE_BUILDING"
+        next_action = f"Collect at least {min_closed} closed TP/STOP decisions."
+    elif not gates["minWinRateClosed"] or not gates["minAvgRClosed"]:
+        readiness_status = "NEGATIVE_EDGE_BLOCKED"
+        next_action = "Do not promote. Closed-decision performance does not pass numeric gate."
+    elif not gates["manualApprovalApproved"]:
+        readiness_status = "PROMOTION_READY_BUT_NOT_APPROVED"
+        next_action = "Numeric gate passed, but manual approval is required. No auto-promotion."
+    elif gates["manualApprovalApproved"] and not gates["clientVisibleApproved"]:
+        readiness_status = "MANUAL_REVIEW_REQUIRED"
+        next_action = "Manual approval exists, but explicit client-visible approval is still required."
+    else:
+        readiness_status = "CLIENT_VISIBLE_APPROVED"
+        next_action = "Client visibility is approved, but delivery layer must still enforce strict signal-level gates."
+
+    return readiness_status, next_action, blockers, gates
+
+
+@app.get("/engine/strategies/promotion-readiness")
+def engine_strategies_promotion_readiness(
+    limit: int = 100,
+    min_closed: int = 30,
+    min_win_rate: float = 65.0,
+    min_avg_r: float = 0.0,
+    min_trigger_closed: int = 5,
+):
+    import sqlite3
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 100), 200))
+    min_closed = max(1, int(min_closed or 30))
+    min_win_rate = float(min_win_rate if min_win_rate is not None else 65.0)
+    min_avg_r = float(min_avg_r if min_avg_r is not None else 0.0)
+    min_trigger_closed = max(1, int(min_trigger_closed or 5))
+
+    evidence_response = engine_strategies_evidence(limit=200)
+    failure_response = engine_research_failure_analysis(
+        limit=200,
+        min_closed=min_closed,
+        min_trigger_closed=min_trigger_closed,
+        include_all=True,
+    )
+
+    evidence_items = evidence_response.get("items") if isinstance(evidence_response, dict) else []
+    failure_items = failure_response.get("items") if isinstance(failure_response, dict) else []
+
+    failure_by_slug = {
+        item.get("setupSlug"): item
+        for item in failure_items
+        if isinstance(item, dict) and item.get("setupSlug")
+    }
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    table_names = _s836a_table_names(con)
+
+    items = []
+    by_status = {}
+    by_gate_blocker = {
+        "pipeline": 0,
+        "negativeEdge": 0,
+        "featureCoverage": 0,
+        "manualApproval": 0,
+    }
+
+    for evidence_item in evidence_items:
+        if not isinstance(evidence_item, dict):
+            continue
+
+        slug = evidence_item.get("setupSlug")
+        failure_item = failure_by_slug.get(slug) or {}
+        manual_state = _s836a_manual_approval_state(con, slug, table_names=table_names)
+
+        readiness_status, next_action, blockers, gates = _s836a_decide(
+            evidence_item=evidence_item,
+            failure_item=failure_item,
+            manual_state=manual_state,
+            min_closed=min_closed,
+            min_win_rate=min_win_rate,
+            min_avg_r=min_avg_r,
+        )
+
+        by_status[readiness_status] = by_status.get(readiness_status, 0) + 1
+        if not gates.get("noPipelineRepairBlocker"):
+            by_gate_blocker["pipeline"] += 1
+        if not gates.get("noNegativeEdgeBlocker"):
+            by_gate_blocker["negativeEdge"] += 1
+        if not gates.get("featureCoverageOk"):
+            by_gate_blocker["featureCoverage"] += 1
+        if not gates.get("manualApprovalApproved"):
+            by_gate_blocker["manualApproval"] += 1
+
+        items.append({
+            "setupSlug": slug,
+            "setupName": evidence_item.get("setupName"),
+            "family": evidence_item.get("family"),
+            "assetType": evidence_item.get("assetType"),
+            "direction": evidence_item.get("direction"),
+            "enabled": bool(evidence_item.get("enabled")),
+            "executionStatus": evidence_item.get("executionStatus"),
+            "readinessStatus": readiness_status,
+            "nextAction": next_action,
+            "clientVisible": False,
+            "manualApprovalRequired": True,
+            "manualApproval": manual_state,
+            "gates": gates,
+            "blockers": blockers,
+            "evidenceQuality": evidence_item.get("evidenceQuality"),
+            "evidencePromotionStatus": evidence_item.get("promotionStatus"),
+            "failureStatus": failure_item.get("failureStatus"),
+            "failureSeverity": failure_item.get("severity"),
+            "demotionCandidate": bool(failure_item.get("demotionCandidate")),
+            "evidence": evidence_item.get("evidence"),
+            "liveEvidence": evidence_item.get("liveEvidence"),
+            "researchEvidence": evidence_item.get("researchEvidence"),
+            "featureCoverage": failure_item.get("featureCoverage"),
+            "failureIssues": failure_item.get("issues") or [],
+            "filtersToTest": failure_item.get("filtersToTest") or [],
+            "pipelineFixes": failure_item.get("pipelineFixes") or [],
+        })
+
+    con.close()
+
+    order = {
+        "PIPELINE_REPAIR_REQUIRED": 0,
+        "NEGATIVE_EDGE_BLOCKED": 1,
+        "FEATURE_COVERAGE_BLOCKED": 2,
+        "PAPER_EVIDENCE_BUILDING": 3,
+        "REGISTRY_ONLY": 4,
+        "RESEARCH_ONLY": 5,
+        "MANUAL_REVIEW_REQUIRED": 6,
+        "PROMOTION_READY_BUT_NOT_APPROVED": 7,
+        "CLIENT_VISIBLE_APPROVED": 8,
+    }
+
+    items.sort(key=lambda x: (
+        order.get(x.get("readinessStatus"), 99),
+        -_s836a_int((x.get("evidence") or {}).get("closedDecisionCount")),
+    ))
+
+    returned = items[:safe_limit]
+
+    return {
+        "ok": True,
+        "storageVersion": S836A_PROMOTION_GUARD_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "registryTotal": len(evidence_items),
+            "returned": len(returned),
+            "byReadinessStatus": by_status,
+            "gateBlockers": by_gate_blocker,
+            "promotionReadyButNotApproved": by_status.get("PROMOTION_READY_BUT_NOT_APPROVED", 0),
+            "clientVisibleApproved": by_status.get("CLIENT_VISIBLE_APPROVED", 0),
+            "manualApprovalTablesDetected": [
+                name for name in [
+                    "strategy_manual_approvals",
+                    "strategy_promotion_approvals",
+                    "strategy_approvals",
+                    "manual_strategy_approvals",
+                ]
+                if name in table_names
+            ],
+            "approvalTableMissing": not any(name in table_names for name in [
+                "strategy_manual_approvals",
+                "strategy_promotion_approvals",
+                "strategy_approvals",
+                "manual_strategy_approvals",
+            ]),
+            "thresholds": {
+                "minClosed": min_closed,
+                "minWinRateClosed": min_win_rate,
+                "minAvgRClosed": min_avg_r,
+                "minTriggerClosed": min_trigger_closed,
+            },
+        },
+        "guard": {
+            "name": "Strategy Promotion Guard",
+            "purpose": "Combine strategy evidence, failure analysis, feature coverage, setup adjustments, and manual approval state before any client visibility.",
+            "sourceEndpoints": [
+                "/engine/strategies/evidence",
+                "/engine/research/failure-analysis",
+            ],
+            "doesNotAutoChangeStrategy": True,
+            "doesNotAutoPromote": True,
+            "doesNotSendTelegram": True,
+        },
+        "policy": {
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+            "autoDemotesStrategies": False,
+            "autoPromotesStrategies": False,
+            "manualApprovalRequired": True,
+            "clientVisibleDefault": False,
+        },
+        "items": returned,
+    }
+
+# === /S8.36A Strategy Promotion Guard ===
+
