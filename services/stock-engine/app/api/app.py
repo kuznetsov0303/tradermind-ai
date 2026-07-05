@@ -19019,3 +19019,312 @@ def engine_strategies_promotion_readiness(
 
 # === /S8.36A Strategy Promotion Guard ===
 
+
+# === S8.37A Admin Ops Commander Status ===
+S837A_ADMIN_OPS_STATUS_VERSION = "s8_37a_admin_ops_commander_status_v1"
+
+
+def _s837a_safe_call(name, fn, fallback=None):
+    try:
+        return fn()
+    except Exception as error:
+        return {
+            "ok": False,
+            "source": name,
+            "error": repr(error),
+            **(fallback or {}),
+        }
+
+
+def _s837a_db_table_counts(con, tables):
+    counts = {}
+    for table in tables:
+        try:
+            row = con.execute(f"select count(*) as c from {table}").fetchone()
+            counts[table] = int(row["c"] if isinstance(row, sqlite3.Row) else row[0])
+        except Exception as error:
+            counts[table] = {"error": repr(error)}
+    return counts
+
+
+def _s837a_systemd_units():
+    import subprocess
+
+    wanted = [
+        "skilledge-stock-engine-api.service",
+        "skilledge-daily-ai-desk.service",
+        "skilledge-telegram-consumer.service",
+        "skilledge-clean-elite-capture.timer",
+        "skilledge-engine-watchdog.timer",
+        "skilledge-nightly-self-learning.timer",
+        "skilledge-post-close-evidence.timer",
+        "skilledge-production-readiness.timer",
+    ]
+
+    units = []
+    for unit in wanted:
+        try:
+            active = subprocess.run(
+                ["systemctl", "is-active", unit],
+                text=True,
+                capture_output=True,
+                timeout=4,
+            )
+            enabled = subprocess.run(
+                ["systemctl", "is-enabled", unit],
+                text=True,
+                capture_output=True,
+                timeout=4,
+            )
+            units.append({
+                "unit": unit,
+                "active": active.stdout.strip() or active.stderr.strip(),
+                "enabled": enabled.stdout.strip() or enabled.stderr.strip(),
+                "ok": active.returncode == 0 and (active.stdout.strip() in {"active"}),
+            })
+        except FileNotFoundError:
+            units.append({
+                "unit": unit,
+                "active": "systemctl_not_available",
+                "enabled": "unknown",
+                "ok": None,
+            })
+        except Exception as error:
+            units.append({
+                "unit": unit,
+                "active": "error",
+                "enabled": "unknown",
+                "ok": False,
+                "error": repr(error),
+            })
+
+    return {
+        "ok": all(x.get("ok") is True for x in units if x.get("ok") is not None),
+        "items": units,
+        "activeCount": len([x for x in units if x.get("active") == "active"]),
+        "checkedCount": len(units),
+    }
+
+
+def _s837a_latest_report_file(path_text):
+    from pathlib import Path
+    try:
+        path = Path(path_text)
+        if not path.exists():
+            return {"exists": False, "path": str(path)}
+        stat = path.stat()
+        return {
+            "exists": True,
+            "path": str(path),
+            "sizeBytes": int(stat.st_size),
+            "modifiedAt": datetime.fromtimestamp(stat.st_mtime, timezone.utc).isoformat(),
+        }
+    except Exception as error:
+        return {"exists": False, "path": path_text, "error": repr(error)}
+
+
+def _s837a_status_level(summary):
+    if summary.get("engineOk") is not True:
+        return "CRITICAL_ENGINE_DOWN"
+    if int(summary.get("systemdInactiveCount") or 0) > 0:
+        return "SYSTEMD_ATTENTION_REQUIRED"
+    if int(summary.get("dirtyOutcomePipelines") or 0) > 0:
+        return "OUTCOME_PIPELINE_REPAIR_REQUIRED"
+    if int(summary.get("approvalTableMissing") or 0) > 0:
+        return "ADMIN_APPROVAL_TABLE_MISSING"
+    if int(summary.get("nightlyFailedSteps") or 0) > 0:
+        return "NIGHTLY_LEARNING_ATTENTION_REQUIRED"
+    return "OPERATIONAL_WITH_GUARDS"
+
+
+@app.get("/engine/admin/ops/status")
+def engine_admin_ops_status():
+    import os
+    import sqlite3
+    from pathlib import Path
+    from datetime import datetime, timezone
+
+    generated_at = datetime.now(timezone.utc).isoformat()
+
+    health_snapshot = _s837a_safe_call("health", lambda: health())
+    nightly_snapshot = _s837a_safe_call("nightly_status", lambda: engine_research_nightly_status())
+    strategy_evidence = _s837a_safe_call("strategy_evidence", lambda: engine_strategies_evidence(limit=200))
+    failure_analysis = _s837a_safe_call(
+        "failure_analysis",
+        lambda: engine_research_failure_analysis(limit=200, min_closed=30, min_trigger_closed=5, include_all=False),
+    )
+    promotion_readiness = _s837a_safe_call(
+        "promotion_readiness",
+        lambda: engine_strategies_promotion_readiness(
+            limit=200,
+            min_closed=30,
+            min_win_rate=65.0,
+            min_avg_r=0.0,
+            min_trigger_closed=5,
+        ),
+    )
+
+    db_path = _s832a2_db_path()
+    db_file = Path(db_path)
+    db_health = {
+        "path": str(db_file),
+        "exists": db_file.exists(),
+        "sizeBytes": db_file.stat().st_size if db_file.exists() else None,
+        "readOk": False,
+        "tableCounts": {},
+    }
+
+    try:
+        con = sqlite3.connect(str(db_file))
+        con.row_factory = sqlite3.Row
+        db_health["readOk"] = True
+        db_health["tableCounts"] = _s837a_db_table_counts(con, [
+            "algorithm_registry",
+            "setup_adjustments",
+            "signal_records",
+            "outcome_records",
+            "research_runs",
+            "research_rebuilt_outcomes",
+            "research_feature_snapshots",
+        ])
+        con.close()
+    except Exception as error:
+        db_health["error"] = repr(error)
+
+    systemd = _s837a_systemd_units()
+
+    reports = {
+        "nightlySelfLearningLatest": _s837a_latest_report_file("/opt/skilledge/stock-engine/reports/nightly_self_learning/latest.json"),
+        "reportsDir": _s837a_latest_report_file("/opt/skilledge/stock-engine/reports"),
+    }
+
+    evidence_summary = strategy_evidence.get("summary") if isinstance(strategy_evidence, dict) else {}
+    failure_summary = failure_analysis.get("summary") if isinstance(failure_analysis, dict) else {}
+    promotion_summary = promotion_readiness.get("summary") if isinstance(promotion_readiness, dict) else {}
+    nightly_steps = nightly_snapshot.get("steps") if isinstance(nightly_snapshot, dict) else {}
+    health_ok = bool(health_snapshot.get("ok")) if isinstance(health_snapshot, dict) else False
+
+    inactive_units = [
+        item for item in systemd.get("items", [])
+        if item.get("ok") is False or item.get("active") not in {"active", "systemctl_not_available"}
+    ]
+
+    top_risks = []
+    dirty_count = int(evidence_summary.get("dirtyOutcomePipelines") or 0)
+    if dirty_count:
+        top_risks.append({
+            "code": "DIRTY_OUTCOME_PIPELINES",
+            "severity": "HIGH",
+            "message": f"{dirty_count} strategies have dirty/open/session-close outcome pipelines.",
+            "nextAction": "Run outcome repair/rebuild before investor or promotion claims.",
+        })
+
+    negative_count = int(failure_summary.get("negativeEdgeSetups") or 0)
+    if negative_count:
+        top_risks.append({
+            "code": "NEGATIVE_EDGE_SETUPS",
+            "severity": "HIGH",
+            "message": f"{negative_count} setups show negative edge or weak closed-decision performance.",
+            "nextAction": "Keep blocked from client promotion and test stricter filters.",
+        })
+
+    if promotion_summary.get("approvalTableMissing") is True:
+        top_risks.append({
+            "code": "APPROVAL_TABLE_MISSING",
+            "severity": "MEDIUM",
+            "message": "No manual approval table exists yet.",
+            "nextAction": "Add admin approval storage before any client-visible strategy promotion.",
+        })
+
+    nightly_failed = int((nightly_steps or {}).get("failed") or 0)
+    if nightly_failed:
+        top_risks.append({
+            "code": "NIGHTLY_LEARNING_FAILURES",
+            "severity": "HIGH",
+            "message": f"Nightly learning has {nightly_failed} failed steps.",
+            "nextAction": "Open nightly report and fix failed learning steps.",
+        })
+
+    if inactive_units:
+        top_risks.append({
+            "code": "SYSTEMD_UNIT_ATTENTION",
+            "severity": "HIGH",
+            "message": f"{len(inactive_units)} SkillEdge systemd units need attention.",
+            "nextAction": "Inspect systemctl status and journalctl for inactive/failed units.",
+        })
+
+    summary = {
+        "engineOk": health_ok,
+        "systemdOk": bool(systemd.get("ok")),
+        "systemdInactiveCount": len(inactive_units),
+        "nightlyOk": bool(nightly_snapshot.get("ok")) if isinstance(nightly_snapshot, dict) else False,
+        "nightlyFailedSteps": nightly_failed,
+        "dbReadOk": bool(db_health.get("readOk")),
+        "registryTotal": evidence_summary.get("registryTotal"),
+        "strategyEvidenceReturned": evidence_summary.get("returned"),
+        "dirtyOutcomePipelines": dirty_count,
+        "withAnyClosedEvidence": evidence_summary.get("withAnyClosedEvidence"),
+        "withMeaningfulSample": evidence_summary.get("withMeaningfulSample"),
+        "promotionCandidates": evidence_summary.get("promotionCandidates"),
+        "failureCritical": failure_summary.get("critical"),
+        "failureHigh": failure_summary.get("high"),
+        "negativeEdgeSetups": negative_count,
+        "demotionCandidates": failure_summary.get("demotionCandidates"),
+        "promotionReadyButNotApproved": promotion_summary.get("promotionReadyButNotApproved"),
+        "clientVisibleApproved": promotion_summary.get("clientVisibleApproved"),
+        "approvalTableMissing": 1 if promotion_summary.get("approvalTableMissing") is True else 0,
+    }
+
+    return {
+        "ok": health_ok and bool(db_health.get("readOk")),
+        "storageVersion": S837A_ADMIN_OPS_STATUS_VERSION,
+        "generatedAt": generated_at,
+        "status": _s837a_status_level(summary),
+        "summary": summary,
+        "topRisks": top_risks,
+        "engine": {
+            "health": health_snapshot,
+        },
+        "systemd": systemd,
+        "storage": db_health,
+        "nightlyLearning": {
+            "summary": {
+                "ok": nightly_snapshot.get("ok") if isinstance(nightly_snapshot, dict) else False,
+                "latestReport": nightly_snapshot.get("latestReport") if isinstance(nightly_snapshot, dict) else None,
+                "steps": nightly_snapshot.get("steps") if isinstance(nightly_snapshot, dict) else None,
+                "learningMemory": nightly_snapshot.get("learningMemory") if isinstance(nightly_snapshot, dict) else None,
+            },
+        },
+        "strategyEvidence": {
+            "summary": evidence_summary,
+            "topItems": (strategy_evidence.get("items") or [])[:10] if isinstance(strategy_evidence, dict) else [],
+        },
+        "failureAnalysis": {
+            "summary": failure_summary,
+            "topItems": (failure_analysis.get("items") or [])[:10] if isinstance(failure_analysis, dict) else [],
+        },
+        "promotionReadiness": {
+            "summary": promotion_summary,
+            "topItems": (promotion_readiness.get("items") or [])[:10] if isinstance(promotion_readiness, dict) else [],
+        },
+        "reports": reports,
+        "env": {
+            "fmpConfigured": bool(os.getenv("FMP_API_KEY") or os.getenv("FMP_KEY") or os.getenv("FINANCIAL_MODELING_PREP_API_KEY")),
+            "pythonPath": os.getenv("PYTHONPATH"),
+            "engineMode": os.getenv("SKILLEDGE_ENGINE_MODE") or os.getenv("ENGINE_MODE"),
+        },
+        "policy": {
+            "adminOnly": True,
+            "readOnly": True,
+            "writesDb": False,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "changesRegistry": False,
+            "autoDemotesStrategies": False,
+            "autoPromotesStrategies": False,
+            "manualApprovalRequired": True,
+        },
+    }
+
+# === /S8.37A Admin Ops Commander Status ===
+
