@@ -22451,3 +22451,451 @@ def engine_research_strategy_filter_review_latest():
     return payload
 
 # === /S8.43 Strategy Filter Review / Negative Edge Triage ===
+
+# === S8.44 Shadow Filter Experiment Plan ===
+S844_SHADOW_FILTER_EXPERIMENT_PLAN_VERSION = "s8_44_shadow_filter_experiment_plan_v1"
+
+
+def _s844_now_iso():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s844_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def _s844_float(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s844_safe_text(value, fallback="UNKNOWN"):
+    value = str(value or "").strip()
+    return value if value else fallback
+
+
+def _s844_experiment_id(setup_slug, primary_trigger):
+    import hashlib
+    raw = f"{_s844_safe_text(setup_slug)}::{_s844_safe_text(primary_trigger)}".encode("utf-8")
+    return "shadow_filter:" + hashlib.sha1(raw).hexdigest()[:16]
+
+
+def _s844_action_rule(trigger):
+    closed = _s844_int((trigger or {}).get("closedDecisionCount"))
+    win_rate = _s844_float((trigger or {}).get("winRateClosed"), 0.0)
+    avg_r = _s844_float((trigger or {}).get("avgRClosed"), 0.0)
+    stop_rate = _s844_float((trigger or {}).get("stopRateClosed"), None)
+
+    if closed >= 20 and (win_rate < 35.0 or avg_r < 0.0):
+        return {
+            "shadowAction": "SHADOW_BLOCK",
+            "strictnessLevel": "HARD",
+            "reason": "Large enough trigger sample with weak win rate or negative avg R.",
+        }
+
+    if closed >= 5 and (win_rate < 35.0 or avg_r < 0.0):
+        return {
+            "shadowAction": "SHADOW_DEMOTE",
+            "strictnessLevel": "MEDIUM",
+            "reason": "Weak trigger sample should be demoted or blocked in paper/shadow before live client delivery.",
+        }
+
+    if closed >= 5 and stop_rate is not None and stop_rate >= 70.0:
+        return {
+            "shadowAction": "SHADOW_TIGHTEN_CONFIRMATION",
+            "strictnessLevel": "MEDIUM",
+            "reason": "High stop rate needs stricter confirmation in shadow.",
+        }
+
+    return {
+        "shadowAction": "OBSERVE_MORE_SAMPLE",
+        "strictnessLevel": "LOW",
+        "reason": "Insufficient evidence for a hard shadow block.",
+    }
+
+
+def _s844_setup_specific_condition(setup_slug, primary_trigger):
+    setup_slug = _s844_safe_text(setup_slug, "")
+    primary_trigger = _s844_safe_text(primary_trigger, "UNKNOWN")
+
+    if setup_slug == "vwap_reclaim_long":
+        if primary_trigger in ("ema20_reclaim_5m", "vwap_reclaim_5m"):
+            return "Reject first-touch reclaim entries unless price holds above VWAP and EMA20 with a confirmed higher-low after reclaim."
+        if primary_trigger == "higher_low_5m":
+            return "Require higher-low to form after a confirmed VWAP reclaim, with clean TP1 room and no chase candle."
+        return "Require VWAP reclaim + EMA20 support + fresh liquidity context before ACTIVE."
+
+    if setup_slug == "gap_and_crap_short":
+        if primary_trigger == "vwap_rejection_5m":
+            return "Require VWAP rejection plus lower-high confirmation and failed reclaim before short activation."
+        if primary_trigger == "ema20_loss_5m":
+            return "Require EMA20 loss plus VWAP underside rejection and clean downside room before ACTIVE."
+        if primary_trigger == "lower_high_5m":
+            return "Require lower-high after failed extension, not into support or after the move is already exhausted."
+        return "Require failed push + lower-high + liquidity/spread check before ACTIVE."
+
+    if setup_slug == "vwap_rejection_short":
+        if primary_trigger == "UNKNOWN":
+            return "Block UNKNOWN trigger attribution from promotion/client evidence until primary_trigger metadata is fixed."
+        if primary_trigger == "lower_high_5m":
+            return "Require lower-high to form below VWAP after rejection, not before confirmation."
+        if primary_trigger == "ema20_loss_5m":
+            return "Require EMA20 loss to hold below VWAP with clean stop location and downside TP1 room."
+        return "Require VWAP rejection + lower-high + EMA/VWAP hold below confirmation."
+
+    if setup_slug == "opening_range_breakout_long":
+        return "Reject first ORB touch unless breakout candle has volume expansion, retest/hold confirmation, and enough TP1 room after spread/ATR."
+
+    if setup_slug == "premarket_pump_short":
+        if primary_trigger == "UNKNOWN":
+            return "Block UNKNOWN trigger attribution from promotion/client evidence; require lower_high_5m + ema20_loss_5m pair before ACTIVE."
+        return "Require lower-high plus VWAP/EMA loss confirmation together before short activation."
+
+    return "Apply shadow block/demotion only in research/paper until new clean evidence validates the filter."
+
+
+def _s844_success_criteria():
+    return {
+        "minimumNewClosedDecisions": 30,
+        "minimumShadowWinRateClosed": 55.0,
+        "minimumShadowAvgRClosed": 0.10,
+        "maximumStopRateClosed": 60.0,
+        "minimumObservationDays": 5,
+        "promotionStillRequiresManualApproval": True,
+    }
+
+
+def _s844_build_plan(limit=200, min_closed=30, min_trigger_closed=5):
+    import uuid
+    from datetime import datetime, timezone
+
+    created_at = datetime.now(timezone.utc).isoformat()
+    plan_id = "shadow_filter_plan:" + created_at + ":" + uuid.uuid4().hex[:10]
+
+    try:
+        review = engine_research_strategy_filter_review_latest()
+    except Exception:
+        review = {"ok": False, "items": []}
+
+    if not review or not review.get("ok"):
+        review = engine_research_strategy_filter_review_run(
+            publish=False,
+            limit=limit,
+            min_closed=min_closed,
+            min_trigger_closed=min_trigger_closed,
+        )
+
+    experiments = []
+    for setup in review.get("items") or []:
+        setup_slug = setup.get("setupSlug")
+        setup_decision = setup.get("decision")
+        demotion_candidate = bool(setup.get("demotionCandidate"))
+
+        for trigger in setup.get("weakTriggerVariants") or []:
+            primary_trigger = _s844_safe_text(trigger.get("primaryTrigger"), "UNKNOWN")
+            action_rule = _s844_action_rule(trigger)
+
+            if action_rule.get("shadowAction") == "OBSERVE_MORE_SAMPLE":
+                continue
+
+            experiment = {
+                "experimentId": _s844_experiment_id(setup_slug, primary_trigger),
+                "planId": plan_id,
+                "setupSlug": setup_slug,
+                "setupName": setup.get("setupName"),
+                "primaryTrigger": primary_trigger,
+                "setupDecision": setup_decision,
+                "demotionCandidate": demotion_candidate,
+                "shadowAction": action_rule.get("shadowAction"),
+                "strictnessLevel": action_rule.get("strictnessLevel"),
+                "reason": action_rule.get("reason"),
+                "condition": _s844_setup_specific_condition(setup_slug, primary_trigger),
+                "status": "PLANNED_SHADOW_ONLY",
+                "source": {
+                    "closedDecisionCount": trigger.get("closedDecisionCount"),
+                    "worked": trigger.get("worked"),
+                    "failed": trigger.get("failed"),
+                    "winRateClosed": trigger.get("winRateClosed"),
+                    "avgRClosed": trigger.get("avgRClosed"),
+                    "stopRateClosed": trigger.get("stopRateClosed"),
+                    "recommendedShadowAction": trigger.get("recommendedShadowAction"),
+                },
+                "successCriteria": _s844_success_criteria(),
+                "guardrails": {
+                    "appliesToLiveClientDelivery": False,
+                    "appliesToTelegram": False,
+                    "changesOutcomes": False,
+                    "changesSignalGeneration": False,
+                    "paperShadowOnly": True,
+                    "manualApprovalRequiredAfterSuccess": True,
+                },
+            }
+            experiments.append(experiment)
+
+    order = {"SHADOW_BLOCK": 0, "SHADOW_DEMOTE": 1, "SHADOW_TIGHTEN_CONFIRMATION": 2}
+    experiments = sorted(
+        experiments,
+        key=lambda x: (
+            order.get(x.get("shadowAction"), 99),
+            -_s844_int((x.get("source") or {}).get("closedDecisionCount")),
+            _s844_float((x.get("source") or {}).get("winRateClosed"), 999.0),
+        ),
+    )
+
+    by_action = {}
+    by_setup = {}
+    for exp in experiments:
+        by_action[exp["shadowAction"]] = by_action.get(exp["shadowAction"], 0) + 1
+        by_setup[exp["setupSlug"]] = by_setup.get(exp["setupSlug"], 0) + 1
+
+    summary = {
+        "plannedExperiments": len(experiments),
+        "setupsCovered": len(by_setup),
+        "byAction": by_action,
+        "bySetup": by_setup,
+        "clientVisibleChanges": 0,
+        "telegramChanges": 0,
+        "outcomeChanges": 0,
+        "manualApprovalRequired": True,
+        "sourceReviewId": review.get("reportId"),
+        "sourceReviewVersion": review.get("storageVersion"),
+    }
+
+    return {
+        "ok": True,
+        "storageVersion": S844_SHADOW_FILTER_EXPERIMENT_PLAN_VERSION,
+        "planId": plan_id,
+        "createdAt": created_at,
+        "mode": "shadow_filter_experiment_plan",
+        "summary": summary,
+        "experiments": experiments,
+        "policy": {
+            "researchOnly": True,
+            "paperShadowOnly": True,
+            "noClientVisibleChanges": True,
+            "doesNotChangeOutcomes": True,
+            "doesNotSendTelegram": True,
+            "doesNotPromoteStrategies": True,
+            "doesNotApplyFiltersToLiveEngine": True,
+            "writesPlanOnly": True,
+        },
+        "nextAction": {
+            "engineering": "Create a shadow evaluator that scores future candidate signals against these planned filters without blocking live internal research generation.",
+            "ops": "Compare accepted vs shadow-blocked candidates after enough new closed decisions accumulate.",
+            "approval": "Only promote a filter after shadow evidence passes criteria and manual approval is recorded.",
+        },
+    }
+
+
+def _s844_ensure_tables(con):
+    con.execute(
+        """
+        create table if not exists shadow_filter_experiment_plans (
+            plan_id text primary key,
+            created_at text not null,
+            storage_version text not null,
+            planned_experiments integer not null default 0,
+            setups_covered integer not null default 0,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute(
+        "create index if not exists idx_shadow_filter_experiment_plans_created on shadow_filter_experiment_plans(created_at desc)"
+    )
+    con.execute(
+        """
+        create table if not exists shadow_filter_experiments (
+            experiment_id text primary key,
+            plan_id text not null,
+            created_at text not null,
+            setup_slug text not null,
+            primary_trigger text not null,
+            shadow_action text not null,
+            strictness_level text,
+            status text not null,
+            closed_decision_count integer,
+            win_rate_closed real,
+            avg_r_closed real,
+            stop_rate_closed real,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute(
+        "create index if not exists idx_shadow_filter_experiments_plan on shadow_filter_experiments(plan_id)"
+    )
+    con.execute(
+        "create index if not exists idx_shadow_filter_experiments_setup_trigger on shadow_filter_experiments(setup_slug, primary_trigger)"
+    )
+
+
+def _s844_reports_dir():
+    import os
+    from pathlib import Path
+
+    preferred = Path("/opt/skilledge/stock-engine/reports/shadow_filter_experiments")
+    try:
+        if Path("/opt/skilledge/stock-engine").exists():
+            preferred.mkdir(parents=True, exist_ok=True)
+            return preferred
+    except Exception:
+        pass
+
+    fallback = Path(os.getcwd()) / "reports" / "shadow_filter_experiments"
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+def _s844_persist_plan(plan):
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s844_ensure_tables(con)
+
+    summary = plan.get("summary") or {}
+    con.execute(
+        """
+        insert or replace into shadow_filter_experiment_plans
+        (plan_id, created_at, storage_version, planned_experiments, setups_covered, payload_json)
+        values (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            plan.get("planId"),
+            plan.get("createdAt"),
+            plan.get("storageVersion"),
+            _s844_int(summary.get("plannedExperiments")),
+            _s844_int(summary.get("setupsCovered")),
+            json.dumps(plan, ensure_ascii=False),
+        ),
+    )
+
+    for exp in plan.get("experiments") or []:
+        source = exp.get("source") or {}
+        con.execute(
+            """
+            insert or replace into shadow_filter_experiments
+            (experiment_id, plan_id, created_at, setup_slug, primary_trigger, shadow_action,
+             strictness_level, status, closed_decision_count, win_rate_closed, avg_r_closed,
+             stop_rate_closed, payload_json)
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                exp.get("experimentId"),
+                plan.get("planId"),
+                plan.get("createdAt"),
+                exp.get("setupSlug"),
+                exp.get("primaryTrigger"),
+                exp.get("shadowAction"),
+                exp.get("strictnessLevel"),
+                exp.get("status"),
+                _s844_int(source.get("closedDecisionCount")),
+                _s844_float(source.get("winRateClosed")),
+                _s844_float(source.get("avgRClosed")),
+                _s844_float(source.get("stopRateClosed")),
+                json.dumps(exp, ensure_ascii=False),
+            ),
+        )
+
+    con.commit()
+    con.close()
+
+    import json
+    out_dir = _s844_reports_dir()
+    latest_path = out_dir / "latest.json"
+    stamp = str(plan.get("createdAt") or "").replace(":", "-").replace(".", "-")
+    snapshot_path = out_dir / f"{stamp}.json"
+
+    text = json.dumps(plan, ensure_ascii=False, indent=2)
+    latest_path.write_text(text, encoding="utf-8")
+    snapshot_path.write_text(text, encoding="utf-8")
+
+    return {
+        "dbPersisted": True,
+        "filePersisted": True,
+        "latestPath": str(latest_path),
+        "snapshotPath": str(snapshot_path),
+    }
+
+
+@app.post("/engine/research/shadow-filter-experiments/plan")
+def engine_research_shadow_filter_experiments_plan(
+    publish: bool = True,
+    limit: int = 200,
+    min_closed: int = 30,
+    min_trigger_closed: int = 5,
+):
+    plan = _s844_build_plan(
+        limit=limit,
+        min_closed=min_closed,
+        min_trigger_closed=min_trigger_closed,
+    )
+
+    persistence = {
+        "dbPersisted": False,
+        "filePersisted": False,
+        "latestPath": None,
+        "snapshotPath": None,
+    }
+    if publish:
+        persistence = _s844_persist_plan(plan)
+
+    plan["publish"] = bool(publish)
+    plan["persistence"] = persistence
+    return plan
+
+
+@app.get("/engine/research/shadow-filter-experiments/latest")
+def engine_research_shadow_filter_experiments_latest():
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s844_ensure_tables(con)
+
+    row = con.execute(
+        """
+        select payload_json
+        from shadow_filter_experiment_plans
+        order by created_at desc
+        limit 1
+        """
+    ).fetchone()
+    con.close()
+
+    if not row:
+        return {
+            "ok": False,
+            "storageVersion": S844_SHADOW_FILTER_EXPERIMENT_PLAN_VERSION,
+            "error": "shadow_filter_experiment_plan_not_found",
+            "nextAction": "Run POST /engine/research/shadow-filter-experiments/plan?publish=true first.",
+        }
+
+    try:
+        payload = json.loads(row["payload_json"] or "{}")
+    except Exception as error:
+        return {
+            "ok": False,
+            "storageVersion": S844_SHADOW_FILTER_EXPERIMENT_PLAN_VERSION,
+            "error": "shadow_filter_experiment_plan_payload_parse_failed",
+            "details": repr(error),
+        }
+
+    payload["source"] = "db_latest"
+    return payload
+
+# === /S8.44 Shadow Filter Experiment Plan ===
+
