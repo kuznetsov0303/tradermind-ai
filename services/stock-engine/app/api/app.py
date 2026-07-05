@@ -17735,24 +17735,60 @@ def _s834a_quality(closed):
 
 
 def _s834a_finish_stats(raw):
-    total = int(raw.get("total") or 0)
-    worked = int(raw.get("worked") or 0)
-    failed = int(raw.get("failed") or 0)
+    raw = raw or {}
+
+    def _i(value):
+        try:
+            if value is None or value == "":
+                return 0
+            return int(value)
+        except Exception:
+            return 0
+
+    def _f(value):
+        try:
+            if value is None or value == "":
+                return None
+            return float(value)
+        except Exception:
+            return None
+
+    total = _i(raw.get("total"))
+    worked = _i(raw.get("worked"))
+    failed = _i(raw.get("failed"))
+    open_count = _i(raw.get("open"))
+    session_close = _i(raw.get("sessionClose"))
+    other = _i(raw.get("other"))
+
     closed = worked + failed
-    avg_r = raw.get("avgRClosed")
+    avg_r = _f(raw.get("avgRClosed"))
+    if avg_r is None:
+        avg_r = _f(raw.get("avgResultRClosed"))
+
+    # S8.40E:
+    # OPEN / stuck outcomes are pipeline-repair problems.
+    # EXPIRED_SESSION / SESSION_CLOSE outcomes are non-win/loss evidence-quality gaps.
+    # They must not inflate win rate, but they also must not keep the system in
+    # OUTCOME_PIPELINE_REPAIR_REQUIRED after OPEN has been classified to NO_EVAL.
+    evidence_session_close_pct = _s834a_pct(session_close, total)
+
     return {
         "total": total,
-        "closedDecisionCount": closed,
         "worked": worked,
         "failed": failed,
+        "open": open_count,
+        "sessionClose": session_close,
+        "other": other,
+        "closedDecisionCount": closed,
         "winRateClosed": _s834a_pct(worked, closed),
         "avgRClosed": round(float(avg_r), 4) if avg_r is not None else None,
-        "open": int(raw.get("open") or 0),
-        "openPct": _s834a_pct(raw.get("open"), total),
-        "sessionClose": int(raw.get("sessionClose") or 0),
-        "sessionClosePct": _s834a_pct(raw.get("sessionClose"), total),
-        "other": int(raw.get("other") or 0),
-        "otherPct": _s834a_pct(raw.get("other"), total),
+        "stopRateClosed": _s834a_pct(failed, closed),
+        "openPct": _s834a_pct(open_count, total),
+        "sessionClosePct": 0.0,
+        "pipelineSessionClosePct": 0.0,
+        "evidenceSessionClosePct": evidence_session_close_pct,
+        "sessionCloseEvidencePct": evidence_session_close_pct,
+        "otherPct": _s834a_pct(other, total),
     }
 
 
@@ -17782,82 +17818,82 @@ def _s834a_merge_stats(a, b):
 def _s834a_status(combined, live, research):
     total = int(combined.get("total") or 0)
     closed = int(combined.get("closedDecisionCount") or 0)
-    live_total = int(live.get("total") or 0)
+
+    live_open_pct = float(live.get("openPct") or 0)
+    research_open_pct = float(research.get("openPct") or 0)
 
     if total <= 0:
         return "REGISTRY_ONLY"
 
-    if live_total <= 0 and int(research.get("closedDecisionCount") or 0) > 0:
-        return "RESEARCH_ONLY"
-
-    if live_total >= 20 and (
-        float(live.get("openPct") or 0) >= 50.0
-        or float(live.get("sessionClosePct") or 0) >= 30.0
-    ):
+    if live_open_pct >= 20.0 or research_open_pct >= 20.0:
         return "OUTCOME_PIPELINE_DIRTY_TOO_MANY_OPEN"
 
     if closed < S834A_MIN_CLOSED_FOR_PROMOTION:
         return "PAPER_EVIDENCE_BUILDING"
 
+    win_rate = combined.get("winRateClosed")
+    avg_r = combined.get("avgRClosed")
+
     if (
-        combined.get("winRateClosed") is not None
-        and combined.get("avgRClosed") is not None
-        and float(combined["winRateClosed"]) >= S834A_MIN_WIN_RATE_FOR_PROMOTION
-        and float(combined["avgRClosed"]) > S834A_MIN_AVG_R_FOR_PROMOTION
+        win_rate is not None
+        and avg_r is not None
+        and float(win_rate) >= S834A_MIN_WIN_RATE_FOR_PROMOTION
+        and float(avg_r) > S834A_MIN_AVG_R_FOR_PROMOTION
     ):
-        return "PROMOTION_CANDIDATE_MANUAL_REVIEW"
+        return "PROMOTION_CANDIDATE_NEEDS_MANUAL_APPROVAL"
 
     return "NEGATIVE_EDGE_FILTER_REQUIRED"
 
 
 def _s834a_warnings(combined, live, research):
     warnings = []
+
+    total = int(combined.get("total") or 0)
     closed = int(combined.get("closedDecisionCount") or 0)
+
+    live_open_pct = float(live.get("openPct") or 0)
+    research_open_pct = float(research.get("openPct") or 0)
+
+    if live_open_pct >= 20.0 or research_open_pct >= 20.0:
+        warnings.append("High OPEN ratio. Outcome pipeline/replay completeness must be checked.")
+
+    evidence_session_close_pct = max(
+        float(live.get("evidenceSessionClosePct") or live.get("sessionCloseEvidencePct") or 0),
+        float(research.get("evidenceSessionClosePct") or research.get("sessionCloseEvidencePct") or 0),
+    )
+    if total > 0 and evidence_session_close_pct >= 30.0:
+        warnings.append("High SESSION_CLOSE/EXPIRED ratio. These rows are treated as non-win/loss evidence-quality gaps, not pipeline repair.")
 
     if closed <= 0:
         warnings.append("No closed TP/STOP decisions. Do not use total rows as win/loss evidence.")
-
-    if int(combined.get("total") or 0) > 0 and float(combined.get("openPct") or 0) >= 50.0:
-        warnings.append("High OPEN ratio. Outcome pipeline/replay completeness must be checked.")
-
-    if int(combined.get("total") or 0) > 0 and float(combined.get("sessionClosePct") or 0) >= 30.0:
-        warnings.append("High SESSION_CLOSE/EXPIRED ratio. Separate this from win/loss evidence.")
 
     if closed < S834A_MIN_CLOSED_FOR_PROMOTION:
         warnings.append("Closed TP/STOP sample below promotion threshold.")
 
     if (
-        closed >= 5
-        and combined.get("winRateClosed") is not None
+        combined.get("winRateClosed") is not None
         and float(combined["winRateClosed"]) < S834A_MIN_WIN_RATE_FOR_PROMOTION
     ):
         warnings.append("Win rate on closed decisions is below promotion threshold.")
 
     if (
-        closed >= 5
-        and combined.get("avgRClosed") is not None
+        combined.get("avgRClosed") is not None
         and float(combined["avgRClosed"]) <= S834A_MIN_AVG_R_FOR_PROMOTION
     ):
         warnings.append("Average R on closed decisions is not positive. Filter/failure analysis required.")
-
-    if (
-        int(live.get("total") or 0) > 0
-        and int(live.get("closedDecisionCount") or 0) <= 0
-        and int(research.get("closedDecisionCount") or 0) > 0
-    ):
-        warnings.append("Research-only closed evidence exists, but live outcome_records have no closed TP/STOP sample.")
 
     return warnings
 
 
 def _s834a_action(status):
-    return {
-        "REGISTRY_ONLY": "Keep in registry/research. Collect paper outcomes before any client delivery.",
-        "RESEARCH_ONLY": "Use research sandbox evidence only. Require live/paper forward validation.",
-        "OUTCOME_PIPELINE_DIRTY_TOO_MANY_OPEN": "Fix outcome pipeline completeness before judging edge or promotion.",
-        "NEGATIVE_EDGE_FILTER_REQUIRED": "Run failure analysis and test stricter filters before promotion review.",
-        "PROMOTION_CANDIDATE_MANUAL_REVIEW": "Manual admin review required. Do not auto-promote or enable client visibility.",
-    }.get(status, "Continue paper evidence collection until closed TP/STOP sample is meaningful.")
+    actions = {
+        "REGISTRY_ONLY": "Collect first closed TP/STOP outcomes before judging edge.",
+        "OUTCOME_PIPELINE_DIRTY_TOO_MANY_OPEN": "Fix stuck OPEN outcome pipeline before judging edge or promotion.",
+        "PAPER_EVIDENCE_BUILDING": "Keep collecting clean closed TP/STOP evidence in paper/shadow mode.",
+        "NEGATIVE_EDGE_FILTER_REQUIRED": "Keep blocked from client promotion and test stricter filters.",
+        "PROMOTION_CANDIDATE_NEEDS_MANUAL_APPROVAL": "Eligible for manual review only; do not auto-promote.",
+    }
+    return actions.get(status, "Keep blocked from client promotion until gates pass.")
 
 
 @app.get("/engine/strategies/evidence")
@@ -19884,14 +19920,14 @@ def engine_outcomes_repair_plan(
         session_close_count = _s840a_int(row["session_close_count"])
         other_count = _s840a_int(row["other_count"])
         closed = worked + failed
-        dirty_total = open_count + session_close_count
+        dirty_total = open_count
         open_ratio = _s840a_ratio(open_count, total)
         session_close_ratio = _s840a_ratio(session_close_count, total)
         dirty_ratio = _s840a_ratio(dirty_total, total)
         rows_with_payload = _s840a_int(row["rows_with_payload"])
         rows_with_trigger_time = _s840a_int(row["rows_with_trigger_time"])
 
-        is_dirty = open_ratio >= safe_dirty_open_ratio or session_close_ratio >= safe_dirty_session_close_ratio
+        is_dirty = open_ratio >= safe_dirty_open_ratio
         if is_dirty:
             dirty_count += 1
 
@@ -19921,7 +19957,7 @@ def engine_outcomes_repair_plan(
         if open_ratio >= safe_dirty_open_ratio:
             warnings.append("High OPEN ratio. Replay completeness must be checked.")
         if session_close_ratio >= safe_dirty_session_close_ratio:
-            warnings.append("High SESSION_CLOSE/EXPIRED ratio. These rows must not be treated as wins/losses.")
+            warnings.append("High SESSION_CLOSE/EXPIRED ratio. These rows are evidence-quality gaps, not pipeline-repair rows, and must not be treated as wins/losses.")
         if closed <= 0:
             warnings.append("No closed TP/STOP decisions for this setup.")
         if repair_mode == "NOT_REPAIRABLE_WITH_CURRENT_DATA":
@@ -21558,4 +21594,14 @@ def engine_outcomes_classify_no_eval_partial_open(
     }
 
 # === /S8.40D No-Eval Partial OPEN Classifier ===
+
+
+# === S8.40E Outcome Evidence Reclassification Applied ===
+S840E_OUTCOME_EVIDENCE_RECLASSIFICATION_VERSION = "s8_40e_outcome_evidence_reclassification_v1"
+# Policy:
+# - OPEN/stuck rows are outcome pipeline repair blockers.
+# - EXPIRED_SESSION/SESSION_CLOSE rows are non-win/loss evidence-quality gaps.
+# - SESSION_CLOSE rows do not inflate win rate and do not keep admin status in repair mode after OPEN=0.
+# - Promotion remains blocked by weak/negative evidence and manual approval gates.
+# === /S8.40E Outcome Evidence Reclassification Applied ===
 
