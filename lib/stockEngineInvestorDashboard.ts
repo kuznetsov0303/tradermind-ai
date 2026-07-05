@@ -190,7 +190,7 @@ export async function buildInvestorDashboardSnapshot(options?: {
         maxDrawdownPct: null,
         curveSample: [],
         reason:
-          "No investor-grade equity curve is shown until clean client-visible sample and outcome repair are complete.",
+          "No investor-grade equity curve is shown until a clean client-visible sample is manually approved and enough closed TP/STOP evidence is collected.",
       },
       cleanEliteLayer: {
         status:
@@ -214,11 +214,11 @@ export async function buildInvestorDashboardSnapshot(options?: {
       currentTruth:
         "SkillEdge AI has a working VPS engine, nightly learning, strategy evidence, failure analysis and promotion guard. Current strategy stats are research/paper evidence, not marketing claims.",
       whatImproved:
-        "The system now separates registry count from real evidence, ignores OPEN/SESSION_CLOSE as wins/losses, flags dirty outcome pipelines and blocks auto-promotion.",
+        "The system now separates registry count from real evidence, ignores OPEN/SESSION_CLOSE/no-eval rows as wins/losses, classifies old incomplete outcomes honestly, and blocks auto-promotion.",
       whyNoAggressiveMarketingYet:
-        "Outcome pipelines still contain dirty OPEN/SESSION_CLOSE ratios, several setups show weak closed-decision performance, and no manual approval table exists for client-visible promotion.",
+        "Outcome pipeline repair is complete: stuck OPEN rows were classified as no-eval and SESSION_CLOSE rows are treated as non-win/loss evidence gaps. Several setups still show weak closed-decision performance, and no strategy has been manually approved as client-visible.",
       nextEngineeringStep:
-        "Repair/rebuild old outcomes, add manual approval storage, then keep collecting clean closed TP/STOP evidence for investor-grade statistics.",
+        "Continue filter/failure review, keep collecting clean closed TP/STOP evidence, and use the manual approval table only after a strategy passes evidence, promotion and admin gates.",
     },
     setupLearning: {
       cards,
@@ -232,7 +232,7 @@ export async function buildInvestorDashboardSnapshot(options?: {
     },
     aiLearningLog: [
       "Strategy Evidence Engine computes win rate only from closed TP/STOP decisions.",
-      "Failure Analysis Agent flags negative edge, weak triggers and dirty outcome pipelines.",
+      "Failure Analysis Agent flags negative edge, weak triggers, no-eval evidence gaps and strategy-quality issues.",
       "Promotion Guard blocks client visibility until numeric evidence, pipeline health and manual approval pass.",
       ...risks.slice(0, 4).map(topRiskText),
     ],
@@ -267,4 +267,5 @@ export async function buildInvestorDashboardSnapshot(options?: {
     },
   };
 }
+
 
