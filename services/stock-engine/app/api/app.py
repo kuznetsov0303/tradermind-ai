@@ -21605,3 +21605,432 @@ S840E_OUTCOME_EVIDENCE_RECLASSIFICATION_VERSION = "s8_40e_outcome_evidence_recla
 # - Promotion remains blocked by weak/negative evidence and manual approval gates.
 # === /S8.40E Outcome Evidence Reclassification Applied ===
 
+# === S8.41 Recalibrated Evidence Baseline ===
+S841_RECALIBRATED_EVIDENCE_BASELINE_VERSION = "s8_41_recalibrated_evidence_baseline_v1"
+
+
+def _s841_round(value, digits=4):
+    try:
+        if value is None or value == "":
+            return None
+        return round(float(value), int(digits))
+    except Exception:
+        return None
+
+
+def _s841_pct(part, total):
+    try:
+        p = float(part or 0)
+        t = float(total or 0)
+        if t <= 0:
+            return None
+        return round((p / t) * 100.0, 2)
+    except Exception:
+        return None
+
+
+def _s841_table_exists(con, table_name):
+    row = con.execute(
+        "select name from sqlite_master where type='table' and name=?",
+        (str(table_name),),
+    ).fetchone()
+    return bool(row)
+
+
+def _s841_count(con, sql, params=()):
+    try:
+        row = con.execute(sql, params).fetchone()
+        if not row:
+            return 0
+        return int(row[0] or 0)
+    except Exception:
+        return 0
+
+
+def _s841_ensure_baseline_table(con):
+    con.execute(
+        """
+        create table if not exists evidence_baseline_snapshots (
+            baseline_id text primary key,
+            created_at text not null,
+            storage_version text not null,
+            status text not null,
+            raw_closed_outcomes integer not null default 0,
+            raw_win_rate_closed real,
+            raw_avg_result_r_closed real,
+            dirty_outcome_pipelines integer not null default 0,
+            negative_edge_setups integer not null default 0,
+            promotion_candidates integer not null default 0,
+            client_visible_approved integer not null default 0,
+            payload_json text not null
+        )
+        """
+    )
+    con.execute(
+        "create index if not exists idx_evidence_baseline_snapshots_created on evidence_baseline_snapshots(created_at desc)"
+    )
+
+
+def _s841_reports_dir():
+    import os
+    from pathlib import Path
+
+    preferred = Path("/opt/skilledge/stock-engine/reports/evidence_baseline")
+    try:
+        if Path("/opt/skilledge/stock-engine").exists():
+            preferred.mkdir(parents=True, exist_ok=True)
+            return preferred
+    except Exception:
+        pass
+
+    fallback = Path(os.getcwd()) / "reports" / "evidence_baseline"
+    fallback.mkdir(parents=True, exist_ok=True)
+    return fallback
+
+
+def _s841_status_counts(con):
+    if not _s841_table_exists(con, "outcome_records"):
+        return {}
+
+    rows = con.execute(
+        """
+        select upper(coalesce(status,'')) as status, count(*) as count
+        from outcome_records
+        group by upper(coalesce(status,''))
+        order by count desc
+        """
+    ).fetchall()
+
+    return {str(row["status"] or "UNKNOWN"): int(row["count"] or 0) for row in rows}
+
+
+def _s841_setup_rows(con):
+    if not _s841_table_exists(con, "outcome_records"):
+        return []
+
+    rows = con.execute(
+        """
+        select
+            setup_slug,
+            count(*) as total,
+            sum(case when upper(coalesce(status,''))='WORKED' then 1 else 0 end) as worked,
+            sum(case when upper(coalesce(status,''))='FAILED' then 1 else 0 end) as failed,
+            sum(case when upper(coalesce(status,''))='OPEN' then 1 else 0 end) as open_count,
+            sum(case when upper(coalesce(status,'')) in ('EXPIRED_SESSION','SESSION_CLOSE','EXPIRED','SESSION_EXPIRED') then 1 else 0 end) as session_close,
+            sum(case when upper(coalesce(status,'')) like 'NO_EVAL%' then 1 else 0 end) as no_eval,
+            avg(case when upper(coalesce(status,'')) in ('WORKED','FAILED') then result_r else null end) as avg_r_closed
+        from outcome_records
+        group by setup_slug
+        order by (sum(case when upper(coalesce(status,'')) in ('WORKED','FAILED') then 1 else 0 end)) desc, total desc
+        """
+    ).fetchall()
+
+    out = []
+    for row in rows:
+        total = int(row["total"] or 0)
+        worked = int(row["worked"] or 0)
+        failed = int(row["failed"] or 0)
+        closed = worked + failed
+        open_count = int(row["open_count"] or 0)
+        session_close = int(row["session_close"] or 0)
+        no_eval = int(row["no_eval"] or 0)
+        win_rate = _s841_pct(worked, closed)
+        avg_r = _s841_round(row["avg_r_closed"], 4)
+
+        if closed >= 30 and win_rate is not None and avg_r is not None and win_rate >= 65.0 and avg_r > 0:
+            promotion_status = "PROMOTION_CANDIDATE_NEEDS_MANUAL_APPROVAL"
+        elif closed >= 30:
+            promotion_status = "NEGATIVE_EDGE_FILTER_REQUIRED"
+        elif total > 0:
+            promotion_status = "PAPER_EVIDENCE_BUILDING"
+        else:
+            promotion_status = "REGISTRY_ONLY"
+
+        if closed >= 30:
+            evidence_quality = "MEANINGFUL_SAMPLE"
+        elif closed >= 10:
+            evidence_quality = "EARLY_SAMPLE"
+        elif closed >= 3:
+            evidence_quality = "THIN_SAMPLE"
+        elif closed > 0:
+            evidence_quality = "VERY_THIN_SAMPLE"
+        else:
+            evidence_quality = "NO_CLOSED_DECISIONS"
+
+        out.append({
+            "setupSlug": row["setup_slug"],
+            "total": total,
+            "worked": worked,
+            "failed": failed,
+            "closedDecisionCount": closed,
+            "open": open_count,
+            "sessionCloseOrExpired": session_close,
+            "noEval": no_eval,
+            "winRateClosed": win_rate,
+            "avgRClosed": avg_r,
+            "openPct": _s841_pct(open_count, total),
+            "sessionCloseEvidencePct": _s841_pct(session_close, total),
+            "noEvalPct": _s841_pct(no_eval, total),
+            "evidenceQuality": evidence_quality,
+            "promotionStatus": promotion_status,
+        })
+
+    return out
+
+
+def _s841_build_baseline():
+    import sqlite3
+    import uuid
+    from datetime import datetime, timezone
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+
+    created_at = datetime.now(timezone.utc).isoformat()
+    baseline_id = "evidence_baseline:" + created_at + ":" + uuid.uuid4().hex[:10]
+
+    status_counts = _s841_status_counts(con)
+    setup_rows = _s841_setup_rows(con)
+
+    registry_total = _s841_count(con, "select count(*) from algorithm_registry") if _s841_table_exists(con, "algorithm_registry") else 0
+
+    manual_table_exists = _s841_table_exists(con, "strategy_manual_approvals")
+    client_visible_approved = 0
+    total_approval_records = 0
+    if manual_table_exists:
+        total_approval_records = _s841_count(con, "select count(*) from strategy_manual_approvals")
+        client_visible_approved = _s841_count(
+            con,
+            """
+            select count(distinct setup_slug)
+            from strategy_manual_approvals
+            where coalesce(client_visible,0)=1
+               or upper(coalesce(status,''))='CLIENT_VISIBLE_APPROVED'
+            """,
+        )
+
+    worked = int(status_counts.get("WORKED", 0) or 0)
+    failed = int(status_counts.get("FAILED", 0) or 0)
+    raw_closed = worked + failed
+
+    raw_avg_r = None
+    if _s841_table_exists(con, "outcome_records"):
+        row = con.execute(
+            """
+            select avg(result_r) as avg_r
+            from outcome_records
+            where upper(coalesce(status,'')) in ('WORKED','FAILED')
+            """
+        ).fetchone()
+        if row:
+            raw_avg_r = _s841_round(row["avg_r"], 4)
+
+    dirty_outcome_pipelines = len([
+        r for r in setup_rows
+        if float(r.get("openPct") or 0) >= 20.0
+    ])
+
+    negative_edge_setups = len([
+        r for r in setup_rows
+        if int(r.get("closedDecisionCount") or 0) >= 30
+        and (
+            r.get("winRateClosed") is None
+            or r.get("avgRClosed") is None
+            or float(r.get("winRateClosed") or 0) < 65.0
+            or float(r.get("avgRClosed") or 0) <= 0.0
+        )
+    ])
+
+    promotion_candidates = len([
+        r for r in setup_rows
+        if r.get("promotionStatus") == "PROMOTION_CANDIDATE_NEEDS_MANUAL_APPROVAL"
+    ])
+
+    with_closed_evidence = len([r for r in setup_rows if int(r.get("closedDecisionCount") or 0) > 0])
+    with_meaningful_sample = len([r for r in setup_rows if int(r.get("closedDecisionCount") or 0) >= 30])
+
+    if dirty_outcome_pipelines > 0:
+        admin_status = "OUTCOME_PIPELINE_REPAIR_REQUIRED"
+        readiness = "PRIVATE_BETA_OUTCOME_REPAIR_REQUIRED"
+    elif negative_edge_setups > 0 or promotion_candidates <= 0 or client_visible_approved <= 0:
+        admin_status = "OPERATIONAL_WITH_GUARDS"
+        readiness = "PRIVATE_BETA_FILTER_REVIEW_REQUIRED"
+    else:
+        admin_status = "PROMOTION_REVIEW_READY"
+        readiness = "PRIVATE_BETA_PROMOTION_REVIEW_READY"
+
+    summary = {
+        "adminOpsStatus": admin_status,
+        "readiness": readiness,
+        "registryTotal": registry_total,
+        "totalOutcomes": sum(int(v or 0) for v in status_counts.values()),
+        "rawClosedOutcomes": raw_closed,
+        "rawWinRateClosed": _s841_pct(worked, raw_closed),
+        "rawAvgResultRClosed": raw_avg_r,
+        "worked": worked,
+        "failed": failed,
+        "open": int(status_counts.get("OPEN", 0) or 0),
+        "expiredSession": int(status_counts.get("EXPIRED_SESSION", 0) or 0),
+        "noEvalMissingFutureCandles": int(status_counts.get("NO_EVAL_MISSING_FUTURE_CANDLES", 0) or 0),
+        "noEvalPartialReplayIncomplete": int(status_counts.get("NO_EVAL_PARTIAL_REPLAY_INCOMPLETE", 0) or 0),
+        "dirtyOutcomePipelines": dirty_outcome_pipelines,
+        "withClosedEvidence": with_closed_evidence,
+        "withMeaningfulSample": with_meaningful_sample,
+        "negativeEdgeSetups": negative_edge_setups,
+        "promotionCandidates": promotion_candidates,
+        "clientVisibleApproved": client_visible_approved,
+        "approvalTableMissing": 0 if manual_table_exists else 1,
+        "totalApprovalRecords": total_approval_records,
+        "promotionPipelineBlockers": dirty_outcome_pipelines,
+        "promotionNegativeEdgeBlockers": negative_edge_setups,
+        "promotionManualApprovalBlockers": max(0, registry_total - client_visible_approved),
+    }
+
+    baseline = {
+        "ok": True,
+        "storageVersion": S841_RECALIBRATED_EVIDENCE_BASELINE_VERSION,
+        "baselineId": baseline_id,
+        "createdAt": created_at,
+        "mode": "post_repair_recalibrated_evidence_baseline",
+        "summary": summary,
+        "totalByStatus": status_counts,
+        "topSetups": setup_rows[:20],
+        "policy": {
+            "honestInvestorBaseline": True,
+            "noFakeWinRate": True,
+            "closedStatsUseOnlyWorkedFailed": True,
+            "openRowsArePipelineRepairBlockers": True,
+            "sessionCloseRowsAreEvidenceGapsNotWinsLosses": True,
+            "noEvalRowsExcludedFromWinRate": True,
+            "doesNotChangeOutcomes": True,
+            "doesNotChangeClientDelivery": True,
+            "doesNotSendTelegram": True,
+            "doesNotPromoteStrategies": True,
+            "writesBaselineSnapshotOnly": True,
+        },
+        "nextAction": {
+            "primary": "Continue filter/failure review on negative-edge setups and collect clean closed TP/STOP evidence.",
+            "manualApproval": "Use manual approval only after evidence, promotion and admin gates pass.",
+            "investor": "Investor-facing claims must stay private-beta/research until a clean client-visible sample exists.",
+        },
+    }
+
+    try:
+        con.close()
+    except Exception:
+        pass
+
+    return baseline
+
+
+def _s841_persist_baseline(baseline):
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s841_ensure_baseline_table(con)
+
+    summary = baseline.get("summary") or {}
+    con.execute(
+        """
+        insert or replace into evidence_baseline_snapshots
+        (baseline_id, created_at, storage_version, status, raw_closed_outcomes,
+         raw_win_rate_closed, raw_avg_result_r_closed, dirty_outcome_pipelines,
+         negative_edge_setups, promotion_candidates, client_visible_approved, payload_json)
+        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            baseline.get("baselineId"),
+            baseline.get("createdAt"),
+            baseline.get("storageVersion"),
+            summary.get("adminOpsStatus"),
+            int(summary.get("rawClosedOutcomes") or 0),
+            summary.get("rawWinRateClosed"),
+            summary.get("rawAvgResultRClosed"),
+            int(summary.get("dirtyOutcomePipelines") or 0),
+            int(summary.get("negativeEdgeSetups") or 0),
+            int(summary.get("promotionCandidates") or 0),
+            int(summary.get("clientVisibleApproved") or 0),
+            json.dumps(baseline, ensure_ascii=False),
+        ),
+    )
+    con.commit()
+    con.close()
+
+    out_dir = _s841_reports_dir()
+    latest_path = out_dir / "latest.json"
+    stamp = str(baseline.get("createdAt") or "").replace(":", "-").replace(".", "-")
+    snapshot_path = out_dir / f"{stamp}.json"
+
+    text = json.dumps(baseline, ensure_ascii=False, indent=2)
+    latest_path.write_text(text, encoding="utf-8")
+    snapshot_path.write_text(text, encoding="utf-8")
+
+    return {
+        "dbPersisted": True,
+        "filePersisted": True,
+        "latestPath": str(latest_path),
+        "snapshotPath": str(snapshot_path),
+    }
+
+
+@app.post("/engine/research/evidence-baseline/run")
+def engine_research_evidence_baseline_run(publish: bool = True):
+    baseline = _s841_build_baseline()
+    persist = {
+        "dbPersisted": False,
+        "filePersisted": False,
+        "latestPath": None,
+        "snapshotPath": None,
+    }
+
+    if publish:
+        persist = _s841_persist_baseline(baseline)
+
+    baseline["publish"] = bool(publish)
+    baseline["persistence"] = persist
+    return baseline
+
+
+@app.get("/engine/research/evidence-baseline/latest")
+def engine_research_evidence_baseline_latest():
+    import json
+    import sqlite3
+
+    con = sqlite3.connect(_s832a2_db_path())
+    con.row_factory = sqlite3.Row
+    _s841_ensure_baseline_table(con)
+
+    row = con.execute(
+        """
+        select payload_json
+        from evidence_baseline_snapshots
+        order by created_at desc
+        limit 1
+        """
+    ).fetchone()
+    con.close()
+
+    if not row:
+        return {
+            "ok": False,
+            "storageVersion": S841_RECALIBRATED_EVIDENCE_BASELINE_VERSION,
+            "error": "baseline_not_found",
+            "nextAction": "Run POST /engine/research/evidence-baseline/run?publish=true first.",
+        }
+
+    try:
+        payload = json.loads(row["payload_json"] or "{}")
+    except Exception as error:
+        return {
+            "ok": False,
+            "storageVersion": S841_RECALIBRATED_EVIDENCE_BASELINE_VERSION,
+            "error": "baseline_payload_parse_failed",
+            "details": repr(error),
+        }
+
+    payload["source"] = "db_latest"
+    return payload
+
+# === /S8.41 Recalibrated Evidence Baseline ===
