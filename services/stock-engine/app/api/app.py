@@ -23840,7 +23840,7 @@ def engine_research_shadow_filter_outcome_attribution_latest():
 
 
 # === S8.50J Telegram Gate Split Dry-Run Permanent Report ===
-S850J_TELEGRAM_GATE_SPLIT_DRY_RUN_VERSION = "s8_50j_telegram_gate_split_dry_run_permanent_v1"
+S850J_TELEGRAM_GATE_SPLIT_DRY_RUN_VERSION = "s8_50l_telegram_gate_split_status_normalized_v1"
 
 
 def _s850j_num(value):
@@ -23938,7 +23938,17 @@ def _s850j_evaluate_normal_candidate(item):
     quality_ok = quality == "PASSED" or desk_passed
     exec_ok = (exec_count is not None and exec_count >= 1) or _s850j_has_reason(item, "execution_confirmation_present")
 
-    if status != "ACTIVE":
+    status_ok = (
+        status == "ACTIVE"
+        or status == "ENTRY_STILL_VALID"
+        or (
+            item.get("strictEligible") is True
+            and item.get("isActionable") is True
+            and _s850j_text(item.get("tradeAction")).lower() == "paper_test_candidate"
+        )
+    )
+
+    if not status_ok:
         blockers.append("not_active")
     if not quality_ok:
         blockers.append("quality_not_passed")
@@ -24149,4 +24159,5 @@ def engine_research_telegram_gate_split_dry_run_latest():
     return json.loads(latest.read_text(encoding="utf-8"))
 
 # === /S8.50J Telegram Gate Split Dry-Run Permanent Report ===
+
 
