@@ -10185,6 +10185,7 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
     telegram_gate_policy = telegram_gate_report.get("policy") if isinstance(telegram_gate_report.get("policy"), dict) else {}
     telegram_gate_selected = telegram_gate_report.get("normalSelectedReady") if isinstance(telegram_gate_report.get("normalSelectedReady"), list) else []
     telegram_gate_freshness = _s852_telegram_gate_split_freshness(telegram_gate_report, max_fresh_minutes=720)
+    post_close_chain_health = _s853_build_post_close_chain_health(post_close_report, max_fresh_minutes=720)
     telegram_gate_payload = {
         "ok": bool(telegram_gate_report.get("ok")),
         "storageVersion": telegram_gate_report.get("storageVersion"),
@@ -10384,6 +10385,12 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "telegramNormalDryRunSelectedCount": telegram_gate_payload.get("wouldTelegramNormalSelectedCount"),
             "telegramGateFreshnessStatus": telegram_gate_payload.get("freshnessStatus"),
             "telegramGateAgeMinutes": telegram_gate_payload.get("ageMinutes"),
+            "postCloseOk": post_close_chain_health.get("ok"),
+            "postCloseStatus": post_close_chain_health.get("postCloseStatus"),
+            "postCloseFreshnessStatus": post_close_chain_health.get("freshnessStatus"),
+            "postCloseAgeMinutes": post_close_chain_health.get("ageMinutes"),
+            "postCloseForwardState": post_close_chain_health.get("forwardState"),
+            "postCloseNoTradeNonFatal": post_close_chain_health.get("postCloseNoTradeNonFatal"),
         },
         "equitySimulation": {
             "startingCapital": 50000,
@@ -10395,6 +10402,7 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
         },
         "cleanElitePerformance": clean_elite_snapshot,
         "telegramGateSplitDryRun": telegram_gate_payload,
+        "postCloseChainHealth": post_close_chain_health,
         "setupLearning": {
             "promoteForEliteTest": setup_summary.get("promoteForEliteTest"),
             "keepAndTighten": setup_summary.get("keepAndTighten"),
@@ -19275,6 +19283,60 @@ def _s852_telegram_gate_split_freshness(report: dict[str, Any], max_fresh_minute
         return result
 
 
+
+# === S8.53/S8.54 Post-Close Chain Health Visibility ===========================
+def _s853_build_post_close_chain_health(report: dict[str, Any], max_fresh_minutes: int = 720) -> dict[str, Any]:
+    summary = report.get("summary") if isinstance(report, dict) and isinstance(report.get("summary"), dict) else {}
+    freshness = _s852_telegram_gate_split_freshness(report, max_fresh_minutes=max_fresh_minutes)
+
+    has_report = bool(report) and isinstance(report, dict)
+    report_ok = bool(report.get("ok")) if has_report else False
+
+    if not has_report:
+        status = "MISSING"
+    elif freshness.get("freshnessStatus") == "STALE":
+        status = "STALE"
+    elif freshness.get("freshnessStatus") == "INVALID_TIMESTAMP":
+        status = "INVALID_TIMESTAMP"
+    elif report_ok:
+        status = "OK"
+    else:
+        status = "FAILED"
+
+    return {
+        "ok": report_ok,
+        "postCloseStatus": status,
+        "version": report.get("version") if has_report else None,
+        "generatedAt": report.get("generatedAt") if has_report else None,
+        "freshnessStatus": freshness.get("freshnessStatus"),
+        "isFresh": freshness.get("isFresh"),
+        "ageMinutes": freshness.get("ageMinutes"),
+        "maxFreshMinutes": freshness.get("maxFreshMinutes"),
+        "forwardState": summary.get("forwardState"),
+        "forwardSelectedBestCount": summary.get("forwardSelectedBestCount"),
+        "healthOk": summary.get("healthOk"),
+        "outcomesOk": summary.get("outcomesOk"),
+        "forwardReportOk": summary.get("forwardReportOk"),
+        "cleanEliteStatsOk": summary.get("cleanEliteStatsOk"),
+        "cleanEliteStatsEffectiveOk": summary.get("cleanEliteStatsEffectiveOk"),
+        "evidenceOk": summary.get("evidenceOk"),
+        "evidenceEffectiveOk": summary.get("evidenceEffectiveOk"),
+        "postCloseNoTradeNonFatal": summary.get("postCloseNoTradeNonFatal"),
+        "nightCalibrationOk": summary.get("nightCalibrationOk"),
+        "nightCalibrationNonFatal": summary.get("nightCalibrationNonFatal"),
+        "policySummary": {
+            "readOnly": True,
+            "visibilityOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "changesPostCloseAutomation": False,
+            "freshnessGuardEnabled": True,
+            "maxFreshMinutes": freshness.get("maxFreshMinutes"),
+        },
+    }
+
+
 # === S8.51B Telegram Gate Split Admin Ops Visibility ==========================
 def _s851b_build_telegram_gate_split_admin_snapshot() -> dict[str, Any]:
     try:
@@ -19450,6 +19512,8 @@ def engine_admin_ops_status():
         })
 
     telegram_gate_admin = _s851b_build_telegram_gate_split_admin_snapshot()
+    post_close_report = _s814d_read_report_json("reports/post_close_evidence/latest.json")
+    post_close_chain_health = _s853_build_post_close_chain_health(post_close_report, max_fresh_minutes=720)
 
     summary = {
         "engineOk": health_ok,
@@ -19477,6 +19541,13 @@ def engine_admin_ops_status():
         "telegramNormalDryRunSelectedCount": telegram_gate_admin.get("wouldTelegramNormalSelectedCount"),
         "telegramGateFreshnessStatus": telegram_gate_admin.get("freshnessStatus"),
         "telegramGateAgeMinutes": telegram_gate_admin.get("ageMinutes"),
+        "postCloseChainHealth": post_close_chain_health,
+        "postCloseOk": post_close_chain_health.get("ok"),
+        "postCloseStatus": post_close_chain_health.get("postCloseStatus"),
+        "postCloseFreshnessStatus": post_close_chain_health.get("freshnessStatus"),
+        "postCloseAgeMinutes": post_close_chain_health.get("ageMinutes"),
+        "postCloseForwardState": post_close_chain_health.get("forwardState"),
+        "postCloseNoTradeNonFatal": post_close_chain_health.get("postCloseNoTradeNonFatal"),
     }
 
     return {
