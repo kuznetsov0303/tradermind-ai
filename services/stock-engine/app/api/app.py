@@ -19216,6 +19216,58 @@ def _s837a_status_level(summary):
     return "OPERATIONAL_WITH_GUARDS"
 
 
+
+# === S8.51B Telegram Gate Split Admin Ops Visibility ==========================
+def _s851b_build_telegram_gate_split_admin_snapshot() -> dict[str, Any]:
+    try:
+        report = _s814d_read_report_json("reports/telegram_gate_split_dry_run/latest_s850j.json")
+    except Exception:
+        report = {}
+
+    summary = report.get("summary") if isinstance(report.get("summary"), dict) else {}
+    policy = report.get("policy") if isinstance(report.get("policy"), dict) else {}
+    selected = report.get("normalSelectedReady") if isinstance(report.get("normalSelectedReady"), list) else []
+
+    elite_policy = policy.get("currentTelegramElite") if isinstance(policy.get("currentTelegramElite"), dict) else {}
+    normal_policy = policy.get("simulatedTelegramNormal") if isinstance(policy.get("simulatedTelegramNormal"), dict) else {}
+
+    return {
+        "ok": bool(report.get("ok")),
+        "storageVersion": report.get("storageVersion"),
+        "generatedAt": report.get("generatedAt"),
+        "currentTelegramReadyCount": summary.get("currentTelegramReadyCount"),
+        "wouldTelegramNormalReadyCount": summary.get("wouldTelegramNormalReadyCount"),
+        "wouldTelegramNormalSelectedCount": summary.get("wouldTelegramNormalSelectedCount"),
+        "normalBlockedByReason": summary.get("normalBlockedByReason") if isinstance(summary.get("normalBlockedByReason"), dict) else {},
+        "normalSelectedReadyTop": [
+            {
+                "symbol": item.get("symbol"),
+                "setupSlug": item.get("setupSlug"),
+                "status": item.get("status"),
+                "grade": item.get("grade"),
+                "score": item.get("score"),
+                "rrToTp1": item.get("rrToTp1"),
+                "entry": item.get("entry"),
+                "currentPrice": item.get("currentPrice"),
+                "wouldTelegramNormal": item.get("wouldTelegramNormal"),
+                "blockers": item.get("blockers") if isinstance(item.get("blockers"), list) else [],
+            }
+            for item in selected[:10]
+            if isinstance(item, dict)
+        ],
+        "policySummary": {
+            "readOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "eliteRrPolicy": elite_policy.get("rrToTp1") or ">= 2.2",
+            "normalDryRunRrPolicy": normal_policy.get("rrToTp1") or ">= 2.0",
+            "normalDryRunOnly": True,
+        },
+        "persistence": report.get("persistence") if isinstance(report.get("persistence"), dict) else {},
+    }
+
+
 @app.get("/engine/admin/ops/status")
 def engine_admin_ops_status():
     import os
@@ -19332,6 +19384,8 @@ def engine_admin_ops_status():
             "nextAction": "Inspect systemctl status and journalctl for inactive/failed units.",
         })
 
+    telegram_gate_admin = _s851b_build_telegram_gate_split_admin_snapshot()
+
     summary = {
         "engineOk": health_ok,
         "systemdOk": bool(systemd.get("ok")),
@@ -19352,6 +19406,10 @@ def engine_admin_ops_status():
         "promotionReadyButNotApproved": promotion_summary.get("promotionReadyButNotApproved"),
         "clientVisibleApproved": promotion_summary.get("clientVisibleApproved"),
         "approvalTableMissing": 1 if promotion_summary.get("approvalTableMissing") is True else 0,
+        "telegramGateSplitDryRun": telegram_gate_admin,
+        "telegramCurrentReadyCount": telegram_gate_admin.get("currentTelegramReadyCount"),
+        "telegramNormalDryRunReadyCount": telegram_gate_admin.get("wouldTelegramNormalReadyCount"),
+        "telegramNormalDryRunSelectedCount": telegram_gate_admin.get("wouldTelegramNormalSelectedCount"),
     }
 
     return {
