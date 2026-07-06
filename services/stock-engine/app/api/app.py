@@ -23840,7 +23840,7 @@ def engine_research_shadow_filter_outcome_attribution_latest():
 
 
 # === S8.50J Telegram Gate Split Dry-Run Permanent Report ===
-S850J_TELEGRAM_GATE_SPLIT_DRY_RUN_VERSION = "s8_50l_telegram_gate_split_status_normalized_v1"
+S850J_TELEGRAM_GATE_SPLIT_DRY_RUN_VERSION = "s8_50n_telegram_gate_split_persistence_metadata_v1"
 
 
 def _s850j_num(value):
@@ -24116,14 +24116,14 @@ def _s850j_run_report(limit=80, publish=True):
         latest = out_dir / "latest_s850j.json"
         snapshot = out_dir / (generated_at.replace(":", "-") + "_s850j.json")
 
-        latest.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
-        snapshot.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
-
         report["persistence"] = {
             "filePersisted": True,
             "latestPath": str(latest),
             "snapshotPath": str(snapshot),
         }
+
+        latest.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        snapshot.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     else:
         report["persistence"] = {
             "filePersisted": False,
