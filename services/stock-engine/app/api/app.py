@@ -23838,3 +23838,315 @@ def engine_research_shadow_filter_outcome_attribution_latest():
 
 # === /S8.46 Shadow Outcome Attribution ===
 
+
+# === S8.50J Telegram Gate Split Dry-Run Permanent Report ===
+S850J_TELEGRAM_GATE_SPLIT_DRY_RUN_VERSION = "s8_50j_telegram_gate_split_dry_run_permanent_v1"
+
+
+def _s850j_num(value):
+    try:
+        if value is None or value == "":
+            return None
+        return float(value)
+    except Exception:
+        return None
+
+
+def _s850j_text(value):
+    return str(value or "").strip()
+
+
+def _s850j_arr(value):
+    return value if isinstance(value, list) else []
+
+
+def _s850j_has_reason(item, needle):
+    hay = []
+    for key in [
+        "reasons",
+        "cautions",
+        "telegramReasons",
+        "deskReasons",
+        "whySelected",
+        "whyNotElite",
+        "strictBlockedReasons",
+    ]:
+        hay += [str(x) for x in _s850j_arr(item.get(key))]
+    return any(str(needle) in x for x in hay)
+
+
+def _s850j_collect_items(root):
+    selector = root.get("bestIdeaSelector") or {}
+    items = []
+
+    for bucket in ["selectedIdeas", "monitorOnly", "waitingArmed", "eliteReady", "blockedIdeas"]:
+        for item in _s850j_arr(selector.get(bucket)):
+            if isinstance(item, dict):
+                row = dict(item)
+                row["_bucket"] = "bestIdeaSelector." + bucket
+                items.append(row)
+
+    for bucket in ["active", "armed"]:
+        section = root.get(bucket) or {}
+        for item in _s850j_arr(section.get("items")):
+            if isinstance(item, dict):
+                row = dict(item)
+                row["_bucket"] = bucket
+                items.append(row)
+
+    seen = set()
+    out = []
+    for item in items:
+        key = (
+            _s850j_text(item.get("symbol")),
+            _s850j_text(item.get("setupSlug") or item.get("setup_slug")),
+            _s850j_text(item.get("status") or item.get("engineStatus")),
+            round(_s850j_num(item.get("entry")) or -1, 4),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(item)
+
+    return out
+
+
+def _s850j_evaluate_normal_candidate(item):
+    blockers = []
+
+    symbol = _s850j_text(item.get("symbol"))
+    setup = _s850j_text(item.get("setupSlug") or item.get("setup_slug"))
+    status = _s850j_text(item.get("status") or item.get("engineStatus")).upper()
+    quality = _s850j_text(item.get("qualityStatus") or item.get("quality_status")).upper()
+    grade = _s850j_text(item.get("grade") or item.get("signalGrade")).upper()
+
+    score = _s850j_num(item.get("score") or item.get("signalScore"))
+    rr = _s850j_num(item.get("rrToTp1") or item.get("rr_to_tp1"))
+    entry = _s850j_num(item.get("entry"))
+    current_price = _s850j_num(item.get("currentPrice") or item.get("price"))
+    current_r = _s850j_num(item.get("currentR"))
+
+    metrics = item.get("metrics") or {}
+    entry_distance = _s850j_num(metrics.get("entryDistancePct") or item.get("entryDistancePct"))
+    exec_count = _s850j_num(metrics.get("executionTriggerCount") or item.get("executionTriggerCount"))
+    trigger_count = _s850j_num(metrics.get("triggerCount") or item.get("triggerCount"))
+
+    management = _s850j_text(item.get("managementState")).upper()
+    action = _s850j_text(item.get("tradeAction")).upper()
+
+    desk_passed = item.get("deskPassed") is True or _s850j_has_reason(item, "desk_quality_passed")
+    quality_ok = quality == "PASSED" or desk_passed
+    exec_ok = (exec_count is not None and exec_count >= 1) or _s850j_has_reason(item, "execution_confirmation_present")
+
+    if status != "ACTIVE":
+        blockers.append("not_active")
+    if not quality_ok:
+        blockers.append("quality_not_passed")
+    if grade not in {"A", "A+"}:
+        blockers.append("grade_not_a_or_a_plus")
+    if score is None or score < 92:
+        blockers.append("score_below_92")
+    if rr is None or rr < 2.0:
+        blockers.append("rr_below_2_0")
+    if not desk_passed:
+        blockers.append("desk_not_passed")
+    if item.get("strictEligible") is not True:
+        blockers.append("strict_not_true")
+    if item.get("isActionable") is not True:
+        blockers.append("not_actionable")
+    if not exec_ok:
+        blockers.append("execution_confirmation_missing")
+    if item.get("stalePriceBlocked") is True or _s850j_text(item.get("priceFreshness")).upper() == "STALE":
+        blockers.append("stale_price")
+    if item.get("lateSessionBlocked") is True:
+        blockers.append("late_session_blocked")
+    if item.get("marketClosedNewEntryBlocked") is True:
+        blockers.append("market_closed_new_entry_blocked")
+    if entry is not None and entry < 1:
+        blockers.append("sub_1_dollar_blocked")
+    if "EXTENDED_DO_NOT_CHASE" in management:
+        blockers.append("extended_do_not_chase")
+    if "STOP" in management or "INVALIDATED" in action:
+        blockers.append("invalidated_or_stop_hit")
+    if entry_distance is not None and entry_distance > 3.0:
+        blockers.append("entry_distance_over_3pct")
+
+    if entry and current_price and entry > 0 and current_price > 0:
+        ratio = max(current_price / entry, entry / current_price)
+        if ratio >= 5:
+            blockers.append("price_scale_mismatch_5x_plus")
+
+    return {
+        "symbol": symbol,
+        "setupSlug": setup,
+        "bucket": item.get("_bucket"),
+        "status": status,
+        "qualityStatus": quality,
+        "qualityOk": bool(quality_ok),
+        "grade": grade,
+        "score": score,
+        "rrToTp1": rr,
+        "entry": entry,
+        "currentPrice": current_price,
+        "currentR": current_r,
+        "entryDistancePct": entry_distance,
+        "executionOk": bool(exec_ok),
+        "triggerCount": trigger_count,
+        "deskPassed": bool(desk_passed),
+        "strictEligible": item.get("strictEligible"),
+        "isActionable": item.get("isActionable"),
+        "managementState": item.get("managementState"),
+        "tradeAction": item.get("tradeAction"),
+        "currentTelegramEligible": bool(item.get("telegramEligible") or item.get("telegramPassed")),
+        "wouldTelegramNormal": len(blockers) == 0,
+        "blockers": blockers,
+        "telegramReasons": item.get("telegramReasons") or [],
+    }
+
+
+def _s850j_report_dir():
+    from pathlib import Path
+
+    return Path("/opt/skilledge/stock-engine/reports/telegram_gate_split_dry_run")
+
+
+def _s850j_run_report(limit=80, publish=True):
+    import json
+    import urllib.request
+    from datetime import datetime, timezone
+
+    safe_limit = max(1, min(int(limit or 80), 200))
+    base_url = "http://127.0.0.1:8000"
+    url = f"{base_url}/engine/cockpit?limit={safe_limit}"
+
+    with urllib.request.urlopen(url, timeout=25) as response:
+        payload = json.loads(response.read().decode("utf-8"))
+
+    root = payload.get("value") or payload.get("dashboard") or payload
+    selector = root.get("bestIdeaSelector") or {}
+
+    selected_symbols = {
+        _s850j_text(item.get("symbol"))
+        for item in _s850j_arr(selector.get("selectedIdeas"))
+        if isinstance(item, dict)
+    }
+
+    evaluated = [_s850j_evaluate_normal_candidate(item) for item in _s850j_collect_items(root)]
+
+    normal_ready = [item for item in evaluated if item["wouldTelegramNormal"]]
+    normal_selected = [item for item in normal_ready if item["symbol"] in selected_symbols]
+    current_ready = [item for item in evaluated if item["currentTelegramEligible"]]
+
+    blockers = {}
+    for item in evaluated:
+        for blocker in item.get("blockers") or []:
+            blockers[blocker] = blockers.get(blocker, 0) + 1
+
+    generated_at = datetime.now(timezone.utc).isoformat()
+
+    report = {
+        "ok": True,
+        "storageVersion": S850J_TELEGRAM_GATE_SPLIT_DRY_RUN_VERSION,
+        "generatedAt": generated_at,
+        "source": {
+            "url": url,
+            "cockpitStorageVersion": payload.get("storageVersion"),
+            "cache": payload.get("cache"),
+        },
+        "policy": {
+            "readOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "currentTelegramElite": {
+                "rrToTp1": ">= 2.2",
+                "keptAsIs": True,
+            },
+            "simulatedTelegramNormal": {
+                "rrToTp1": ">= 2.0",
+                "requires": [
+                    "ACTIVE",
+                    "qualityStatus PASSED or deskPassed",
+                    "grade A/A+",
+                    "score >= 92",
+                    "deskPassed",
+                    "strictEligible true",
+                    "isActionable true",
+                    "execution confirmation present",
+                    "entry >= 1",
+                    "fresh price",
+                    "not late-session blocked",
+                    "not extended do-not-chase",
+                    "no 5x+ price mismatch",
+                ],
+            },
+        },
+        "summary": {
+            "watchCount": (root.get("watchlist") or {}).get("count"),
+            "activeCount": (root.get("active") or {}).get("count"),
+            "armedCount": (root.get("armed") or {}).get("count"),
+            "selectorTotals": selector.get("totals") or {},
+            "evaluatedUniqueIdeas": len(evaluated),
+            "currentTelegramReadyCount": len(current_ready),
+            "wouldTelegramNormalReadyCount": len(normal_ready),
+            "wouldTelegramNormalSelectedCount": len(normal_selected),
+            "normalBlockedByReason": dict(sorted(blockers.items(), key=lambda kv: kv[1], reverse=True)),
+        },
+        "normalSelectedReady": normal_selected[:10],
+        "normalReady": normal_ready[:30],
+        "currentTelegramReady": current_ready[:30],
+        "evaluatedSample": evaluated[:100],
+    }
+
+    if publish:
+        out_dir = _s850j_report_dir()
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        latest = out_dir / "latest_s850j.json"
+        snapshot = out_dir / (generated_at.replace(":", "-") + "_s850j.json")
+
+        latest.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+        snapshot.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
+
+        report["persistence"] = {
+            "filePersisted": True,
+            "latestPath": str(latest),
+            "snapshotPath": str(snapshot),
+        }
+    else:
+        report["persistence"] = {
+            "filePersisted": False,
+        }
+
+    return report
+
+
+@app.post("/engine/research/telegram-gate-split-dry-run/run")
+def engine_research_telegram_gate_split_dry_run_run(limit: int = 80, publish: bool = True):
+    return _s850j_run_report(limit=limit, publish=publish)
+
+
+@app.get("/engine/research/telegram-gate-split-dry-run/latest")
+def engine_research_telegram_gate_split_dry_run_latest():
+    import json
+
+    latest = _s850j_report_dir() / "latest_s850j.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S850J_TELEGRAM_GATE_SPLIT_DRY_RUN_VERSION,
+            "error": "telegram_gate_split_dry_run_not_found",
+            "nextAction": "Run POST /engine/research/telegram-gate-split-dry-run/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "sendsTelegram": False,
+                "changesTelegramGate": False,
+                "changesClientDelivery": False,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+# === /S8.50J Telegram Gate Split Dry-Run Permanent Report ===
+
