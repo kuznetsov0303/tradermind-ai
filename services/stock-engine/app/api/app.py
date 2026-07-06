@@ -9875,7 +9875,7 @@ def engine_evidence_cache():
 
 
 # === S8.14D Investor Dashboard Snapshot API ==================================
-S814D_INVESTOR_DASHBOARD_VERSION = "s8_14d_investor_dashboard_snapshot_v1"
+S814D_INVESTOR_DASHBOARD_VERSION = "s8_51a_investor_dashboard_telegram_gate_split_visibility_v1"
 S814D_INVESTOR_DASHBOARD_CACHE_KEY = "engine:investor_dashboard:snapshot"
 
 
@@ -10175,11 +10175,50 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
     setup_report = _s814d_read_report_json("reports/setup_learning/latest.json")
     post_close_report = _s814d_read_report_json("reports/post_close_evidence/latest.json")
     evidence_report = _s814d_read_report_json("reports/investor_evidence/latest.json")
+    telegram_gate_report = _s814d_read_report_json("reports/telegram_gate_split_dry_run/latest_s850j.json")
 
     setup_summary = setup_report.get("summary") if isinstance(setup_report.get("summary"), dict) else {}
     setup_rows = setup_report.get("setupLearning") if isinstance(setup_report.get("setupLearning"), list) else []
 
     investor_summary = evidence_report.get("investorSummary") if isinstance(evidence_report.get("investorSummary"), dict) else {}
+    telegram_gate_summary = telegram_gate_report.get("summary") if isinstance(telegram_gate_report.get("summary"), dict) else {}
+    telegram_gate_policy = telegram_gate_report.get("policy") if isinstance(telegram_gate_report.get("policy"), dict) else {}
+    telegram_gate_selected = telegram_gate_report.get("normalSelectedReady") if isinstance(telegram_gate_report.get("normalSelectedReady"), list) else []
+    telegram_gate_payload = {
+        "ok": bool(telegram_gate_report.get("ok")),
+        "storageVersion": telegram_gate_report.get("storageVersion"),
+        "generatedAt": telegram_gate_report.get("generatedAt"),
+        "currentTelegramReadyCount": telegram_gate_summary.get("currentTelegramReadyCount"),
+        "wouldTelegramNormalReadyCount": telegram_gate_summary.get("wouldTelegramNormalReadyCount"),
+        "wouldTelegramNormalSelectedCount": telegram_gate_summary.get("wouldTelegramNormalSelectedCount"),
+        "normalBlockedByReason": telegram_gate_summary.get("normalBlockedByReason") if isinstance(telegram_gate_summary.get("normalBlockedByReason"), dict) else {},
+        "normalSelectedReadyTop": [
+            {
+                "symbol": item.get("symbol"),
+                "setupSlug": item.get("setupSlug"),
+                "status": item.get("status"),
+                "grade": item.get("grade"),
+                "score": item.get("score"),
+                "rrToTp1": item.get("rrToTp1"),
+                "entry": item.get("entry"),
+                "currentPrice": item.get("currentPrice"),
+                "wouldTelegramNormal": item.get("wouldTelegramNormal"),
+                "blockers": item.get("blockers") if isinstance(item.get("blockers"), list) else [],
+            }
+            for item in telegram_gate_selected[:10]
+            if isinstance(item, dict)
+        ],
+        "policySummary": {
+            "readOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "eliteRrPolicy": ((telegram_gate_policy.get("currentTelegramElite") or {}).get("rrToTp1") if isinstance(telegram_gate_policy.get("currentTelegramElite"), dict) else ">= 2.2"),
+            "normalDryRunRrPolicy": ((telegram_gate_policy.get("simulatedTelegramNormal") or {}).get("rrToTp1") if isinstance(telegram_gate_policy.get("simulatedTelegramNormal"), dict) else ">= 2.0"),
+            "normalDryRunOnly": True,
+        },
+        "persistence": telegram_gate_report.get("persistence") if isinstance(telegram_gate_report.get("persistence"), dict) else {},
+    }
     post_close_summary = post_close_report.get("summary") if isinstance(post_close_report.get("summary"), dict) else {}
 
     # S8.20E: expose read-only night calibration decision in investor/admin snapshot.
@@ -10333,6 +10372,9 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "cleanEliteMaxDrawdownPct": clean_elite_snapshot.get("maxDrawdownPct"),
             "cleanEliteTestCount": clean_elite_snapshot.get("testLedgerCount"),
             "testToReadyPromotionCandidateCount": clean_elite_promotion.get("promotionCandidateCount"),
+            "telegramCurrentReadyCount": telegram_gate_payload.get("currentTelegramReadyCount"),
+            "telegramNormalDryRunReadyCount": telegram_gate_payload.get("wouldTelegramNormalReadyCount"),
+            "telegramNormalDryRunSelectedCount": telegram_gate_payload.get("wouldTelegramNormalSelectedCount"),
         },
         "equitySimulation": {
             "startingCapital": 50000,
@@ -10343,6 +10385,7 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "cleanEliteLayer": clean_elite_snapshot,
         },
         "cleanElitePerformance": clean_elite_snapshot,
+        "telegramGateSplitDryRun": telegram_gate_payload,
         "setupLearning": {
             "promoteForEliteTest": setup_summary.get("promoteForEliteTest"),
             "keepAndTighten": setup_summary.get("keepAndTighten"),
