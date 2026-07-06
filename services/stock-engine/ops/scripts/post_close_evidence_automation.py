@@ -214,6 +214,26 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         else {}
     )
 
+    forward_state = (
+        (forward_value.get("dailyDeskState") or {}).get("state")
+        if isinstance(forward_value.get("dailyDeskState"), dict) else None
+    )
+    forward_selected_best_count = (
+        len(forward_value.get("selectedBestIdeas") or [])
+        if isinstance(forward_value.get("selectedBestIdeas"), list) else None
+    )
+
+    # S8.52B1: no-trade post-close should not fail systemd.
+    # If the desk correctly produced NO_TRADE_NO_BEST_IDEA, evidence/clean stats can be empty.
+    # This is an honest no-trade state, not an ops failure.
+    no_trade_non_fatal = (
+        forward_state == "NO_TRADE_NO_BEST_IDEA"
+        and int(forward_selected_best_count or 0) == 0
+    )
+
+    clean_stats_effective_ok = bool(clean_stats.get("ok")) or no_trade_non_fatal
+    evidence_effective_ok = bool(evidence.get("ok")) or no_trade_non_fatal
+
     ok = bool(
         health.get("ok")
         and outcomes.get("ok")
@@ -221,8 +241,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         and clean_capture.get("ok")
         and clean_outcomes.get("ok")
         and clean_sync.get("ok")
-        and clean_stats.get("ok")
-        and evidence.get("ok")
+        and clean_stats_effective_ok
+        and evidence_effective_ok
     )
 
     report: dict[str, Any] = {
@@ -244,16 +264,19 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "cleanEliteOutcomesOk": clean_outcomes.get("ok"),
             "cleanEliteSupabaseSyncOk": clean_sync.get("ok"),
             "cleanEliteStatsOk": clean_stats.get("ok"),
+            "cleanEliteStatsEffectiveOk": clean_stats_effective_ok,
+            "cleanEliteStatsNonFatalNoTrade": bool(no_trade_non_fatal and not clean_stats.get("ok")),
             "nightCalibrationOk": night_calibration.get("ok"),
             "nightCalibrationNonFatal": True,
             "nightCalibrationTopAction": night_calibration_decision.get("topAction"),
             "nightCalibrationSafeToApplyAutomatically": night_calibration_decision.get("safeToApplyAutomatically"),
             "nightCalibrationTotals": night_calibration_value.get("totals") if isinstance(night_calibration_value, dict) else None,
             "evidenceOk": evidence.get("ok"),
-            "forwardState": (forward_value.get("dailyDeskState") or {}).get("state")
-                if isinstance(forward_value.get("dailyDeskState"), dict) else None,
-            "forwardSelectedBestCount": len(forward_value.get("selectedBestIdeas") or [])
-                if isinstance(forward_value.get("selectedBestIdeas"), list) else None,
+            "evidenceEffectiveOk": evidence_effective_ok,
+            "evidenceNonFatalNoTrade": bool(no_trade_non_fatal and not evidence.get("ok")),
+            "postCloseNoTradeNonFatal": bool(no_trade_non_fatal),
+            "forwardState": forward_state,
+            "forwardSelectedBestCount": forward_selected_best_count,
             "evidence": compact_evidence(evidence_value),
             "outcomes": {
                 "ok": outcomes_value.get("ok"),
