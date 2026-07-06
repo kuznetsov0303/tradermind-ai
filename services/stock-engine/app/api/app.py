@@ -10184,10 +10184,15 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
     telegram_gate_summary = telegram_gate_report.get("summary") if isinstance(telegram_gate_report.get("summary"), dict) else {}
     telegram_gate_policy = telegram_gate_report.get("policy") if isinstance(telegram_gate_report.get("policy"), dict) else {}
     telegram_gate_selected = telegram_gate_report.get("normalSelectedReady") if isinstance(telegram_gate_report.get("normalSelectedReady"), list) else []
+    telegram_gate_freshness = _s852_telegram_gate_split_freshness(telegram_gate_report, max_fresh_minutes=720)
     telegram_gate_payload = {
         "ok": bool(telegram_gate_report.get("ok")),
         "storageVersion": telegram_gate_report.get("storageVersion"),
         "generatedAt": telegram_gate_report.get("generatedAt"),
+        "freshness": telegram_gate_freshness,
+        "freshnessStatus": telegram_gate_freshness.get("freshnessStatus"),
+        "isFresh": telegram_gate_freshness.get("isFresh"),
+        "ageMinutes": telegram_gate_freshness.get("ageMinutes"),
         "currentTelegramReadyCount": telegram_gate_summary.get("currentTelegramReadyCount"),
         "wouldTelegramNormalReadyCount": telegram_gate_summary.get("wouldTelegramNormalReadyCount"),
         "wouldTelegramNormalSelectedCount": telegram_gate_summary.get("wouldTelegramNormalSelectedCount"),
@@ -10216,6 +10221,8 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "eliteRrPolicy": ((telegram_gate_policy.get("currentTelegramElite") or {}).get("rrToTp1") if isinstance(telegram_gate_policy.get("currentTelegramElite"), dict) else ">= 2.2"),
             "normalDryRunRrPolicy": ((telegram_gate_policy.get("simulatedTelegramNormal") or {}).get("rrToTp1") if isinstance(telegram_gate_policy.get("simulatedTelegramNormal"), dict) else ">= 2.0"),
             "normalDryRunOnly": True,
+            "freshnessGuardEnabled": True,
+            "maxFreshMinutes": telegram_gate_freshness.get("maxFreshMinutes"),
         },
         "persistence": telegram_gate_report.get("persistence") if isinstance(telegram_gate_report.get("persistence"), dict) else {},
     }
@@ -10375,6 +10382,8 @@ def _s814d_build_investor_dashboard_snapshot() -> dict[str, Any]:
             "telegramCurrentReadyCount": telegram_gate_payload.get("currentTelegramReadyCount"),
             "telegramNormalDryRunReadyCount": telegram_gate_payload.get("wouldTelegramNormalReadyCount"),
             "telegramNormalDryRunSelectedCount": telegram_gate_payload.get("wouldTelegramNormalSelectedCount"),
+            "telegramGateFreshnessStatus": telegram_gate_payload.get("freshnessStatus"),
+            "telegramGateAgeMinutes": telegram_gate_payload.get("ageMinutes"),
         },
         "equitySimulation": {
             "startingCapital": 50000,
@@ -19217,6 +19226,55 @@ def _s837a_status_level(summary):
 
 
 
+
+# === S8.52 Telegram Gate Split Freshness Guard ================================
+def _s852_telegram_gate_split_freshness(report: dict[str, Any], max_fresh_minutes: int = 720) -> dict[str, Any]:
+    from datetime import datetime, timezone
+
+    checked_at = datetime.now(timezone.utc)
+    generated_at_raw = report.get("generatedAt") if isinstance(report, dict) else None
+
+    result = {
+        "checkedAt": checked_at.isoformat(),
+        "generatedAt": generated_at_raw,
+        "ageMinutes": None,
+        "maxFreshMinutes": int(max_fresh_minutes),
+        "isFresh": False,
+        "freshnessStatus": "MISSING",
+    }
+
+    if not generated_at_raw:
+        return result
+
+    try:
+        generated_text = str(generated_at_raw).strip()
+        if generated_text.endswith("Z"):
+            generated_text = generated_text[:-1] + "+00:00"
+
+        generated_at = datetime.fromisoformat(generated_text)
+        if generated_at.tzinfo is None:
+            generated_at = generated_at.replace(tzinfo=timezone.utc)
+
+        age_minutes = max(
+            0.0,
+            (checked_at - generated_at.astimezone(timezone.utc)).total_seconds() / 60.0,
+        )
+        is_fresh = age_minutes <= float(max_fresh_minutes)
+
+        result.update({
+            "ageMinutes": round(age_minutes, 2),
+            "isFresh": bool(is_fresh),
+            "freshnessStatus": "FRESH" if is_fresh else "STALE",
+        })
+        return result
+    except Exception as error:
+        result.update({
+            "freshnessStatus": "INVALID_TIMESTAMP",
+            "error": repr(error),
+        })
+        return result
+
+
 # === S8.51B Telegram Gate Split Admin Ops Visibility ==========================
 def _s851b_build_telegram_gate_split_admin_snapshot() -> dict[str, Any]:
     try:
@@ -19227,6 +19285,7 @@ def _s851b_build_telegram_gate_split_admin_snapshot() -> dict[str, Any]:
     summary = report.get("summary") if isinstance(report.get("summary"), dict) else {}
     policy = report.get("policy") if isinstance(report.get("policy"), dict) else {}
     selected = report.get("normalSelectedReady") if isinstance(report.get("normalSelectedReady"), list) else []
+    freshness = _s852_telegram_gate_split_freshness(report, max_fresh_minutes=720)
 
     elite_policy = policy.get("currentTelegramElite") if isinstance(policy.get("currentTelegramElite"), dict) else {}
     normal_policy = policy.get("simulatedTelegramNormal") if isinstance(policy.get("simulatedTelegramNormal"), dict) else {}
@@ -19235,6 +19294,10 @@ def _s851b_build_telegram_gate_split_admin_snapshot() -> dict[str, Any]:
         "ok": bool(report.get("ok")),
         "storageVersion": report.get("storageVersion"),
         "generatedAt": report.get("generatedAt"),
+        "freshness": freshness,
+        "freshnessStatus": freshness.get("freshnessStatus"),
+        "isFresh": freshness.get("isFresh"),
+        "ageMinutes": freshness.get("ageMinutes"),
         "currentTelegramReadyCount": summary.get("currentTelegramReadyCount"),
         "wouldTelegramNormalReadyCount": summary.get("wouldTelegramNormalReadyCount"),
         "wouldTelegramNormalSelectedCount": summary.get("wouldTelegramNormalSelectedCount"),
@@ -19263,6 +19326,8 @@ def _s851b_build_telegram_gate_split_admin_snapshot() -> dict[str, Any]:
             "eliteRrPolicy": elite_policy.get("rrToTp1") or ">= 2.2",
             "normalDryRunRrPolicy": normal_policy.get("rrToTp1") or ">= 2.0",
             "normalDryRunOnly": True,
+            "freshnessGuardEnabled": True,
+            "maxFreshMinutes": freshness.get("maxFreshMinutes"),
         },
         "persistence": report.get("persistence") if isinstance(report.get("persistence"), dict) else {},
     }
@@ -19410,6 +19475,8 @@ def engine_admin_ops_status():
         "telegramCurrentReadyCount": telegram_gate_admin.get("currentTelegramReadyCount"),
         "telegramNormalDryRunReadyCount": telegram_gate_admin.get("wouldTelegramNormalReadyCount"),
         "telegramNormalDryRunSelectedCount": telegram_gate_admin.get("wouldTelegramNormalSelectedCount"),
+        "telegramGateFreshnessStatus": telegram_gate_admin.get("freshnessStatus"),
+        "telegramGateAgeMinutes": telegram_gate_admin.get("ageMinutes"),
     }
 
     return {
