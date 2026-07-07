@@ -25417,3 +25417,601 @@ def engine_research_trigger_quality_latest():
 
 
 # === /S8.59A Trigger Quality Report ==========================================
+
+# === S8.59B Failure Pattern Mining ===========================================
+S859B_FAILURE_PATTERN_VERSION = "s8_59b_failure_pattern_mining_v1"
+
+
+def _s859b_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/failure_patterns")
+
+
+def _s859b_db_path():
+    return "/opt/skilledge/stock-engine/data/stock_engine.db"
+
+
+def _s859b_json_loads(value):
+    import json
+    if not value:
+        return {}
+    if isinstance(value, dict):
+        return value
+    try:
+        data = json.loads(value)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _s859b_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s859b_to_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s859b_get_nested(data, path, fallback=None):
+    cur = data if isinstance(data, dict) else {}
+    for key in path:
+        if not isinstance(cur, dict):
+            return fallback
+        cur = cur.get(key)
+    return cur if cur is not None else fallback
+
+
+def _s859b_arr(value):
+    return value if isinstance(value, list) else []
+
+
+def _s859b_add_count(counter, key, inc=1):
+    k = str(key or "unknown").strip() or "unknown"
+    counter[k] = int(counter.get(k, 0) or 0) + int(inc or 1)
+
+
+def _s859b_sorted_counts(counter, limit=30):
+    rows = sorted(counter.items(), key=lambda item: int(item[1] or 0), reverse=True)
+    if limit:
+        rows = rows[:limit]
+    return {str(k): int(v or 0) for k, v in rows}
+
+
+def _s859b_status_bucket(row, payload):
+    status = str(row.get("status") or payload.get("status") or payload.get("result") or "").upper().strip()
+    if status == "FAILED":
+        return "FAILED"
+    if status == "WORKED":
+        return "WORKED"
+    if "EXPIRED" in status or status == "SESSION_CLOSE":
+        return "SESSION_CLOSE"
+    if status in {"OPEN", "NO_EVAL", "NO_EVALUATION", "PENDING"}:
+        return "OPEN_OR_NO_EVAL"
+    return status or "UNKNOWN"
+
+
+def _s859b_extract_triggers(row, outcome_payload, signal_payload):
+    raw = []
+
+    def add(value):
+        if value is None:
+            return
+        if isinstance(value, str):
+            v = value.strip()
+            if v:
+                raw.append(v)
+            return
+        if isinstance(value, list):
+            for item in value:
+                add(item)
+
+    add(row.get("primary_trigger"))
+
+    for payload in [outcome_payload, signal_payload]:
+        if not isinstance(payload, dict):
+            continue
+
+        for key in [
+            "primaryTrigger",
+            "primary_trigger",
+            "trigger",
+            "triggerName",
+            "trigger_name",
+            "triggers",
+            "triggerReasons",
+            "telegramReasons",
+        ]:
+            add(payload.get(key))
+
+        for path in [
+            ["confirmation", "triggers"],
+            ["candleContext", "confirmation", "triggers"],
+            ["source", "candleContext", "confirmation", "triggers"],
+            ["payload", "confirmation", "triggers"],
+        ]:
+            add(_s859b_get_nested(payload, path))
+
+    out = []
+    for item in raw:
+        t = str(item or "").strip().replace(" ", "_").replace("-", "_").lower()
+        while "__" in t:
+            t = t.replace("__", "_")
+        if t and t not in out:
+            out.append(t)
+    return out or ["unknown_trigger"]
+
+
+def _s859b_payload_metric(signal_payload, outcome_payload, key, paths):
+    for payload in [signal_payload, outcome_payload]:
+        if not isinstance(payload, dict):
+            continue
+        if key in payload:
+            val = _s859b_to_float(payload.get(key), None)
+            if val is not None:
+                return val
+        for path in paths:
+            val = _s859b_to_float(_s859b_get_nested(payload, path), None)
+            if val is not None:
+                return val
+    return None
+
+
+def _s859b_classify_failure(row, outcome_payload, signal_payload):
+    patterns = []
+
+    result_r = _s859b_to_float(row.get("result_r"), _s859b_to_float(outcome_payload.get("resultR"), None))
+    mfe_r = _s859b_to_float(row.get("mfe_r"), _s859b_to_float(outcome_payload.get("mfeR"), None))
+    mae_r = _s859b_to_float(row.get("mae_r"), _s859b_to_float(outcome_payload.get("maeR"), None))
+    score = _s859b_to_float(_s859b_get_nested(signal_payload, ["score"]), _s859b_to_float(outcome_payload.get("score"), None))
+    quality_score = _s859b_to_float(_s859b_get_nested(signal_payload, ["qualityScore"]), _s859b_to_float(outcome_payload.get("qualityScore"), None))
+    grade = str(row.get("signal_grade") or signal_payload.get("signalGrade") or outcome_payload.get("signalGrade") or "").upper().strip()
+    quality_status = str(row.get("quality_status") or signal_payload.get("qualityStatus") or outcome_payload.get("qualityStatus") or "").upper().strip()
+    setup_slug = str(row.get("setup_slug") or "").strip()
+    triggers = _s859b_extract_triggers(row, outcome_payload, signal_payload)
+
+    entry = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "entry",
+        [["levels", "entry"], ["source", "entry"], ["trade", "entry"]],
+    )
+    stop = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "stop",
+        [["levels", "stop"], ["source", "stop"], ["trade", "stop"]],
+    )
+    price = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "latestPrice",
+        [["candleContext", "latestPrice"], ["source", "candleContext", "latestPrice"]],
+    )
+    distance_vwap = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "distanceFromVwapPct",
+        [["candleContext", "distanceFromVwapPct"], ["source", "candleContext", "distanceFromVwapPct"]],
+    )
+    distance_ema = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "distanceFromEma20Pct",
+        [["candleContext", "distanceFromEma20Pct"], ["source", "candleContext", "distanceFromEma20Pct"]],
+    )
+    distance_hod = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "distanceFromHodPct",
+        [["candleContext", "distanceFromHodPct"], ["source", "candleContext", "distanceFromHodPct"]],
+    )
+    volume_accel = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "volumeAcceleration",
+        [["candleContext", "volumeAcceleration"], ["source", "candleContext", "volumeAcceleration"]],
+    )
+    rsi = _s859b_payload_metric(
+        signal_payload,
+        outcome_payload,
+        "rsi14_5m",
+        [["candleContext", "rsi14_5m"], ["source", "candleContext", "rsi14_5m"]],
+    )
+
+    if "unknown_trigger" in triggers:
+        patterns.append("metadata_unknown_trigger")
+
+    if quality_status and quality_status != "PASSED":
+        patterns.append("quality_not_passed")
+
+    if grade in {"REJECT", "C", "C+", "B", "B+"}:
+        patterns.append("low_grade_failure")
+
+    if score is not None and score < 78:
+        patterns.append("score_below_78")
+    elif score is not None and score < 92:
+        patterns.append("score_below_92")
+
+    if quality_score is not None and quality_score < 70:
+        patterns.append("quality_score_below_70")
+
+    if mae_r is not None and mae_r >= 1.0:
+        patterns.append("full_r_adverse_move")
+    elif mae_r is not None and mae_r >= 0.75:
+        patterns.append("large_adverse_move")
+
+    if mfe_r is not None and mfe_r < 0.5:
+        patterns.append("no_follow_through_mfe_lt_0_5r")
+    elif mfe_r is not None and mfe_r < 1.0:
+        patterns.append("weak_follow_through_mfe_lt_1r")
+
+    if mfe_r is not None and mae_r is not None and mae_r > mfe_r:
+        patterns.append("mae_greater_than_mfe")
+
+    if result_r is not None and result_r <= -1.0:
+        patterns.append("hard_stop_loss")
+    elif result_r is not None and result_r < 0:
+        patterns.append("negative_r_failure")
+
+    if row.get("stop_hit") is not None and _s859b_to_int(row.get("stop_hit"), 0) == 1:
+        patterns.append("stop_hit")
+
+    if price is not None and price < 1.0:
+        patterns.append("sub_1_dollar_failure")
+
+    if distance_vwap is not None and abs(distance_vwap) >= 5.0:
+        patterns.append("extended_from_vwap_over_5pct")
+    elif distance_vwap is not None and abs(distance_vwap) >= 3.0:
+        patterns.append("extended_from_vwap_over_3pct")
+
+    if distance_ema is not None and abs(distance_ema) >= 8.0:
+        patterns.append("extended_from_ema20_over_8pct")
+    elif distance_ema is not None and abs(distance_ema) >= 5.0:
+        patterns.append("extended_from_ema20_over_5pct")
+
+    if distance_hod is not None and distance_hod <= 2.0 and any(x in setup_slug for x in ["short", "pump", "rejection", "breakdown"]):
+        patterns.append("short_too_close_to_hod")
+
+    if volume_accel is not None and volume_accel < 1.2:
+        patterns.append("weak_volume_acceleration")
+
+    if rsi is not None and rsi >= 80:
+        patterns.append("overheated_rsi")
+
+    if entry is not None and stop is not None and entry > 0:
+        risk_pct = abs(entry - stop) / entry * 100.0
+        if risk_pct < 0.5:
+            patterns.append("stop_too_tight_lt_0_5pct")
+        elif risk_pct > 12.0:
+            patterns.append("stop_too_wide_gt_12pct")
+
+    if not patterns:
+        patterns.append("unclassified_failure")
+
+    compact_metrics = {
+        "resultR": result_r,
+        "mfeR": mfe_r,
+        "maeR": mae_r,
+        "score": score,
+        "qualityScore": quality_score,
+        "grade": grade,
+        "qualityStatus": quality_status,
+        "entry": entry,
+        "stop": stop,
+        "latestPrice": price,
+        "distanceFromVwapPct": distance_vwap,
+        "distanceFromEma20Pct": distance_ema,
+        "distanceFromHodPct": distance_hod,
+        "volumeAcceleration": volume_accel,
+        "rsi14_5m": rsi,
+        "triggers": triggers,
+    }
+
+    return patterns, compact_metrics
+
+
+def _s859b_fetch_rows(limit=5000):
+    import sqlite3
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    con = sqlite3.connect(_s859b_db_path())
+    con.row_factory = sqlite3.Row
+
+    rows = con.execute(
+        """
+        SELECT
+            o.signal_id,
+            o.symbol,
+            o.setup_slug,
+            o.session_date,
+            o.status,
+            o.result_r,
+            o.mfe_r,
+            o.mae_r,
+            o.tp1_hit,
+            o.tp2_hit,
+            o.stop_hit,
+            o.premium_signal,
+            o.telegram_eligible,
+            o.signal_grade,
+            o.quality_status,
+            o.primary_trigger,
+            o.first_event,
+            o.trigger_time,
+            o.evaluated_at,
+            o.stored_at,
+            o.payload_json AS outcome_payload_json,
+            s.payload_json AS signal_payload_json
+        FROM outcome_records o
+        LEFT JOIN signal_records s ON s.signal_id = o.signal_id
+        ORDER BY COALESCE(o.evaluated_at, o.stored_at, o.trigger_time, o.session_date) DESC
+        LIMIT ?
+        """,
+        (safe_limit,),
+    ).fetchall()
+
+    con.close()
+    return [dict(row) for row in rows]
+
+
+def _s859b_new_pattern_row(pattern):
+    return {
+        "pattern": pattern,
+        "count": 0,
+        "setupCounts": {},
+        "triggerCounts": {},
+        "avgResultRValues": [],
+        "avgMfeRValues": [],
+        "avgMaeRValues": [],
+        "examples": [],
+    }
+
+
+def _s859b_finalize_pattern_row(row):
+    def avg(values):
+        clean = [float(v) for v in values if v is not None]
+        if not clean:
+            return None
+        return round(sum(clean) / len(clean), 4)
+
+    setup_rows = [
+        {"setupSlug": k, "count": v}
+        for k, v in sorted(row.get("setupCounts", {}).items(), key=lambda item: int(item[1] or 0), reverse=True)
+    ]
+
+    trigger_rows = [
+        {"triggerName": k, "count": v}
+        for k, v in sorted(row.get("triggerCounts", {}).items(), key=lambda item: int(item[1] or 0), reverse=True)
+    ]
+
+    return {
+        "pattern": row.get("pattern"),
+        "count": int(row.get("count") or 0),
+        "avgResultR": avg(row.get("avgResultRValues") or []),
+        "avgMfeR": avg(row.get("avgMfeRValues") or []),
+        "avgMaeR": avg(row.get("avgMaeRValues") or []),
+        "topSetups": setup_rows[:8],
+        "topTriggers": trigger_rows[:8],
+        "examples": row.get("examples") or [],
+    }
+
+
+def _s859b_pattern_recommendation(pattern):
+    mapping = {
+        "metadata_unknown_trigger": "Fix trigger attribution before using this sample for promotion decisions.",
+        "quality_not_passed": "Do not promote. Require quality PASSED before signal eligibility.",
+        "low_grade_failure": "Raise grade threshold or keep these ideas research-only.",
+        "score_below_78": "Reject low-score setups earlier.",
+        "score_below_92": "Keep strict gate for client-visible delivery.",
+        "full_r_adverse_move": "Review entry timing and stop placement; price moved against setup quickly.",
+        "large_adverse_move": "Tighten entry quality or wait for cleaner confirmation.",
+        "no_follow_through_mfe_lt_0_5r": "Avoid setups that do not produce at least 0.5R MFE after trigger.",
+        "weak_follow_through_mfe_lt_1r": "Require stronger continuation/context before promotion.",
+        "mae_greater_than_mfe": "Signal timing is likely wrong; adverse excursion exceeds favorable excursion.",
+        "hard_stop_loss": "Review stop logic and trigger timing.",
+        "stop_hit": "Classify stop-hit conditions by setup and trigger before promotion.",
+        "sub_1_dollar_failure": "Keep sub-$1 names blocked or separate them into a special high-risk bucket.",
+        "extended_from_vwap_over_5pct": "Avoid chase entries far from VWAP.",
+        "extended_from_vwap_over_3pct": "Add entry-distance guard or wait for pullback.",
+        "extended_from_ema20_over_8pct": "Avoid entries too extended from EMA20.",
+        "extended_from_ema20_over_5pct": "Require better pullback/confirmation near EMA20.",
+        "short_too_close_to_hod": "Avoid shorting too close to HOD without failed reclaim / lower-high proof.",
+        "weak_volume_acceleration": "Require stronger relative volume/volume acceleration.",
+        "overheated_rsi": "Separate exhaustion vs continuation logic when RSI is overheated.",
+        "stop_too_tight_lt_0_5pct": "Widen or normalize stop by ATR; avoid micro stops.",
+        "stop_too_wide_gt_12pct": "Reject poor RR / oversized-risk setups.",
+        "unclassified_failure": "Needs deeper candle-level failure analysis.",
+    }
+    return mapping.get(str(pattern or ""), "Review manually.")
+
+
+def _s859b_build_report(limit=5000):
+    from datetime import datetime, timezone
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    rows = _s859b_fetch_rows(limit=safe_limit)
+
+    pattern_rows = {}
+    setup_failure_counts = {}
+    trigger_failure_counts = {}
+    failed_count = 0
+    worked_count = 0
+    non_closed_count = 0
+    failed_examples = []
+
+    for row in rows:
+        outcome_payload = _s859b_json_loads(row.get("outcome_payload_json"))
+        signal_payload = _s859b_json_loads(row.get("signal_payload_json"))
+        bucket = _s859b_status_bucket(row, outcome_payload)
+
+        if bucket == "WORKED":
+            worked_count += 1
+            continue
+
+        if bucket != "FAILED":
+            non_closed_count += 1
+            continue
+
+        failed_count += 1
+
+        setup_slug = str(row.get("setup_slug") or "unknown_setup").strip() or "unknown_setup"
+        _s859b_add_count(setup_failure_counts, setup_slug)
+
+        patterns, metrics = _s859b_classify_failure(row, outcome_payload, signal_payload)
+        triggers = metrics.get("triggers") or ["unknown_trigger"]
+
+        for trigger in triggers:
+            _s859b_add_count(trigger_failure_counts, trigger)
+
+        if len(failed_examples) < 50:
+            failed_examples.append({
+                "signalId": row.get("signal_id"),
+                "symbol": row.get("symbol"),
+                "setupSlug": setup_slug,
+                "sessionDate": row.get("session_date"),
+                "patterns": patterns,
+                "metrics": metrics,
+            })
+
+        for pattern in patterns:
+            prow = pattern_rows.setdefault(pattern, _s859b_new_pattern_row(pattern))
+            prow["count"] += 1
+            _s859b_add_count(prow["setupCounts"], setup_slug)
+            for trigger in triggers:
+                _s859b_add_count(prow["triggerCounts"], trigger)
+
+            prow["avgResultRValues"].append(metrics.get("resultR"))
+            prow["avgMfeRValues"].append(metrics.get("mfeR"))
+            prow["avgMaeRValues"].append(metrics.get("maeR"))
+
+            if len(prow["examples"]) < 8:
+                prow["examples"].append({
+                    "symbol": row.get("symbol"),
+                    "setupSlug": setup_slug,
+                    "sessionDate": row.get("session_date"),
+                    "resultR": metrics.get("resultR"),
+                    "mfeR": metrics.get("mfeR"),
+                    "maeR": metrics.get("maeR"),
+                    "grade": metrics.get("grade"),
+                    "score": metrics.get("score"),
+                    "triggers": triggers,
+                })
+
+    finalized = [_s859b_finalize_pattern_row(row) for row in pattern_rows.values()]
+    finalized = sorted(finalized, key=lambda row: int(row.get("count") or 0), reverse=True)
+
+    recommendations = []
+    for row in finalized[:20]:
+        recommendations.append({
+            "pattern": row.get("pattern"),
+            "count": row.get("count"),
+            "recommendation": _s859b_pattern_recommendation(row.get("pattern")),
+            "topSetups": row.get("topSetups"),
+            "topTriggers": row.get("topTriggers"),
+        })
+
+    return {
+        "ok": True,
+        "storageVersion": S859B_FAILURE_PATTERN_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "dbPath": _s859b_db_path(),
+            "tables": ["outcome_records", "signal_records"],
+            "limit": safe_limit,
+            "scope": "FAILED outcomes only for pattern mining; WORKED/non-closed are counted but not mined as failures.",
+        },
+        "summary": {
+            "rowsEvaluated": len(rows),
+            "failedOutcomes": failed_count,
+            "workedOutcomesSkipped": worked_count,
+            "nonClosedSkipped": non_closed_count,
+            "patternCount": len(finalized),
+            "topPattern": finalized[0]["pattern"] if finalized else None,
+            "topPatternCount": finalized[0]["count"] if finalized else 0,
+            "topFailedSetup": next(iter(_s859b_sorted_counts(setup_failure_counts, 1).keys()), None),
+            "topFailedTrigger": next(iter(_s859b_sorted_counts(trigger_failure_counts, 1).keys()), None),
+            "nextAction": "Use this report to create filter hypotheses; do not change live/client delivery automatically.",
+        },
+        "patternCounts": _s859b_sorted_counts({row["pattern"]: row["count"] for row in finalized}, 30),
+        "setupFailureCounts": _s859b_sorted_counts(setup_failure_counts, 30),
+        "triggerFailureCounts": _s859b_sorted_counts(trigger_failure_counts, 30),
+        "patterns": finalized,
+        "recommendations": recommendations,
+        "failedExamples": failed_examples,
+        "policy": {
+            "readOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "researchOnly": True,
+            "manualApprovalRequiredBeforePromotion": True,
+        },
+    }
+
+
+def _s859b_persist_report(report):
+    import json
+
+    out_dir = _s859b_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s859b.json"
+    snapshot = out_dir / f"{generated_at}_s859b.json"
+
+    report["persistence"] = {
+        "filePersisted": True,
+        "latestPath": str(latest),
+        "snapshotPath": str(snapshot),
+    }
+
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    return report
+
+
+def _s859b_run_report(limit=5000, publish=True):
+    report = _s859b_build_report(limit=limit)
+    if publish:
+        report = _s859b_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/failure-patterns/run")
+def engine_research_failure_patterns_run(limit: int = 5000, publish: bool = True):
+    return _s859b_run_report(limit=limit, publish=publish)
+
+
+@app.get("/engine/research/failure-patterns/latest")
+def engine_research_failure_patterns_latest():
+    import json
+
+    latest = _s859b_report_dir() / "latest_s859b.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S859B_FAILURE_PATTERN_VERSION,
+            "error": "failure_patterns_report_not_found",
+            "nextAction": "Run POST /engine/research/failure-patterns/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.59B Failure Pattern Mining ==========================================
