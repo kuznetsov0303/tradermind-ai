@@ -19205,6 +19205,151 @@ def _s837a_systemd_units():
     }
 
 
+
+# === S8.55B Admin Ops Timer Run Health =======================================
+def _s855b_systemd_show(unit: str, properties: list[str]) -> dict[str, Any]:
+    import subprocess
+
+    cmd = ["systemctl", "show", unit]
+    for prop in properties:
+        cmd.extend(["-p", prop])
+
+    try:
+        result = subprocess.run(
+            cmd,
+            text=True,
+            capture_output=True,
+            timeout=5,
+        )
+        data = {}
+        for line in (result.stdout or "").splitlines():
+            if "=" in line:
+                key, value = line.split("=", 1)
+                data[key] = value or None
+        return {
+            "ok": result.returncode == 0,
+            "unit": unit,
+            "returnCode": result.returncode,
+            "data": data,
+            "stderr": (result.stderr or "").strip() or None,
+        }
+    except Exception as error:
+        return {
+            "ok": False,
+            "unit": unit,
+            "error": repr(error),
+            "data": {},
+        }
+
+
+def _s855b_admin_timer_run_health() -> dict[str, Any]:
+    timer_props = [
+        "ActiveState",
+        "SubState",
+        "UnitFileState",
+        "NextElapseUSecRealtime",
+        "LastTriggerUSec",
+        "Result",
+    ]
+    service_props = [
+        "ActiveState",
+        "SubState",
+        "Result",
+        "ExecMainCode",
+        "ExecMainStatus",
+        "ActiveEnterTimestamp",
+        "InactiveEnterTimestamp",
+    ]
+
+    targets = [
+        {
+            "key": "postCloseEvidence",
+            "timer": "skilledge-post-close-evidence.timer",
+            "service": "skilledge-post-close-evidence.service",
+            "expectedCadence": "DAILY_POST_CLOSE",
+            "expectedRunKyiv": "23:12 Kyiv",
+        },
+        {
+            "key": "nightlySelfLearning",
+            "timer": "skilledge-nightly-self-learning.timer",
+            "service": "skilledge-nightly-self-learning.service",
+            "expectedCadence": "DAILY_NIGHTLY_LEARNING",
+            "expectedRunKyiv": "23:35 Kyiv",
+        },
+        {
+            "key": "engineWatchdog",
+            "timer": "skilledge-engine-watchdog.timer",
+            "service": "skilledge-engine-watchdog.service",
+            "expectedCadence": "EVERY_5_MINUTES",
+            "expectedRunKyiv": "every 5 minutes",
+        },
+        {
+            "key": "productionReadiness",
+            "timer": "skilledge-production-readiness.timer",
+            "service": "skilledge-production-readiness.service",
+            "expectedCadence": "DAILY_READINESS",
+            "expectedRunKyiv": "systemd timer schedule",
+        },
+    ]
+
+    items = []
+    for target in targets:
+        timer_show = _s855b_systemd_show(target["timer"], timer_props)
+        service_show = _s855b_systemd_show(target["service"], service_props)
+
+        timer_data = timer_show.get("data") if isinstance(timer_show.get("data"), dict) else {}
+        service_data = service_show.get("data") if isinstance(service_show.get("data"), dict) else {}
+
+        timer_active = timer_data.get("ActiveState")
+        service_result = service_data.get("Result")
+        exec_status = service_data.get("ExecMainStatus")
+
+        timer_ok = timer_show.get("ok") is True and timer_active == "active"
+        last_service_ok = service_show.get("ok") is True and service_result in {None, "success"} and exec_status in {None, "0"}
+
+        items.append({
+            "key": target["key"],
+            "timer": target["timer"],
+            "service": target["service"],
+            "ok": timer_ok and last_service_ok,
+            "timerOk": timer_ok,
+            "lastServiceOk": last_service_ok,
+            "timerActiveState": timer_active,
+            "timerSubState": timer_data.get("SubState"),
+            "timerUnitFileState": timer_data.get("UnitFileState"),
+            "nextRun": timer_data.get("NextElapseUSecRealtime"),
+            "lastTrigger": timer_data.get("LastTriggerUSec"),
+            "serviceActiveState": service_data.get("ActiveState"),
+            "serviceSubState": service_data.get("SubState"),
+            "serviceResult": service_result,
+            "serviceExecMainStatus": exec_status,
+            "serviceStartedAt": service_data.get("ActiveEnterTimestamp"),
+            "serviceFinishedAt": service_data.get("InactiveEnterTimestamp"),
+            "expectedCadence": target["expectedCadence"],
+            "expectedRunKyiv": target["expectedRunKyiv"],
+        })
+
+    failed = [item for item in items if item.get("ok") is False]
+
+    return {
+        "ok": len(failed) == 0,
+        "storageVersion": "s8_55b_admin_timer_run_health_v1",
+        "checkedCount": len(items),
+        "failedCount": len(failed),
+        "items": items,
+        "failed": failed,
+        "policySummary": {
+            "readOnly": True,
+            "visibilityOnly": True,
+            "usesSystemdShow": True,
+            "sendsTelegram": False,
+            "changesTimers": False,
+            "changesServices": False,
+            "changesClientDelivery": False,
+        },
+    }
+
+
 def _s837a_latest_report_file(path_text):
     from pathlib import Path
     try:
@@ -19468,6 +19613,7 @@ def engine_admin_ops_status():
         db_health["error"] = repr(error)
 
     systemd = _s837a_systemd_units()
+    timer_run_health = _s855b_admin_timer_run_health()
 
     reports = {
         "nightlySelfLearningLatest": _s837a_latest_report_file("/opt/skilledge/stock-engine/reports/nightly_self_learning/latest.json"),
@@ -19529,6 +19675,14 @@ def engine_admin_ops_status():
             "nextAction": "Inspect systemctl status and journalctl for inactive/failed units.",
         })
 
+    if int(timer_run_health.get("failedCount") or 0) > 0:
+        top_risks.append({
+            "code": "TIMER_RUN_HEALTH_ATTENTION",
+            "severity": "HIGH",
+            "message": f"{timer_run_health.get('failedCount')} timer/service run health checks need attention.",
+            "nextAction": "Inspect Admin Ops timerRunHealth.failed and related journalctl logs.",
+        })
+
     telegram_gate_admin = _s851b_build_telegram_gate_split_admin_snapshot()
     post_close_report = _s814d_read_report_json("reports/post_close_evidence/latest.json")
     post_close_chain_health = _s853_build_post_close_chain_health(post_close_report, max_fresh_minutes=S855_DAILY_REPORT_MAX_FRESH_MINUTES)
@@ -19537,6 +19691,9 @@ def engine_admin_ops_status():
         "engineOk": health_ok,
         "systemdOk": bool(systemd.get("ok")),
         "systemdInactiveCount": len(inactive_units),
+        "timerRunOk": bool(timer_run_health.get("ok")),
+        "timerRunCheckedCount": timer_run_health.get("checkedCount"),
+        "timerRunFailedCount": timer_run_health.get("failedCount"),
         "nightlyOk": bool(nightly_snapshot.get("ok")) if isinstance(nightly_snapshot, dict) else False,
         "nightlyFailedSteps": nightly_failed,
         "dbReadOk": bool(db_health.get("readOk")),
@@ -19579,6 +19736,7 @@ def engine_admin_ops_status():
             "health": health_snapshot,
         },
         "systemd": systemd,
+        "timerRunHealth": timer_run_health,
         "storage": db_health,
         "nightlyLearning": {
             "summary": {
