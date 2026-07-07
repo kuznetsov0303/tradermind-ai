@@ -26015,3 +26015,460 @@ def engine_research_failure_patterns_latest():
 
 
 # === /S8.59B Failure Pattern Mining ==========================================
+
+# === S8.60 AI Improvement Hypothesis Generator ==============================
+S860_IMPROVEMENT_HYPOTHESIS_VERSION = "s8_60_ai_improvement_hypothesis_generator_v1"
+
+
+def _s860_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/improvement_hypotheses")
+
+
+def _s860_json_loads(value):
+    import json
+    if not value:
+        return {}
+    if isinstance(value, dict):
+        return value
+    try:
+        data = json.loads(value)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _s860_read_json_report(path):
+    import json
+    from pathlib import Path
+
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as error:
+        return {"ok": False, "error": repr(error), "path": str(p)}
+
+
+def _s860_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s860_to_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s860_arr(value):
+    return value if isinstance(value, list) else []
+
+
+def _s860_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def _s860_hypothesis_id(prefix, key):
+    import re
+    cleaned = re.sub(r"[^a-zA-Z0-9_]+", "_", str(key or "unknown").lower()).strip("_")
+    return f"{prefix}_{cleaned}"
+
+
+def _s860_priority(score):
+    if score >= 90:
+        return "CRITICAL"
+    if score >= 75:
+        return "HIGH"
+    if score >= 50:
+        return "MEDIUM"
+    return "LOW"
+
+
+def _s860_confidence(sample):
+    sample = _s860_to_int(sample, 0)
+    if sample >= 100:
+        return "HIGH"
+    if sample >= 30:
+        return "MEDIUM"
+    if sample >= 10:
+        return "EARLY"
+    return "LOW_SAMPLE"
+
+
+def _s860_make_hypothesis(
+    hypothesis_id,
+    title,
+    reason,
+    proposed_change,
+    validation_plan,
+    source,
+    impact_score,
+    sample_size,
+    risk_level="MEDIUM",
+    status="DRAFT_RESEARCH_ONLY",
+    guardrails=None,
+):
+    return {
+        "hypothesisId": hypothesis_id,
+        "title": title,
+        "reason": reason,
+        "proposedChange": proposed_change,
+        "validationPlan": validation_plan,
+        "source": source,
+        "impactScore": round(float(impact_score or 0), 2),
+        "priority": _s860_priority(float(impact_score or 0)),
+        "sampleSize": int(sample_size or 0),
+        "confidence": _s860_confidence(sample_size),
+        "riskLevel": risk_level,
+        "status": status,
+        "guardrails": guardrails or [
+            "Research-only draft.",
+            "Do not change Telegram/client delivery automatically.",
+            "Require shadow/backtest comparison before promotion.",
+            "Require manual/admin approval before live use.",
+        ],
+    }
+
+
+def _s860_trigger_hypotheses(trigger_quality_report):
+    hypotheses = []
+    for row in _s860_arr(trigger_quality_report.get("triggerQuality")):
+        trigger = str(row.get("triggerName") or "").strip()
+        if not trigger or trigger == "unknown_trigger":
+            continue
+
+        closed = _s860_to_int(row.get("closed"), 0)
+        winrate = _s860_to_float(row.get("winrate"), None)
+        avg_r = _s860_to_float(row.get("avgR"), None)
+        stop_rate = _s860_to_float(row.get("stopRate"), None)
+        recommendation = str(row.get("recommendation") or "")
+
+        if closed < 10:
+            continue
+
+        bad_winrate = winrate is not None and winrate < 45.0
+        bad_avg_r = avg_r is not None and avg_r < 0.0
+        bad_stop_rate = stop_rate is not None and stop_rate >= 65.0
+
+        if recommendation == "DEMOTE_OR_REWORK" or bad_winrate or bad_avg_r or bad_stop_rate:
+            impact = min(100.0, 35.0 + min(closed, 200) * 0.18)
+            if bad_avg_r:
+                impact += min(20.0, abs(avg_r or 0) * 20.0)
+            if bad_stop_rate:
+                impact += min(15.0, ((stop_rate or 0) - 60.0) * 0.5)
+
+            hypotheses.append(_s860_make_hypothesis(
+                hypothesis_id=_s860_hypothesis_id("trigger_filter", trigger),
+                title=f"Rework trigger: {trigger}",
+                reason=(
+                    f"{trigger} has weak closed performance: closed={closed}, "
+                    f"winrate={winrate}, avgR={avg_r}, stopRate={stop_rate}."
+                ),
+                proposed_change=(
+                    f"Do not use {trigger} as standalone confirmation. Require stronger setup/context filters "
+                    "such as regime, entry distance, volume acceleration, RR, and quality PASSED."
+                ),
+                validation_plan=[
+                    "Run shadow backtest with this trigger downgraded to context-only.",
+                    "Compare winrate, avgR, stopRate, MFE/MAE versus current baseline.",
+                    "Keep existing live/client gates unchanged until shadow comparison is positive.",
+                ],
+                source={
+                    "report": "trigger_quality",
+                    "storageVersion": trigger_quality_report.get("storageVersion"),
+                    "triggerName": trigger,
+                    "closed": closed,
+                    "winrate": winrate,
+                    "avgR": avg_r,
+                    "stopRate": stop_rate,
+                    "recommendation": recommendation,
+                },
+                impact_score=impact,
+                sample_size=closed,
+                risk_level="LOW",
+            ))
+
+    return hypotheses
+
+
+def _s860_failure_pattern_hypotheses(failure_report):
+    hypotheses = []
+    patterns = _s860_arr(failure_report.get("patterns"))
+
+    for row in patterns:
+        pattern = str(row.get("pattern") or "").strip()
+        count = _s860_to_int(row.get("count"), 0)
+        avg_mfe = _s860_to_float(row.get("avgMfeR"), None)
+        avg_mae = _s860_to_float(row.get("avgMaeR"), None)
+
+        if not pattern or count < 10:
+            continue
+
+        top_setups = _s860_arr(row.get("topSetups"))
+        top_triggers = _s860_arr(row.get("topTriggers"))
+
+        top_setup = top_setups[0].get("setupSlug") if top_setups and isinstance(top_setups[0], dict) else None
+        top_trigger = top_triggers[0].get("triggerName") if top_triggers and isinstance(top_triggers[0], dict) else None
+
+        impact = min(100.0, 40.0 + min(count, 500) * 0.12)
+
+        if pattern == "no_follow_through_mfe_lt_0_5r":
+            proposed = "Add a no-follow-through guard: downgrade setups whose historical trigger class fails to produce at least 0.5R MFE."
+            title = "Filter triggers with no follow-through"
+            validation = [
+                "Create shadow variant requiring historical pattern MFE >= 0.5R.",
+                "Compare failedOutcomes and avgR after removing no-follow-through cases.",
+                "Check that candidate count does not collapse below useful daily volume.",
+            ]
+            risk = "MEDIUM"
+        elif pattern == "mae_greater_than_mfe":
+            proposed = "Add timing-quality guard: prefer triggers where favorable excursion historically exceeds adverse excursion."
+            title = "Improve entry timing where MAE exceeds MFE"
+            validation = [
+                "Shadow-test stricter entry timing after trigger.",
+                "Track MAE/MFE ratio by setup and trigger.",
+                "Promote only if avgR improves without killing all valid signals.",
+            ]
+            risk = "MEDIUM"
+        elif pattern in {"full_r_adverse_move", "hard_stop_loss", "stop_hit"}:
+            proposed = "Mine stop-hit failures by setup/trigger and add setup-specific entry/stop constraints."
+            title = "Reduce full-R stop failures"
+            validation = [
+                "Split stop failures by setup, trigger, entry distance, and volume acceleration.",
+                "Shadow-test entry delay/pullback requirements.",
+                "Reject changes that reduce good MFE cases more than they reduce stops.",
+            ]
+            risk = "MEDIUM"
+        elif pattern == "metadata_unknown_trigger":
+            proposed = "Fix trigger attribution before using unknown-trigger samples for promotion/demotion."
+            title = "Repair unknown trigger attribution"
+            validation = [
+                "Backfill primary_trigger from signal payload confirmation.triggers where available.",
+                "Rerun trigger-quality and failure-pattern reports.",
+                "Confirm unknown_trigger count drops materially.",
+            ]
+            risk = "LOW"
+        elif pattern.startswith("extended_from_vwap") or pattern.startswith("extended_from_ema20"):
+            proposed = "Add an extension/chase guard based on VWAP/EMA20 distance before candidate promotion."
+            title = "Avoid extended chase entries"
+            validation = [
+                "Shadow-test stricter max distance from VWAP/EMA20.",
+                "Compare avgR and stopRate before/after.",
+                "Keep exceptions only for verified momentum continuation setups.",
+            ]
+            risk = "LOW"
+        else:
+            proposed = "Create setup/trigger-specific shadow filter for this failure pattern."
+            title = f"Investigate failure pattern: {pattern}"
+            validation = [
+                "Build shadow filter variant.",
+                "Compare against current baseline.",
+                "Do not promote without positive sample and manual approval.",
+            ]
+            risk = "MEDIUM"
+
+        hypotheses.append(_s860_make_hypothesis(
+            hypothesis_id=_s860_hypothesis_id("failure_pattern", pattern),
+            title=title,
+            reason=(
+                f"Failure pattern {pattern} appears {count} times. "
+                f"Top setup={top_setup}, top trigger={top_trigger}, avgMfeR={avg_mfe}, avgMaeR={avg_mae}."
+            ),
+            proposed_change=proposed,
+            validation_plan=validation,
+            source={
+                "report": "failure_patterns",
+                "storageVersion": failure_report.get("storageVersion"),
+                "pattern": pattern,
+                "count": count,
+                "avgMfeR": avg_mfe,
+                "avgMaeR": avg_mae,
+                "topSetups": top_setups[:5],
+                "topTriggers": top_triggers[:5],
+            },
+            impact_score=impact,
+            sample_size=count,
+            risk_level=risk,
+        ))
+
+    return hypotheses
+
+
+def _s860_setup_hypotheses(failure_report):
+    hypotheses = []
+    counts = _s860_dict(failure_report.get("setupFailureCounts"))
+
+    for setup, count in sorted(counts.items(), key=lambda item: _s860_to_int(item[1], 0), reverse=True)[:15]:
+        count_i = _s860_to_int(count, 0)
+        if count_i < 10:
+            continue
+
+        hypotheses.append(_s860_make_hypothesis(
+            hypothesis_id=_s860_hypothesis_id("setup_review", setup),
+            title=f"Review setup failure cluster: {setup}",
+            reason=f"{setup} is one of the top failed setups with {count_i} failed outcomes.",
+            proposed_change=(
+                f"Do setup-specific failure mining for {setup}: split by trigger, entry distance, MFE/MAE, "
+                "grade, quality status, and time of day. Draft a stricter shadow variant."
+            ),
+            validation_plan=[
+                "Create setup-level shadow filter.",
+                "Run historical comparison against current setup baseline.",
+                "Only promote if closed sample improves avgR and stopRate without unacceptable signal loss.",
+            ],
+            source={
+                "report": "failure_patterns",
+                "storageVersion": failure_report.get("storageVersion"),
+                "setupSlug": setup,
+                "failedCount": count_i,
+            },
+            impact_score=min(100.0, 35.0 + count_i * 0.25),
+            sample_size=count_i,
+            risk_level="MEDIUM",
+        ))
+
+    return hypotheses
+
+
+def _s860_rank_hypotheses(hypotheses):
+    unique = {}
+    for h in hypotheses:
+        hid = h.get("hypothesisId")
+        if not hid:
+            continue
+        if hid not in unique or float(h.get("impactScore") or 0) > float(unique[hid].get("impactScore") or 0):
+            unique[hid] = h
+
+    rows = list(unique.values())
+    rows.sort(
+        key=lambda h: (
+            float(h.get("impactScore") or 0),
+            int(h.get("sampleSize") or 0),
+            str(h.get("priority") or ""),
+        ),
+        reverse=True,
+    )
+
+    for idx, row in enumerate(rows, start=1):
+        row["rank"] = idx
+
+    return rows
+
+
+def _s860_build_report():
+    from datetime import datetime, timezone
+
+    tq_path = "/opt/skilledge/stock-engine/reports/trigger_quality/latest_s859a.json"
+    fp_path = "/opt/skilledge/stock-engine/reports/failure_patterns/latest_s859b.json"
+
+    trigger_quality = _s860_read_json_report(tq_path)
+    failure_patterns = _s860_read_json_report(fp_path)
+
+    hypotheses = []
+    hypotheses.extend(_s860_trigger_hypotheses(trigger_quality))
+    hypotheses.extend(_s860_failure_pattern_hypotheses(failure_patterns))
+    hypotheses.extend(_s860_setup_hypotheses(failure_patterns))
+
+    ranked = _s860_rank_hypotheses(hypotheses)
+
+    high_priority = [h for h in ranked if h.get("priority") in {"CRITICAL", "HIGH"}]
+    critical = [h for h in ranked if h.get("priority") == "CRITICAL"]
+
+    return {
+        "ok": True,
+        "storageVersion": S860_IMPROVEMENT_HYPOTHESIS_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "triggerQualityReport": tq_path,
+            "failurePatternsReport": fp_path,
+            "triggerQualityVersion": trigger_quality.get("storageVersion"),
+            "failurePatternsVersion": failure_patterns.get("storageVersion"),
+        },
+        "summary": {
+            "hypothesisCount": len(ranked),
+            "criticalCount": len(critical),
+            "highPriorityCount": len(high_priority),
+            "topHypothesisId": ranked[0].get("hypothesisId") if ranked else None,
+            "topTitle": ranked[0].get("title") if ranked else None,
+            "topPriority": ranked[0].get("priority") if ranked else None,
+            "nextAction": "Feed top hypotheses into shadow/backtest comparison. Do not auto-change live/client gates.",
+        },
+        "hypotheses": ranked,
+        "topHypotheses": ranked[:15],
+        "policy": {
+            "readOnly": True,
+            "researchOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "manualApprovalRequiredBeforePromotion": True,
+        },
+    }
+
+
+def _s860_persist_report(report):
+    import json
+
+    out_dir = _s860_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s860.json"
+    snapshot = out_dir / f"{generated_at}_s860.json"
+
+    report["persistence"] = {
+        "filePersisted": True,
+        "latestPath": str(latest),
+        "snapshotPath": str(snapshot),
+    }
+
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+
+    return report
+
+
+def _s860_run_report(publish=True):
+    report = _s860_build_report()
+    if publish:
+        report = _s860_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/improvement-hypotheses/run")
+def engine_research_improvement_hypotheses_run(publish: bool = True):
+    return _s860_run_report(publish=publish)
+
+
+@app.get("/engine/research/improvement-hypotheses/latest")
+def engine_research_improvement_hypotheses_latest():
+    import json
+
+    latest = _s860_report_dir() / "latest_s860.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S860_IMPROVEMENT_HYPOTHESIS_VERSION,
+            "error": "improvement_hypotheses_report_not_found",
+            "nextAction": "Run POST /engine/research/improvement-hypotheses/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "researchOnly": True,
+                "changesClientDelivery": False,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.60 AI Improvement Hypothesis Generator =============================
