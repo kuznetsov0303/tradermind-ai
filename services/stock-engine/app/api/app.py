@@ -19389,17 +19389,75 @@ def _s837a_latest_report_file(path_text):
         return {"exists": False, "path": path_text, "error": repr(error)}
 
 
+# === S8.57 Admin Ops Status Level Upgrade ====================================
+def _s857_summary_bool(summary: dict[str, Any], key: str, default: bool | None = None) -> bool | None:
+    value = summary.get(key) if isinstance(summary, dict) else default
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return default
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in {"true", "1", "yes", "ok", "fresh"}:
+            return True
+        if lowered in {"false", "0", "no", "fail", "failed", "stale", "missing"}:
+            return False
+    return bool(value)
+
+
+def _s857_summary_int(summary: dict[str, Any], key: str, default: int = 0) -> int:
+    value = summary.get(key) if isinstance(summary, dict) else default
+    try:
+        return int(value or default)
+    except Exception:
+        return default
+
+
+def _s857_freshness_bad(summary: dict[str, Any], key: str) -> bool:
+    value = summary.get(key) if isinstance(summary, dict) else None
+    if value is None:
+        return False
+    return str(value).strip().upper() not in {"FRESH", "OK"}
+
+
 def _s837a_status_level(summary):
-    if summary.get("engineOk") is not True:
+    if not isinstance(summary, dict):
+        return "ADMIN_STATUS_SUMMARY_INVALID"
+
+    if _s857_summary_bool(summary, "engineOk") is not True:
         return "CRITICAL_ENGINE_DOWN"
-    if int(summary.get("systemdInactiveCount") or 0) > 0:
+
+    if _s857_summary_bool(summary, "dbReadOk") is False:
+        return "DB_STORAGE_ATTENTION_REQUIRED"
+
+    if _s857_summary_bool(summary, "systemdOk") is False or _s857_summary_int(summary, "systemdInactiveCount") > 0:
         return "SYSTEMD_ATTENTION_REQUIRED"
-    if int(summary.get("dirtyOutcomePipelines") or 0) > 0:
+
+    if _s857_summary_bool(summary, "timerRunOk") is False or _s857_summary_int(summary, "timerRunFailedCount") > 0:
+        return "TIMER_RUN_ATTENTION_REQUIRED"
+
+    if _s857_summary_int(summary, "dirtyOutcomePipelines") > 0:
         return "OUTCOME_PIPELINE_REPAIR_REQUIRED"
-    if int(summary.get("approvalTableMissing") or 0) > 0:
+
+    if _s857_summary_int(summary, "approvalTableMissing") > 0:
         return "ADMIN_APPROVAL_TABLE_MISSING"
-    if int(summary.get("nightlyFailedSteps") or 0) > 0:
+
+    if _s857_summary_bool(summary, "nightlyOk") is False or _s857_summary_int(summary, "nightlyFailedSteps") > 0:
         return "NIGHTLY_LEARNING_ATTENTION_REQUIRED"
+
+    if _s857_summary_bool(summary, "postCloseOk") is False:
+        return "POST_CLOSE_ATTENTION_REQUIRED"
+
+    post_close_status = str(summary.get("postCloseStatus") or "").strip().upper()
+    if post_close_status and post_close_status not in {"OK", "NO_TRADE_NO_BEST_IDEA"}:
+        return "POST_CLOSE_ATTENTION_REQUIRED"
+
+    if _s857_freshness_bad(summary, "postCloseFreshnessStatus"):
+        return "REPORT_FRESHNESS_ATTENTION_REQUIRED"
+
+    if _s857_freshness_bad(summary, "telegramGateFreshnessStatus"):
+        return "REPORT_FRESHNESS_ATTENTION_REQUIRED"
+
     return "OPERATIONAL_WITH_GUARDS"
 
 
@@ -24596,5 +24654,7 @@ def engine_research_telegram_gate_split_dry_run_latest():
     return json.loads(latest.read_text(encoding="utf-8"))
 
 # === /S8.50J Telegram Gate Split Dry-Run Permanent Report ===
+
+
 
 
