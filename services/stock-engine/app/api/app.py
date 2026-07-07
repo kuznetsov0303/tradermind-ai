@@ -19135,14 +19135,36 @@ def _s837a_safe_call(name, fn, fallback=None):
         }
 
 
+# === S8.56 Admin Ops Storage Table Counts Repair =============================
+def _s856_safe_table_identifier(table: Any) -> str | None:
+    value = str(table or "").strip()
+    if not value:
+        return None
+    if not all(ch.isalnum() or ch == "_" for ch in value):
+        return None
+    return value
+
+
 def _s837a_db_table_counts(con, tables):
     counts = {}
     for table in tables:
+        safe_table = _s856_safe_table_identifier(table)
+        if not safe_table:
+            counts[str(table)] = {"error": "unsafe_table_name"}
+            continue
+
         try:
-            row = con.execute(f"select count(*) as c from {table}").fetchone()
-            counts[table] = int(row["c"] if isinstance(row, sqlite3.Row) else row[0])
+            row = con.execute(f'SELECT COUNT(*) AS c FROM "{safe_table}"').fetchone()
+            if row is None:
+                counts[safe_table] = 0
+                continue
+
+            try:
+                counts[safe_table] = int(row["c"])
+            except Exception:
+                counts[safe_table] = int(row[0])
         except Exception as error:
-            counts[table] = {"error": repr(error)}
+            counts[safe_table] = {"error": repr(error)}
     return counts
 
 
