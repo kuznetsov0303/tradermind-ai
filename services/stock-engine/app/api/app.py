@@ -19764,6 +19764,12 @@ def engine_admin_ops_status():
         })
 
     telegram_gate_admin = _s851b_build_telegram_gate_split_admin_snapshot()
+    signal_blockers_report = _s814d_read_report_json("reports/signal_blockers/latest_s858.json")
+    signal_blockers_summary = signal_blockers_report.get("summary") if isinstance(signal_blockers_report.get("summary"), dict) else {}
+    signal_blockers_freshness = _s852_telegram_gate_split_freshness(
+        signal_blockers_report,
+        max_fresh_minutes=S855_DAILY_REPORT_MAX_FRESH_MINUTES,
+    )
     post_close_report = _s814d_read_report_json("reports/post_close_evidence/latest.json")
     post_close_chain_health = _s853_build_post_close_chain_health(post_close_report, max_fresh_minutes=S855_DAILY_REPORT_MAX_FRESH_MINUTES)
 
@@ -19796,6 +19802,28 @@ def engine_admin_ops_status():
         "telegramNormalDryRunSelectedCount": telegram_gate_admin.get("wouldTelegramNormalSelectedCount"),
         "telegramGateFreshnessStatus": telegram_gate_admin.get("freshnessStatus"),
         "telegramGateAgeMinutes": telegram_gate_admin.get("ageMinutes"),
+        "signalBlockers": {
+            "ok": signal_blockers_report.get("ok"),
+            "storageVersion": signal_blockers_report.get("storageVersion"),
+            "generatedAt": signal_blockers_report.get("generatedAt"),
+            "freshnessStatus": signal_blockers_freshness.get("freshnessStatus"),
+            "ageMinutes": signal_blockers_freshness.get("ageMinutes"),
+            "summary": signal_blockers_summary,
+            "policy": {
+                "readOnly": True,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+                "visibilityOnly": True,
+            },
+        },
+        "signalBlockersFreshnessStatus": signal_blockers_freshness.get("freshnessStatus"),
+        "signalBlockersAgeMinutes": signal_blockers_freshness.get("ageMinutes"),
+        "signalBlockersEvaluatedCount": signal_blockers_summary.get("evaluatedCount"),
+        "signalBlockersPassCount": signal_blockers_summary.get("passCount"),
+        "signalBlockersNearReadyCount": signal_blockers_summary.get("nearReadyCount"),
+        "signalBlockersBlockedCount": signal_blockers_summary.get("blockedCount"),
+        "signalBlockersTopBlocker": signal_blockers_summary.get("topBlocker"),
+        "signalBlockersDecisionState": signal_blockers_summary.get("decisionState"),
         "postCloseChainHealth": post_close_chain_health,
         "postCloseOk": post_close_chain_health.get("ok"),
         "postCloseStatus": post_close_chain_health.get("postCloseStatus"),
@@ -24656,5 +24684,275 @@ def engine_research_telegram_gate_split_dry_run_latest():
 # === /S8.50J Telegram Gate Split Dry-Run Permanent Report ===
 
 
+
+
+
+# === S8.58A Signal Blocker Intelligence ======================================
+S858_SIGNAL_BLOCKERS_VERSION = "s8_58a_signal_blocker_intelligence_v1"
+
+
+def _s858_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/signal_blockers")
+
+
+def _s858_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s858_as_list(value):
+    return value if isinstance(value, list) else []
+
+
+def _s858_as_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def _s858_add_count(counter, key):
+    value = str(key or "unknown").strip() or "unknown"
+    counter[value] = int(counter.get(value, 0) or 0) + 1
+
+
+def _s858_sorted_counts(counter, limit=20):
+    rows = sorted(counter.items(), key=lambda item: int(item[1] or 0), reverse=True)
+    if limit:
+        rows = rows[:limit]
+    return {str(k): int(v or 0) for k, v in rows}
+
+
+def _s858_blocker_group(reason):
+    reason = str(reason or "").strip()
+    if reason in {"not_active", "not_actionable_or_closed", "closed_or_invalidated"}:
+        return "lifecycle"
+    if reason in {"quality_not_passed", "desk_not_passed", "desk_quality_not_passed", "quality_guard_missing"}:
+        return "quality"
+    if reason == "execution_confirmation_missing":
+        return "execution"
+    if reason.startswith("score_below") or reason == "score_missing_or_zero":
+        return "score"
+    if reason.startswith("rr_below") or reason == "rr_missing":
+        return "risk_reward"
+    if reason == "stale_price" or reason.startswith("price_freshness:"):
+        return "data_freshness"
+    if reason in {"late_session_blocked", "market_closed_new_entry_blocked"} or reason.startswith("late_session:"):
+        return "timing"
+    if reason in {"extended_do_not_chase", "entry_distance_over_3pct", "invalidated_or_stop_hit", "sub_1_dollar_blocked"}:
+        return "entry_health"
+    if reason == "strict_not_true":
+        return "strict_gate"
+    if reason == "grade_not_a_or_a_plus":
+        return "grade"
+    return "other"
+
+
+def _s858_candidate_decision(row):
+    blockers = [str(x or "").strip() for x in _s858_as_list(row.get("blockers")) if str(x or "").strip()]
+    grade = str(row.get("grade") or "").upper().strip()
+    score = _s858_to_float(row.get("score"), 0) or 0
+    rr = _s858_to_float(row.get("rrToTp1"), None)
+    is_actionable = bool(row.get("isActionable"))
+
+    if bool(row.get("wouldTelegramNormal")) is True and not blockers:
+        return "PASS_NORMAL_DRY_RUN"
+    if is_actionable and grade in {"A", "A+"} and score >= 78 and (rr is None or rr >= 2.0) and len(blockers) <= 2:
+        return "NEAR_READY_REVIEW"
+    if "execution_confirmation_missing" in blockers:
+        return "WAIT_FOR_EXECUTION_CONFIRMATION"
+    if "not_active" in blockers:
+        return "WAIT_FOR_ACTIVE_STATUS"
+    if "quality_not_passed" in blockers or "desk_not_passed" in blockers:
+        return "WAIT_FOR_QUALITY"
+    if "grade_not_a_or_a_plus" in blockers:
+        return "BLOCK_GRADE_TOO_LOW"
+    if "rr_below_2_0" in blockers or "rr_below_2r" in blockers:
+        return "BLOCK_RR_TOO_LOW"
+    if "stale_price" in blockers:
+        return "BLOCK_STALE_PRICE"
+    if "late_session_blocked" in blockers or "market_closed_new_entry_blocked" in blockers:
+        return "BLOCK_TIMING"
+    return "BLOCK"
+
+
+def _s858_compact_candidate(item):
+    blockers = [str(x or "").strip() for x in _s858_as_list(item.get("blockers")) if str(x or "").strip()]
+    groups = []
+    for reason in blockers:
+        group = _s858_blocker_group(reason)
+        if group not in groups:
+            groups.append(group)
+    decision = _s858_candidate_decision(item)
+    return {
+        "symbol": str(item.get("symbol") or "").upper().strip(),
+        "setupSlug": item.get("setupSlug"),
+        "bucket": item.get("bucket"),
+        "status": item.get("status"),
+        "qualityStatus": item.get("qualityStatus"),
+        "qualityOk": bool(item.get("qualityOk")),
+        "grade": item.get("grade"),
+        "score": _s858_to_float(item.get("score"), None),
+        "rrToTp1": _s858_to_float(item.get("rrToTp1"), None),
+        "entry": _s858_to_float(item.get("entry"), None),
+        "currentPrice": _s858_to_float(item.get("currentPrice"), None),
+        "currentR": _s858_to_float(item.get("currentR"), None),
+        "entryDistancePct": _s858_to_float(item.get("entryDistancePct"), None),
+        "executionOk": bool(item.get("executionOk")),
+        "triggerCount": _s858_to_float(item.get("triggerCount"), None),
+        "deskPassed": bool(item.get("deskPassed")),
+        "strictEligible": item.get("strictEligible"),
+        "isActionable": bool(item.get("isActionable")),
+        "managementState": item.get("managementState"),
+        "tradeAction": item.get("tradeAction"),
+        "currentTelegramEligible": bool(item.get("currentTelegramEligible")),
+        "wouldTelegramNormal": bool(item.get("wouldTelegramNormal")),
+        "blockerCount": len(blockers),
+        "blockers": blockers,
+        "blockerGroups": groups,
+        "telegramReasons": _s858_as_list(item.get("telegramReasons")),
+        "decision": decision,
+        "clientVisibleReadiness": "REVIEW_ONLY" if decision in {"PASS_NORMAL_DRY_RUN", "NEAR_READY_REVIEW"} else "BLOCKED_OR_WAITING",
+    }
+
+
+def _s858_load_latest_telegram_gate_report():
+    import json
+    latest = _s850j_report_dir() / "latest_s850j.json"
+    if not latest.exists():
+        return {}
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+def _s858_build_report(source_report, limit=120):
+    from datetime import datetime, timezone
+    safe_limit = max(10, min(int(limit or 120), 300))
+    source_summary = _s858_as_dict(source_report.get("summary"))
+    evaluated_raw = _s858_as_list(source_report.get("evaluatedSample"))
+    evaluated = []
+    blocker_counts = {}
+    group_counts = {}
+    setup_counts = {}
+    status_counts = {}
+    grade_counts = {}
+    decision_counts = {}
+
+    for item in evaluated_raw:
+        if not isinstance(item, dict):
+            continue
+        row = _s858_compact_candidate(item)
+        evaluated.append(row)
+        _s858_add_count(status_counts, row.get("status"))
+        _s858_add_count(grade_counts, row.get("grade"))
+        _s858_add_count(decision_counts, row.get("decision"))
+        setup = str(row.get("setupSlug") or "unknown")
+        setup_row = setup_counts.setdefault(setup, {"setupSlug": setup, "total": 0, "passCount": 0, "nearReadyCount": 0, "blockedCount": 0, "topBlockers": {}, "topGroups": {}, "examples": []})
+        setup_row["total"] += 1
+        if row.get("decision") == "PASS_NORMAL_DRY_RUN":
+            setup_row["passCount"] += 1
+        elif row.get("decision") == "NEAR_READY_REVIEW":
+            setup_row["nearReadyCount"] += 1
+        else:
+            setup_row["blockedCount"] += 1
+        for reason in row.get("blockers") or []:
+            _s858_add_count(blocker_counts, reason)
+            _s858_add_count(setup_row["topBlockers"], reason)
+        for group in row.get("blockerGroups") or []:
+            _s858_add_count(group_counts, group)
+            _s858_add_count(setup_row["topGroups"], group)
+        if len(setup_row["examples"]) < 5:
+            setup_row["examples"].append({"symbol": row.get("symbol"), "status": row.get("status"), "grade": row.get("grade"), "score": row.get("score"), "rrToTp1": row.get("rrToTp1"), "decision": row.get("decision"), "blockers": row.get("blockers")})
+
+    passed = [row for row in evaluated if row.get("decision") == "PASS_NORMAL_DRY_RUN"]
+    near_ready = [row for row in evaluated if row.get("decision") == "NEAR_READY_REVIEW"]
+    blocked = [row for row in evaluated if row.get("decision") not in {"PASS_NORMAL_DRY_RUN", "NEAR_READY_REVIEW"}]
+    by_setup = []
+    for setup_row in setup_counts.values():
+        setup_row["topBlockers"] = _s858_sorted_counts(setup_row.get("topBlockers") or {}, 10)
+        setup_row["topGroups"] = _s858_sorted_counts(setup_row.get("topGroups") or {}, 10)
+        by_setup.append(setup_row)
+    by_setup = sorted(by_setup, key=lambda row: (int(row.get("nearReadyCount") or 0), int(row.get("blockedCount") or 0), int(row.get("total") or 0)), reverse=True)
+    blocker_counts_sorted = _s858_sorted_counts(blocker_counts, 20)
+    group_counts_sorted = _s858_sorted_counts(group_counts, 20)
+
+    if passed:
+        decision_state = "NORMAL_DRY_RUN_SIGNALS_READY"
+        next_action = "Review passed candidates before client delivery."
+    elif near_ready:
+        decision_state = "NEAR_READY_REVIEW_REQUIRED"
+        next_action = "Review near-ready candidates and decide whether blockers are legitimate."
+    elif evaluated:
+        decision_state = "NO_SIGNAL_SAFE_MODE"
+        next_action = "Keep blocked. Fix top blocker groups first."
+    else:
+        decision_state = "NO_CANDIDATES"
+        next_action = "Wait for valid market candidates."
+
+    return {
+        "ok": True,
+        "storageVersion": S858_SIGNAL_BLOCKERS_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {"telegramGateStorageVersion": source_report.get("storageVersion"), "telegramGateGeneratedAt": source_report.get("generatedAt"), "sourceReport": "reports/telegram_gate_split_dry_run/latest_s850j.json", "derivedFrom": "S8.50J telegram gate split dry-run evaluatedSample"},
+        "summary": {"watchCount": source_summary.get("watchCount"), "activeCount": source_summary.get("activeCount"), "armedCount": source_summary.get("armedCount"), "evaluatedCount": len(evaluated), "passCount": len(passed), "nearReadyCount": len(near_ready), "blockedCount": len(blocked), "currentTelegramReadyCount": source_summary.get("currentTelegramReadyCount"), "wouldTelegramNormalReadyCount": source_summary.get("wouldTelegramNormalReadyCount"), "wouldTelegramNormalSelectedCount": source_summary.get("wouldTelegramNormalSelectedCount"), "topBlocker": next(iter(blocker_counts_sorted.keys()), None), "topBlockerCount": next(iter(blocker_counts_sorted.values()), 0) if blocker_counts_sorted else 0, "decisionState": decision_state, "nextAction": next_action},
+        "blockerCounts": blocker_counts_sorted,
+        "blockerGroupCounts": group_counts_sorted,
+        "decisionCounts": _s858_sorted_counts(decision_counts, 20),
+        "byStatus": _s858_sorted_counts(status_counts, 20),
+        "byGrade": _s858_sorted_counts(grade_counts, 20),
+        "bySetup": by_setup[:30],
+        "passedCandidates": passed[:30],
+        "nearReadyCandidates": near_ready[:30],
+        "blockedSamples": blocked[:safe_limit],
+        "evaluated": evaluated[:safe_limit],
+        "policy": {"readOnly": True, "sendsTelegram": False, "changesTelegramGate": False, "changesClientDelivery": False, "writesDb": False, "clientVisiblePromotion": False, "principle": "Explain why AI is waiting before changing delivery gates."},
+    }
+
+
+def _s858_persist_report(report):
+    import json
+    out_dir = _s858_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s858.json"
+    snapshot = out_dir / f"{generated_at}_s858.json"
+    report["persistence"] = {"filePersisted": True, "latestPath": str(latest), "snapshotPath": str(snapshot)}
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    return report
+
+
+def _s858_run_report(limit=120, publish=True, refresh_telegram_gate=True):
+    safe_limit = max(10, min(int(limit or 120), 300))
+    source_report = {}
+    if refresh_telegram_gate:
+        try:
+            source_report = _s850j_run_report(limit=safe_limit, publish=True)
+        except Exception as error:
+            source_report = {"ok": False, "error": repr(error)}
+    if not isinstance(source_report, dict) or not source_report.get("evaluatedSample"):
+        source_report = _s858_load_latest_telegram_gate_report()
+    report = _s858_build_report(source_report if isinstance(source_report, dict) else {}, limit=safe_limit)
+    if publish:
+        report = _s858_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/signal-blockers/run")
+def engine_research_signal_blockers_run(limit: int = 120, publish: bool = True, refresh_telegram_gate: bool = True):
+    return _s858_run_report(limit=limit, publish=publish, refresh_telegram_gate=refresh_telegram_gate)
+
+
+@app.get("/engine/research/signal-blockers/latest")
+def engine_research_signal_blockers_latest():
+    import json
+    latest = _s858_report_dir() / "latest_s858.json"
+    if not latest.exists():
+        return {"ok": False, "storageVersion": S858_SIGNAL_BLOCKERS_VERSION, "error": "signal_blockers_report_not_found", "nextAction": "Run POST /engine/research/signal-blockers/run?publish=true first.", "policy": {"readOnly": True, "sendsTelegram": False, "changesClientDelivery": False}}
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.58A Signal Blocker Intelligence =====================================
 
 
