@@ -26860,3 +26860,535 @@ def engine_research_shadow_backtest_comparison_latest():
 
 
 # === /S8.61 Shadow Backtest Comparison =======================================
+
+# === S8.62 Strategy Re-Ranking Draft =========================================
+S862_STRATEGY_RERANKING_VERSION = "s8_62_strategy_reranking_draft_v1"
+
+
+def _s862_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/strategy_reranking_draft")
+
+
+def _s862_db_path():
+    return "/opt/skilledge/stock-engine/data/stock_engine.db"
+
+
+def _s862_read_json_report(path):
+    import json
+    from pathlib import Path
+
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as error:
+        return {"ok": False, "error": repr(error), "path": str(p)}
+
+
+def _s862_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s862_to_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s862_arr(value):
+    return value if isinstance(value, list) else []
+
+
+def _s862_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def _s862_avg(values):
+    clean = [float(v) for v in values if v is not None]
+    if not clean:
+        return None
+    return round(sum(clean) / len(clean), 4)
+
+
+def _s862_pct(num, den):
+    if not den:
+        return None
+    return round((float(num) / float(den)) * 100.0, 2)
+
+
+def _s862_add_count(counter, key, inc=1):
+    k = str(key or "unknown").strip() or "unknown"
+    counter[k] = int(counter.get(k, 0) or 0) + int(inc or 1)
+
+
+def _s862_sorted_counts(counter, limit=20):
+    rows = sorted(counter.items(), key=lambda item: int(item[1] or 0), reverse=True)
+    if limit:
+        rows = rows[:limit]
+    return {str(k): int(v or 0) for k, v in rows}
+
+
+def _s862_fetch_rows(limit=5000):
+    import sqlite3
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    con = sqlite3.connect(_s862_db_path())
+    con.row_factory = sqlite3.Row
+
+    rows = con.execute(
+        """
+        SELECT
+            o.signal_id,
+            o.symbol,
+            o.setup_slug,
+            o.session_date,
+            o.status,
+            o.result_r,
+            o.mfe_r,
+            o.mae_r,
+            o.tp1_hit,
+            o.tp2_hit,
+            o.stop_hit,
+            o.premium_signal,
+            o.telegram_eligible,
+            o.signal_grade,
+            o.quality_status,
+            o.primary_trigger,
+            o.first_event,
+            o.trigger_time,
+            o.evaluated_at,
+            o.stored_at,
+            o.payload_json AS outcome_payload_json,
+            s.payload_json AS signal_payload_json
+        FROM outcome_records o
+        LEFT JOIN signal_records s ON s.signal_id = o.signal_id
+        ORDER BY COALESCE(o.evaluated_at, o.stored_at, o.trigger_time, o.session_date) DESC
+        LIMIT ?
+        """,
+        (safe_limit,),
+    ).fetchall()
+
+    con.close()
+    return [dict(row) for row in rows]
+
+
+def _s862_status_bucket(row):
+    outcome_payload = _s859b_json_loads(row.get("outcome_payload_json"))
+    status = str(row.get("status") or outcome_payload.get("status") or outcome_payload.get("result") or "").upper().strip()
+    if status == "WORKED":
+        return "WORKED"
+    if status == "FAILED":
+        return "FAILED"
+    if "EXPIRED" in status or status == "SESSION_CLOSE":
+        return "SESSION_CLOSE"
+    if status in {"OPEN", "NO_EVAL", "NO_EVALUATION", "PENDING"}:
+        return "OPEN_OR_NO_EVAL"
+    return status or "UNKNOWN"
+
+
+def _s862_new_setup_row(setup_slug):
+    return {
+        "setupSlug": setup_slug,
+        "total": 0,
+        "closed": 0,
+        "worked": 0,
+        "failed": 0,
+        "sessionCloseOrExpired": 0,
+        "openOrNoEval": 0,
+        "unknownStatus": 0,
+        "tp1Hits": 0,
+        "tp2Hits": 0,
+        "stopHits": 0,
+        "premiumCount": 0,
+        "telegramEligibleCount": 0,
+        "gradeCounts": {},
+        "qualityCounts": {},
+        "triggerCounts": {},
+        "resultRValues": [],
+        "mfeRValues": [],
+        "maeRValues": [],
+        "examples": [],
+    }
+
+
+def _s862_add_row_to_setup(setup_row, row):
+    setup_row["total"] += 1
+
+    bucket = _s862_status_bucket(row)
+    if bucket == "WORKED":
+        setup_row["closed"] += 1
+        setup_row["worked"] += 1
+    elif bucket == "FAILED":
+        setup_row["closed"] += 1
+        setup_row["failed"] += 1
+    elif bucket == "SESSION_CLOSE":
+        setup_row["sessionCloseOrExpired"] += 1
+    elif bucket == "OPEN_OR_NO_EVAL":
+        setup_row["openOrNoEval"] += 1
+    else:
+        setup_row["unknownStatus"] += 1
+
+    if _s862_to_int(row.get("premium_signal"), 0):
+        setup_row["premiumCount"] += 1
+    if _s862_to_int(row.get("telegram_eligible"), 0):
+        setup_row["telegramEligibleCount"] += 1
+
+    _s862_add_count(setup_row["gradeCounts"], row.get("signal_grade"))
+    _s862_add_count(setup_row["qualityCounts"], row.get("quality_status"))
+
+    outcome_payload = _s859b_json_loads(row.get("outcome_payload_json"))
+    signal_payload = _s859b_json_loads(row.get("signal_payload_json"))
+    for trigger in _s859b_extract_triggers(row, outcome_payload, signal_payload):
+        _s862_add_count(setup_row["triggerCounts"], trigger)
+
+    if bucket in {"WORKED", "FAILED"}:
+        setup_row["resultRValues"].append(_s862_to_float(row.get("result_r"), None))
+        setup_row["mfeRValues"].append(_s862_to_float(row.get("mfe_r"), None))
+        setup_row["maeRValues"].append(_s862_to_float(row.get("mae_r"), None))
+        setup_row["tp1Hits"] += 1 if _s862_to_int(row.get("tp1_hit"), 0) else 0
+        setup_row["tp2Hits"] += 1 if _s862_to_int(row.get("tp2_hit"), 0) else 0
+        setup_row["stopHits"] += 1 if _s862_to_int(row.get("stop_hit"), 0) else 0
+
+        if len(setup_row["examples"]) < 8:
+            setup_row["examples"].append({
+                "signalId": row.get("signal_id"),
+                "symbol": row.get("symbol"),
+                "sessionDate": row.get("session_date"),
+                "status": bucket,
+                "resultR": _s862_to_float(row.get("result_r"), None),
+                "mfeR": _s862_to_float(row.get("mfe_r"), None),
+                "maeR": _s862_to_float(row.get("mae_r"), None),
+                "grade": row.get("signal_grade"),
+                "qualityStatus": row.get("quality_status"),
+            })
+
+
+def _s862_find_shadow_for_setup(setup_slug, shadow_report):
+    for row in _s862_arr(shadow_report.get("comparisons")):
+        if str(row.get("kind") or "") == "setup_review" and str(row.get("key") or "") == str(setup_slug):
+            return row
+    return None
+
+
+def _s862_setup_failure_count(setup_slug, failure_report):
+    counts = _s862_dict(failure_report.get("setupFailureCounts"))
+    return _s862_to_int(counts.get(setup_slug), 0)
+
+
+def _s862_setup_hypothesis(setup_slug, hypotheses_report):
+    target = f"setup_review_{setup_slug}"
+    for row in _s862_arr(hypotheses_report.get("hypotheses")):
+        if str(row.get("hypothesisId") or "") == target:
+            return row
+    for row in _s862_arr(hypotheses_report.get("topHypotheses")):
+        if str(row.get("hypothesisId") or "") == target:
+            return row
+    return None
+
+
+def _s862_rank_score(metrics, failure_count, shadow_row):
+    closed = _s862_to_int(metrics.get("closed"), 0)
+    winrate = _s862_to_float(metrics.get("winrate"), 0.0) or 0.0
+    avg_r = _s862_to_float(metrics.get("avgR"), 0.0) or 0.0
+    stop_rate = _s862_to_float(metrics.get("stopRate"), 0.0) or 0.0
+    sample_bonus = min(20.0, closed / 5.0)
+
+    score = 50.0
+    score += (winrate - 50.0) * 0.7
+    score += avg_r * 25.0
+    score -= max(0.0, stop_rate - 45.0) * 0.45
+    score -= min(20.0, failure_count * 0.08)
+    score += sample_bonus
+
+    if shadow_row:
+        rec = str(shadow_row.get("recommendation") or "")
+        wr_delta = _s862_to_float(_s862_dict(shadow_row.get("deltas")).get("winrateChangePctPoints"), 0.0) or 0.0
+        avg_delta = _s862_to_float(_s862_dict(shadow_row.get("deltas")).get("avgRChange"), 0.0) or 0.0
+
+        if rec == "PROMISING_SHADOW_TEST":
+            score -= 15.0
+        elif rec == "MONITOR_IN_SHADOW":
+            score -= 7.0
+        elif rec == "TOO_MUCH_SIGNAL_LOSS":
+            score -= 3.0
+
+        if wr_delta > 3.0 or avg_delta > 0.05:
+            score -= min(12.0, wr_delta * 0.5 + avg_delta * 10.0)
+
+    return round(max(0.0, min(100.0, score)), 2)
+
+
+def _s862_draft_status(metrics, rank_score, failure_count, shadow_row, min_closed):
+    closed = _s862_to_int(metrics.get("closed"), 0)
+    winrate = _s862_to_float(metrics.get("winrate"), None)
+    avg_r = _s862_to_float(metrics.get("avgR"), None)
+    stop_rate = _s862_to_float(metrics.get("stopRate"), None)
+
+    shadow_rec = str(shadow_row.get("recommendation") or "") if shadow_row else ""
+
+    if closed < min_closed:
+        return "KEEP_MONITORING"
+
+    if shadow_rec == "PROMISING_SHADOW_TEST":
+        return "REWORK_REQUIRED"
+
+    if winrate is not None and avg_r is not None and stop_rate is not None:
+        if winrate >= 60.0 and avg_r >= 0.35 and stop_rate <= 40.0 and rank_score >= 70.0:
+            return "PROMOTE_CANDIDATE"
+
+        if winrate < 35.0 or avg_r < 0.0 or stop_rate >= 65.0:
+            return "DEMOTE_TO_MONITOR_ONLY"
+
+        if winrate < 45.0 or avg_r < 0.10 or failure_count >= 25:
+            return "REWORK_REQUIRED"
+
+    if rank_score < 35.0:
+        return "BLOCK_CLIENT_VISIBLE"
+
+    return "KEEP_MONITORING"
+
+
+def _s862_client_visibility(status):
+    if status == "PROMOTE_CANDIDATE":
+        return "REVIEW_FOR_CLIENT_VISIBLE_APPROVAL"
+    if status in {"KEEP_MONITORING", "REWORK_REQUIRED", "DEMOTE_TO_MONITOR_ONLY", "BLOCK_CLIENT_VISIBLE"}:
+        return "BLOCKED_RESEARCH_ONLY"
+    return "BLOCKED_RESEARCH_ONLY"
+
+
+def _s862_finalize_setup_row(setup_row, failure_report, hypotheses_report, shadow_report, min_closed):
+    closed = _s862_to_int(setup_row.get("closed"), 0)
+    worked = _s862_to_int(setup_row.get("worked"), 0)
+    failed = _s862_to_int(setup_row.get("failed"), 0)
+    setup_slug = setup_row.get("setupSlug")
+
+    metrics = {
+        "total": _s862_to_int(setup_row.get("total"), 0),
+        "closed": closed,
+        "worked": worked,
+        "failed": failed,
+        "sessionCloseOrExpired": _s862_to_int(setup_row.get("sessionCloseOrExpired"), 0),
+        "openOrNoEval": _s862_to_int(setup_row.get("openOrNoEval"), 0),
+        "unknownStatus": _s862_to_int(setup_row.get("unknownStatus"), 0),
+        "winrate": _s862_pct(worked, closed),
+        "avgR": _s862_avg(setup_row.get("resultRValues") or []),
+        "avgMfeR": _s862_avg(setup_row.get("mfeRValues") or []),
+        "avgMaeR": _s862_avg(setup_row.get("maeRValues") or []),
+        "tp1Rate": _s862_pct(setup_row.get("tp1Hits") or 0, closed),
+        "tp2Rate": _s862_pct(setup_row.get("tp2Hits") or 0, closed),
+        "stopRate": _s862_pct(setup_row.get("stopHits") or 0, closed),
+        "premiumCount": _s862_to_int(setup_row.get("premiumCount"), 0),
+        "telegramEligibleCount": _s862_to_int(setup_row.get("telegramEligibleCount"), 0),
+    }
+
+    failure_count = _s862_setup_failure_count(setup_slug, failure_report)
+    shadow_row = _s862_find_shadow_for_setup(setup_slug, shadow_report)
+    hypothesis = _s862_setup_hypothesis(setup_slug, hypotheses_report)
+
+    rank_score = _s862_rank_score(metrics, failure_count, shadow_row)
+    draft_status = _s862_draft_status(metrics, rank_score, failure_count, shadow_row, min_closed)
+
+    warnings = []
+    if closed < min_closed:
+        warnings.append("sample_below_min_closed")
+    if setup_slug == "unknown_setup":
+        warnings.append("unknown_setup")
+    if metrics.get("avgR") is not None and metrics.get("avgR") < 0:
+        warnings.append("negative_avg_r")
+    if metrics.get("stopRate") is not None and metrics.get("stopRate") >= 65:
+        warnings.append("high_stop_rate")
+    if shadow_row and shadow_row.get("recommendation") == "PROMISING_SHADOW_TEST":
+        warnings.append("shadow_suggests_rework")
+    if failure_count >= 25:
+        warnings.append("high_failure_cluster_count")
+
+    return {
+        "setupSlug": setup_slug,
+        "draftRankScore": rank_score,
+        "draftStatus": draft_status,
+        "clientVisibleDraft": _s862_client_visibility(draft_status),
+        "metrics": metrics,
+        "failureCount": failure_count,
+        "topTriggers": _s862_sorted_counts(setup_row.get("triggerCounts") or {}, 12),
+        "gradeCounts": _s862_sorted_counts(setup_row.get("gradeCounts") or {}, 12),
+        "qualityCounts": _s862_sorted_counts(setup_row.get("qualityCounts") or {}, 12),
+        "shadow": {
+            "recommendation": shadow_row.get("recommendation") if shadow_row else None,
+            "winrateDelta": _s862_dict(shadow_row.get("deltas")).get("winrateChangePctPoints") if shadow_row else None,
+            "avgRDelta": _s862_dict(shadow_row.get("deltas")).get("avgRChange") if shadow_row else None,
+            "removedClosed": _s862_dict(shadow_row.get("removedByFilter")).get("closed") if shadow_row else None,
+            "removedFailed": _s862_dict(shadow_row.get("removedByFilter")).get("failed") if shadow_row else None,
+            "removedWorked": _s862_dict(shadow_row.get("removedByFilter")).get("worked") if shadow_row else None,
+        },
+        "hypothesis": {
+            "hypothesisId": hypothesis.get("hypothesisId") if hypothesis else None,
+            "priority": hypothesis.get("priority") if hypothesis else None,
+            "title": hypothesis.get("title") if hypothesis else None,
+        },
+        "warnings": warnings,
+        "examples": setup_row.get("examples") or [],
+    }
+
+
+def _s862_build_report(limit=5000, min_closed=10):
+    from datetime import datetime, timezone
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    safe_min_closed = max(1, min(int(min_closed or 10), 100))
+
+    failure_report_path = "/opt/skilledge/stock-engine/reports/failure_patterns/latest_s859b.json"
+    hypotheses_report_path = "/opt/skilledge/stock-engine/reports/improvement_hypotheses/latest_s860.json"
+    shadow_report_path = "/opt/skilledge/stock-engine/reports/shadow_backtest_comparison/latest_s861.json"
+
+    failure_report = _s862_read_json_report(failure_report_path)
+    hypotheses_report = _s862_read_json_report(hypotheses_report_path)
+    shadow_report = _s862_read_json_report(shadow_report_path)
+
+    rows = _s862_fetch_rows(limit=safe_limit)
+    setup_rows = {}
+
+    for row in rows:
+        setup_slug = str(row.get("setup_slug") or "unknown_setup").strip() or "unknown_setup"
+        setup_row = setup_rows.setdefault(setup_slug, _s862_new_setup_row(setup_slug))
+        _s862_add_row_to_setup(setup_row, row)
+
+    ranked = [
+        _s862_finalize_setup_row(setup_row, failure_report, hypotheses_report, shadow_report, safe_min_closed)
+        for setup_row in setup_rows.values()
+    ]
+
+    ranked.sort(
+        key=lambda row: (
+            float(row.get("draftRankScore") or 0),
+            _s862_to_int(row.get("metrics", {}).get("closed"), 0),
+            _s862_to_int(row.get("metrics", {}).get("worked"), 0),
+        ),
+        reverse=True,
+    )
+
+    for idx, row in enumerate(ranked, start=1):
+        row["draftRank"] = idx
+
+    status_counts = {}
+    for row in ranked:
+        _s862_add_count(status_counts, row.get("draftStatus"))
+
+    promote = [row for row in ranked if row.get("draftStatus") == "PROMOTE_CANDIDATE"]
+    rework = [row for row in ranked if row.get("draftStatus") == "REWORK_REQUIRED"]
+    demote = [row for row in ranked if row.get("draftStatus") == "DEMOTE_TO_MONITOR_ONLY"]
+    keep = [row for row in ranked if row.get("draftStatus") == "KEEP_MONITORING"]
+    blocked = [row for row in ranked if row.get("draftStatus") == "BLOCK_CLIENT_VISIBLE"]
+
+    return {
+        "ok": True,
+        "storageVersion": S862_STRATEGY_RERANKING_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "dbPath": _s862_db_path(),
+            "failureReport": failure_report_path,
+            "hypothesesReport": hypotheses_report_path,
+            "shadowReport": shadow_report_path,
+            "failureVersion": failure_report.get("storageVersion"),
+            "hypothesesVersion": hypotheses_report.get("storageVersion"),
+            "shadowVersion": shadow_report.get("storageVersion"),
+            "limit": safe_limit,
+            "minClosed": safe_min_closed,
+        },
+        "summary": {
+            "rowsEvaluated": len(rows),
+            "setupCount": len(ranked),
+            "promoteCandidateCount": len(promote),
+            "keepMonitoringCount": len(keep),
+            "reworkRequiredCount": len(rework),
+            "demoteToMonitorOnlyCount": len(demote),
+            "blockClientVisibleCount": len(blocked),
+            "topSetup": ranked[0].get("setupSlug") if ranked else None,
+            "topDraftStatus": ranked[0].get("draftStatus") if ranked else None,
+            "nextAction": "Review draft ranks, then feed safe draft actions into strategy registry only after manual approval.",
+        },
+        "statusCounts": _s862_sorted_counts(status_counts, 20),
+        "promoteCandidates": promote,
+        "keepMonitoring": keep,
+        "reworkRequired": rework,
+        "demoteToMonitorOnly": demote,
+        "blockClientVisible": blocked,
+        "strategyRanks": ranked,
+        "policy": {
+            "readOnly": True,
+            "researchOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "draftOnly": True,
+            "manualApprovalRequiredBeforeRegistryChange": True,
+        },
+    }
+
+
+def _s862_persist_report(report):
+    import json
+
+    out_dir = _s862_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s862.json"
+    snapshot = out_dir / f"{generated_at}_s862.json"
+
+    report["persistence"] = {
+        "filePersisted": True,
+        "latestPath": str(latest),
+        "snapshotPath": str(snapshot),
+    }
+
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+
+    return report
+
+
+def _s862_run_report(limit=5000, min_closed=10, publish=True):
+    report = _s862_build_report(limit=limit, min_closed=min_closed)
+    if publish:
+        report = _s862_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/strategy-reranking-draft/run")
+def engine_research_strategy_reranking_draft_run(limit: int = 5000, min_closed: int = 10, publish: bool = True):
+    return _s862_run_report(limit=limit, min_closed=min_closed, publish=publish)
+
+
+@app.get("/engine/research/strategy-reranking-draft/latest")
+def engine_research_strategy_reranking_draft_latest():
+    import json
+
+    latest = _s862_report_dir() / "latest_s862.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S862_STRATEGY_RERANKING_VERSION,
+            "error": "strategy_reranking_draft_report_not_found",
+            "nextAction": "Run POST /engine/research/strategy-reranking-draft/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "researchOnly": True,
+                "changesClientDelivery": False,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.62 Strategy Re-Ranking Draft ========================================
