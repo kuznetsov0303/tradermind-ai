@@ -26472,3 +26472,391 @@ def engine_research_improvement_hypotheses_latest():
 
 
 # === /S8.60 AI Improvement Hypothesis Generator =============================
+
+# === S8.61 Shadow Backtest Comparison ========================================
+S861_SHADOW_BACKTEST_VERSION = "s8_61_shadow_backtest_comparison_v1"
+
+
+def _s861_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/shadow_backtest_comparison")
+
+
+def _s861_db_path():
+    return "/opt/skilledge/stock-engine/data/stock_engine.db"
+
+
+def _s861_read_json_report(path):
+    import json
+    from pathlib import Path
+
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as error:
+        return {"ok": False, "error": repr(error), "path": str(p)}
+
+
+def _s861_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s861_to_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s861_arr(value):
+    return value if isinstance(value, list) else []
+
+
+def _s861_avg(values):
+    clean = [float(v) for v in values if v is not None]
+    if not clean:
+        return None
+    return round(sum(clean) / len(clean), 4)
+
+
+def _s861_pct(num, den):
+    if not den:
+        return None
+    return round((float(num) / float(den)) * 100.0, 2)
+
+
+def _s861_fetch_rows(limit=5000):
+    import sqlite3
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    con = sqlite3.connect(_s861_db_path())
+    con.row_factory = sqlite3.Row
+
+    rows = con.execute(
+        """
+        SELECT
+            o.signal_id,
+            o.symbol,
+            o.setup_slug,
+            o.session_date,
+            o.status,
+            o.result_r,
+            o.mfe_r,
+            o.mae_r,
+            o.tp1_hit,
+            o.tp2_hit,
+            o.stop_hit,
+            o.premium_signal,
+            o.telegram_eligible,
+            o.signal_grade,
+            o.quality_status,
+            o.primary_trigger,
+            o.first_event,
+            o.trigger_time,
+            o.evaluated_at,
+            o.stored_at,
+            o.payload_json AS outcome_payload_json,
+            s.payload_json AS signal_payload_json
+        FROM outcome_records o
+        LEFT JOIN signal_records s ON s.signal_id = o.signal_id
+        ORDER BY COALESCE(o.evaluated_at, o.stored_at, o.trigger_time, o.session_date) DESC
+        LIMIT ?
+        """,
+        (safe_limit,),
+    ).fetchall()
+
+    con.close()
+    return [dict(row) for row in rows]
+
+
+def _s861_closed_rows(rows):
+    closed = []
+    for row in rows:
+        outcome_payload = _s859b_json_loads(row.get("outcome_payload_json"))
+        bucket = _s859b_status_bucket(row, outcome_payload)
+        if bucket in {"WORKED", "FAILED"}:
+            row["_s861Bucket"] = bucket
+            closed.append(row)
+    return closed
+
+
+def _s861_metrics(rows):
+    closed = list(rows or [])
+    worked = [r for r in closed if r.get("_s861Bucket") == "WORKED"]
+    failed = [r for r in closed if r.get("_s861Bucket") == "FAILED"]
+
+    result_values = [_s861_to_float(r.get("result_r"), None) for r in closed]
+    mfe_values = [_s861_to_float(r.get("mfe_r"), None) for r in closed]
+    mae_values = [_s861_to_float(r.get("mae_r"), None) for r in closed]
+    stop_hits = sum(1 for r in closed if _s861_to_int(r.get("stop_hit"), 0) == 1)
+
+    return {
+        "closed": len(closed),
+        "worked": len(worked),
+        "failed": len(failed),
+        "winrate": _s861_pct(len(worked), len(closed)),
+        "avgR": _s861_avg(result_values),
+        "avgMfeR": _s861_avg(mfe_values),
+        "avgMaeR": _s861_avg(mae_values),
+        "stopRate": _s861_pct(stop_hits, len(closed)),
+    }
+
+
+def _s861_hypothesis_kind(hypothesis):
+    hid = str(hypothesis.get("hypothesisId") or "").strip()
+    if hid.startswith("trigger_filter_"):
+        return "trigger_filter"
+    if hid.startswith("failure_pattern_"):
+        return "failure_pattern"
+    if hid.startswith("setup_review_"):
+        return "setup_review"
+    return "unknown"
+
+
+def _s861_hypothesis_key(hypothesis):
+    hid = str(hypothesis.get("hypothesisId") or "").strip()
+    for prefix in ["trigger_filter_", "failure_pattern_", "setup_review_"]:
+        if hid.startswith(prefix):
+            return hid[len(prefix):]
+    return hid
+
+
+def _s861_row_matches_hypothesis(row, hypothesis):
+    kind = _s861_hypothesis_kind(hypothesis)
+    key = _s861_hypothesis_key(hypothesis)
+
+    outcome_payload = _s859b_json_loads(row.get("outcome_payload_json"))
+    signal_payload = _s859b_json_loads(row.get("signal_payload_json"))
+
+    if kind == "trigger_filter":
+        triggers = _s859b_extract_triggers(row, outcome_payload, signal_payload)
+        return key in triggers
+
+    if kind == "setup_review":
+        return str(row.get("setup_slug") or "").strip() == key
+
+    if kind == "failure_pattern":
+        bucket = row.get("_s861Bucket") or _s859b_status_bucket(row, outcome_payload)
+        if bucket != "FAILED":
+            return False
+        patterns, _metrics = _s859b_classify_failure(row, outcome_payload, signal_payload)
+        return key in patterns
+
+    return False
+
+
+def _s861_shadow_recommendation(baseline, shadow, removed, hypothesis):
+    baseline_closed = _s861_to_int(baseline.get("closed"), 0)
+    shadow_closed = _s861_to_int(shadow.get("closed"), 0)
+    removed_closed = _s861_to_int(removed.get("closed"), 0)
+    removed_failed = _s861_to_int(removed.get("failed"), 0)
+    removed_worked = _s861_to_int(removed.get("worked"), 0)
+
+    if removed_closed == 0:
+        return "NO_MATCHING_SAMPLE"
+
+    loss_pct = _s861_pct(removed_closed, baseline_closed) or 0.0
+    removed_failed_ratio = _s861_pct(removed_failed, removed_closed) or 0.0
+
+    b_wr = _s861_to_float(baseline.get("winrate"), 0.0) or 0.0
+    s_wr = _s861_to_float(shadow.get("winrate"), 0.0) or 0.0
+    b_avg = _s861_to_float(baseline.get("avgR"), 0.0) or 0.0
+    s_avg = _s861_to_float(shadow.get("avgR"), 0.0) or 0.0
+
+    if shadow_closed < 30:
+        return "INSUFFICIENT_SHADOW_SAMPLE"
+
+    if s_wr > b_wr + 5.0 and s_avg > b_avg and removed_failed_ratio >= 70.0 and removed_worked <= removed_failed:
+        return "PROMISING_SHADOW_TEST"
+
+    if s_wr > b_wr and s_avg >= b_avg and loss_pct <= 35.0:
+        return "MONITOR_IN_SHADOW"
+
+    if loss_pct > 50.0 and s_wr <= b_wr + 2.0:
+        return "TOO_MUCH_SIGNAL_LOSS"
+
+    return "REVIEW_MANUALLY"
+
+
+def _s861_compare_hypothesis(closed_rows, hypothesis):
+    matched = []
+    kept = []
+
+    for row in closed_rows:
+        if _s861_row_matches_hypothesis(row, hypothesis):
+            matched.append(row)
+        else:
+            kept.append(row)
+
+    baseline = _s861_metrics(closed_rows)
+    shadow = _s861_metrics(kept)
+    removed = _s861_metrics(matched)
+
+    b_wr = _s861_to_float(baseline.get("winrate"), None)
+    s_wr = _s861_to_float(shadow.get("winrate"), None)
+    b_avg = _s861_to_float(baseline.get("avgR"), None)
+    s_avg = _s861_to_float(shadow.get("avgR"), None)
+
+    return {
+        "hypothesisId": hypothesis.get("hypothesisId"),
+        "rank": hypothesis.get("rank"),
+        "title": hypothesis.get("title"),
+        "priority": hypothesis.get("priority"),
+        "kind": _s861_hypothesis_kind(hypothesis),
+        "key": _s861_hypothesis_key(hypothesis),
+        "hypothesisImpactScore": hypothesis.get("impactScore"),
+        "hypothesisConfidence": hypothesis.get("confidence"),
+        "baseline": baseline,
+        "shadowKeptAfterFilter": shadow,
+        "removedByFilter": removed,
+        "deltas": {
+            "winrateChangePctPoints": round((s_wr or 0.0) - (b_wr or 0.0), 2) if b_wr is not None and s_wr is not None else None,
+            "avgRChange": round((s_avg or 0.0) - (b_avg or 0.0), 4) if b_avg is not None and s_avg is not None else None,
+            "removedClosedPct": _s861_pct(removed.get("closed"), baseline.get("closed")),
+            "removedFailedPctOfAllFailed": _s861_pct(removed.get("failed"), baseline.get("failed")),
+            "removedWorkedPctOfAllWorked": _s861_pct(removed.get("worked"), baseline.get("worked")),
+        },
+        "recommendation": _s861_shadow_recommendation(baseline, shadow, removed, hypothesis),
+        "policy": {
+            "researchOnly": True,
+            "doesNotModifyLiveGate": True,
+            "manualApprovalRequired": True,
+        },
+    }
+
+
+def _s861_build_report(limit=5000, max_hypotheses=15):
+    from datetime import datetime, timezone
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    safe_max = max(1, min(int(max_hypotheses or 15), 50))
+
+    hypotheses_report_path = "/opt/skilledge/stock-engine/reports/improvement_hypotheses/latest_s860.json"
+    hypotheses_report = _s861_read_json_report(hypotheses_report_path)
+    hypotheses = _s861_arr(hypotheses_report.get("topHypotheses")) or _s861_arr(hypotheses_report.get("hypotheses"))
+    hypotheses = hypotheses[:safe_max]
+
+    rows = _s861_fetch_rows(limit=safe_limit)
+    closed = _s861_closed_rows(rows)
+    baseline = _s861_metrics(closed)
+
+    comparisons = [_s861_compare_hypothesis(closed, h) for h in hypotheses if isinstance(h, dict)]
+    comparisons = sorted(
+        comparisons,
+        key=lambda row: (
+            1 if row.get("recommendation") == "PROMISING_SHADOW_TEST" else 0,
+            _s861_to_float(row.get("deltas", {}).get("winrateChangePctPoints"), -999),
+            _s861_to_float(row.get("deltas", {}).get("avgRChange"), -999),
+            _s861_to_int(row.get("removedByFilter", {}).get("closed"), 0),
+        ),
+        reverse=True,
+    )
+
+    promising = [c for c in comparisons if c.get("recommendation") == "PROMISING_SHADOW_TEST"]
+    monitor = [c for c in comparisons if c.get("recommendation") == "MONITOR_IN_SHADOW"]
+
+    return {
+        "ok": True,
+        "storageVersion": S861_SHADOW_BACKTEST_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "dbPath": _s861_db_path(),
+            "hypothesesReport": hypotheses_report_path,
+            "hypothesesVersion": hypotheses_report.get("storageVersion"),
+            "limit": safe_limit,
+            "maxHypotheses": safe_max,
+            "closedDefinition": "Only WORKED/FAILED outcomes are compared. Non-closed rows are excluded.",
+        },
+        "summary": {
+            "rowsEvaluated": len(rows),
+            "closedRows": len(closed),
+            "hypothesesCompared": len(comparisons),
+            "promisingCount": len(promising),
+            "monitorCount": len(monitor),
+            "baselineWinrate": baseline.get("winrate"),
+            "baselineAvgR": baseline.get("avgR"),
+            "topRecommendation": comparisons[0].get("recommendation") if comparisons else None,
+            "topHypothesisId": comparisons[0].get("hypothesisId") if comparisons else None,
+            "nextAction": "Review promising/monitor shadow variants. Do not change live/client gates without manual approval.",
+        },
+        "baseline": baseline,
+        "promisingShadowTests": promising,
+        "monitorInShadow": monitor,
+        "comparisons": comparisons,
+        "policy": {
+            "readOnly": True,
+            "researchOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "manualApprovalRequiredBeforePromotion": True,
+        },
+    }
+
+
+def _s861_persist_report(report):
+    import json
+
+    out_dir = _s861_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s861.json"
+    snapshot = out_dir / f"{generated_at}_s861.json"
+
+    report["persistence"] = {
+        "filePersisted": True,
+        "latestPath": str(latest),
+        "snapshotPath": str(snapshot),
+    }
+
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+
+    return report
+
+
+def _s861_run_report(limit=5000, max_hypotheses=15, publish=True):
+    report = _s861_build_report(limit=limit, max_hypotheses=max_hypotheses)
+    if publish:
+        report = _s861_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/shadow-backtest-comparison/run")
+def engine_research_shadow_backtest_comparison_run(limit: int = 5000, max_hypotheses: int = 15, publish: bool = True):
+    return _s861_run_report(limit=limit, max_hypotheses=max_hypotheses, publish=publish)
+
+
+@app.get("/engine/research/shadow-backtest-comparison/latest")
+def engine_research_shadow_backtest_comparison_latest():
+    import json
+
+    latest = _s861_report_dir() / "latest_s861.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S861_SHADOW_BACKTEST_VERSION,
+            "error": "shadow_backtest_comparison_report_not_found",
+            "nextAction": "Run POST /engine/research/shadow-backtest-comparison/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "researchOnly": True,
+                "changesClientDelivery": False,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.61 Shadow Backtest Comparison =======================================
