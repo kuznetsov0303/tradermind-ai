@@ -24956,3 +24956,464 @@ def engine_research_signal_blockers_latest():
 # === /S8.58A Signal Blocker Intelligence =====================================
 
 
+
+# === S8.59A Trigger Quality Report ===========================================
+S859A_TRIGGER_QUALITY_VERSION = "s8_59a_trigger_quality_report_v1"
+
+
+def _s859a_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/trigger_quality")
+
+
+def _s859a_db_path():
+    return "/opt/skilledge/stock-engine/data/stock_engine.db"
+
+
+def _s859a_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s859a_to_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s859a_json_loads(value):
+    import json
+    if not value:
+        return {}
+    if isinstance(value, dict):
+        return value
+    try:
+        data = json.loads(value)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _s859a_get_nested(data, path):
+    cur = data if isinstance(data, dict) else {}
+    for key in path:
+        if not isinstance(cur, dict):
+            return None
+        cur = cur.get(key)
+    return cur
+
+
+def _s859a_add_trigger(out, value):
+    if value is None:
+        return
+    if isinstance(value, str):
+        v = value.strip()
+        if v:
+            out.append(v)
+        return
+    if isinstance(value, list):
+        for item in value:
+            _s859a_add_trigger(out, item)
+
+
+def _s859a_normalize_trigger(value):
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    text = text.replace(" ", "_").replace("-", "_")
+    while "__" in text:
+        text = text.replace("__", "_")
+    return text.lower()
+
+
+def _s859a_extract_triggers(row, outcome_payload, signal_payload):
+    raw = []
+
+    _s859a_add_trigger(raw, row.get("primary_trigger"))
+    for payload in [outcome_payload, signal_payload]:
+        if not isinstance(payload, dict):
+            continue
+
+        for key in [
+            "primaryTrigger",
+            "primary_trigger",
+            "trigger",
+            "triggerName",
+            "trigger_name",
+            "triggers",
+            "triggerReasons",
+            "telegramReasons",
+        ]:
+            _s859a_add_trigger(raw, payload.get(key))
+
+        for path in [
+            ["confirmation", "triggers"],
+            ["candleContext", "confirmation", "triggers"],
+            ["source", "candleContext", "confirmation", "triggers"],
+            ["payload", "confirmation", "triggers"],
+        ]:
+            _s859a_add_trigger(raw, _s859a_get_nested(payload, path))
+
+    normalized = []
+    for item in raw:
+        trigger = _s859a_normalize_trigger(item)
+        if trigger and trigger not in normalized:
+            normalized.append(trigger)
+
+    return normalized or ["unknown_trigger"]
+
+
+def _s859a_outcome_bucket(row, outcome_payload):
+    status = str(row.get("status") or outcome_payload.get("status") or outcome_payload.get("result") or "").upper().strip()
+
+    if status == "WORKED":
+        return "WORKED"
+    if status == "FAILED":
+        return "FAILED"
+    if "EXPIRED" in status or status == "SESSION_CLOSE":
+        return "SESSION_CLOSE"
+    if status in {"OPEN", "NO_EVAL", "NO_EVALUATION", "PENDING"}:
+        return "OPEN_OR_NO_EVAL"
+    if not status:
+        return "UNKNOWN"
+    return status
+
+
+def _s859a_avg(values):
+    clean = [float(v) for v in values if v is not None]
+    if not clean:
+        return None
+    return round(sum(clean) / len(clean), 4)
+
+
+def _s859a_pct(num, den):
+    if not den:
+        return None
+    return round((float(num) / float(den)) * 100.0, 2)
+
+
+def _s859a_sample_quality(closed):
+    if closed >= 30:
+        return "HIGH_SAMPLE"
+    if closed >= 10:
+        return "USABLE_SAMPLE"
+    if closed >= 3:
+        return "EARLY_SAMPLE"
+    return "INSUFFICIENT_SAMPLE"
+
+
+def _s859a_recommendation(closed, winrate, avg_r, stop_rate, min_closed):
+    if closed < min_closed:
+        return "COLLECT_MORE_DATA"
+
+    wr = winrate if winrate is not None else 0.0
+    ar = avg_r if avg_r is not None else 0.0
+    sr = stop_rate if stop_rate is not None else 100.0
+
+    if wr >= 65.0 and ar >= 0.50 and sr <= 35.0:
+        return "PROMOTE_CANDIDATE"
+    if wr >= 55.0 and ar > 0.0:
+        return "KEEP_MONITORING"
+    if wr < 45.0 or ar < 0.0:
+        return "DEMOTE_OR_REWORK"
+
+    return "REVIEW_MANUALLY"
+
+
+def _s859a_new_trigger_row(trigger):
+    return {
+        "triggerName": trigger,
+        "total": 0,
+        "closed": 0,
+        "worked": 0,
+        "failed": 0,
+        "sessionCloseOrExpired": 0,
+        "openOrNoEval": 0,
+        "unknownStatus": 0,
+        "tp1Hits": 0,
+        "tp2Hits": 0,
+        "stopHits": 0,
+        "resultRValues": [],
+        "mfeRValues": [],
+        "maeRValues": [],
+        "setupBreakdown": {},
+        "examples": [],
+    }
+
+
+def _s859a_add_setup_count(row, setup_slug):
+    setup = str(setup_slug or "unknown_setup").strip() or "unknown_setup"
+    row["setupBreakdown"][setup] = int(row["setupBreakdown"].get(setup, 0) or 0) + 1
+
+
+def _s859a_finalize_trigger_row(row, min_closed):
+    closed = int(row.get("closed") or 0)
+    worked = int(row.get("worked") or 0)
+
+    winrate = _s859a_pct(worked, closed)
+    avg_r = _s859a_avg(row.get("resultRValues") or [])
+    avg_mfe = _s859a_avg(row.get("mfeRValues") or [])
+    avg_mae = _s859a_avg(row.get("maeRValues") or [])
+    tp1_rate = _s859a_pct(row.get("tp1Hits") or 0, closed)
+    tp2_rate = _s859a_pct(row.get("tp2Hits") or 0, closed)
+    stop_rate = _s859a_pct(row.get("stopHits") or 0, closed)
+
+    setup_rows = [
+        {"setupSlug": setup, "count": count}
+        for setup, count in sorted(row["setupBreakdown"].items(), key=lambda item: int(item[1] or 0), reverse=True)
+    ]
+
+    return {
+        "triggerName": row.get("triggerName"),
+        "total": int(row.get("total") or 0),
+        "closed": closed,
+        "worked": worked,
+        "failed": int(row.get("failed") or 0),
+        "sessionCloseOrExpired": int(row.get("sessionCloseOrExpired") or 0),
+        "openOrNoEval": int(row.get("openOrNoEval") or 0),
+        "unknownStatus": int(row.get("unknownStatus") or 0),
+        "winrate": winrate,
+        "avgR": avg_r,
+        "avgMfeR": avg_mfe,
+        "avgMaeR": avg_mae,
+        "tp1Rate": tp1_rate,
+        "tp2Rate": tp2_rate,
+        "stopRate": stop_rate,
+        "sampleQuality": _s859a_sample_quality(closed),
+        "recommendation": _s859a_recommendation(closed, winrate, avg_r, stop_rate, min_closed),
+        "setupBreakdown": setup_rows[:12],
+        "examples": row.get("examples") or [],
+    }
+
+
+def _s859a_fetch_rows(limit=5000):
+    import sqlite3
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    con = sqlite3.connect(_s859a_db_path())
+    con.row_factory = sqlite3.Row
+
+    rows = con.execute(
+        """
+        SELECT
+            o.signal_id,
+            o.symbol,
+            o.setup_slug,
+            o.session_date,
+            o.status,
+            o.result_r,
+            o.mfe_r,
+            o.mae_r,
+            o.tp1_hit,
+            o.tp2_hit,
+            o.stop_hit,
+            o.premium_signal,
+            o.telegram_eligible,
+            o.signal_grade,
+            o.quality_status,
+            o.primary_trigger,
+            o.first_event,
+            o.trigger_time,
+            o.evaluated_at,
+            o.stored_at,
+            o.payload_json AS outcome_payload_json,
+            s.payload_json AS signal_payload_json
+        FROM outcome_records o
+        LEFT JOIN signal_records s ON s.signal_id = o.signal_id
+        ORDER BY COALESCE(o.evaluated_at, o.stored_at, o.trigger_time, o.session_date) DESC
+        LIMIT ?
+        """,
+        (safe_limit,),
+    ).fetchall()
+
+    con.close()
+    return [dict(row) for row in rows]
+
+
+def _s859a_build_report(limit=5000, min_closed=3):
+    from datetime import datetime, timezone
+
+    safe_limit = max(100, min(int(limit or 5000), 20000))
+    safe_min_closed = max(1, min(int(min_closed or 3), 50))
+
+    rows = _s859a_fetch_rows(limit=safe_limit)
+
+    triggers = {}
+    status_counts = {}
+    unknown_trigger_count = 0
+
+    for row in rows:
+        outcome_payload = _s859a_json_loads(row.get("outcome_payload_json"))
+        signal_payload = _s859a_json_loads(row.get("signal_payload_json"))
+
+        trigger_names = _s859a_extract_triggers(row, outcome_payload, signal_payload)
+        bucket = _s859a_outcome_bucket(row, outcome_payload)
+
+        status_counts[bucket] = int(status_counts.get(bucket, 0) or 0) + 1
+
+        if trigger_names == ["unknown_trigger"]:
+            unknown_trigger_count += 1
+
+        for trigger in trigger_names:
+            trow = triggers.setdefault(trigger, _s859a_new_trigger_row(trigger))
+            trow["total"] += 1
+            _s859a_add_setup_count(trow, row.get("setup_slug"))
+
+            is_closed = bucket in {"WORKED", "FAILED"}
+            if bucket == "WORKED":
+                trow["closed"] += 1
+                trow["worked"] += 1
+            elif bucket == "FAILED":
+                trow["closed"] += 1
+                trow["failed"] += 1
+            elif bucket == "SESSION_CLOSE":
+                trow["sessionCloseOrExpired"] += 1
+            elif bucket == "OPEN_OR_NO_EVAL":
+                trow["openOrNoEval"] += 1
+            else:
+                trow["unknownStatus"] += 1
+
+            if is_closed:
+                trow["resultRValues"].append(_s859a_to_float(row.get("result_r"), None))
+                trow["mfeRValues"].append(_s859a_to_float(row.get("mfe_r"), None))
+                trow["maeRValues"].append(_s859a_to_float(row.get("mae_r"), None))
+                trow["tp1Hits"] += 1 if _s859a_to_int(row.get("tp1_hit"), 0) else 0
+                trow["tp2Hits"] += 1 if _s859a_to_int(row.get("tp2_hit"), 0) else 0
+                trow["stopHits"] += 1 if _s859a_to_int(row.get("stop_hit"), 0) else 0
+
+                if len(trow["examples"]) < 8:
+                    trow["examples"].append({
+                        "signalId": row.get("signal_id"),
+                        "symbol": row.get("symbol"),
+                        "setupSlug": row.get("setup_slug"),
+                        "sessionDate": row.get("session_date"),
+                        "status": bucket,
+                        "resultR": _s859a_to_float(row.get("result_r"), None),
+                        "mfeR": _s859a_to_float(row.get("mfe_r"), None),
+                        "maeR": _s859a_to_float(row.get("mae_r"), None),
+                        "grade": row.get("signal_grade"),
+                        "qualityStatus": row.get("quality_status"),
+                    })
+
+    trigger_rows = [_s859a_finalize_trigger_row(row, safe_min_closed) for row in triggers.values()]
+    trigger_rows = sorted(
+        trigger_rows,
+        key=lambda row: (
+            int(row.get("closed") or 0),
+            row.get("avgR") if row.get("avgR") is not None else -999,
+            row.get("winrate") if row.get("winrate") is not None else -999,
+            int(row.get("total") or 0),
+        ),
+        reverse=True,
+    )
+
+    actionable = [row for row in trigger_rows if int(row.get("closed") or 0) >= safe_min_closed]
+    promote = [row for row in trigger_rows if row.get("recommendation") == "PROMOTE_CANDIDATE"]
+    demote = [row for row in trigger_rows if row.get("recommendation") == "DEMOTE_OR_REWORK"]
+
+    closed_total = sum(int(row.get("closed") or 0) for row in trigger_rows)
+    worked_total = sum(int(row.get("worked") or 0) for row in trigger_rows)
+    failed_total = sum(int(row.get("failed") or 0) for row in trigger_rows)
+
+    return {
+        "ok": True,
+        "storageVersion": S859A_TRIGGER_QUALITY_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "dbPath": _s859a_db_path(),
+            "tables": ["outcome_records", "signal_records"],
+            "join": "outcome_records.signal_id = signal_records.signal_id",
+            "closedDefinition": "Only status WORKED/FAILED counts as closed. SESSION_CLOSE/EXPIRED/OPEN/NO_EVAL are not win/loss.",
+            "limit": safe_limit,
+        },
+        "summary": {
+            "rowsEvaluated": len(rows),
+            "triggerCount": len(trigger_rows),
+            "actionableTriggerCount": len(actionable),
+            "promoteCandidateCount": len(promote),
+            "demoteOrReworkCount": len(demote),
+            "closedTotal": closed_total,
+            "workedTotal": worked_total,
+            "failedTotal": failed_total,
+            "overallClosedWinrate": _s859a_pct(worked_total, closed_total),
+            "unknownTriggerCount": unknown_trigger_count,
+            "topTriggerByClosed": trigger_rows[0]["triggerName"] if trigger_rows else None,
+            "topAction": "Use only actionable triggers with enough closed outcomes. Do not promote unknown_trigger.",
+        },
+        "statusCounts": status_counts,
+        "promoteCandidates": promote[:30],
+        "demoteOrRework": demote[:30],
+        "triggerQuality": trigger_rows,
+        "policy": {
+            "readOnly": True,
+            "sendsTelegram": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "researchOnly": True,
+            "manualApprovalRequiredBeforePromotion": True,
+        },
+    }
+
+
+def _s859a_persist_report(report):
+    import json
+
+    out_dir = _s859a_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s859a.json"
+    snapshot = out_dir / f"{generated_at}_s859a.json"
+
+    report["persistence"] = {
+        "filePersisted": True,
+        "latestPath": str(latest),
+        "snapshotPath": str(snapshot),
+    }
+
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    return report
+
+
+def _s859a_run_report(limit=5000, min_closed=3, publish=True):
+    report = _s859a_build_report(limit=limit, min_closed=min_closed)
+    if publish:
+        report = _s859a_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/trigger-quality/run")
+def engine_research_trigger_quality_run(limit: int = 5000, min_closed: int = 3, publish: bool = True):
+    return _s859a_run_report(limit=limit, min_closed=min_closed, publish=publish)
+
+
+@app.get("/engine/research/trigger-quality/latest")
+def engine_research_trigger_quality_latest():
+    import json
+
+    latest = _s859a_report_dir() / "latest_s859a.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S859A_TRIGGER_QUALITY_VERSION,
+            "error": "trigger_quality_report_not_found",
+            "nextAction": "Run POST /engine/research/trigger-quality/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "sendsTelegram": False,
+                "changesClientDelivery": False,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.59A Trigger Quality Report ==========================================
