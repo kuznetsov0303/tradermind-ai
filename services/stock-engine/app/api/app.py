@@ -27392,3 +27392,357 @@ def engine_research_strategy_reranking_draft_latest():
 
 
 # === /S8.62 Strategy Re-Ranking Draft ========================================
+
+# === S8.63 Internal AI Trader Desk Layer =====================================
+S863_AI_TRADER_DESKS_VERSION = "s8_63_internal_ai_trader_desk_layer_v1"
+
+
+def _s863_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/ai_trader_desks")
+
+
+def _s863_read_json_report(path):
+    import json
+    from pathlib import Path
+
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as error:
+        return {"ok": False, "error": repr(error), "path": str(p)}
+
+
+def _s863_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s863_to_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s863_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def _s863_arr(value):
+    return value if isinstance(value, list) else []
+
+
+def _s863_avg(values):
+    clean = [float(v) for v in values if v is not None]
+    if not clean:
+        return None
+    return round(sum(clean) / len(clean), 4)
+
+
+def _s863_pct(num, den):
+    if not den:
+        return None
+    return round((float(num) / float(den)) * 100.0, 2)
+
+
+def _s863_desk_definitions():
+    return [
+        {
+            "deskId": "small_cap_short_desk",
+            "deskName": "Small Cap Short Desk",
+            "mandate": "Internal research desk for short-biased small-cap momentum/exhaustion setups.",
+            "setups": ["premarket_pump_short", "gap_and_crap_short", "vwap_rejection_short", "opening_range_breakdown_short"],
+        },
+        {
+            "deskId": "small_cap_long_momentum_desk",
+            "deskName": "Small Cap Long Momentum Desk",
+            "mandate": "Internal research desk for long-biased small-cap continuation/reclaim setups.",
+            "setups": ["vwap_reclaim_long", "opening_range_breakout_long", "gap_hold_continuation_long", "orb_pullback_continuation"],
+        },
+        {
+            "deskId": "large_cap_momentum_desk",
+            "deskName": "Large Cap Momentum Desk",
+            "mandate": "Internal research desk for large-cap VWAP/trend/gap continuation setups.",
+            "setups": ["large_cap_vwap_trend_long", "large_cap_gap_continuation"],
+        },
+        {
+            "deskId": "risk_rework_desk",
+            "deskName": "Risk & Rework Desk",
+            "mandate": "Internal guard desk that focuses on demoted/rework-required strategies before client visibility.",
+            "setups": [],
+        },
+    ]
+
+
+def _s863_setup_lookup(strategy_report):
+    lookup = {}
+    for row in _s863_arr(strategy_report.get("strategyRanks")):
+        setup = str(row.get("setupSlug") or "").strip()
+        if setup:
+            lookup[setup] = row
+    return lookup
+
+
+def _s863_collect_desk_rows(desk_def, setup_lookup):
+    rows = []
+    for setup in desk_def.get("setups") or []:
+        item = setup_lookup.get(setup)
+        if item:
+            rows.append(item)
+    return rows
+
+
+def _s863_desk_metrics(rows):
+    closed = 0
+    worked = 0
+    failed = 0
+    failure_count = 0
+    rank_scores = []
+    avg_r_values = []
+    stop_rates = []
+    statuses = {}
+
+    for row in rows:
+        metrics = _s863_dict(row.get("metrics"))
+        closed += _s863_to_int(metrics.get("closed"), 0)
+        worked += _s863_to_int(metrics.get("worked"), 0)
+        failed += _s863_to_int(metrics.get("failed"), 0)
+        failure_count += _s863_to_int(row.get("failureCount"), 0)
+
+        rank_score = _s863_to_float(row.get("draftRankScore"), None)
+        if rank_score is not None:
+            rank_scores.append(rank_score)
+
+        avg_r = _s863_to_float(metrics.get("avgR"), None)
+        if avg_r is not None:
+            avg_r_values.append(avg_r)
+
+        stop_rate = _s863_to_float(metrics.get("stopRate"), None)
+        if stop_rate is not None:
+            stop_rates.append(stop_rate)
+
+        status = str(row.get("draftStatus") or "unknown").strip() or "unknown"
+        statuses[status] = int(statuses.get(status, 0) or 0) + 1
+
+    return {
+        "setupCount": len(rows),
+        "closed": closed,
+        "worked": worked,
+        "failed": failed,
+        "winrate": _s863_pct(worked, closed),
+        "avgSetupRankScore": _s863_avg(rank_scores),
+        "avgSetupAvgR": _s863_avg(avg_r_values),
+        "avgStopRate": _s863_avg(stop_rates),
+        "failureCount": failure_count,
+        "statusCounts": statuses,
+    }
+
+
+def _s863_desk_status(metrics):
+    setup_count = _s863_to_int(metrics.get("setupCount"), 0)
+    closed = _s863_to_int(metrics.get("closed"), 0)
+    winrate = _s863_to_float(metrics.get("winrate"), None)
+    avg_score = _s863_to_float(metrics.get("avgSetupRankScore"), None)
+    avg_r = _s863_to_float(metrics.get("avgSetupAvgR"), None)
+    status_counts = _s863_dict(metrics.get("statusCounts"))
+
+    if setup_count == 0 or closed == 0:
+        return "NO_SAMPLE_YET"
+    if _s863_to_int(status_counts.get("REWORK_REQUIRED"), 0) > 0:
+        return "REWORK_REQUIRED"
+    if _s863_to_int(status_counts.get("DEMOTE_TO_MONITOR_ONLY"), 0) >= max(1, setup_count // 2):
+        return "DEMOTE_TO_MONITOR_ONLY"
+    if winrate is not None and avg_r is not None and avg_score is not None:
+        if winrate >= 55.0 and avg_r > 0 and avg_score >= 55.0:
+            return "PROMOTE_CANDIDATE"
+        if winrate < 35.0 or avg_r < 0:
+            return "REWORK_REQUIRED"
+    return "KEEP_MONITORING"
+
+
+def _s863_desk_next_action(status):
+    if status == "PROMOTE_CANDIDATE":
+        return "Prepare manual review pack. Keep client delivery blocked until approval."
+    if status == "KEEP_MONITORING":
+        return "Continue collecting evidence and run nightly strategy reranking."
+    if status == "REWORK_REQUIRED":
+        return "Create setup-specific shadow filters before any promotion."
+    if status == "DEMOTE_TO_MONITOR_ONLY":
+        return "Keep this desk research-only and block client-visible promotion."
+    return "Collect more closed outcomes."
+
+
+def _s863_build_desk(desk_def, setup_lookup, strategy_report):
+    if desk_def.get("deskId") == "risk_rework_desk":
+        rows = [
+            row for row in _s863_arr(strategy_report.get("strategyRanks"))
+            if str(row.get("draftStatus") or "") in {"REWORK_REQUIRED", "DEMOTE_TO_MONITOR_ONLY", "BLOCK_CLIENT_VISIBLE"}
+        ]
+    else:
+        rows = _s863_collect_desk_rows(desk_def, setup_lookup)
+
+    metrics = _s863_desk_metrics(rows)
+    status = _s863_desk_status(metrics)
+
+    setup_cards = []
+    for row in rows:
+        metrics_row = _s863_dict(row.get("metrics"))
+        setup_cards.append({
+            "setupSlug": row.get("setupSlug"),
+            "draftRank": row.get("draftRank"),
+            "draftRankScore": row.get("draftRankScore"),
+            "draftStatus": row.get("draftStatus"),
+            "clientVisibleDraft": row.get("clientVisibleDraft"),
+            "closed": metrics_row.get("closed"),
+            "winrate": metrics_row.get("winrate"),
+            "avgR": metrics_row.get("avgR"),
+            "stopRate": metrics_row.get("stopRate"),
+            "failureCount": row.get("failureCount"),
+            "warnings": row.get("warnings"),
+        })
+
+    return {
+        "deskId": desk_def.get("deskId"),
+        "deskName": desk_def.get("deskName"),
+        "mandate": desk_def.get("mandate"),
+        "deskStatus": status,
+        "clientVisiblePolicy": "INTERNAL_ONLY_NO_DIRECT_CLIENT_AUTHORITY",
+        "metrics": metrics,
+        "setups": setup_cards,
+        "nextAction": _s863_desk_next_action(status),
+        "guards": [
+            "Internal desk output only.",
+            "No direct Telegram/client signal authority.",
+            "Client visible output must go through unified SkillEdge AI signal gate.",
+            "Manual/admin approval required before promotion.",
+        ],
+    }
+
+
+def _s863_build_report():
+    from datetime import datetime, timezone
+
+    strategy_path = "/opt/skilledge/stock-engine/reports/strategy_reranking_draft/latest_s862.json"
+    blockers_path = "/opt/skilledge/stock-engine/reports/signal_blockers/latest_s858.json"
+
+    strategy_report = _s863_read_json_report(strategy_path)
+    signal_blockers_report = _s863_read_json_report(blockers_path)
+
+    setup_lookup = _s863_setup_lookup(strategy_report)
+    desks = [
+        _s863_build_desk(desk_def, setup_lookup, strategy_report)
+        for desk_def in _s863_desk_definitions()
+    ]
+
+    status_counts = {}
+    for desk in desks:
+        status = str(desk.get("deskStatus") or "unknown")
+        status_counts[status] = int(status_counts.get(status, 0) or 0) + 1
+
+    desks_sorted = sorted(
+        desks,
+        key=lambda row: (
+            _s863_to_float(_s863_dict(row.get("metrics")).get("avgSetupRankScore"), -1),
+            _s863_to_int(_s863_dict(row.get("metrics")).get("closed"), 0),
+        ),
+        reverse=True,
+    )
+
+    return {
+        "ok": True,
+        "storageVersion": S863_AI_TRADER_DESKS_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "strategyRerankingDraft": strategy_path,
+            "signalBlockers": blockers_path,
+            "strategyRerankingVersion": strategy_report.get("storageVersion"),
+            "signalBlockersVersion": signal_blockers_report.get("storageVersion"),
+        },
+        "summary": {
+            "deskCount": len(desks_sorted),
+            "statusCounts": status_counts,
+            "topDesk": desks_sorted[0].get("deskId") if desks_sorted else None,
+            "topDeskStatus": desks_sorted[0].get("deskStatus") if desks_sorted else None,
+            "nextAction": "Use desk layer for internal R&D/ops routing only. Client sees unified SkillEdge AI.",
+        },
+        "desks": desks_sorted,
+        "policy": {
+            "readOnly": True,
+            "researchOnly": True,
+            "internalOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "manualApprovalRequiredBeforePromotion": True,
+            "principle": "AI desks are internal R&D/ops roles, not auto-traders and not direct client-signal authorities.",
+        },
+    }
+
+
+def _s863_persist_report(report):
+    import json
+
+    out_dir = _s863_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s863.json"
+    snapshot = out_dir / f"{generated_at}_s863.json"
+
+    report["persistence"] = {
+        "filePersisted": True,
+        "latestPath": str(latest),
+        "snapshotPath": str(snapshot),
+    }
+
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+
+    return report
+
+
+def _s863_run_report(publish=True):
+    report = _s863_build_report()
+    if publish:
+        report = _s863_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/ai-trader-desks/run")
+def engine_research_ai_trader_desks_run(publish: bool = True):
+    return _s863_run_report(publish=publish)
+
+
+@app.get("/engine/research/ai-trader-desks/latest")
+def engine_research_ai_trader_desks_latest():
+    import json
+
+    latest = _s863_report_dir() / "latest_s863.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S863_AI_TRADER_DESKS_VERSION,
+            "error": "ai_trader_desks_report_not_found",
+            "nextAction": "Run POST /engine/research/ai-trader-desks/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "researchOnly": True,
+                "internalOnly": True,
+                "changesClientDelivery": False,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.63 Internal AI Trader Desk Layer ====================================
