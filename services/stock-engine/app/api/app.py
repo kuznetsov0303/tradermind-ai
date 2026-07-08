@@ -1,4 +1,4 @@
-﻿import os
+import os
 import json
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -27970,6 +27970,21 @@ def _s864_fetch_recent_signals(limit=50):
 
 
 def _s864_manual_approval(signal_payload, row):
+    signal_id = str(
+        (row or {}).get("signal_id")
+        or (row or {}).get("signalId")
+        or _s864_pick(signal_payload, "signalId", "id", fallback="")
+        or ""
+    ).strip()
+
+    if signal_id and "_s867_get_signal_manual_approval" in globals():
+        manual_state = _s867_get_signal_manual_approval(signal_id)
+        if isinstance(manual_state, dict):
+            if manual_state.get("clientVisibleApproved") is True:
+                return True
+            if str(manual_state.get("status") or "").upper() in {"REJECTED", "BLOCKED", "REVOKED"}:
+                return False
+
     approval = _s864_pick(
         signal_payload,
         "clientVisibleApproved", "manualApproval.clientVisibleApproved", "approval.clientVisibleApproved",
@@ -27981,7 +27996,6 @@ def _s864_manual_approval(signal_payload, row):
 
     approved_by = _s864_pick(signal_payload, "approvedByAdmin", "manualApproval.approved", "approval.approved", fallback=None)
     return _s864_bool(approved_by)
-
 
 def _s864_block_reasons(row, signal_payload, rr):
     reasons = []
@@ -28241,4 +28255,298 @@ def engine_research_unified_skilledge_output_latest():
     return json.loads(latest.read_text(encoding="utf-8"))
 
 
+
+# === S8.67 Admin Manual Approval Gate =======================================
+S867_SIGNAL_MANUAL_APPROVAL_VERSION = "s8_67_signal_manual_approval_gate_v1"
+
+
+def _s867_now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s867_db_path():
+    try:
+        return _s864_db_path()
+    except Exception:
+        return "/opt/skilledge/stock-engine/data/stock_engine.db"
+
+
+def _s867_connect():
+    import sqlite3
+
+    con = sqlite3.connect(_s867_db_path())
+    con.row_factory = sqlite3.Row
+    return con
+
+
+def _s867_json_dumps(value):
+    import json
+
+    try:
+        return json.dumps(value, ensure_ascii=False, default=str)
+    except Exception:
+        return "{}"
+
+
+def _s867_init_table():
+    con = _s867_connect()
+    cur = con.cursor()
+    cur.execute(
+        """
+        CREATE TABLE IF NOT EXISTS signal_manual_approvals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            signal_id TEXT NOT NULL UNIQUE,
+            symbol TEXT,
+            setup_slug TEXT,
+            session_date TEXT,
+            status TEXT NOT NULL DEFAULT 'PENDING',
+            approved INTEGER NOT NULL DEFAULT 0,
+            client_visible INTEGER NOT NULL DEFAULT 0,
+            reviewed_by TEXT,
+            reason TEXT,
+            notes TEXT,
+            source TEXT,
+            payload_json TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        )
+        """
+    )
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_signal_manual_approvals_status ON signal_manual_approvals(status)")
+    cur.execute("CREATE INDEX IF NOT EXISTS idx_signal_manual_approvals_updated_at ON signal_manual_approvals(updated_at)")
+    con.commit()
+    con.close()
+
+
+def _s867_row_to_dict(row):
+    if row is None:
+        return None
+    data = dict(row)
+    return {
+        "id": data.get("id"),
+        "signalId": data.get("signal_id"),
+        "symbol": data.get("symbol"),
+        "setupSlug": data.get("setup_slug"),
+        "sessionDate": data.get("session_date"),
+        "status": data.get("status"),
+        "approved": bool(data.get("approved")),
+        "clientVisibleApproved": bool(data.get("approved")) and bool(data.get("client_visible")),
+        "reviewedBy": data.get("reviewed_by"),
+        "reason": data.get("reason"),
+        "notes": data.get("notes"),
+        "source": data.get("source"),
+        "createdAt": data.get("created_at"),
+        "updatedAt": data.get("updated_at"),
+        "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+    }
+
+
+def _s867_get_signal_manual_approval(signal_id: str):
+    clean_signal_id = str(signal_id or "").strip()
+    if not clean_signal_id:
+        return {
+            "status": "MISSING_SIGNAL_ID",
+            "approved": False,
+            "clientVisibleApproved": False,
+            "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+        }
+
+    try:
+        _s867_init_table()
+        con = _s867_connect()
+        row = con.execute(
+            "SELECT * FROM signal_manual_approvals WHERE signal_id = ? LIMIT 1",
+            (clean_signal_id,),
+        ).fetchone()
+        con.close()
+
+        if row is None:
+            return {
+                "signalId": clean_signal_id,
+                "status": "NO_MANUAL_APPROVAL_RECORD",
+                "approved": False,
+                "clientVisibleApproved": False,
+                "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+            }
+
+        out = _s867_row_to_dict(row)
+        return out if isinstance(out, dict) else {
+            "signalId": clean_signal_id,
+            "status": "NO_MANUAL_APPROVAL_RECORD",
+            "approved": False,
+            "clientVisibleApproved": False,
+            "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+        }
+    except Exception as error:
+        return {
+            "signalId": clean_signal_id,
+            "status": "MANUAL_APPROVAL_READ_ERROR",
+            "approved": False,
+            "clientVisibleApproved": False,
+            "error": repr(error),
+            "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+        }
+
+
+def _s867_upsert_signal_manual_approval(payload, *, status: str, approved: bool, client_visible: bool):
+    body = payload if isinstance(payload, dict) else {}
+    signal_id = str(body.get("signalId") or body.get("signal_id") or "").strip()
+
+    if not signal_id:
+        return {
+            "ok": False,
+            "error": "missing_signal_id",
+            "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+        }
+
+    now_iso = _s867_now_iso()
+    status_clean = str(status or "").upper().strip() or "PENDING"
+
+    symbol = str(body.get("symbol") or "").upper().strip() or None
+    setup_slug = str(body.get("setupSlug") or body.get("setup_slug") or "").strip() or None
+    session_date = str(body.get("sessionDate") or body.get("session_date") or "")[:10] or None
+    reviewed_by = str(body.get("reviewedBy") or body.get("reviewed_by") or "admin").strip() or "admin"
+    reason = str(body.get("reason") or "").strip() or None
+    notes = str(body.get("notes") or "").strip() or None
+    source = str(body.get("source") or "admin_manual_gate").strip() or "admin_manual_gate"
+
+    _s867_init_table()
+    con = _s867_connect()
+    cur = con.cursor()
+    existing = cur.execute(
+        "SELECT created_at FROM signal_manual_approvals WHERE signal_id = ? LIMIT 1",
+        (signal_id,),
+    ).fetchone()
+    created_at = str(existing["created_at"]) if existing and existing["created_at"] else now_iso
+
+    cur.execute(
+        """
+        INSERT INTO signal_manual_approvals (
+            signal_id, symbol, setup_slug, session_date, status, approved, client_visible,
+            reviewed_by, reason, notes, source, payload_json, created_at, updated_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(signal_id) DO UPDATE SET
+            symbol = excluded.symbol,
+            setup_slug = excluded.setup_slug,
+            session_date = excluded.session_date,
+            status = excluded.status,
+            approved = excluded.approved,
+            client_visible = excluded.client_visible,
+            reviewed_by = excluded.reviewed_by,
+            reason = excluded.reason,
+            notes = excluded.notes,
+            source = excluded.source,
+            payload_json = excluded.payload_json,
+            updated_at = excluded.updated_at
+        """,
+        (
+            signal_id,
+            symbol,
+            setup_slug,
+            session_date,
+            status_clean,
+            1 if approved else 0,
+            1 if (approved and client_visible) else 0,
+            reviewed_by,
+            reason,
+            notes,
+            source,
+            _s867_json_dumps(body),
+            created_at,
+            now_iso,
+        ),
+    )
+    con.commit()
+    row = cur.execute(
+        "SELECT * FROM signal_manual_approvals WHERE signal_id = ? LIMIT 1",
+        (signal_id,),
+    ).fetchone()
+    con.close()
+
+    return {
+        "ok": True,
+        "approval": _s867_row_to_dict(row),
+        "policy": {
+            "manualApprovalIsFinalGateOnly": True,
+            "doesNotBypassQualityGate": True,
+            "doesNotBypassRiskRewardGate": True,
+            "doesNotBypassGradeGate": True,
+            "doesNotBypassLifecycleGate": True,
+            "doesNotSendTelegram": True,
+            "doesNotCreateSignal": True,
+        },
+        "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+    }
+
+
+def _s867_list_signal_manual_approvals(limit: int = 100, signal_id: str | None = None):
+    _s867_init_table()
+    safe_limit = max(1, min(int(limit or 100), 500))
+    clean_signal_id = str(signal_id or "").strip()
+
+    con = _s867_connect()
+    if clean_signal_id:
+        rows = con.execute(
+            "SELECT * FROM signal_manual_approvals WHERE signal_id = ? ORDER BY updated_at DESC LIMIT ?",
+            (clean_signal_id, safe_limit),
+        ).fetchall()
+    else:
+        rows = con.execute(
+            "SELECT * FROM signal_manual_approvals ORDER BY updated_at DESC LIMIT ?",
+            (safe_limit,),
+        ).fetchall()
+    con.close()
+
+    items = [_s867_row_to_dict(row) for row in rows]
+    items = [item for item in items if isinstance(item, dict)]
+
+    return {
+        "ok": True,
+        "items": items,
+        "summary": {
+            "count": len(items),
+            "approvedCount": len([item for item in items if item.get("approved") is True]),
+            "clientVisibleApprovedCount": len([item for item in items if item.get("clientVisibleApproved") is True]),
+            "limit": safe_limit,
+            "signalId": clean_signal_id or None,
+        },
+        "policy": {
+            "adminOnly": True,
+            "manualApprovalIsFinalGateOnly": True,
+            "changesClientDeliveryOnlyAfterS864Regenerates": True,
+            "doesNotBypassSignalGates": True,
+        },
+        "storageVersion": S867_SIGNAL_MANUAL_APPROVAL_VERSION,
+    }
+
+
+@app.get("/engine/admin/manual-approvals/list")
+def engine_admin_manual_approvals_list(limit: int = 100, signal_id: str | None = None):
+    return _s867_list_signal_manual_approvals(limit=limit, signal_id=signal_id)
+
+
+@app.post("/engine/admin/manual-approvals/approve")
+def engine_admin_manual_approvals_approve(payload: dict[str, Any] | None = None):
+    body = payload if isinstance(payload, dict) else {}
+    return _s867_upsert_signal_manual_approval(
+        body,
+        status="APPROVED",
+        approved=True,
+        client_visible=True,
+    )
+
+
+@app.post("/engine/admin/manual-approvals/reject")
+def engine_admin_manual_approvals_reject(payload: dict[str, Any] | None = None):
+    body = payload if isinstance(payload, dict) else {}
+    return _s867_upsert_signal_manual_approval(
+        body,
+        status="REJECTED",
+        approved=False,
+        client_visible=False,
+    )
+
+
+# === /S8.67 Admin Manual Approval Gate ======================================
 # === /S8.64 Unified SkillEdge AI Signal Output ===============================
