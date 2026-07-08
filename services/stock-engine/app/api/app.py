@@ -5868,7 +5868,7 @@ def engine_lifecycle_notifications_mark_batch(
     }
 
 # ---------------------------------------------------------------------------
-# S4.16 Signal Cockpit API Р Р†Р вЂљРІР‚Сњ compact dashboard-ready payload
+# S4.16 Signal Cockpit API Р В Р’В Р вЂ™Р’В Р В Р’В Р Р†Р вЂљР’В Р В Р’В Р вЂ™Р’В Р В Р вЂ Р В РІР‚С™Р РЋРІвЂћСћР В Р’В Р В РІР‚В Р В Р’В Р Р†Р вЂљРЎв„ўР В Р Р‹Р РЋРЎв„ў compact dashboard-ready payload
 # ---------------------------------------------------------------------------
 
 S416_COCKPIT_VERSION = "s416d_cockpit_frontend_safety_v1"
@@ -28710,5 +28710,826 @@ def engine_admin_manual_approvals_reject(payload: dict[str, Any] | None = None):
     )
 
 
+# === S8.70A Ready Candidate Quality Audit ===================================
+S870A_READY_QUALITY_AUDIT_VERSION = "s8_70a_ready_candidate_quality_audit_v1"
+S870B_READY_QUALITY_RR_SEMANTICS_VERSION = "s8_70b_ready_quality_rr_semantics_hotfix_v1"
+S870C_CALIBRATED_EDGE_GATE_VERSION = "s8_70c_calibrated_edge_gate_no_hard_limit_v1"
+
+
+# S8.70A Path hotfix: keep pathlib dependency local so app.py does not depend on a global Path import.
+def _s870a_reports_dir():
+    from pathlib import Path as _Path
+
+    try:
+        root = _Path(__file__).resolve().parents[2]
+    except Exception:
+        root = _Path(".")
+    out_dir = root / "reports" / "ready_candidate_quality"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    return out_dir
+
+
+def _s870a_nested(obj, path, default=None):
+    current = obj
+    for part in str(path or "").split("."):
+        if not part:
+            continue
+        if isinstance(current, dict):
+            current = current.get(part)
+        else:
+            return default
+        if current is None:
+            return default
+    return current
+
+
+def _s870a_float(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s870a_reasons(card):
+    raw = card.get("blockedReasons") if isinstance(card, dict) else []
+    if isinstance(raw, list):
+        return [str(item or "").strip() for item in raw if str(item or "").strip()]
+    return []
+
+
+def _s870a_is_ready_for_manual_review(card):
+    if not isinstance(card, dict):
+        return False
+    reasons = _s870a_reasons(card)
+    return bool(
+        card.get("premiumSignal") is True
+        and card.get("telegramEligible") is True
+        and str(card.get("lifecycleStatus") or "").upper() == "ACTIVE"
+        and str(card.get("qualityStatus") or "").upper() == "PASSED"
+        and str(card.get("grade") or "").upper() in ("A", "A+")
+        and (_s870a_float(card.get("score"), 0.0) or 0.0) >= 78
+        and (_s870a_float(card.get("riskReward"), 0.0) or 0.0) >= 2
+        and len(reasons) == 1
+        and reasons[0] == "manual_client_approval_missing"
+        and card.get("clientVisible") is not True
+    )
+
+
+def _s870a_side(card):
+    side = str(card.get("direction") or "").strip().upper()
+    setup_slug = str(card.get("setupSlug") or "").strip().lower()
+    if side in ("LONG", "BUY", "BULLISH"):
+        return "LONG"
+    if side in ("SHORT", "SELL", "BEARISH"):
+        return "SHORT"
+    if setup_slug.endswith("_short") or "short" in setup_slug or "rejection" in setup_slug or "breakdown" in setup_slug:
+        return "SHORT"
+    if setup_slug.endswith("_long") or "long" in setup_slug or "reclaim" in setup_slug or "breakout" in setup_slug or "continuation" in setup_slug:
+        return "LONG"
+    return "UNKNOWN"
+
+
+def _s870a_parse_dt(value):
+    text = str(value or "").strip()
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00"))
+    except Exception:
+        return None
+
+
+def _s870a_age_minutes(card):
+    candidates = [
+        _s870a_nested(card, "timing.triggerTime"),
+        _s870a_nested(card, "timing.createdAt"),
+        _s870a_nested(card, "timing.storedAt"),
+        card.get("createdAt"),
+        card.get("triggerTime"),
+        card.get("storedAt"),
+    ]
+    dt = None
+    for item in candidates:
+        dt = _s870a_parse_dt(item)
+        if dt:
+            break
+    if not dt:
+        return None
+    try:
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return round((datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds() / 60.0, 1)
+    except Exception:
+        return None
+
+
+def _s870a_add_flag(flags, severity, code, message, value=None):
+    flags.append({"severity": severity, "code": code, "message": message, "value": value})
+
+
+def _s870a_audit_card(card, duplicate_symbol_count=1, duplicate_setup_count=1):
+    symbol = str(card.get("symbol") or "").upper()
+    setup_slug = str(card.get("setupSlug") or "")
+    side = _s870a_side(card)
+
+    entry = _s870a_float(_s870a_nested(card, "levels.entry"))
+    stop = _s870a_float(_s870a_nested(card, "levels.stop"))
+    targets = _s870a_nested(card, "levels.targets", [])
+    target_prices = []
+    target_declared_rs = []
+    tp1 = None
+    tp1_declared_r = None
+    max_declared_r = None
+
+    if isinstance(targets, list):
+        for target in targets:
+            if not isinstance(target, dict):
+                continue
+            price = _s870a_float(target.get("price"))
+            declared_r = _s870a_float(target.get("r"))
+            if price is not None:
+                target_prices.append(price)
+            if declared_r is not None:
+                target_declared_rs.append(declared_r)
+
+    if target_prices:
+        tp1 = target_prices[0]
+    if target_declared_rs:
+        tp1_declared_r = target_declared_rs[0]
+        max_declared_r = max(target_declared_rs)
+
+    reported_rr = _s870a_float(card.get("riskReward"))
+    score = _s870a_float(card.get("score"), 0.0) or 0.0
+    age_minutes = _s870a_age_minutes(card)
+    flags = []
+
+    if not symbol:
+        _s870a_add_flag(flags, "CRITICAL", "symbol_missing", "Symbol is missing.")
+    if side == "UNKNOWN":
+        _s870a_add_flag(flags, "HIGH", "side_unknown", "Signal side could not be inferred.")
+    if entry is None:
+        _s870a_add_flag(flags, "CRITICAL", "entry_missing", "Entry is missing.")
+    if stop is None:
+        _s870a_add_flag(flags, "CRITICAL", "stop_missing", "Stop is missing.")
+    if tp1 is None:
+        _s870a_add_flag(flags, "CRITICAL", "tp1_missing", "TP1 is missing.")
+
+    stop_distance_pct = None
+    tp1_distance_pct = None
+    calculated_tp1_r = None
+    calculated_max_r = None
+    reported_rr_reference = None
+    geometry_ok = None
+
+    if entry and stop and tp1:
+        risk = abs(entry - stop)
+        reward = abs(tp1 - entry)
+        stop_distance_pct = round((risk / abs(entry)) * 100.0, 3) if entry else None
+        tp1_distance_pct = round((reward / abs(entry)) * 100.0, 3) if entry else None
+        calculated_tp1_r = round(reward / risk, 3) if risk > 0 else None
+
+        if risk > 0 and target_prices:
+            calculated_target_rs = [round(abs(price - entry) / risk, 3) for price in target_prices]
+            calculated_max_r = max(calculated_target_rs) if calculated_target_rs else None
+
+        reported_rr_reference = (
+            max_declared_r
+            if max_declared_r is not None
+            else calculated_max_r
+            if calculated_max_r is not None
+            else calculated_tp1_r
+        )
+
+        if side == "LONG":
+            geometry_ok = bool(stop < entry < tp1)
+            if not geometry_ok:
+                _s870a_add_flag(flags, "CRITICAL", "long_geometry_invalid", "LONG requires stop < entry < TP1.", {"entry": entry, "stop": stop, "tp1": tp1})
+        elif side == "SHORT":
+            geometry_ok = bool(stop > entry > tp1)
+            if not geometry_ok:
+                _s870a_add_flag(flags, "CRITICAL", "short_geometry_invalid", "SHORT requires stop > entry > TP1.", {"entry": entry, "stop": stop, "tp1": tp1})
+
+        if stop_distance_pct is not None:
+            if stop_distance_pct < 0.12:
+                _s870a_add_flag(flags, "HIGH", "stop_distance_too_tight", "Stop distance is very tight and may be noise-sensitive.", stop_distance_pct)
+            elif stop_distance_pct > 8.0:
+                _s870a_add_flag(flags, "HIGH", "stop_distance_too_wide", "Stop distance is too wide for fast signal delivery.", stop_distance_pct)
+            elif stop_distance_pct > 4.0:
+                _s870a_add_flag(flags, "MEDIUM", "stop_distance_wide", "Stop distance is wide; manual context required.", stop_distance_pct)
+
+        if calculated_tp1_r is not None:
+            if calculated_tp1_r < 1.8:
+                _s870a_add_flag(flags, "HIGH", "tp1_rr_below_1_8", "Calculated TP1 R is below the quality threshold.", calculated_tp1_r)
+            elif calculated_tp1_r < 2.0:
+                _s870a_add_flag(flags, "MEDIUM", "tp1_rr_below_2", "Calculated TP1 R is slightly below 2R.", calculated_tp1_r)
+
+        if reported_rr is not None and reported_rr_reference is not None:
+            rr_diff = abs(reported_rr - reported_rr_reference)
+            rr_context = {
+                "reportedRR": reported_rr,
+                "reportedRRReference": reported_rr_reference,
+                "tp1DeclaredR": tp1_declared_r,
+                "maxDeclaredR": max_declared_r,
+                "calculatedTp1R": calculated_tp1_r,
+                "calculatedMaxR": calculated_max_r,
+            }
+
+            if rr_diff >= 1.0:
+                _s870a_add_flag(flags, "HIGH", "reported_rr_mismatch", "Reported RR differs strongly from max target R reference.", rr_context)
+            elif rr_diff >= 0.5:
+                _s870a_add_flag(flags, "MEDIUM", "reported_rr_minor_mismatch", "Reported RR differs from max target R reference.", rr_context)
+
+    if reported_rr == 3.0 and tp1_declared_r == 2.0:
+        if (
+            (max_declared_r is None or max_declared_r < 2.8)
+            and (calculated_max_r is None or calculated_max_r < 2.8)
+        ):
+            _s870a_add_flag(flags, "MEDIUM", "rr_default_like", "Reported RR is 3R while no 3R target reference is visible; verify targets are not default-shaped.", {
+                "reportedRR": reported_rr,
+                "tp1DeclaredR": tp1_declared_r,
+                "maxDeclaredR": max_declared_r,
+                "calculatedMaxR": calculated_max_r,
+            })
+        else:
+            _s870a_add_flag(flags, "LOW", "rr_uses_max_target_not_tp1", "Reported RR appears to reference max target while TP1 remains 2R.", {
+                "reportedRR": reported_rr,
+                "tp1DeclaredR": tp1_declared_r,
+                "maxDeclaredR": max_declared_r,
+                "calculatedMaxR": calculated_max_r,
+            })
+    if score >= 99:
+        _s870a_add_flag(flags, "LOW", "score_saturated", "Score is saturated near 100; verify score is not over-compressed.", score)
+    if duplicate_symbol_count > 1:
+        _s870a_add_flag(flags, "MEDIUM", "duplicate_symbol_in_ready_queue", "Multiple ready signals exist for the same symbol.", duplicate_symbol_count)
+    if duplicate_setup_count > 12:
+        _s870a_add_flag(flags, "MEDIUM", "setup_overcrowded_ready_queue", "One setup dominates the ready queue; verify no template/default burst.", {"setupSlug": setup_slug, "count": duplicate_setup_count})
+    if symbol in ("SPY", "QQQ", "IWM", "DIA"):
+        _s870a_add_flag(flags, "MEDIUM", "broad_etf_requires_context", "Broad ETF signal requires separate large-cap/index context.", symbol)
+    if age_minutes is None:
+        _s870a_add_flag(flags, "MEDIUM", "signal_time_missing", "Signal time could not be evaluated.")
+    elif age_minutes > 90:
+        _s870a_add_flag(flags, "HIGH", "signal_too_old_for_manual_release", "Signal is too old for live client release without revalidation.", age_minutes)
+    elif age_minutes > 45:
+        _s870a_add_flag(flags, "MEDIUM", "signal_age_requires_recheck", "Signal is aging; price/context recheck required before approval.", age_minutes)
+
+    critical = sum(1 for item in flags if item.get("severity") == "CRITICAL")
+    high = sum(1 for item in flags if item.get("severity") == "HIGH")
+    medium = sum(1 for item in flags if item.get("severity") == "MEDIUM")
+
+    if critical > 0:
+        decision = "FAIL_CRITICAL"
+    elif high > 0:
+        decision = "REVIEW_HIGH_RISK"
+    elif medium > 0:
+        decision = "REVIEW_REQUIRED"
+    else:
+        decision = "PASS_READY_QUALITY"
+
+    return {
+        "symbol": symbol,
+        "setupSlug": setup_slug,
+        "signalId": card.get("signalId"),
+        "side": side,
+        "decision": decision,
+        "severityCounts": {"critical": critical, "high": high, "medium": medium, "low": sum(1 for item in flags if item.get("severity") == "LOW")},
+        "metrics": {
+            "entry": entry,
+            "stop": stop,
+            "tp1": tp1,
+            "reportedRR": reported_rr,
+            "reportedRRReference": reported_rr_reference,
+            "tp1DeclaredR": tp1_declared_r,
+            "maxDeclaredR": max_declared_r,
+            "calculatedTp1R": calculated_tp1_r,
+            "calculatedMaxR": calculated_max_r,
+            "stopDistancePct": stop_distance_pct,
+            "tp1DistancePct": tp1_distance_pct,
+            "score": score,
+            "ageMinutes": age_minutes,
+            "geometryOk": geometry_ok,
+            "duplicateSymbolCount": duplicate_symbol_count,
+            "duplicateSetupCount": duplicate_setup_count,
+        },
+        "flags": flags,
+        "readyCard": {
+            "lifecycleStatus": card.get("lifecycleStatus"),
+            "qualityStatus": card.get("qualityStatus"),
+            "grade": card.get("grade"),
+            "premiumSignal": card.get("premiumSignal"),
+            "telegramEligible": card.get("telegramEligible"),
+            "blockedReasons": _s870a_reasons(card),
+        },
+    }
+
+
+def _s870a_count_by(items, key):
+    counts = {}
+    for item in items:
+        value = str(item.get(key) or "unknown")
+        counts[value] = counts.get(value, 0) + 1
+    return counts
+
+
+def _s870a_flag_counts(audits):
+    counts = {}
+    for audit in audits:
+        for flag in audit.get("flags", []):
+            code = str(flag.get("code") or "unknown")
+            counts[code] = counts.get(code, 0) + 1
+    return dict(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))
+
+
+
+# === S8.70C Calibrated Edge Gate / No Hard Limit =============================
+def _s870c_edge_root_dir():
+    from pathlib import Path as _Path
+
+    try:
+        return _Path(__file__).resolve().parents[2]
+    except Exception:
+        return _Path(".")
+
+
+def _s870c_edge_float(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s870c_edge_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def _s870c_edge_safe_div(num, den):
+    try:
+        den = float(den)
+        if den == 0:
+            return None
+        return float(num) / den
+    except Exception:
+        return None
+
+
+def _s870c_edge_db_candidates():
+    root = _s870c_edge_root_dir()
+    dirs = [
+        root / "data",
+        root / "app" / "data",
+        root / "reports",
+    ]
+    patterns = ["*.db", "*.sqlite", "*.sqlite3"]
+
+    found = []
+    seen = set()
+    for directory in dirs:
+        try:
+            if not directory.exists():
+                continue
+            for pattern in patterns:
+                for path in directory.rglob(pattern):
+                    key = str(path.resolve())
+                    if key in seen:
+                        continue
+                    if ".venv" in key or "__pycache__" in key:
+                        continue
+                    seen.add(key)
+                    found.append(path)
+        except Exception:
+            continue
+
+    return found[:20]
+
+
+def _s870c_edge_column(columns, *names):
+    lowered = {str(col).lower(): col for col in columns}
+    for name in names:
+        direct = lowered.get(str(name).lower())
+        if direct:
+            return direct
+    return None
+
+
+def _s870c_edge_outcome_kind(row, result_col=None, status_col=None, r_col=None):
+    text_parts = []
+    if result_col and result_col in row:
+        text_parts.append(str(row.get(result_col) or ""))
+    if status_col and status_col in row:
+        text_parts.append(str(row.get(status_col) or ""))
+
+    text = " ".join(text_parts).upper()
+    result_r = _s870c_edge_float(row.get(r_col)) if r_col and r_col in row else None
+
+    if any(token in text for token in ("WORKED", "TP1", "TP2", "TARGET", "WIN")):
+        return "WIN", result_r
+    if any(token in text for token in ("FAILED", "STOP", "LOSS")):
+        return "LOSS", result_r
+
+    if result_r is not None:
+        if result_r > 0:
+            return "WIN", result_r
+        if result_r < 0:
+            return "LOSS", result_r
+
+    return "OPEN_OR_UNKNOWN", result_r
+
+
+def _s870c_edge_empty_stats(setup_slug, symbol=None, source="not_found"):
+    return {
+        "setupSlug": setup_slug,
+        "symbol": symbol,
+        "source": source,
+        "statsAvailable": False,
+        "closedTrades": 0,
+        "wins": 0,
+        "losses": 0,
+        "winRate": None,
+        "expectedWinRate": None,
+        "avgR": None,
+        "expectancyR": None,
+        "sampleQuality": "NO_STATS_FOUND",
+        "note": "No closed outcome statistics found yet. Signal remains eligible for research/manual review, but edge is not statistically proven.",
+    }
+
+
+def _s870c_edge_stats_from_sqlite(setup_slug, symbol=None):
+    import sqlite3
+
+    setup_slug = str(setup_slug or "").strip()
+    symbol = str(symbol or "").strip().upper() if symbol else None
+
+    if not setup_slug:
+        return _s870c_edge_empty_stats(setup_slug, symbol, source="missing_setup_slug")
+
+    aggregate = {
+        "closedTrades": 0,
+        "wins": 0,
+        "losses": 0,
+        "rValues": [],
+        "sources": [],
+    }
+
+    for db_path in _s870c_edge_db_candidates():
+        conn = None
+        try:
+            conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=2)
+            conn.row_factory = sqlite3.Row
+            tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+        except Exception:
+            try:
+                if conn:
+                    conn.close()
+            except Exception:
+                pass
+            continue
+
+        for table_row in tables:
+            table = table_row[0]
+            try:
+                info = conn.execute(f'PRAGMA table_info("{table}")').fetchall()
+                columns = [row[1] for row in info]
+                if not columns:
+                    continue
+
+                setup_col = _s870c_edge_column(columns, "setup_slug", "setupSlug", "setup", "strategy_slug", "strategySlug")
+                if not setup_col:
+                    continue
+
+                result_col = _s870c_edge_column(columns, "result", "outcome", "outcome_status", "outcomeStatus", "result_status", "resultStatus", "first_event", "firstEvent")
+                status_col = _s870c_edge_column(columns, "status", "state", "lifecycle_status", "lifecycleStatus")
+                r_col = _s870c_edge_column(columns, "result_r", "resultR", "r_multiple", "rMultiple", "pnl_r", "pnlR", "realized_r", "realizedR")
+
+                if not result_col and not status_col and not r_col:
+                    continue
+
+                rows = conn.execute(f'SELECT * FROM "{table}" WHERE "{setup_col}" = ? LIMIT 5000', [setup_slug]).fetchall()
+
+                table_closed = 0
+                table_wins = 0
+                table_losses = 0
+                table_r_values = []
+
+                for raw in rows:
+                    row = dict(raw)
+                    kind, result_r = _s870c_edge_outcome_kind(row, result_col=result_col, status_col=status_col, r_col=r_col)
+
+                    if kind not in ("WIN", "LOSS"):
+                        continue
+
+                    table_closed += 1
+                    if kind == "WIN":
+                        table_wins += 1
+                    else:
+                        table_losses += 1
+
+                    if result_r is not None:
+                        table_r_values.append(result_r)
+
+                if table_closed > 0:
+                    aggregate["closedTrades"] += table_closed
+                    aggregate["wins"] += table_wins
+                    aggregate["losses"] += table_losses
+                    aggregate["rValues"].extend(table_r_values)
+                    aggregate["sources"].append({
+                        "db": str(db_path),
+                        "table": table,
+                        "closedTrades": table_closed,
+                        "wins": table_wins,
+                        "losses": table_losses,
+                    })
+
+            except Exception:
+                continue
+
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+    closed = aggregate["closedTrades"]
+    if closed <= 0:
+        return _s870c_edge_empty_stats(setup_slug, symbol, source="sqlite_scan_no_closed_rows")
+
+    wins = aggregate["wins"]
+    losses = aggregate["losses"]
+    win_rate = _s870c_edge_safe_div(wins, closed)
+    r_values = aggregate["rValues"]
+    avg_r = round(sum(r_values) / len(r_values), 4) if r_values else None
+
+    expectancy_r = avg_r if avg_r is not None else round(((wins * 2.0) + (losses * -1.0)) / closed, 4)
+
+    return {
+        "setupSlug": setup_slug,
+        "symbol": symbol,
+        "source": "sqlite_outcome_scan",
+        "statsAvailable": True,
+        "closedTrades": closed,
+        "wins": wins,
+        "losses": losses,
+        "winRate": round(win_rate, 4) if win_rate is not None else None,
+        "expectedWinRate": round(win_rate, 4) if win_rate is not None else None,
+        "avgR": avg_r,
+        "expectancyR": expectancy_r,
+        "sampleQuality": "OK" if closed >= 30 else "SMALL_SAMPLE" if closed >= 10 else "VERY_SMALL_SAMPLE",
+        "sources": aggregate["sources"][:10],
+    }
+
+
+def _s870c_edge_status(stats, min_win_rate=0.65, proven_min_closed=30, promising_min_closed=10):
+    closed = _s870c_edge_int(stats.get("closedTrades"), 0)
+    win_rate = _s870c_edge_float(stats.get("expectedWinRate"))
+    expectancy = _s870c_edge_float(stats.get("expectancyR"))
+
+    if not stats.get("statsAvailable"):
+        return {
+            "edgeStatus": "INSUFFICIENT_SAMPLE",
+            "clientEdgeGatePassed": False,
+            "reason": "No closed outcome stats available yet.",
+        }
+
+    if closed < promising_min_closed:
+        return {
+            "edgeStatus": "INSUFFICIENT_SAMPLE",
+            "clientEdgeGatePassed": False,
+            "reason": f"Only {closed} closed trades; need at least {promising_min_closed} for promising edge.",
+        }
+
+    if win_rate is None:
+        return {
+            "edgeStatus": "INSUFFICIENT_SAMPLE",
+            "clientEdgeGatePassed": False,
+            "reason": "Win rate could not be computed.",
+        }
+
+    expectancy_ok = expectancy is None or expectancy > 0
+
+    if closed >= proven_min_closed and win_rate >= min_win_rate and expectancy_ok:
+        return {
+            "edgeStatus": "PROVEN_EDGE",
+            "clientEdgeGatePassed": True,
+            "reason": f"Closed trades >= {proven_min_closed}, win rate >= {min_win_rate:.0%}, expectancy positive/unknown.",
+        }
+
+    if closed >= promising_min_closed and win_rate >= min_win_rate and expectancy_ok:
+        return {
+            "edgeStatus": "PROMISING_EDGE",
+            "clientEdgeGatePassed": False,
+            "reason": f"Win rate >= {min_win_rate:.0%}, but sample below proven threshold.",
+        }
+
+    if win_rate >= 0.55 and expectancy_ok:
+        return {
+            "edgeStatus": "EDGE_WATCHLIST",
+            "clientEdgeGatePassed": False,
+            "reason": "Edge is not strong enough for 65% target yet, but not weak.",
+        }
+
+    return {
+        "edgeStatus": "EDGE_WEAK",
+        "clientEdgeGatePassed": False,
+        "reason": "Historical edge is below target or expectancy is not positive.",
+    }
+
+
+def _s870c_attach_calibrated_edge(audit, min_win_rate=0.65, proven_min_closed=30, promising_min_closed=10):
+    if not isinstance(audit, dict):
+        return audit
+
+    enriched = dict(audit)
+    setup_slug = enriched.get("setupSlug")
+    symbol = enriched.get("symbol")
+
+    stats = _s870c_edge_stats_from_sqlite(setup_slug, symbol=symbol)
+    status = _s870c_edge_status(
+        stats,
+        min_win_rate=min_win_rate,
+        proven_min_closed=proven_min_closed,
+        promising_min_closed=promising_min_closed,
+    )
+
+    enriched["calibratedEdge"] = {
+        "version": S870C_CALIBRATED_EDGE_GATE_VERSION,
+        "targetWinRate": min_win_rate,
+        "provenMinClosedTrades": proven_min_closed,
+        "promisingMinClosedTrades": promising_min_closed,
+        **stats,
+        **status,
+        "noHardLimitPolicy": {
+            "doNotLimitBySetupCount": True,
+            "doNotLimitBySymbolCount": True,
+            "keepAllSignalsForLearning": True,
+            "clientReleaseRequiresSignalQualityAndEdgeOrManualPolicy": True,
+        },
+    }
+    enriched["edgeStatus"] = enriched["calibratedEdge"].get("edgeStatus")
+    enriched["expectedWinRate"] = enriched["calibratedEdge"].get("expectedWinRate")
+    enriched["clientEdgeGatePassed"] = enriched["calibratedEdge"].get("clientEdgeGatePassed")
+
+    return enriched
+
+
+def _s870c_edge_counts(audits):
+    counts = {}
+    for audit in audits:
+        status = str((audit.get("calibratedEdge") or {}).get("edgeStatus") or "NOT_EVALUATED")
+        counts[status] = counts.get(status, 0) + 1
+    return dict(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))
+
+
+# === /S8.70C Calibrated Edge Gate / No Hard Limit ============================
+
+
+def _s870a_run_report(limit=50, publish=True, edge_min_win_rate=0.65, proven_min_closed_trades=30, promising_min_closed_trades=10):
+    safe_limit = max(1, min(int(limit or 50), 100))
+    unified = _s864_run_report(limit=safe_limit, publish=publish)
+    internal = unified.get("internalOutput") if isinstance(unified, dict) else {}
+    cards = internal.get("recentUnifiedCards") if isinstance(internal, dict) else []
+    if not isinstance(cards, list):
+        cards = []
+
+    ready_cards = [card for card in cards if _s870a_is_ready_for_manual_review(card)]
+    symbol_counts = _s870a_count_by(ready_cards, "symbol")
+    setup_counts = _s870a_count_by(ready_cards, "setupSlug")
+    audits = [
+        _s870a_audit_card(
+            card,
+            duplicate_symbol_count=symbol_counts.get(str(card.get("symbol") or "unknown"), 1),
+            duplicate_setup_count=setup_counts.get(str(card.get("setupSlug") or "unknown"), 1),
+        )
+        for card in ready_cards
+    ]
+
+    audits = [
+        _s870c_attach_calibrated_edge(
+            audit,
+            min_win_rate=edge_min_win_rate,
+            proven_min_closed=proven_min_closed_trades,
+            promising_min_closed=promising_min_closed_trades,
+        )
+        for audit in audits
+    ]
+    edge_counts = _s870c_edge_counts(audits)
+    client_edge_gate_passed = [item for item in audits if item.get("clientEdgeGatePassed") is True]
+
+    passed = [item for item in audits if item.get("decision") == "PASS_READY_QUALITY"]
+    review_required = [item for item in audits if item.get("decision") in ("REVIEW_REQUIRED", "REVIEW_HIGH_RISK")]
+    critical = [item for item in audits if item.get("decision") == "FAIL_CRITICAL"]
+    flag_counts = _s870a_flag_counts(audits)
+
+    result = {
+        "ok": True,
+        "storageVersion": S870C_CALIBRATED_EDGE_GATE_VERSION,
+        "baseAuditVersion": S870A_READY_QUALITY_AUDIT_VERSION,
+        "baseRrSemanticsVersion": S870B_READY_QUALITY_RR_SEMANTICS_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "unifiedStorageVersion": unified.get("storageVersion") if isinstance(unified, dict) else None,
+            "unifiedGeneratedAt": unified.get("generatedAt") if isinstance(unified, dict) else None,
+            "limit": safe_limit,
+            "publishUnified": bool(publish),
+        },
+        "summary": {
+            "cardsEvaluated": len(cards),
+            "readyInputCount": len(ready_cards),
+            "passReadyQualityCount": len(passed),
+            "reviewRequiredCount": len(review_required),
+            "criticalFailCount": len(critical),
+            "clientEdgeGatePassedCount": len(client_edge_gate_passed),
+            "edgeStatusCounts": edge_counts,
+            "edgeMinWinRate": edge_min_win_rate,
+            "provenMinClosedTrades": proven_min_closed_trades,
+            "promisingMinClosedTrades": promising_min_closed_trades,
+            "topFlag": next(iter(flag_counts), None),
+            "decisionState": (
+                "READY_QUALITY_PASSED"
+                if len(ready_cards) > 0 and len(passed) == len(ready_cards)
+                else "READY_REVIEW_REQUIRED"
+                if len(ready_cards) > 0 and len(critical) == 0
+                else "READY_CRITICAL_ISSUES"
+                if len(critical) > 0
+                else "NO_READY_CANDIDATES"
+            ),
+        },
+        "flagCounts": flag_counts,
+        "setupCounts": dict(sorted(setup_counts.items(), key=lambda kv: kv[1], reverse=True)),
+        "edgeGate": {
+            "version": S870C_CALIBRATED_EDGE_GATE_VERSION,
+            "enabled": True,
+            "mode": "NO_HARD_LIMIT_RESEARCH_METADATA",
+            "targetWinRate": edge_min_win_rate,
+            "provenMinClosedTrades": proven_min_closed_trades,
+            "promisingMinClosedTrades": promising_min_closed_trades,
+            "doNotLimitBySetupCount": True,
+            "doNotLimitBySymbolCount": True,
+            "keepAllQualitySignalsForLearning": True,
+            "clientReleaseRuleTarget": "quality gates + calibrated edge >= target OR explicit admin/manual policy",
+            "doesNotApproveSignals": True,
+            "doesNotRejectSignals": True,
+            "doesNotSendTelegram": True,
+            "doesNotChangeClientDelivery": True,
+        },
+        "audits": audits[:100],
+        "policy": {
+            "researchOnly": True,
+            "doesNotApproveSignals": True,
+            "doesNotRejectSignals": True,
+            "doesNotSendTelegram": True,
+            "doesNotChangeClientDelivery": True,
+            "manualApprovalStillRequired": True,
+            "purpose": "Audit ready-for-manual-approval signals before trusting them as normal client signals.",
+        },
+    }
+
+    out_dir = _s870a_reports_dir()
+    latest = out_dir / "latest_s870a.json"
+    stamp = str(result.get("generatedAt") or "").replace(":", "-").replace(".", "-")
+    snapshot = out_dir / f"{stamp}.json"
+    text = json.dumps(result, ensure_ascii=False, indent=2)
+    latest.write_text(text, encoding="utf-8")
+    snapshot.write_text(text, encoding="utf-8")
+    return result
+
+
+@app.post("/engine/research/ready-quality-audit/run")
+def engine_research_ready_quality_audit_run(
+    limit: int = 50,
+    publish: bool = True,
+    edge_min_win_rate: float = 0.65,
+    proven_min_closed_trades: int = 30,
+    promising_min_closed_trades: int = 10,
+):
+    return _s870a_run_report(
+        limit=limit,
+        publish=publish,
+        edge_min_win_rate=edge_min_win_rate,
+        proven_min_closed_trades=proven_min_closed_trades,
+        promising_min_closed_trades=promising_min_closed_trades,
+    )
+
+
+@app.get("/engine/research/ready-quality-audit/latest")
+def engine_research_ready_quality_audit_latest():
+    latest = _s870a_reports_dir() / "latest_s870a.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S870A_READY_QUALITY_AUDIT_VERSION,
+            "error": "No S8.70A ready candidate quality audit report yet. Run POST /engine/research/ready-quality-audit/run.",
+        }
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# S8.70B Ready Quality RR Semantics Hotfix installed: reported RR now compares against max target R, TP1 remains strict >=2R.
+# S8.70C Calibrated Edge Gate / No Hard Limit installed: every quality signal stays in research/output; edge is evaluated separately.
+# === /S8.70A Ready Candidate Quality Audit ==================================
 # === /S8.67 Admin Manual Approval Gate ======================================
 # === /S8.64 Unified SkillEdge AI Signal Output ===============================
