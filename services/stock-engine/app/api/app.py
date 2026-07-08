@@ -28187,6 +28187,18 @@ def _s864_block_reasons(row, signal_payload, rr):
     if not approved:
         reasons.append("manual_client_approval_missing")
 
+    # S8.70F: autonomous strategy calibration policy is an additional client gate.
+    # Manual approval is final-only and cannot bypass weak/unproven setup policy.
+    try:
+        _s870f_signal_payload = signal_payload if "signal_payload" in locals() else None
+        _s870f_policy_decision = _s870f_strategy_policy_decision(row, signal_payload=_s870f_signal_payload)
+        for _s870f_reason in (_s870f_policy_decision.get("blockReasons") or []):
+            if _s870f_reason and _s870f_reason not in reasons:
+                reasons.append(_s870f_reason)
+    except Exception:
+        if "strategy_policy_error" not in reasons:
+            reasons.append("strategy_policy_error")
+
     return reasons
 
 
@@ -30161,6 +30173,726 @@ def engine_research_setup_calibration_segments_latest():
         }
     return json.loads(latest.read_text(encoding="utf-8"))
 
+
+
+# === S8.70E Autonomous Strategy Calibration Agent ============================
+S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION = "s8_70e_autonomous_strategy_calibration_agent_v1"
+
+
+def _s870e_now_iso():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s870e_root_dir():
+    from pathlib import Path as _Path
+    try:
+        return _Path(__file__).resolve().parents[2]
+    except Exception:
+        return _Path(".")
+
+
+def _s870e_reports_dir():
+    out = _s870e_root_dir() / "reports" / "autonomous_strategy_calibration"
+    out.mkdir(parents=True, exist_ok=True)
+    return out
+
+
+def _s870e_policy_dir():
+    out = _s870e_root_dir() / "data" / "strategy_calibration_policy"
+    out.mkdir(parents=True, exist_ok=True)
+    return out
+
+
+def _s870e_float(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s870e_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def _s870e_load_segment_report(target_win_rate=0.65, min_closed_trades=30):
+    import json
+
+    latest = _s870d_reports_dir() / "latest_s870d.json"
+    if latest.exists():
+        return json.loads(latest.read_text(encoding="utf-8"))
+
+    return _s870d_run_report(
+        min_win_rate=target_win_rate,
+        min_closed_trades=min_closed_trades,
+        min_promising_closed_trades=10,
+        max_rows=100000,
+        publish=True,
+    )
+
+
+def _s870e_baseline(setup_item):
+    base = setup_item.get("baseline")
+    return base if isinstance(base, dict) else {}
+
+
+def _s870e_compact_segments(items, limit=10):
+    out = []
+    for seg in items or []:
+        if not isinstance(seg, dict):
+            continue
+        out.append({
+            "segmentId": seg.get("segmentId"),
+            "filters": seg.get("filters") or [],
+            "closedTrades": seg.get("closedTrades"),
+            "wins": seg.get("wins"),
+            "losses": seg.get("losses"),
+            "winRate": seg.get("winRate"),
+            "avgR": seg.get("avgR"),
+            "expectancyR": seg.get("expectancyR"),
+            "overfitRisk": seg.get("overfitRisk"),
+            "status": seg.get("status"),
+            "productionEligible": seg.get("productionEligible"),
+            "promising": seg.get("promising"),
+        })
+    return out[:limit]
+
+
+def _s870e_decide_setup(setup_item, target_win_rate=0.65, min_closed_trades=30):
+    setup_slug = str(setup_item.get("setupSlug") or "unknown")
+    base = _s870e_baseline(setup_item)
+
+    closed = _s870e_int(base.get("closedTrades"), 0)
+    win_rate = _s870e_float(base.get("winRate"))
+    avg_r = _s870e_float(base.get("avgR"))
+    expectancy_r = _s870e_float(base.get("expectancyR"))
+    baseline_status = base.get("status")
+    baseline_overfit = base.get("overfitRisk")
+
+    production_count = _s870e_int(setup_item.get("productionEligibleCount"), 0)
+    promising_count = _s870e_int(setup_item.get("promisingCount"), 0)
+    eligible_segments = _s870e_compact_segments(setup_item.get("bestProductionEligibleSegments") or [])
+    promising_segments = _s870e_compact_segments(setup_item.get("bestPromisingSegments") or [])
+
+    if production_count > 0:
+        action = "PRODUCTION_CANDIDATE"
+        client_mode = "EDGE_PROVEN_CANDIDATE"
+        priority = "HIGH"
+        reason = "At least one segment passed honest production thresholds from closed outcomes."
+        next_step = "Keep in shadow-confirmation and prepare S8.70F policy integration."
+    elif promising_count > 0:
+        action = "FORWARD_TEST_PROMISING_SEGMENTS"
+        client_mode = "CLIENT_BLOCKED_EDGE_NOT_PROVEN"
+        priority = "HIGH"
+        reason = "A 65%+ positive-expectancy segment exists, but sample/overfit guard is not production-safe yet."
+        next_step = "Auto-forward-test promising filters until minimum sample is reached."
+    elif closed < min_closed_trades:
+        action = "SHADOW_ONLY_COLLECT_DATA"
+        client_mode = "CLIENT_BLOCKED_INSUFFICIENT_SAMPLE"
+        priority = "MEDIUM"
+        reason = "Not enough closed trades for honest production proof."
+        next_step = "Keep collecting closed outcomes automatically."
+    elif (win_rate is not None and win_rate < target_win_rate) or (expectancy_r is not None and expectancy_r <= 0):
+        action = "SHADOW_ONLY_REWORK"
+        client_mode = "CLIENT_BLOCKED_EDGE_WEAK"
+        priority = "HIGH"
+        reason = "Baseline setup is below target winrate or expectancy is not positive."
+        next_step = "Auto-search stricter filters; keep this setup research-only for client delivery."
+    else:
+        action = "SHADOW_ONLY_REVIEW"
+        client_mode = "CLIENT_BLOCKED_REVIEW_REQUIRED"
+        priority = "MEDIUM"
+        reason = "Setup does not pass explicit production rules yet."
+        next_step = "Continue autonomous segment search and forward testing."
+
+    return {
+        "setupSlug": setup_slug,
+        "action": action,
+        "clientMode": client_mode,
+        "clientReleaseAllowed": False,
+        "priority": priority,
+        "reason": reason,
+        "nextStep": next_step,
+        "baseline": {
+            "closedTrades": closed,
+            "winRate": win_rate,
+            "avgR": avg_r,
+            "expectancyR": expectancy_r,
+            "status": baseline_status,
+            "overfitRisk": baseline_overfit,
+        },
+        "productionEligibleCount": production_count,
+        "promisingCount": promising_count,
+        "productionEligibleSegments": eligible_segments,
+        "promisingSegments": promising_segments,
+        "agentDecision": {
+            "decidedBy": S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION,
+            "targetWinRate": target_win_rate,
+            "minClosedTrades": min_closed_trades,
+            "usesClosedOutcomesOnly": True,
+            "doesNotFabricateStats": True,
+            "adminOnlyReviewsResult": True,
+        },
+    }
+
+
+def _s870e_counts(items, key):
+    counts = {}
+    for item in items:
+        name = item.get(key) or "UNKNOWN"
+        counts[name] = counts.get(name, 0) + 1
+    return dict(sorted(counts.items(), key=lambda kv: kv[1], reverse=True))
+
+
+def _s870e_policy_from_actions(actions, source_report):
+    strategies = {}
+    for a in actions:
+        setup_slug = a.get("setupSlug")
+        if not setup_slug:
+            continue
+        strategies[setup_slug] = {
+            "setupSlug": setup_slug,
+            "clientReleaseAllowed": bool(a.get("clientReleaseAllowed")),
+            "clientMode": a.get("clientMode"),
+            "action": a.get("action"),
+            "priority": a.get("priority"),
+            "reason": a.get("reason"),
+            "nextStep": a.get("nextStep"),
+            "baseline": a.get("baseline"),
+            "productionEligibleSegments": a.get("productionEligibleSegments") or [],
+            "promisingSegments": a.get("promisingSegments") or [],
+            "updatedAt": _s870e_now_iso(),
+            "updatedBy": S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION,
+        }
+
+    return {
+        "ok": True,
+        "policyVersion": S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION,
+        "generatedAt": _s870e_now_iso(),
+        "source": {
+            "segmentReportVersion": source_report.get("storageVersion"),
+            "segmentReportGeneratedAt": source_report.get("generatedAt"),
+            "summary": source_report.get("summary") or {},
+        },
+        "globalRules": {
+            "defaultClientReleaseAllowed": False,
+            "weakOrUnprovenSetupsRemainResearchOnly": True,
+            "doesNotLimitBySetupCount": True,
+            "doesNotLimitBySymbolCount": True,
+            "noFakeStats": True,
+        },
+        "strategies": strategies,
+    }
+
+
+def _s870e_admin_events(actions):
+    now = _s870e_now_iso()
+    return [
+        {
+            "eventType": "AI_STRATEGY_CALIBRATION_ACTION",
+            "createdAt": now,
+            "agent": "Autonomous Strategy Calibration Agent",
+            "version": S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION,
+            "setupSlug": a.get("setupSlug"),
+            "action": a.get("action"),
+            "clientMode": a.get("clientMode"),
+            "priority": a.get("priority"),
+            "message": f"AI set {a.get('setupSlug')} to {a.get('action')}: {a.get('reason')}",
+            "nextStep": a.get("nextStep"),
+            "baseline": a.get("baseline"),
+        }
+        for a in actions
+    ]
+
+
+def _s870e_run_report(target_win_rate=0.65, min_closed_trades=30, apply_policy=True, publish=True):
+    import json
+
+    target_win_rate = max(0.50, min(float(target_win_rate or 0.65), 0.95))
+    min_closed_trades = max(5, min(int(min_closed_trades or 30), 500))
+
+    source_report = _s870e_load_segment_report(target_win_rate=target_win_rate, min_closed_trades=min_closed_trades)
+    per_setup = source_report.get("perSetup") or []
+    actions = [_s870e_decide_setup(item, target_win_rate=target_win_rate, min_closed_trades=min_closed_trades) for item in per_setup if isinstance(item, dict)]
+    policy = _s870e_policy_from_actions(actions, source_report)
+    events = _s870e_admin_events(actions)
+
+    result = {
+        "ok": True,
+        "storageVersion": S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION,
+        "generatedAt": _s870e_now_iso(),
+        "summary": {
+            "setupCount": len(actions),
+            "actionCounts": _s870e_counts(actions, "action"),
+            "clientModeCounts": _s870e_counts(actions, "clientMode"),
+            "targetWinRate": target_win_rate,
+            "minClosedTrades": min_closed_trades,
+            "policyApplied": bool(apply_policy),
+            "decisionState": "AUTONOMOUS_CALIBRATION_ACTIONS_READY",
+        },
+        "policy": {
+            "agentIsAutonomous": True,
+            "adminOnlySeesResult": True,
+            "noFakeStats": True,
+            "usesOnlyS870DClosedOutcomeSegments": True,
+            "doesNotApproveManualSignals": True,
+            "doesNotRejectManualSignals": True,
+            "doesNotSendTelegram": True,
+            "doesNotChangeClientDeliveryUntilS870FIntegration": True,
+        },
+        "sourceReportSummary": source_report.get("summary") or {},
+        "actions": actions,
+        "adminEvents": events,
+        "strategyCalibrationPolicy": policy,
+    }
+
+    if publish:
+        out_dir = _s870e_reports_dir()
+        stamp = str(result["generatedAt"]).replace(":", "-").replace(".", "-")
+        payload = json.dumps(result, ensure_ascii=False, indent=2)
+        (out_dir / "latest_s870e.json").write_text(payload, encoding="utf-8")
+        (out_dir / f"{stamp}.json").write_text(payload, encoding="utf-8")
+
+    if apply_policy:
+        policy_payload = json.dumps(policy, ensure_ascii=False, indent=2)
+        (_s870e_policy_dir() / "latest_s870e_policy.json").write_text(policy_payload, encoding="utf-8")
+
+    return result
+
+
+@app.post("/engine/research/autonomous-strategy-calibration/run")
+def engine_research_autonomous_strategy_calibration_run(
+    target_win_rate: float = 0.65,
+    min_closed_trades: int = 30,
+    apply_policy: bool = True,
+    publish: bool = True,
+):
+    return _s870e_run_report(
+        target_win_rate=target_win_rate,
+        min_closed_trades=min_closed_trades,
+        apply_policy=apply_policy,
+        publish=publish,
+    )
+
+
+@app.get("/engine/research/autonomous-strategy-calibration/latest")
+def engine_research_autonomous_strategy_calibration_latest():
+    import json
+
+    latest = _s870e_reports_dir() / "latest_s870e.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION,
+            "error": "No S8.70E report yet. Run POST /engine/research/autonomous-strategy-calibration/run.",
+        }
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+@app.get("/engine/research/autonomous-strategy-calibration/policy")
+def engine_research_autonomous_strategy_calibration_policy():
+    import json
+
+    latest = _s870e_policy_dir() / "latest_s870e_policy.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "policyVersion": S870E_AUTONOMOUS_STRATEGY_CALIBRATION_VERSION,
+            "error": "No S8.70E policy yet. Run POST /engine/research/autonomous-strategy-calibration/run?apply_policy=true.",
+        }
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+
+# === S8.70F Client Eligibility Policy Hook ==================================
+S870F_CLIENT_ELIGIBILITY_POLICY_HOOK_VERSION = "s8_70f_client_eligibility_policy_hook_v2"
+
+
+def _s870f_policy_path():
+    try:
+        return _s870e_policy_dir() / "latest_s870e_policy.json"
+    except Exception:
+        from pathlib import Path as _Path
+
+        try:
+            root = _Path(__file__).resolve().parents[2]
+        except Exception:
+            root = _Path(".")
+        return root / "data" / "strategy_calibration_policy" / "latest_s870e_policy.json"
+
+
+def _s870f_load_strategy_policy():
+    import json
+
+    path = _s870f_policy_path()
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _s870f_nested(payload, *paths):
+    if not isinstance(payload, dict):
+        return None
+
+    for path in paths:
+        cur = payload
+        ok = True
+        for part in str(path).split("."):
+            if isinstance(cur, dict) and part in cur:
+                cur = cur.get(part)
+            else:
+                ok = False
+                break
+        if ok and cur not in (None, ""):
+            return cur
+
+    return None
+
+
+def _s870f_setup_slug_from_row(row, signal_payload=None):
+    setup_slug = None
+
+    if isinstance(row, dict):
+        for key in ("setup_slug", "setupSlug", "strategy_slug", "strategySlug", "setup"):
+            value = row.get(key)
+            if value not in (None, ""):
+                setup_slug = value
+                break
+
+    if not setup_slug and isinstance(signal_payload, dict):
+        setup_slug = _s870f_nested(
+            signal_payload,
+            "setupSlug",
+            "setup_slug",
+            "strategySlug",
+            "strategy_slug",
+            "setup.slug",
+            "setup.setupSlug",
+            "signal.setupSlug",
+            "signal.setup_slug",
+        )
+
+    return str(setup_slug or "").strip()
+
+
+def _s870f_policy_block_reason(client_mode):
+    import re as _re
+
+    mode = str(client_mode or "CLIENT_BLOCKED_REVIEW_REQUIRED").strip().lower()
+    safe = _re.sub(r"[^a-z0-9_]+", "_", mode)
+    safe = _re.sub(r"_+", "_", safe).strip("_")
+    if not safe:
+        safe = "client_blocked_review_required"
+    return f"strategy_policy_{safe}"
+
+
+def _s870f_strategy_policy_decision(row, signal_payload=None):
+    setup_slug = _s870f_setup_slug_from_row(row, signal_payload=signal_payload)
+
+    result = {
+        "version": S870F_CLIENT_ELIGIBILITY_POLICY_HOOK_VERSION,
+        "setupSlug": setup_slug,
+        "policyLoaded": False,
+        "policyVersion": None,
+        "clientReleaseAllowed": False,
+        "clientMode": "CLIENT_BLOCKED_POLICY_MISSING",
+        "action": "POLICY_MISSING",
+        "blockReasons": ["strategy_policy_missing"],
+        "doesNotLimitBySetupCount": True,
+        "doesNotLimitBySymbolCount": True,
+        "source": "latest_s870e_policy.json",
+    }
+
+    try:
+        policy = _s870f_load_strategy_policy()
+    except Exception as exc:
+        result["clientMode"] = "CLIENT_BLOCKED_POLICY_ERROR"
+        result["action"] = "POLICY_ERROR"
+        result["error"] = str(exc)
+        result["blockReasons"] = ["strategy_policy_error"]
+        return result
+
+    if not isinstance(policy, dict):
+        return result
+
+    result["policyLoaded"] = True
+    result["policyVersion"] = policy.get("policyVersion")
+    result["globalRules"] = policy.get("globalRules") or {}
+
+    strategies = policy.get("strategies") if isinstance(policy.get("strategies"), dict) else {}
+
+    if not setup_slug:
+        result["clientMode"] = "CLIENT_BLOCKED_SETUP_MISSING"
+        result["action"] = "SETUP_MISSING"
+        result["blockReasons"] = ["strategy_policy_setup_missing"]
+        return result
+
+    item = strategies.get(setup_slug)
+    if not isinstance(item, dict):
+        result["clientMode"] = "CLIENT_BLOCKED_SETUP_NOT_IN_POLICY"
+        result["action"] = "SETUP_NOT_IN_POLICY"
+        result["blockReasons"] = ["strategy_policy_setup_missing"]
+        return result
+
+    allowed = bool(item.get("clientReleaseAllowed"))
+    client_mode = str(item.get("clientMode") or "CLIENT_BLOCKED_REVIEW_REQUIRED")
+    action = str(item.get("action") or "UNKNOWN_ACTION")
+
+    result.update({
+        "clientReleaseAllowed": allowed,
+        "clientMode": client_mode,
+        "action": action,
+        "priority": item.get("priority"),
+        "reason": item.get("reason"),
+        "nextStep": item.get("nextStep"),
+        "baseline": item.get("baseline"),
+        "recommendedFilterTests": item.get("recommendedFilterTests") or [],
+    })
+
+    if allowed:
+        result["blockReasons"] = []
+    else:
+        result["blockReasons"] = [_s870f_policy_block_reason(client_mode)]
+
+    return result
+
+
+@app.get("/engine/research/client-eligibility-policy/hook-status")
+def engine_research_client_eligibility_policy_hook_status():
+    policy = None
+    try:
+        policy = _s870f_load_strategy_policy()
+    except Exception as exc:
+        return {
+            "ok": False,
+            "storageVersion": S870F_CLIENT_ELIGIBILITY_POLICY_HOOK_VERSION,
+            "error": str(exc),
+            "policyPath": str(_s870f_policy_path()),
+        }
+
+    return {
+        "ok": True,
+        "storageVersion": S870F_CLIENT_ELIGIBILITY_POLICY_HOOK_VERSION,
+        "policyLoaded": isinstance(policy, dict),
+        "policyPath": str(_s870f_policy_path()),
+        "policyVersion": policy.get("policyVersion") if isinstance(policy, dict) else None,
+        "globalRules": policy.get("globalRules") if isinstance(policy, dict) else None,
+        "strategyCount": len((policy.get("strategies") or {})) if isinstance(policy, dict) else 0,
+        "deliveryEffect": "Blocks clientVisible when S8.70E says setup edge is weak/unproven/insufficient sample.",
+        "doesNotLimitBySetupCount": True,
+        "doesNotLimitBySymbolCount": True,
+        "doesNotApproveSignals": True,
+        "doesNotRejectSignals": True,
+        "doesNotSendTelegram": True,
+    }
+
+
+
+# === S8.70G Admin AI Ops Feed Backend =======================================
+S870G_ADMIN_AI_OPS_FEED_VERSION = "s8_70g_admin_ai_ops_feed_backend_v1"
+
+
+def _s870g_now_iso():
+    from datetime import datetime, timezone
+
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s870g_reports_dir():
+    out_dir = _s870e_root_dir() / "reports" / "admin_ai_ops_feed"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    return out_dir
+
+
+def _s870g_load_json_file(path):
+    import json
+
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _s870g_latest_s870e():
+    try:
+        return _s870g_load_json_file(_s870e_reports_dir() / "latest_s870e.json")
+    except Exception:
+        return None
+
+
+def _s870g_latest_s870d():
+    try:
+        return _s870g_load_json_file(_s870d_reports_dir() / "latest_s870d.json")
+    except Exception:
+        return None
+
+
+def _s870g_latest_policy():
+    try:
+        return _s870f_load_strategy_policy()
+    except Exception:
+        return None
+
+
+def _s870g_compact_action(action):
+    baseline = action.get("baseline") if isinstance(action.get("baseline"), dict) else {}
+    return {
+        "setupSlug": action.get("setupSlug"),
+        "action": action.get("action"),
+        "clientMode": action.get("clientMode"),
+        "clientReleaseAllowed": bool(action.get("clientReleaseAllowed")),
+        "priority": action.get("priority"),
+        "reason": action.get("reason"),
+        "nextStep": action.get("nextStep"),
+        "baselineClosedTrades": baseline.get("closedTrades"),
+        "baselineWinRate": baseline.get("winRate"),
+        "baselineAvgR": baseline.get("avgR"),
+        "baselineExpectancyR": baseline.get("expectancyR"),
+        "baselineStatus": baseline.get("status"),
+        "productionEligibleCount": action.get("productionEligibleCount"),
+        "promisingCount": action.get("promisingCount"),
+        "recommendedFilterTests": action.get("recommendedFilterTests") or [],
+    }
+
+
+def _s870g_build_feed(refresh=False):
+    import json
+
+    if refresh:
+        try:
+            _s870d_run_report(
+                min_win_rate=0.65,
+                min_closed_trades=30,
+                min_promising_closed_trades=10,
+                max_rows=100000,
+                publish=True,
+            )
+        except Exception:
+            pass
+
+        try:
+            _s870e_run_report(
+                target_win_rate=0.65,
+                min_closed_trades=30,
+                apply_policy=True,
+                publish=True,
+            )
+        except Exception:
+            pass
+
+    s870e = _s870g_latest_s870e()
+    s870d = _s870g_latest_s870d()
+    policy = _s870g_latest_policy()
+
+    actions = []
+    admin_events = []
+
+    if isinstance(s870e, dict):
+        actions = s870e.get("actions") or []
+        admin_events = s870e.get("adminEvents") or []
+
+    compact_actions = [_s870g_compact_action(item) for item in actions if isinstance(item, dict)]
+
+    high_priority = [item for item in compact_actions if item.get("priority") == "HIGH"]
+    forward_tests = [item for item in compact_actions if item.get("action") == "FORWARD_TEST_PROMISING_SEGMENTS"]
+    reworks = [item for item in compact_actions if item.get("action") == "SHADOW_ONLY_REWORK"]
+    collect_data = [item for item in compact_actions if item.get("action") == "SHADOW_ONLY_COLLECT_DATA"]
+    client_allowed = [item for item in compact_actions if item.get("clientReleaseAllowed") is True]
+
+    result = {
+        "ok": True,
+        "storageVersion": S870G_ADMIN_AI_OPS_FEED_VERSION,
+        "generatedAt": _s870g_now_iso(),
+        "summary": {
+            "agent": "SkillEdge AI Autonomous Ops",
+            "setupCount": len(compact_actions),
+            "highPriorityCount": len(high_priority),
+            "forwardTestCount": len(forward_tests),
+            "shadowReworkCount": len(reworks),
+            "collectDataCount": len(collect_data),
+            "clientAllowedCount": len(client_allowed),
+            "policyLoaded": isinstance(policy, dict),
+            "policyVersion": policy.get("policyVersion") if isinstance(policy, dict) else None,
+            "segmentReportVersion": s870d.get("storageVersion") if isinstance(s870d, dict) else None,
+            "calibrationReportVersion": s870e.get("storageVersion") if isinstance(s870e, dict) else None,
+            "decisionState": (
+                "AUTONOMOUS_AI_OPS_FEED_READY"
+                if isinstance(s870e, dict) and isinstance(policy, dict)
+                else "AI_OPS_FEED_PARTIAL_DATA"
+            ),
+        },
+        "policy": {
+            "adminFacing": True,
+            "clientsDoNotSeeInternalAgents": True,
+            "noFakeStats": True,
+            "usesClosedOutcomeSegments": True,
+            "autonomousAgentWritesActions": True,
+            "adminOnlyReviewsResults": True,
+            "doesNotApproveSignals": True,
+            "doesNotRejectSignals": True,
+            "doesNotSendTelegram": True,
+            "doesNotChangeClientDelivery": True,
+            "doesNotLimitBySetupCount": True,
+            "doesNotLimitBySymbolCount": True,
+        },
+        "sourceReports": {
+            "segmentFinder": (s870d.get("summary") if isinstance(s870d, dict) else None),
+            "autonomousCalibration": (s870e.get("summary") if isinstance(s870e, dict) else None),
+            "strategyPolicy": {
+                "policyVersion": policy.get("policyVersion") if isinstance(policy, dict) else None,
+                "strategyCount": len((policy.get("strategies") or {})) if isinstance(policy, dict) else 0,
+                "globalRules": policy.get("globalRules") if isinstance(policy, dict) else None,
+            } if isinstance(policy, dict) else None,
+        },
+        "importantActions": high_priority,
+        "forwardTests": forward_tests,
+        "reworks": reworks,
+        "collectData": collect_data,
+        "clientAllowed": client_allowed,
+        "actions": compact_actions,
+        "adminEvents": admin_events[:100],
+    }
+
+    out_dir = _s870g_reports_dir()
+    latest = out_dir / "latest_s870g.json"
+    stamp = str(result.get("generatedAt") or "").replace(":", "-").replace(".", "-")
+    snapshot = out_dir / f"{stamp}.json"
+    payload = json.dumps(result, ensure_ascii=False, indent=2)
+    latest.write_text(payload, encoding="utf-8")
+    snapshot.write_text(payload, encoding="utf-8")
+
+    return result
+
+
+@app.get("/engine/admin/ai-ops-feed/latest")
+def engine_admin_ai_ops_feed_latest():
+    latest = _s870g_reports_dir() / "latest_s870g.json"
+    if latest.exists():
+        try:
+            import json
+            return json.loads(latest.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    return _s870g_build_feed(refresh=False)
+
+
+@app.post("/engine/admin/ai-ops-feed/refresh")
+def engine_admin_ai_ops_feed_refresh():
+    return _s870g_build_feed(refresh=True)
+
+
+# === /S8.70G Admin AI Ops Feed Backend ======================================
+
+# === /S8.70F Client Eligibility Policy Hook =================================
+
+# === /S8.70E Autonomous Strategy Calibration Agent ===========================
 
 # === /S8.70D Setup Calibration Segment Finder ===============================
 
