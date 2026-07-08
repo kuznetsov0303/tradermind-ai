@@ -27746,3 +27746,499 @@ def engine_research_ai_trader_desks_latest():
 
 
 # === /S8.63 Internal AI Trader Desk Layer ====================================
+
+# === S8.64 Unified SkillEdge AI Signal Output ================================
+S864_UNIFIED_SKILLEDGE_OUTPUT_VERSION = "s8_64_unified_skilledge_ai_signal_output_v1"
+
+
+def _s864_report_dir():
+    from pathlib import Path
+    return Path("/opt/skilledge/stock-engine/reports/unified_skilledge_output")
+
+
+def _s864_db_path():
+    return "/opt/skilledge/stock-engine/data/stock_engine.db"
+
+
+def _s864_read_json_report(path):
+    import json
+    from pathlib import Path
+
+    p = Path(path)
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception as error:
+        return {"ok": False, "error": repr(error), "path": str(p)}
+
+
+def _s864_json_loads(value):
+    import json
+
+    if isinstance(value, dict):
+        return value
+    if not value:
+        return {}
+    try:
+        data = json.loads(value)
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def _s864_to_float(value, fallback=None):
+    try:
+        if value is None or value == "":
+            return fallback
+        return float(value)
+    except Exception:
+        return fallback
+
+
+def _s864_to_int(value, fallback=0):
+    try:
+        if value is None or value == "":
+            return fallback
+        return int(value)
+    except Exception:
+        return fallback
+
+
+def _s864_bool(value):
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    if isinstance(value, (int, float)):
+        return bool(value)
+    return str(value).strip().lower() in {"1", "true", "yes", "y", "approved", "ok"}
+
+
+def _s864_arr(value):
+    return value if isinstance(value, list) else []
+
+
+def _s864_dict(value):
+    return value if isinstance(value, dict) else {}
+
+
+def _s864_pick(payload, *paths, fallback=None):
+    for path in paths:
+        cur = payload
+        ok = True
+        for part in str(path).split("."):
+            if isinstance(cur, dict) and part in cur:
+                cur = cur.get(part)
+            else:
+                ok = False
+                break
+        if ok and cur is not None:
+            return cur
+    return fallback
+
+
+def _s864_extract_direction(signal_payload, row):
+    direction = _s864_pick(
+        signal_payload,
+        "direction", "signal.direction", "setup.direction", "candidate.direction", "payload.direction",
+        fallback=None,
+    )
+    if direction:
+        return str(direction).upper()
+    setup_slug = str(row.get("setup_slug") or "").lower()
+    if "short" in setup_slug or "crap" in setup_slug or "rejection" in setup_slug or "breakdown" in setup_slug:
+        return "SHORT"
+    if "long" in setup_slug or "reclaim" in setup_slug or "breakout" in setup_slug or "continuation" in setup_slug:
+        return "LONG"
+    return "UNKNOWN"
+
+
+def _s864_extract_price(signal_payload, *names):
+    for name in names:
+        value = _s864_pick(signal_payload, name, fallback=None)
+        if value is not None:
+            return _s864_to_float(value, None)
+    return None
+
+
+def _s864_extract_entry(signal_payload):
+    direct = _s864_extract_price(
+        signal_payload,
+        "entry", "entryPrice", "signal.entry", "signal.entryPrice",
+        "candidate.entry", "candidate.entryPrice", "payload.entry", "payload.entryPrice",
+    )
+    if direct is not None:
+        return direct
+
+    zone = _s864_pick(signal_payload, "entry_zone", "entryZone", "candidate.entry_zone", "candidate.entryZone", fallback=None)
+    if isinstance(zone, dict):
+        lo = _s864_to_float(zone.get("min"), None)
+        hi = _s864_to_float(zone.get("max"), None)
+        if lo is not None and hi is not None:
+            return round((lo + hi) / 2.0, 4)
+        return lo if lo is not None else hi
+
+    return None
+
+
+def _s864_extract_targets(signal_payload):
+    targets = _s864_pick(signal_payload, "targets", "signal.targets", "candidate.targets", "payload.targets", fallback=[])
+    out = []
+    for target in _s864_arr(targets):
+        if isinstance(target, dict):
+            price = _s864_to_float(target.get("price") or target.get("target") or target.get("value"), None)
+            r_value = _s864_to_float(target.get("r") or target.get("rr") or target.get("riskReward"), None)
+            if price is not None or r_value is not None:
+                out.append({"price": price, "r": r_value})
+        else:
+            price = _s864_to_float(target, None)
+            if price is not None:
+                out.append({"price": price, "r": None})
+    return out[:4]
+
+
+def _s864_extract_rr(signal_payload, row):
+    for path in [
+        "rr", "riskReward", "risk_reward", "riskRewardRatio", "signal.rr", "signal.riskReward",
+        "candidate.rr", "candidate.riskReward", "payload.rr", "payload.riskReward",
+    ]:
+        value = _s864_pick(signal_payload, path, fallback=None)
+        rr = _s864_to_float(value, None)
+        if rr is not None:
+            return rr
+
+    targets = _s864_extract_targets(signal_payload)
+    r_values = [_s864_to_float(t.get("r"), None) for t in targets if isinstance(t, dict)]
+    r_values = [r for r in r_values if r is not None]
+    if r_values:
+        return max(r_values)
+
+    entry = _s864_extract_entry(signal_payload)
+    stop = _s864_extract_price(signal_payload, "stop", "stopPrice", "signal.stop", "candidate.stop", "payload.stop")
+    if entry is not None and stop is not None and targets:
+        first_target = _s864_to_float(targets[0].get("price"), None)
+        if first_target is not None:
+            risk = abs(entry - stop)
+            reward = abs(entry - first_target)
+            if risk > 0:
+                return round(reward / risk, 2)
+    return None
+
+
+def _s864_fetch_recent_signals(limit=50):
+    import sqlite3
+
+    safe_limit = max(5, min(int(limit or 50), 500))
+    con = sqlite3.connect(_s864_db_path())
+    con.row_factory = sqlite3.Row
+
+    rows = con.execute(
+        """
+        SELECT
+            s.storage_key,
+            s.signal_id,
+            s.symbol,
+            s.setup_slug,
+            s.session_date,
+            s.lifecycle_status,
+            s.quality_status,
+            s.signal_grade,
+            s.signal_score,
+            s.premium_signal,
+            s.telegram_eligible,
+            s.created_at,
+            s.trigger_time,
+            s.stored_at,
+            s.updated_at,
+            s.payload_json AS signal_payload_json,
+            o.status AS outcome_status,
+            o.result_r AS outcome_result_r,
+            o.mfe_r AS outcome_mfe_r,
+            o.mae_r AS outcome_mae_r,
+            o.first_event AS outcome_first_event
+        FROM signal_records s
+        LEFT JOIN outcome_records o ON o.signal_id = s.signal_id
+        ORDER BY COALESCE(s.updated_at, s.stored_at, s.trigger_time, s.created_at) DESC
+        LIMIT ?
+        """,
+        (safe_limit,),
+    ).fetchall()
+
+    con.close()
+    return [dict(row) for row in rows]
+
+
+def _s864_manual_approval(signal_payload, row):
+    approval = _s864_pick(
+        signal_payload,
+        "clientVisibleApproved", "manualApproval.clientVisibleApproved", "approval.clientVisibleApproved",
+        "admin.clientVisibleApproved", "delivery.clientVisibleApproved",
+        fallback=None,
+    )
+    if approval is not None:
+        return _s864_bool(approval)
+
+    approved_by = _s864_pick(signal_payload, "approvedByAdmin", "manualApproval.approved", "approval.approved", fallback=None)
+    return _s864_bool(approved_by)
+
+
+def _s864_block_reasons(row, signal_payload, rr):
+    reasons = []
+
+    lifecycle = str(row.get("lifecycle_status") or "").upper()
+    quality = str(row.get("quality_status") or "").upper()
+    grade = str(row.get("signal_grade") or "").upper()
+    score = _s864_to_float(row.get("signal_score"), 0.0) or 0.0
+    telegram_eligible = _s864_bool(row.get("telegram_eligible"))
+    premium_signal = _s864_bool(row.get("premium_signal"))
+    approved = _s864_manual_approval(signal_payload, row)
+
+    if lifecycle != "ACTIVE":
+        reasons.append("not_active_lifecycle")
+    if quality != "PASSED":
+        reasons.append("quality_not_passed")
+    if grade not in {"A", "A+"}:
+        reasons.append("grade_below_A")
+    if score < 78.0:
+        reasons.append("score_below_78")
+    if rr is None:
+        reasons.append("rr_missing")
+    elif rr < 2.0:
+        reasons.append("rr_below_2")
+    if not premium_signal:
+        reasons.append("not_premium_signal")
+    if not telegram_eligible:
+        reasons.append("telegram_eligible_false")
+    if not approved:
+        reasons.append("manual_client_approval_missing")
+
+    return reasons
+
+
+def _s864_unified_signal_card(row):
+    signal_payload = _s864_json_loads(row.get("signal_payload_json"))
+    rr = _s864_extract_rr(signal_payload, row)
+    block_reasons = _s864_block_reasons(row, signal_payload, rr)
+    client_visible = len(block_reasons) == 0
+
+    entry = _s864_extract_entry(signal_payload)
+    stop = _s864_extract_price(signal_payload, "stop", "stopPrice", "signal.stop", "candidate.stop", "payload.stop")
+    targets = _s864_extract_targets(signal_payload)
+    direction = _s864_extract_direction(signal_payload, row)
+
+    lifecycle = str(row.get("lifecycle_status") or "UNKNOWN").upper()
+    setup_slug = str(row.get("setup_slug") or "unknown_setup")
+    symbol = str(row.get("symbol") or "UNKNOWN").upper()
+
+    if client_visible:
+        display_state = "CLIENT_VISIBLE_READY"
+        client_headline = f"{symbol} {direction} setup is ready"
+    elif lifecycle == "ACTIVE":
+        display_state = "INTERNAL_ACTIVE_BLOCKED"
+        client_headline = f"{symbol} is under SkillEdge AI review"
+    else:
+        display_state = "WATCHING_OR_RESEARCH_ONLY"
+        client_headline = f"{symbol} is being monitored by SkillEdge AI"
+
+    return {
+        "signalId": row.get("signal_id"),
+        "symbol": symbol,
+        "setupSlug": setup_slug,
+        "sourceLabel": "SkillEdge AI",
+        "internalDeskHidden": True,
+        "displayState": display_state,
+        "clientVisible": client_visible,
+        "clientVisibleApproved": _s864_manual_approval(signal_payload, row),
+        "blockedReasons": block_reasons,
+        "headline": client_headline,
+        "direction": direction,
+        "lifecycleStatus": lifecycle,
+        "qualityStatus": row.get("quality_status"),
+        "grade": row.get("signal_grade"),
+        "score": _s864_to_float(row.get("signal_score"), None),
+        "riskReward": rr,
+        "premiumSignal": _s864_bool(row.get("premium_signal")),
+        "telegramEligible": _s864_bool(row.get("telegram_eligible")),
+        "levels": {"entry": entry, "stop": stop, "targets": targets},
+        "timing": {
+            "sessionDate": row.get("session_date"),
+            "createdAt": row.get("created_at"),
+            "triggerTime": row.get("trigger_time"),
+            "storedAt": row.get("stored_at"),
+            "updatedAt": row.get("updated_at"),
+        },
+        "outcomeSnapshot": {
+            "status": row.get("outcome_status"),
+            "resultR": _s864_to_float(row.get("outcome_result_r"), None),
+            "mfeR": _s864_to_float(row.get("outcome_mfe_r"), None),
+            "maeR": _s864_to_float(row.get("outcome_mae_r"), None),
+            "firstEvent": row.get("outcome_first_event"),
+        },
+        "safeClientCopy": {
+            "title": client_headline,
+            "subtitle": "Unified SkillEdge AI signal layer",
+            "riskNote": "Use only after the signal passes all quality, RR and manual approval gates.",
+            "status": display_state,
+        },
+    }
+
+
+def _s864_display_state(visible_cards, blocked_cards, desk_report, strategy_report):
+    if visible_cards:
+        return "CLIENT_VISIBLE_SIGNALS_READY"
+    active_blocked = [card for card in blocked_cards if card.get("displayState") == "INTERNAL_ACTIVE_BLOCKED"]
+    if active_blocked:
+        return "INTERNAL_SIGNALS_BLOCKED_BY_GATES"
+
+    summary = _s864_dict(strategy_report.get("summary"))
+    promote_count = _s864_to_int(summary.get("promoteCandidateCount"), 0)
+    if promote_count > 0:
+        return "PROMOTION_CANDIDATES_REQUIRE_MANUAL_APPROVAL"
+
+    return "NO_CLIENT_VISIBLE_SIGNALS_READY"
+
+
+def _s864_build_report(limit=50):
+    from datetime import datetime, timezone
+
+    safe_limit = max(5, min(int(limit or 50), 500))
+
+    strategy_path = "/opt/skilledge/stock-engine/reports/strategy_reranking_draft/latest_s862.json"
+    desks_path = "/opt/skilledge/stock-engine/reports/ai_trader_desks/latest_s863.json"
+    blockers_path = "/opt/skilledge/stock-engine/reports/signal_blockers/latest_s858.json"
+
+    strategy_report = _s864_read_json_report(strategy_path)
+    desk_report = _s864_read_json_report(desks_path)
+    blockers_report = _s864_read_json_report(blockers_path)
+
+    rows = _s864_fetch_recent_signals(limit=safe_limit)
+    cards = [_s864_unified_signal_card(row) for row in rows]
+
+    visible_cards = [card for card in cards if card.get("clientVisible") is True]
+    blocked_cards = [card for card in cards if card.get("clientVisible") is not True]
+
+    display_state = _s864_display_state(visible_cards, blocked_cards, desk_report, strategy_report)
+
+    blocked_reason_counts = {}
+    for card in blocked_cards:
+        for reason in card.get("blockedReasons") or []:
+            blocked_reason_counts[reason] = int(blocked_reason_counts.get(reason, 0) or 0) + 1
+
+    client_output = {
+        "brand": "SkillEdge AI",
+        "displayState": display_state,
+        "clientVisibleCount": len(visible_cards),
+        "researchOnlyCount": len(blocked_cards),
+        "cards": visible_cards[:10],
+        "emptyState": {
+            "title": "No approved SkillEdge AI signals right now",
+            "message": "The engine is monitoring the market, but no signal has passed the full quality, RR and manual approval gate yet.",
+            "showInternalDesks": False,
+        },
+    }
+
+    internal_output = {
+        "recentUnifiedCards": cards[:25],
+        "blockedReasonCounts": dict(sorted(blocked_reason_counts.items(), key=lambda item: int(item[1] or 0), reverse=True)),
+        "deskSummary": _s864_dict(desk_report.get("summary")),
+        "strategySummary": _s864_dict(strategy_report.get("summary")),
+        "signalBlockersSummary": _s864_dict(blockers_report.get("summary")),
+    }
+
+    return {
+        "ok": True,
+        "storageVersion": S864_UNIFIED_SKILLEDGE_OUTPUT_VERSION,
+        "generatedAt": datetime.now(timezone.utc).isoformat(),
+        "source": {
+            "dbPath": _s864_db_path(),
+            "strategyRerankingDraft": strategy_path,
+            "aiTraderDesks": desks_path,
+            "signalBlockers": blockers_path,
+            "strategyRerankingVersion": strategy_report.get("storageVersion"),
+            "aiTraderDesksVersion": desk_report.get("storageVersion"),
+            "signalBlockersVersion": blockers_report.get("storageVersion"),
+            "limit": safe_limit,
+        },
+        "summary": {
+            "rowsEvaluated": len(rows),
+            "unifiedCardCount": len(cards),
+            "clientVisibleCount": len(visible_cards),
+            "researchOnlyCount": len(blocked_cards),
+            "displayState": display_state,
+            "topBlockedReason": next(iter(internal_output["blockedReasonCounts"]), None),
+            "nextAction": "Use this as the unified SkillEdge AI output adapter. Keep all internal desks hidden from clients.",
+        },
+        "clientOutput": client_output,
+        "internalOutput": internal_output,
+        "policy": {
+            "readOnly": True,
+            "researchOnly": True,
+            "sendsTelegram": False,
+            "changesTelegramGate": False,
+            "changesClientDelivery": False,
+            "writesDb": False,
+            "manualApprovalRequiredBeforeClientVisible": True,
+            "hideInternalDesksFromClient": True,
+            "clientSeesUnifiedSkillEdgeAIOnly": True,
+        },
+    }
+
+
+def _s864_persist_report(report):
+    import json
+
+    out_dir = _s864_report_dir()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    generated_at = str(report.get("generatedAt") or "unknown").replace(":", "-")
+    latest = out_dir / "latest_s864.json"
+    snapshot = out_dir / f"{generated_at}_s864.json"
+
+    report["persistence"] = {
+        "filePersisted": True,
+        "latestPath": str(latest),
+        "snapshotPath": str(snapshot),
+    }
+
+    latest.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+    snapshot.write_text(json.dumps(report, indent=2, sort_keys=True), encoding="utf-8")
+
+    return report
+
+
+def _s864_run_report(limit=50, publish=True):
+    report = _s864_build_report(limit=limit)
+    if publish:
+        report = _s864_persist_report(report)
+    return report
+
+
+@app.post("/engine/research/unified-skilledge-output/run")
+def engine_research_unified_skilledge_output_run(limit: int = 50, publish: bool = True):
+    return _s864_run_report(limit=limit, publish=publish)
+
+
+@app.get("/engine/research/unified-skilledge-output/latest")
+def engine_research_unified_skilledge_output_latest():
+    import json
+
+    latest = _s864_report_dir() / "latest_s864.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S864_UNIFIED_SKILLEDGE_OUTPUT_VERSION,
+            "error": "unified_skilledge_output_report_not_found",
+            "nextAction": "Run POST /engine/research/unified-skilledge-output/run?publish=true first.",
+            "policy": {
+                "readOnly": True,
+                "researchOnly": True,
+                "changesClientDelivery": False,
+                "clientSeesUnifiedSkillEdgeAIOnly": True,
+            },
+        }
+
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.64 Unified SkillEdge AI Signal Output ===============================
