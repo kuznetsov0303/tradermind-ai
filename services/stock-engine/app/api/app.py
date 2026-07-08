@@ -29530,6 +29530,640 @@ def engine_research_ready_quality_audit_latest():
 
 # S8.70B Ready Quality RR Semantics Hotfix installed: reported RR now compares against max target R, TP1 remains strict >=2R.
 # S8.70C Calibrated Edge Gate / No Hard Limit installed: every quality signal stays in research/output; edge is evaluated separately.
+
+# === S8.70D Setup Calibration Segment Finder ================================
+S870D_SETUP_CALIBRATION_SEGMENT_FINDER_VERSION = "s8_70d_setup_calibration_segment_finder_v1"
+
+
+def _s870d_now_iso():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _s870d_reports_dir():
+    from pathlib import Path as _Path
+    try:
+        root = _Path(__file__).resolve().parents[2]
+    except Exception:
+        root = _Path(".")
+    out_dir = root / "reports" / "setup_calibration_segments"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    return out_dir
+
+
+def _s870d_float(value, default=None):
+    try:
+        if value is None or value == "":
+            return default
+        return float(value)
+    except Exception:
+        return default
+
+
+def _s870d_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def _s870d_safe_div(num, den):
+    try:
+        den = float(den)
+        if den == 0:
+            return None
+        return float(num) / den
+    except Exception:
+        return None
+
+
+def _s870d_col(columns, *names):
+    lowered = {str(col).lower(): col for col in columns}
+    for name in names:
+        match = lowered.get(str(name).lower())
+        if match:
+            return match
+    return None
+
+
+def _s870d_db_candidates():
+    if "_s870c_edge_db_candidates" in globals():
+        try:
+            return _s870c_edge_db_candidates()
+        except Exception:
+            pass
+
+    from pathlib import Path as _Path
+    try:
+        root = _Path(__file__).resolve().parents[2]
+    except Exception:
+        root = _Path(".")
+
+    dirs = [root / "data", root / "app" / "data", root / "reports"]
+    found = []
+    seen = set()
+
+    for directory in dirs:
+        try:
+            if not directory.exists():
+                continue
+            for pattern in ("*.db", "*.sqlite", "*.sqlite3"):
+                for path in directory.rglob(pattern):
+                    key = str(path.resolve())
+                    if key in seen:
+                        continue
+                    if ".venv" in key or "__pycache__" in key:
+                        continue
+                    seen.add(key)
+                    found.append(path)
+        except Exception:
+            continue
+
+    return found[:30]
+
+
+def _s870d_outcome_kind(row, result_col=None, status_col=None, r_col=None):
+    if "_s870c_edge_outcome_kind" in globals():
+        try:
+            return _s870c_edge_outcome_kind(row, result_col=result_col, status_col=status_col, r_col=r_col)
+        except Exception:
+            pass
+
+    text_parts = []
+    if result_col and result_col in row:
+        text_parts.append(str(row.get(result_col) or ""))
+    if status_col and status_col in row:
+        text_parts.append(str(row.get(status_col) or ""))
+
+    text = " ".join(text_parts).upper()
+    result_r = _s870d_float(row.get(r_col)) if r_col and r_col in row else None
+
+    if any(token in text for token in ("WORKED", "TP1", "TP2", "TARGET", "WIN")):
+        return "WIN", result_r
+    if any(token in text for token in ("FAILED", "STOP", "LOSS")):
+        return "LOSS", result_r
+
+    if result_r is not None:
+        if result_r > 0:
+            return "WIN", result_r
+        if result_r < 0:
+            return "LOSS", result_r
+
+    return "OPEN_OR_UNKNOWN", result_r
+
+
+def _s870d_bucket_score(score):
+    score = _s870d_float(score)
+    if score is None:
+        return "UNKNOWN"
+    if score >= 98:
+        return "SCORE_98_100"
+    if score >= 95:
+        return "SCORE_95_97"
+    if score >= 90:
+        return "SCORE_90_94"
+    if score >= 85:
+        return "SCORE_85_89"
+    if score >= 78:
+        return "SCORE_78_84"
+    return "SCORE_BELOW_78"
+
+
+def _s870d_bucket_rr(rr):
+    rr = _s870d_float(rr)
+    if rr is None:
+        return "UNKNOWN"
+    if rr >= 3:
+        return "RR_3_PLUS"
+    if rr >= 2.5:
+        return "RR_2_5_2_99"
+    if rr >= 2:
+        return "RR_2_2_49"
+    return "RR_BELOW_2"
+
+
+def _s870d_bucket_stop_distance(stop_pct):
+    stop_pct = _s870d_float(stop_pct)
+    if stop_pct is None:
+        return "UNKNOWN"
+    if stop_pct < 0.12:
+        return "STOP_TOO_TIGHT_LT_0_12"
+    if stop_pct < 1:
+        return "STOP_0_12_0_99"
+    if stop_pct <= 2.5:
+        return "STOP_1_0_2_5"
+    if stop_pct <= 4:
+        return "STOP_2_5_4_0"
+    if stop_pct <= 8:
+        return "STOP_4_0_8_0"
+    return "STOP_GT_8"
+
+
+def _s870d_normal_text(value, fallback="UNKNOWN"):
+    text = str(value or "").strip()
+    if not text:
+        return fallback
+    return text.upper().replace(" ", "_")
+
+
+def _s870d_extract_stop_distance(row, entry_col=None, stop_col=None, stop_distance_col=None):
+    direct = _s870d_float(row.get(stop_distance_col)) if stop_distance_col and stop_distance_col in row else None
+    if direct is not None:
+        return direct
+
+    entry = _s870d_float(row.get(entry_col)) if entry_col and entry_col in row else None
+    stop = _s870d_float(row.get(stop_col)) if stop_col and stop_col in row else None
+    if entry is None or stop is None or entry == 0:
+        return None
+
+    return round(abs(entry - stop) / abs(entry) * 100.0, 4)
+
+
+def _s870d_extract_normalized_rows(max_rows=100000):
+    import sqlite3
+
+    out = []
+    sources = []
+    max_rows = max(1000, min(int(max_rows or 100000), 300000))
+
+    for db_path in _s870d_db_candidates():
+        if len(out) >= max_rows:
+            break
+
+        conn = None
+        try:
+            conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True, timeout=2)
+            conn.row_factory = sqlite3.Row
+            tables = conn.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+        except Exception:
+            try:
+                if conn:
+                    conn.close()
+            except Exception:
+                pass
+            continue
+
+        for table_row in tables:
+            if len(out) >= max_rows:
+                break
+
+            table = table_row[0]
+            try:
+                info = conn.execute(f'PRAGMA table_info("{table}")').fetchall()
+                columns = [row[1] for row in info]
+                if not columns:
+                    continue
+
+                setup_col = _s870d_col(columns, "setup_slug", "setupSlug", "setup", "strategy_slug", "strategySlug")
+                if not setup_col:
+                    continue
+
+                result_col = _s870d_col(columns, "result", "outcome", "outcome_status", "outcomeStatus", "result_status", "resultStatus", "first_event", "firstEvent")
+                status_col = _s870d_col(columns, "status", "state", "lifecycle_status", "lifecycleStatus")
+                r_col = _s870d_col(columns, "result_r", "resultR", "r_multiple", "rMultiple", "pnl_r", "pnlR", "realized_r", "realizedR")
+
+                if not result_col and not status_col and not r_col:
+                    continue
+
+                symbol_col = _s870d_col(columns, "symbol", "ticker")
+                direction_col = _s870d_col(columns, "direction", "side", "signal_direction", "signalDirection")
+                grade_col = _s870d_col(columns, "signal_grade", "signalGrade", "grade")
+                quality_col = _s870d_col(columns, "quality_status", "qualityStatus", "quality", "quality_gate", "qualityGate")
+                score_col = _s870d_col(columns, "signal_score", "signalScore", "score", "confidence")
+                rr_col = _s870d_col(columns, "risk_reward", "riskReward", "rr", "reported_rr", "reportedRR")
+                session_col = _s870d_col(columns, "session", "market_session", "marketSession", "session_type", "sessionType")
+                engine_col = _s870d_col(columns, "engine_version", "engineVersion", "algorithm_version", "algorithmVersion", "storage_version", "storageVersion")
+                regime_col = _s870d_col(columns, "market_regime", "marketRegime", "regime")
+                trigger_col = _s870d_col(columns, "trigger", "trigger_type", "triggerType", "triggers")
+                entry_col = _s870d_col(columns, "entry", "entry_price", "entryPrice")
+                stop_col = _s870d_col(columns, "stop", "stop_price", "stopPrice")
+                stop_distance_col = _s870d_col(columns, "stop_distance_pct", "stopDistancePct", "stop_pct", "stopPct")
+
+                limit_left = max_rows - len(out)
+                rows = conn.execute(f'SELECT * FROM "{table}" LIMIT {limit_left}').fetchall()
+
+                table_closed = 0
+                for raw in rows:
+                    row = dict(raw)
+                    setup_slug = str(row.get(setup_col) or "").strip()
+                    if not setup_slug:
+                        continue
+
+                    kind, result_r = _s870d_outcome_kind(row, result_col=result_col, status_col=status_col, r_col=r_col)
+                    if kind not in ("WIN", "LOSS"):
+                        continue
+
+                    score = _s870d_float(row.get(score_col)) if score_col and score_col in row else None
+                    rr = _s870d_float(row.get(rr_col)) if rr_col and rr_col in row else None
+                    stop_distance = _s870d_extract_stop_distance(row, entry_col=entry_col, stop_col=stop_col, stop_distance_col=stop_distance_col)
+
+                    normalized = {
+                        "setupSlug": setup_slug,
+                        "symbol": str(row.get(symbol_col) or "").upper() if symbol_col and symbol_col in row else None,
+                        "result": kind,
+                        "isWin": kind == "WIN",
+                        "resultR": result_r,
+                        "hasRealR": result_r is not None,
+                        "score": score,
+                        "scoreBucket": _s870d_bucket_score(score),
+                        "riskReward": rr,
+                        "rrBucket": _s870d_bucket_rr(rr),
+                        "stopDistancePct": stop_distance,
+                        "stopDistanceBucket": _s870d_bucket_stop_distance(stop_distance),
+                        "direction": _s870d_normal_text(row.get(direction_col), "UNKNOWN") if direction_col and direction_col in row else "UNKNOWN",
+                        "grade": _s870d_normal_text(row.get(grade_col), "UNKNOWN") if grade_col and grade_col in row else "UNKNOWN",
+                        "qualityStatus": _s870d_normal_text(row.get(quality_col), "UNKNOWN") if quality_col and quality_col in row else "UNKNOWN",
+                        "session": _s870d_normal_text(row.get(session_col), "UNKNOWN") if session_col and session_col in row else "UNKNOWN",
+                        "marketRegime": _s870d_normal_text(row.get(regime_col), "UNKNOWN") if regime_col and regime_col in row else "UNKNOWN",
+                        "triggerType": _s870d_normal_text(row.get(trigger_col), "UNKNOWN") if trigger_col and trigger_col in row else "UNKNOWN",
+                        "engineVersion": _s870d_normal_text(row.get(engine_col), "UNKNOWN") if engine_col and engine_col in row else "UNKNOWN",
+                        "source": {"db": str(db_path), "table": table},
+                    }
+                    out.append(normalized)
+                    table_closed += 1
+
+                if table_closed > 0:
+                    sources.append({
+                        "db": str(db_path),
+                        "table": table,
+                        "closedRows": table_closed,
+                        "columns": columns[:80],
+                    })
+
+            except Exception:
+                continue
+
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+    return out, sources
+
+
+def _s870d_segment_key(setup_slug, filters):
+    if not filters:
+        return f"{setup_slug}::ALL"
+    return f"{setup_slug}::" + "|".join([f"{k}={v}" for k, v in filters])
+
+
+def _s870d_segment_stats(setup_slug, filters, rows, min_win_rate=0.65, min_closed=30, min_promising_closed=10):
+    closed = len(rows)
+    wins = sum(1 for row in rows if row.get("isWin") is True)
+    losses = closed - wins
+    win_rate = _s870d_safe_div(wins, closed)
+
+    real_r_values = [row.get("resultR") for row in rows if row.get("resultR") is not None]
+    avg_r = round(sum(real_r_values) / len(real_r_values), 4) if real_r_values else None
+
+    estimated_expectancy_r = round(((wins * 2.0) + (losses * -1.0)) / closed, 4) if closed > 0 else None
+    expectancy_r = avg_r
+
+    filter_count = len(filters)
+    if closed < min_promising_closed:
+        sample_quality = "TOO_SMALL"
+    elif closed < min_closed:
+        sample_quality = "SMALL_SAMPLE"
+    elif closed < (min_closed * 2):
+        sample_quality = "OK_BUT_THIN"
+    else:
+        sample_quality = "OK"
+
+    if closed < min_closed:
+        overfit_risk = "HIGH"
+    elif filter_count >= 3 and closed < (min_closed * 3):
+        overfit_risk = "MEDIUM"
+    else:
+        overfit_risk = "LOW"
+
+    expectancy_ok = expectancy_r is not None and expectancy_r > 0
+    winrate_ok = win_rate is not None and win_rate >= min_win_rate
+    sample_ok = closed >= min_closed
+    real_r_ok = len(real_r_values) >= max(5, int(closed * 0.5))
+
+    production_eligible = bool(sample_ok and winrate_ok and expectancy_ok and real_r_ok and overfit_risk != "HIGH")
+    promising = bool(closed >= min_promising_closed and winrate_ok and expectancy_ok and real_r_ok)
+
+    if production_eligible:
+        status = "PRODUCTION_ELIGIBLE"
+    elif promising:
+        status = "PROMISING_SEGMENT"
+    elif sample_quality in ("TOO_SMALL", "SMALL_SAMPLE"):
+        status = "INSUFFICIENT_SAMPLE"
+    elif not winrate_ok:
+        status = "WINRATE_BELOW_TARGET"
+    elif not expectancy_ok:
+        status = "EXPECTANCY_NOT_PROVEN"
+    elif not real_r_ok:
+        status = "MISSING_REAL_R_EVIDENCE"
+    else:
+        status = "NOT_ELIGIBLE"
+
+    return {
+        "segmentId": _s870d_segment_key(setup_slug, filters),
+        "setupSlug": setup_slug,
+        "filters": [{"field": k, "value": v} for k, v in filters],
+        "filterCount": filter_count,
+        "closedTrades": closed,
+        "wins": wins,
+        "losses": losses,
+        "winRate": round(win_rate, 4) if win_rate is not None else None,
+        "avgR": avg_r,
+        "expectancyR": expectancy_r,
+        "estimatedExpectancyRConservative": estimated_expectancy_r,
+        "realRCount": len(real_r_values),
+        "sampleQuality": sample_quality,
+        "overfitRisk": overfit_risk,
+        "status": status,
+        "productionEligible": production_eligible,
+        "promising": promising,
+        "targetWinRate": min_win_rate,
+        "rules": {
+            "minWinRate": min_win_rate,
+            "minClosedTrades": min_closed,
+            "minPromisingClosedTrades": min_promising_closed,
+            "requiresPositiveRealExpectancyR": True,
+            "requiresRealREvidence": True,
+            "doesNotUseEstimatedRForProduction": True,
+        },
+    }
+
+
+def _s870d_build_segments(rows, min_win_rate=0.65, min_closed=30, min_promising_closed=10):
+    by_setup = {}
+    for row in rows:
+        by_setup.setdefault(row.get("setupSlug"), []).append(row)
+
+    all_segments = []
+    per_setup = []
+
+    dimensions = [
+        "direction",
+        "grade",
+        "qualityStatus",
+        "scoreBucket",
+        "rrBucket",
+        "stopDistanceBucket",
+        "session",
+        "marketRegime",
+        "triggerType",
+        "engineVersion",
+    ]
+
+    pair_dimensions = [
+        ("scoreBucket", "grade"),
+        ("scoreBucket", "rrBucket"),
+        ("scoreBucket", "stopDistanceBucket"),
+        ("grade", "qualityStatus"),
+        ("direction", "scoreBucket"),
+        ("session", "scoreBucket"),
+        ("marketRegime", "scoreBucket"),
+        ("triggerType", "scoreBucket"),
+    ]
+
+    for setup_slug, setup_rows in sorted(by_setup.items()):
+        segment_map = {}
+        segment_map[()] = setup_rows
+
+        for dim in dimensions:
+            values = {}
+            for row in setup_rows:
+                value = row.get(dim) or "UNKNOWN"
+                if value == "UNKNOWN":
+                    continue
+                values.setdefault(value, []).append(row)
+            for value, subset in values.items():
+                segment_map[((dim, value),)] = subset
+
+        for d1, d2 in pair_dimensions:
+            values = {}
+            for row in setup_rows:
+                v1 = row.get(d1) or "UNKNOWN"
+                v2 = row.get(d2) or "UNKNOWN"
+                if v1 == "UNKNOWN" or v2 == "UNKNOWN":
+                    continue
+                values.setdefault((v1, v2), []).append(row)
+            for (v1, v2), subset in values.items():
+                segment_map[((d1, v1), (d2, v2))] = subset
+
+        setup_segments = [
+            _s870d_segment_stats(
+                setup_slug,
+                list(filters),
+                subset,
+                min_win_rate=min_win_rate,
+                min_closed=min_closed,
+                min_promising_closed=min_promising_closed,
+            )
+            for filters, subset in segment_map.items()
+        ]
+
+        setup_segments = sorted(
+            setup_segments,
+            key=lambda item: (
+                1 if item.get("productionEligible") else 0,
+                1 if item.get("promising") else 0,
+                item.get("winRate") or 0,
+                item.get("expectancyR") if item.get("expectancyR") is not None else -999,
+                item.get("closedTrades") or 0,
+            ),
+            reverse=True,
+        )
+
+        baseline = next((item for item in setup_segments if item.get("filterCount") == 0), None)
+        eligible = [item for item in setup_segments if item.get("productionEligible")]
+        promising = [item for item in setup_segments if item.get("promising") and not item.get("productionEligible")]
+
+        all_segments.extend(setup_segments)
+        per_setup.append({
+            "setupSlug": setup_slug,
+            "baseline": baseline,
+            "productionEligibleCount": len(eligible),
+            "promisingCount": len(promising),
+            "bestProductionEligibleSegments": eligible[:10],
+            "bestPromisingSegments": promising[:10],
+            "bestSegmentsOverall": setup_segments[:15],
+            "calibrationAction": (
+                "PROMOTE_SEGMENTS_TO_SHADOW_PRODUCTION_REVIEW"
+                if eligible
+                else "FORWARD_TEST_PROMISING_SEGMENTS"
+                if promising
+                else "NEEDS_REWORK_OR_STRICTER_FILTERS"
+            ),
+        })
+
+    all_segments = sorted(
+        all_segments,
+        key=lambda item: (
+            1 if item.get("productionEligible") else 0,
+            1 if item.get("promising") else 0,
+            item.get("winRate") or 0,
+            item.get("expectancyR") if item.get("expectancyR") is not None else -999,
+            item.get("closedTrades") or 0,
+        ),
+        reverse=True,
+    )
+
+    return per_setup, all_segments
+
+
+def _s870d_run_report(
+    min_win_rate=0.65,
+    min_closed_trades=30,
+    min_promising_closed_trades=10,
+    max_rows=100000,
+    publish=True,
+):
+    import json
+
+    min_win_rate = max(0.50, min(float(min_win_rate or 0.65), 0.95))
+    min_closed_trades = max(5, min(int(min_closed_trades or 30), 500))
+    min_promising_closed_trades = max(3, min(int(min_promising_closed_trades or 10), min_closed_trades))
+    max_rows = max(1000, min(int(max_rows or 100000), 300000))
+
+    rows, sources = _s870d_extract_normalized_rows(max_rows=max_rows)
+    per_setup, all_segments = _s870d_build_segments(
+        rows,
+        min_win_rate=min_win_rate,
+        min_closed=min_closed_trades,
+        min_promising_closed=min_promising_closed_trades,
+    )
+
+    eligible = [item for item in all_segments if item.get("productionEligible")]
+    promising = [item for item in all_segments if item.get("promising") and not item.get("productionEligible")]
+    setup_count = len({row.get("setupSlug") for row in rows if row.get("setupSlug")})
+
+    result = {
+        "ok": True,
+        "storageVersion": S870D_SETUP_CALIBRATION_SEGMENT_FINDER_VERSION,
+        "generatedAt": _s870d_now_iso(),
+        "summary": {
+            "closedRowsLoaded": len(rows),
+            "sourceTableCount": len(sources),
+            "setupCount": setup_count,
+            "segmentsEvaluated": len(all_segments),
+            "productionEligibleSegmentCount": len(eligible),
+            "promisingSegmentCount": len(promising),
+            "targetWinRate": min_win_rate,
+            "minClosedTrades": min_closed_trades,
+            "minPromisingClosedTrades": min_promising_closed_trades,
+            "decisionState": (
+                "PRODUCTION_ELIGIBLE_SEGMENTS_FOUND"
+                if eligible
+                else "PROMISING_SEGMENTS_FOUND"
+                if promising
+                else "NO_65_PERCENT_SEGMENTS_FOUND_YET"
+            ),
+        },
+        "policy": {
+            "goal": "Find honest 65%+ winrate segments per SkillEdge AI setup/strategy.",
+            "noFakeStats": True,
+            "usesOnlyClosedOutcomes": True,
+            "openSessionCloseNoEvalExcluded": True,
+            "requiresPositiveRealExpectancyR": True,
+            "requiresRealREvidenceForProduction": True,
+            "doesNotUseEstimatedRForProduction": True,
+            "doesNotLimitBySetupCount": True,
+            "doesNotLimitBySymbolCount": True,
+            "doesNotApproveSignals": True,
+            "doesNotRejectSignals": True,
+            "doesNotSendTelegram": True,
+            "doesNotChangeClientDelivery": True,
+        },
+        "sources": sources[:30],
+        "productionEligibleSegments": eligible[:50],
+        "promisingSegments": promising[:50],
+        "perSetup": per_setup,
+        "topSegmentsOverall": all_segments[:100],
+    }
+
+    if publish:
+        out_dir = _s870d_reports_dir()
+        latest = out_dir / "latest_s870d.json"
+        stamp = str(result.get("generatedAt") or "").replace(":", "-").replace(".", "-")
+        snapshot = out_dir / f"{stamp}.json"
+        payload = json.dumps(result, ensure_ascii=False, indent=2)
+        latest.write_text(payload, encoding="utf-8")
+        snapshot.write_text(payload, encoding="utf-8")
+
+    return result
+
+
+@app.post("/engine/research/setup-calibration-segments/run")
+def engine_research_setup_calibration_segments_run(
+    min_win_rate: float = 0.65,
+    min_closed_trades: int = 30,
+    min_promising_closed_trades: int = 10,
+    max_rows: int = 100000,
+    publish: bool = True,
+):
+    return _s870d_run_report(
+        min_win_rate=min_win_rate,
+        min_closed_trades=min_closed_trades,
+        min_promising_closed_trades=min_promising_closed_trades,
+        max_rows=max_rows,
+        publish=publish,
+    )
+
+
+@app.get("/engine/research/setup-calibration-segments/latest")
+def engine_research_setup_calibration_segments_latest():
+    import json
+
+    latest = _s870d_reports_dir() / "latest_s870d.json"
+    if not latest.exists():
+        return {
+            "ok": False,
+            "storageVersion": S870D_SETUP_CALIBRATION_SEGMENT_FINDER_VERSION,
+            "error": "No S8.70D setup calibration segment report yet. Run POST /engine/research/setup-calibration-segments/run.",
+        }
+    return json.loads(latest.read_text(encoding="utf-8"))
+
+
+# === /S8.70D Setup Calibration Segment Finder ===============================
+
 # === /S8.70A Ready Candidate Quality Audit ==================================
 # === /S8.67 Admin Manual Approval Gate ======================================
 # === /S8.64 Unified SkillEdge AI Signal Output ===============================
