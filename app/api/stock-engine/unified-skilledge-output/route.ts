@@ -1,5 +1,6 @@
-﻿// S8.65 Unified Output Frontend/API Adapter
+﻿// S8.65B Unified Output Frontend/API Adapter Proxy-Mode Hotfix
 // Public-safe adapter for the S8.64 engine report.
+// Uses existing /api/stock-engine/* proxy, so internal engine secret stays in the proxy layer.
 // Client sees one SkillEdge AI output only. Internal desks/agents stay hidden.
 
 import { NextRequest, NextResponse } from "next/server";
@@ -7,56 +8,61 @@ import { NextRequest, NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const ADAPTER_VERSION = "s8_65_unified_output_frontend_api_adapter_v1";
+const ADAPTER_VERSION = "s8_65b_unified_output_frontend_api_adapter_proxy_mode_v1";
 
 type EngineJson = Record<string, any>;
 
-function getEngineBaseUrl(): string {
-  const raw =
-    process.env.STOCK_ENGINE_BASE_URL ||
-    process.env.STOCK_ENGINE_URL ||
-    process.env.SKILLEDGE_STOCK_ENGINE_URL ||
-    process.env.NEXT_PUBLIC_STOCK_ENGINE_BASE_URL ||
-    "https://engine.upyourskills.site";
+function getRequestOrigin(req: NextRequest): string {
+  const forwardedProto = req.headers.get("x-forwarded-proto") || "https";
+  const forwardedHost = req.headers.get("x-forwarded-host") || req.headers.get("host");
 
-  return raw.replace(/\/+$/, "");
-}
-
-function getEngineHeaders(): HeadersInit {
-  const headers: Record<string, string> = {
-    accept: "application/json",
-  };
-
-  const secret =
-    process.env.STOCK_ENGINE_INGRESS_SECRET ||
-    process.env.SKILLEDGE_ENGINE_INGRESS_SECRET ||
-    process.env.ENGINE_INGRESS_SECRET ||
-    process.env.STOCK_ENGINE_API_SECRET ||
-    "";
-
-  if (secret) {
-    headers["x-skilledge-engine-secret"] = secret;
-    headers["x-engine-secret"] = secret;
-    headers.authorization = `Bearer ${secret}`;
+  if (forwardedHost) {
+    return `${forwardedProto}://${forwardedHost}`.replace(/\/+$/, "");
   }
 
-  return headers;
+  const envSite =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+    "https://www.upyourskills.site";
+
+  const normalized = envSite.startsWith("http") ? envSite : `https://${envSite}`;
+  return normalized.replace(/\/+$/, "");
 }
 
-async function fetchEngineJson(path: string, init?: RequestInit): Promise<{
+function getProxyBaseUrl(req: NextRequest): string {
+  const explicit =
+    process.env.SKILLEDGE_STOCK_ENGINE_PROXY_BASE_URL ||
+    process.env.STOCK_ENGINE_PROXY_BASE_URL ||
+    "";
+
+  if (explicit) {
+    return explicit.replace(/\/+$/, "");
+  }
+
+  return `${getRequestOrigin(req)}/api/stock-engine`;
+}
+
+async function fetchEngineJsonViaProxy(
+  req: NextRequest,
+  enginePath: string,
+  init?: RequestInit
+): Promise<{
   ok: boolean;
   status: number;
   json: EngineJson;
+  proxyUrl: string;
 }> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 25000);
+  const timeout = setTimeout(() => controller.abort(), 30000);
+  const proxyUrl = `${getProxyBaseUrl(req)}${enginePath}`;
 
   try {
-    const res = await fetch(`${getEngineBaseUrl()}${path}`, {
+    const res = await fetch(proxyUrl, {
       ...init,
       cache: "no-store",
       headers: {
-        ...getEngineHeaders(),
+        accept: "application/json",
         ...(init?.headers || {}),
       },
       signal: controller.signal,
@@ -70,7 +76,7 @@ async function fetchEngineJson(path: string, init?: RequestInit): Promise<{
     } catch {
       json = {
         ok: false,
-        error: "engine_returned_non_json",
+        error: "proxy_returned_non_json",
         rawPreview: text.slice(0, 500),
       };
     }
@@ -79,6 +85,7 @@ async function fetchEngineJson(path: string, init?: RequestInit): Promise<{
       ok: res.ok,
       status: res.status,
       json,
+      proxyUrl,
     };
   } catch (error: any) {
     return {
@@ -86,9 +93,10 @@ async function fetchEngineJson(path: string, init?: RequestInit): Promise<{
       status: 0,
       json: {
         ok: false,
-        error: "engine_fetch_failed",
+        error: "proxy_fetch_failed",
         message: error?.message || String(error),
       },
+      proxyUrl,
     };
   } finally {
     clearTimeout(timeout);
@@ -156,13 +164,15 @@ function sanitizeForClient(engineJson: EngineJson, source: "latest" | "run") {
       clientSeesUnifiedSkillEdgeAIOnly: true,
       manualApprovalRequiredBeforeClientVisible: true,
       adapterReturnsInternalOutput: false,
+      usesExistingStockEngineProxy: true,
     },
   };
 }
 
-async function loadUnifiedOutput(limit: number, refresh: boolean) {
+async function loadUnifiedOutput(req: NextRequest, limit: number, refresh: boolean) {
   if (refresh) {
-    const run = await fetchEngineJson(
+    const run = await fetchEngineJsonViaProxy(
+      req,
       `/engine/research/unified-skilledge-output/run?limit=${limit}&publish=true`,
       { method: "POST" }
     );
@@ -172,12 +182,15 @@ async function loadUnifiedOutput(limit: number, refresh: boolean) {
       engineStatus: run.status,
       payload: sanitizeForClient(run.json, "run" as const),
       engineError: run.ok ? null : run.json,
+      proxyUrl: run.proxyUrl,
     };
   }
 
-  const latest = await fetchEngineJson("/engine/research/unified-skilledge-output/latest", {
-    method: "GET",
-  });
+  const latest = await fetchEngineJsonViaProxy(
+    req,
+    "/engine/research/unified-skilledge-output/latest",
+    { method: "GET" }
+  );
 
   if (latest.ok && latest.json?.ok) {
     return {
@@ -185,10 +198,12 @@ async function loadUnifiedOutput(limit: number, refresh: boolean) {
       engineStatus: latest.status,
       payload: sanitizeForClient(latest.json, "latest" as const),
       engineError: null,
+      proxyUrl: latest.proxyUrl,
     };
   }
 
-  const run = await fetchEngineJson(
+  const run = await fetchEngineJsonViaProxy(
+    req,
     `/engine/research/unified-skilledge-output/run?limit=${limit}&publish=true`,
     { method: "POST" }
   );
@@ -198,6 +213,34 @@ async function loadUnifiedOutput(limit: number, refresh: boolean) {
     engineStatus: run.status,
     payload: sanitizeForClient(run.json, "run" as const),
     engineError: run.ok ? null : run.json,
+    proxyUrl: run.proxyUrl,
+  };
+}
+
+function buildResponseBody(
+  result: Awaited<ReturnType<typeof loadUnifiedOutput>>,
+  includeDiagnostics: boolean,
+  extraRoute?: Record<string, any>
+) {
+  return {
+    ...result.payload,
+    route: {
+      ok: result.engineOk,
+      engineStatus: result.engineStatus,
+      adapterVersion: ADAPTER_VERSION,
+      proxyMode: true,
+      ...extraRoute,
+    },
+    diagnostics: includeDiagnostics
+      ? {
+          engineOk: result.engineOk,
+          engineStatus: result.engineStatus,
+          engineError: result.engineError,
+          proxyMode: true,
+          proxyUrl: result.proxyUrl,
+          adapterUsesExistingStockEngineProxy: true,
+        }
+      : undefined,
   };
 }
 
@@ -208,43 +251,14 @@ export async function GET(req: NextRequest) {
   const includeDiagnostics =
     searchParams.get("diagnostics") === "1" || searchParams.get("diagnostics") === "true";
 
-  const result = await loadUnifiedOutput(limit, refresh);
+  const result = await loadUnifiedOutput(req, limit, refresh);
 
-  return NextResponse.json(
-    {
-      ...result.payload,
-      route: {
-        ok: result.engineOk,
-        engineStatus: result.engineStatus,
-        adapterVersion: ADAPTER_VERSION,
-      },
-      diagnostics: includeDiagnostics
-        ? {
-            engineOk: result.engineOk,
-            engineStatus: result.engineStatus,
-            engineError: result.engineError,
-            engineBaseConfigured: Boolean(
-              process.env.STOCK_ENGINE_BASE_URL ||
-                process.env.STOCK_ENGINE_URL ||
-                process.env.SKILLEDGE_STOCK_ENGINE_URL ||
-                process.env.NEXT_PUBLIC_STOCK_ENGINE_BASE_URL
-            ),
-            hasEngineSecret: Boolean(
-              process.env.STOCK_ENGINE_INGRESS_SECRET ||
-                process.env.SKILLEDGE_ENGINE_INGRESS_SECRET ||
-                process.env.ENGINE_INGRESS_SECRET ||
-                process.env.STOCK_ENGINE_API_SECRET
-            ),
-          }
-        : undefined,
+  return NextResponse.json(buildResponseBody(result, includeDiagnostics), {
+    status: result.engineOk ? 200 : 502,
+    headers: {
+      "Cache-Control": "no-store, max-age=0",
     },
-    {
-      status: result.engineOk ? 200 : 502,
-      headers: {
-        "Cache-Control": "no-store, max-age=0",
-      },
-    }
-  );
+  });
 }
 
 export async function POST(req: NextRequest) {
@@ -262,18 +276,10 @@ export async function POST(req: NextRequest) {
     Math.min(Number(body?.limit || searchParams.get("limit") || 50), 200)
   );
 
-  const result = await loadUnifiedOutput(limit, true);
+  const result = await loadUnifiedOutput(req, limit, true);
 
   return NextResponse.json(
-    {
-      ...result.payload,
-      route: {
-        ok: result.engineOk,
-        engineStatus: result.engineStatus,
-        adapterVersion: ADAPTER_VERSION,
-        refreshed: true,
-      },
-    },
+    buildResponseBody(result, false, { refreshed: true }),
     {
       status: result.engineOk ? 200 : 502,
       headers: {
