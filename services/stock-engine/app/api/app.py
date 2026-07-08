@@ -5868,7 +5868,7 @@ def engine_lifecycle_notifications_mark_batch(
     }
 
 # ---------------------------------------------------------------------------
-# S4.16 Signal Cockpit API РІР‚вЂќ compact dashboard-ready payload
+# S4.16 Signal Cockpit API Р Р†Р вЂљРІР‚Сњ compact dashboard-ready payload
 # ---------------------------------------------------------------------------
 
 S416_COCKPIT_VERSION = "s416d_cockpit_frontend_safety_v1"
@@ -27997,6 +27997,165 @@ def _s864_manual_approval(signal_payload, row):
     approved_by = _s864_pick(signal_payload, "approvedByAdmin", "manualApproval.approved", "approval.approved", fallback=None)
     return _s864_bool(approved_by)
 
+# === S8.69B Unified Eligibility Derivation Fix ===============================
+S869B_UNIFIED_ELIGIBILITY_VERSION = "s8_69b_unified_eligibility_derivation_fix_v1"
+
+
+def _s869b_payload_get(payload, *paths):
+    if not isinstance(payload, dict):
+        return None
+
+    for path in paths:
+        current = payload
+        ok = True
+        for part in str(path or "").split("."):
+            if not part:
+                continue
+            if isinstance(current, dict) and part in current:
+                current = current.get(part)
+            else:
+                ok = False
+                break
+        if ok and current is not None:
+            return current
+
+    return None
+
+
+def _s869b_has_trigger_evidence(row, signal_payload):
+    direct_values = [
+        row.get("trigger_time"),
+        row.get("primary_trigger"),
+        row.get("primaryTrigger"),
+        _s869b_payload_get(signal_payload, "triggerTime", "trigger_time"),
+        _s869b_payload_get(signal_payload, "primaryTrigger", "primary_trigger"),
+        _s869b_payload_get(signal_payload, "trigger", "triggerName", "trigger_name"),
+        _s869b_payload_get(signal_payload, "confirmation.primaryTrigger"),
+        _s869b_payload_get(signal_payload, "rawSignal.primaryTrigger"),
+        _s869b_payload_get(signal_payload, "signal.primaryTrigger"),
+    ]
+
+    for value in direct_values:
+        if value is not None and str(value).strip():
+            return True
+
+    trigger_lists = [
+        _s869b_payload_get(signal_payload, "triggers"),
+        _s869b_payload_get(signal_payload, "confirmation.triggers"),
+        _s869b_payload_get(signal_payload, "rawSignal.triggers"),
+        _s869b_payload_get(signal_payload, "signal.triggers"),
+    ]
+
+    for value in trigger_lists:
+        if isinstance(value, list) and len(value) > 0:
+            return True
+
+    metrics = _s869b_payload_get(signal_payload, "qualityGuard.metrics")
+    if isinstance(metrics, dict):
+        for key in ("executionTriggerCount", "triggerCount"):
+            count = _s864_to_float(metrics.get(key), 0.0) or 0.0
+            if count > 0:
+                return True
+
+    return False
+
+
+def _s869b_unified_delivery_eligibility(row, signal_payload, rr):
+    lifecycle = str(row.get("lifecycle_status") or "").upper()
+    quality = str(row.get("quality_status") or "").upper()
+    grade = str(row.get("signal_grade") or "").upper()
+    score = _s864_to_float(row.get("signal_score"), 0.0) or 0.0
+    rr_value = _s864_to_float(rr, 0.0) or 0.0
+
+    stored_premium = _s864_bool(row.get("premium_signal"))
+    stored_telegram = _s864_bool(row.get("telegram_eligible"))
+
+    payload_premium = _s864_bool(
+        _s869b_payload_get(
+            signal_payload,
+            "premiumSignal",
+            "premium_signal",
+            "signal.premiumSignal",
+            "payload.premiumSignal",
+            "rawSignal.premiumSignal",
+        )
+    )
+    payload_telegram = _s864_bool(
+        _s869b_payload_get(
+            signal_payload,
+            "telegramEligible",
+            "telegram_eligible",
+            "signal.telegramEligible",
+            "payload.telegramEligible",
+            "rawSignal.telegramEligible",
+        )
+    )
+
+    has_trigger = _s869b_has_trigger_evidence(row, signal_payload)
+
+    strict_gate_reasons = []
+    if lifecycle != "ACTIVE":
+        strict_gate_reasons.append("not_active_lifecycle")
+    if quality != "PASSED":
+        strict_gate_reasons.append("quality_not_passed")
+    if grade not in ("A", "A+"):
+        strict_gate_reasons.append("grade_below_A")
+    if score < 78:
+        strict_gate_reasons.append("score_below_78")
+    if rr_value < 2:
+        strict_gate_reasons.append("rr_below_2")
+    if not has_trigger:
+        strict_gate_reasons.append("trigger_missing")
+
+    derived_from_strict_gate = len(strict_gate_reasons) == 0
+
+    premium_signal = bool(stored_premium or payload_premium or derived_from_strict_gate)
+    telegram_eligible = bool(stored_telegram or payload_telegram or derived_from_strict_gate)
+
+    if stored_premium and stored_telegram:
+        source = "stored_flags"
+    elif payload_premium and payload_telegram:
+        source = "payload_flags"
+    elif derived_from_strict_gate:
+        source = "derived_from_s864_strict_gate"
+    else:
+        source = "blocked_by_strict_gate"
+
+    return {
+        "version": S869B_UNIFIED_ELIGIBILITY_VERSION,
+        "premiumSignal": premium_signal,
+        "telegramEligible": telegram_eligible,
+        "source": source,
+        "derivedFromStrictGate": derived_from_strict_gate,
+        "strictGateReasons": strict_gate_reasons,
+        "stored": {
+            "premiumSignal": stored_premium,
+            "telegramEligible": stored_telegram,
+        },
+        "payload": {
+            "premiumSignal": payload_premium,
+            "telegramEligible": payload_telegram,
+        },
+        "checks": {
+            "lifecycle": lifecycle,
+            "qualityStatus": quality,
+            "grade": grade,
+            "score": score,
+            "riskReward": rr_value,
+            "hasTriggerEvidence": has_trigger,
+            "manualApprovalStillRequired": True,
+        },
+        "policy": {
+            "manualApprovalIsFinalGateOnly": True,
+            "doesNotBypassQualityGate": True,
+            "doesNotBypassRiskRewardGate": True,
+            "doesNotBypassGradeGate": True,
+            "doesNotBypassLifecycleGate": True,
+            "doesNotSendTelegram": True,
+            "fixesStalePersistedEligibilityFlagsOnly": True,
+        },
+    }
+
 def _s864_block_reasons(row, signal_payload, rr):
     reasons = []
 
@@ -28004,22 +28163,23 @@ def _s864_block_reasons(row, signal_payload, rr):
     quality = str(row.get("quality_status") or "").upper()
     grade = str(row.get("signal_grade") or "").upper()
     score = _s864_to_float(row.get("signal_score"), 0.0) or 0.0
-    telegram_eligible = _s864_bool(row.get("telegram_eligible"))
-    premium_signal = _s864_bool(row.get("premium_signal"))
+    eligibility = _s869b_unified_delivery_eligibility(row, signal_payload, rr)
+    telegram_eligible = bool(eligibility.get("telegramEligible"))
+    premium_signal = bool(eligibility.get("premiumSignal"))
     approved = _s864_manual_approval(signal_payload, row)
 
     if lifecycle != "ACTIVE":
         reasons.append("not_active_lifecycle")
     if quality != "PASSED":
         reasons.append("quality_not_passed")
-    if grade not in {"A", "A+"}:
+    if grade not in ("A", "A+"):
         reasons.append("grade_below_A")
-    if score < 78.0:
+    if score < 78:
         reasons.append("score_below_78")
-    if rr is None:
-        reasons.append("rr_missing")
-    elif rr < 2.0:
+    if rr is None or rr < 2:
         reasons.append("rr_below_2")
+    if "trigger_missing" in eligibility.get("strictGateReasons", []):
+        reasons.append("trigger_missing")
     if not premium_signal:
         reasons.append("not_premium_signal")
     if not telegram_eligible:
@@ -28033,6 +28193,7 @@ def _s864_block_reasons(row, signal_payload, rr):
 def _s864_unified_signal_card(row):
     signal_payload = _s864_json_loads(row.get("signal_payload_json"))
     rr = _s864_extract_rr(signal_payload, row)
+    eligibility = _s869b_unified_delivery_eligibility(row, signal_payload, rr)
     block_reasons = _s864_block_reasons(row, signal_payload, rr)
     client_visible = len(block_reasons) == 0
 
@@ -28072,8 +28233,9 @@ def _s864_unified_signal_card(row):
         "grade": row.get("signal_grade"),
         "score": _s864_to_float(row.get("signal_score"), None),
         "riskReward": rr,
-        "premiumSignal": _s864_bool(row.get("premium_signal")),
-        "telegramEligible": _s864_bool(row.get("telegram_eligible")),
+        "premiumSignal": bool(eligibility.get("premiumSignal")),
+        "telegramEligible": bool(eligibility.get("telegramEligible")),
+        "deliveryEligibility": eligibility,
         "levels": {"entry": entry, "stop": stop, "targets": targets},
         "timing": {
             "sessionDate": row.get("session_date"),
