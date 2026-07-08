@@ -1,107 +1,18 @@
-﻿// S8.65B Unified Output Frontend/API Adapter Proxy-Mode Hotfix
+﻿// S8.65C Unified Output Frontend/API Adapter Direct StockEngineProxy Hotfix
 // Public-safe adapter for the S8.64 engine report.
-// Uses existing /api/stock-engine/* proxy, so internal engine secret stays in the proxy layer.
+// Uses "@/lib/stockEngineProxy" directly, same trusted proxy/secret layer as existing stock-engine routes.
 // Client sees one SkillEdge AI output only. Internal desks/agents stay hidden.
 
 import { NextRequest, NextResponse } from "next/server";
+import { fetchStockEngineJson } from "@/lib/stockEngineProxy";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const runtime = "nodejs";
 
-const ADAPTER_VERSION = "s8_65b_unified_output_frontend_api_adapter_proxy_mode_v1";
+const ADAPTER_VERSION = "s8_65c_unified_output_frontend_api_adapter_stock_engine_proxy_v1";
 
 type EngineJson = Record<string, any>;
-
-function getRequestOrigin(req: NextRequest): string {
-  const forwardedProto = req.headers.get("x-forwarded-proto") || "https";
-  const forwardedHost = req.headers.get("x-forwarded-host") || req.headers.get("host");
-
-  if (forwardedHost) {
-    return `${forwardedProto}://${forwardedHost}`.replace(/\/+$/, "");
-  }
-
-  const envSite =
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.SITE_URL ||
-    process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-    "https://www.upyourskills.site";
-
-  const normalized = envSite.startsWith("http") ? envSite : `https://${envSite}`;
-  return normalized.replace(/\/+$/, "");
-}
-
-function getProxyBaseUrl(req: NextRequest): string {
-  const explicit =
-    process.env.SKILLEDGE_STOCK_ENGINE_PROXY_BASE_URL ||
-    process.env.STOCK_ENGINE_PROXY_BASE_URL ||
-    "";
-
-  if (explicit) {
-    return explicit.replace(/\/+$/, "");
-  }
-
-  return `${getRequestOrigin(req)}/api/stock-engine`;
-}
-
-async function fetchEngineJsonViaProxy(
-  req: NextRequest,
-  enginePath: string,
-  init?: RequestInit
-): Promise<{
-  ok: boolean;
-  status: number;
-  json: EngineJson;
-  proxyUrl: string;
-}> {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
-  const proxyUrl = `${getProxyBaseUrl(req)}${enginePath}`;
-
-  try {
-    const res = await fetch(proxyUrl, {
-      ...init,
-      cache: "no-store",
-      headers: {
-        accept: "application/json",
-        ...(init?.headers || {}),
-      },
-      signal: controller.signal,
-    });
-
-    const text = await res.text();
-    let json: EngineJson = {};
-
-    try {
-      json = text ? JSON.parse(text) : {};
-    } catch {
-      json = {
-        ok: false,
-        error: "proxy_returned_non_json",
-        rawPreview: text.slice(0, 500),
-      };
-    }
-
-    return {
-      ok: res.ok,
-      status: res.status,
-      json,
-      proxyUrl,
-    };
-  } catch (error: any) {
-    return {
-      ok: false,
-      status: 0,
-      json: {
-        ok: false,
-        error: "proxy_fetch_failed",
-        message: error?.message || String(error),
-      },
-      proxyUrl,
-    };
-  } finally {
-    clearTimeout(timeout);
-  }
-}
 
 function safeEmptyClientOutput(displayState = "NO_CLIENT_VISIBLE_SIGNALS_READY") {
   return {
@@ -164,33 +75,55 @@ function sanitizeForClient(engineJson: EngineJson, source: "latest" | "run") {
       clientSeesUnifiedSkillEdgeAIOnly: true,
       manualApprovalRequiredBeforeClientVisible: true,
       adapterReturnsInternalOutput: false,
-      usesExistingStockEngineProxy: true,
+      usesStockEngineProxyLibrary: true,
     },
   };
 }
 
-async function loadUnifiedOutput(req: NextRequest, limit: number, refresh: boolean) {
-  if (refresh) {
-    const run = await fetchEngineJsonViaProxy(
-      req,
-      `/engine/research/unified-skilledge-output/run?limit=${limit}&publish=true`,
-      { method: "POST" }
-    );
+async function fetchEngine(path: string): Promise<{
+  ok: boolean;
+  status: number;
+  json: EngineJson;
+  enginePath: string;
+}> {
+  try {
+    const json = (await fetchStockEngineJson(path)) as EngineJson;
+    return {
+      ok: Boolean(json?.ok),
+      status: Boolean(json?.ok) ? 200 : 502,
+      json,
+      enginePath: path,
+    };
+  } catch (error: any) {
+    return {
+      ok: false,
+      status: 502,
+      json: {
+        ok: false,
+        error: "stock_engine_proxy_library_failed",
+        message: error?.message || String(error),
+      },
+      enginePath: path,
+    };
+  }
+}
 
+async function loadUnifiedOutput(limit: number, refresh: boolean) {
+  const runPath = `/engine/research/unified-skilledge-output/run?limit=${limit}&publish=true`;
+  const latestPath = "/engine/research/unified-skilledge-output/latest";
+
+  if (refresh) {
+    const run = await fetchEngine(runPath);
     return {
       engineOk: run.ok,
       engineStatus: run.status,
       payload: sanitizeForClient(run.json, "run" as const),
       engineError: run.ok ? null : run.json,
-      proxyUrl: run.proxyUrl,
+      enginePath: run.enginePath,
     };
   }
 
-  const latest = await fetchEngineJsonViaProxy(
-    req,
-    "/engine/research/unified-skilledge-output/latest",
-    { method: "GET" }
-  );
+  const latest = await fetchEngine(latestPath);
 
   if (latest.ok && latest.json?.ok) {
     return {
@@ -198,22 +131,18 @@ async function loadUnifiedOutput(req: NextRequest, limit: number, refresh: boole
       engineStatus: latest.status,
       payload: sanitizeForClient(latest.json, "latest" as const),
       engineError: null,
-      proxyUrl: latest.proxyUrl,
+      enginePath: latest.enginePath,
     };
   }
 
-  const run = await fetchEngineJsonViaProxy(
-    req,
-    `/engine/research/unified-skilledge-output/run?limit=${limit}&publish=true`,
-    { method: "POST" }
-  );
+  const run = await fetchEngine(runPath);
 
   return {
     engineOk: run.ok,
     engineStatus: run.status,
     payload: sanitizeForClient(run.json, "run" as const),
     engineError: run.ok ? null : run.json,
-    proxyUrl: run.proxyUrl,
+    enginePath: run.enginePath,
   };
 }
 
@@ -228,7 +157,8 @@ function buildResponseBody(
       ok: result.engineOk,
       engineStatus: result.engineStatus,
       adapterVersion: ADAPTER_VERSION,
-      proxyMode: true,
+      proxyMode: false,
+      stockEngineProxyLibraryMode: true,
       ...extraRoute,
     },
     diagnostics: includeDiagnostics
@@ -236,9 +166,8 @@ function buildResponseBody(
           engineOk: result.engineOk,
           engineStatus: result.engineStatus,
           engineError: result.engineError,
-          proxyMode: true,
-          proxyUrl: result.proxyUrl,
-          adapterUsesExistingStockEngineProxy: true,
+          enginePath: result.enginePath,
+          stockEngineProxyLibraryMode: true,
         }
       : undefined,
   };
@@ -251,7 +180,7 @@ export async function GET(req: NextRequest) {
   const includeDiagnostics =
     searchParams.get("diagnostics") === "1" || searchParams.get("diagnostics") === "true";
 
-  const result = await loadUnifiedOutput(req, limit, refresh);
+  const result = await loadUnifiedOutput(limit, refresh);
 
   return NextResponse.json(buildResponseBody(result, includeDiagnostics), {
     status: result.engineOk ? 200 : 502,
@@ -276,7 +205,7 @@ export async function POST(req: NextRequest) {
     Math.min(Number(body?.limit || searchParams.get("limit") || 50), 200)
   );
 
-  const result = await loadUnifiedOutput(req, limit, true);
+  const result = await loadUnifiedOutput(limit, true);
 
   return NextResponse.json(
     buildResponseBody(result, false, { refreshed: true }),
