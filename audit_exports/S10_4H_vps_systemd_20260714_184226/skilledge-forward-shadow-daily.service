@@ -1,0 +1,22 @@
+[Unit]
+Description=SkillEdge Forward Shadow Daily Evaluator
+After=network-online.target skilledge-stock-engine-api.service
+Wants=network-online.target
+Requires=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+Environment=S898_DATE=
+Environment=S898_SYMBOLS=TSLA,NVDA,AAPL,MSFT,META,GOOGL,AMZN,AMD,SMCI,PLTR,NOW,NFLX,MSTR,CRWD,CRM,COIN,AVGO,XOS,RGNT,PAVS,OLOX,NTAP,JZXN,HPE,HPAI
+Environment=S898_INTERVAL=5min
+Environment=S898_MAX_CANDIDATES=25000
+Environment=S898_SKIP_PIPELINE=false
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+TimeoutStartSec=3600
+
+[Install]
+WantedBy=multi-user.target

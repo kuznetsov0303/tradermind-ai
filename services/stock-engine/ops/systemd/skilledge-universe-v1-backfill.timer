@@ -1,0 +1,10 @@
+[Unit]
+Description=Run SkillEdge Universe v1 Overnight Research Backfill
+
+[Timer]
+OnCalendar=*-*-* 01:10:00
+Persistent=true
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=timers.target

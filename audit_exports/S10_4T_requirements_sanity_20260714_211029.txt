@@ -1,0 +1,10 @@
+S10.4T REQUIREMENTS SANITY
+Current=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\services\stock-engine\requirements.txt
+SHA256=90fd0d91e04cee447e23936c0992debaa2066b0553a61893c722500369a522ba
+ACTIVE_REQUIREMENT_LINES=9
+INVALID_MERGED_LINES=0
+DUPLICATE_LINES=0
+
+=== INVALID MERGED LINES ===
+
+=== DUPLICATE LINES ===

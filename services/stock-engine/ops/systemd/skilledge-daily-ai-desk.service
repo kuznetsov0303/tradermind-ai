@@ -1,0 +1,17 @@
+[Unit]
+Description=SkillEdge Daily AI Desk Runner
+After=skilledge-stock-engine-api.service
+Wants=skilledge-stock-engine-api.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python run_daily_ai_desk.py --loop --interval-seconds 300 --start-kyiv 11:00 --end-kyiv 23:00
+Restart=always
+RestartSec=10
+User=skilledge
+Group=skilledge
+
+[Install]
+WantedBy=multi-user.target

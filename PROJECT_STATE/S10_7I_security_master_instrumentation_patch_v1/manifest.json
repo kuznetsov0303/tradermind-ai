@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "classification": "DAY7D_SECURITY_MASTER_AND_INSTRUMENTATION_PATCH_PACKAGE_VALIDATED",
+  "packageBuilt": true,
+  "packageExecuted": false,
+  "deploymentAuthorized": false,
+  "productionMutation": false,
+  "serviceRestarted": false,
+  "systemdTouched": false,
+  "streamSymbolsChanged": false,
+  "liveProvider": "databento",
+  "referenceProvider": "fmp",
+  "files": [
+    "app\\market_data\\stream_service.py",
+    "app\\data\\fmp_client.py",
+    "app\\data\\security_master.py",
+    "ops\\scripts\\build_validated_common_stock_universe.py",
+    "tests\\test_security_master.py"
+  ],
+  "instrumentationFields": [
+    "rawRecordsPerSecond",
+    "marketEventsPerSecond",
+    "cpuPercent",
+    "callbackLatencyMs",
+    "snapshotWriteLatencyMs",
+    "scannerBuildLatencyMs",
+    "candleCompleteness"
+  ],
+  "securityPolicy": {
+    "commonStock": "ALLOW_WITH_EXPLICIT_EVIDENCE",
+    "etfFundWarrantUnitRightPreferred": "BLOCK",
+    "unknown": "FAIL_CLOSED"
+  },
+  "clientEligibilityChanged": false,
+  "telegramEligibilityChanged": false,
+  "paperEligibilityChanged": false,
+  "nextAction": "RUN_ISOLATED_PACKAGE_TESTS_AND_REVIEW"
+}

@@ -30,7 +30,20 @@ function getEnvString(name: string, fallback = "") {
 }
 
 function getFmpStableBaseUrl() {
-  return getEnvString("FMP_STABLE_BASE_URL", "https://financialmodelingprep.com/stable").replace(/\/+$/g, "");
+  const raw = getEnvString(
+    "FMP_STABLE_BASE_URL",
+    "https://financialmodelingprep.com/stable"
+  )
+    .replace(/\/+$/g, "")
+    .trim();
+
+  // Stable intraday candles work on the paid key.
+  // If env was accidentally set to legacy /api/v3, force the correct stable base.
+  if (!raw || raw.includes("/api/v3") || !raw.includes("/stable")) {
+    return "https://financialmodelingprep.com/stable";
+  }
+
+  return raw;
 }
 
 function getBinanceBaseUrl() {
@@ -41,8 +54,12 @@ function getFmpApiKey() {
   return (
     process.env.FMP_API_KEY ||
     process.env.FINANCIAL_MODELING_PREP_API_KEY ||
+    process.env.NEXT_PUBLIC_FMP_API_KEY ||
     ""
   ).trim();
+}
+function maskFmpApiKeyInUrl(url: string) {
+  return url.replace(/apikey=[^&]+/gi, "apikey=***");
 }
 
 function normalizeSymbol(symbol: string) {
@@ -255,7 +272,10 @@ export async function fetchSkillEdgeCandles({
 
   try {
     const fmpInterval = mapFmpInterval(safeInterval);
-    const url = new URL(`/historical-chart/${fmpInterval}`, getFmpStableBaseUrl());
+    const url = new URL(
+      `historical-chart/${fmpInterval}`,
+      `${getFmpStableBaseUrl()}/`
+    );
 
     url.searchParams.set("symbol", safeSymbol);
     url.searchParams.set("apikey", fmpApiKey);
@@ -268,25 +288,49 @@ export async function fetchSkillEdgeCandles({
       cache: "no-store",
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
       return {
         candles: [],
         provider: "fmp",
         interval: safeInterval,
-        error: `FMP candles request failed: ${response.status}`,
+        error: `FMP stable candles request failed: ${response.status} ${responseText.slice(
+          0,
+          180
+        )} url=${maskFmpApiKeyInUrl(url.toString())}`,
       };
     }
 
-    const payload = await response.json();
+    let payload: unknown;
+
+    try {
+      payload = JSON.parse(responseText);
+    } catch {
+      return {
+        candles: [],
+        provider: "fmp",
+        interval: safeInterval,
+        error: `FMP stable candles returned non-JSON body: ${responseText.slice(
+          0,
+          180
+        )} url=${maskFmpApiKeyInUrl(url.toString())}`,
+      };
+    }
+
     const candles = parseFmpCandles(payload).slice(-safeLimit);
 
     return {
       candles,
       provider: "fmp",
       interval: safeInterval,
-      error: candles.length > 0 ? null : "No FMP candles returned.",
-    };
-  } catch (error) {
+      error:
+        candles.length > 0
+          ? null
+          : `No FMP stable candles returned. url=${maskFmpApiKeyInUrl(
+              url.toString()
+            )}`,
+    };  } catch (error) {
     return {
       candles: [],
       provider: "fmp",

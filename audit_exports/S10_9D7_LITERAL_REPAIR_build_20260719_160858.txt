@@ -1,0 +1,144 @@
+
+> tradermind-ai@0.1.0 build
+> next build
+
+в–І Next.js 16.2.4 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+вњ“ Compiled successfully in 28.9s
+  Skipping validation of types
+  Finished TypeScript config validation in 43ms ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/66) ...
+  Generating static pages using 11 workers (16/66) 
+  Generating static pages using 11 workers (32/66) 
+  Generating static pages using 11 workers (49/66) 
+вњ“ Generating static pages using 11 workers (66/66) in 692ms
+  Finalizing page optimization ...
+
+Route (app)
+в”Њ в—‹ /
+в”њ в—‹ /_not-found
+в”њ в—‹ /about
+в”њ в—‹ /admin
+в”њ в—‹ /admin/investor-dashboard
+в”њ в—‹ /admin/referrals
+в”њ в—‹ /admin/signals-review
+в”њ в—‹ /admin/support
+в”њ в—‹ /ai-guide
+в”њ Ж’ /api/admin/me
+в”њ Ж’ /api/admin/referrals/withdrawals
+в”њ Ж’ /api/admin/signals/manual-approval
+в”њ Ж’ /api/admin/signals/review-queue
+в”њ Ж’ /api/admin/stats/activations
+в”њ Ж’ /api/ai-coach
+в”њ Ж’ /api/analyze-current-chart
+в”њ Ж’ /api/analyze-trade-screenshot
+в”њ Ж’ /api/create-crypto-payment
+в”њ Ж’ /api/email-request
+в”њ Ж’ /api/journal-analysis
+в”њ Ж’ /api/market/ai-analysis
+в”њ Ж’ /api/market/ai-briefs
+в”њ Ж’ /api/market/alerts
+в”њ Ж’ /api/market/alerts/cron
+в”њ Ж’ /api/market/alerts/cron/all
+в”њ Ж’ /api/market/alerts/cron/crypto
+в”њ Ж’ /api/market/alerts/cron/stock
+в”њ Ж’ /api/market/alerts/decision
+в”њ Ж’ /api/market/alerts/outcomes
+в”њ Ж’ /api/market/alerts/outcomes/resolve
+в”њ Ж’ /api/market/alerts/personalized
+в”њ Ж’ /api/market/alerts/viewed
+в”њ Ж’ /api/market/chart-movers
+в”њ Ж’ /api/market/intelligence
+в”њ Ж’ /api/market/scanner
+в”њ Ж’ /api/market/social-mentions
+в”њ Ж’ /api/nowpayments-webhook
+в”њ Ж’ /api/personal-edge/summary
+в”њ Ж’ /api/playbook/setups
+в”њ Ж’ /api/playbook/signal-profile
+в”њ Ж’ /api/playbook/trade-patterns
+в”њ Ж’ /api/referrals/attach
+в”њ Ж’ /api/referrals/dashboard
+в”њ Ж’ /api/referrals/withdraw
+в”њ Ж’ /api/reports/ai-report
+в”њ Ж’ /api/stock-engine/calibration/preview
+в”њ Ж’ /api/stock-engine/cockpit
+в”њ Ж’ /api/stock-engine/cockpit/history/[symbol]
+в”њ Ж’ /api/stock-engine/cockpit/stream
+в”њ Ж’ /api/stock-engine/cockpit/symbol/[symbol]
+в”њ Ж’ /api/stock-engine/evidence/cache
+в”њ Ж’ /api/stock-engine/evidence/run
+в”њ Ж’ /api/stock-engine/evidence/today
+в”њ Ж’ /api/stock-engine/health
+в”њ Ж’ /api/stock-engine/investor-dashboard/cache
+в”њ Ж’ /api/stock-engine/investor-dashboard/run
+в”њ Ж’ /api/stock-engine/investor-dashboard/snapshot
+в”њ Ж’ /api/stock-engine/lifecycle/run
+в”њ Ж’ /api/stock-engine/market-session
+в”њ Ж’ /api/stock-engine/promotion/evidence
+в”њ Ж’ /api/stock-engine/promotion/evidence/[setup_slug]
+в”њ Ж’ /api/stock-engine/research/failure-patterns
+в”њ Ж’ /api/stock-engine/research/feature-matrix
+в”њ Ж’ /api/stock-engine/research/live-feature-audit
+в”њ Ж’ /api/stock-engine/research/readiness
+в”њ Ж’ /api/stock-engine/research/status
+в”њ Ж’ /api/stock-engine/signals/why-no-client-signals
+в”њ Ж’ /api/stock-engine/unified-skilledge-output
+в”њ Ж’ /api/strategy/after-trade-debriefs
+в”њ Ж’ /api/strategy/analytics
+в”њ Ж’ /api/strategy/before-trade-checks
+в”њ Ж’ /api/strategy/drills
+в”њ Ж’ /api/strategy/examples
+в”њ Ж’ /api/strategy/overview
+в”њ Ж’ /api/strategy/playbook/graduation
+в”њ Ж’ /api/strategy/profile
+в”њ Ж’ /api/strategy/review
+в”њ Ж’ /api/strategy/strategies
+в”њ Ж’ /api/strategy/tasks
+в”њ Ж’ /api/strategy/templates
+в”њ Ж’ /api/strategy/versions/generate
+в”њ Ж’ /api/strategy/weekly-report
+в”њ Ж’ /api/strategy/weekly-report/accept
+в”њ Ж’ /api/support/admin/close
+в”њ Ж’ /api/support/admin/messages
+в”њ Ж’ /api/support/admin/reply
+в”њ Ж’ /api/support/admin/sessions
+в”њ Ж’ /api/support/email-request
+в”њ Ж’ /api/support/messages
+в”њ Ж’ /api/support/operator-request
+в”њ Ж’ /api/support/session
+в”њ Ж’ /api/telegram/signals/connect-code
+в”њ Ж’ /api/telegram/signals/status
+в”њ Ж’ /api/telegram/signals/webhook
+в”њ Ж’ /apple-icon
+в”њ в—‹ /dashboard
+в”њ в—‹ /dashboard-guide
+в”њ в—‹ /desk
+в”њ Ж’ /icon
+в”њ в—‹ /journal-guide
+в”њ в—‹ /legal/billing
+в”њ в—‹ /legal/cookies
+в”њ в—‹ /legal/disclaimer
+в”њ в—‹ /legal/eula
+в”њ в—‹ /legal/privacy-policy
+в”њ в—‹ /legal/terms
+в”њ в—‹ /login
+в”њ Ж’ /opengraph-image
+в”њ в—‹ /pricing
+в”њ в—‹ /product
+в”њ в—‹ /referral
+в”њ в—‹ /register
+в”њ в—‹ /robots.txt
+в”њ в—‹ /sitemap.xml
+в”њ в—‹ /team
+в”” Ж’ /twitter-image
+
+
+в—‹  (Static)   prerendered as static content
+Ж’  (Dynamic)  server-rendered on demand
+
+
+--- STDERR ---
+вљ  Using edge runtime on a page currently disables static generation for that page

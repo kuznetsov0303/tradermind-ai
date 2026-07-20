@@ -1,0 +1,11 @@
+[Unit]
+Description=Run SkillEdge Clean Elite Live Capture every 5 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+Persistent=true
+Unit=skilledge-clean-elite-capture.service
+
+[Install]
+WantedBy=timers.target

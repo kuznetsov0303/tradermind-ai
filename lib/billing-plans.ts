@@ -1,5 +1,5 @@
 export type BillingPlanId = "core" | "edge" | "elite";
-export type BillingPeriod = "monthly" | "yearly";
+export type BillingPeriod = "monthly" | "halfyear" | "yearly";
 export type PaymentMethodId = "fondy" | "crypto";
 
 export type BillingPlan = {
@@ -8,6 +8,7 @@ export type BillingPlan = {
   publicName: string;
   description: string;
   monthlyPriceUsd: number;
+  halfyearPriceUsd: number;
   yearlyPriceUsd: number;
   yearlySavingsLabel: string;
   features: string[];
@@ -21,8 +22,9 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
     description:
       "A disciplined trading workspace for journaling, screenshots, structure, and AI coaching.",
     monthlyPriceUsd: 49,
-    yearlyPriceUsd: 490,
-    yearlySavingsLabel: "Save $98 yearly",
+    halfyearPriceUsd: 249,
+    yearlyPriceUsd: 399,
+    yearlySavingsLabel: "Save $189 yearly",
     features: [
       "Trading journal",
       "Screenshot storage",
@@ -38,8 +40,9 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
     description:
       "Professional trading workspace with Strategy OS, Personal Edge, Reports, Market Intelligence, AI Scanner, and AI Market Brief for active traders.",
     monthlyPriceUsd: 99,
-    yearlyPriceUsd: 990,
-    yearlySavingsLabel: "Save $198 yearly",
+    halfyearPriceUsd: 499,
+    yearlyPriceUsd: 799,
+    yearlySavingsLabel: "Save $389 yearly",
     features: [
       "Everything in Core",
       "Strategy OS",
@@ -57,9 +60,10 @@ export const BILLING_PLANS: Record<BillingPlanId, BillingPlan> = {
     publicName: "SkillEdge Elite",
     description:
       "Full AI Trading Desk with everything in Edge plus live AI Alerts, signal workflow, outcome tracking, and strategy-based feedback.",
-    monthlyPriceUsd: 179,
-    yearlyPriceUsd: 1790,
-    yearlySavingsLabel: "Save $358 yearly",
+    monthlyPriceUsd: 149,
+    halfyearPriceUsd: 749,
+    yearlyPriceUsd: 1249,
+    yearlySavingsLabel: "Save $539 yearly",
     features: [
       "Everything in Edge",
       "Strategy OS + Signals workflow",
@@ -82,7 +86,9 @@ export function normalizeBillingPlanId(value: unknown): BillingPlanId {
 }
 
 export function normalizeBillingPeriod(value: unknown): BillingPeriod {
-  return value === "yearly" ? "yearly" : "monthly";
+  if (value === "halfyear") return "halfyear";
+  if (value === "yearly") return "yearly";
+  return "monthly";
 }
 
 export function getBillingPlan(planId: unknown): BillingPlan {
@@ -93,16 +99,22 @@ export function getBillingAmountUsd(planId: unknown, period: unknown): number {
   const plan = getBillingPlan(planId);
   const billingPeriod = normalizeBillingPeriod(period);
 
+  if (billingPeriod === "halfyear") {
+    return plan.halfyearPriceUsd;
+  }
+
   return billingPeriod === "yearly"
     ? plan.yearlyPriceUsd
     : plan.monthlyPriceUsd;
 }
 
 export function getBillingPeriodLabel(period: BillingPeriod): string {
+  if (period === "halfyear") return "6 months";
   return period === "yearly" ? "Yearly" : "Monthly";
 }
 
 export function getBillingPeriodDays(period: BillingPeriod): number {
+  if (period === "halfyear") return 183;
   return period === "yearly" ? 365 : 30;
 }
 

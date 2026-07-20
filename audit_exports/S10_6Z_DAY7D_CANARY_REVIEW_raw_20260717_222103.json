@@ -1,0 +1,45 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_GUARDED_CANARY_REVIEW_PASSED",
+    "localPackageChecks":  {
+                               "manifestExecutionAuthorized":  false,
+                               "manifestPackageExecuted":  false,
+                               "additionsExact":  true,
+                               "removalsExact":  true,
+                               "protectedCoreCount":  21,
+                               "soakMinutes":  30,
+                               "executionContainsMarketStreamRestart":  true,
+                               "executionContainsApiRestart":  false,
+                               "executionContainsPaperMutation":  false,
+                               "executionContainsTelegramMutation":  false,
+                               "executionContainsExactCurrentUniverse":  true,
+                               "executionContainsExactNextUniverse":  true,
+                               "rollbackContainsMarketStreamRestart":  true,
+                               "rollbackContainsApiRestart":  false
+                           },
+    "remoteRuntimeChecks":  {
+                                "serviceHealthy":  true,
+                                "currentUnitCore25Exact":  true,
+                                "marketCount":  25,
+                                "candleCount":  25,
+                                "snapshotSetsMatch":  true,
+                                "snapshotExactCore25":  true,
+                                "negativeAgeSymbols":  [
+
+                                                       ],
+                                "openPaperRowsForRivnSofi":  [
+
+                                                             ]
+                            },
+    "validationErrors":  [
+
+                         ],
+    "armAllowed":  true,
+    "executionAuthorized":  false,
+    "packageExecuted":  false,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "nextAction":  "REQUEST_EXPLICIT_CANARY_EXECUTION_APPROVAL"
+}

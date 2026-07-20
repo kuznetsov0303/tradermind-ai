@@ -1,0 +1,26 @@
+﻿S10_9Y1_TRANSLATION_CONTEXT_AUDIT_COMPLETE
+GENERATED_AT=2026-07-20T15:11:20.1763322+03:00
+ACTIVE_RUNTIME_FILES_CHANGED=False
+ENGLISH_STRING_COUNT=446
+CONTEXT_ENTRY_COUNT=446
+LOCALE_FILES_AUDITED=15
+ALL_LOCALE_KEY_PARITY_PASSED=True
+ALL_LOCALES_NON_EMPTY=True
+X6_REPORT_FOUND=True
+X6_RAW_FOUND=True
+X6_BUILD_FOUND=True
+X6_FIXED_HEIGHT_92=True
+X6_VISIBLE_ROWS_2=True
+X6_INLINE_OVERFLOW_CONTROL=True
+X6_SCROLLBAR_HIDDEN=True
+X6_BUILD_PASSED=True
+X6_FORMALLY_CONFIRMED=True
+STRUCTURED_LOADER_REFERENCE=True
+SHARED_STORAGE_KEY_REFERENCE=False
+BUILD_SKIPPED=False
+BUILD_PASSED=True
+CONTEXT_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n\landing_translation_context.json
+GLOSSARY_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n\landing_glossary.json
+STYLE_GUIDE_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n\landing_style_guide.md
+RAW_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_raw_20260720_151039.json
+BUILD_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_build_20260720_151039.txt

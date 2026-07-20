@@ -1,0 +1,18 @@
+{
+  "ok": true,
+  "classification": "MISSING_LANDING_TRANSLATIONS_GENERATED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "runtimeAiTranslation": false,
+  "existingProviderUsed": "OpenAI API",
+  "oneTimeApiUsage": true,
+  "model": "gpt-5.6-luna",
+  "missingRowsRead": 191,
+  "periodRowsRestored": 3,
+  "uniqueEntriesGenerated": 194,
+  "pathAssignments": 223,
+  "generatedLocales": 14,
+  "generatedFiles": 15,
+  "outputDirectory": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing",
+  "nextAction": "VALIDATE_AND_MERGE_COMPLETE_LANDING_LOCALES"
+}

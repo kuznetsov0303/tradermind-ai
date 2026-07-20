@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "classification": "LANDING_UNIFIED_LOCALE_RUNTIME_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "filesChanged": [
+    "components/Landing.tsx"
+  ],
+  "supportedLocales": [
+    "en",
+    "ru",
+    "uk",
+    "zh",
+    "de",
+    "fr",
+    "es",
+    "ar",
+    "it",
+    "nb",
+    "ka",
+    "pl",
+    "tr",
+    "el",
+    "hi"
+  ],
+  "existingTranslatedLocales": [
+    "en",
+    "ru",
+    "uk"
+  ],
+  "temporaryEnglishFallbackLocales": [
+    "zh",
+    "de",
+    "fr",
+    "es",
+    "ar",
+    "it",
+    "nb",
+    "ka",
+    "pl",
+    "tr",
+    "el",
+    "hi"
+  ],
+  "storageKey": "skilledge_language",
+  "documentLangApplied": true,
+  "rtlReady": true,
+  "runtimeAiTranslation": false,
+  "buildPassed": true,
+  "replacementResults": [
+    {
+      "name": "unified_i18n_imports",
+      "hits": 1
+    },
+    {
+      "name": "landing_language_type",
+      "hits": 1
+    },
+    {
+      "name": "canonical_uk_comparisons",
+      "hits": 4
+    },
+    {
+      "name": "landing_locale_helpers",
+      "hits": 1
+    },
+    {
+      "name": "landing_dictionary_compatibility",
+      "hits": 1
+    },
+    {
+      "name": "landing_unified_locale_loader",
+      "hits": 1
+    },
+    {
+      "name": "landing_unified_locale_cycle",
+      "hits": 1
+    },
+    {
+      "name": "selector_actual_locale_label",
+      "hits": 1
+    }
+  ],
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9L2_landing_locale_runtime_backup_20260719_211829",
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9L2_LANDING_LOCALE_RUNTIME_build_20260719_211829.txt",
+  "nextAction": "EXTRACT_ENGLISH_MASTER_AND_GENERATE_LOCALE_FILES"
+}

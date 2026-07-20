@@ -1,0 +1,20 @@
+[Unit]
+Description=SkillEdge Forward Shadow Promotion Gate Report
+After=network-online.target skilledge-forward-shadow-daily.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+Environment=S900_MIN_FORWARD_SHADOW_DAYS=15
+Environment=S900_MIN_DECISION_TRADES=50
+Environment=S900_MIN_WIN_RATE=0.65
+Environment=S900_MIN_AVG_R=0.03
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_promotion_gate_report.py
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+TimeoutStartSec=900
+
+[Install]
+WantedBy=multi-user.target

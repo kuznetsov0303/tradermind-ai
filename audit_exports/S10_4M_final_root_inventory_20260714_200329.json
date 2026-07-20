@@ -1,0 +1,187 @@
+﻿{
+    "generated":  "20260714_200329",
+    "projectRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai",
+    "archiveSession":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai-history\\S10_4M_final_local_archive_20260714_200329",
+    "removedCount":  54,
+    "remainingTargetCount":  0,
+    "remainingTargets":  [
+
+                         ],
+    "rootItems":  [
+                      {
+                          "name":  ".env.example",
+                          "type":  "file",
+                          "size":  760
+                      },
+                      {
+                          "name":  ".env.local",
+                          "type":  "file",
+                          "size":  9962
+                      },
+                      {
+                          "name":  ".git",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".gitignore",
+                          "type":  "file",
+                          "size":  483
+                      },
+                      {
+                          "name":  ".local-start",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".next",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".vercel",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".vercelignore",
+                          "type":  "file",
+                          "size":  15
+                      },
+                      {
+                          "name":  ".vs",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "AGENTS.md",
+                          "type":  "file",
+                          "size":  327
+                      },
+                      {
+                          "name":  "app",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "audit_exports",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "CLAUDE.md",
+                          "type":  "file",
+                          "size":  11
+                      },
+                      {
+                          "name":  "components",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "components.json",
+                          "type":  "file",
+                          "size":  517
+                      },
+                      {
+                          "name":  "eslint.config.mjs",
+                          "type":  "file",
+                          "size":  465
+                      },
+                      {
+                          "name":  "lib",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "next.config.ts",
+                          "type":  "file",
+                          "size":  154
+                      },
+                      {
+                          "name":  "next-env.d.ts",
+                          "type":  "file",
+                          "size":  251
+                      },
+                      {
+                          "name":  "node_modules",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "package.json",
+                          "type":  "file",
+                          "size":  996
+                      },
+                      {
+                          "name":  "package-lock.json",
+                          "type":  "file",
+                          "size":  437460
+                      },
+                      {
+                          "name":  "postcss.config.mjs",
+                          "type":  "file",
+                          "size":  94
+                      },
+                      {
+                          "name":  "PRODUCTION_MANIFEST_DRAFT.md",
+                          "type":  "file",
+                          "size":  2870
+                      },
+                      {
+                          "name":  "public",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "README.md",
+                          "type":  "file",
+                          "size":  1450
+                      },
+                      {
+                          "name":  "S10_4M_final_local_archive_pass.ps1",
+                          "type":  "file",
+                          "size":  11256
+                      },
+                      {
+                          "name":  "services",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "start_all_local.ps1",
+                          "type":  "file",
+                          "size":  4256
+                      },
+                      {
+                          "name":  "START_ALL_README.txt",
+                          "type":  "file",
+                          "size":  439
+                      },
+                      {
+                          "name":  "stop_local_ports.ps1",
+                          "type":  "file",
+                          "size":  1367
+                      },
+                      {
+                          "name":  "supabase",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "tsconfig.json",
+                          "type":  "file",
+                          "size":  666
+                      },
+                      {
+                          "name":  "tsconfig.tsbuildinfo",
+                          "type":  "file",
+                          "size":  256880
+                      },
+                      {
+                          "name":  "vercel.json",
+                          "type":  "file",
+                          "size":  420
+                      }
+                  ]
+}

@@ -1,0 +1,46 @@
+S10.5F FMP AUTH DIFFERENTIAL PROBE - RECOVERED REPORT
+SourceRaw=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_5F_fmp_auth_differential_raw_20260714_233607.json
+OK=True
+APIKEYPRESENT=True
+APIKEYSOURCE=.env.server
+APIKEYFINGERPRINTSHA256PREFIX=54bd3b242b59
+APIKEYOUTPUT=NEVER_EMITTED
+CLASSIFICATION=REST_VALID_WEBSOCKET_401
+RECOMMENDATION=Do not rotate the working REST key and do not upgrade blindly. Account-side WebSocket entitlement or WebSocket auth provisioning must be confirmed with FMP.
+
+=== REST STABLE ===
+OK=True
+STATUS=200
+BODYKIND=list
+ITEMCOUNT=1
+CONTENTTYPE=application/json; charset=utf-8
+
+=== REST LEGACY ===
+OK=False
+STATUS=403
+ERROR={
+  "Error Message": "Legacy Endpoint : Due to Legacy endpoints being no longer supported - This endpoint is only available for legacy users who have valid subscriptions prior August 31, 2025. Please visit our documentation page https://site.financialmodelingprep.com/developer/docs for our current APIs. "
+}
+
+=== WEBSOCKET LOGIN ===
+CONNECTED=True
+LOGINSENT=True
+ERROR=
+EVENT=login
+STATUS=401
+MESSAGE=Unauthorized
+
+=== CHAIN ===
+AIAURL=http://crt.sectigo.com/SectigoPublicServerAuthenticationCADVR36.crt
+INTERMEDIATESHA256=8c54c334b66ba4e426772af4a3f9136c19a1aec729fdb28c535c07a5a4ef22e0
+VERIFYOK=True
+
+=== SAFETY ===
+INSTALLPERFORMED=False
+SUBSCRIPTIONCHANGED=False
+DEPLOYPERFORMED=False
+RESTARTPERFORMED=False
+SERVICESTATECHANGED=False
+PAPERPOSTPERFORMED=False
+APIKEYEMITTED=False
+TEMPORARYFILESREMOVED=True

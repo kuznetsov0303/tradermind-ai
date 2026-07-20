@@ -1,0 +1,1792 @@
+S10.9G3 EXACT EDGE COMPONENT / JOURNAL CARD EXTRACT
+Generated=20260719_174508
+OK=True
+CLASSIFICATION=EXACT_EDGE_COMPONENT_AND_JOURNAL_CARD_EXTRACT_COMPLETE
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+EDGE_FUNCTION_START=31445
+EDGE_FUNCTION_END=32076
+JOURNAL_CONTEXTS=8
+
+=== PERSONAL EDGE ENGINE PANEL SOURCE ===
+function PersonalEdgeEnginePanel({
+  language,
+  summary,
+  loading,
+  error,
+  onRefresh,
+  onOpenJournal,
+}: {
+  language: Language;
+  summary: PersonalEdgeSummary | null;
+  loading: boolean;
+  error: string;
+  onRefresh: () => void;
+  onOpenJournal: () => void;
+}) {
+  const isRu = language === "ru";
+  const isUa = language === "ua";
+
+  const copy = isRu
+    ? {
+        badge: "Personal Edge Engine",
+        statusPrefix: "Статус профиля",
+        title: "SkillEdge строит твой Personal Edge.",
+        text:
+          "Каждый trade review, скриншот и Journal review превращаются в личный профиль трейдера: сильные сетапы, leaks, правила, execution score и будущие Personal Match Alerts.",
+        refresh: "Обновить",
+        loading: "Обновляем...",
+        analyzeMore: "Усилить профиль",
+        emptyTitle: "Профиль ещё прогревается",
+        emptyText:
+          "Добавь сделку со скрином и запусти trade review. После этого здесь появятся Trading DNA, setup fingerprints, личный playbook и Anti-Setup Guard.",
+        profile: "Сила профиля",
+        profileHint: "Насколько AI уже понимает твой стиль и повторяемые паттерны.",
+        execution: "Исполнение",
+        executionHint: "Качество входа, риска, дисциплины и следования плану.",
+        data: "Качество данных",
+        dataHint: "Насколько хорошо заполнены сделки: скрин, стоп, сетап, заметки.",
+        discipline: "Дисциплина",
+        disciplineHint: "Насколько стабильно ты работаешь по риску и invalidation.",
+        bestSetup: "Твой сильный сетап",
+        riskPattern: "Anti-Setup Guard",
+        condition: "Сильное условие",
+        rules: "Персональные правила",
+        playbook: "Личный playbook",
+        fingerprints: "Отпечатки сетапов",
+        nextFocus: "Следующий фокус",
+        reviewed: "Разобранные сделки",
+        screenshots: "Скриншоты",
+        alerts: "Связано с сигналами",
+        matchReady: "Personal Match готовится",
+        matchActive: "Personal Match активен",
+        playbookBuilding: "Playbook строится",
+        playbookActive: "A+ кандидаты найдены",
+        guardBuilding: "Защита риска прогревается",
+        guardActive: "Anti-Setup Guard активен",
+        notEnough: "Недостаточно данных",
+        profileMeaningTitle: "Что это значит",
+        missingTitle: "Что усилит профиль",
+      }
+    : isUa
+      ? {
+          badge: "Personal Edge Engine",
+          statusPrefix: "Статус профілю",
+          title: "SkillEdge будує твій Personal Edge.",
+          text:
+            "Кожен desk review угоди, скриншот і розбір журналу перетворюються на особистий профіль трейдера: сильні сетапи, помилки, правила, оцінка виконання і майбутні Personal Match Alerts.",
+          refresh: "Оновити",
+          loading: "Оновлюємо...",
+          analyzeMore: "Посилити профіль",
+          emptyTitle: "Профіль ще прогрівається",
+          emptyText:
+            "Додай угоду зі скрином і запусти desk review. Після цього тут зʼявляться Trading DNA, відбитки сетапів, особистий playbook і Anti-Setup Guard.",
+          profile: "Сила профілю",
+          profileHint: "Наскільки AI вже розуміє твій стиль і повторювані патерни.",
+          execution: "Виконання",
+          executionHint: "Якість входу, ризику, дисципліни та дотримання плану.",
+          data: "Якість даних",
+          dataHint: "Наскільки добре заповнені угоди: скрин, стоп, сетап, нотатки.",
+          discipline: "Дисципліна",
+          disciplineHint: "Наскільки стабільно ти працюєш по ризику та invalidation.",
+          bestSetup: "Твій сильний сетап",
+          riskPattern: "Anti-Setup Guard",
+          condition: "Сильна умова",
+          rules: "Персональні правила",
+          playbook: "Особистий playbook",
+          fingerprints: "Відбитки сетапів",
+          nextFocus: "Наступний фокус",
+          reviewed: "Розібрані угоди",
+          screenshots: "Скриншоти",
+          alerts: "Повʼязано із сигналами",
+          matchReady: "Personal Match готується",
+          matchActive: "Personal Match активний",
+          playbookBuilding: "Playbook будується",
+          playbookActive: "A+ кандидати знайдені",
+          guardBuilding: "Захист ризику прогрівається",
+          guardActive: "Anti-Setup Guard активний",
+          notEnough: "Недостатньо даних",
+          profileMeaningTitle: "Що це означає",
+          missingTitle: "Що посилить профіль",
+        }
+      : {
+          badge: "Personal Edge Engine",
+          statusPrefix: "Profile status",
+          title: "SkillEdge is building your Personal Edge.",
+          text:
+            "Every AI trade review, screenshot and journal note becomes part of your personal trader profile: strongest setups, mistakes, rules, execution score and future Personal Match Alerts.",
+          refresh: "Refresh",
+          loading: "Refreshing...",
+          analyzeMore: "Strengthen profile",
+          emptyTitle: "Profile is warming up",
+          emptyText:
+            "Add a trade with a screenshot and run desk review. Trading DNA, Setup Fingerprints, Personal Playbook and Anti-Setup Guard will appear here.",
+          profile: "Profile strength",
+          profileHint: "How well AI understands your style and recurring patterns.",
+          execution: "Execution",
+          executionHint: "Entry quality, risk, discipline and plan adherence.",
+          data: "Data quality",
+          dataHint: "How complete your trades are: screenshot, stop, setup and notes.",
+          discipline: "Discipline",
+          disciplineHint: "How consistently you respect risk and invalidation.",
+          bestSetup: "Top A-setup",
+          riskPattern: "Anti-Setup Guard",
+          condition: "Strong condition",
+          rules: "Personal rules",
+          playbook: "Playbook",
+          fingerprints: "Fingerprints",
+          nextFocus: "Next focus",
+          reviewed: "reviewed trades",
+          screenshots: "screenshots",
+          alerts: "alert-linked",
+          matchReady: "Personal Match warming up",
+          matchActive: "Personal Match active",
+          playbookBuilding: "Playbook building",
+          playbookActive: "A+ candidates detected",
+          guardBuilding: "Risk Guard warming up",
+          guardActive: "Anti-Setup Guard active",
+          notEnough: "Sample still building",
+          profileMeaningTitle: "What this means",
+          missingTitle: "What will strengthen it",
+        };
+
+  const translateLabel = (value?: string | null) => {
+    const raw = String(value || "").trim();
+
+    if (!raw) return copy.notEnough;
+
+    const normalized = raw.toLowerCase();
+
+    if (!isRu && !isUa) return raw;
+
+    const dictionary: Record<string, string> = isRu
+      ? {
+          "not enough data yet": "Недостаточно данных",
+          "weak reward-to-risk profile": "Слабый risk/reward профиль",
+          "vwap context": "VWAP контекст",
+          "volume context": "Контекст объёма",
+          "gap context": "Gap контекст",
+          "premarket context": "Премаркет контекст",
+          "manual journal + screenshot review": "Журнал + розбір скриншота",
+          "no clear stop / invalidation saved": "Нет чёткого стопа / invalidation",
+          "failed breakout / trap": "Ложный пробой / trap",
+          "lower high": "Lower High",
+          "reclaim / failed reclaim": "Reclaim / failed reclaim",
+          "key level reaction": "Реакция от ключевого уровня",
+          "stock": "Акции",
+          "crypto": "Крипто",
+          "long": "Long",
+          "short": "Short",
+          "more reviewed trades": "Больше разобранных сделок",
+"higher data quality: screenshots, stop, setup notes": "Лучше данные: скрины, стоп, сетап и заметки",
+"setup fingerprints": "Відбитки сетапів",
+"personal playbook items": "Особистий playbook",
+          "unknown": "Не определено",
+        }
+      : {
+          "not enough data yet": "Недостатньо даних",
+          "weak reward-to-risk profile": "Слабкий risk/reward профіль",
+          "vwap context": "VWAP контекст",
+          "volume context": "Контекст обʼєму",
+          "gap context": "Gap контекст",
+          "premarket context": "Премаркет контекст",
+          "manual journal + screenshot review": "Журнал + розбір скриншота",
+          "no clear stop / invalidation saved": "Немає чіткого стопа / invalidation",
+          "failed breakout / trap": "Хибний пробій / trap",
+          "lower high": "Lower High",
+          "reclaim / failed reclaim": "Reclaim / failed reclaim",
+          "key level reaction": "Реакція від ключового рівня",
+          "stock": "Акції",
+          "crypto": "Крипто",
+          "long": "Long",
+          "short": "Short",
+          "more reviewed trades": "Більше розібраних угод",
+"higher data quality: screenshots, stop, setup notes": "Кращі дані: скрини, стоп, сетап і нотатки",
+"setup fingerprints": "Відбитки сетапів",
+"personal playbook items": "Особистий playbook",
+          "unknown": "Не визначено",
+        };
+
+    return dictionary[normalized] || raw;
+  };
+
+  const getLocalizedProfileSummary = () => {
+  if (!summary) return copy.text;
+
+  const stage = summary.profile.stage.stage;
+
+  if (isRu) {
+    if (stage === "empty") {
+      return "Personal Edge Engine готов. Добавь первую сделку со скрином и запусти trade review — система начнёт строить Trading DNA.";
+    }
+
+    if (stage === "warming_up") {
+      return "Персонализация запущена. SkillEdge читает исполнение, находит первые patterns и собирает базу для будущих Personal Match Alerts.";
+    }
+
+    if (stage === "building_edge") {
+      return "Твой профиль уже набирает силу. Система видит повторяющиеся сетапы, риск-паттерны и первые элементы личного playbook.";
+    }
+
+    if (stage === "strong_profile") {
+      return "У тебя уже сильный Personal Edge профиль. AI может точнее фильтровать сетапы, подсвечивать риски и сравнивать новые сигналы с твоей историей.";
+    }
+
+    return "Твой профиль готов к работе как персональный trading desk: сетапы, правила, риски и execution score уже связаны в единую систему.";
+  }
+
+  if (isUa) {
+    if (stage === "empty") {
+      return "Personal Edge Engine готовий до роботи. Додай першу угоду зі скрином і запусти desk review, щоб система почала будувати твій Trading DNA.";
+    }
+
+    if (stage === "warming_up") {
+      return "Персоналізація запущена. SkillEdge читає виконання, знаходить перші patterns і збирає базу для майбутніх Personal Match Alerts.";
+    }
+
+    if (stage === "building_edge") {
+      return "Твій профіль уже набирає силу. Система бачить повторювані сетапи, ризик-патерни й перші елементи особистого playbook.";
+    }
+
+    if (stage === "strong_profile") {
+      return "У тебе вже сильний Personal Edge профіль. AI може точніше фільтрувати сетапи, підсвічувати ризики й порівнювати нові сигнали з твоєю історією.";
+    }
+
+    return "Твій профіль готовий працювати як персональний trading desk: сетапи, правила, ризики й execution score вже зʼєднані в одну систему.";
+  }
+
+  return summary.profile.summary || copy.text;
+};
+
+const getLocalizedStageDescription = () => {
+  if (!summary) return copy.emptyText;
+
+  const stage = summary.profile.stage.stage;
+
+  if (isRu) {
+    if (stage === "empty") {
+      return "Пока данных мало. Разбери первую сделку со скрином, чтобы AI начал строить личный профиль.";
+    }
+
+    if (stage === "warming_up") {
+      return "AI уже начал читать твоё исполнение. Добавь больше review, чтобы повысить точность Personal Match.";
+    }
+
+    if (stage === "building_edge") {
+      return "Система уже видит первые повторяемые сетапы и начинает формировать твой playbook.";
+    }
+
+    if (stage === "strong_profile") {
+      return "Профиль достаточно сильный для более точной персонализации сигналов и risk warnings.";
+    }
+
+    return "Профиль готов к работе на уровне персонального trading desk.";
+  }
+
+  if (isUa) {
+    if (stage === "empty") {
+      return "Даних поки мало. Розбери першу угоду зі скрином, щоб AI почав будувати особистий профіль.";
+    }
+
+    if (stage === "warming_up") {
+      return "AI уже почав читати твоє виконання. Додай більше review, щоб підвищити точність Personal Match.";
+    }
+
+    if (stage === "building_edge") {
+      return "Система вже бачить перші повторювані сетапи й починає формувати твій playbook.";
+    }
+
+    if (stage === "strong_profile") {
+      return "Профіль достатньо сильний для точнішої персоналізації сигналів і risk warnings.";
+    }
+
+    return "Профіль готовий до роботи на рівні персонального trading desk.";
+  }
+
+  return summary.profile.stage.description;
+};
+
+const getLocalizedRiskDescription = () => {
+  const riskMode = summary?.profile.riskMode || "normal";
+
+  if (isRu) {
+    if (riskMode === "defensive") {
+      return "Система видит слабые места в исполнении. Сейчас приоритет — только A+ сетапы и жёсткий риск.";
+    }
+
+    if (riskMode === "cooldown") {
+      return "Risk Guard предлагает снизить активность. Сначала восстанови дисциплину, потом увеличивай частоту сделок.";
+    }
+
+    if (riskMode === "kill_switch") {
+      return "Режим защиты: торговлю лучше остановить, пока правила, риск и исполнение не вернутся в норму.";
+    }
+
+    if (riskMode === "aggressive_allowed") {
+      return "Профиль и исполнение позволяют активнее работать только с качественными подтверждёнными сетапами.";
+    }
+
+    return "Критичных рисков не найдено. Продолжай работать по personal playbook и правилам риска.";
+  }
+
+  if (isUa) {
+    if (riskMode === "defensive") {
+      return "Система бачить слабкі місця у виконанні. Зараз пріоритет — тільки A+ сетапи й жорсткий ризик.";
+    }
+
+    if (riskMode === "cooldown") {
+      return "Risk Guard пропонує знизити активність. Спочатку віднови дисципліну, потім збільшуй частоту угод.";
+    }
+
+    if (riskMode === "kill_switch") {
+      return "Режим захисту: торгівлю краще зупинити, поки правила, ризик і виконання не повернуться в норму.";
+    }
+
+    if (riskMode === "aggressive_allowed") {
+      return "Профіль і виконання дозволяють активніше працювати тільки з якісними підтвердженими сетапами.";
+    }
+
+    return "Критичних ризиків не знайдено. Продовжуй працювати за personal playbook і правилами ризику.";
+  }
+
+  return summary?.profile.riskModeCopy.description || "";
+};
+
+  const profile = summary?.profile;
+  const highlights = summary?.highlights;
+
+  const profileStrength = profile?.profileStrength ?? 0;
+  const executionScore = profile?.executionScore ?? 0;
+  const dataQualityScore = profile?.dataQualityScore ?? 0;
+  const disciplineScore = profile?.disciplineScore ?? 0;
+
+  const profileStageLabel =
+    profile?.stage.label || (isRu ? "Профиль прогревается" : isUa ? "Профіль прогрівається" : "Profile warming up");
+
+  const scoreCards = [
+    {
+      label: copy.profile,
+      value: profileStrength,
+      hint: copy.profileHint,
+      accent: "emerald",
+    },
+    {
+      label: copy.execution,
+      value: executionScore,
+      hint: copy.executionHint,
+      accent: "gold",
+    },
+    {
+      label: copy.data,
+      value: dataQualityScore,
+      hint: copy.dataHint,
+      accent: "blue",
+    },
+    {
+      label: copy.discipline,
+      value: disciplineScore,
+      hint: copy.disciplineHint,
+      accent: "red",
+    },
+  ];
+
+  const getBarClass = (accent: string) => {
+    if (accent === "gold") return "from-[#C8A96B] to-[#F5D58A]";
+    if (accent === "red") return "from-[#FF5A5F] to-[#F59E0B]";
+    if (accent === "blue") return "from-[#38BDF8] to-[#00C076]";
+    return "from-[#00C076] to-[#00D084]";
+  };
+
+  const bestSetup = translateLabel(highlights?.bestSetup);
+  const mainRiskPattern = translateLabel(highlights?.mainRiskPattern);
+  const strongestCondition = translateLabel(highlights?.strongestCondition);
+
+  const reviewedTrades = summary?.profile.totalReviewedTrades ?? 0;
+  const screenshotReviews = summary?.profile.totalScreenshotReviews ?? 0;
+  const alertLinked = summary?.profile.totalAlertLinkedTrades ?? 0;
+
+  const missingData = summary?.readiness.missingData || [];
+
+  return (
+    <div className="se-dashboard-panel relative overflow-hidden rounded-[2.35rem] border border-white/[0.08] p-6 shadow-[0_34px_130px_rgba(0,0,0,0.38)]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(0,192,118,0.16),transparent_32%),radial-gradient(circle_at_88%_10%,rgba(200,169,107,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.045),transparent_46%)]" />
+      <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#00C076]/10 blur-3xl" />
+      <div className="absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-[#C8A96B]/10 blur-3xl" />
+
+      <div className="relative">
+        <div className="flex flex-wrap items-start justify-between gap-5">
+          <div className="max-w-4xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex rounded-full border border-[#C8A96B]/25 bg-[#C8A96B]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-[#F4E8C8]/85 shadow-[0_0_34px_rgba(200,169,107,0.10)]">
+                {copy.badge}
+              </div>
+
+              <div className="inline-flex rounded-full border border-[#00C076]/22 bg-[#00C076]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#DFFFEF]/82">
+                {copy.statusPrefix}: {profileStageLabel}
+              </div>
+            </div>
+
+            <h3 className="mt-4 max-w-4xl text-2xl font-black tracking-[-0.04em] text-[#E6EDF7] md:text-3xl">
+              {copy.title}
+            </h3>
+
+            <p className="mt-3 max-w-4xl text-sm font-semibold leading-7 text-[#94A3B8]">
+              {getLocalizedStageDescription()}
+            </p>
+
+            {summary ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+                  {reviewedTrades} {copy.reviewed}
+                </div>
+                <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+                  {screenshotReviews} {copy.screenshots}
+                </div>
+                <div className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+                  {alertLinked} {copy.alerts}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="flex flex-wrap justify-end gap-2">
+            <button
+              type="button"
+              onClick={onOpenJournal}
+              className="rounded-full border border-[#00D084]/38 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#03140D] shadow-[0_18px_60px_rgba(0,192,118,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_80px_rgba(0,192,118,0.32)]"
+            >
+              {copy.analyzeMore}
+            </button>
+
+            <button
+              type="button"
+              onClick={onRefresh}
+              disabled={loading}
+              className="rounded-full border border-[#C8A96B]/25 bg-[#C8A96B]/10 px-4 py-2 text-xs font-black uppercase tracking-[0.16em] text-[#F4E8C8] transition hover:bg-[#C8A96B]/16 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {loading ? copy.loading : copy.refresh}
+            </button>
+          </div>
+        </div>
+
+        {error ? (
+          <div className="mt-5 rounded-2xl border border-[#FF5A5F]/20 bg-[#FF5A5F]/10 px-4 py-3 text-xs font-bold leading-5 text-rose-100">
+            {error}
+          </div>
+        ) : null}
+
+        {!summary ? (
+          <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+            <div className="text-sm font-black text-white">{copy.emptyTitle}</div>
+            <p className="mt-2 text-sm font-semibold leading-6 text-white/54">
+              {copy.emptyText}
+            </p>
+          </div>
+        ) : (
+          <>
+            <div id="edge-dna" className="mt-6 grid scroll-mt-28 gap-3 md:grid-cols-4">
+              {scoreCards.map((card) => (
+                <div
+                  key={card.label}
+                  className="rounded-[1.35rem] border border-white/10 bg-[#07111F]/46 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/42">
+                      {card.label}
+                    </span>
+                    <span className="text-sm font-black text-[#E6EDF7]">
+                      {Math.round(card.value)}%
+                    </span>
+                  </div>
+
+                  <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className={`h-full rounded-full bg-gradient-to-r ${getBarClass(card.accent)}`}
+                      style={{
+                        width: `${Math.max(4, Math.min(100, card.value))}%`,
+                      }}
+                    />
+                  </div>
+
+                  <p className="mt-3 min-h-[42px] text-[11px] font-semibold leading-5 text-white/45">
+                    {card.hint}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 grid gap-3 lg:grid-cols-3">
+              <div className="rounded-[1.5rem] border border-[#00C076]/18 bg-[#00C076]/[0.07] p-5 shadow-[0_0_50px_rgba(0,192,118,0.07)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#00D084]/80">
+                  {copy.bestSetup}
+                </div>
+                <div className="mt-3 text-lg font-black text-[#E6EDF7]">
+                  {bestSetup}
+                </div>
+                <p className="mt-2 text-xs font-semibold leading-5 text-white/50">
+                  {summary.profile.stage.description}
+                </p>
+              </div>
+
+              <div className="rounded-[1.5rem] border border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.07] p-5 shadow-[0_0_50px_rgba(255,90,95,0.06)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#FFB4B7]/80">
+                  {copy.riskPattern}
+                </div>
+                <div className="mt-3 text-lg font-black text-[#E6EDF7]">
+                  {mainRiskPattern}
+                </div>
+                <p className="mt-2 text-xs font-semibold leading-5 text-white/50">
+                  {getLocalizedRiskDescription()}
+                </p>
+              </div>
+
+              <div className="rounded-[1.5rem] border border-[#C8A96B]/20 bg-[#C8A96B]/[0.08] p-5 shadow-[0_0_50px_rgba(200,169,107,0.07)]">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#F4E8C8]/80">
+                  {copy.condition}
+                </div>
+                <div className="mt-3 text-lg font-black text-[#E6EDF7]">
+                  {strongestCondition}
+                </div>
+                <p className="mt-2 text-xs font-semibold leading-5 text-white/50">
+                  {copy.nextFocus}: {translateLabel(summary.profile.nextFocus)}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <div className="rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+                  {copy.fingerprints}
+                </div>
+                <div className="mt-2 text-2xl font-black text-white">
+                  {summary.fingerprints.length}
+                </div>
+                <p className="mt-1 text-xs font-semibold text-white/45">
+                  {summary.readiness.canPersonalizeAlerts
+                    ? copy.matchActive
+                    : copy.matchReady}
+                </p>
+              </div>
+
+              <div id="edge-playbook" className="scroll-mt-28 rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+                  {copy.playbook}
+                </div>
+                <div className="mt-2 text-2xl font-black text-white">
+                  {summary.playbook.length}
+                </div>
+                <p className="mt-1 text-xs font-semibold text-white/45">
+                  {summary.readiness.canBuildAPlusPlaybook
+                    ? copy.playbookActive
+                    : copy.playbookBuilding}
+                </p>
+              </div>
+
+              <div id="edge-rules" className="scroll-mt-28 rounded-[1.35rem] border border-white/10 bg-white/[0.045] p-4">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+                  {copy.rules}
+                </div>
+                <div className="mt-2 text-2xl font-black text-white">
+                  {summary.rules.length}
+                </div>
+                <p className="mt-1 text-xs font-semibold text-white/45">
+                  {summary.readiness.canUseAntiSetupGuard
+                    ? copy.guardActive
+                    : copy.guardBuilding}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="rounded-[1.5rem] border border-white/10 bg-[#07111F]/36 p-5">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+                  {copy.profileMeaningTitle}
+                </div>
+                <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
+                  {summary.profile.stage.description}
+                </p>
+              </div>
+
+              <div className="rounded-[1.5rem] border border-white/10 bg-[#07111F]/36 p-5">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+                  {copy.missingTitle}
+                </div>
+
+                {missingData.length > 0 ? (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {missingData.slice(0, 4).map((item) => (
+                      <span
+                        key={String(item)}
+                        className="rounded-full border border-white/10 bg-white/[0.05] px-3 py-1.5 text-[11px] font-bold text-white/58"
+                      >
+                        {translateLabel(String(item))}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-sm font-semibold leading-7 text-white/58">
+                    {isRu
+                      ? "Профиль уже рабочий. Добавляй качественные reviews — Personal Match станет точнее."
+                      : isUa
+                        ? "Профіль уже робочий. Додавай якісні reviews — Personal Match стане точнішим."
+                        : "The profile is already tradable. Keep adding high-quality reviews — Personal Match gets sharper."}
+                  </p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+=== JOURNAL CARD CONTEXTS ===
+
+-- line 16881 | needle=md:grid-cols-[minmax(0,1fr)_116px] --
+16841:     : t.journal.save}
+16842:           </button>
+16843:           {editingTradeId && (
+16844:   <button
+16845:     type="button"
+16846:     onClick={onTradeEditCancel}
+16847:     className="mt-3 rounded-full border border-white/10 bg-white/[0.055] px-5 py-3 text-sm font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
+16848:   >
+16849:     {t.journal.cancelEditButton}
+16850:   </button>
+16851: )}
+16852:         </div>
+16853:       </div>
+16854: 
+16855:         <div className="se-dashboard-card rounded-[1.65rem] p-4">
+16856:           <div className="flex items-center justify-between gap-3">
+16857:             <div>
+16858:               <div className="inline-flex rounded-full border border-cyan-200/18 bg-cyan-200/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-cyan-50/70">{journalDeskCopy.recentBadge}</div>
+16859:               <h3 className="mt-2 text-xl font-black tracking-[-0.03em]">{t.journal.recentTitle}</h3>
+16860:               <p className="mt-1 text-sm text-white/45">
+16861:                 {t.journal.recentText}
+16862:               </p>
+16863:             </div>
+16864: 
+16865:             <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
+16866:               {trades.length} {t.journal.tradesCount}
+16867:             </div>
+16868:           </div>
+16869: 
+16870:           <div className="mt-4 space-y-2.5">
+16871:             {trades.length === 0 ? (
+16872:               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-sm font-semibold leading-7 text-white/50">
+16873:                 {t.journal.empty}
+16874:               </div>
+16875:             ) : (
+16876:               recentTrades.map((trade) => (
+16877:                 <div
+16878:                   key={trade.id}
+16879:                   className="rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-3 transition hover:border-cyan-200/20 hover:bg-cyan-200/[0.055]"
+16880:                 >
+16881:                   <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_116px] md:items-start">
+16882:   <div className="min-w-0">
+16883:     <div className="flex flex-wrap items-center gap-3">
+16884:       <h4 className="text-lg font-black">
+16885:         {trade.ticker}
+16886:       </h4>
+16887: 
+16888:       <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wide text-white/55">
+16889:         {getDirectionLabel(trade.direction)}
+16890:       </span>
+16891: 
+16892:       <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wide text-white/55">
+16893:         {getMarketLabel(trade.market)}
+16894:       </span>
+16895:     </div>
+16896: 
+16897:     <p className="mt-1 text-sm text-white/45">
+16898:       {trade.trade_date}
+16899:     </p>
+16900:   </div>
+16901: 
+16902:   <div className="flex w-full flex-row flex-wrap items-center gap-2 md:w-auto md:max-w-[620px] md:justify-end">
+16903:     <div className="mb-1 min-w-[96px] text-right">
+16904:       <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+16905:         PnL
+16906:       </div>
+16907: 
+16908:       <div className="mt-0.5 text-lg font-black text-white">
+16909:         {trade.pnl === null ? "—" : `$${trade.pnl}`}
+16910:       </div>
+16911:     </div>
+16912: 
+16913:     <button
+16914:       type="button"
+16915:       onClick={() => onTradeChartAnalysis(trade.id)}
+16916:       disabled={
+16917:         locked ||
+16918:         chartAnalysisLoading ||
+16919:         tradeScreenshots.filter((item) => item.trade_id === trade.id)
+16920:           .length === 0
+16921:       }
+16922:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+16923:     >
+16924:       {chartAnalysisLoading && chartAnalysisTradeId === trade.id
+16925:         ? t.journal.chartAnalyzingButton
+16926:         : t.journal.chartAnalyzeButton}
+16927:     </button>
+16928: 
+16929:     <button
+16930:   type="button"
+16931:   onClick={() => onOpenTradeChart(trade)}
+16932:   className="w-full rounded-full border border-[#00C076]/20 bg-[#00C076]/10 px-3 py-1.5 text-xs font-black text-[#DFFFEF] transition hover:bg-[#00C076]/15"
+16933: >
+16934:   {t.journal.openChartButton}
+16935: </button>
+16936:     
+16937:     <button
+16938:       type="button"
+16939:       onClick={() => onTradeEditStart(trade)}
+16940:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
+16941:     >
+16942:       {t.journal.editTradeButton}
+16943:     </button>
+16944: 
+16945:     <button
+16946:       type="button"
+16947:       onClick={() => onTradeDelete(trade.id)}
+16948:       className="w-full rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-xs font-bold text-red-200 transition hover:bg-red-400/15"
+16949:     >
+16950:       {t.journal.deleteTradeButton}
+16951:     </button>
+16952: 
+16953:     <div className="w-full text-right text-xs text-white/35">
+16954:       {
+16955:         tradeScreenshots.filter(
+16956:           (screenshot) => screenshot.trade_id === trade.id
+16957:         ).length
+16958:       }{" "}
+16959:       {t.journal.chartScreenshotsLabel}
+16960:     </div>
+16961:   </div>
+16962: </div>
+16963: 
+16964: {trade.source_alert_id ? (
+16965:   (() => {
+16966:     const executionReview = getSignalExecutionReview(trade);
+16967: 
+16968:     if (!executionReview) return null;
+16969: 
+16970:     return (
+16971:       <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
+16972:         <div className="flex flex-wrap items-start justify-between gap-3">
+16973:           <div>
+16974:             <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+16975:               {signalCopy.linkedTrade}
+16976:             </div>
+16977: 
+16978:             <div className="mt-2 text-sm font-semibold text-white/85">
+16979:               {trade.source_setup_name || trade.setup || signalCopy.defaultSignal}
+16980:             </div>
+16981: 
+
+-- line 16902 | needle=flex w-full flex-row flex-wrap items-center gap-2 --
+16862:               </p>
+16863:             </div>
+16864: 
+16865:             <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70">
+16866:               {trades.length} {t.journal.tradesCount}
+16867:             </div>
+16868:           </div>
+16869: 
+16870:           <div className="mt-4 space-y-2.5">
+16871:             {trades.length === 0 ? (
+16872:               <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-6 text-sm font-semibold leading-7 text-white/50">
+16873:                 {t.journal.empty}
+16874:               </div>
+16875:             ) : (
+16876:               recentTrades.map((trade) => (
+16877:                 <div
+16878:                   key={trade.id}
+16879:                   className="rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-3 transition hover:border-cyan-200/20 hover:bg-cyan-200/[0.055]"
+16880:                 >
+16881:                   <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_116px] md:items-start">
+16882:   <div className="min-w-0">
+16883:     <div className="flex flex-wrap items-center gap-3">
+16884:       <h4 className="text-lg font-black">
+16885:         {trade.ticker}
+16886:       </h4>
+16887: 
+16888:       <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wide text-white/55">
+16889:         {getDirectionLabel(trade.direction)}
+16890:       </span>
+16891: 
+16892:       <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wide text-white/55">
+16893:         {getMarketLabel(trade.market)}
+16894:       </span>
+16895:     </div>
+16896: 
+16897:     <p className="mt-1 text-sm text-white/45">
+16898:       {trade.trade_date}
+16899:     </p>
+16900:   </div>
+16901: 
+16902:   <div className="flex w-full flex-row flex-wrap items-center gap-2 md:w-auto md:max-w-[620px] md:justify-end">
+16903:     <div className="mb-1 min-w-[96px] text-right">
+16904:       <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+16905:         PnL
+16906:       </div>
+16907: 
+16908:       <div className="mt-0.5 text-lg font-black text-white">
+16909:         {trade.pnl === null ? "—" : `$${trade.pnl}`}
+16910:       </div>
+16911:     </div>
+16912: 
+16913:     <button
+16914:       type="button"
+16915:       onClick={() => onTradeChartAnalysis(trade.id)}
+16916:       disabled={
+16917:         locked ||
+16918:         chartAnalysisLoading ||
+16919:         tradeScreenshots.filter((item) => item.trade_id === trade.id)
+16920:           .length === 0
+16921:       }
+16922:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+16923:     >
+16924:       {chartAnalysisLoading && chartAnalysisTradeId === trade.id
+16925:         ? t.journal.chartAnalyzingButton
+16926:         : t.journal.chartAnalyzeButton}
+16927:     </button>
+16928: 
+16929:     <button
+16930:   type="button"
+16931:   onClick={() => onOpenTradeChart(trade)}
+16932:   className="w-full rounded-full border border-[#00C076]/20 bg-[#00C076]/10 px-3 py-1.5 text-xs font-black text-[#DFFFEF] transition hover:bg-[#00C076]/15"
+16933: >
+16934:   {t.journal.openChartButton}
+16935: </button>
+16936:     
+16937:     <button
+16938:       type="button"
+16939:       onClick={() => onTradeEditStart(trade)}
+16940:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
+16941:     >
+16942:       {t.journal.editTradeButton}
+16943:     </button>
+16944: 
+16945:     <button
+16946:       type="button"
+16947:       onClick={() => onTradeDelete(trade.id)}
+16948:       className="w-full rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-xs font-bold text-red-200 transition hover:bg-red-400/15"
+16949:     >
+16950:       {t.journal.deleteTradeButton}
+16951:     </button>
+16952: 
+16953:     <div className="w-full text-right text-xs text-white/35">
+16954:       {
+16955:         tradeScreenshots.filter(
+16956:           (screenshot) => screenshot.trade_id === trade.id
+16957:         ).length
+16958:       }{" "}
+16959:       {t.journal.chartScreenshotsLabel}
+16960:     </div>
+16961:   </div>
+16962: </div>
+16963: 
+16964: {trade.source_alert_id ? (
+16965:   (() => {
+16966:     const executionReview = getSignalExecutionReview(trade);
+16967: 
+16968:     if (!executionReview) return null;
+16969: 
+16970:     return (
+16971:       <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
+16972:         <div className="flex flex-wrap items-start justify-between gap-3">
+16973:           <div>
+16974:             <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+16975:               {signalCopy.linkedTrade}
+16976:             </div>
+16977: 
+16978:             <div className="mt-2 text-sm font-semibold text-white/85">
+16979:               {trade.source_setup_name || trade.setup || signalCopy.defaultSignal}
+16980:             </div>
+16981: 
+16982:             <div className="mt-1 text-xs leading-5 text-white/45">
+16983:               {signalCopy.alertConfidence}:{" "}
+16984:               {trade.alert_confidence_score ?? "—"}
+16985:               {trade.alert_confidence_tier
+16986:                 ? ` В· ${trade.alert_confidence_tier}`
+16987:                 : ""}
+16988:             </div>
+16989:           </div>
+16990: 
+16991:           <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
+16992:             {executionReview.adherenceScore}/100 В·{" "}
+16993:             {getSignalExecutionLabelCopy(executionReview.executionLabel, journalLanguage)}
+16994:           </div>
+16995:         </div>
+16996: 
+16997:         <div className="mt-4 grid gap-3 md:grid-cols-4">
+16998:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+16999:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17000:               {signalCopy.entryQuality}
+17001:             </div>
+17002: 
+
+-- line 16931 | needle=onOpenTradeChart(trade) --
+16891: 
+16892:       <span className="rounded-full border border-white/10 px-3 py-1 text-[11px] uppercase tracking-wide text-white/55">
+16893:         {getMarketLabel(trade.market)}
+16894:       </span>
+16895:     </div>
+16896: 
+16897:     <p className="mt-1 text-sm text-white/45">
+16898:       {trade.trade_date}
+16899:     </p>
+16900:   </div>
+16901: 
+16902:   <div className="flex w-full flex-row flex-wrap items-center gap-2 md:w-auto md:max-w-[620px] md:justify-end">
+16903:     <div className="mb-1 min-w-[96px] text-right">
+16904:       <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+16905:         PnL
+16906:       </div>
+16907: 
+16908:       <div className="mt-0.5 text-lg font-black text-white">
+16909:         {trade.pnl === null ? "—" : `$${trade.pnl}`}
+16910:       </div>
+16911:     </div>
+16912: 
+16913:     <button
+16914:       type="button"
+16915:       onClick={() => onTradeChartAnalysis(trade.id)}
+16916:       disabled={
+16917:         locked ||
+16918:         chartAnalysisLoading ||
+16919:         tradeScreenshots.filter((item) => item.trade_id === trade.id)
+16920:           .length === 0
+16921:       }
+16922:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+16923:     >
+16924:       {chartAnalysisLoading && chartAnalysisTradeId === trade.id
+16925:         ? t.journal.chartAnalyzingButton
+16926:         : t.journal.chartAnalyzeButton}
+16927:     </button>
+16928: 
+16929:     <button
+16930:   type="button"
+16931:   onClick={() => onOpenTradeChart(trade)}
+16932:   className="w-full rounded-full border border-[#00C076]/20 bg-[#00C076]/10 px-3 py-1.5 text-xs font-black text-[#DFFFEF] transition hover:bg-[#00C076]/15"
+16933: >
+16934:   {t.journal.openChartButton}
+16935: </button>
+16936:     
+16937:     <button
+16938:       type="button"
+16939:       onClick={() => onTradeEditStart(trade)}
+16940:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
+16941:     >
+16942:       {t.journal.editTradeButton}
+16943:     </button>
+16944: 
+16945:     <button
+16946:       type="button"
+16947:       onClick={() => onTradeDelete(trade.id)}
+16948:       className="w-full rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-xs font-bold text-red-200 transition hover:bg-red-400/15"
+16949:     >
+16950:       {t.journal.deleteTradeButton}
+16951:     </button>
+16952: 
+16953:     <div className="w-full text-right text-xs text-white/35">
+16954:       {
+16955:         tradeScreenshots.filter(
+16956:           (screenshot) => screenshot.trade_id === trade.id
+16957:         ).length
+16958:       }{" "}
+16959:       {t.journal.chartScreenshotsLabel}
+16960:     </div>
+16961:   </div>
+16962: </div>
+16963: 
+16964: {trade.source_alert_id ? (
+16965:   (() => {
+16966:     const executionReview = getSignalExecutionReview(trade);
+16967: 
+16968:     if (!executionReview) return null;
+16969: 
+16970:     return (
+16971:       <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
+16972:         <div className="flex flex-wrap items-start justify-between gap-3">
+16973:           <div>
+16974:             <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+16975:               {signalCopy.linkedTrade}
+16976:             </div>
+16977: 
+16978:             <div className="mt-2 text-sm font-semibold text-white/85">
+16979:               {trade.source_setup_name || trade.setup || signalCopy.defaultSignal}
+16980:             </div>
+16981: 
+16982:             <div className="mt-1 text-xs leading-5 text-white/45">
+16983:               {signalCopy.alertConfidence}:{" "}
+16984:               {trade.alert_confidence_score ?? "—"}
+16985:               {trade.alert_confidence_tier
+16986:                 ? ` В· ${trade.alert_confidence_tier}`
+16987:                 : ""}
+16988:             </div>
+16989:           </div>
+16990: 
+16991:           <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
+16992:             {executionReview.adherenceScore}/100 В·{" "}
+16993:             {getSignalExecutionLabelCopy(executionReview.executionLabel, journalLanguage)}
+16994:           </div>
+16995:         </div>
+16996: 
+16997:         <div className="mt-4 grid gap-3 md:grid-cols-4">
+16998:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+16999:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17000:               {signalCopy.entryQuality}
+17001:             </div>
+17002: 
+17003:             <div className="mt-2 text-sm font-semibold text-white/80">
+17004:               {executionReview.entryInZone === null
+17005:                 ? signalCopy.noPlanZone
+17006:                 : executionReview.entryInZone
+17007:                   ? signalCopy.inZone
+17008:                   : signalCopy.outsideZone}
+17009:             </div>
+17010: 
+17011:             <div className="mt-1 text-xs leading-5 text-white/45">
+17012:               {signalCopy.plan}:{" "}
+17013:               {trade.alert_entry_zone_min && trade.alert_entry_zone_max
+17014:                 ? `${formatExecutionNumber(
+17015:                     trade.alert_entry_zone_min
+17016:                   )}–${formatExecutionNumber(trade.alert_entry_zone_max)}`
+17017:                 : "—"}
+17018:             </div>
+17019:           </div>
+17020: 
+17021:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+17022:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17023:               {signalCopy.stopAdherence}
+17024:             </div>
+17025: 
+17026:             <div className="mt-2 text-sm font-semibold text-white/80">
+17027:               {executionReview.stopMatched === null
+17028:                 ? signalCopy.noStopData
+17029:                 : executionReview.stopMatched
+17030:                   ? signalCopy.matched
+17031:                   : signalCopy.different}
+
+-- line 17353 | needle=onOpenTradeChart(trade) --
+17313:                       {trade.ticker}
+17314:                     </td>
+17315:                     <td className="py-4 pr-4">{getMarketLabel(trade.market)}</td>
+17316:                     <td className="py-4 pr-4">{getDirectionLabel(trade.direction)}</td>
+17317:                     <td className="py-4 pr-4">{trade.entry_price ?? "—"}</td>
+17318:                     <td className="py-4 pr-4">{trade.exit_price ?? "—"}</td>
+17319:                     <td className="py-4 pr-4">{trade.stop_loss ?? "—"}</td>
+17320:                     <td className="py-4 pr-4">
+17321:                       {trade.risk_amount === null ? "—" : `$${trade.risk_amount}`}
+17322:                     </td>
+17323:                     <td className="py-4 pr-4 font-semibold">
+17324:                       {trade.pnl === null ? "—" : `$${trade.pnl}`}
+17325:                     </td>
+17326:                     <td className="py-4 pr-4">{getResultLabel(trade.result)}</td>
+17327:                     <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
+17328:                     <td className="py-5 pr-4">
+17329:   {(() => {
+17330:     const screenshotsCount = tradeScreenshots.filter(
+17331:       (screenshot) => screenshot.trade_id === trade.id
+17332:     ).length;
+17333: 
+17334:     if (screenshotsCount === 0) {
+17335:       return <span className="text-white/35">—</span>;
+17336:     }
+17337: 
+17338:     return (
+17339:       <button
+17340:         type="button"
+17341:         onClick={() => handleOpenTradeScreenshots(trade)}
+17342:         className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
+17343:       >
+17344:         {t.journal.openScreenshots} {screenshotsCount}
+17345:       </button>
+17346:     );
+17347:   })()}
+17348: </td>
+17349:                   <td className="py-4 pr-4">
+17350:                     <div className="flex min-w-max flex-row flex-wrap items-center justify-end gap-2">
+17351:                       <button
+17352:   type="button"
+17353:   onClick={() => onOpenTradeChart(trade)}
+17354:   className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-300/15"
+17355: >
+17356:   {t.journal.openChartButton}
+17357:                       </button>
+17358:                       <button
+17359:   type="button"
+17360:   onClick={() => onTradeEditStart(trade)}
+17361:   className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
+17362: >
+17363:   {t.journal.editTradeButton}
+17364:                       </button>
+17365:                       <button
+17366:     type="button"
+17367:     onClick={() => onTradeDelete(trade.id)}
+17368:     className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-black text-red-200 transition hover:bg-red-400/15"
+17369:   >
+17370:     {t.journal.deleteTradeButton}
+17371:                       </button>
+17372:                     </div>
+17373:                   </td>
+17374:                   </tr>
+17375:                 ))
+17376:               )}
+17377:             </tbody>
+17378:           </table>
+17379:         </div>
+17380:       </div>
+17381:     </div>
+17382:   );
+17383: }
+17384: 
+17385: function EquityCurveCard({
+17386:   trades,
+17387:   compact = false,
+17388:   t,
+17389:   onExpand,
+17390: }: {
+17391:   trades: Trade[];
+17392:   compact?: boolean;
+17393:   t: (typeof dashboardDict)[Language];
+17394:   onExpand?: () => void;
+17395: }) {
+17396:   const equityCurveData = buildEquityCurveData(trades);
+17397:   const [mounted, setMounted] = useState(false);
+17398: 
+17399: useEffect(() => {
+17400:   setMounted(true);
+17401: }, []);
+17402: 
+17403:   return (
+17404:     <div
+17405:       className={
+17406:         compact
+17407:           ? "se-dashboard-card rounded-3xl p-5 overflow-hidden"
+17408:           : "se-dashboard-panel rounded-3xl p-6"
+17409:       }
+17410:     >
+17411:       <div className="flex items-center justify-between gap-4">
+17412:         <div>
+17413:           <h3
+17414:             className={
+17415:               compact ? "text-lg font-semibold" : "text-2xl font-semibold"
+17416:             }
+17417:           >
+17418:             {t.journal.equityTitle}
+17419:           </h3>
+17420:           <p className="mt-2 text-xs leading-6 text-white/45">
+17421:             {t.journal.equityText}
+17422:           </p>
+17423:         </div>
+17424: 
+17425:         <div className="flex items-center gap-2">
+17426:           <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/65">
+17427:             {equityCurveData.length} {t.journal.equityPoints}
+17428:           </div>
+17429: 
+17430:           {compact && onExpand && (
+17431:             <button
+17432:               type="button"
+17433:               onClick={onExpand}
+17434:               className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
+17435:             >
+17436:               {t.journal.expand}
+17437:             </button>
+17438:           )}
+17439:         </div>
+17440:       </div>
+17441: 
+17442:       <div
+17443:   className={
+17444:     compact
+17445:       ? "mt-5 h-[230px] w-full overflow-hidden"
+17446:       : "mt-6 h-[520px] w-full overflow-x-auto overflow-y-hidden"
+17447:   }
+17448: >
+17449:         {!mounted ? (
+17450:   <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+17451:     {t.loading}
+17452:   </div>
+17453: ) : equityCurveData.length === 0 ? (
+
+-- line 16939 | needle=onTradeEditStart(trade) --
+16899:     </p>
+16900:   </div>
+16901: 
+16902:   <div className="flex w-full flex-row flex-wrap items-center gap-2 md:w-auto md:max-w-[620px] md:justify-end">
+16903:     <div className="mb-1 min-w-[96px] text-right">
+16904:       <div className="text-xs uppercase tracking-[0.25em] text-white/35">
+16905:         PnL
+16906:       </div>
+16907: 
+16908:       <div className="mt-0.5 text-lg font-black text-white">
+16909:         {trade.pnl === null ? "—" : `$${trade.pnl}`}
+16910:       </div>
+16911:     </div>
+16912: 
+16913:     <button
+16914:       type="button"
+16915:       onClick={() => onTradeChartAnalysis(trade.id)}
+16916:       disabled={
+16917:         locked ||
+16918:         chartAnalysisLoading ||
+16919:         tradeScreenshots.filter((item) => item.trade_id === trade.id)
+16920:           .length === 0
+16921:       }
+16922:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+16923:     >
+16924:       {chartAnalysisLoading && chartAnalysisTradeId === trade.id
+16925:         ? t.journal.chartAnalyzingButton
+16926:         : t.journal.chartAnalyzeButton}
+16927:     </button>
+16928: 
+16929:     <button
+16930:   type="button"
+16931:   onClick={() => onOpenTradeChart(trade)}
+16932:   className="w-full rounded-full border border-[#00C076]/20 bg-[#00C076]/10 px-3 py-1.5 text-xs font-black text-[#DFFFEF] transition hover:bg-[#00C076]/15"
+16933: >
+16934:   {t.journal.openChartButton}
+16935: </button>
+16936:     
+16937:     <button
+16938:       type="button"
+16939:       onClick={() => onTradeEditStart(trade)}
+16940:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
+16941:     >
+16942:       {t.journal.editTradeButton}
+16943:     </button>
+16944: 
+16945:     <button
+16946:       type="button"
+16947:       onClick={() => onTradeDelete(trade.id)}
+16948:       className="w-full rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-xs font-bold text-red-200 transition hover:bg-red-400/15"
+16949:     >
+16950:       {t.journal.deleteTradeButton}
+16951:     </button>
+16952: 
+16953:     <div className="w-full text-right text-xs text-white/35">
+16954:       {
+16955:         tradeScreenshots.filter(
+16956:           (screenshot) => screenshot.trade_id === trade.id
+16957:         ).length
+16958:       }{" "}
+16959:       {t.journal.chartScreenshotsLabel}
+16960:     </div>
+16961:   </div>
+16962: </div>
+16963: 
+16964: {trade.source_alert_id ? (
+16965:   (() => {
+16966:     const executionReview = getSignalExecutionReview(trade);
+16967: 
+16968:     if (!executionReview) return null;
+16969: 
+16970:     return (
+16971:       <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
+16972:         <div className="flex flex-wrap items-start justify-between gap-3">
+16973:           <div>
+16974:             <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+16975:               {signalCopy.linkedTrade}
+16976:             </div>
+16977: 
+16978:             <div className="mt-2 text-sm font-semibold text-white/85">
+16979:               {trade.source_setup_name || trade.setup || signalCopy.defaultSignal}
+16980:             </div>
+16981: 
+16982:             <div className="mt-1 text-xs leading-5 text-white/45">
+16983:               {signalCopy.alertConfidence}:{" "}
+16984:               {trade.alert_confidence_score ?? "—"}
+16985:               {trade.alert_confidence_tier
+16986:                 ? ` В· ${trade.alert_confidence_tier}`
+16987:                 : ""}
+16988:             </div>
+16989:           </div>
+16990: 
+16991:           <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
+16992:             {executionReview.adherenceScore}/100 В·{" "}
+16993:             {getSignalExecutionLabelCopy(executionReview.executionLabel, journalLanguage)}
+16994:           </div>
+16995:         </div>
+16996: 
+16997:         <div className="mt-4 grid gap-3 md:grid-cols-4">
+16998:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+16999:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17000:               {signalCopy.entryQuality}
+17001:             </div>
+17002: 
+17003:             <div className="mt-2 text-sm font-semibold text-white/80">
+17004:               {executionReview.entryInZone === null
+17005:                 ? signalCopy.noPlanZone
+17006:                 : executionReview.entryInZone
+17007:                   ? signalCopy.inZone
+17008:                   : signalCopy.outsideZone}
+17009:             </div>
+17010: 
+17011:             <div className="mt-1 text-xs leading-5 text-white/45">
+17012:               {signalCopy.plan}:{" "}
+17013:               {trade.alert_entry_zone_min && trade.alert_entry_zone_max
+17014:                 ? `${formatExecutionNumber(
+17015:                     trade.alert_entry_zone_min
+17016:                   )}–${formatExecutionNumber(trade.alert_entry_zone_max)}`
+17017:                 : "—"}
+17018:             </div>
+17019:           </div>
+17020: 
+17021:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+17022:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17023:               {signalCopy.stopAdherence}
+17024:             </div>
+17025: 
+17026:             <div className="mt-2 text-sm font-semibold text-white/80">
+17027:               {executionReview.stopMatched === null
+17028:                 ? signalCopy.noStopData
+17029:                 : executionReview.stopMatched
+17030:                   ? signalCopy.matched
+17031:                   : signalCopy.different}
+17032:             </div>
+17033: 
+17034:             <div className="mt-1 text-xs leading-5 text-white/45">
+17035:               {signalCopy.plan}: {formatExecutionNumber(trade.alert_stop_price)}
+17036:             </div>
+17037:           </div>
+17038: 
+17039:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+
+-- line 17360 | needle=onTradeEditStart(trade) --
+17320:                     <td className="py-4 pr-4">
+17321:                       {trade.risk_amount === null ? "—" : `$${trade.risk_amount}`}
+17322:                     </td>
+17323:                     <td className="py-4 pr-4 font-semibold">
+17324:                       {trade.pnl === null ? "—" : `$${trade.pnl}`}
+17325:                     </td>
+17326:                     <td className="py-4 pr-4">{getResultLabel(trade.result)}</td>
+17327:                     <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
+17328:                     <td className="py-5 pr-4">
+17329:   {(() => {
+17330:     const screenshotsCount = tradeScreenshots.filter(
+17331:       (screenshot) => screenshot.trade_id === trade.id
+17332:     ).length;
+17333: 
+17334:     if (screenshotsCount === 0) {
+17335:       return <span className="text-white/35">—</span>;
+17336:     }
+17337: 
+17338:     return (
+17339:       <button
+17340:         type="button"
+17341:         onClick={() => handleOpenTradeScreenshots(trade)}
+17342:         className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
+17343:       >
+17344:         {t.journal.openScreenshots} {screenshotsCount}
+17345:       </button>
+17346:     );
+17347:   })()}
+17348: </td>
+17349:                   <td className="py-4 pr-4">
+17350:                     <div className="flex min-w-max flex-row flex-wrap items-center justify-end gap-2">
+17351:                       <button
+17352:   type="button"
+17353:   onClick={() => onOpenTradeChart(trade)}
+17354:   className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-300/15"
+17355: >
+17356:   {t.journal.openChartButton}
+17357:                       </button>
+17358:                       <button
+17359:   type="button"
+17360:   onClick={() => onTradeEditStart(trade)}
+17361:   className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
+17362: >
+17363:   {t.journal.editTradeButton}
+17364:                       </button>
+17365:                       <button
+17366:     type="button"
+17367:     onClick={() => onTradeDelete(trade.id)}
+17368:     className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-black text-red-200 transition hover:bg-red-400/15"
+17369:   >
+17370:     {t.journal.deleteTradeButton}
+17371:                       </button>
+17372:                     </div>
+17373:                   </td>
+17374:                   </tr>
+17375:                 ))
+17376:               )}
+17377:             </tbody>
+17378:           </table>
+17379:         </div>
+17380:       </div>
+17381:     </div>
+17382:   );
+17383: }
+17384: 
+17385: function EquityCurveCard({
+17386:   trades,
+17387:   compact = false,
+17388:   t,
+17389:   onExpand,
+17390: }: {
+17391:   trades: Trade[];
+17392:   compact?: boolean;
+17393:   t: (typeof dashboardDict)[Language];
+17394:   onExpand?: () => void;
+17395: }) {
+17396:   const equityCurveData = buildEquityCurveData(trades);
+17397:   const [mounted, setMounted] = useState(false);
+17398: 
+17399: useEffect(() => {
+17400:   setMounted(true);
+17401: }, []);
+17402: 
+17403:   return (
+17404:     <div
+17405:       className={
+17406:         compact
+17407:           ? "se-dashboard-card rounded-3xl p-5 overflow-hidden"
+17408:           : "se-dashboard-panel rounded-3xl p-6"
+17409:       }
+17410:     >
+17411:       <div className="flex items-center justify-between gap-4">
+17412:         <div>
+17413:           <h3
+17414:             className={
+17415:               compact ? "text-lg font-semibold" : "text-2xl font-semibold"
+17416:             }
+17417:           >
+17418:             {t.journal.equityTitle}
+17419:           </h3>
+17420:           <p className="mt-2 text-xs leading-6 text-white/45">
+17421:             {t.journal.equityText}
+17422:           </p>
+17423:         </div>
+17424: 
+17425:         <div className="flex items-center gap-2">
+17426:           <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/65">
+17427:             {equityCurveData.length} {t.journal.equityPoints}
+17428:           </div>
+17429: 
+17430:           {compact && onExpand && (
+17431:             <button
+17432:               type="button"
+17433:               onClick={onExpand}
+17434:               className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
+17435:             >
+17436:               {t.journal.expand}
+17437:             </button>
+17438:           )}
+17439:         </div>
+17440:       </div>
+17441: 
+17442:       <div
+17443:   className={
+17444:     compact
+17445:       ? "mt-5 h-[230px] w-full overflow-hidden"
+17446:       : "mt-6 h-[520px] w-full overflow-x-auto overflow-y-hidden"
+17447:   }
+17448: >
+17449:         {!mounted ? (
+17450:   <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+17451:     {t.loading}
+17452:   </div>
+17453: ) : equityCurveData.length === 0 ? (
+17454:           <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+17455:             {t.journal.equityEmpty}
+17456:           </div>
+17457:         ) : (
+17458:           <LineChart
+17459:   data={equityCurveData}
+17460:   width={compact ? 220 : 1000}
+
+-- line 16947 | needle=onTradeDelete(trade.id) --
+16907: 
+16908:       <div className="mt-0.5 text-lg font-black text-white">
+16909:         {trade.pnl === null ? "—" : `$${trade.pnl}`}
+16910:       </div>
+16911:     </div>
+16912: 
+16913:     <button
+16914:       type="button"
+16915:       onClick={() => onTradeChartAnalysis(trade.id)}
+16916:       disabled={
+16917:         locked ||
+16918:         chartAnalysisLoading ||
+16919:         tradeScreenshots.filter((item) => item.trade_id === trade.id)
+16920:           .length === 0
+16921:       }
+16922:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+16923:     >
+16924:       {chartAnalysisLoading && chartAnalysisTradeId === trade.id
+16925:         ? t.journal.chartAnalyzingButton
+16926:         : t.journal.chartAnalyzeButton}
+16927:     </button>
+16928: 
+16929:     <button
+16930:   type="button"
+16931:   onClick={() => onOpenTradeChart(trade)}
+16932:   className="w-full rounded-full border border-[#00C076]/20 bg-[#00C076]/10 px-3 py-1.5 text-xs font-black text-[#DFFFEF] transition hover:bg-[#00C076]/15"
+16933: >
+16934:   {t.journal.openChartButton}
+16935: </button>
+16936:     
+16937:     <button
+16938:       type="button"
+16939:       onClick={() => onTradeEditStart(trade)}
+16940:       className="w-full rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-white/70 transition hover:bg-white/10 hover:text-white"
+16941:     >
+16942:       {t.journal.editTradeButton}
+16943:     </button>
+16944: 
+16945:     <button
+16946:       type="button"
+16947:       onClick={() => onTradeDelete(trade.id)}
+16948:       className="w-full rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-xs font-bold text-red-200 transition hover:bg-red-400/15"
+16949:     >
+16950:       {t.journal.deleteTradeButton}
+16951:     </button>
+16952: 
+16953:     <div className="w-full text-right text-xs text-white/35">
+16954:       {
+16955:         tradeScreenshots.filter(
+16956:           (screenshot) => screenshot.trade_id === trade.id
+16957:         ).length
+16958:       }{" "}
+16959:       {t.journal.chartScreenshotsLabel}
+16960:     </div>
+16961:   </div>
+16962: </div>
+16963: 
+16964: {trade.source_alert_id ? (
+16965:   (() => {
+16966:     const executionReview = getSignalExecutionReview(trade);
+16967: 
+16968:     if (!executionReview) return null;
+16969: 
+16970:     return (
+16971:       <div className="mt-4 rounded-2xl border border-emerald-300/15 bg-emerald-300/[0.04] p-4">
+16972:         <div className="flex flex-wrap items-start justify-between gap-3">
+16973:           <div>
+16974:             <div className="text-[10px] uppercase tracking-[0.22em] text-emerald-100/45">
+16975:               {signalCopy.linkedTrade}
+16976:             </div>
+16977: 
+16978:             <div className="mt-2 text-sm font-semibold text-white/85">
+16979:               {trade.source_setup_name || trade.setup || signalCopy.defaultSignal}
+16980:             </div>
+16981: 
+16982:             <div className="mt-1 text-xs leading-5 text-white/45">
+16983:               {signalCopy.alertConfidence}:{" "}
+16984:               {trade.alert_confidence_score ?? "—"}
+16985:               {trade.alert_confidence_tier
+16986:                 ? ` В· ${trade.alert_confidence_tier}`
+16987:                 : ""}
+16988:             </div>
+16989:           </div>
+16990: 
+16991:           <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold text-emerald-100">
+16992:             {executionReview.adherenceScore}/100 В·{" "}
+16993:             {getSignalExecutionLabelCopy(executionReview.executionLabel, journalLanguage)}
+16994:           </div>
+16995:         </div>
+16996: 
+16997:         <div className="mt-4 grid gap-3 md:grid-cols-4">
+16998:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+16999:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17000:               {signalCopy.entryQuality}
+17001:             </div>
+17002: 
+17003:             <div className="mt-2 text-sm font-semibold text-white/80">
+17004:               {executionReview.entryInZone === null
+17005:                 ? signalCopy.noPlanZone
+17006:                 : executionReview.entryInZone
+17007:                   ? signalCopy.inZone
+17008:                   : signalCopy.outsideZone}
+17009:             </div>
+17010: 
+17011:             <div className="mt-1 text-xs leading-5 text-white/45">
+17012:               {signalCopy.plan}:{" "}
+17013:               {trade.alert_entry_zone_min && trade.alert_entry_zone_max
+17014:                 ? `${formatExecutionNumber(
+17015:                     trade.alert_entry_zone_min
+17016:                   )}–${formatExecutionNumber(trade.alert_entry_zone_max)}`
+17017:                 : "—"}
+17018:             </div>
+17019:           </div>
+17020: 
+17021:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+17022:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17023:               {signalCopy.stopAdherence}
+17024:             </div>
+17025: 
+17026:             <div className="mt-2 text-sm font-semibold text-white/80">
+17027:               {executionReview.stopMatched === null
+17028:                 ? signalCopy.noStopData
+17029:                 : executionReview.stopMatched
+17030:                   ? signalCopy.matched
+17031:                   : signalCopy.different}
+17032:             </div>
+17033: 
+17034:             <div className="mt-1 text-xs leading-5 text-white/45">
+17035:               {signalCopy.plan}: {formatExecutionNumber(trade.alert_stop_price)}
+17036:             </div>
+17037:           </div>
+17038: 
+17039:           <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+17040:             <div className="text-[11px] font-black uppercase leading-4 tracking-[0.16em] text-white/46">
+17041:               {signalCopy.targetResult}
+17042:             </div>
+17043: 
+17044:             <div className="mt-2 text-sm font-semibold text-white/80">
+17045:               {getSignalTargetHitCopy(executionReview.targetHit, journalLanguage)}
+17046:             </div>
+17047: 
+
+-- line 17367 | needle=onTradeDelete(trade.id) --
+17327:                     <td className="py-4 pr-4">{trade.setup ?? "—"}</td>
+17328:                     <td className="py-5 pr-4">
+17329:   {(() => {
+17330:     const screenshotsCount = tradeScreenshots.filter(
+17331:       (screenshot) => screenshot.trade_id === trade.id
+17332:     ).length;
+17333: 
+17334:     if (screenshotsCount === 0) {
+17335:       return <span className="text-white/35">—</span>;
+17336:     }
+17337: 
+17338:     return (
+17339:       <button
+17340:         type="button"
+17341:         onClick={() => handleOpenTradeScreenshots(trade)}
+17342:         className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
+17343:       >
+17344:         {t.journal.openScreenshots} {screenshotsCount}
+17345:       </button>
+17346:     );
+17347:   })()}
+17348: </td>
+17349:                   <td className="py-4 pr-4">
+17350:                     <div className="flex min-w-max flex-row flex-wrap items-center justify-end gap-2">
+17351:                       <button
+17352:   type="button"
+17353:   onClick={() => onOpenTradeChart(trade)}
+17354:   className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-300/15"
+17355: >
+17356:   {t.journal.openChartButton}
+17357:                       </button>
+17358:                       <button
+17359:   type="button"
+17360:   onClick={() => onTradeEditStart(trade)}
+17361:   className="rounded-full border border-white/10 bg-white/[0.055] px-4 py-2 text-xs font-black text-white/70 transition hover:bg-cyan-200/[0.08] hover:text-white"
+17362: >
+17363:   {t.journal.editTradeButton}
+17364:                       </button>
+17365:                       <button
+17366:     type="button"
+17367:     onClick={() => onTradeDelete(trade.id)}
+17368:     className="rounded-full border border-red-400/20 bg-red-400/10 px-3 py-1.5 text-[11px] font-black text-red-200 transition hover:bg-red-400/15"
+17369:   >
+17370:     {t.journal.deleteTradeButton}
+17371:                       </button>
+17372:                     </div>
+17373:                   </td>
+17374:                   </tr>
+17375:                 ))
+17376:               )}
+17377:             </tbody>
+17378:           </table>
+17379:         </div>
+17380:       </div>
+17381:     </div>
+17382:   );
+17383: }
+17384: 
+17385: function EquityCurveCard({
+17386:   trades,
+17387:   compact = false,
+17388:   t,
+17389:   onExpand,
+17390: }: {
+17391:   trades: Trade[];
+17392:   compact?: boolean;
+17393:   t: (typeof dashboardDict)[Language];
+17394:   onExpand?: () => void;
+17395: }) {
+17396:   const equityCurveData = buildEquityCurveData(trades);
+17397:   const [mounted, setMounted] = useState(false);
+17398: 
+17399: useEffect(() => {
+17400:   setMounted(true);
+17401: }, []);
+17402: 
+17403:   return (
+17404:     <div
+17405:       className={
+17406:         compact
+17407:           ? "se-dashboard-card rounded-3xl p-5 overflow-hidden"
+17408:           : "se-dashboard-panel rounded-3xl p-6"
+17409:       }
+17410:     >
+17411:       <div className="flex items-center justify-between gap-4">
+17412:         <div>
+17413:           <h3
+17414:             className={
+17415:               compact ? "text-lg font-semibold" : "text-2xl font-semibold"
+17416:             }
+17417:           >
+17418:             {t.journal.equityTitle}
+17419:           </h3>
+17420:           <p className="mt-2 text-xs leading-6 text-white/45">
+17421:             {t.journal.equityText}
+17422:           </p>
+17423:         </div>
+17424: 
+17425:         <div className="flex items-center gap-2">
+17426:           <div className="rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-xs text-white/65">
+17427:             {equityCurveData.length} {t.journal.equityPoints}
+17428:           </div>
+17429: 
+17430:           {compact && onExpand && (
+17431:             <button
+17432:               type="button"
+17433:               onClick={onExpand}
+17434:               className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-white/70 transition hover:bg-white/10 hover:text-white"
+17435:             >
+17436:               {t.journal.expand}
+17437:             </button>
+17438:           )}
+17439:         </div>
+17440:       </div>
+17441: 
+17442:       <div
+17443:   className={
+17444:     compact
+17445:       ? "mt-5 h-[230px] w-full overflow-hidden"
+17446:       : "mt-6 h-[520px] w-full overflow-x-auto overflow-y-hidden"
+17447:   }
+17448: >
+17449:         {!mounted ? (
+17450:   <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+17451:     {t.loading}
+17452:   </div>
+17453: ) : equityCurveData.length === 0 ? (
+17454:           <div className="flex h-full items-center justify-center rounded-3xl border border-white/10 bg-black/20 text-center text-sm leading-6 text-white/45">
+17455:             {t.journal.equityEmpty}
+17456:           </div>
+17457:         ) : (
+17458:           <LineChart
+17459:   data={equityCurveData}
+17460:   width={compact ? 220 : 1000}
+17461:   height={compact ? 220 : 520}
+17462: >
+17463:   <CartesianGrid
+17464:     strokeDasharray="3 3"
+17465:     stroke="rgba(255,255,255,0.08)"
+17466:   />
+17467:   <XAxis
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9G3_EXACT_EDGE_JOURNAL_EXTRACT_raw_20260719_174508.json
+NEXT_ACTION=BUILD_EDGE_HERO_AND_JOURNAL_ACTIONS_CORRECTION_PATCH

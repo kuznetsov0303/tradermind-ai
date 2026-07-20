@@ -1,0 +1,99 @@
+{
+  "ok": true,
+  "classification": "SIGNALS_LOCALIZATION_COMPLETION_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "fileChanged": "components/dashboard/SignalCockpitTab.tsx",
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9E3_signals_localization_completion_backup_20260719_165120",
+  "replacementResults": [
+    {
+      "name": "selected_ticker_subtitle",
+      "hits": 1
+    },
+    {
+      "name": "price_metric",
+      "hits": 1
+    },
+    {
+      "name": "score_metric",
+      "hits": 1
+    },
+    {
+      "name": "volume_metric",
+      "hits": 1
+    },
+    {
+      "name": "history_badge",
+      "hits": 1
+    },
+    {
+      "name": "history_summary",
+      "hits": 1
+    },
+    {
+      "name": "chart_empty_state",
+      "hits": 1
+    },
+    {
+      "name": "watchlist_title",
+      "hits": 1
+    },
+    {
+      "name": "watchlist_count",
+      "hits": 1
+    },
+    {
+      "name": "active_counter",
+      "hits": 1
+    },
+    {
+      "name": "closed_counter",
+      "hits": 1
+    },
+    {
+      "name": "ticker_search",
+      "hits": 1
+    },
+    {
+      "name": "filter_labels",
+      "hits": 1
+    },
+    {
+      "name": "late_badge",
+      "hits": 1
+    },
+    {
+      "name": "closed_badge",
+      "hits": 1
+    },
+    {
+      "name": "monitor_only_card",
+      "hits": 0
+    },
+    {
+      "name": "candidate_card",
+      "hits": 0
+    },
+    {
+      "name": "watch_card",
+      "hits": 0
+    },
+    {
+      "name": "selected_freshness",
+      "hits": 2
+    },
+    {
+      "name": "item_freshness",
+      "hits": 1
+    },
+    {
+      "name": "lifecycle_label",
+      "hits": 0
+    }
+  ],
+  "internalFilterKeysPreserved": true,
+  "siteLanguagePropUsed": true,
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9E3_SIGNALS_LOCALIZATION_COMPLETION_build_20260719_165120.txt",
+  "nextAction": "LOCAL_VISUAL_VERIFY_SIGNALS_UA_RU_EN"
+}

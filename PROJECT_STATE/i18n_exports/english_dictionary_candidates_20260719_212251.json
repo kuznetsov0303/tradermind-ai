@@ -1,0 +1,3467 @@
+[
+  {
+    "file": "components/Landing.tsx",
+    "key": "brandTag",
+    "value": "Performance intelligence"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "requestDemo",
+    "value": "Request demo"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "choosePlan",
+    "value": "Choose plan"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "viewProduct",
+    "value": "View product"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "viewPricing",
+    "value": "View pricing"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "viewAbout",
+    "value": "About us"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "team",
+    "value": "About us"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "Premium AI trading workspace"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Turn market noise, trade history and execution mistakes into a clearer trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI connects your journal, screenshots, chart review, market intelligence, AI scanner, alerts, reports and learning workflow into one premium trading workspace — without promising profits or replacing your own judgment."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "start",
+    "value": "Start with a plan"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "tour",
+    "value": "View product flow"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "problemEyebrow",
+    "value": "The problem"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "problemTitle",
+    "value": "Most traders do not need more noise. They need a cleaner process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "problemText",
+    "value": "Charts, screenshots, emotions, watchlists, notes and mistakes often live in different places. SkillEdge AI brings them into one workflow so the trader can review decisions, understand patterns and build a repeatable process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "whyTitle",
+    "value": "What SkillEdge AI helps you organize"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "whyText",
+    "value": "The platform is designed around the real trading loop: find what matters, plan the trade, execute with discipline, record the result and learn from the outcome."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "One connected workspace for trading performance."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "ctaPrimary",
+    "value": "Choose your plan"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "ctaSecondary",
+    "value": "Why SkillEdge exists"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "deskTitle",
+    "value": "A trading desk should give context, not blind calls."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "deskText",
+    "value": "SkillEdge AI is designed to explain why an opportunity matters, what confirms it, what invalidates it and where the risk sits. The goal is better decision-making, not blind dependency."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "flowTitle",
+    "value": "From market scan to personal improvement — one connected loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "flowText",
+    "value": "Every serious trading idea should become data: what the market showed, what the trader planned, what was executed and what the outcome taught."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "modulesTitle",
+    "value": "Everything is designed to work together."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "modulesText",
+    "value": "Each module can be useful alone. Together they create a premium workspace where the trader can discover opportunities, execute with structure and review performance."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "differentTitle",
+    "value": "This is not another signal service. It is a performance system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "differentText",
+    "value": "The best traders do not only search for entries. They build process, risk control, review, discipline and repeatable patterns. SkillEdge AI is being built around that reality."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Build a trading system around your real behavior."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI is for traders who are tired of scattered tools, emotional decisions and unclear reviews. The product helps the client see the market cleaner, execute with more structure and understand what to improve next."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Choose the level of intelligence around your trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "halfyear",
+    "value": "6 months"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "halfyear",
+    "value": "/ 6 months"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cardPayment",
+    "value": "Card payment is being prepared"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cryptoNote",
+    "value": "* crypto payment through the available launch flow"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "checking",
+    "value": "Checking your account..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "invoice",
+    "value": "Creating crypto invoice..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "noUrl",
+    "value": "Crypto invoice was created, but payment URL was not returned."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "unavailable",
+    "value": "Crypto payment is not available right now."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "core",
+    "value": "Start with discipline"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "edge",
+    "value": "Best active-trader value"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "elite",
+    "value": "Full AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "For traders who need structure first."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Build the foundation: journal, screenshots, AI Coach, chart analysis foundation, exports and a cleaner review process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Best for building discipline, tracking trades and stopping reliance on memory."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cta",
+    "value": "Start with Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "For active traders who need deeper review and market context."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Unlock higher limits, AI reports, premium chart analysis, social/market context and the AI Scanner / AI Market Brief layer."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Best for active traders who review seriously and want better setup and mistake discovery."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cta",
+    "value": "Upgrade to Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "For serious traders who want the full AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Unlock AI Alerts, floating alert widget, Signal-to-Journal workflow, decision tracking, outcome learning and maximum AI limits."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Best for advanced traders who want structured signals and a complete feedback loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cta",
+    "value": "Unlock Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "signalEyebrow",
+    "value": "Why the signal layer matters"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "signalTitle",
+    "value": "SkillEdge signals are built to educate, not to make the trader blindly click."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "signalText",
+    "value": "A weak signal service creates dependency. A strong trading system creates clarity: setup, risk, confirmation, invalidation and the lesson after the outcome."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "comparisonTitle",
+    "value": "Plan comparison"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "comparisonText",
+    "value": "Choose the plan that matches your current trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "The clean recommendation"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "Choose Core for structure, Edge for scanner intelligence and active review, Elite for real-time AI Alerts and the full signal-to-journal workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "About SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "We are building the AI trading system serious traders wish already existed."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "ctaProduct",
+    "value": "Explore product"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "ctaPricing",
+    "value": "View plans"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "philosophyBadge",
+    "value": "Product philosophy"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "philosophyTitle",
+    "value": "Process over prediction"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "storyEyebrow",
+    "value": "Our story"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "storyTitle",
+    "value": "SkillEdge AI is built for traders who want discipline, structure and measurable improvement."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "storyText",
+    "value": "The product was born from the same problem many active traders face: the market gives too much information, but almost no honest feedback about execution. SkillEdge AI is designed to connect the trader’s decisions, screenshots, journal, alerts and outcomes into one serious review system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "teamEyebrow",
+    "value": "Team structure"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "teamTitle",
+    "value": "Built like a focused product team — trading, product, data and support."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "teamText",
+    "value": "Use these cards as the About Us layout. Later you can insert real team photos, names and roles without changing the page structure."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "principlesTitle",
+    "value": "A serious trading product must be honest about risk and serious about process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "roadmapTitle",
+    "value": "We are building toward a premium AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "roadmapText",
+    "value": "The launch foundation is product-focused: journal, alerts, learning, reports, support, billing and market intelligence. The next layer is premium data, full market scanning and personal alerts based on the client’s own history."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Help traders stop operating from chaos and start operating from a system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI is for traders who want to review harder, think cleaner, execute with more discipline and build a repeatable edge from real data instead of emotion and memory."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "description",
+    "value": "Premium AI trading workspace for serious traders: market intelligence, AI alerts, journal, execution review, playbook, reports and coaching in one connected system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cookieSettings",
+    "value": "Cookie settings"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "choosePlan",
+    "value": "Choose plan"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "requestDemo",
+    "value": "Request demo"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "risk",
+    "value": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "location",
+    "value": "Dubai / Warsaw / Kyiv"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "demo",
+    "value": "Product demo by request"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "rights",
+    "value": "© 2026 SkillEdge AI. All rights reserved."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bottom",
+    "value": "Built for traders who want structure, discipline and measurable improvement."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "register",
+    "value": "Sign up"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "loginTitle",
+    "value": "Login to SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "registerTitle",
+    "value": "Create account"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "registerButton",
+    "value": "Sign up"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "logout",
+    "value": "Log out"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "switchToLogin",
+    "value": "Already have an account? Login"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "switchToRegister",
+    "value": "No account? Sign up"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "checking",
+    "value": "Checking your account..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "creatingAccount",
+    "value": "Creating account..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "creatingInvoice",
+    "value": "Creating crypto invoice..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "loginRequired",
+    "value": "Login or sign up to pay for a plan."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "afterRegister",
+    "value": "Account created. Confirm your email if required."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "authError",
+    "value": "Authorization error."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "Premium AI-платформа для трейдера"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Преврати рыночный шум, историю сделок и ошибки исполнения в более понятный торговый процесс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI соединяет журнал, скриншоты, анализ графиков, рыночную разведку, AI-сканер, сигналы, отчёты и обучение в одно premium-пространство — без обещаний прибыли и без замены твоего собственного решения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "problemTitle",
+    "value": "Большинству трейдеров не нужен ещё больший шум. Им нужен более чистый процесс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "problemText",
+    "value": "Графики, скриншоты, эмоции, списки наблюдения, заметки и ошибки часто живут в разных местах. SkillEdge AI собирает их в один рабочий процесс, чтобы трейдер мог разбирать решения, понимать паттерны и строить повторяемую систему."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "whyTitle",
+    "value": "Что помогает организовать SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "whyText",
+    "value": "Платформа построена вокруг реального торгового цикла: найти важное, спланировать сделку, исполнить дисциплинированно, записать результат и извлечь урок из исхода."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Единое рабочее пространство для торговой эффективности."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI создаётся как premium trading operating system: журнал, скриншоты, AI-коуч, отчёты, графики, сканер, сигналы, плейбук и поддержка в одном чистом процессе."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "deskTitle",
+    "value": "Торговый desk должен давать контекст, а не слепые команды."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "deskText",
+    "value": "SkillEdge AI должен объяснять, почему ситуация важна, что её подтверждает, что отменяет и где находится риск. Цель — лучшее качество решений, а не слепая зависимость от сигналов."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "flowTitle",
+    "value": "От сканирования рынка до личного прогресса — один связанный цикл."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "flowText",
+    "value": "Каждая серьёзная торговая идея должна становиться данными: что показал рынок, что планировал трейдер, что было исполнено и чему научил исход."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "modulesTitle",
+    "value": "Все части продукта должны работать вместе."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "modulesText",
+    "value": "Каждый модуль полезен сам по себе. Вместе они создают premium-пространство, где трейдер находит ситуации, действует структурно и разбирает результат."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "differentTitle",
+    "value": "Это не очередной сервис сигналов. Это система эффективности."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "differentText",
+    "value": "Сильные трейдеры не просто ищут входы. Они строят процесс, контроль риска, разбор, дисциплину и повторяемые паттерны. SkillEdge AI строится вокруг этой реальности."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Построй торговую систему вокруг своего реального поведения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI создан для трейдеров, которым надоели разрозненные инструменты, эмоциональные решения и непонятные разборы. Продукт помогает чище видеть рынок, действовать структурнее и понимать, что улучшать дальше."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Выбери уровень интеллекта вокруг своего торгового процесса."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "Core строит структуру. Edge добавляет рыночную разведку и AI-сканер. Elite открывает полный AI Trading Desk с сигналами, связкой с журналом и обучением на исходах."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cryptoNote",
+    "value": "* крипто-оплата через доступный launch-flow"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "checking",
+    "value": "Проверяем аккаунт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "invoice",
+    "value": "Создаём крипто-счёт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "noUrl",
+    "value": "Крипто-счёт создан, но ссылка на оплату не вернулась."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "unavailable",
+    "value": "Крипто-оплата сейчас недоступна."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "elite",
+    "value": "Полный AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для трейдера, которому сначала нужна структура."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Построй основу: журнал, скриншоты, AI-коуч, базовый анализ графиков, экспорт и более чистый процесс разбора."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Лучше всего для дисциплины, фиксации сделок и отказа от торговли по памяти."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для активного трейдера, которому нужен глубокий разбор и рыночный контекст."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Открой повышенные лимиты, AI-отчёты, premium-анализ графиков, рыночный контекст и слой AI-сканера / AI Market Brief."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Лучше всего для активных трейдеров, которые серьёзно разбирают сделки и ищут повторяющиеся ошибки и сетапы."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для серьёзного трейдера, которому нужен полный AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Открой AI-сигналы, плавающий виджет, Signal-to-Journal, отслеживание решений, обучение на исходах и максимальные AI-лимиты."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Лучше всего для продвинутых трейдеров, которым нужны структурные сигналы и полный цикл обратной связи."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "signalTitle",
+    "value": "Сигналы SkillEdge должны обучать, а не заставлять трейдера слепо нажимать."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "signalText",
+    "value": "Слабый сервис сигналов создаёт зависимость. Сильная торговая система создаёт ясность: сетап, риск, подтверждение, отмена идеи и урок после исхода."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "comparisonText",
+    "value": "Выбери тариф под текущий торговый процесс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "Выбирай Core для структуры, Edge для рыночного интеллекта и активного разбора, Elite для AI-сигналов и полного workflow сигнал → журнал."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "О SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Мы строим AI-систему для трейдинга, которую серьёзные трейдеры хотели бы иметь уже сейчас."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI создаётся вокруг одной идеи: трейдерам не нужен ещё больший шум. Им нужна система, которая соединяет рыночные возможности, журнал, дисциплину исполнения, обучение и личный прогресс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "storyTitle",
+    "value": "SkillEdge AI создаётся для трейдеров, которым нужны дисциплина, структура и измеримый прогресс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "storyText",
+    "value": "Продукт вырос из проблемы, с которой сталкиваются многие активные трейдеры: рынок даёт слишком много информации, но почти не даёт честной обратной связи по исполнению. SkillEdge AI должен связать решения трейдера, скриншоты, журнал, сигналы и исходы в одну серьёзную систему разбора."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "teamTitle",
+    "value": "Страница построена как команда продукта: трейдинг, продукт, данные и поддержка."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "teamText",
+    "value": "Эти карточки — готовый макет About Us. Позже ты сможешь вставить реальные фото, имена и роли без изменения структуры страницы."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "principlesTitle",
+    "value": "Серьёзный trading-продукт должен честно говорить о риске и строиться вокруг процесса."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "roadmapTitle",
+    "value": "Мы строим продукт в сторону premium AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "roadmapText",
+    "value": "Launch-основа уже продуктовая: журнал, сигналы, обучение, отчёты, поддержка, оплата и рыночная разведка. Следующий слой — premium data, полный market scan и персональные сигналы на базе истории клиента."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Помочь трейдерам выйти из хаоса и начать работать через систему."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI создан для трейдеров, которые хотят глубже разбирать, чище думать, дисциплинированнее исполнять и строить повторяемое преимущество на реальных данных, а не на эмоциях и памяти."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "description",
+    "value": "Premium AI-пространство для серьёзных трейдеров: рыночная разведка, AI-сигналы, журнал, разбор исполнения, плейбук, отчёты и коучинг в одной системе."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cookieSettings",
+    "value": "Настройки cookie"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "risk",
+    "value": "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "location",
+    "value": "Dubai / Warsaw / Kyiv"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "rights",
+    "value": "© 2026 SkillEdge AI. Все права защищены."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bottom",
+    "value": "Создано для трейдеров, которым нужны структура, дисциплина и измеримый прогресс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "loginTitle",
+    "value": "Вход в SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "switchToLogin",
+    "value": "Уже есть аккаунт? Войти"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "switchToRegister",
+    "value": "Нет аккаунта? Зарегистрироваться"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "checking",
+    "value": "Проверяем аккаунт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "creatingAccount",
+    "value": "Создаём аккаунт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "creatingInvoice",
+    "value": "Создаём крипто-счёт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "loginRequired",
+    "value": "Войдите или зарегистрируйтесь, чтобы оплатить тариф."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "afterRegister",
+    "value": "Аккаунт создан. Если нужно, подтвердите email."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "authError",
+    "value": "Ошибка авторизации."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "Premium AI-платформа для трейдера"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Перетвори ринковий шум, історію угод і помилки виконання на зрозуміліший торговий процес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI поєднує журнал, скріншоти, аналіз графіків, ринкову розвідку, AI-сканер, сигнали, звіти та навчання в одному premium-просторі — без обіцянок прибутку і без заміни твого власного рішення."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "problemTitle",
+    "value": "Більшості трейдерів не потрібен ще більший шум. Їм потрібен чистіший процес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "problemText",
+    "value": "Графіки, скріншоти, емоції, списки спостереження, нотатки й помилки часто живуть у різних місцях. SkillEdge AI збирає їх в один робочий процес, щоб трейдер міг розбирати рішення, розуміти патерни та будувати повторювану систему."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "whyTitle",
+    "value": "Що допомагає організувати SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "whyText",
+    "value": "Платформа побудована навколо реального торгового циклу: знайти важливе, спланувати угоду, виконати дисципліновано, записати результат і зробити висновок із результату."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Єдиний робочий простір для торгової ефективності."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI створюється як premium trading operating system: журнал, скріншоти, AI-коуч, звіти, графіки, сканер, сигнали, плейбук і підтримка в одному чистому процесі."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "deskTitle",
+    "value": "Trading desk має давати контекст, а не сліпі команди."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "deskText",
+    "value": "SkillEdge AI має пояснювати, чому ситуація важлива, що її підтверджує, що скасовує і де ризик. Мета — краща якість рішень, а не сліпа залежність від сигналів."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "flowTitle",
+    "value": "Від сканування ринку до особистого прогресу — один пов’язаний цикл."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "flowText",
+    "value": "Кожна серйозна торгова ідея має ставати даними: що показав ринок, що планував трейдер, що було виконано і чому навчив результат."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "modulesTitle",
+    "value": "Усі частини продукту мають працювати разом."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "modulesText",
+    "value": "Кожен модуль корисний окремо. Разом вони створюють premium-простір, де трейдер знаходить ситуації, діє структурно і розбирає результат."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "differentTitle",
+    "value": "Це не черговий сервіс сигналів. Це система ефективності."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "differentText",
+    "value": "Сильні трейдери не просто шукають входи. Вони будують процес, контроль ризику, розбір, дисципліну та повторювані патерни. SkillEdge AI будується навколо цієї реальності."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Побудуй торгову систему навколо своєї реальної поведінки."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI створений для трейдерів, яким набридли розрізнені інструменти, емоційні рішення та незрозумілі розбори. Продукт допомагає чистіше бачити ринок, діяти структурніше і розуміти, що покращувати далі."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Обери рівень інтелекту навколо свого торгового процесу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "Core будує структуру. Edge додає ринкову розвідку та AI-сканер. Elite відкриває повний AI Trading Desk із сигналами, зв’язкою з журналом і навчанням на результатах."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cryptoNote",
+    "value": "* крипто-оплата через доступний launch-flow"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "checking",
+    "value": "Перевіряємо акаунт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "invoice",
+    "value": "Створюємо крипто-рахунок..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "noUrl",
+    "value": "Крипто-рахунок створено, але посилання на оплату не повернулося."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "unavailable",
+    "value": "Крипто-оплата зараз недоступна."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "elite",
+    "value": "Повний AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для трейдера, якому спочатку потрібна структура."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Побудуй основу: журнал, скріншоти, AI-коуч, базовий аналіз графіків, експорт і чистіший процес розбору."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Найкраще для дисципліни, фіксації угод і відмови від торгівлі по пам’яті."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для активного трейдера, якому потрібен глибокий розбір і ринковий контекст."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Відкрий вищі ліміти, AI-звіти, premium-аналіз графіків, ринковий контекст і шар AI-сканера / AI Market Brief."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Найкраще для активних трейдерів, які серйозно розбирають угоди й шукають повторювані помилки та сетапи."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для серйозного трейдера, якому потрібен повний AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Відкрий AI-сигнали, плаваючий віджет, Signal-to-Journal, відстеження рішень, навчання на результатах і максимальні AI-ліміти."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Найкраще для просунутих трейдерів, яким потрібні структурні сигнали та повний цикл зворотного зв’язку."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "signalTitle",
+    "value": "Сигнали SkillEdge мають навчати, а не змушувати трейдера сліпо натискати."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "signalText",
+    "value": "Слабкий сервіс сигналів створює залежність. Сильна торгова система створює ясність: сетап, ризик, підтвердження, скасування ідеї та урок після результату."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "comparisonText",
+    "value": "Обери тариф під поточний торговий процес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "Обирай Core для структури, Edge для ринкового інтелекту та активного розбору, Elite для AI-сигналів і повного workflow сигнал → журнал."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не є фінансовою рекомендацією і не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "Про SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Ми будуємо AI-систему для трейдингу, яку серйозні трейдери хотіли б мати вже зараз."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "SkillEdge AI створюється навколо однієї ідеї: трейдерам не потрібен ще більший шум. Їм потрібна система, яка поєднує ринкові можливості, журнал, дисципліну виконання, навчання та особистий прогрес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "storyTitle",
+    "value": "SkillEdge AI створюється для трейдерів, яким потрібні дисципліна, структура та вимірюваний прогрес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "storyText",
+    "value": "Продукт виріс із проблеми, з якою стикаються багато активних трейдерів: ринок дає занадто багато інформації, але майже не дає чесного зворотного зв’язку щодо виконання. SkillEdge AI має зв’язати рішення трейдера, скріншоти, журнал, сигнали й результати в одну серйозну систему розбору."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "teamTitle",
+    "value": "Сторінка побудована як команда продукту: трейдинг, продукт, дані та підтримка."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "teamText",
+    "value": "Ці картки — готовий макет About Us. Пізніше ти зможеш вставити реальні фото, імена та ролі без зміни структури сторінки."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "principlesTitle",
+    "value": "Серйозний trading-продукт має чесно говорити про ризик і будуватися навколо процесу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "roadmapTitle",
+    "value": "Ми будуємо продукт у напрямку premium AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "roadmapText",
+    "value": "Launch-основа вже продуктова: журнал, сигнали, навчання, звіти, підтримка, оплата та ринкова розвідка. Наступний шар — premium data, повний market scan і персональні сигнали на основі історії клієнта."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Допомогти трейдерам вийти з хаосу й почати працювати через систему."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI створений для трейдерів, які хочуть глибше розбирати, чистіше думати, дисциплінованіше виконувати й будувати повторювану перевагу на реальних даних, а не на емоціях і пам’яті."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "description",
+    "value": "Premium AI-простір для серйозних трейдерів: ринкова розвідка, AI-сигнали, журнал, розбір виконання, плейбук, звіти та коучинг в одній системі."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cookieSettings",
+    "value": "Налаштування cookie"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "risk",
+    "value": "SkillEdge AI не є фінансовою рекомендацією і не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "location",
+    "value": "Dubai / Warsaw / Kyiv"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "rights",
+    "value": "© 2026 SkillEdge AI. Усі права захищено."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bottom",
+    "value": "Створено для трейдерів, яким потрібні структура, дисципліна та вимірюваний прогрес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "loginTitle",
+    "value": "Вхід у SkillEdge AI"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "switchToLogin",
+    "value": "Вже є акаунт? Увійти"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "switchToRegister",
+    "value": "Немає акаунта? Зареєструватися"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "checking",
+    "value": "Перевіряємо акаунт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "creatingAccount",
+    "value": "Створюємо акаунт..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "creatingInvoice",
+    "value": "Створюємо крипто-рахунок..."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "loginRequired",
+    "value": "Увійдіть або зареєструйтеся, щоб оплатити тариф."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "afterRegister",
+    "value": "Акаунт створено. Якщо потрібно, підтвердьте email."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "authError",
+    "value": "Помилка авторизації."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Built by traders for traders"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Trading without a system costs more than the subscription."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI turns market chaos, trades, screenshots, mistakes and alerts into one trading workflow — so you see structure, not noise."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accent",
+    "value": "Setup. Risk. Execution. Review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "primary",
+    "value": "Open product"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "secondary",
+    "value": "View pricing"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "how",
+    "value": "How it works"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "proofTitle",
+    "value": "Professional-grade trust"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Трейдинг без системи коштує дорожче за підписку."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI перетворює хаос ринку, угоди, скріншоти, помилки й сигнали в єдиний trading workflow — щоб ти бачив структуру, а не шум."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accent",
+    "value": "Setup. Ризик. Виконання. Розбір."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Трейдинг без системы стоит дороже подписки."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI превращает хаос рынка, сделки, скриншоты, ошибки и сигналы в единый trading workflow — чтобы ты видел не шум, а структуру."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accent",
+    "value": "Setup. Риск. Исполнение. Разбор."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Client performance examples"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Different starting capital. One principle: discipline, journaling and execution review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "subtitle",
+    "value": "Clients start with different account sizes, trading styles and growth speeds. But when a trader journals consistently, tracks trades and reviews execution, the process usually becomes cleaner, stronger and more stable."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "note",
+    "value": "These are product examples, not a profit promise. Trading involves risk. SkillEdge AI helps traders build structure, review decisions and improve execution discipline."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cta",
+    "value": "Open product"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "secondaryCta",
+    "value": "View pricing"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "capitalLabel",
+    "value": "Starting capital"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "pnlLabel",
+    "value": "Net profit"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "winRateLabel",
+    "value": "Win rate"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "avgRLabel",
+    "value": "Average R"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "drawdownLabel",
+    "value": "Max drawdown"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "chartLabel",
+    "value": "Cumulative Net PnL"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "clickHint",
+    "value": "Click the card to open the product"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "trustTitle",
+    "value": "Why this matters"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Різний стартовий капітал. Один принцип: дисципліна, журнал і розбір виконання."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "subtitle",
+    "value": "Клієнти мають різний розмір рахунку, стиль торгівлі та темп росту. Але коли трейдер системно веде журнал, відстежує угоди та розбирає виконання, процес зазвичай стає чистішим, сильнішим і стабільнішим."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "note",
+    "value": "Це приклади продукту, а не обіцянка прибутку. Трейдинг має ризики. SkillEdge AI допомагає будувати структуру, аналізувати рішення та покращувати дисципліну виконання."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "drawdownLabel",
+    "value": "Макс. просадка"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "clickHint",
+    "value": "Натисни на картку, щоб відкрити продукт"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Разный стартовый капитал. Один принцип: дисциплина, журнал и разбор исполнения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "subtitle",
+    "value": "У клиентов разный размер счёта, стиль торговли и темп роста. Но когда трейдер системно ведёт журнал, отслеживает сделки и разбирает исполнение, процесс обычно становится чище, сильнее и стабильнее."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "note",
+    "value": "Это примеры продукта, а не обещание прибыли. Трейдинг связан с риском. SkillEdge AI помогает выстроить структуру, разбирать решения и улучшать дисциплину исполнения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "drawdownLabel",
+    "value": "Макс. просадка"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "clickHint",
+    "value": "Нажми на карточку, чтобы открыть продукт"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accountSize",
+    "value": "$8,000"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfit",
+    "value": "+$5.2K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfitValue",
+    "value": "+$5,200"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "weeklyValue",
+    "value": "+$5,200"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accountSize",
+    "value": "$15,000"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfit",
+    "value": "+$12.4K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfitValue",
+    "value": "+$12,400"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "drawdown",
+    "value": "-$1.1K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "weeklyValue",
+    "value": "+$12,400"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accountSize",
+    "value": "$30,000"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfit",
+    "value": "+$24.8K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfitValue",
+    "value": "+$24,800"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "drawdown",
+    "value": "-$2.4K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "weeklyValue",
+    "value": "+$24,800"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accountSize",
+    "value": "$75,000"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfit",
+    "value": "+$61.3K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfitValue",
+    "value": "+$61,300"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "drawdown",
+    "value": "-$4.9K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "weeklyValue",
+    "value": "+$61,300"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "accountSize",
+    "value": "$120,000"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfit",
+    "value": "+$104.8K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "netProfitValue",
+    "value": "+$104,800"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "drawdown",
+    "value": "-$7.8K"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "weeklyValue",
+    "value": "+$104,800"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Desk standard"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "SkillEdge Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "subtitle",
+    "value": "A structured workflow for serious traders."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "main",
+    "value": "From market noise to a working trade plan."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "note",
+    "value": "Every idea must pass market context, setup quality, trigger, risk, invalidation, R:R and journal review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Desk standard"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "SkillEdge Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "subtitle",
+    "value": "Структурований workflow для серйозних трейдерів."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "main",
+    "value": "Від ринкового шуму — до робочого плану."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "note",
+    "value": "Кожна ідея проходить market context, setup quality, trigger, risk, invalidation, R:R і journal review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Desk standard"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "SkillEdge Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "subtitle",
+    "value": "Структурированный workflow для серьёзных трейдеров."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "main",
+    "value": "От рыночного шума — к рабочему плану."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "note",
+    "value": "Каждая идея проходит market context, setup quality, trigger, risk, invalidation, R:R и journal review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "SkillEdge AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Turn market noise into a clear execution process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "A premium workspace for traders who want structure: market context, AI alerts, journal, screenshots, reports and review logic in one connected desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "primary",
+    "value": "Open pricing"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "secondary",
+    "value": "View product"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "outcomeTitle",
+    "value": "What the trader gets"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "outcomeText",
+    "value": "SkillEdge AI is not built to throw random signals. It is built to help you understand the setup, the risk, the trigger and your own execution quality."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "workflowTitle",
+    "value": "Desk workflow"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Build your process like a trading desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "Use SkillEdge AI to scan cleaner, plan faster, track mistakes and improve the way you trade over time."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "SkillEdge AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Перетвори ринковий шум на чіткий процес виконання."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Преміальний робочий простір для трейдера: ринковий контекст, AI-сигнали, журнал, скріншоти, звіти й логіка розбору в одному desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "outcomeText",
+    "value": "SkillEdge AI створюється не для випадкових сигналів. Система допомагає зрозуміти сетап, ризик, тригер і якість власного виконання."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "workflowTitle",
+    "value": "Desk workflow"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Будуй процес як trading desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "Використовуй SkillEdge AI, щоб чистіше сканувати ринок, швидше планувати, бачити помилки й покращувати свою торгівлю з часом."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "SkillEdge AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Преврати рыночный шум в чёткий процесс исполнения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Премиальное рабочее пространство для трейдера: рыночный контекст, AI-сигналы, журнал, скриншоты, отчёты и логика разбора в одном desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "outcomeText",
+    "value": "SkillEdge AI создаётся не для случайных сигналов. Система помогает понять сетап, риск, триггер и качество собственного исполнения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "workflowTitle",
+    "value": "Desk workflow"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Построй процесс как trading desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "Используй SkillEdge AI, чтобы чище сканировать рынок, быстрее планировать, видеть ошибки и улучшать свою торговлю со временем."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Built from zero for trading"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Not another AI chat. A full trading product built around execution."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI is a dedicated AI Trading Desk created for real trading workflow: market context, journal, screenshots, AI review, reports, scanner, alerts and performance feedback in one connected system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "second",
+    "value": "A generic AI tool only answers the question you type. SkillEdge AI is different: it works around your process. Every trade, screenshot, setup, mistake and report becomes part of your personal trading context."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "third",
+    "value": "That is why SkillEdge AI cannot be replaced by a free tool. It is not a prompt box. It is a structured product built by specialists in AI engineering, software development and trading workflow design to help traders build discipline, understand risk and improve execution quality."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Не черговий AI-чат. Повноцінний trading product навколо виконання."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI — це окремий AI Trading Desk, створений під реальний процес трейдера: ринковий контекст, журнал, скріншоти, AI-розбір, звіти, сканер, сигнали та feedback по виконанню в одній системі."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "second",
+    "value": "Звичайний AI-інструмент відповідає тільки на запит. SkillEdge AI працює інакше: він будується навколо твого процесу. Кожна угода, скріншот, сетап, помилка й звіт стають частиною твого особистого trading context."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "third",
+    "value": "Саме тому SkillEdge AI не замінюється безкоштовним інструментом. Це не поле для промптів. Це структурований продукт, створений спеціалістами з AI engineering, software development і trading workflow, щоб допомагати трейдеру будувати дисципліну, бачити ризик і покращувати якість виконання."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Не очередной AI-чат, а полноценный trading product вокруг исполнения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI — это отдельный AI Trading Desk, созданный под реальный процесс трейдера: рыночный контекст, журнал, скриншоты, AI-разбор, отчёты, сканер, сигналы и feedback по исполнению в одной системе."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "second",
+    "value": "Обычный AI-инструмент отвечает только на вопрос, который ему задали. SkillEdge AI работает иначе: он строится вокруг торгового процесса. Каждая сделка, каждый скриншот, каждый сетап, каждая ошибка и каждый отчёт становятся частью личного trading context трейдера."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "third",
+    "value": "Именно поэтому SkillEdge AI нельзя заменить бесплатным инструментом. Это не поле для промптов. Это структурированный продукт, созданный специалистами в AI engineering, software development и trading workflow, чтобы помогать трейдеру строить дисциплину, видеть риск и улучшать качество исполнения."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Signature feature"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Create a real trading strategy, not another note in a document."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Strategy OS turns a trader’s idea into a living playbook: setup logic, rules, evidence, before-trade gate, after-trade debrief, versions and measurable trust score."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "punch",
+    "value": "This is the reason Edge becomes a professional workspace: the trader stops jumping between random ideas and starts building one repeatable decision system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "primary",
+    "value": "Unlock Strategy OS"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "secondary",
+    "value": "Open dashboard guide"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "center",
+    "value": "Strategy Builder"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "score",
+    "value": "Strategy Trust"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Створи реальну торгову стратегію, а не чергову нотатку в документі."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Strategy OS перетворює ідею трейдера на живий playbook: логіка setup, правила, evidence, before-trade gate, after-trade debrief, версії та вимірюваний trust score."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "punch",
+    "value": "Саме тому Edge стає професійним workspace: трейдер перестає стрибати між випадковими ідеями й починає будувати одну повторювану систему рішень."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "primary",
+    "value": "Відкрити Strategy OS"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "center",
+    "value": "Strategy Builder"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "score",
+    "value": "Strategy Trust"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Создай реальную торговую стратегию, а не очередную заметку в документе."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Strategy OS превращает идею трейдера в живой playbook: логика setup, правила, evidence, before-trade gate, after-trade debrief, версии и измеримый trust score."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "punch",
+    "value": "Именно поэтому Edge становится профессиональным workspace: трейдер перестаёт прыгать между случайными идеями и начинает строить одну повторяемую систему решений."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "primary",
+    "value": "Открыть Strategy OS"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "center",
+    "value": "Strategy Builder"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "score",
+    "value": "Strategy Trust"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "Premium access board"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Choose the SkillEdge AI level that matches your trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "Core gives structure. Edge adds market intelligence. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "billingTitle",
+    "value": "Choose billing period"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "billingText",
+    "value": "Monthly is flexible. Longer periods are better for building a real review habit and tracking progress over time."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "halfyear",
+    "value": "/ 6 months"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Start with discipline"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "For traders who need structure first."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Build the foundation: journal, screenshots, AI Coach, exports and a cleaner review process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Best for journaling discipline and basic AI review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cta",
+    "value": "Start with Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Active trader"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "For active traders who need market context."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Add market intelligence, AI Scanner, deeper reports and stronger review for active trading."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Best for traders who actively review setups and mistakes."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cta",
+    "value": "Upgrade to Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Full AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "For serious traders who want the full signal workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Unlock AI Alerts, floating alert widget, Signal-to-Journal, decision tracking and outcome learning."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Best for traders who want alerts, journal sync and outcome review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cta",
+    "value": "Unlock Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Elite spotlight"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "The full AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Elite is built for traders who want actionable alerts, structured risk, signal-to-journal workflow and measurable outcome review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "button",
+    "value": "Unlock Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Signal quality"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Signals should teach the trader, not make them click blindly."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge alerts are structured trade ideas: setup, trigger, entry zone, stop, targets, RR, risk and invalidation."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Access matrix"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Compare plans by workflow depth."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Each plan adds a deeper layer: structure, market intelligence, then the full signal workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Clean recommendation"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Choose by process depth, not hype."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Start where your workflow is today. Upgrade when you are ready for market intelligence and the full alert loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI is not financial advice and does not guarantee profits. It is built to improve structure, review, decision quality and trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Best for"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "checkout",
+    "value": "Checkout status"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "Premium access board"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Обери рівень SkillEdge AI під свій торговий процес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "Core дає структуру. Edge додає market intelligence. Elite відкриває повний AI Trading Desk із сигналами, журналом і розбором результатів."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "billingText",
+    "value": "Місячна оплата гнучка. Довші періоди краще підходять для звички review і відстеження прогресу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для трейдера, якому спочатку потрібна структура."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Побудуй основу: журнал, скріншоти, AI Coach, експорт і чистіший процес розбору."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Найкраще для дисципліни журналу та базового AI review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для активного трейдера, якому потрібен ринковий контекст."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Додає market intelligence, AI Scanner, глибші звіти та сильніший review для активної торгівлі."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Найкраще для трейдерів, які серйозно розбирають сетапи й помилки."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Повний AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для серйозних трейдерів, яким потрібен повний signal workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Відкриває AI Alerts, floating alert widget, Signal-to-Journal, decision tracking і outcome learning."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Найкраще для сигналів, синхронізації з журналом і розбору результатів."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Elite spotlight"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Повний AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Elite створений для трейдерів, яким потрібні actionable alerts, структурований ризик, Signal-to-Journal і вимірюваний outcome review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Сигнали мають навчати трейдера, а не змушувати сліпо клікати."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge alerts — це структуровані торгові ідеї: сетап, тригер, зона входу, стоп, цілі, RR, ризик та invalidation."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Порівняй тарифи за глибиною workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Кожен тариф додає глибший шар: структура, market intelligence, потім повний signal workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Обирай за глибиною процесу, а не за хайпом."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Почни з того рівня, де зараз твій workflow. Підвищуй тариф, коли потрібні market intelligence і повний alert loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не є фінансовою порадою і не гарантує прибуток. Платформа створена для покращення структури, review, якості рішень і торгового процесу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroBadge",
+    "value": "Premium access board"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroTitle",
+    "value": "Выбери уровень SkillEdge AI под свой торговый процесс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "heroText",
+    "value": "Core даёт структуру. Edge добавляет market intelligence. Elite открывает полный AI Trading Desk с сигналами, журналом и разбором результатов."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "billingText",
+    "value": "Месячная оплата гибкая. Длинные периоды лучше подходят для привычки review и отслеживания прогресса."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Core"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для трейдера, которому сначала нужна структура."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Построй основу: журнал, скриншоты, AI Coach, экспорт и более чистый процесс разбора."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Лучше всего для дисциплины журнала и базового AI review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Edge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для активного трейдера, которому нужен рыночный контекст."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Добавляет market intelligence, AI Scanner, более глубокие отчёты и сильный review для активной торговли."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Лучше всего для трейдеров, которые серьёзно разбирают сетапы и ошибки."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "SkillEdge Elite"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Полный AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "headline",
+    "value": "Для серьёзных трейдеров, которым нужен полный signal workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Открывает AI Alerts, floating alert widget, Signal-to-Journal, decision tracking и outcome learning."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bestFor",
+    "value": "Лучше всего для сигналов, синхронизации с журналом и разбора результатов."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Elite spotlight"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Полный AI Trading Desk."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Elite создан для трейдеров, которым нужны actionable alerts, структурированный риск, Signal-to-Journal и измеримый outcome review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Сигналы должны обучать трейдера, а не заставлять слепо кликать."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge alerts — это структурированные торговые идеи: сетап, триггер, зона входа, стоп, цели, RR, риск и invalidation."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Сравни тарифы по глубине workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Каждый тариф добавляет более глубокий слой: структура, market intelligence, затем полный signal workflow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Выбирай по глубине процесса, а не по хайпу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Начни с того уровня, где сейчас твой workflow. Повышай тариф, когда нужны market intelligence и полный alert loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, review, качества решений и торгового процесса."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "eyebrow",
+    "value": "Institutional-grade trading infrastructure"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Not another empty shell, but a working tool that turns market context, trades and mistakes into a controlled system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI connects journal, screenshots, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports and Elite Alerts into one premium trading desk — so every decision moves through context, risk, execution and review."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "strong",
+    "value": "A basic AI tool answers a prompt. SkillEdge AI builds infrastructure around the trader: from market scan and trade planning to journal review, outcome tracking and Personal Edge development. This is not a one-trade suggestion — it is a system for making trading measurable."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Не чергова пустишка, а робочий інструмент, який перетворює ринок, угоди й помилки на керовану систему."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI поєднує журнал, скріншоти, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports і Elite Alerts в один premium trading desk — щоб кожне рішення проходило через контекст, ризик, виконання й розбір."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "strong",
+    "value": "Звичайний AI-інструмент відповідає на запит. SkillEdge AI будує інфраструктуру навколо трейдера: від market scan і trade plan до journal review, outcome tracking і розвитку Personal Edge. Це не підказка на одну угоду — це система, яка робить торгівлю вимірюваною."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Не очередная пустышка, а рабочий инструмент, который превращает рынок, сделки и ошибки в управляемую систему."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI объединяет журнал, скриншоты, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports и Elite Alerts в один premium trading desk — чтобы каждое решение проходило через контекст, риск, исполнение и разбор."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "strong",
+    "value": "Обычный AI-инструмент отвечает на запрос. SkillEdge AI строит инфраструктуру вокруг трейдера: от market scan и trade plan до journal review, outcome tracking и развития Personal Edge. Это не подсказка на одну сделку — это система, которая заставляет торговлю становиться измеримой."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Elite demo"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Try SkillEdge Elite for 3 days"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Get full Elite access for 3 days: journal, AI Coach, reports, Market Intelligence, AI Alerts and the floating alerts widget."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "warning",
+    "value": "Best activated Monday–Thursday. We do not recommend activating the demo on Friday because the US stock market is closed on the weekend and live stock signals will be limited. Crypto signals may still appear."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "button",
+    "value": "Activate demo"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Elite demo"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Спробуй SkillEdge Elite на 3 дні"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Отримай повний Elite-доступ на 3 дні: журнал, AI Coach, звіти, Market Intelligence, AI Alerts і floating alerts widget."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "warning",
+    "value": "Краще активувати з понеділка по четвер. Не рекомендуємо оплачувати demo у пʼятницю, тому що фондовий ринок США закритий на вихідних і live stock-сигналів буде менше. Crypto-сигнали можуть продовжувати зʼявлятися."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Elite demo"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Попробуй SkillEdge Elite на 3 дня"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Полный Elite-доступ на 3 дня: журнал, AI Coach, отчёты, Market Intelligence, AI Alerts и floating alerts widget."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "warning",
+    "value": "Лучше активировать с понедельника по четверг. Не рекомендуем оплачивать demo в пятницу, потому что фондовый рынок США закрыт на выходных и live stock-сигналов будет меньше. Crypto-сигналы могут продолжать появляться."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Team manifesto"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Built by traders, product people and risk-first operators."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI is not built as another signal feed. It is built like a trading desk: market intelligence, setup logic, journal feedback, execution review and a process that makes the trader sharper over time."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "primary",
+    "value": "Choose access"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "secondary",
+    "value": "View product"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "carouselBadge",
+    "value": "Global desk team"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "carouselTitle",
+    "value": "Seven people, one mission: turn trading into a repeatable process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "principlesEyebrow",
+    "value": "Operating principles"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "principlesTitle",
+    "value": "What this team is building."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "refuseTitle",
+    "value": "What we refuse to build"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "buildTitle",
+    "value": "What SkillEdge is built for"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "A premium trading process, not another noisy tool."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI is being built for traders who want structure, discipline, market context and a serious feedback loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Створюємо продукт як trading desk: з ризиком, структурою і дисципліною."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI — це не чергова стрічка сигналів. Це система для трейдера: ринкова розвідка, логіка сетапів, журнал, розбір виконання і процес, який робить рішення сильнішими з часом."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "carouselTitle",
+    "value": "Сім людей, одна місія: перетворити трейдинг на повторюваний процес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "principlesTitle",
+    "value": "Що будує ця команда."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "buildTitle",
+    "value": "Для чого створений SkillEdge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Преміальний торговий процес, а не ще один шумний інструмент."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI створюється для трейдерів, яким потрібні структура, дисципліна, ринковий контекст і серйозний feedback loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Мы строим продукт как trading desk: через риск, структуру и дисциплину."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "SkillEdge AI — это не очередная лента сигналов. Это система для трейдера: рыночная разведка, логика сетапов, журнал, разбор исполнения и процесс, который делает решения сильнее со временем."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "carouselTitle",
+    "value": "Семь человек, одна миссия: превратить трейдинг в повторяемый процесс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "principlesTitle",
+    "value": "Что строит эта команда."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "buildTitle",
+    "value": "Для чего создан SkillEdge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalTitle",
+    "value": "Премиальный торговый процесс, а не ещё один шумный инструмент."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "finalText",
+    "value": "SkillEdge AI строится для трейдеров, которым нужны структура, дисциплина, рыночный контекст и серьёзный feedback loop."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Aida Sarynova"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(0,192,118,0.36), rgba(15,23,42,0.92) 48%, rgba(16,185,129,0.26))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Niamh O’Connor"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(59,130,246,0.28))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Oliver Reed"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 50%, rgba(0,192,118,0.26))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "James Whitfield"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(14,165,233,0.32), rgba(15,23,42,0.92) 50%, rgba(244,114,182,0.18))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Lukas Schneider"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(6,182,212,0.28), rgba(15,23,42,0.92) 52%, rgba(251,191,36,0.2))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Marcus Hayes"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(37,99,235,0.32), rgba(15,23,42,0.92) 52%, rgba(16,185,129,0.23))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(0,192,118,0.32), rgba(15,23,42,0.92) 48%, rgba(248,113,113,0.22))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Jakub Zieliński"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 48%, rgba(34,197,94,0.22))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Dilnoza Karimova"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(217,70,239,0.2))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "name",
+    "value": "Kenji Watanabe"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "gradient",
+    "value": "linear-gradient(135deg, rgba(45,212,191,0.3), rgba(15,23,42,0.92) 52%, rgba(248,113,113,0.18))"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Secure checkout"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "title",
+    "value": "Choose payment method"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Select how you want to activate SkillEdge AI. Crypto payment is available now. Card payment is being prepared."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "crypto",
+    "value": "Pay with crypto"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cryptoText",
+    "value": "USDT TRC20 invoice through the active launch payment flow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "card",
+    "value": "Pay by card"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cardText",
+    "value": "Card payment is being prepared and will be available soon."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "demoNote",
+    "value": "Demo gives full SkillEdge Elite access for 3 days. Best activated Monday–Thursday."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "halfyear",
+    "value": "6 months"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Secure checkout"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Обери, як активувати SkillEdge AI. Крипто-оплата вже доступна. Оплата карткою готується."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cryptoText",
+    "value": "USDT TRC20 invoice через активний launch payment flow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cardText",
+    "value": "Оплата карткою готується і буде доступна скоро."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "demoNote",
+    "value": "Demo відкриває повний SkillEdge Elite доступ на 3 дні. Краще активувати з понеділка по четвер."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "badge",
+    "value": "Secure checkout"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "text",
+    "value": "Выбери, как активировать SkillEdge AI. Крипто-оплата уже доступна. Оплата картой готовится."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cryptoText",
+    "value": "USDT TRC20 invoice через активный launch payment flow."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cardText",
+    "value": "Оплата картой готовится и будет доступна скоро."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "demoNote",
+    "value": "Demo открывает полный SkillEdge Elite доступ на 3 дня. Лучше активировать с понедельника по четверг."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "status",
+    "value": "Initializing market intelligence"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "description",
+    "value": "Premium AI trading workspace for serious traders: market intelligence, AI signals, journal, execution review, playbook, reports and coaching in one connected system."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "choosePlan",
+    "value": "Choose plan"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "requestDemo",
+    "value": "Request demo"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cookieSettings",
+    "value": "Cookie settings"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "location",
+    "value": "Dubai / Warsaw / Kyiv"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "demo",
+    "value": "Product demo by request"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "rights",
+    "value": "© 2026 SkillEdge AI. All rights reserved."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bottomNote",
+    "value": "Built for traders who want structure, discipline and measurable improvement."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "About Us"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Signals"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Market Intelligence"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Journal & Screenshots"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Execution Coach"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Outcome Learning"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Learning Center"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Support Assistant"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Getting Started"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "How SkillEdge Works"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Trading Journal Guide"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Signals Guide"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Referral program"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Privacy Policy"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Terms & Conditions"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Billing & Cancellation"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Cookie Policy"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "description",
+    "value": "Премиальное AI-пространство для серьёзных трейдеров: рыночная разведка, AI-сигналы, журнал, разбор исполнения, плейбук, отчёты и коучинг в одной системе."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cookieSettings",
+    "value": "Настройки cookies"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "location",
+    "value": "Dubai / Warsaw / Kyiv"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "rights",
+    "value": "© 2026 SkillEdge AI. Все права защищены."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bottomNote",
+    "value": "Создано для трейдеров, которым нужны структура, дисциплина и измеримый прогресс."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Как работает SkillEdge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Политика cookies"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "description",
+    "value": "Преміальний AI-простір для серйозних трейдерів: ринкова розвідка, AI-сигнали, журнал, розбір виконання, плейбук, звіти та коучинг в одній системі."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "cookieSettings",
+    "value": "Налаштування cookies"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "location",
+    "value": "Dubai / Warsaw / Kyiv"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "rights",
+    "value": "© 2026 SkillEdge AI. Усі права захищені."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "bottomNote",
+    "value": "Створено для трейдерів, яким потрібні структура, дисципліна та вимірюваний прогрес."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не є фінансовою рекомендацією та не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу."
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "AI Trading Desk"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Як працює SkillEdge"
+  },
+  {
+    "file": "components/Landing.tsx",
+    "key": "label",
+    "value": "Політика cookies"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "name",
+    "value": "SkillEdge AI"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "tagline",
+    "value": "Premium AI trading workspace"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "getStarted",
+    "value": "Get started"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "requestDemo",
+    "value": "Request demo"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "choosePlan",
+    "value": "Choose plan"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "openDashboard",
+    "value": "Open dashboard"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "contactSupport",
+    "value": "Contact support"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "login",
+    "value": "Log in"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "logout",
+    "value": "Log out"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "journal",
+    "value": "Trade Journal"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "aiCoach",
+    "value": "AI Coach"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "coreRequired",
+    "value": "Core required"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "edgeRequired",
+    "value": "Edge required"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "eliteRequired",
+    "value": "Elite required"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "scannerEdgePlus",
+    "value": "AI Scanner / Market Intelligence is available from SkillEdge Edge."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "alertsEliteOnly",
+    "value": "AI Alerts, Floating Alerts Widget and Signal-to-Journal workflow are available only on SkillEdge Elite."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "title",
+    "value": "SkillEdge Support"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chooseTitle",
+    "value": "How would you like to contact us?"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chooseSubtitle",
+    "value": "Choose the easiest channel. We’ll guide you without pressure."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailText",
+    "value": "Leave your email and question. We’ll receive your request and answer as soon as possible."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatText",
+    "value": "Write a message in chat. After pressing Send, the request goes directly to an operator."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailHeading",
+    "value": "Send us your question"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailDescription",
+    "value": "Write your email and describe what you need help with. The more context you add, the faster we can help."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "questionPlaceholder",
+    "value": "Describe your question..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "sendEmail",
+    "value": "Send request"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailSuccess",
+    "value": "Request sent. We’ll review it and reply to the email you provided."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailError",
+    "value": "Could not send the request. Please check your email and try again."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatIntro",
+    "value": "Good afternoon. Write your question — once you send it, it will go directly to an operator."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatPlaceholder",
+    "value": "Describe your question for the operator..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "operatorSuccess",
+    "value": "Operator request sent. We received your message."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "operatorError",
+    "value": "Failed to send operator request. Please try again later."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "disclaimer",
+    "value": "SkillEdge AI is not a financial advisor. Support helps with product, access, payment and general platform questions."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "systemLanguageRule",
+    "value": "Detect the language of the user"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "name",
+    "value": "SkillEdge AI"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "tagline",
+    "value": "Премиальный AI workspace для трейдинга"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "loading",
+    "value": "Загрузка..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "aiCoach",
+    "value": "AI Coach"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "scannerEdgePlus",
+    "value": "AI Scanner / Market Intelligence доступен с SkillEdge Edge."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "alertsEliteOnly",
+    "value": "AI Alerts, Floating Alerts Widget и Signal-to-Journal workflow доступны только на SkillEdge Elite."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "title",
+    "value": "SkillEdge Support"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chooseTitle",
+    "value": "Как вам удобнее связаться?"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chooseSubtitle",
+    "value": "Выберите формат связи. Мы поможем спокойно, понятно и без лишнего давления."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailText",
+    "value": "Оставьте email и вопрос. Мы получим обращение и ответим как можно быстрее."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatText",
+    "value": "Напишите сообщение в чат. После нажатия “Отправить” запрос сразу уйдёт оператору."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailDescription",
+    "value": "Укажите email и коротко опишите ситуацию. Чем больше контекста — тем быстрее мы разберёмся."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "questionPlaceholder",
+    "value": "Опишите ваш вопрос..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "sendingEmail",
+    "value": "Отправляю..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailSuccess",
+    "value": "Запрос отправлен. Мы посмотрим его и ответим на указанный email."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailError",
+    "value": "Не удалось отправить запрос. Проверьте email и попробуйте ещё раз."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatIntro",
+    "value": "Добрый день. Напишите вопрос — после отправки он сразу уйдёт оператору."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatPlaceholder",
+    "value": "Опишите вопрос для оператора..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "sending",
+    "value": "Отправляю..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "operatorSuccess",
+    "value": "Запрос оператору отправлен. Мы получили ваше сообщение."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "operatorError",
+    "value": "Не удалось отправить запрос оператору. Попробуйте позже."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не является финансовым консультантом. Поддержка помогает с продуктом, доступом, оплатой и общими вопросами по платформе."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "systemLanguageRule",
+    "value": "Определи язык последнего сообщения пользователя и отвечай на том же языке. Если сообщение смешанное, используй доминирующий язык. Не переводи названия продукта SkillEdge AI, AI Coach, AI Scanner, AI Alerts, Market Intelligence и Signal-to-Journal. Никогда не упоминай OpenAI, GPT-модели или внутренние названия моделей."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "name",
+    "value": "SkillEdge AI"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "tagline",
+    "value": "Преміальний AI workspace для трейдингу"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "loading",
+    "value": "Завантаження..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "aiCoach",
+    "value": "AI Coach"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "scannerEdgePlus",
+    "value": "AI Scanner / Market Intelligence доступний з SkillEdge Edge."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "alertsEliteOnly",
+    "value": "AI Alerts, Floating Alerts Widget і Signal-to-Journal workflow доступні тільки на SkillEdge Elite."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "title",
+    "value": "SkillEdge Support"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chooseTitle",
+    "value": "Який канал вам зручніший?"
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chooseSubtitle",
+    "value": "Оберіть формат зв’язку. Ми допоможемо спокійно і без зайвого тиску."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailText",
+    "value": "Залиште email і питання. Ми отримаємо звернення і відповімо якнайшвидше."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatText",
+    "value": "Напишіть повідомлення в чат. Після натискання “Надіслати” запит одразу піде оператору."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailDescription",
+    "value": "Вкажіть email і коротко опишіть ситуацію. Чим більше контексту — тим швидше ми розберемося."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "questionPlaceholder",
+    "value": "Опишіть ваше питання..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "sendingEmail",
+    "value": "Надсилаю..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailSuccess",
+    "value": "Запит надіслано. Ми переглянемо його і відповімо на вказаний email."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "emailError",
+    "value": "Не вдалося надіслати запит. Перевірте email і спробуйте ще раз."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatIntro",
+    "value": "Добрий день. Напишіть питання — після відправки воно одразу піде оператору."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "chatPlaceholder",
+    "value": "Опишіть питання для оператора..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "sending",
+    "value": "Надсилаю..."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "operatorSuccess",
+    "value": "Запит оператору надіслано. Ми отримали ваше повідомлення."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "operatorError",
+    "value": "Не вдалося надіслати запит оператору. Спробуйте пізніше."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "disclaimer",
+    "value": "SkillEdge AI не є фінансовим консультантом. Підтримка допомагає з продуктом, доступом, оплатою і загальними питаннями платформи."
+  },
+  {
+    "file": "lib/i18n/dictionaries.ts",
+    "key": "systemLanguageRule",
+    "value": "Визнач мову останнього повідомлення користувача і відповідай тією ж мовою. Якщо повідомлення змішане, використовуй домінуючу мову. Не перекладай назви продукту SkillEdge AI, AI Coach, AI Scanner, AI Alerts, Market Intelligence і Signal-to-Journal. Ніколи не згадуй OpenAI, GPT-моделі або внутрішні назви моделей."
+  }
+]

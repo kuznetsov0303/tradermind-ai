@@ -1,0 +1,2158 @@
+{
+  "root": "/opt/skilledge/stock-engine",
+  "units": [
+    {
+      "unit": "skilledge-cap-aware-backfill.service",
+      "description": "SkillEdge Capitalization-Aware Research Backfill",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-cap-aware-backfill.service",
+      "fragmentExists": true,
+      "fragmentSha256": "6ad80da9e098f011eb256b10dd75fde957f005772b5c7780041a6b42fe7c474d",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/capitalization_aware_backfill_runner.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "system.slice -.mount sysinit.target",
+      "wants": "network-online.target",
+      "after": "-.mount skilledge-cap-aware-backfill.timer systemd-journald.socket sysinit.target skilledge-stock-engine-api.service network-online.target system.slice basic.target",
+      "triggers": "",
+      "triggeredBy": "skilledge-cap-aware-backfill.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-cap-aware-backfill.service\n[Unit]\nDescription=SkillEdge Capitalization-Aware Research Backfill\nAfter=network-online.target skilledge-stock-engine-api.service\nWants=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironment=S912B_START_DATE=2021-07-12\nEnvironment=S912B_END_DATE=2026-07-10\nEnvironment=S912B_SYMBOLS_PER_JOB=8\nEnvironment=S912B_DAYS_PER_JOB=5\nEnvironment=S912B_MAX_JOBS_PER_RUN=60\nEnvironment=S912B_SLEEP_SECONDS=2\nEnvironment=S912B_REBUILD_QUEUE_IF_SMOKE=true\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/capitalization_aware_backfill_runner.py\nUser=root\n"
+    },
+    {
+      "unit": "skilledge-cap-aware-backfill.timer",
+      "description": "Run SkillEdge Capitalization-Aware Research Backfill",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-cap-aware-backfill.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "f036eea7104bef9527a0bfe6fc8255136dc5be3fde18ec711e1542b2e0eb29b8",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "time-sync.target -.mount time-set.target sysinit.target",
+      "triggers": "skilledge-cap-aware-backfill.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-cap-aware-backfill.timer\n[Unit]\nDescription=Run SkillEdge Capitalization-Aware Research Backfill\n\n[Timer]\nOnCalendar=*-*-* 01:25:00\nPersistent=true\nRandomizedDelaySec=600\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-clean-elite-capture.service",
+      "description": "SkillEdge Clean Elite Live Capture",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-clean-elite-capture.service",
+      "fragmentExists": true,
+      "fragmentSha256": "a24d3d8d2399797171636e00404deb4feb938891fcb0ed8eeb9778132f97f4b4",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/clean_elite_ledger.py --base-url http://127.0.0.1:8000 --initial-capital 50000 --risk-pct 0.01 ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:33:56 EEST] ; stop_time=[Tue 2026-07-14 18:33:57 EEST] ; pid=685584 ; code=exited ; status=0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=no)",
+      "requires": "system.slice -.mount sysinit.target",
+      "wants": "skilledge-stock-engine-api.service",
+      "after": "-.mount system.slice systemd-journald.socket skilledge-clean-elite-capture.timer sysinit.target basic.target skilledge-stock-engine-api.service",
+      "triggers": "",
+      "triggeredBy": "skilledge-clean-elite-capture.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-clean-elite-capture.service\n[Unit]\nDescription=SkillEdge Clean Elite Live Capture\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/clean_elite_ledger.py --base-url http://127.0.0.1:8000 --initial-capital 50000 --risk-pct 0.01\nUser=skilledge\nGroup=skilledge\n"
+    },
+    {
+      "unit": "skilledge-clean-elite-capture.timer",
+      "description": "Run SkillEdge Clean Elite Live Capture every 5 minutes",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-clean-elite-capture.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "4b1f519d7f5709c839127cd64423450772338b330d6ba5c6e884f658aa425de2",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "-.mount sysinit.target",
+      "triggers": "skilledge-clean-elite-capture.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-clean-elite-capture.timer\n[Unit]\nDescription=Run SkillEdge Clean Elite Live Capture every 5 minutes\n\n[Timer]\nOnBootSec=2min\nOnUnitActiveSec=5min\nPersistent=true\nUnit=skilledge-clean-elite-capture.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-daily-ai-desk.service",
+      "description": "SkillEdge Daily AI Desk Runner",
+      "activeState": "active",
+      "subState": "running",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-daily-ai-desk.service",
+      "fragmentExists": true,
+      "fragmentSha256": "174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python run_daily_ai_desk.py --loop --interval-seconds 300 --start-kyiv 11:00 --end-kyiv 23:00 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=no)",
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "skilledge-stock-engine-api.service",
+      "after": "sysinit.target system.slice basic.target systemd-journald.socket -.mount skilledge-stock-engine-api.service",
+      "triggers": "",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-daily-ai-desk.service\n[Unit]\nDescription=SkillEdge Daily AI Desk Runner\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python run_daily_ai_desk.py --loop --interval-seconds 300 --start-kyiv 11:00 --end-kyiv 23:00\nRestart=always\nRestartSec=10\nUser=skilledge\nGroup=skilledge\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    {
+      "unit": "skilledge-engine-watchdog.service",
+      "description": "SkillEdge Engine Watchdog",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-engine-watchdog.service",
+      "fragmentExists": true,
+      "fragmentSha256": "b276e12b635c9a9c3336fd9bee58280063bfa0464d663644c2724253ad91d5e7",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/engine_watchdog.py --public-url https://engine.upyourskills.site --auto-restart --alert ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:33:56 EEST] ; stop_time=[Tue 2026-07-14 18:34:08 EEST] ; pid=685585 ; code=exited ; status=0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=yes)",
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "network-online.target",
+      "after": "sysinit.target skilledge-engine-watchdog.timer network-online.target system.slice -.mount basic.target systemd-journald.socket",
+      "triggers": "",
+      "triggeredBy": "skilledge-engine-watchdog.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-engine-watchdog.service\n[Unit]\nDescription=SkillEdge Engine Watchdog\nWants=network-online.target\nAfter=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=-/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/engine_watchdog.py --public-url https://engine.upyourskills.site --auto-restart --alert\nUser=root\nGroup=root\n"
+    },
+    {
+      "unit": "skilledge-engine-watchdog.timer",
+      "description": "Run SkillEdge Engine Watchdog every 5 minutes",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-engine-watchdog.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "95855f938715506bc7dc625f4b846266ead1274dcd235884d6106fd9f40c630d",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "-.mount sysinit.target",
+      "triggers": "skilledge-engine-watchdog.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-engine-watchdog.timer\n[Unit]\nDescription=Run SkillEdge Engine Watchdog every 5 minutes\n\n[Timer]\nOnBootSec=2min\nOnUnitActiveSec=5min\nAccuracySec=30s\nPersistent=true\nUnit=skilledge-engine-watchdog.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-forward-shadow-daily.service",
+      "description": "SkillEdge Forward Shadow Daily Evaluator",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "disabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-forward-shadow-daily.service",
+      "fragmentExists": true,
+      "fragmentSha256": "e8215e5f928046c32901b0f44f560c8e5a793abed0c579ebacf07255feded4d6",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "-.mount system.slice sysinit.target skilledge-stock-engine-api.service",
+      "wants": "network-online.target",
+      "after": "systemd-journald.socket network-online.target sysinit.target system.slice skilledge-forward-shadow-daily.timer basic.target -.mount skilledge-stock-engine-api.service",
+      "triggers": "",
+      "triggeredBy": "skilledge-forward-shadow-daily.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-forward-shadow-daily.service\n[Unit]\nDescription=SkillEdge Forward Shadow Daily Evaluator\nAfter=network-online.target skilledge-stock-engine-api.service\nWants=network-online.target\nRequires=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironment=S898_DATE=\nEnvironment=S898_SYMBOLS=TSLA,NVDA,AAPL,MSFT,META,GOOGL,AMZN,AMD,SMCI,PLTR,NOW,NFLX,MSTR,CRWD,CRM,COIN,AVGO,XOS,RGNT,PAVS,OLOX,NTAP,JZXN,HPE,HPAI\nEnvironment=S898_INTERVAL=5min\nEnvironment=S898_MAX_CANDIDATES=25000\nEnvironment=S898_SKIP_PIPELINE=false\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py\nNice=10\nIOSchedulingClass=best-effort\nIOSchedulingPriority=7\nTimeoutStartSec=3600\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    {
+      "unit": "skilledge-forward-shadow-daily.timer",
+      "description": "Run SkillEdge Forward Shadow Evaluator after US regular close",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-forward-shadow-daily.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "1bc443261df2845bc76bad5c63cefeece6745efa2555c725f4001abc21bd64de",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "time-set.target sysinit.target -.mount time-sync.target",
+      "triggers": "skilledge-forward-shadow-daily.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-forward-shadow-daily.timer\n[Unit]\nDescription=Run SkillEdge Forward Shadow Evaluator after US regular close\n\n[Timer]\n# Server-local time. On the current VPS this is intended to run after US regular close.\n# If server timezone is UTC, 20:30 UTC is safely after 16:00 NY close during most configurations.\nOnCalendar=Mon..Fri *-*-* 20:30:00\nPersistent=true\nRandomizedDelaySec=300\nUnit=skilledge-forward-shadow-daily.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-forward-shadow-promotion-gate.service",
+      "description": "SkillEdge Forward Shadow Promotion Gate Report",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "disabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-forward-shadow-promotion-gate.service",
+      "fragmentExists": true,
+      "fragmentSha256": "8717a690efc1146dc09fbd70dea38b2044e157a5973009f9f5207107282bf911",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_promotion_gate_report.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "network-online.target",
+      "after": "-.mount skilledge-forward-shadow-daily.service network-online.target sysinit.target systemd-journald.socket skilledge-forward-shadow-promotion-gate.timer basic.target system.slice",
+      "triggers": "",
+      "triggeredBy": "skilledge-forward-shadow-promotion-gate.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-forward-shadow-promotion-gate.service\n[Unit]\nDescription=SkillEdge Forward Shadow Promotion Gate Report\nAfter=network-online.target skilledge-forward-shadow-daily.service\nWants=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironment=S900_MIN_FORWARD_SHADOW_DAYS=15\nEnvironment=S900_MIN_DECISION_TRADES=50\nEnvironment=S900_MIN_WIN_RATE=0.65\nEnvironment=S900_MIN_AVG_R=0.03\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_promotion_gate_report.py\nNice=10\nIOSchedulingClass=best-effort\nIOSchedulingPriority=7\nTimeoutStartSec=900\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    {
+      "unit": "skilledge-forward-shadow-promotion-gate.timer",
+      "description": "Run SkillEdge Forward Shadow Promotion Gate Report",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-forward-shadow-promotion-gate.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "d56e16006f6d02f5d5ffb63f25f4d866c30ab1b2133860f158096eec909a058d",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "time-sync.target sysinit.target -.mount time-set.target",
+      "triggers": "skilledge-forward-shadow-promotion-gate.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-forward-shadow-promotion-gate.timer\n[Unit]\nDescription=Run SkillEdge Forward Shadow Promotion Gate Report\n\n[Timer]\n# Runs shortly after skilledge-forward-shadow-daily.timer.\nOnCalendar=Mon..Fri *-*-* 20:45:00\nPersistent=true\nRandomizedDelaySec=180\nUnit=skilledge-forward-shadow-promotion-gate.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-historical-learning-backfill.service",
+      "description": "SkillEdge Historical Learning Backfill Scheduler",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-historical-learning-backfill.service",
+      "fragmentExists": true,
+      "fragmentSha256": "52e7f3bcd35a4c9fe92cca1b32c18932fc5d6331a5c7796606390be0129c83ed",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/run_historical_learning_backfill.py --symbols AAPL,NVDA,TSLA --intervals 5min --years-back 5 --max-days 5 --chunk-days 1 --max-jobs 1 --max-candidates 5000 --sync-supabase true ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=yes)",
+      "requires": "sysinit.target system.slice -.mount",
+      "wants": "network-online.target",
+      "after": "skilledge-stock-engine-api.service -.mount network-online.target sysinit.target skilledge-historical-learning-backfill.timer systemd-journald.socket system.slice basic.target",
+      "triggers": "",
+      "triggeredBy": "skilledge-historical-learning-backfill.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-historical-learning-backfill.service\n[Unit]\nDescription=SkillEdge Historical Learning Backfill Scheduler\nWants=network-online.target\nAfter=network-online.target skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=-/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/run_historical_learning_backfill.py --symbols AAPL,NVDA,TSLA --intervals 5min --years-back 5 --max-days 5 --chunk-days 1 --max-jobs 1 --max-candidates 5000 --sync-supabase true\nNice=10\n"
+    },
+    {
+      "unit": "skilledge-historical-learning-backfill.timer",
+      "description": "Run SkillEdge Historical Learning Backfill Scheduler nightly",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-historical-learning-backfill.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "93f839c506b0195aeb5a154e8aaf5a5777f699710d74694ed2d3750cdf26156c",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "time-set.target time-sync.target sysinit.target -.mount",
+      "triggers": "skilledge-historical-learning-backfill.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-historical-learning-backfill.timer\n[Unit]\nDescription=Run SkillEdge Historical Learning Backfill Scheduler nightly\n\n[Timer]\nOnCalendar=Mon..Sat *-*-* 01:15:00\nPersistent=true\nRandomizedDelaySec=300\nUnit=skilledge-historical-learning-backfill.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-internal-research-agents.service",
+      "description": "SkillEdge Internal Research Agents Daily Report",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-internal-research-agents.service",
+      "fragmentExists": true,
+      "fragmentSha256": "56f1525693904b208a22d877d7c0ad34f64e2cf8a5638d53fc2304b8ab12bb97",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/internal_research_agents_daily.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "network-online.target",
+      "after": "system.slice systemd-journald.socket sysinit.target -.mount network-online.target skilledge-internal-research-agents.timer basic.target skilledge-stock-engine-api.service",
+      "triggers": "",
+      "triggeredBy": "skilledge-internal-research-agents.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-internal-research-agents.service\n[Unit]\nDescription=SkillEdge Internal Research Agents Daily Report\nAfter=network-online.target skilledge-stock-engine-api.service\nWants=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/internal_research_agents_daily.py\nUser=root\n"
+    },
+    {
+      "unit": "skilledge-internal-research-agents.timer",
+      "description": "Run SkillEdge Internal Research Agents Daily Report",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-internal-research-agents.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "4e29b018bf87226f3ea00cfaa7dda4a33f4190ef90570897760201bcc7936575",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "-.mount time-set.target time-sync.target sysinit.target",
+      "triggers": "skilledge-internal-research-agents.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-internal-research-agents.timer\n[Unit]\nDescription=Run SkillEdge Internal Research Agents Daily Report\n\n[Timer]\nOnCalendar=*-*-* 02:45:00\nPersistent=true\nRandomizedDelaySec=300\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-nightly-research-optimizer.service",
+      "description": "SkillEdge Cap-Aware Nightly Research Optimizer Controller",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-nightly-research-optimizer.service",
+      "fragmentExists": true,
+      "fragmentSha256": "4293858801424b8851cef42cc0cf7b2beaa88e920462f973e320b2e3be4a9b01",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/nightly_research_optimizer_controller.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "network-online.target",
+      "after": "skilledge-nightly-research-optimizer.timer basic.target skilledge-cap-aware-backfill.service -.mount skilledge-stock-engine-api.service system.slice network-online.target sysinit.target systemd-journald.socket skilledge-internal-research-agents.service",
+      "triggers": "",
+      "triggeredBy": "skilledge-nightly-research-optimizer.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-nightly-research-optimizer.service\n[Unit]\nDescription=SkillEdge Cap-Aware Nightly Research Optimizer Controller\nAfter=network-online.target skilledge-stock-engine-api.service skilledge-cap-aware-backfill.service skilledge-internal-research-agents.service\nWants=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironment=S913_MIN_COMPLETED_JOBS=50\nEnvironment=S913_REQUIRE_ALL_BUCKETS=true\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/nightly_research_optimizer_controller.py\nUser=root\n"
+    },
+    {
+      "unit": "skilledge-nightly-research-optimizer.timer",
+      "description": "Run SkillEdge Cap-Aware Nightly Research Optimizer Controller",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-nightly-research-optimizer.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "12944670f2759a6441cf0c57b09cb9a2609d86378b93bd2011f89769c9482f85",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "sysinit.target time-set.target -.mount time-sync.target",
+      "triggers": "skilledge-nightly-research-optimizer.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-nightly-research-optimizer.timer\n[Unit]\nDescription=Run SkillEdge Cap-Aware Nightly Research Optimizer Controller\n\n[Timer]\nOnCalendar=*-*-* 03:20:00\nPersistent=true\nRandomizedDelaySec=300\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-nightly-self-learning.service",
+      "description": "SkillEdge Nightly Self Learning Runner",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-nightly-self-learning.service",
+      "fragmentExists": true,
+      "fragmentSha256": "d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python run_nightly_self_learning.py --lookback-days 3 --max-days 3 --min-closed 10 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=no)",
+      "requires": "system.slice -.mount sysinit.target",
+      "wants": "skilledge-stock-engine-api.service",
+      "after": "skilledge-stock-engine-api.service system.slice basic.target skilledge-nightly-self-learning.timer systemd-journald.socket sysinit.target -.mount",
+      "triggers": "",
+      "triggeredBy": "skilledge-nightly-self-learning.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-nightly-self-learning.service\n[Unit]\nDescription=SkillEdge Nightly Self Learning Runner\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python run_nightly_self_learning.py --lookback-days 3 --max-days 3 --min-closed 10\nUser=skilledge\nGroup=skilledge\n"
+    },
+    {
+      "unit": "skilledge-nightly-self-learning.timer",
+      "description": "Run SkillEdge Nightly Self Learning at 23:35 Kyiv",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-nightly-self-learning.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "-.mount time-sync.target sysinit.target time-set.target",
+      "triggers": "skilledge-nightly-self-learning.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-nightly-self-learning.timer\n[Unit]\nDescription=Run SkillEdge Nightly Self Learning at 23:35 Kyiv\n\n[Timer]\nOnCalendar=Mon..Fri 23:35\nPersistent=true\nUnit=skilledge-nightly-self-learning.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-post-close-evidence.service",
+      "description": "SkillEdge Post-Close Evidence Automation",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-post-close-evidence.service",
+      "fragmentExists": true,
+      "fragmentSha256": "7020b0c9da8bc4cfd71e93f192b2de55d21c79b57ef36c4d4c8b152693735e95",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/post_close_evidence_automation.py --base-url http://127.0.0.1:8000 --limit 160 --max-best 5 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=no)",
+      "requires": "sysinit.target system.slice -.mount",
+      "wants": "skilledge-stock-engine-api.service",
+      "after": "skilledge-stock-engine-api.service skilledge-post-close-evidence.timer systemd-journald.socket basic.target -.mount system.slice sysinit.target",
+      "triggers": "",
+      "triggeredBy": "skilledge-post-close-evidence.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-post-close-evidence.service\n[Unit]\nDescription=SkillEdge Post-Close Evidence Automation\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/post_close_evidence_automation.py --base-url http://127.0.0.1:8000 --limit 160 --max-best 5\nExecStartPost=/usr/bin/curl -fsS -o /dev/null -X POST \"http://127.0.0.1:8000/engine/outcomes/repair-stale-stock-open?dry_run=false&min_age_days=1&limit=5000\"\nExecStartPost=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/setup_learning_report.py --db-path data/stock_engine.db --lookback-days 30 --min-closed 10 --initial-capital 50000 --risk-pct 0.005\nExecStartPost=/usr/bin/curl -fsS -o /dev/null -X POST \"http://127.0.0.1:8000/engine/research/shadow-filter-experiments/evaluate?publish=true&source=signal_records&limit=1000&lookback_days=60\"\nExecStartPost=/usr/bin/curl -fsS -o /dev/null -X POST \"http://127.0.0.1:8000/engine/research/shadow-filter-outcome-attribution/run?publish=true&sample_limit=80\"\n# S8.50K telegram gate split dry-run snapshot\nExecStartPost=/usr/bin/curl -fsS -o /dev/null -X POST \"http://127.0.0.1:8000/engine/research/telegram-gate-split-dry-run/run?publish=true&limit=80\"\nExecStartPost=/usr/bin/curl -fsS -o /dev/null -X POST \"http://127.0.0.1:8000/engine/investor-dashboard/run?publish=true\"\nUser=skilledge\nGroup=skilledge\n# S8.48_QUIET_MODE_INSTALLED: curl ExecStartPost output redirected to /dev/null, failures still visible via -fsS\n"
+    },
+    {
+      "unit": "skilledge-post-close-evidence.timer",
+      "description": "Run SkillEdge Post-Close Evidence Automation at 23:12 Kyiv",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-post-close-evidence.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "bf9171a30d1674e976a1e0803953fbe2c464893435947544143c2a97078d82cd",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "sysinit.target -.mount time-set.target time-sync.target",
+      "triggers": "skilledge-post-close-evidence.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-post-close-evidence.timer\n\ufeff[Unit]\nDescription=Run SkillEdge Post-Close Evidence Automation at 23:12 Kyiv\n\n[Timer]\nOnCalendar=Mon..Fri 23:12\nPersistent=true\nUnit=skilledge-post-close-evidence.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-production-readiness.service",
+      "description": "SkillEdge Production Live-Day Readiness Check",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-production-readiness.service",
+      "fragmentExists": true,
+      "fragmentSha256": "7c60024504cd74fc75e9bd5364ad185ff0412f7c7f904055bd64fe078f016bac",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/production_live_day_readiness.py --public-url https://engine.upyourskills.site --frontend-url https://www.upyourskills.site --alert-on-blocker ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=yes)",
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "network-online.target",
+      "after": "skilledge-production-readiness.timer sysinit.target -.mount network-online.target basic.target skilledge-stock-engine-api.service systemd-journald.socket system.slice",
+      "triggers": "",
+      "triggeredBy": "skilledge-production-readiness.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-production-readiness.service\n[Unit]\nDescription=SkillEdge Production Live-Day Readiness Check\nWants=network-online.target\nAfter=network-online.target skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=-/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/production_live_day_readiness.py --public-url https://engine.upyourskills.site --frontend-url https://www.upyourskills.site --alert-on-blocker\nUser=root\nGroup=root\n"
+    },
+    {
+      "unit": "skilledge-production-readiness.timer",
+      "description": "Run SkillEdge Production Live-Day Readiness Check before US premarket",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-production-readiness.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "301e821e9ea073cb598406c1c63f50dcff9b8d07906c92b3e6a63247f690e62e",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "time-set.target time-sync.target sysinit.target -.mount",
+      "triggers": "skilledge-production-readiness.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-production-readiness.timer\n[Unit]\nDescription=Run SkillEdge Production Live-Day Readiness Check before US premarket\n\n[Timer]\nOnCalendar=Mon..Fri 10:45:00\nAccuracySec=60s\nPersistent=true\nUnit=skilledge-production-readiness.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-s10-paper-evaluation.service",
+      "description": "SkillEdge S10 paper evaluation-only runner",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "disabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-s10-paper-evaluation.service",
+      "fragmentExists": true,
+      "fragmentSha256": "71459ed66d43e1cd5b10566ca45df096500558c3a952fb06e09700e259e3d90f",
+      "execStart": "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_evaluation_only_wrapper.py ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:37:56 EEST] ; stop_time=[Tue 2026-07-14 18:37:59 EEST] ; pid=685723 ; code=exited ; status=0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "sysinit.target system.slice skilledge-stock-engine-api.service -.mount",
+      "wants": "network-online.target",
+      "after": "skilledge-stock-engine-api.service systemd-journald.socket skilledge-s10-paper-evaluation.timer system.slice network-online.target sysinit.target basic.target -.mount",
+      "triggers": "",
+      "triggeredBy": "skilledge-s10-paper-evaluation.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-s10-paper-evaluation.service\n[Unit]\nDescription=SkillEdge S10 paper evaluation-only runner\nAfter=network-online.target skilledge-stock-engine-api.service\nWants=network-online.target\nRequires=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nUser=root\nWorkingDirectory=/opt/skilledge/stock-engine\nExecStart=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_evaluation_only_wrapper.py\nTimeoutStartSec=120\nNice=5\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    {
+      "unit": "skilledge-s10-paper-evaluation.timer",
+      "description": "Run SkillEdge S10 paper evaluation-only every 5 minutes",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-s10-paper-evaluation.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "c6cbacb060b6077002208d46a279d1cbfe4cbe0c52fb0cdf36080a1e91056a17",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "sysinit.target",
+      "wants": "",
+      "after": "sysinit.target",
+      "triggers": "skilledge-s10-paper-evaluation.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-s10-paper-evaluation.timer\n[Unit]\nDescription=Run SkillEdge S10 paper evaluation-only every 5 minutes\n\n[Timer]\nOnActiveSec=30s\nOnUnitInactiveSec=5min\nAccuracySec=10s\nUnit=skilledge-s10-paper-evaluation.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-s10-paper-trading.service",
+      "description": "SkillEdge S10 market-hours guarded paper entry runner",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "disabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-s10-paper-trading.service",
+      "fragmentExists": true,
+      "fragmentSha256": "ab2155022521904096ab2b76ef39e2746b6da76fb44ca3f8306d801f250c72a4",
+      "execStart": "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:34:07 EEST] ; stop_time=[Tue 2026-07-14 18:34:07 EEST] ; pid=685592 ; code=exited ; status=0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "system.slice -.mount skilledge-stock-engine-api.service sysinit.target",
+      "wants": "network-online.target",
+      "after": "network-online.target basic.target system.slice skilledge-stock-engine-api.service skilledge-s10-paper-trading.timer systemd-journald.socket sysinit.target -.mount",
+      "triggers": "",
+      "triggeredBy": "skilledge-s10-paper-trading.timer",
+      "unitCat": "# /etc/systemd/system/skilledge-s10-paper-trading.service\n[Unit]\nDescription=SkillEdge S10 market-hours guarded paper entry runner\nAfter=network-online.target skilledge-stock-engine-api.service\nWants=network-online.target\nRequires=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nUser=root\nWorkingDirectory=/opt/skilledge/stock-engine\nExecStart=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py\nTimeoutStartSec=180\nNice=5\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    {
+      "unit": "skilledge-s10-paper-trading.timer",
+      "description": "Run SkillEdge S10 guarded paper entry check every 5 minutes, staggered from evaluation",
+      "activeState": "active",
+      "subState": "waiting",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-s10-paper-trading.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "eb74da39516589efdaaeefb94f72ff37a549b2a20701e0da2778f6259dce7a23",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "sysinit.target",
+      "wants": "",
+      "after": "sysinit.target",
+      "triggers": "skilledge-s10-paper-trading.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-s10-paper-trading.timer\n[Unit]\nDescription=Run SkillEdge S10 guarded paper entry check every 5 minutes, staggered from evaluation\n\n[Timer]\nOnActiveSec=3min\nOnUnitInactiveSec=5min\nAccuracySec=10s\nUnit=skilledge-s10-paper-trading.service\n\n[Install]\nWantedBy=timers.target\n"
+    },
+    {
+      "unit": "skilledge-stock-engine-api.service",
+      "description": "SkillEdge Stock Engine API",
+      "activeState": "active",
+      "subState": "running",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-stock-engine-api.service",
+      "fragmentExists": true,
+      "fragmentSha256": "707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python -m uvicorn app.api.app:app --host 127.0.0.1 --port 8000 ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:13:38 EEST] ; stop_time=[n/a] ; pid=683393 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=no)",
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "network-online.target",
+      "after": "system.slice network-online.target basic.target systemd-journald.socket -.mount sysinit.target",
+      "triggers": "",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-stock-engine-api.service\n[Unit]\nDescription=SkillEdge Stock Engine API\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python -m uvicorn app.api.app:app --host 127.0.0.1 --port 8000\nRestart=always\nRestartSec=5\nTimeoutStartSec=60\nKillSignal=SIGINT\nUser=skilledge\nGroup=skilledge\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    {
+      "unit": "skilledge-telegram-consumer.service",
+      "description": "SkillEdge Telegram Cache Consumer",
+      "activeState": "active",
+      "subState": "running",
+      "unitFileState": "enabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-telegram-consumer.service",
+      "fragmentExists": true,
+      "fragmentSha256": "feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python telegram_cache_consumer.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": "/opt/skilledge/stock-engine/.env.server (ignore_errors=no)",
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "skilledge-stock-engine-api.service",
+      "after": "skilledge-stock-engine-api.service system.slice systemd-journald.socket basic.target sysinit.target -.mount",
+      "triggers": "",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-telegram-consumer.service\n[Unit]\nDescription=SkillEdge Telegram Cache Consumer\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nEnvironment=TELEGRAM_CONSUMER_DRY_RUN=false\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python telegram_cache_consumer.py\nRestart=always\nRestartSec=10\nUser=skilledge\nGroup=skilledge\n\n[Install]\nWantedBy=multi-user.target\n"
+    },
+    {
+      "unit": "skilledge-universe-v1-backfill.service",
+      "description": "SkillEdge Universe v1 Overnight Research Backfill",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "static",
+      "fragmentPath": "/etc/systemd/system/skilledge-universe-v1-backfill.service",
+      "fragmentExists": true,
+      "fragmentSha256": "58dd804f5d52e3ade78be2dcd2ba9363b700a20710f7003005a757bd03258cc6",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/universe_v1_overnight_backfill_runner.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "workingDirectory": "/opt/skilledge/stock-engine",
+      "environmentFiles": null,
+      "requires": "system.slice sysinit.target -.mount",
+      "wants": "network-online.target",
+      "after": "basic.target system.slice -.mount sysinit.target systemd-journald.socket skilledge-stock-engine-api.service network-online.target",
+      "triggers": "",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-universe-v1-backfill.service\n[Unit]\nDescription=SkillEdge Universe v1 Overnight Research Backfill\nAfter=network-online.target skilledge-stock-engine-api.service\nWants=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironment=S908B_START_DATE=2021-07-12\nEnvironment=S908B_END_DATE=2026-07-10\nEnvironment=S908B_MAX_SYMBOLS=150\nEnvironment=S908B_SYMBOLS_PER_JOB=10\nEnvironment=S908B_DAYS_PER_JOB=5\nEnvironment=S908B_MAX_JOBS_PER_RUN=80\nEnvironment=S908B_SLEEP_SECONDS=2\nEnvironment=S908B_REBUILD_QUEUE=false\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/universe_v1_overnight_backfill_runner.py\nUser=root\n"
+    },
+    {
+      "unit": "skilledge-universe-v1-backfill.timer",
+      "description": "Run SkillEdge Universe v1 Overnight Research Backfill",
+      "activeState": "inactive",
+      "subState": "dead",
+      "unitFileState": "disabled",
+      "fragmentPath": "/etc/systemd/system/skilledge-universe-v1-backfill.timer",
+      "fragmentExists": true,
+      "fragmentSha256": "fddd553b8fcc6716e3a2ce00c16efd866a65ca09ca1f0edf2cdda57cb2f50064",
+      "execStart": null,
+      "workingDirectory": null,
+      "environmentFiles": null,
+      "requires": "-.mount sysinit.target",
+      "wants": "",
+      "after": "time-set.target time-sync.target -.mount sysinit.target",
+      "triggers": "skilledge-universe-v1-backfill.service",
+      "triggeredBy": "",
+      "unitCat": "# /etc/systemd/system/skilledge-universe-v1-backfill.timer\n[Unit]\nDescription=Run SkillEdge Universe v1 Overnight Research Backfill\n\n[Timer]\nOnCalendar=*-*-* 01:10:00\nPersistent=true\nRandomizedDelaySec=600\n\n[Install]\nWantedBy=timers.target\n"
+    }
+  ],
+  "referencedPaths": [
+    "/opt/skilledge/stock-engine/.env.server",
+    "/opt/skilledge/stock-engine/.venv/bin/python",
+    "/opt/skilledge/stock-engine/ops/scripts/capitalization_aware_backfill_runner.py",
+    "/opt/skilledge/stock-engine/ops/scripts/engine_watchdog.py",
+    "/opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py",
+    "/opt/skilledge/stock-engine/ops/scripts/forward_shadow_promotion_gate_report.py",
+    "/opt/skilledge/stock-engine/ops/scripts/internal_research_agents_daily.py",
+    "/opt/skilledge/stock-engine/ops/scripts/nightly_research_optimizer_controller.py",
+    "/opt/skilledge/stock-engine/ops/scripts/production_live_day_readiness.py",
+    "/opt/skilledge/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py",
+    "/opt/skilledge/stock-engine/ops/scripts/s10_paper_evaluation_only_wrapper.py",
+    "/opt/skilledge/stock-engine/ops/scripts/universe_v1_overnight_backfill_runner.py",
+    "/opt/skilledge/stock-engine/run_historical_learning_backfill.py"
+  ],
+  "indirectEdges": [
+    {
+      "from": ".venv/lib/python3.12/site-packages/_yaml/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/anyio/pytest_plugin.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/command/test.py",
+      "match": "test.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/anyio/streams/text.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/click/_textwrap.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/click/_textwrap.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/tests/textwrap.py",
+      "match": "textwrap.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/click/core.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/click/decorators.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/click/utils.py",
+      "to": "app/api/app.py",
+      "match": "app.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/dateutil/tz/_common.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/datetime.py",
+      "match": "datetime.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/fastapi/_compat.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/v1/schema.py",
+      "match": "schema.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/h11/_version.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/httpcore/_utils.py",
+      "to": ".venv/lib/python3.12/site-packages/redis/_parsers/socket.py",
+      "match": "socket.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/httpx/_compat.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/httpx/_decoders.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/httpx/_models.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/httpx/_urlparse.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/httpx/_urlparse.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py",
+      "match": "parse.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/httpx/_urls.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/jwt/utils.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py",
+      "match": "core.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/packaging/licenses/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py",
+      "match": "parse.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/packaging/utils.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/build_env.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/__pip-runner__.py",
+      "match": "__pip-runner__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/cli/cmdoptions.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py",
+      "match": "target_python.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "match": "utils.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/python.py",
+      "match": "python.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/commands/install.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/operations/check.py",
+      "match": "check.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/commands/lock.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/commands/lock.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "match": "utils.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/index/package_finder.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py",
+      "match": "target_python.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/index/package_finder.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/python.py",
+      "match": "python.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/index/package_finder.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/locations/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/locations/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py",
+      "match": "sysconfig.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/locations/_distutils.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/models/index.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/command/test.py",
+      "match": "test.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/models/scheme.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/compatibility_tags.py",
+      "match": "compatibility_tags.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/tags.py",
+      "match": "tags.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/operations/install/wheel.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/req/constructors.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/req/constructors.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "match": "utils.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/req/req_uninstall.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/req/req_uninstall.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/utils/misc.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/utils/misc.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py",
+      "match": "__main__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_internal/utils/pylock.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/cachecontrol/filewrapper.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/distlib/scripts.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py",
+      "match": "__main__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/distlib/util.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py",
+      "match": "parse.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/pkg_resources/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/pkg_resources/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/anyio/streams/text.py",
+      "match": "text.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py",
+      "match": "ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_vendor/importlib_metadata/_text.py",
+      "match": "_text.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/python.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py",
+      "match": "_in_process.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/console.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/table.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/box.py",
+      "match": "box.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/connectionpool.py",
+      "to": ".venv/lib/python3.12/site-packages/redis/_parsers/socket.py",
+      "match": "socket.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/emscripten/response.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/emscripten/fetch.py",
+      "match": "fetch.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/socks.py",
+      "to": ".venv/lib/python3.12/site-packages/httpcore/_sync/connection.py",
+      "match": "connection.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/socks.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/redis/_parsers/socket.py",
+      "match": "socket.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/proxy.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/poolmanager.py",
+      "match": "poolmanager.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssltransport.py",
+      "to": ".venv/lib/python3.12/site-packages/redis/_parsers/socket.py",
+      "match": "socket.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/timeout.py",
+      "to": ".venv/lib/python3.12/site-packages/redis/_parsers/socket.py",
+      "match": "socket.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_fields.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py",
+      "to": ".venv/lib/python3.12/site-packages/typing_extensions.py",
+      "match": "typing_extensions.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_generics.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_git.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/vcs/git.py",
+      "match": "git.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_namespace_utils.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/cachecontrol/adapter.py",
+      "match": "adapter.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_namespace_utils.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/type_adapter.py",
+      "match": "type_adapter.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_typing_extra.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_typing_extra.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/v1/typing.py",
+      "match": "typing.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/tomli/_types.py",
+      "match": "_types.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/_internal/_std_types_schema.py",
+      "match": "_std_types_schema.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/v1/schema.py",
+      "match": "schema.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/v1/types.py",
+      "match": "types.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_migration.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/_migration.py",
+      "to": ".venv/lib/python3.12/site-packages/httptools/parser/errors.py",
+      "match": "errors.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/aliases.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/color.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/config.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/dataclasses.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/fields.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/fields.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/_internal/_fields.py",
+      "match": "_fields.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/functional_validators.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/functional_validators.py",
+      "to": ".venv/lib/python3.12/site-packages/httptools/parser/errors.py",
+      "match": "errors.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/json_schema.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/main.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/mypy.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/plugin/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/root_model.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/type_adapter.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/types.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/types.py",
+      "to": ".venv/lib/python3.12/site-packages/httptools/parser/errors.py",
+      "match": "errors.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/types.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/fields.py",
+      "match": "fields.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/types.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/_internal/_fields.py",
+      "match": "_fields.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/v1/_hypothesis_plugin.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/v1/datetime_parse.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py",
+      "match": "parse.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/v1/schema.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/v1/typing.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/v1/validators.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/validate_call_decorator.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic/warnings.py",
+      "to": ".venv/lib/python3.12/site-packages/httptools/parser/errors.py",
+      "match": "errors.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic_core/core_schema.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic_core/core_schema.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py",
+      "match": "core.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic_core/core_schema.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/v1/schema.py",
+      "match": "schema.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/pydantic_settings/sources.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/asyncio/client.py",
+      "to": ".venv/lib/python3.12/site-packages/h11/_connection.py",
+      "match": "_connection.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/asyncio/client.py",
+      "to": ".venv/lib/python3.12/site-packages/httpcore/_sync/connection.py",
+      "match": "connection.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/asyncio/client.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/asyncio/cluster.py",
+      "to": ".venv/lib/python3.12/site-packages/redis/backoff.py",
+      "match": "backoff.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/asyncio/cluster.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/off.py",
+      "match": "off.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/asyncio/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/client.py",
+      "to": ".venv/lib/python3.12/site-packages/h11/_connection.py",
+      "match": "_connection.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/client.py",
+      "to": ".venv/lib/python3.12/site-packages/httpcore/_sync/connection.py",
+      "match": "connection.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/client.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/cluster.py",
+      "to": ".venv/lib/python3.12/site-packages/realtime/_sync/client.py",
+      "match": "client.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/commands/core.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/command/test.py",
+      "match": "test.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/redis/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_core_metadata.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/_modified.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/cmd.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_clib.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py",
+      "match": "ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_clib.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py",
+      "match": "build_ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py",
+      "match": "bar.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py",
+      "match": "sysconfig.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_py.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/install_lib.py",
+      "match": "install_lib.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_py.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_py.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/install.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/cmd.py",
+      "match": "cmd.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/install.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/install_lib.py",
+      "match": "install_lib.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/compat/py39.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/compat/py39.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py",
+      "match": "sysconfig.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/msvc.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/ccompiler.py",
+      "match": "ccompiler.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/tests/test_unix.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/unix.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/ccompiler.py",
+      "match": "ccompiler.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/zos.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/zos.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py",
+      "match": "sysconfig.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/core.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py",
+      "match": "core.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/extension.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py",
+      "match": "core.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/extension.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py",
+      "match": "ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/extension.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py",
+      "match": "build_ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/filelist.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py",
+      "match": "bar.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_build_py.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_filelist.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/commands/list.py",
+      "match": "list.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_filelist.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/filelist.py",
+      "match": "filelist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_install_lib.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_sdist.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_sysconfig.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_sysconfig.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py",
+      "match": "sysconfig.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/version.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/urllib3/_version.py",
+      "match": "_version.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/version.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_version.py",
+      "match": "test_version.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_distutils/version.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_entry_points.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_imp.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_normalization.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_static.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_vendor/backports/tarfile/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/anyio/streams/file.py",
+      "match": "file.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_vendor/backports/tarfile/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_vendor/importlib_metadata/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_vendor/more_itertools/recipes.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_vendor/packaging/licenses/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py",
+      "match": "parse.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_vendor/zipp/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/_vendor/zipp/glob.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/_requirestxt.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/build_ext.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py",
+      "match": "ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/build_py.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/build_py.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/editable_wheel.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/editable_wheel.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/editable_wheel.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/command/install_lib.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_apply_pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_apply_pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py",
+      "match": "metadata.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/extra_validations.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/formats.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/expand.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/config/setupcfg.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/discovery.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/discovery.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/dist.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/dist.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py",
+      "match": "metadata.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/dist.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/extension.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py",
+      "match": "ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/extension.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py",
+      "match": "build_ext.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/downloads/__init__.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/tests/config/downloads/preload.py",
+      "match": "preload.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_apply_pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_apply_pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/tests/config/downloads/preload.py",
+      "match": "preload.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_expand.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/cli/main.py",
+      "match": "main.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_expand.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py",
+      "match": "__main__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py",
+      "match": "__version__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_setupcfg.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/build.py",
+      "match": "build.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_setupcfg.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/config/test_setupcfg.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/fixtures.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/integration/test_pip_install_sdist.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/namespaces.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_bdist_wheel.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/distributions/sdist.py",
+      "match": "sdist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_bdist_wheel.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_bdist_wheel.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_build_meta.py",
+      "to": ".venv/lib/python3.12/site-packages/idna/cli.py",
+      "match": "cli.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_build_meta.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_build_py.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py",
+      "match": "bar.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_build_py.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py",
+      "to": ".venv/lib/python3.12/site-packages/anyio/streams/file.py",
+      "match": "file.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/cli/main.py",
+      "match": "main.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_develop.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_dist.py",
+      "to": ".venv/lib/python3.12/site-packages/anyio/streams/file.py",
+      "match": "file.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_dist.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_dist.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py",
+      "to": ".venv/lib/python3.12/site-packages/anyio/streams/file.py",
+      "match": "file.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py",
+      "match": "__main__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py",
+      "match": "bar.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py",
+      "match": "config.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_egg_info.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py",
+      "match": "packaging.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_egg_info.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py",
+      "match": "bar.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_find_packages.py",
+      "to": ".venv/lib/python3.12/site-packages/anyio/streams/file.py",
+      "match": "file.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_find_packages.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_find_packages.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py",
+      "to": ".venv/lib/python3.12/site-packages/anyio/streams/file.py",
+      "match": "file.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/models/link.py",
+      "match": "link.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py",
+      "match": "compat.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/command/test.py",
+      "match": "test.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/commands/list.py",
+      "match": "list.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/filelist.py",
+      "match": "filelist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_filelist.py",
+      "match": "test_filelist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_sdist.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_setuptools.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py",
+      "match": "bar.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_setuptools.py",
+      "to": ".venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py",
+      "match": "dist.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_warnings.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/tests/test_wheel.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/warnings.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py",
+      "match": "tools.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/setuptools/wheel.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/sniffio/_version.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/typing_extensions.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/typing_extensions.py",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/v1/typing.py",
+      "match": "typing.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/uvicorn/_subprocess.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/uvicorn/config.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/uvloop/_testbase.py",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "match": "utils.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/asyncio/async_timeout.py",
+      "to": ".venv/lib/python3.12/site-packages/typing_extensions.py",
+      "match": "typing_extensions.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/asyncio/async_timeout.py",
+      "to": "app/data/__init__.py",
+      "match": "__init__.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/asyncio/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/h11/_connection.py",
+      "match": "_connection.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/asyncio/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/httpx/_client.py",
+      "match": "_client.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/asyncio/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/realtime/_sync/client.py",
+      "match": "client.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/asyncio/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/cli.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/legacy/protocol.py",
+      "to": ".venv/lib/python3.12/site-packages/fastapi/openapi/docs.py",
+      "match": "docs.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/sync/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/h11/_connection.py",
+      "match": "_connection.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/sync/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/httpx/_client.py",
+      "match": "_client.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/sync/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/realtime/_sync/client.py",
+      "match": "client.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/sync/connection.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": ".venv/lib/python3.12/site-packages/websockets/version.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/operations/check.py",
+      "match": "check.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "match": "utils.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/_internal/_utils.py",
+      "match": "_utils.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/ops/scripts/server_healthcheck.py",
+      "match": "server_healthcheck.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/runner_utils.py",
+      "match": "runner_utils.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_daily_ai_desk.py",
+      "match": "run_daily_ai_desk.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_nightly_self_learning.py",
+      "match": "run_nightly_self_learning.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/operations/check.py",
+      "match": "check.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pip/_internal/operations/check.py",
+      "match": "check.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "match": "utils.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py",
+      "match": "utils.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/_internal/_utils.py",
+      "match": "_utils.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": ".venv/lib/python3.12/site-packages/pydantic/_internal/_utils.py",
+      "match": "_utils.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/ops/scripts/server_healthcheck.py",
+      "match": "server_healthcheck.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/ops/scripts/server_healthcheck.py",
+      "match": "server_healthcheck.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/runner_utils.py",
+      "match": "runner_utils.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/runner_utils.py",
+      "match": "runner_utils.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_daily_ai_desk.py",
+      "match": "run_daily_ai_desk.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_daily_ai_desk.py",
+      "match": "run_daily_ai_desk.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_nightly_self_learning.py",
+      "match": "run_nightly_self_learning.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_nightly_self_learning.py",
+      "match": "run_nightly_self_learning.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_entry_guarded_wrapper.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_entry_guarded_wrapper.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_entry_guarded_wrapper.py",
+      "to": "ops/scripts/s10_paper_entry_guarded_daemon.py",
+      "match": "s10_paper_entry_guarded_daemon.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_entry_guarded_wrapper.py",
+      "to": "ops/scripts/s10_paper_entry_guarded_daemon.py",
+      "match": "s10_paper_entry_guarded_daemon.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_evaluation_only_wrapper.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_evaluation_only_wrapper.py",
+      "to": ".venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py",
+      "match": "on.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_evaluation_only_wrapper.py",
+      "to": "ops/scripts/s10_paper_evaluation_only_daemon.py",
+      "match": "s10_paper_evaluation_only_daemon.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_evaluation_only_wrapper.py",
+      "to": "ops/scripts/s10_paper_evaluation_only_daemon.py",
+      "match": "s10_paper_evaluation_only_daemon.py"
+    }
+  ],
+  "duplicateOpsTreeExists": true,
+  "duplicateOpsFiles": [
+    "ops/ops/README_VPS_DEPLOY.md",
+    "ops/ops/nginx/stock-engine.nginx.conf",
+    "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+    "ops/ops/scripts/server_healthcheck.py",
+    "ops/ops/systemd/skilledge-daily-ai-desk.service",
+    "ops/ops/systemd/skilledge-nightly-self-learning.service",
+    "ops/ops/systemd/skilledge-nightly-self-learning.timer",
+    "ops/ops/systemd/skilledge-stock-engine-api.service",
+    "ops/ops/systemd/skilledge-telegram-consumer.service"
+  ]
+}

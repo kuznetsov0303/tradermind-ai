@@ -111,14 +111,10 @@ function includesAny(text: string, keywords: string[]) {
 
 function isAllowedCryptoSmcIctSetupSlug(slug: string) {
   return [
-    "crypto_stop_run_reclaim_long",
-    "crypto_stop_run_rejection_short",
-    "session_liquidity_sweep_reversal",
-    "order_block_mitigation_reaction",
-    "breaker_block_retest",
-    "fvg_fill_continuation",
-    "fvg_displacement_continuation",
-    "trendline_pullback_structure_continuation",
+    "crypto_liquidity_sweep_reclaim_long",
+    "crypto_liquidity_sweep_rejection_short",
+    "crypto_trend_pullback_continuation",
+    "crypto_range_deviation_reversal",
   ].includes(slug);
 }
 
@@ -264,8 +260,20 @@ function inferSetupSlug({
     "strategy_slug",
   ]);
 
+  const allowedV1Slugs = [
+    "stock_gap_crap_short",
+    "stock_opening_range_breakout",
+    "stock_vwap_reclaim_rejection",
+    "stock_news_continuation_pullback",
+    "crypto_liquidity_sweep_reclaim_long",
+    "crypto_liquidity_sweep_rejection_short",
+    "crypto_trend_pullback_continuation",
+    "crypto_range_deviation_reversal",
+  ];
+
   if (
     explicitSlug &&
+    allowedV1Slugs.includes(explicitSlug) &&
     getSkillEdgeSetupBySlug(explicitSlug) &&
     (assetType !== "crypto" || isAllowedCryptoSmcIctSetupSlug(explicitSlug))
   ) {
@@ -285,200 +293,130 @@ function inferSetupSlug({
   if (assetType === "crypto") {
     if (
       includesAny(text, [
+        "range deviation",
+        "deviation reversal",
+        "return inside range",
+        "failed range breakout",
+        "failed range breakdown",
+        "range high",
+        "range low",
+      ])
+    ) {
+      return "crypto_range_deviation_reversal";
+    }
+
+    if (
+      includesAny(text, [
+        "trend pullback",
+        "pullback continuation",
         "trendline pullback",
-        "pullback to trendline",
-        "trendline continuation",
-        "structure continuation",
         "controlled pullback",
-        "pullback into structure",
+        "structure continuation",
+        "trend continuation",
+        "continuation pullback",
       ])
     ) {
-      return "trendline_pullback_structure_continuation";
-    }
-
-    if (includesAny(text, ["order block", "mitigation"])) {
-      return "order_block_mitigation_reaction";
-    }
-
-    if (includesAny(text, ["breaker block", "breaker retest"])) {
-      return "breaker_block_retest";
-    }
-
-    if (includesAny(text, ["fvg", "fair value gap", "imbalance"])) {
-      return "fvg_fill_continuation";
+      return "crypto_trend_pullback_continuation";
     }
 
     if (
       includesAny(text, [
-        "buy-side sweep",
         "sweep high",
+        "buy-side sweep",
         "swept high",
-        "liquidity grab above",
-        "sweep high rejection",
-        "rejection",
-      ])
+        "liquidity above",
+        "rejection short",
+        "sweep rejection",
+        "failed breakout",
+        "lower high",
+        "breakdown",
+        "short",
+      ]) ||
+      (priceChangePercent !== null && priceChangePercent < -3)
     ) {
-      return "crypto_stop_run_rejection_short";
+      return "crypto_liquidity_sweep_rejection_short";
     }
 
-    if (
-      includesAny(text, [
-        "stop run",
-        "liquidity sweep",
-        "sell-side sweep",
-        "sweep low",
-        "swept low",
-        "sweep reclaim",
-        "reclaim",
-      ])
-    ) {
-      return "crypto_stop_run_reclaim_long";
-    }
-
-    return "session_liquidity_sweep_reversal";
+    return "crypto_liquidity_sweep_reclaim_long";
   }
 
+  const hasCatalystText = includesAny(text, [
+    "earnings",
+    "eps",
+    "guidance",
+    "news",
+    "catalyst",
+    "fda",
+    "analyst",
+    "upgrade",
+    "downgrade",
+    "sec filing",
+    "merger",
+    "contract",
+    "partnership",
+  ]);
+
+  const hasShortFailureText = includesAny(text, [
+    "gap crap",
+    "gapcrap",
+    "failed premarket",
+    "failed breakout",
+    "stuff",
+    "lower high",
+    "failed high",
+    "pmh fail",
+    "hod fail",
+    "fade",
+    "short",
+  ]);
+
+  const hasVwapText = includesAny(text, [
+    "vwap",
+    "reclaim",
+    "rejection",
+    "lost vwap",
+    "under vwap",
+    "above vwap",
+    "below vwap",
+  ]);
+
+  const hasOpeningRangeText = includesAny(text, [
+    "opening range",
+    "orb",
+    "range breakout",
+    "range breakdown",
+    "open high",
+    "open low",
+  ]);
+
   if (
-    includesAny(text, ["personal premarket", "user fingerprint"]) ||
+    hasShortFailureText ||
     (sessionWindow === "premarket" &&
       priceChangePercent !== null &&
-      priceChangePercent >= 8 &&
-      includesAny(text, ["failed high", "lower high", "vwap"]))
+      priceChangePercent >= 8)
   ) {
-    return "personal_premarket_short_fingerprint";
+    return "stock_gap_crap_short";
   }
 
-  if (includesAny(text, ["gapcrap", "gap crap"])) {
-    return "gap_crap_short";
+  if (hasOpeningRangeText || sessionWindow === "open") {
+    return "stock_opening_range_breakout";
   }
 
-  if (includesAny(text, ["golden zone", "pmh"])) {
-    return "pmh_golden_zone_short";
+  if (hasVwapText) {
+    return "stock_vwap_reclaim_rejection";
   }
 
-  if (includesAny(text, ["order block", "mitigation"])) {
-    return "order_block_mitigation_reaction";
+  if (hasCatalystText) {
+    return "stock_news_continuation_pullback";
   }
 
-  if (includesAny(text, ["breaker block", "breaker retest"])) {
-    return "breaker_block_retest";
+  if (priceChangePercent !== null && Math.abs(priceChangePercent) >= 8) {
+    return priceChangePercent > 0
+      ? "stock_opening_range_breakout"
+      : "stock_vwap_reclaim_rejection";
   }
 
-  if (includesAny(text, ["fvg", "fair value gap", "imbalance"])) {
-    return "fvg_fill_continuation";
-  }
-
-  if (
-    includesAny(text, [
-      "session sweep",
-      "session liquidity",
-      "equal highs",
-      "equal lows",
-      "buy-side liquidity",
-      "sell-side liquidity",
-    ])
-  ) {
-    return "session_liquidity_sweep_reversal";
-  }
-
-  if (includesAny(text, ["j-line", "jline"])) {
-    return "vwap_jline_rejection_short";
-  }
-
-  if (includesAny(text, ["wall of sellers", "seller wall"])) {
-    return "wall_of_sellers_short";
-  }
-
-  if (includesAny(text, ["second day", "day 2"])) {
-    return "second_day_fade_continuation";
-  }
-
-  if (
-    includesAny(text, [
-      "earnings",
-      "eps",
-      "guidance",
-      "news",
-      "catalyst",
-      "offering",
-      "dilution",
-      "fda",
-      "analyst",
-      "upgrade",
-      "downgrade",
-      "sec filing",
-      "merger",
-      "contract",
-      "partnership",
-    ])
-  ) {
-    if (includesAny(text, ["fade", "short", "failed", "rejection", "stuff"])) {
-      return "catalyst_reaction_fade";
-    }
-
-    if (includesAny(text, ["big cap", "large cap", "mega cap"])) {
-      return "big_cap_catalyst_continuation";
-    }
-
-    return "catalyst_continuation_after_pullback";
-  }
-
-  if (
-    includesAny(text, [
-      "trendline pullback",
-      "pullback to trendline",
-      "trendline continuation",
-      "structure continuation",
-      "controlled pullback",
-      "pullback into structure",
-    ])
-  ) {
-    return "trendline_pullback_structure_continuation";
-  }
-
-  if (includesAny(text, ["lower high", "under vwap"])) {
-    return "lower_high_under_vwap_short";
-  }
-
-  if (includesAny(text, ["stuff", "failed breakout", "trap"])) {
-    return "failed_premarket_breakout_stuff_short";
-  }
-
-  if (includesAny(text, ["breakout hold limit", "breakout + hold"])) {
-    return "breakout_hold_limit";
-  }
-
-  if (includesAny(text, ["bounce limit", "bounce + limit"])) {
-    return "bounce_limit";
-  }
-
-  if (includesAny(text, ["daily level", "false break", "retest"])) {
-    return "daily_level_false_break_retest";
-  }
-
-  if (sessionWindow === "premarket") {
-    return "premarket_pump_exhaustion_short";
-  }
-
-  if (sessionWindow === "open") {
-    return includesAny(text, ["fade", "failed", "short"])
-      ? "first_push_fade_short"
-      : "opening_range_breakout";
-  }
-
-  if (sessionWindow === "main_session") {
-    return includesAny(text, ["range", "compression"])
-      ? "midday_range_breakout_continuation"
-      : "intraday_vwap_trend_continuation";
-  }
-
-  if (sessionWindow === "power_hour") {
-    return includesAny(text, ["failed", "trap", "reversal"])
-      ? "late_day_failed_breakout_reversal"
-      : "power_hour_breakout_continuation";
-  }
-
-  return "momentum_continuation";
+  return "stock_opening_range_breakout";
 }
 
 function inferVwapState(text: string): SkillEdgeSignalCandidateContext["vwapState"] {

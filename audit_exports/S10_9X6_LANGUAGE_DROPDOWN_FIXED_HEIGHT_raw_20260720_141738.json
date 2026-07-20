@@ -1,0 +1,15 @@
+﻿{
+    "ok":  true,
+    "classification":  "LANDING_LANGUAGE_DROPDOWN_FIXED_HEIGHT_PASSED",
+    "landingComponentChanged":  true,
+    "fixedHeightPx":  92,
+    "visibleLanguageRows":  2,
+    "inlineOverflowControl":  true,
+    "scrollbarHidden":  true,
+    "buildPassed":  true,
+    "productionMutation":  false,
+    "vpsTouched":  false,
+    "backupRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9X6_language_dropdown_fixed_height_backup_20260720_141738",
+    "buildLog":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9X6_LANGUAGE_DROPDOWN_FIXED_HEIGHT_build_20260720_141738.txt",
+    "nextAction":  "RESTART_DEV_SERVER_AND_RUN_VISUAL_QA"
+}

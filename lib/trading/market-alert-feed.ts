@@ -180,6 +180,93 @@ function isNotExpired(item: MarketAlertFeedItem) {
   return expiresAt > Date.now();
 }
 
+function normalizeAlertSymbol(value: unknown) {
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+}
+
+function getAlertDeliveryReady(item: MarketAlertFeedItem) {
+  const sourceData = getRecord(item.source_data);
+  const aiValidation = getRecord(sourceData.aiValidation);
+  const deliveryEligibility = getRecord(aiValidation.deliveryEligibility);
+  const qualityV2 = getRecord(sourceData.qualityV2);
+
+  return (
+    deliveryEligibility.eligible === true ||
+    qualityV2.telegramEligible === true ||
+    String(qualityV2.telegramEligible || "").toLowerCase() === "true"
+  );
+}
+
+function getAlertCreatedAtMs(item: MarketAlertFeedItem) {
+  const createdAt = new Date(
+    String(item.created_at || "1970-01-01T00:00:00.000Z")
+  ).getTime();
+
+  return Number.isFinite(createdAt) ? createdAt : 0;
+}
+
+function getAlertScoreValue(item: MarketAlertFeedItem) {
+  return Math.max(toNumber(item.confidence_score), toNumber(item.score));
+}
+
+function getAlertCanonicalFingerprint(item: MarketAlertFeedItem) {
+  return [
+    item.asset_type === "crypto" ? "crypto" : "stock",
+    normalizeAlertSymbol(item.symbol),
+    String(item.setup_slug || "unknown_setup"),
+    String(item.direction || "neutral"),
+  ].join(":");
+}
+
+function compareCanonicalFeedItems(a: MarketAlertFeedItem, b: MarketAlertFeedItem) {
+  const statusDiff = getMarketAlertStatusRank(b.status) - getMarketAlertStatusRank(a.status);
+  if (statusDiff !== 0) return statusDiff;
+
+  const deliveryDiff = Number(getAlertDeliveryReady(b)) - Number(getAlertDeliveryReady(a));
+  if (deliveryDiff !== 0) return deliveryDiff;
+
+  const scoreDiff = getAlertScoreValue(b) - getAlertScoreValue(a);
+  if (scoreDiff !== 0) return scoreDiff;
+
+  return getAlertCreatedAtMs(b) - getAlertCreatedAtMs(a);
+}
+
+function dedupeMarketAlertFeedItems<T extends MarketAlertFeedItem>(items: T[]) {
+  const map = new Map<string, T>();
+  let removed = 0;
+
+  for (const item of items) {
+    const fingerprint = getAlertCanonicalFingerprint(item);
+
+    if (!fingerprint.includes("unknown_setup") && fingerprint.split(":")[1]) {
+      const existing = map.get(fingerprint);
+
+      if (!existing) {
+        map.set(fingerprint, item);
+        continue;
+      }
+
+      removed += 1;
+
+      if (compareCanonicalFeedItems(existing, item) > 0) {
+        map.set(fingerprint, item);
+      }
+
+      continue;
+    }
+
+    map.set(`${fingerprint}:${item.alert_key || item.id || removed}`, item);
+  }
+
+  return {
+    items: sortMarketAlertsCanonical(Array.from(map.values())),
+    removed,
+  };
+}
+
 export function sortMarketAlertsCanonical<T extends MarketAlertFeedItem>(items: T[]) {
   return [...items].sort((a, b) => {
     const statusDiff = getMarketAlertStatusRank(b.status) - getMarketAlertStatusRank(a.status);
@@ -331,7 +418,14 @@ export async function loadMarketAlertFeed(params: {
     .filter(isAllowedCryptoAlert)
     .filter((item) => params.includeExpired || isNotExpired(item));
 
-  const sortedItems = sortMarketAlertsCanonical(rawItems).slice(0, limit);
+  const deduplicationEnabled =
+    process.env.MARKET_ALERT_FEED_DEDUPE_ENABLED !== "false";
+
+  const canonicalResult = deduplicationEnabled
+    ? dedupeMarketAlertFeedItems(sortMarketAlertsCanonical(rawItems))
+    : { items: sortMarketAlertsCanonical(rawItems), removed: 0 };
+
+  const sortedItems = canonicalResult.items.slice(0, limit);
   const items = await mergeUserAlertStates(sortedItems, params.userId || null);
 
   return {
@@ -340,6 +434,14 @@ export async function loadMarketAlertFeed(params: {
     assetType,
     status,
     count: items.length,
+    rawCount: rawItems.length,
+    dedupedCount: canonicalResult.items.length,
+    feedDeduplication: {
+      enabled: deduplicationEnabled,
+      removed: canonicalResult.removed,
+      key: "asset_type:symbol:setup_slug:direction",
+      priority: "active > armed > watch, delivery-ready first, higher score, newest",
+    },
     metrics: buildMarketAlertFeedMetrics(items),
     sourceCoverage: buildMarketAlertFeedSourceCoverage(items),
     scannedAt: new Date().toISOString(),

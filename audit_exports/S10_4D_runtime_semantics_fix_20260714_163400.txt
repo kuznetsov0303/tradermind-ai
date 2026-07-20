@@ -1,0 +1,304 @@
+S10.4D RUNTIME SEMANTICS FIX
+StartedUTC=2026-07-14T13:34:02Z
+
+=== PRE-FIX SAFETY SNAPSHOT ===
+{"ok":true,"service":"SkillEdge Persistent Stock Engine","engineVersion":"holly_persistent_v2","env":"local","stockPersistentEngineEnabled":true,"stockLegacyEngineEnabled":false,"localDatabase":{"storageVersion":"s410_supabase_sqlite_persistence_v1","dbPath":"/opt/skilledge/stock-engine/data/stock_engine.db","signalsCount":10172,"outcomesCount":3785,"closedOutcomeCount":613,"workedOutcomeCount":149,"failedOutcomeCount":464,"winRateClosed":24.31,"primaryStore":"supabase","sqlite":{"storageVersion":"s410_supabase_sqlite_persistence_v1","dbPath":"/opt/skilledge/stock-engine/data/stock_engine.db","signalsCount":10172,"outcomesCount":3785,"closedOutcomeCount":613,"workedOutcomeCount":149,"failedOutcomeCount":464,"winRateClosed":24.31},"supabase":{"enabled":true,"configured":true,"url":"https://wddkqtclrtkavxzezgyv.supabase.co","signalsCount":1000,"outcomesCount":1000,"closedOutcomeCount":70,"workedOutcomeCount":19,"failedOutcomeCount":51,"winRateClosed":27.14,"lastError":null}},"runtimeCache":{"cacheVersion":"s412_runtime_cache_v1","enabled":true,"mode":"upstash_redis_rest","configured":true,"hasUpstashUrl":true,"hasUpstashToken":true,"cachePath":"/opt/skilledge/stock-engine/data/runtime_cache.json","lastError":null},"connections":{"hasSupabaseUrl":true,"hasSupabaseServiceKey":true,"hasRedisUrl":false,"hasFmpApiKey":true,"fmpPlan":"premium"}}
+{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","account":{"accountId":"skilledge_paper_50k_v1","brokerExecution":false,"cash":52388.96,"createdAt":"2026-07-13T19:01:07.317798+00:00","currentBuyingPower":21927.51,"equity":52437.94,"maxNotionalPctPerTrade":0.2,"minRR":2.0,"mode":"paper_forward","ok":true,"openExposure":30510.43,"policy":{"paperOnly":true,"realMoneyExecution":false,"requiresRRAtLeast":2.0,"researchOnlyCandidatesBlocked":true,"source":"SkillEdge live signals only"},"realizedPnl":2388.96,"resetReason":"manual_admin_reset","riskPctPerTrade":0.01,"startingBuyingPower":50000.0,"storageVersion":"s10_0_50k_paper_trade_accountability_v1","unrealizedPnl":48.98,"paperOnly":true,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"paperPolicy":{"version":"S10.3_best_desk_idea_paper_bridge_v1","paperSource":"best_ideas_report_selected","requiresTelegramOrEliteReady":false,"requiresBestDeskIdea":true,"telegramGateUnaffected":true,"clientReleaseUnaffected":true,"researchPromotionUnaffected":true,"paperOnly":true,"brokerExecution":false,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"minScore":78.0,"sourceSignalMustBeAfterReset":true,"duplicateSourceSignalIdBlocked":true,"duplicateOpenSymbolSetupBlocked":true},"trades":7,"openTrades":3,"closedTrades":4,"updatedAt":"2026-07-14T13:34:07.947299Z"},"trades":7,"openTrades":3,"closedTrades":4,"equity":52437.94,"cash":52388.96,"realizedPnl":2388.96,"unrealizedPnl":48.98,"openExposure":30510.43,"paperOnly":true,"brokerExecution":false,"guard":{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","paperSource":"best_ideas_report_selected","requiresTelegramOrEliteReady":false,"requiresBestDeskIdea":true,"telegramGateUnaffected":true,"clientReleaseUnaffected":true,"researchPromotionUnaffected":true,"paperOnly":true,"brokerExecution":false,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"minScore":78.0,"sourceSignalMustBeAfterReset":true,"duplicateSourceSignalIdBlocked":true,"duplicateOpenSymbolSetupBlocked":true,"accountGuard":{"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"paperOnly":true,"brokerExecution":false}},"latestSummary":{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","runAt":"2026-07-14T13:31:04.389862Z","mode":"evaluation_only","openedCount":0,"closedCount":2,"openTradesBefore":5,"openTradesAfter":3,"closedEvents":[{"eventId":"a70f68e0-fd2d-4f72-aaff-74d86a88e134","type":"PAPER_TRADE_CLOSED","version":"S10.3_best_desk_idea_paper_bridge_v1","createdAt":"2026-07-14T13:31:02.604532Z","tradeId":"57db1bce-a842-4a40-b9b6-bf125c0725c1","symbol":"MIMI","setupSlug":"opening_range_breakdown_short","exitReason":"TP2","exitPrice":2.655,"exitPriceSource":"FMP_QUOTE","sessionCloseAt":null,"sessionClosePriceApproximation":false,"realizedPnl":1048.59,"paperOnly":true,"brokerExecution":false},{"eventId":"a58e7171-8922-4233-b1ec-381c87883fa3","type":"PAPER_TRADE_CLOSED","version":"S10.3_best_desk_idea_paper_bridge_v1","createdAt":"2026-07-14T13:31:03.054338Z","tradeId":"d9b188e2-6b52-44d2-8d88-b246dd917dbb","symbol":"PLUG","setupSlug":"opening_range_breakout_long","exitReason":"TP2","exitPrice":2.265,"exitPriceSource":"FMP_QUOTE","sessionCloseAt":null,"sessionClosePriceApproximation":false,"realizedPnl":445.55,"paperOnly":true,"brokerExecution":false}],"account":{"accountId":"skilledge_paper_50k_v1","brokerExecution":false,"cash":52388.96,"createdAt":"2026-07-13T19:01:07.317798+00:00","currentBuyingPower":21927.51,"equity":52437.94,"maxNotionalPctPerTrade":0.2,"minRR":2.0,"mode":"paper_forward","ok":true,"openExposure":30510.43,"policy":{"paperOnly":true,"realMoneyExecution":false,"requiresRRAtLeast":2.0,"researchOnlyCandidatesBlocked":true,"source":"SkillEdge live signals only"},"realizedPnl":2388.96,"resetReason":"manual_admin_reset","riskPctPerTrade":0.01,"startingBuyingPower":50000.0,"storageVersion":"s10_0_50k_paper_trade_accountability_v1","unrealizedPnl":48.98,"paperOnly":true,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"paperPolicy":{"version":"S10.3_best_desk_idea_paper_bridge_v1","paperSource":"best_ideas_report_selected","requiresTelegramOrEliteReady":false,"requiresBestDeskIdea":true,"telegramGateUnaffected":true,"clientReleaseUnaffected":true,"researchPromotionUnaffected":true,"paperOnly":true,"brokerExecution":false,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"minScore":78.0,"sourceSignalMustBeAfterReset":true,"duplicateSourceSignalIdBlocked":true,"duplicateOpenSymbolSetupBlocked":true},"trades":7,"openTrades":3,"closedTrades":4,"updatedAt":"2026-07-14T13:31:04.389241Z"},"safety":{"ok":true,"openTrades":3,"maxOpenTrades":5,"openExposure":30510.43,"maxExposure":52437.94,"paperOnly":true,"brokerExecution":false,"newEntriesDisabled":true}}}
+{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","count":3,"items":[{"tradeId":"e7f5fbf1-ff50-4a04-9b03-0c2a13770186","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:PFE:opening_range_breakdown_short:2026-07-14T10:00:55.029139+00:00","sourceSignalTime":"2026-07-14T09:59:00+00:00","symbol":"PFE","setupSlug":"opening_range_breakdown_short","setupName":"Opening Range Breakdown Short","direction":"SHORT","status":"OPEN","openedAt":"2026-07-14T10:06:58.067501Z","entry":24.48,"stop":24.786,"tp1":23.868,"tp2":23.562,"qty":415,"notional":10159.2,"riskPerShare":0.306,"plannedRisk":126.99,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":45.65,"realizedPnl":0.0,"lastEvalAt":"2026-07-14T13:31:03.482648Z","lastEvalError":null,"lastPrice":24.37},{"tradeId":"f5000f5a-130d-4328-9a42-a55c4ad6f7cc","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:DWSN:opening_range_breakout_long:2026-07-14T09:59:43.584649+00:00","sourceSignalTime":"2026-07-14T09:52:00+00:00","symbol":"DWSN","setupSlug":"opening_range_breakout_long","setupName":"Opening Range Breakout Long","direction":"LONG","status":"OPEN","openedAt":"2026-07-14T10:06:58.068904Z","entry":4.42,"stop":4.2641,"tp1":4.7318,"tp2":4.8877,"qty":2302,"notional":10174.84,"riskPerShare":0.1559,"plannedRisk":358.88,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":103.59,"realizedPnl":0.0,"lastEvalAt":"2026-07-14T13:31:03.916300Z","lastEvalError":null,"lastPrice":4.465},{"tradeId":"70841195-0d1e-4ea1-85ce-478b547fd66f","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:AGEN:gap_and_crap_short:2026-07-14T10:13:40.876262+00:00","sourceSignalTime":"2026-07-14T10:13:00+00:00","symbol":"AGEN","setupSlug":"gap_and_crap_short","setupName":"Gap and Crap Short","direction":"SHORT","status":"OPEN","openedAt":"2026-07-14T10:17:12.333232Z","entry":6.09,"stop":6.2265,"tp1":5.817,"tp2":5.6805,"qty":1671,"notional":10176.39,"riskPerShare":0.1365,"plannedRisk":228.09,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":-100.26,"realizedPnl":0.0,"lastEvalAt":"2026-07-14T13:31:04.383857Z","lastEvalError":null,"lastPrice":6.15}],"paperOnly":true,"brokerExecution":false}
+=== VERIFY SOURCE FILES ===
+source_files_ok=true
+
+=== BACKUP ACTIVE FILES ===
+backup_stamp=20260714T133402Z
+
+=== INSTALL ENTRY WRAPPER ===
+=== INSTALL EVALUATION WRAPPER ===
+=== PY_COMPILE ===
+py_compile_ok=true
+
+=== PATCH SERVICE EXECSTART ONLY ===
+=== INSTALL STAGGERED MONOTONIC TIMERS ===
+=== APPLY SYSTEMD CHANGES ===
+Warning: The unit file, source configuration file or drop-ins of skilledge-s10-paper-trading.timer changed on disk. Run 'systemctl daemon-reload' to reload units.
+Warning: The unit file, source configuration file or drop-ins of skilledge-s10-paper-evaluation.timer changed on disk. Run 'systemctl daemon-reload' to reload units.
+
+=== INSTALLED UNITS ===
+# /etc/systemd/system/skilledge-s10-paper-evaluation.service
+[Unit]
+Description=SkillEdge S10 paper evaluation-only runner
+After=network-online.target skilledge-stock-engine-api.service
+Wants=network-online.target
+Requires=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/skilledge/stock-engine
+ExecStart=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_evaluation_only_wrapper.py
+TimeoutStartSec=120
+Nice=5
+
+[Install]
+WantedBy=multi-user.target
+# /etc/systemd/system/skilledge-s10-paper-trading.service
+[Unit]
+Description=SkillEdge S10 market-hours guarded paper entry runner
+After=network-online.target skilledge-stock-engine-api.service
+Wants=network-online.target
+Requires=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/skilledge/stock-engine
+ExecStart=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py
+TimeoutStartSec=180
+Nice=5
+
+[Install]
+WantedBy=multi-user.target
+# /etc/systemd/system/skilledge-s10-paper-evaluation.timer
+[Unit]
+Description=Run SkillEdge S10 paper evaluation-only every 5 minutes
+
+[Timer]
+OnActiveSec=30s
+OnUnitInactiveSec=5min
+AccuracySec=10s
+Unit=skilledge-s10-paper-evaluation.service
+
+[Install]
+WantedBy=timers.target
+# /etc/systemd/system/skilledge-s10-paper-trading.timer
+[Unit]
+Description=Run SkillEdge S10 guarded paper entry check every 5 minutes, staggered from evaluation
+
+[Timer]
+OnActiveSec=3min
+OnUnitInactiveSec=5min
+AccuracySec=10s
+Unit=skilledge-s10-paper-trading.service
+
+[Install]
+WantedBy=timers.target
+
+=== INITIAL SCHEDULE ===
+NEXT                                  LEFT LAST                                PASSED UNIT                                          ACTIVATES
+Tue 2026-07-14 16:34:38 EEST           29s Tue 2026-07-14 16:31:01 EEST   3min 6s ago skilledge-s10-paper-evaluation.timer          skilledge-s10-paper-evaluation.service
+Tue 2026-07-14 16:36:02 EEST      1min 53s Tue 2026-07-14 16:31:01 EEST   3min 6s ago skilledge-s10-paper-trading.timer             skilledge-s10-paper-trading.service
+
+=== WAIT FOR AUTOMATIC FIRES ONLY ===
+Waiting 220 seconds. No service is started manually.
+
+=== POST-WAIT SERVICE STATES ===
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+StateChangeTimestamp=Tue 2026-07-14 16:34:47 EEST
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+StateChangeTimestamp=Tue 2026-07-14 16:37:19 EEST
+
+=== POST-WAIT TIMER STATES ===
+NextElapseUSecMonotonic=3w 3d 21h 22min 54.498798s
+LastTriggerUSec=Tue 2026-07-14 16:34:46 EEST
+ActiveState=active
+SubState=waiting
+UnitFileState=enabled
+NextElapseUSecMonotonic=3w 3d 21h 25min 26.171694s
+LastTriggerUSec=Tue 2026-07-14 16:37:16 EEST
+ActiveState=active
+SubState=waiting
+UnitFileState=enabled
+
+=== RECENT EVALUATION JOURNAL ===
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "symbol": "AGEN",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "setupSlug": "gap_and_crap_short",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "exitReason": "TP2",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "exitPrice": 5.6053,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "exitPriceSource": "FMP_QUOTE",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "sessionCloseAt": null,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "sessionClosePriceApproximation": false,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "realizedPnl": 809.93,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "paperOnly": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "brokerExecution": false
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     }
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:   ],
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:   "account": {
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "accountId": "skilledge_paper_50k_v1",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "brokerExecution": false,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "cash": 53198.89,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "createdAt": "2026-07-13T19:01:07.317798+00:00",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "currentBuyingPower": 33062.75,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "equity": 53396.79,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "maxNotionalPctPerTrade": 0.2,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "minRR": 2.0,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "mode": "paper_forward",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "ok": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "openExposure": 20334.04,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "policy": {
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "paperOnly": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "realMoneyExecution": false,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "requiresRRAtLeast": 2.0,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "researchOnlyCandidatesBlocked": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "source": "SkillEdge live signals only"
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     },
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "realizedPnl": 3198.89,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "resetReason": "manual_admin_reset",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "riskPctPerTrade": 0.01,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "startingBuyingPower": 50000.0,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "storageVersion": "s10_0_50k_paper_trade_accountability_v1",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "unrealizedPnl": 197.9,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "paperOnly": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "maxOpenTrades": 5,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "maxNewPerRun": 2,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "maxTotalExposurePct": 1.0,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "paperPolicy": {
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "version": "S10.3_best_desk_idea_paper_bridge_v1",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "paperSource": "best_ideas_report_selected",
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "requiresTelegramOrEliteReady": false,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "requiresBestDeskIdea": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "telegramGateUnaffected": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "clientReleaseUnaffected": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "researchPromotionUnaffected": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "paperOnly": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "brokerExecution": false,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "maxOpenTrades": 5,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "maxNewPerRun": 2,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "maxTotalExposurePct": 1.0,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "maxNotionalPctPerTrade": 0.2,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "riskPctPerTrade": 0.01,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "minRR": 2.0,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "minScore": 78.0,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "sourceSignalMustBeAfterReset": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "duplicateSourceSignalIdBlocked": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:       "duplicateOpenSymbolSetupBlocked": true
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     },
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "trades": 7,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "openTrades": 2,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "closedTrades": 5,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "updatedAt": "2026-07-14T13:34:47.663436Z"
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:   },
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:   "safety": {
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "ok": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "openTrades": 2,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "maxOpenTrades": 5,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "openExposure": 20334.04,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "maxExposure": 53396.79,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "paperOnly": true,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "brokerExecution": false,
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:     "newEntriesDisabled": true
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]:   }
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 python3[679863]: }
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 systemd[1]: skilledge-s10-paper-evaluation.service: Deactivated successfully.
+2026-07-14T16:34:47+03:00 skilledge-stock-engine-01 systemd[1]: Finished skilledge-s10-paper-evaluation.service - SkillEdge S10 paper evaluation-only runner.
+
+=== RECENT ENTRY JOURNAL ===
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "maxNewPerRun": 2,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "maxTotalExposurePct": 1.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "maxNotionalPctPerTrade": 0.2,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "riskPctPerTrade": 0.01,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "minRR": 2.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "minScore": 78.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "sourceSignalMustBeAfterReset": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "duplicateSourceSignalIdBlocked": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "duplicateOpenSymbolSetupBlocked": true
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     }
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:   },
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:   "account": {
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "accountId": "skilledge_paper_50k_v1",
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "brokerExecution": false,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "cash": 53198.89,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "createdAt": "2026-07-13T19:01:07.317798+00:00",
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "currentBuyingPower": 1253.03,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "equity": 53454.69,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "maxNotionalPctPerTrade": 0.2,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "minRR": 2.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "mode": "paper_forward",
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "ok": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "openExposure": 52201.66,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "policy": {
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "paperOnly": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "realMoneyExecution": false,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "requiresRRAtLeast": 2.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "researchOnlyCandidatesBlocked": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "source": "SkillEdge live signals only"
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     },
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "realizedPnl": 3198.89,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "resetReason": "manual_admin_reset",
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "riskPctPerTrade": 0.01,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "startingBuyingPower": 50000.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "storageVersion": "s10_0_50k_paper_trade_accountability_v1",
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "unrealizedPnl": 255.8,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "paperOnly": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "maxOpenTrades": 5,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "maxNewPerRun": 2,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "maxTotalExposurePct": 1.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "paperPolicy": {
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "version": "S10.3_best_desk_idea_paper_bridge_v1",
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "paperSource": "best_ideas_report_selected",
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "requiresTelegramOrEliteReady": false,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "requiresBestDeskIdea": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "telegramGateUnaffected": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "clientReleaseUnaffected": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "researchPromotionUnaffected": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "paperOnly": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "brokerExecution": false,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "maxOpenTrades": 5,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "maxNewPerRun": 2,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "maxTotalExposurePct": 1.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "maxNotionalPctPerTrade": 0.2,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "riskPctPerTrade": 0.01,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "minRR": 2.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "minScore": 78.0,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "sourceSignalMustBeAfterReset": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "duplicateSourceSignalIdBlocked": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:       "duplicateOpenSymbolSetupBlocked": true
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     },
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "trades": 10,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "openTrades": 5,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "closedTrades": 5,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "updatedAt": "2026-07-14T13:37:19.347143Z"
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:   },
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:   "safety": {
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "ok": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "openTrades": 5,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "maxOpenTrades": 5,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "openExposure": 52201.66,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "maxExposure": 53454.69,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "maxNewPerRun": 2,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "paperOnly": true,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "brokerExecution": false,
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:     "telegramGateUnaffected": true
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]:   }
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 python3[679947]: }
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 systemd[1]: skilledge-s10-paper-trading.service: Deactivated successfully.
+2026-07-14T16:37:19+03:00 skilledge-stock-engine-01 systemd[1]: Finished skilledge-s10-paper-trading.service - SkillEdge S10 market-hours guarded paper entry runner.
+
+=== FINAL PAPER STATUS ===
+{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","account":{"accountId":"skilledge_paper_50k_v1","brokerExecution":false,"cash":53198.89,"createdAt":"2026-07-13T19:01:07.317798+00:00","currentBuyingPower":1253.03,"equity":53454.69,"maxNotionalPctPerTrade":0.2,"minRR":2.0,"mode":"paper_forward","ok":true,"openExposure":52201.66,"policy":{"paperOnly":true,"realMoneyExecution":false,"requiresRRAtLeast":2.0,"researchOnlyCandidatesBlocked":true,"source":"SkillEdge live signals only"},"realizedPnl":3198.89,"resetReason":"manual_admin_reset","riskPctPerTrade":0.01,"startingBuyingPower":50000.0,"storageVersion":"s10_0_50k_paper_trade_accountability_v1","unrealizedPnl":255.8,"paperOnly":true,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"paperPolicy":{"version":"S10.3_best_desk_idea_paper_bridge_v1","paperSource":"best_ideas_report_selected","requiresTelegramOrEliteReady":false,"requiresBestDeskIdea":true,"telegramGateUnaffected":true,"clientReleaseUnaffected":true,"researchPromotionUnaffected":true,"paperOnly":true,"brokerExecution":false,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"minScore":78.0,"sourceSignalMustBeAfterReset":true,"duplicateSourceSignalIdBlocked":true,"duplicateOpenSymbolSetupBlocked":true},"trades":10,"openTrades":5,"closedTrades":5,"updatedAt":"2026-07-14T13:37:49.017971Z"},"trades":10,"openTrades":5,"closedTrades":5,"equity":53454.69,"cash":53198.89,"realizedPnl":3198.89,"unrealizedPnl":255.8,"openExposure":52201.66,"paperOnly":true,"brokerExecution":false,"guard":{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","paperSource":"best_ideas_report_selected","requiresTelegramOrEliteReady":false,"requiresBestDeskIdea":true,"telegramGateUnaffected":true,"clientReleaseUnaffected":true,"researchPromotionUnaffected":true,"paperOnly":true,"brokerExecution":false,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"minScore":78.0,"sourceSignalMustBeAfterReset":true,"duplicateSourceSignalIdBlocked":true,"duplicateOpenSymbolSetupBlocked":true,"accountGuard":{"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"paperOnly":true,"brokerExecution":false}},"latestSummary":{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","runAt":"2026-07-14T13:37:19.347329Z","source":"best_ideas_report_selected","signalsSeen":5,"paperQualifiedCount":3,"openedCount":1,"closedCount":0,"openedTrades":[{"tradeId":"d9c19b69-f93c-4645-b10c-edd7d2d055e8","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:ONDS:opening_range_breakdown_short:2026-07-14T13:32:26.206058+00:00","sourceSignalTime":"2026-07-14T13:32:00+00:00","symbol":"ONDS","setupSlug":"opening_range_breakdown_short","setupName":"Opening Range Breakdown Short","direction":"SHORT","status":"OPEN","openedAt":"2026-07-14T13:37:19.343380Z","entry":7.075,"stop":7.1634,"tp1":6.8982,"tp2":6.8098,"qty":1503,"notional":10633.73,"riskPerShare":0.0884,"plannedRisk":132.87,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":0.0,"realizedPnl":0.0,"lastEvalAt":null,"lastEvalError":null}],"closedEvents":[],"runtimeRejections":[],"diagnostic":{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","generatedAt":"2026-07-14T13:37:19.341002Z","selectedBestIdeasCount":5,"paperQualifiedCount":3,"rejectedCount":2,"rejectReasonCounts":{"duplicate_sourceSignalId":2,"duplicate_open_symbol_setup":2},"qualifiedSample":[{"sourceSignalId":"stock:ONDS:opening_range_breakdown_short:2026-07-14T13:32:26.206058+00:00","sourceSignalTime":"2026-07-14T13:32:00+00:00","symbol":"ONDS","setupSlug":"opening_range_breakdown_short","setupName":"Opening Range Breakdown Short","direction":"SHORT","status":"ACTIVE","score":100.0,"rrToTp1":2.0,"entry":7.075,"stop":7.1634,"tp1":6.8982,"tp2":6.8098,"tradeAction":"paper_test_candidate","strictEligible":true,"deskPassed":true,"isActionable":true,"rawIdea":{"symbol":"ONDS","setupSlug":"opening_range_breakdown_short","setupName":"Opening Range Breakdown Short","direction":"short","status":"ACTIVE","lifecycleStatus":null,"grade":"A+","score":100.0,"selectorScore":159.0,"tier":"BEST_DESK_IDEA","source":"active","rrToTp1":2.0,"entry":7.075,"stop":7.1634,"tp1":6.8982,"tp2":6.8098,"currentPrice":7.075,"currentPriceSource":"item.currentPrice","priceUpdatedAt":"2026-07-14T13:32:26.206011+00:00","priceAgeSeconds":293.08,"priceFreshness":"FRESH","priceFreshnessReason":"price_updated_within_fresh_window","stalePriceBlocked":false,"sessionEnd":"2026-07-14T20:00:00+00:00","signalTimeForSessionGuard":"2026-07-14T13:32:26.206058+00:00","minutesToCloseAtSignal":387.56,"minutesToCloseNow":382.68,"lateSessionBlocked":false,"lateSessionReason":"new_entry_window_open","marketClosedNewEntryBlocked":false,"currentR":0.0,"managementState":"HEALTHY_ENTRY_ZONE","tradeAction":"paper_test_candidate","managementReasons":["price_near_or_slightly_in_favor"],"telegramEligible":false,"deskPassed":true,"telegramPassed":false,"isActionable":true,"strictEligible":true,"strictBlockedReasons":[],"metrics":{"entryDistancePct":0.0,"triggerCount":2.0,"executionTriggerCount":2.0,"inPlayScore":61.0,"changePercent":1.65,"volume":2403447.0,"price":7.075,"currentPriceSource":"item.currentPrice","priceUpdatedAt":"2026-07-14T13:32:26.206011+00:00","priceAgeSeconds":293.08,"priceFreshness":"FRESH","stalePriceBlocked":false,"sessionEnd":"2026-07-14T20:00:00+00:00","signalTimeForSessionGuard":"2026-07-14T13:32:26.206058+00:00","minutesToCloseAtSignal":387.56,"minutesToCloseNow":382.68,"lateSessionBlocked":false,"lateSessionReason":"new_entry_window_open","marketClosedNewEntryBlocked":false,"riskPerShare":0.08840000000000003},"reasons":["entry_health_healthy","actionable_now","desk_quality_passed","grade_a_plus","rr_2r_plus","execution_confirmation_present","multi_trigger_confirmation","two_execution_triggers","entry_distance_elite","volume_1m_plus"],"cautions":["telegram_requires_rr_2_2_plus"],"telegramReasons":["telegram_requires_rr_2_2_plus"],"deskReasons":["desk_active_quality_passed"],"whySelected":["entry_health_healthy","actionable_now","desk_quality_passed","grade_a_plus","rr_2r_plus"],"whyNotElite":["telegram_requires_rr_2_2_plus"],"rank":3,"role":"BACKUP_IDEA","sourceSignalTime":"2026-07-14T13:32:00+00:00","sourceSignalId":"stock:ONDS:opening_range_breakdown_short:2026-07-14T13:32:26.206058+00:00","_paperSourceMatch":{"matched":true,"symbol":"ONDS","setupSlug":"opening_range_breakdown_short","liveStatus":"ACTIVE","sourceSignalTime":"2026-07-14T13:32:00+00:00","sourceSignalId":"stock:ONDS:opening_range_breakdown_short:2026-07-14T13:32:26.206058+00:00"}}},{"sourceSignalId":"stock:OPEN:vwap_rejection_short:2026-07-14T13:32:30.904305+00:00","sourceSignalTime":"2026-07-14T13:32:00+00:00","symbol":"OPEN","setupSlug":"vwap_rejection_short","setupName":"VWAP Rejection Short","direction":"SHORT","status":"ACTIVE","score":100.0,"rrToTp1":2.0,"entry":4.5403,"stop":4.5972,"tp1":4.4265,"tp2":4.3696,"tradeAction":"paper_test_candidate","strictEligible":true,"deskPassed":true,"isActionable":true,"rawIdea":{"symbol":"OPEN","setupSlug":"vwap_rejection_short","setupName":"VWAP Rejection Short","direction":"short","status":"ACTIVE","lifecycleStatus":null,"grade":"A+","score":100.0,"selectorScore":159.0,"tier":"BEST_DESK_IDEA","source":"active","rrToTp1":2.0,"entry":4.5403,"stop":4.5972,"tp1":4.4265,"tp2":4.3696,"currentPrice":4.535,"currentPriceSource":"item.currentPrice","priceUpdatedAt":"2026-07-14T13:32:30.904233+00:00","priceAgeSeconds":288.38,"priceFreshness":"FRESH","priceFreshnessReason":"price_updated_within_fresh_window","stalePriceBlocked":false,"sessionEnd":"2026-07-14T20:00:00+00:00","signalTimeForSessionGuard":"2026-07-14T13:32:30.904305+00:00","minutesToCloseAtSignal":387.48,"minutesToCloseNow":382.68,"lateSessionBlocked":false,"lateSessionReason":"new_entry_window_open","marketClosedNewEntryBlocked":false,"currentR":0.09,"managementState":"HEALTHY_ENTRY_ZONE","tradeAction":"paper_test_candidate","managementReasons":["price_near_or_slightly_in_favor"],"telegramEligible":false,"deskPassed":true,"telegramPassed":false,"isActionable":true,"strictEligible":true,"strictBlockedReasons":[],"metrics":{"entryDistancePct":0.1167,"triggerCount":3.0,"executionTriggerCount":2.0,"inPlayScore":61.0,"changePercent":1.11,"volume":1866104.0,"price":4.535,"currentPriceSource":"item.currentPrice","priceUpdatedAt":"2026-07-14T13:32:30.904233+00:00","priceAgeSeconds":288.38,"priceFreshness":"FRESH","stalePriceBlocked":false,"sessionEnd":"2026-07-14T20:00:00+00:00","signalTimeForSessionGuard":"2026-07-14T13:32:30.904305+00:00","minutesToCloseAtSignal":387.48,"minutesToCloseNow":382.68,"lateSessionBlocked":false,"lateSessionReason":"new_entry_window_open","marketClosedNewEntryBlocked":false,"riskPerShare":0.05689999999999973},"reasons":["entry_health_healthy","actionable_now","desk_quality_passed","grade_a_plus","rr_2r_plus","execution_confirmation_present","multi_trigger_confirmation","two_execution_triggers","entry_distance_elite","volume_1m_plus"],"cautions":["telegram_requires_rr_2_2_plus"],"telegramReasons":["telegram_requires_rr_2_2_plus"],"deskReasons":["desk_active_quality_passed"],"whySelected":["entry_health_healthy","actionable_now","desk_quality_passed","grade_a_plus","rr_2r_plus"],"whyNotElite":["telegram_requires_rr_2_2_plus"],"rank":4,"role":"BACKUP_IDEA","sourceSignalTime":"2026-07-14T13:32:00+00:00","sourceSignalId":"stock:OPEN:vwap_rejection_short:2026-07-14T13:32:30.904305+00:00","_paperSourceMatch":{"matched":true,"symbol":"OPEN","setupSlug":"vwap_rejection_short","liveStatus":"ACTIVE","sourceSignalTime":"2026-07-14T13:32:00+00:00","sourceSignalId":"stock:OPEN:vwap_rejection_short:2026-07-14T13:32:30.904305+00:00"}}},{"sourceSignalId":"stock:SOFI:opening_range_breakout_long:2026-07-14T13:32:21.274464+00:00","sourceSignalTime":"2026-07-14T13:32:00+00:00","symbol":"SOFI","setupSlug":"opening_range_breakout_long","setupName":"Opening Range Breakout Long","direction":"LONG","status":"ACTIVE","score":100.0,"rrToTp1":2.0,"entry":18.265,"stop":18.0367,"tp1":18.7216,"tp2":18.9499,"tradeAction":"paper_test_candidate","strictEligible":true,"deskPassed":true,"isActionable":true,"rawIdea":{"symbol":"SOFI","setupSlug":"opening_range_breakout_long","setupName":"Opening Range Breakout Long","direction":"long","status":"ACTIVE","lifecycleStatus":null,"grade":"A+","score":100.0,"selectorScore":146.0,"tier":"BEST_DESK_IDEA","source":"active","rrToTp1":2.0,"entry":18.265,"stop":18.0367,"tp1":18.7216,"tp2":18.9499,"currentPrice":18.265,"currentPriceSource":"item.currentPrice","priceUpdatedAt":"2026-07-14T13:32:21.274423+00:00","priceAgeSeconds":298.01,"priceFreshness":"FRESH","priceFreshnessReason":"price_updated_within_fresh_window","stalePriceBlocked":false,"sessionEnd":"2026-07-14T20:00:00+00:00","signalTimeForSessionGuard":"2026-07-14T13:32:21.274464+00:00","minutesToCloseAtSignal":387.65,"minutesToCloseNow":382.68,"lateSessionBlocked":false,"lateSessionReason":"new_entry_window_open","marketClosedNewEntryBlocked":false,"currentR":0.0,"managementState":"HEALTHY_ENTRY_ZONE","tradeAction":"paper_test_candidate","managementReasons":["price_near_or_slightly_in_favor"],"telegramEligible":false,"deskPassed":true,"telegramPassed":false,"isActionable":true,"strictEligible":true,"strictBlockedReasons":[],"metrics":{"entryDistancePct":0.0,"triggerCount":1.0,"executionTriggerCount":1.0,"inPlayScore":62.0,"changePercent":0.74,"volume":2778572.0,"price":18.265,"currentPriceSource":"item.currentPrice","priceUpdatedAt":"2026-07-14T13:32:21.274423+00:00","priceAgeSeconds":298.01,"priceFreshness":"FRESH","stalePriceBlocked":false,"sessionEnd":"2026-07-14T20:00:00+00:00","signalTimeForSessionGuard":"2026-07-14T13:32:21.274464+00:00","minutesToCloseAtSignal":387.65,"minutesToCloseNow":382.68,"lateSessionBlocked":false,"lateSessionReason":"new_entry_window_open","marketClosedNewEntryBlocked":false,"riskPerShare":0.22830000000000084},"reasons":["entry_health_healthy","actionable_now","desk_quality_passed","grade_a_plus","rr_2r_plus","execution_confirmation_present","entry_distance_elite","volume_1m_plus","lifecycle_valid"],"cautions":["telegram_requires_rr_2_2_plus","single_trigger_only"],"telegramReasons":["telegram_requires_rr_2_2_plus"],"deskReasons":["desk_active_quality_passed"],"whySelected":["entry_health_healthy","actionable_now","desk_quality_passed","grade_a_plus","rr_2r_plus"],"whyNotElite":["telegram_requires_rr_2_2_plus"],"rank":5,"role":"BACKUP_IDEA","sourceSignalTime":"2026-07-14T13:32:00+00:00","sourceSignalId":"stock:SOFI:opening_range_breakout_long:2026-07-14T13:32:21.274464+00:00","_paperSourceMatch":{"matched":true,"symbol":"SOFI","setupSlug":"opening_range_breakout_long","liveStatus":"ACTIVE","sourceSignalTime":"2026-07-14T13:32:00+00:00","sourceSignalId":"stock:SOFI:opening_range_breakout_long:2026-07-14T13:32:21.274464+00:00"}}}],"rejectedSample":[{"symbol":"INTC","setupSlug":"opening_range_breakout_long","sourceSignalId":"stock:INTC:opening_range_breakout_long:2026-07-14T13:31:57.095956+00:00","reasons":["duplicate_sourceSignalId","duplicate_open_symbol_setup"],"score":100.0,"rrToTp1":2.0,"sourceSignalTime":"2026-07-14T13:31:00+00:00"},{"symbol":"NOK","setupSlug":"opening_range_breakdown_short","sourceSignalId":"stock:NOK:opening_range_breakdown_short:2026-07-14T13:32:04.787013+00:00","reasons":["duplicate_sourceSignalId","duplicate_open_symbol_setup"],"score":100.0,"rrToTp1":2.0,"sourceSignalTime":"2026-07-14T13:32:00+00:00"}],"sourceDebug":{"transport":"internal_route_endpoint","errors":[],"signalEnrichment":{"ok":true,"transport":"sqlite_signal_records","errors":[],"dbPath":"/opt/skilledge/stock-engine/data/stock_engine.db","rowsRead":118,"activePassedCount":118,"exactKeysCount":118,"skipped":{"missing_symbol":0,"missing_setup":0,"missing_signal_id":0,"missing_signal_time":0,"payload_decode_failed":0},"sourceTable":"signal_records","sessionFilter":"DATE('now')","matchRule":"exact_symbol_plus_setupSlug","requiredLifecycleStatus":"ACTIVE","requiredQualityStatus":"PASSED","selectedCount":5,"matchedCount":5,"matchedWithTimeCount":5,"matchedWithIdCount":5,"unmatchedCount":0,"unmatchedSample":[],"bestIdeasRemainSelectionAuthority":true},"payloadKeys":["cache","ok","storageVersion","value"],"bestIdeasPublishedAt":null,"paperResetAt":"2026-07-13T19:01:07.317798Z"},"policy":{"version":"S10.3_best_desk_idea_paper_bridge_v1","paperSource":"best_ideas_report_selected","requiresTelegramOrEliteReady":false,"requiresBestDeskIdea":true,"telegramGateUnaffected":true,"clientReleaseUnaffected":true,"researchPromotionUnaffected":true,"paperOnly":true,"brokerExecution":false,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"minScore":78.0,"sourceSignalMustBeAfterReset":true,"duplicateSourceSignalIdBlocked":true,"duplicateOpenSymbolSetupBlocked":true}},"account":{"accountId":"skilledge_paper_50k_v1","brokerExecution":false,"cash":53198.89,"createdAt":"2026-07-13T19:01:07.317798+00:00","currentBuyingPower":1253.03,"equity":53454.69,"maxNotionalPctPerTrade":0.2,"minRR":2.0,"mode":"paper_forward","ok":true,"openExposure":52201.66,"policy":{"paperOnly":true,"realMoneyExecution":false,"requiresRRAtLeast":2.0,"researchOnlyCandidatesBlocked":true,"source":"SkillEdge live signals only"},"realizedPnl":3198.89,"resetReason":"manual_admin_reset","riskPctPerTrade":0.01,"startingBuyingPower":50000.0,"storageVersion":"s10_0_50k_paper_trade_accountability_v1","unrealizedPnl":255.8,"paperOnly":true,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"paperPolicy":{"version":"S10.3_best_desk_idea_paper_bridge_v1","paperSource":"best_ideas_report_selected","requiresTelegramOrEliteReady":false,"requiresBestDeskIdea":true,"telegramGateUnaffected":true,"clientReleaseUnaffected":true,"researchPromotionUnaffected":true,"paperOnly":true,"brokerExecution":false,"maxOpenTrades":5,"maxNewPerRun":2,"maxTotalExposurePct":1.0,"maxNotionalPctPerTrade":0.2,"riskPctPerTrade":0.01,"minRR":2.0,"minScore":78.0,"sourceSignalMustBeAfterReset":true,"duplicateSourceSignalIdBlocked":true,"duplicateOpenSymbolSetupBlocked":true},"trades":10,"openTrades":5,"closedTrades":5,"updatedAt":"2026-07-14T13:37:19.347143Z"},"safety":{"ok":true,"openTrades":5,"maxOpenTrades":5,"openExposure":52201.66,"maxExposure":53454.69,"maxNewPerRun":2,"paperOnly":true,"brokerExecution":false,"telegramGateUnaffected":true}}}
+
+=== FINAL OPEN TRADES ===
+{"ok":true,"version":"S10.3_best_desk_idea_paper_bridge_v1","count":5,"items":[{"tradeId":"e7f5fbf1-ff50-4a04-9b03-0c2a13770186","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:PFE:opening_range_breakdown_short:2026-07-14T10:00:55.029139+00:00","sourceSignalTime":"2026-07-14T09:59:00+00:00","symbol":"PFE","setupSlug":"opening_range_breakdown_short","setupName":"Opening Range Breakdown Short","direction":"SHORT","status":"OPEN","openedAt":"2026-07-14T10:06:58.067501Z","entry":24.48,"stop":24.786,"tp1":23.868,"tp2":23.562,"qty":415,"notional":10159.2,"riskPerShare":0.306,"plannedRisk":126.99,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":95.57,"realizedPnl":0.0,"lastEvalAt":"2026-07-14T13:37:17.428135Z","lastEvalError":null,"lastPrice":24.2497},{"tradeId":"f5000f5a-130d-4328-9a42-a55c4ad6f7cc","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:DWSN:opening_range_breakout_long:2026-07-14T09:59:43.584649+00:00","sourceSignalTime":"2026-07-14T09:52:00+00:00","symbol":"DWSN","setupSlug":"opening_range_breakout_long","setupName":"Opening Range Breakout Long","direction":"LONG","status":"OPEN","openedAt":"2026-07-14T10:06:58.068904Z","entry":4.42,"stop":4.2641,"tp1":4.7318,"tp2":4.8877,"qty":2302,"notional":10174.84,"riskPerShare":0.1559,"plannedRisk":358.88,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":161.14,"realizedPnl":0.0,"lastEvalAt":"2026-07-14T13:37:17.859098Z","lastEvalError":null,"lastPrice":4.49},{"tradeId":"93c1fba5-9566-403e-9b5a-d3b3369239d4","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:INTC:opening_range_breakout_long:2026-07-14T13:31:57.095956+00:00","sourceSignalTime":"2026-07-14T13:31:00+00:00","symbol":"INTC","setupSlug":"opening_range_breakout_long","setupName":"Opening Range Breakout Long","direction":"LONG","status":"OPEN","openedAt":"2026-07-14T13:36:07.056440Z","entry":107.025,"stop":104.8778,"tp1":111.3194,"tp2":113.4666,"qty":99,"notional":10595.48,"riskPerShare":2.1472,"plannedRisk":212.57,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":-14.36,"realizedPnl":0.0,"lastEvalAt":"2026-07-14T13:37:18.815166Z","lastEvalError":null,"lastPrice":106.88},{"tradeId":"c11a974e-53af-482f-b3c4-e6ad2e579162","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:NOK:opening_range_breakdown_short:2026-07-14T13:32:04.787013+00:00","sourceSignalTime":"2026-07-14T13:32:00+00:00","symbol":"NOK","setupSlug":"opening_range_breakdown_short","setupName":"Opening Range Breakdown Short","direction":"SHORT","status":"OPEN","openedAt":"2026-07-14T13:36:07.060926Z","entry":11.86,"stop":12.0083,"tp1":11.5634,"tp2":11.4151,"qty":897,"notional":10638.42,"riskPerShare":0.1483,"plannedRisk":133.03,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":13.45,"realizedPnl":0.0,"lastEvalAt":"2026-07-14T13:37:19.246986Z","lastEvalError":null,"lastPrice":11.845},{"tradeId":"d9c19b69-f93c-4645-b10c-edd7d2d055e8","version":"S10.3_best_desk_idea_paper_bridge_v1","source":"best_ideas_report_selected","sourceSignalId":"stock:ONDS:opening_range_breakdown_short:2026-07-14T13:32:26.206058+00:00","sourceSignalTime":"2026-07-14T13:32:00+00:00","symbol":"ONDS","setupSlug":"opening_range_breakdown_short","setupName":"Opening Range Breakdown Short","direction":"SHORT","status":"OPEN","openedAt":"2026-07-14T13:37:19.343380Z","entry":7.075,"stop":7.1634,"tp1":6.8982,"tp2":6.8098,"qty":1503,"notional":10633.73,"riskPerShare":0.0884,"plannedRisk":132.87,"score":100.0,"rrToTp1":2.0,"strictEligible":true,"deskPassed":true,"isActionable":true,"paperOnly":true,"brokerExecution":false,"telegramEligibleRequired":false,"telegramGateUnaffected":true,"unrealizedPnl":0.0,"realizedPnl":0.0,"lastEvalAt":null,"lastEvalError":null}],"paperOnly":true,"brokerExecution":false}
+
+=== FINAL FAILED UNITS ===
+  UNIT LOAD ACTIVE SUB DESCRIPTION
+
+0 loaded units listed.
+
+=== FINAL PAPER TIMER SCHEDULE ===
+NEXT                                  LEFT LAST                                PASSED UNIT                                          ACTIVATES
+Tue 2026-07-14 16:39:47 EEST      1min 58s Tue 2026-07-14 16:34:46 EEST   3min 2s ago skilledge-s10-paper-evaluation.timer          skilledge-s10-paper-evaluation.service
+Tue 2026-07-14 16:42:19 EEST      4min 30s Tue 2026-07-14 16:37:16 EEST       32s ago skilledge-s10-paper-trading.timer             skilledge-s10-paper-trading.service
+
+=== S10.4D COMPLETE ===
+NO_RESET=true
+NO_MANUAL_RUN_ONCE=true
+NO_MANUAL_SERVICE_START=true
+NO_TRADING_RULE_CHANGE=true
+TELEGRAM_UNCHANGED=true
+CLIENT_GATES_UNCHANGED=true
+RESEARCH_GATES_UNCHANGED=true

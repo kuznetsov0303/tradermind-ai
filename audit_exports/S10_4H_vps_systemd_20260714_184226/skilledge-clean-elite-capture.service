@@ -1,0 +1,12 @@
+[Unit]
+Description=SkillEdge Clean Elite Live Capture
+After=skilledge-stock-engine-api.service
+Wants=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/clean_elite_ledger.py --base-url http://127.0.0.1:8000 --initial-capital 50000 --risk-pct 0.01
+User=skilledge
+Group=skilledge

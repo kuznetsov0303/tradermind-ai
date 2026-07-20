@@ -1,0 +1,150 @@
+﻿{
+    "schemaVersion":  1,
+    "name":  "skilledge_dynamic_universe_rotation_canary",
+    "createdAt":  "2026-07-17T17:32:22.452595Z",
+    "mode":  "plan_only",
+    "productionEnabled":  false,
+    "researchOnly":  true,
+    "capacity":  25,
+    "protectedCoreCount":  21,
+    "dynamicSlotCount":  4,
+    "protectedCoreSymbols":  [
+                                 "AAPL",
+                                 "MSFT",
+                                 "NVDA",
+                                 "TSLA",
+                                 "AMD",
+                                 "AMZN",
+                                 "META",
+                                 "GOOGL",
+                                 "AVGO",
+                                 "PLTR",
+                                 "SMCI",
+                                 "MSTR",
+                                 "COIN",
+                                 "NFLX",
+                                 "CRM",
+                                 "ORCL",
+                                 "INTC",
+                                 "MU",
+                                 "ARM",
+                                 "UBER",
+                                 "SHOP"
+                             ],
+    "dynamicCandidates":  [
+                              {
+                                  "symbol":  "SDOT",
+                                  "score":  212.814749,
+                                  "sourceBucket":  "gainers",
+                                  "watchIndex":  0
+                              },
+                              {
+                                  "symbol":  "SLND",
+                                  "score":  200.213225,
+                                  "sourceBucket":  "gainers",
+                                  "watchIndex":  2
+                              },
+                              {
+                                  "symbol":  "CJMB",
+                                  "score":  164.566116,
+                                  "sourceBucket":  "gainers",
+                                  "watchIndex":  16
+                              },
+                              {
+                                  "symbol":  "STAK",
+                                  "score":  158.223765,
+                                  "sourceBucket":  "losers",
+                                  "watchIndex":  4
+                              }
+                          ],
+    "desiredCanarySymbols":  [
+                                 "AAPL",
+                                 "MSFT",
+                                 "NVDA",
+                                 "TSLA",
+                                 "AMD",
+                                 "AMZN",
+                                 "META",
+                                 "GOOGL",
+                                 "AVGO",
+                                 "PLTR",
+                                 "SMCI",
+                                 "MSTR",
+                                 "COIN",
+                                 "NFLX",
+                                 "CRM",
+                                 "ORCL",
+                                 "INTC",
+                                 "MU",
+                                 "ARM",
+                                 "UBER",
+                                 "SHOP",
+                                 "SDOT",
+                                 "SLND",
+                                 "CJMB",
+                                 "STAK"
+                             ],
+    "rotationRules":  {
+                          "maxAddsPerCycle":  2,
+                          "maxRemovesPerCycle":  2,
+                          "minimumResidenceSeconds":  900,
+                          "evictionConfirmationCycles":  3,
+                          "reentryCooldownSeconds":  900,
+                          "rotationAllowedOnlyDuringCanaryWindow":  true,
+                          "neverEvictActiveLifecycle":  true,
+                          "neverEvictOpenPaperPosition":  true
+                      },
+    "rollback":  {
+                     "fallbackUniverse":  [
+                                              "AAPL",
+                                              "MSFT",
+                                              "NVDA",
+                                              "TSLA",
+                                              "AMD",
+                                              "AMZN",
+                                              "META",
+                                              "GOOGL",
+                                              "AVGO",
+                                              "PLTR",
+                                              "SMCI",
+                                              "MSTR",
+                                              "COIN",
+                                              "NFLX",
+                                              "CRM",
+                                              "ORCL",
+                                              "INTC",
+                                              "MU",
+                                              "ARM",
+                                              "UBER",
+                                              "SHOP",
+                                              "RIVN",
+                                              "SOFI",
+                                              "CRWD",
+                                              "NOW"
+                                          ],
+                     "atomicFallbackRequired":  true,
+                     "autoRollbackConditions":  [
+                                                    "stream service unhealthy",
+                                                    "symbol resolution failure",
+                                                    "quote freshness failure",
+                                                    "negative age regression",
+                                                    "symbol count not equal to 25",
+                                                    "market state/candle snapshot mismatch"
+                                                ]
+                 },
+    "gates":  {
+                  "clientReleaseAllowed":  false,
+                  "telegramAllowed":  false,
+                  "productionApplyAllowed":  false,
+                  "paperTradingAllowed":  false
+              },
+    "rolloutSequence":  [
+                            "PLAN_VALIDATION",
+                            "ONE_CYCLE_DRY_RUN",
+                            "LIVE_SHADOW_WITHOUT_SUBSCRIPTION_CHANGE",
+                            "CONTROLLED_2_SYMBOL_ROTATION_CANARY",
+                            "30_MINUTE_SOAK",
+                            "ROLLBACK_TEST",
+                            "SECOND_CANARY_ONLY_IF_FIRST_PASSES"
+                        ]
+}

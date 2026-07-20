@@ -1,0 +1,27 @@
+S10.4J CONTROLLED ARCHIVE + CLEAN ROOT PREPARATION
+Generated=20260714_191404
+ProjectRoot=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai
+ArchiveSession=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4J_archive_20260714_191404
+SourceInventory=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4I_local_cleanup_inventory_20260714_184851.json
+
+=== RESULT ===
+CANDIDATES=0
+PROTECTED_SKIPPED=4
+ARCHIVE_VERIFICATION_OK=true
+REMOVED_FROM_PROJECT_ROOT=0
+CANONICAL_PATHS_PRESENT=true
+VPS_TOUCHED=false
+DEPLOY_PERFORMED=false
+RESTART_PERFORMED=false
+
+=== ARCHIVED AND REMOVED FROM ROOT ===
+
+=== PROTECTED / SKIPPED ===
+S8_77B_walk_forward_validation_key_hotfix.ps1 | reason=PROTECTED
+S8_88A_fmp_key_locator_endpoint_audit.ps1 | reason=PROTECTED
+S9_11B_fmp_key_locator_universe_v2_rebuild.ps1 | reason=PROTECTED
+audit_exports | reason=PROTECTED
+
+=== OUTPUTS ===
+ArchiveManifest=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4J_archive_20260714_191404\archive_manifest.json
+ArchiveReport=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4J_archive_20260714_191404\archive_report.txt

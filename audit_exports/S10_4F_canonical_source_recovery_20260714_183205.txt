@@ -1,0 +1,50 @@
+S10.4F CANONICAL SOURCE RECOVERY
+Generated=20260714_183205
+Direction=VPS_TO_LOCAL_ONLY
+NO_DELETE=true
+NO_LOCAL_TO_VPS_DEPLOY=true
+NO_RESTART=true
+NO_DATA_TOUCH=true
+
+=== RECOVERED FILES ===
+app/api/app.py
+requirements.txt
+ops/scripts/capitalization_aware_backfill_runner.py
+ops/scripts/forward_shadow_daily_evaluator.py
+ops/scripts/forward_shadow_promotion_gate_report.py
+ops/scripts/internal_research_agents_daily.py
+ops/scripts/nightly_research_optimizer_controller.py
+ops/scripts/s10_paper_entry_guarded_wrapper.py
+ops/scripts/s10_paper_evaluation_only_wrapper.py
+ops/scripts/universe_v1_overnight_backfill_runner.py
+ops/scripts/s10_paper_entry_guarded_daemon.py
+ops/scripts/s10_paper_evaluation_only_daemon.py
+
+=== SHA256 ===
+app/api/app.py | match=True | local=bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785 | vps=bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785
+requirements.txt | match=True | local=90fd0d91e04cee447e23936c0992debaa2066b0553a61893c722500369a522ba | vps=90fd0d91e04cee447e23936c0992debaa2066b0553a61893c722500369a522ba
+ops/scripts/capitalization_aware_backfill_runner.py | match=True | local=dfe8b1722872000f37686de5010ef7d9e9764d6e4ecd3527f8db2300f59ad95f | vps=dfe8b1722872000f37686de5010ef7d9e9764d6e4ecd3527f8db2300f59ad95f
+ops/scripts/forward_shadow_daily_evaluator.py | match=True | local=1950a39a571db6df38fd2b03861503604001f80c384d82a9b057d3200d6119be | vps=1950a39a571db6df38fd2b03861503604001f80c384d82a9b057d3200d6119be
+ops/scripts/forward_shadow_promotion_gate_report.py | match=True | local=8544acb395ddf1af45640fd824ed9029248d1a03a9da023b3ad882f63ab408a5 | vps=8544acb395ddf1af45640fd824ed9029248d1a03a9da023b3ad882f63ab408a5
+ops/scripts/internal_research_agents_daily.py | match=True | local=b75ede6079ea7119b62d477bf4c6a88f6b7417135fa8860c2893ec4bd1c3c8b0 | vps=b75ede6079ea7119b62d477bf4c6a88f6b7417135fa8860c2893ec4bd1c3c8b0
+ops/scripts/nightly_research_optimizer_controller.py | match=True | local=641b74798a7cd7bfcc0e99644132e92c9d6da6ca9f5071c4c659019888cf8336 | vps=641b74798a7cd7bfcc0e99644132e92c9d6da6ca9f5071c4c659019888cf8336
+ops/scripts/s10_paper_entry_guarded_wrapper.py | match=True | local=752b8504a3c66d0094cb91934aca5308439684155b9c0daff16ca7b06185ba37 | vps=752b8504a3c66d0094cb91934aca5308439684155b9c0daff16ca7b06185ba37
+ops/scripts/s10_paper_evaluation_only_wrapper.py | match=True | local=4789c8d2cc3b5e828cbc90115fb6300618b42fed6cc8df345e375450fd821926 | vps=4789c8d2cc3b5e828cbc90115fb6300618b42fed6cc8df345e375450fd821926
+ops/scripts/universe_v1_overnight_backfill_runner.py | match=True | local=e12153d1daff2c8e43522b55424a44fa70540c66aae1dbf2a0f627e0a614c512 | vps=e12153d1daff2c8e43522b55424a44fa70540c66aae1dbf2a0f627e0a614c512
+ops/scripts/s10_paper_entry_guarded_daemon.py | match=True | local=1229cdb19f54bb6b72f5946a6653db17b13b8021631a7029fd578c7bfd9eede1 | vps=1229cdb19f54bb6b72f5946a6653db17b13b8021631a7029fd578c7bfd9eede1
+ops/scripts/s10_paper_evaluation_only_daemon.py | match=True | local=bb1a6a4bcc18a35c4a7632c1cd3dccf031acd4b174e52f0c434e691135419acd | vps=bb1a6a4bcc18a35c4a7632c1cd3dccf031acd4b174e52f0c434e691135419acd
+
+=== STATIC CHECKS ===
+py_compile_ok=true
+
+=== BACKUP ROOT ===
+C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4F_reconciliation_backup_20260714_183205
+
+=== STAGING ROOT ===
+C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4F_vps_canonical_20260714_183205
+
+=== PRODUCTION MANIFEST DRAFT ===
+C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PRODUCTION_MANIFEST_DRAFT.md
+
+=== LEGACY CANDIDATES NOT TOUCHED ===
+ops/scripts/s10_paper_trading_daemon.py

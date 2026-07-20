@@ -1,0 +1,2378 @@
+[
+  {
+    "canonicalKey": "landing.ast.4a9715e68fcb",
+    "text": "EN",
+    "paths": [
+      "dict.en.lang"
+    ],
+    "nearestNamedKeys": [
+      "lang"
+    ],
+    "firstLine": 31,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.981684d95e10",
+    "text": "Language",
+    "paths": [
+      "dict.en.switchLanguage"
+    ],
+    "nearestNamedKeys": [
+      "switchLanguage"
+    ],
+    "firstLine": 32,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a8bd3b42a06a",
+    "text": "Home",
+    "paths": [
+      "dict.en.footer.productLinks[0]",
+      "dict.en.nav.home"
+    ],
+    "nearestNamedKeys": [
+      "home",
+      "productLinks"
+    ],
+    "firstLine": 40,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.81301e39bd73",
+    "text": "Desk",
+    "paths": [
+      "dict.en.nav.desk"
+    ],
+    "nearestNamedKeys": [
+      "desk"
+    ],
+    "firstLine": 41,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.e093642ada75",
+    "text": "Product",
+    "paths": [
+      "dict.en.footer.product",
+      "dict.en.footer.productLinks[1]",
+      "dict.en.nav.product",
+      "dict.en.productPage.heroBadge"
+    ],
+    "nearestNamedKeys": [
+      "heroBadge",
+      "product",
+      "productLinks"
+    ],
+    "firstLine": 42,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.1d51ede10410",
+    "text": "Pricing",
+    "paths": [
+      "dict.en.footer.productLinks[2]",
+      "dict.en.nav.pricing",
+      "dict.en.pricingPage.heroBadge"
+    ],
+    "nearestNamedKeys": [
+      "heroBadge",
+      "pricing",
+      "productLinks"
+    ],
+    "firstLine": 43,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.cce81fe75007",
+    "text": "Private beta",
+    "paths": [
+      "dict.en.stats[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 53,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.c33b2d8fc940",
+    "text": "built for serious active traders",
+    "paths": [
+      "dict.en.stats[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 53,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.5e1534d33f70",
+    "text": "Journal-first",
+    "paths": [
+      "dict.en.stats[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 54,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.c71b71eded08",
+    "text": "your trades become the data source",
+    "paths": [
+      "dict.en.stats[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 54,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ad07a16c1870",
+    "text": "Edge+",
+    "paths": [
+      "dict.en.stats[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 55,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.33eb19c51c00",
+    "text": "scanner and market brief access",
+    "paths": [
+      "dict.en.stats[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 55,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.8669a900f80c",
+    "text": "Journal & screenshots",
+    "paths": [
+      "dict.en.homeSections.cards[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 66,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.4e3d7c66ff8b",
+    "text": "Track trades, screenshots, emotions, mistakes, risk and lessons in one place.",
+    "paths": [
+      "dict.en.homeSections.cards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 66,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.4a16ac48ba88",
+    "text": "AI Coach",
+    "paths": [
+      "dict.en.homeSections.cards[1][0]",
+      "dict.en.pricingPage.comparison[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "cards",
+      "comparison"
+    ],
+    "firstLine": 67,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.015dff010b12",
+    "text": "Get structured feedback on trade logic, risk, discipline and decision quality.",
+    "paths": [
+      "dict.en.homeSections.cards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 67,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.fe57b3998fd2",
+    "text": "Edge and Elite unlock the scanner layer for stocks, crypto and in-play market context.",
+    "paths": [
+      "dict.en.homeSections.cards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 68,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ec50d5c51543",
+    "text": "AI Alerts",
+    "paths": [
+      "dict.en.footer.featureLinks[1]",
+      "dict.en.homeSections.cards[3][0]",
+      "dict.en.pricingPage.comparison[7][0]",
+      "dict.en.productPage.deskCards[2][0]",
+      "dict.en.productPage.modules[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "cards",
+      "comparison",
+      "deskCards",
+      "featureLinks",
+      "modules"
+    ],
+    "firstLine": 69,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.71bd04a67872",
+    "text": "Elite unlocks the premium alert workflow with setup, trigger, entry, stop, targets and outcome review.",
+    "paths": [
+      "dict.en.homeSections.cards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 69,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.31a12c5d824e",
+    "text": "Market intelligence, alerts, journal and coaching in one system.",
+    "paths": [
+      "dict.en.productPage.heroCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 80,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.531d3ce46dc8",
+    "text": "Create a trade draft from an alert and compare the plan with your execution.",
+    "paths": [
+      "dict.en.productPage.heroCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 81,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.cfe2394713f9",
+    "text": "Signal-to-Journal",
+    "paths": [
+      "dict.en.pricingPage.signalCards[2][0]",
+      "dict.en.productPage.heroCards[1][0]",
+      "dict.en.productPage.modules[3][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards",
+      "modules",
+      "signalCards"
+    ],
+    "firstLine": 81,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.09048cbf9350",
+    "text": "Personal Edge",
+    "paths": [
+      "dict.en.productPage.heroCards[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 82,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.e091a2b7e7f0",
+    "text": "The long-term architecture is built around the trader’s own best and worst patterns.",
+    "paths": [
+      "dict.en.productPage.heroCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 82,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.43d790984ede",
+    "text": "Find stocks and crypto that deserve attention before wasting time on dead charts.",
+    "paths": [
+      "dict.en.productPage.deskCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 88,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.aacb1ed59689",
+    "text": "AI Scanner",
+    "paths": [
+      "dict.en.pricingPage.comparison[6][0]",
+      "dict.en.productPage.deskCards[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison",
+      "deskCards"
+    ],
+    "firstLine": 89,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.01b5f4069e96",
+    "text": "Edge and Elite receive AI Market Brief logic around the best in-play candidates.",
+    "paths": [
+      "dict.en.productPage.deskCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 89,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.971f3b2b1fbb",
+    "text": "Elite receives structured signals with setup, direction, trigger, entry zone, stop and targets.",
+    "paths": [
+      "dict.en.productPage.deskCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 90,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.eb4ec44d8520",
+    "text": "Track taken, skipped and missed alerts so every outcome becomes a learning point.",
+    "paths": [
+      "dict.en.productPage.deskCards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 91,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.53ab87d32851",
+    "text": "Workflow",
+    "paths": [
+      "dict.en.productPage.flowEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "flowEyebrow"
+    ],
+    "firstLine": 93,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ac4ecad30a83",
+    "text": "01",
+    "paths": [
+      "dict.en.productPage.flow[0][0]",
+      "dict.en.teamPage.roadmap[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 98,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.6fb576aa9356",
+    "text": "Market moves",
+    "paths": [
+      "dict.en.productPage.flow[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 98,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.06fadbf0e626",
+    "text": "SkillEdge watches active stocks, crypto, unusual movement, catalysts and market context.",
+    "paths": [
+      "dict.en.productPage.flow[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 98,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.c4ec75fbd6b4",
+    "text": "02",
+    "paths": [
+      "dict.en.productPage.flow[1][0]",
+      "dict.en.teamPage.roadmap[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 99,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.069ae6fc48eb",
+    "text": "AI filters noise",
+    "paths": [
+      "dict.en.productPage.flow[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 99,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.5dbbbfea1cac",
+    "text": "The system ranks opportunities by quality, freshness, risk and setup clarity.",
+    "paths": [
+      "dict.en.productPage.flow[1][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 99,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ff78c72b4bae",
+    "text": "03",
+    "paths": [
+      "dict.en.productPage.flow[2][0]",
+      "dict.en.teamPage.roadmap[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 100,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.8a2dcb9a13ae",
+    "text": "Plan appears",
+    "paths": [
+      "dict.en.productPage.flow[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 100,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.918e44296a7f",
+    "text": "The trader sees direction, trigger, entry zone, stop, targets, management and invalidation.",
+    "paths": [
+      "dict.en.productPage.flow[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 100,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.8b658db76c30",
+    "text": "04",
+    "paths": [
+      "dict.en.productPage.flow[3][0]",
+      "dict.en.teamPage.roadmap[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 101,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.1387ca18e55f",
+    "text": "A taken alert can become a journal trade with screenshots, notes and execution review.",
+    "paths": [
+      "dict.en.productPage.flow[3][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 101,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.12b822218106",
+    "text": "Journal connects",
+    "paths": [
+      "dict.en.productPage.flow[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 101,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.5d77f3b8ef78",
+    "text": "05",
+    "paths": [
+      "dict.en.productPage.flow[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 102,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.fbcef9612bdc",
+    "text": "Learning compounds",
+    "paths": [
+      "dict.en.productPage.flow[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 102,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.551a6efb0e87",
+    "text": "Reports, outcome review and coaching turn repetition into a stronger process.",
+    "paths": [
+      "dict.en.productPage.flow[4][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 102,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.68a1da0c5596",
+    "text": "Modules",
+    "paths": [
+      "dict.en.productPage.modulesEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "modulesEyebrow"
+    ],
+    "firstLine": 104,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3c46ffa2f1c0",
+    "text": "A serious journal that becomes the data source for analysis, reports and future personalization.",
+    "paths": [
+      "dict.en.productPage.modules[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a9093bccbe86",
+    "text": "AI journal review",
+    "paths": [
+      "dict.en.productPage.modules[0][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.bc64e5ef7065",
+    "text": "CSV/XLSX export",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[5]",
+      "dict.en.productPage.modules[0][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "features",
+      "modules"
+    ],
+    "firstLine": 109,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ec1e08a2883b",
+    "text": "PnL and win rate",
+    "paths": [
+      "dict.en.productPage.modules[0][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.82a13cdc03e3",
+    "text": "Trades and screenshots",
+    "paths": [
+      "dict.en.productPage.modules[0][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b7fcca0edfde",
+    "text": "A chart workspace connected to tickers, watchlists, screenshots and future premium chart analysis.",
+    "paths": [
+      "dict.en.productPage.modules[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.20c2ad8147cc",
+    "text": "AI chart analysis foundation",
+    "paths": [
+      "dict.en.productPage.modules[1][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.592413b4eacb",
+    "text": "Charts & Watchlists",
+    "paths": [
+      "dict.en.productPage.modules[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b2f5df8b9abc",
+    "text": "Ticker input",
+    "paths": [
+      "dict.en.productPage.modules[1][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3c60b094d026",
+    "text": "TradingView workspace",
+    "paths": [
+      "dict.en.productPage.modules[1][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.4b0e16937ebf",
+    "text": "Watchlist",
+    "paths": [
+      "dict.en.productPage.modules[1][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.213912583338",
+    "text": "A scanner layer for finding active stocks and crypto with clear source transparency.",
+    "paths": [
+      "dict.en.productPage.modules[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.dd774f5b4f48",
+    "text": "AI Market Brief",
+    "paths": [
+      "dict.en.productPage.modules[2][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111,
+    "wholeValueProtected": true
+  },
+  {
+    "canonicalKey": "landing.ast.a7a2d52d8cd4",
+    "text": "Market context",
+    "paths": [
+      "dict.en.productPage.modules[2][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.904f2948f153",
+    "text": "Source labels",
+    "paths": [
+      "dict.en.productPage.modules[2][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.f0bd75fe1327",
+    "text": "Stocks and crypto candidates",
+    "paths": [
+      "dict.en.productPage.modules[2][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.c865c1546825",
+    "text": "Breakdown modal",
+    "paths": [
+      "dict.en.productPage.modules[3][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.45f6ca7d0b1d",
+    "text": "Elite-level actionable signals with structure, education and outcome review.",
+    "paths": [
+      "dict.en.productPage.modules[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.6ff35d76376d",
+    "text": "Floating alert widget",
+    "paths": [
+      "dict.en.productPage.modules[3][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.9dd8b88329bb",
+    "text": "Full Alerts Center",
+    "paths": [
+      "dict.en.productPage.modules[3][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b395ef6dcc3e",
+    "text": "A review layer that turns trades into performance feedback and repeatable lessons.",
+    "paths": [
+      "dict.en.productPage.modules[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b869d466a853",
+    "text": "AI reports",
+    "paths": [
+      "dict.en.productPage.modules[4][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.41e1790d1838",
+    "text": "Execution focus",
+    "paths": [
+      "dict.en.productPage.modules[4][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.8ffa2d3f2b01",
+    "text": "Learning blocks",
+    "paths": [
+      "dict.en.productPage.modules[4][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.0f098e3af0ce",
+    "text": "Playbook foundation",
+    "paths": [
+      "dict.en.productPage.modules[4][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.7b53a87ae614",
+    "text": "Reports & Learning",
+    "paths": [
+      "dict.en.productPage.modules[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.5ece1b7906b9",
+    "text": "A site-wide support assistant and operator flow for product, payment and access questions.",
+    "paths": [
+      "dict.en.productPage.modules[5][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.4d52dc29427e",
+    "text": "Admin reply flow",
+    "paths": [
+      "dict.en.productPage.modules[5][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.fa80889fe5f8",
+    "text": "Email support",
+    "paths": [
+      "dict.en.productPage.modules[5][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.d1fdaffdb0f7",
+    "text": "Operator request",
+    "paths": [
+      "dict.en.productPage.modules[5][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.7437161e39c2",
+    "text": "Support",
+    "paths": [
+      "dict.en.productPage.modules[5][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.164b0f32de25",
+    "text": "Support assistant",
+    "paths": [
+      "dict.en.productPage.modules[5][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.023c4c62594e",
+    "text": "Difference",
+    "paths": [
+      "dict.en.productPage.differentEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "differentEyebrow"
+    ],
+    "firstLine": 116,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.e50d99d2452d",
+    "text": "Instead of a normal scanner",
+    "paths": [
+      "dict.en.productPage.comparisons[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 121,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.9d0eb8675b67",
+    "text": "SkillEdge explains why the ticker matters, what the setup is, what can go wrong and what confirms the idea.",
+    "paths": [
+      "dict.en.productPage.comparisons[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 121,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.10c1df4683a6",
+    "text": "You only see tickers and still have to guess what matters.",
+    "paths": [
+      "dict.en.productPage.comparisons[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 121,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.10f2aa8e6ea3",
+    "text": "Instead of a simple journal",
+    "paths": [
+      "dict.en.productPage.comparisons[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 122,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.42682f167b86",
+    "text": "SkillEdge connects trades, screenshots, alerts, outcomes and mistakes into a personal improvement system.",
+    "paths": [
+      "dict.en.productPage.comparisons[1][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 122,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2d98e0ca9965",
+    "text": "You store trades but do not transform them into an edge.",
+    "paths": [
+      "dict.en.productPage.comparisons[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 122,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.d076e602598b",
+    "text": "Instead of a generic chatbot",
+    "paths": [
+      "dict.en.productPage.comparisons[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 123,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.fdefbf410dd1",
+    "text": "SkillEdge works inside the workflow: alerts, journal, reports, execution, learning and playbook.",
+    "paths": [
+      "dict.en.productPage.comparisons[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 123,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3a3395cc11f4",
+    "text": "You ask random questions and receive disconnected answers.",
+    "paths": [
+      "dict.en.productPage.comparisons[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 123,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.8e7123aadcfd",
+    "text": "Journal, screenshots and analytics",
+    "paths": [
+      "dict.en.productPage.finalChecklist[0]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 129,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3061c70a8d21",
+    "text": "AI Coach and chart review",
+    "paths": [
+      "dict.en.productPage.finalChecklist[1]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 130,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a200cb40c5e8",
+    "text": "Market Intelligence and AI Scanner for Edge+",
+    "paths": [
+      "dict.en.productPage.finalChecklist[2]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 131,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ee8e3c41aadd",
+    "text": "AI Alerts and Signal-to-Journal for Elite",
+    "paths": [
+      "dict.en.productPage.finalChecklist[3]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 132,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.8f1916387e32",
+    "text": "Reports, learning blocks and playbook foundation",
+    "paths": [
+      "dict.en.productPage.finalChecklist[4]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 133,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.94e4d00d855c",
+    "text": "Support assistant and operator request flow",
+    "paths": [
+      "dict.en.productPage.finalChecklist[5]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 134,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.f10de05ba79e",
+    "text": "1 month",
+    "paths": [
+      "dict.en.pricingPage.billingToggle.monthly"
+    ],
+    "nearestNamedKeys": [
+      "monthly"
+    ],
+    "firstLine": 143,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2f96e34ce895",
+    "text": "1 year",
+    "paths": [
+      "dict.en.pricingPage.billingToggle.yearly"
+    ],
+    "nearestNamedKeys": [
+      "yearly"
+    ],
+    "firstLine": 145,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ee1d9389bb8e",
+    "text": "/ month",
+    "paths": [
+      "dict.en.pricingPage.period.monthly"
+    ],
+    "nearestNamedKeys": [
+      "period"
+    ],
+    "firstLine": 148,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.be71f2d9bc53",
+    "text": "/ 6 months",
+    "paths": [
+      "dict.en.pricingPage.period.halfyear"
+    ],
+    "nearestNamedKeys": [
+      "period"
+    ],
+    "firstLine": 149,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2529bfac7ffe",
+    "text": "/ year",
+    "paths": [
+      "dict.en.pricingPage.period.yearly"
+    ],
+    "nearestNamedKeys": [
+      "period"
+    ],
+    "firstLine": 150,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a99c925a77e3",
+    "text": "10 journal AI analyses / month",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[3]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.197fd28ea7fe",
+    "text": "20 chart AI analyses / month",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[4]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3188aca7b63a",
+    "text": "3 screenshots per trade",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[1]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.75d59a7bbebf",
+    "text": "50 AI Coach requests / month",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[2]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.12bcf377e2c6",
+    "text": "Up to 300 trades",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[0]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.056c773ce274",
+    "text": "Everything in Core",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[0]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 184,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b77bf9fa7b89",
+    "text": "200 AI Coach requests / month",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[4]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.d22f89b6748b",
+    "text": "30 AI reports / month",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[5]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.5556c79b92c2",
+    "text": "5 screenshots per trade",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[3]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ff5e2fcde6e4",
+    "text": "AI Scanner / Market Intelligence",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[6]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3a20ebbd520f",
+    "text": "Strategy OS: build your own trading strategy",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[1]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.aebd3946793c",
+    "text": "Up to 2,000 trades",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[2]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a9e1112c0e4b",
+    "text": "1,000 AI Coach requests / month",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[3]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a14cd02033e3",
+    "text": "10 screenshots per trade",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[2]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3f5b08fd51ea",
+    "text": "150 AI reports / month",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[4]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.d72fb475d747",
+    "text": "AI Alerts + Signal-to-Journal",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[5]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.859d3c66ce42",
+    "text": "Everything in Edge",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[0]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.781254e36e16",
+    "text": "Up to 10,000 trades",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[1]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.5e3a80c53277",
+    "text": "Signals are structured setups with direction, trigger, entry zone, stop, targets and risk.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 203,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.dd58ebbaf9f3",
+    "text": "Structured signals",
+    "paths": [
+      "dict.en.pricingPage.signalCards[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 203,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.bb5bef9bbfbf",
+    "text": "Breakdown before action",
+    "paths": [
+      "dict.en.pricingPage.signalCards[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 204,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.845a86c7a1d4",
+    "text": "Every serious alert explains why it appeared, what confirms it and what makes it dangerous.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 204,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.40fb867457ed",
+    "text": "A taken alert can become a journal trade so the plan and execution can be compared.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 205,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a14342d98446",
+    "text": "Outcome coaching",
+    "paths": [
+      "dict.en.pricingPage.signalCards[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 206,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b1202eee5648",
+    "text": "Taken, skipped and missed decisions show missed opportunities, good skips and weak execution.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 206,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.666d16fc20f6",
+    "text": "Core",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.cf208513e015",
+    "text": "Edge",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.e952ced1b503",
+    "text": "Elite",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.9e189db424c2",
+    "text": "Feature",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.c4181f9f61bf",
+    "text": "Journal + screenshots",
+    "paths": [
+      "dict.en.pricingPage.comparison[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 212,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.0e217c42a4bc",
+    "text": "Yes",
+    "paths": [
+      "dict.en.pricingPage.comparison[1][1]",
+      "dict.en.pricingPage.comparison[1][2]",
+      "dict.en.pricingPage.comparison[1][3]",
+      "dict.en.pricingPage.comparison[6][2]",
+      "dict.en.pricingPage.comparison[6][3]",
+      "dict.en.pricingPage.comparison[7][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 212,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.10b37cdf7a18",
+    "text": "1,000 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[2][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 213,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2de047ffcc0a",
+    "text": "200 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 213,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.0b375a3efb1c",
+    "text": "50 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[2][1]",
+      "dict.en.pricingPage.comparison[3][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 213,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3cec0137adf2",
+    "text": "10 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 214,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.35b850b8910b",
+    "text": "300 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[3][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 214,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.f10f07800859",
+    "text": "Journal AI analysis",
+    "paths": [
+      "dict.en.pricingPage.comparison[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 214,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.aba35124e0d3",
+    "text": "100 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ce8eaeedab92",
+    "text": "20 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.67969602720e",
+    "text": "500 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.39770557d613",
+    "text": "Chart AI analysis",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ec31601933d9",
+    "text": "150 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.80eba5231906",
+    "text": "30 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.e9eddaf3f2ea",
+    "text": "AI Reports",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.793185b8f05b",
+    "text": "—",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][1]",
+      "dict.en.pricingPage.comparison[6][1]",
+      "dict.en.pricingPage.comparison[7][1]",
+      "dict.en.pricingPage.comparison[7][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.798fea3b2849",
+    "text": "Active review",
+    "paths": [
+      "dict.en.pricingPage.comparison[8][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 219,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.7737990ecac2",
+    "text": "Discipline",
+    "paths": [
+      "dict.en.pricingPage.comparison[8][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 219,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.27510b5c570f",
+    "text": "Signals without education create dependency.",
+    "paths": [
+      "dict.en.teamPage.beliefs[0]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 237,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b981216ba660",
+    "text": "A trade without a plan cannot be reviewed properly.",
+    "paths": [
+      "dict.en.teamPage.beliefs[1]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 238,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.083b09d2deb1",
+    "text": "A journal without feedback becomes a graveyard of old trades.",
+    "paths": [
+      "dict.en.teamPage.beliefs[2]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 239,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2fb13d01e76f",
+    "text": "The best product should make the trader calmer, sharper and more disciplined.",
+    "paths": [
+      "dict.en.teamPage.beliefs[3]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 240,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.a5e5f4f8a3b0",
+    "text": "Personal AI alerts become powerful only when the trader builds clean historical data.",
+    "paths": [
+      "dict.en.teamPage.beliefs[4]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 241,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.95ccf4ab7c1e",
+    "text": "Use these cards as the About Us layout. Later you can insert real team photos, names and roles without changing the page structure.",
+    "paths": [
+      "dict.en.teamPage.teamText"
+    ],
+    "nearestNamedKeys": [
+      "teamText"
+    ],
+    "firstLine": 250,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b5d6ab876874",
+    "text": "Founder / Product Vision",
+    "paths": [
+      "dict.en.teamPage.teamCards[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 252,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.24141d661c95",
+    "text": "Owns the product direction, trader workflow, pricing logic and premium positioning.",
+    "paths": [
+      "dict.en.teamPage.teamCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 252,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.7136adf95025",
+    "text": "Defines setups, alert logic, journal review criteria and educational playbooks.",
+    "paths": [
+      "dict.en.teamPage.teamCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 253,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.46a73bfec66a",
+    "text": "Trading Research",
+    "paths": [
+      "dict.en.teamPage.teamCards[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 253,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.4b58b43303d5",
+    "text": "AI & Data Layer",
+    "paths": [
+      "dict.en.teamPage.teamCards[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 254,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.e0deeea3c49b",
+    "text": "Builds scanner logic, AI prompts, data enrichment, usage limits and backend gates.",
+    "paths": [
+      "dict.en.teamPage.teamCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 254,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2d7c3cfda796",
+    "text": "Design & Experience",
+    "paths": [
+      "dict.en.teamPage.teamCards[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 255,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.865c58162b7b",
+    "text": "Shapes the dashboard, public pages, locked states, loading states and premium interface.",
+    "paths": [
+      "dict.en.teamPage.teamCards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 255,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.59c553c525be",
+    "text": "Handles customer questions, operator flow, payments, access and product guidance.",
+    "paths": [
+      "dict.en.teamPage.teamCards[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 256,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.bed3ebacba01",
+    "text": "Support Operations",
+    "paths": [
+      "dict.en.teamPage.teamCards[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 256,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2ac81c11b8ed",
+    "text": "Protects private access, platform data, rate limits and client workflows.",
+    "paths": [
+      "dict.en.teamPage.teamCards[5][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 257,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.8146ac10e897",
+    "text": "Security & Infrastructure",
+    "paths": [
+      "dict.en.teamPage.teamCards[5][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 257,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.fe3fcaa37dcb",
+    "text": "Principles",
+    "paths": [
+      "dict.en.teamPage.principlesEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "principlesEyebrow"
+    ],
+    "firstLine": 259,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.1ebdd10224e6",
+    "text": "No fake certainty",
+    "paths": [
+      "dict.en.teamPage.principles[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 262,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.72b0c2c562fc",
+    "text": "Trading contains risk. SkillEdge AI must never pretend that any model or alert can guarantee profit.",
+    "paths": [
+      "dict.en.teamPage.principles[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 262,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.2024284e73c0",
+    "text": "The client should understand why an alert appears, which sources are tracked and what part of the idea is strong or weak.",
+    "paths": [
+      "dict.en.teamPage.principles[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 263,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.c8b55f2263ff",
+    "text": "Transparent logic",
+    "paths": [
+      "dict.en.teamPage.principles[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 263,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.c649e8d975d1",
+    "text": "Every feature should feel useful, serious and connected to the trader’s real workflow.",
+    "paths": [
+      "dict.en.teamPage.principles[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 264,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.33577abf34b2",
+    "text": "Premium product mindset",
+    "paths": [
+      "dict.en.teamPage.principles[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 264,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.531d0216b11a",
+    "text": "Roadmap",
+    "paths": [
+      "dict.en.teamPage.roadmapEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "roadmapEyebrow"
+    ],
+    "firstLine": 266,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.20455834404d",
+    "text": "Journal, dashboard, screenshots, learning, reports, crypto access and support foundation.",
+    "paths": [
+      "dict.en.teamPage.roadmap[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 271,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.0e9b6f352ac8",
+    "text": "Launch foundation",
+    "paths": [
+      "dict.en.teamPage.roadmap[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 271,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.543a80d6c13b",
+    "text": "AI alerts, decision tracking, trade drafts, outcome learning and missed opportunity coaching.",
+    "paths": [
+      "dict.en.teamPage.roadmap[1][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 272,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.677a45d903b7",
+    "text": "Signals and behavior",
+    "paths": [
+      "dict.en.teamPage.roadmap[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 272,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.36ee74e04f67",
+    "text": "Full ticker coverage, Binance universe, catalysts, heatmaps, halt screener and stronger scanner logic.",
+    "paths": [
+      "dict.en.teamPage.roadmap[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 273,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.814343c7c49b",
+    "text": "Premium data",
+    "paths": [
+      "dict.en.teamPage.roadmap[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 273,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.ac94d7acb9ba",
+    "text": "AI learns from the client’s best setups, weak patterns, execution mistakes and journal history.",
+    "paths": [
+      "dict.en.teamPage.roadmap[3][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 274,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.11e356fd6bd2",
+    "text": "Personal edge",
+    "paths": [
+      "dict.en.teamPage.roadmap[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 274,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.46d564c9add4",
+    "text": "Features",
+    "paths": [
+      "dict.en.footer.features"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 284,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.3735b9e38b39",
+    "text": "Resources",
+    "paths": [
+      "dict.en.footer.resources"
+    ],
+    "nearestNamedKeys": [
+      "resources"
+    ],
+    "firstLine": 285,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.19e28fca0a70",
+    "text": "Legal",
+    "paths": [
+      "dict.en.footer.legal"
+    ],
+    "nearestNamedKeys": [
+      "legal"
+    ],
+    "firstLine": 286,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.63ee19f69246",
+    "text": "Playbook",
+    "paths": [
+      "dict.en.footer.featureLinks[6]"
+    ],
+    "nearestNamedKeys": [
+      "featureLinks"
+    ],
+    "firstLine": 288,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.61a2244b733d",
+    "text": "Reports",
+    "paths": [
+      "dict.en.footer.featureLinks[7]"
+    ],
+    "nearestNamedKeys": [
+      "featureLinks"
+    ],
+    "firstLine": 288,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.0ac9ef9f696e",
+    "text": "AI Alerts Guide",
+    "paths": [
+      "dict.en.footer.resourceLinks[3]"
+    ],
+    "nearestNamedKeys": [
+      "resourceLinks"
+    ],
+    "firstLine": 289,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.b165297cbfb2",
+    "text": "Disclaimer Statement",
+    "paths": [
+      "dict.en.footer.legalLinks[2]"
+    ],
+    "nearestNamedKeys": [
+      "legalLinks"
+    ],
+    "firstLine": 290,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.14246c1d2160",
+    "text": "EULA",
+    "paths": [
+      "dict.en.footer.legalLinks[3]"
+    ],
+    "nearestNamedKeys": [
+      "legalLinks"
+    ],
+    "firstLine": 290,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.d56e6cfdc364",
+    "text": "Contacts",
+    "paths": [
+      "dict.en.footer.contact"
+    ],
+    "nearestNamedKeys": [
+      "contact"
+    ],
+    "firstLine": 296,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.776e59d8e318",
+    "text": "Login",
+    "paths": [
+      "dict.en.auth.login",
+      "dict.en.auth.loginButton"
+    ],
+    "nearestNamedKeys": [
+      "login",
+      "loginButton"
+    ],
+    "firstLine": 303,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.f57d9006ed62",
+    "text": "Email",
+    "paths": [
+      "dict.en.auth.email"
+    ],
+    "nearestNamedKeys": [
+      "email"
+    ],
+    "firstLine": 305,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.46ac9e919166",
+    "text": "Password",
+    "paths": [
+      "dict.en.auth.password"
+    ],
+    "nearestNamedKeys": [
+      "password"
+    ],
+    "firstLine": 306,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.82e80091e70b",
+    "text": "Close",
+    "paths": [
+      "dict.en.auth.close"
+    ],
+    "nearestNamedKeys": [
+      "close"
+    ],
+    "firstLine": 307,
+    "wholeValueProtected": false
+  },
+  {
+    "canonicalKey": "landing.ast.00e703cff684",
+    "text": "Dashboard",
+    "paths": [
+      "dict.en.auth.dashboard"
+    ],
+    "nearestNamedKeys": [
+      "dashboard"
+    ],
+    "firstLine": 312,
+    "wholeValueProtected": false
+  }
+]

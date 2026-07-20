@@ -1,0 +1,89 @@
+{
+  "ok": false,
+  "classification": "DAY7D_CANARY_EXECUTION_PREFLIGHT_BLOCKED",
+  "inspectionOnly": true,
+  "productionMutation": false,
+  "serviceRestarted": false,
+  "systemdTouched": false,
+  "streamSymbolsChanged": false,
+  "packageExecuted": false,
+  "deploymentAuthorized": false,
+  "armAllowed": false,
+  "explicitExecutionApprovalRecorded": true,
+  "clock": {
+    "newYorkNow": "2026-07-19T05:48:49.642273-04:00",
+    "weekday": 6,
+    "regularSessionOpen": false
+  },
+  "services": {
+    "market": {
+      "active": "active",
+      "enabled": "enabled",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python -m app.market_data.stream_service ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+      "environmentFiles": [
+        "/opt/skilledge/stock-engine/.env.server"
+      ]
+    },
+    "api": {
+      "active": "active",
+      "enabled": "enabled",
+      "execStart": "{ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python -m uvicorn app.api.app:app --host 127.0.0.1 --port 8000 ; ignore_errors=no ; start_time=[Sun 2026-07-19 09:10:58 EEST] ; stop_time=[n/a] ; pid=861567 ; code=(null) ; status=0/0 }",
+      "environmentFiles": [
+        "/opt/skilledge/stock-engine/.env.server"
+      ]
+    }
+  },
+  "healthRaw": "{\"ok\":true,\"service\":\"SkillEdge Persistent Stock Engine\",\"engineVersion\":\"holly_persistent_v2\",\"env\":\"local\",\"stockPersistentEngineEnabled\":true,\"stockLegacyEngineEnabled\":false,\"localDatabase\":{\"storageVersion\":\"s410_supabase_sqlite_persistence_v1\",\"dbPath\":\"/opt/skilledge/stock-engine/data/stock_engine.db\",\"signalsCount\":11482,\"outcomesCount\":3928,\"closedOutcomeCount\":627,\"workedOutcomeCount\":151,\"failedOutcomeCount\":476,\"winRateClosed\":24.08,\"primaryStore\":\"supabase\",\"sqlite\":{\"storageVersion\":\"s410_supabase_sqlite_persistence_v1\",\"dbPath\":\"/opt/skilledge/stock-engine/data/stock_engine.db\",\"signalsCount\":11482,\"outcomesCount\":3928,\"closedOutcomeCount\":627,\"workedOutcomeCount\":151,\"failedOutcomeCount\":476,\"winRateClosed\":24.08},\"supabase\":{\"enabled\":true,\"configured\":true,\"url\":\"https://wddkqtclrtkavxzezgyv.supabase.co\",\"signalsCount\":1000,\"outcomesCount\":1000,\"closedOutcomeCount\":83,\"workedOutcomeCount\":20,\"failedOutcomeCount\":63,\"winRateClosed\":24.1,\"lastError\":null}},\"runtimeCache\":{\"cacheVersion\":\"s412_runtime_cache_v1\",\"enabled\":true,\"mode\":\"upstash_redis_rest\",\"configured\":true,\"hasUpstashUrl\":true,\"hasUpstashToken\":true,\"cachePath\":\"/opt/skilledge/stock-engine/data/runtime_cache.json\",\"lastError\":null},\"connections\":{\"hasSupabaseUrl\":true,\"hasSupabaseServiceKey\":true,\"hasRedisUrl\":false,\"hasFmpApiKey\":true,\"fmpPlan\":\"premium\"}}",
+  "requiredFiles": {
+    "streamService": {
+      "path": "/opt/skilledge/stock-engine/app/market_data/stream_service.py",
+      "exists": true,
+      "sizeBytes": 17817
+    },
+    "securityMaster": {
+      "path": "/opt/skilledge/stock-engine/app/market_data/security_master.py",
+      "exists": false,
+      "sizeBytes": null
+    },
+    "discovery": {
+      "path": "/opt/skilledge/stock-engine/app/discovery.py",
+      "exists": true,
+      "sizeBytes": 180099
+    },
+    "marketState": {
+      "path": "/opt/skilledge/stock-engine/data/runtime/market_state.json",
+      "exists": false,
+      "sizeBytes": null
+    },
+    "scannerState": {
+      "path": "/opt/skilledge/stock-engine/data/runtime/scanner_state.json",
+      "exists": false,
+      "sizeBytes": null
+    }
+  },
+  "symbolControls": [
+    {
+      "type": "systemd-unit-environment",
+      "name": "SYMBOLS",
+      "source": "skilledge-market-stream.service",
+      "line": "Environment=SKILLEDGE_MARKET_STREAM_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,NFLX,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW"
+    }
+  ],
+  "exactMutationPoints": [
+    {
+      "type": "systemd-unit-environment",
+      "name": "SYMBOLS",
+      "source": "skilledge-market-stream.service",
+      "line": "Environment=SKILLEDGE_MARKET_STREAM_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,NFLX,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW"
+    }
+  ],
+  "errors": [
+    "REQUIRED_FILE_MISSING_securityMaster",
+    "REQUIRED_FILE_MISSING_marketState",
+    "REQUIRED_FILE_MISSING_scannerState"
+  ],
+  "warnings": [
+    "US_REGULAR_SESSION_NOT_OPEN"
+  ],
+  "nextAction": "FIX_PREFLIGHT_ERRORS"
+}

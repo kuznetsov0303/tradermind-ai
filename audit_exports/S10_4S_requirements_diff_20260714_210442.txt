@@ -1,0 +1,16 @@
+S10.4S REQUIREMENTS DIFF CLOSURE
+Current=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\services\stock-engine\requirements.txt
+Backup=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4F_reconciliation_backup_20260714_183205\requirements.txt
+
+CURRENT_SHA256=90fd0d91e04cee447e23936c0992debaa2066b0553a61893c722500369a522ba
+BACKUP_SHA256=1be8da24b6279be6f646800318066f1ed86f60eaa660b461a703cbbe89d33626
+SAME_NORMALIZED_CONTENT=False
+ONLY_CURRENT_COUNT=2
+ONLY_BACKUP_COUNT=1
+
+=== ONLY CURRENT ===
+httpx==0.27.2
+tzdata>=2025.2
+
+=== ONLY BACKUP ===
+httpx==0.28.1tzdata>=2025.2

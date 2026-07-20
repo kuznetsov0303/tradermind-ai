@@ -1,0 +1,11 @@
+[Unit]
+Description=Run SkillEdge S10 paper evaluation-only every 5 minutes
+
+[Timer]
+OnActiveSec=30s
+OnUnitInactiveSec=5min
+AccuracySec=10s
+Unit=skilledge-s10-paper-evaluation.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "classification": "LANDING_ENGLISH_MASTER_ISOLATED",
+  "inspectionOnly": true,
+  "productionMutation": false,
+  "vpsTouched": false,
+  "sourceReviewFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_exports\\canonical_dictionary_review_20260719_213114.json",
+  "landingRecordsRead": 421,
+  "englishMasterEntries": 252,
+  "protectedEntries": 5,
+  "duplicateSourceKeys": {
+    "heroBadge": 3,
+    "heroTitle": 5,
+    "heroText": 5,
+    "finalTitle": 5,
+    "finalText": 5,
+    "name": 12,
+    "headline": 5,
+    "text": 17,
+    "bestFor": 7,
+    "cta": 4,
+    "disclaimer": 2,
+    "principlesTitle": 2,
+    "description": 2,
+    "badge": 8,
+    "title": 14,
+    "primary": 4,
+    "secondary": 3,
+    "eyebrow": 9,
+    "subtitle": 2,
+    "note": 2,
+    "button": 2,
+    "gradient": 10,
+    "label": 18
+  },
+  "excluded": {
+    "cyrillic": 169
+  },
+  "targetLocales": 14,
+  "nextAction": "GENERATE_LANDING_LOCALE_FILES"
+}

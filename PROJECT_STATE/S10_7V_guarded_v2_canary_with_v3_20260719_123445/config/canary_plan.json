@@ -1,0 +1,82 @@
+﻿{
+    "executionAuthorized":  false,
+    "armAllowed":  false,
+    "packageExecuted":  false,
+    "productionUniverseMustRemain":  25,
+    "explicitExecutionApprovalRequired":  true,
+    "liveProvider":  "databento",
+    "referenceProvider":  "fmp",
+    "requiredMetrics":  [
+                            "rawRecordsPerSecond",
+                            "marketEventsPerSecond",
+                            "processingLagP95Ms",
+                            "quoteFreshnessP95Seconds",
+                            "cpuPercent",
+                            "rssBytes",
+                            "snapshotWriteLatencyMs",
+                            "candleCompletenessPercent",
+                            "providerReconnectCount",
+                            "providerErrorCount",
+                            "scannerCycleMs",
+                            "setupCycleMs"
+                        ],
+    "stages":  [
+                   {
+                       "stage":  25,
+                       "durationMinutes":  5,
+                       "purpose":  "baseline",
+                       "requiresExplicitApproval":  false,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  50,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  100,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  150,
+                       "durationMinutes":  10,
+                       "purpose":  "intermediate-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  250,
+                       "durationMinutes":  30,
+                       "purpose":  "final-capacity-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   }
+               ],
+    "rollbackRules":  {
+                          "serviceUnhealthy":  true,
+                          "negativeQuoteAge":  true,
+                          "providerReconnectBurst":  true,
+                          "providerErrorIncrease":  true,
+                          "processingLagP95RegressionPercent":  50,
+                          "quoteFreshnessP95RegressionPercent":  50,
+                          "cpuPercentCeiling":  85,
+                          "rssGrowthPercentCeiling":  50,
+                          "snapshotWriteRegressionPercent":  100,
+                          "candleCompletenessFloorPercent":  99,
+                          "scannerCycleRegressionPercent":  100,
+                          "setupCycleRegressionPercent":  100,
+                          "returnToUniverseSize":  25
+                      },
+    "baselineStageDeltasRequired":  true,
+    "noManualPaperRun":  true,
+    "noPaperServiceStart":  true,
+    "noBoundaryReset":  true,
+    "clientEligibilityChanged":  false,
+    "telegramEligibilityChanged":  false,
+    "paperEligibilityChanged":  false
+}

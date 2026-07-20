@@ -1,0 +1,936 @@
+{
+  "ok": true,
+  "classification": "ENGLISH_MASTER_EXTRACTION_AUDIT_COMPLETE",
+  "inspectionOnly": true,
+  "productionMutation": false,
+  "vpsTouched": false,
+  "sourceFilesScanned": 189,
+  "uiStringCandidates": 12730,
+  "uniqueUiStringCandidates": 9977,
+  "dictionaryCandidates": 693,
+  "topFiles": [
+    {
+      "file": "app/dashboard/page.tsx",
+      "count": 4733
+    },
+    {
+      "file": "components/Landing.tsx",
+      "count": 1940
+    },
+    {
+      "file": "app/dashboard-guide/page.tsx",
+      "count": 1094
+    },
+    {
+      "file": "components/dashboard/SignalCockpitTab.tsx",
+      "count": 291
+    },
+    {
+      "file": "lib/trading/setup-playbook.ts",
+      "count": 274
+    },
+    {
+      "file": "components/SupportWidget.tsx",
+      "count": 231
+    },
+    {
+      "file": "lib/ai/skill-edge-prompts.ts",
+      "count": 226
+    },
+    {
+      "file": "lib/trading/market-alert-generator.ts",
+      "count": 225
+    },
+    {
+      "file": "components/dashboard/PersonalEdgeTab.tsx",
+      "count": 216
+    },
+    {
+      "file": "app/api/market/alerts/route.ts",
+      "count": 138
+    },
+    {
+      "file": "lib/ai/skill-edge-ai-master-prompt.ts",
+      "count": 136
+    },
+    {
+      "file": "app/api/analyze-trade-screenshot/route.ts",
+      "count": 130
+    },
+    {
+      "file": "app/referral/page.tsx",
+      "count": 129
+    },
+    {
+      "file": "lib/trading/signal-text-i18n.ts",
+      "count": 128
+    },
+    {
+      "file": "app/ai-guide/page.tsx",
+      "count": 118
+    },
+    {
+      "file": "components/admin/InvestorDashboardSection.tsx",
+      "count": 107
+    },
+    {
+      "file": "app/admin/signals-review/page.tsx",
+      "count": 94
+    },
+    {
+      "file": "app/journal-guide/page.tsx",
+      "count": 91
+    },
+    {
+      "file": "components/dashboard/UnifiedSkillEdgeSignalWidget.tsx",
+      "count": 83
+    },
+    {
+      "file": "app/api/market/social-mentions/route.ts",
+      "count": 80
+    },
+    {
+      "file": "lib/i18n/dictionaries.ts",
+      "count": 79
+    },
+    {
+      "file": "lib/trading/signal-ai-validator.ts",
+      "count": 75
+    },
+    {
+      "file": "lib/trading/skill-edge-alert-engine.ts",
+      "count": 74
+    },
+    {
+      "file": "lib/trading/signal-confidence.ts",
+      "count": 72
+    },
+    {
+      "file": "app/admin/page.tsx",
+      "count": 60
+    },
+    {
+      "file": "components/GlobalAlertsWidget.tsx",
+      "count": 60
+    },
+    {
+      "file": "app/api/market/ai-analysis/route.ts",
+      "count": 57
+    },
+    {
+      "file": "app/admin/support/page.tsx",
+      "count": 55
+    },
+    {
+      "file": "lib/trading/price-action-patterns.ts",
+      "count": 53
+    },
+    {
+      "file": "components/marketing/LegalPageShell.tsx",
+      "count": 52
+    }
+  ],
+  "duplicateTexts": [
+    {
+      "text": "Strategy OS",
+      "count": 33
+    },
+    {
+      "text": "AI Alerts",
+      "count": 28
+    },
+    {
+      "text": "Market Intelligence",
+      "count": 26
+    },
+    {
+      "text": "use client",
+      "count": 24
+    },
+    {
+      "text": "Personal Edge",
+      "count": 23
+    },
+    {
+      "text": "flex flex-wrap items-start justify-between gap-4",
+      "count": 22
+    },
+    {
+      "text": "Desk Coach",
+      "count": 21
+    },
+    {
+      "text": "SkillEdge AI",
+      "count": 19
+    },
+    {
+      "text": "AI Trading Desk",
+      "count": 17
+    },
+    {
+      "text": "SkillEdge Core",
+      "count": 16
+    },
+    {
+      "text": ": \"\"}",
+      "count": 16
+    },
+    {
+      "text": "SkillEdge Elite",
+      "count": 15
+    },
+    {
+      "text": "flex items-start justify-between gap-3",
+      "count": 15
+    },
+    {
+      "text": "flex items-center justify-between gap-3",
+      "count": 14
+    },
+    {
+      "text": "SkillEdge Edge",
+      "count": 14
+    },
+    {
+      "text": "mt-2 text-2xl font-black tracking-[-0.04em] text-white",
+      "count": 13
+    },
+    {
+      "text": "AI Coach",
+      "count": 13
+    },
+    {
+      "text": "plan_id, status, expires_at",
+      "count": 13
+    },
+    {
+      "text": "Command Home shows the current state of the trader: performance, discipline, mistakes, plan of the day and the next best action.",
+      "count": 13
+    },
+    {
+      "text": "The trader opens one screen and understands where to work, what to stop doing and what the desk demands today.",
+      "count": 13
+    },
+    {
+      "text": "Personal Edge reads the trader’s best and worst behavior: winning fingerprints, weak setups, rules and risk warnings.",
+      "count": 13
+    },
+    {
+      "text": "This is where the dashboard stops being generic. It adapts around the trader’s own evidence.",
+      "count": 13
+    },
+    {
+      "text": "Journal is the source of truth. Every trade, screenshot, mistake, setup, result and review starts here.",
+      "count": 13
+    },
+    {
+      "text": "Without facts there is no edge. Journal turns emotions into data and gives the desk something real to improve.",
+      "count": 13
+    },
+    {
+      "text": "Strategy OS turns random trading into a structured playbook: setup logic, evidence, rules, drills and version upgrades.",
+      "count": 13
+    },
+    {
+      "text": "The trader stops jumping between ideas and develops one repeatable edge with proof.",
+      "count": 13
+    },
+    {
+      "text": "Charts is the visual execution terminal: ticker, TradingView chart, watchlist, movers and chart review.",
+      "count": 13
+    },
+    {
+      "text": "The trader reads structure before acting: levels, zones, volume, timeframe context and invalidation.",
+      "count": 13
+    },
+    {
+      "text": "Market scans stocks and crypto, ranks candidates and builds an AI Market Brief from real market context.",
+      "count": 13
+    },
+    {
+      "text": "The trader sees where the market is active before wasting energy on dead tickers.",
+      "count": 13
+    },
+    {
+      "text": "Signals Desk shows actionable setups only when the market gives a trigger, entry zone, stop, targets and risk note.",
+      "count": 13
+    },
+    {
+      "text": "The trader receives a plan, not noise: direction, reason, invalidation, targets and later the real outcome.",
+      "count": 13
+    },
+    {
+      "text": "Desk Coach answers trading questions, reviews process and keeps the trader inside risk-first thinking.",
+      "count": 13
+    },
+    {
+      "text": "The trader gets strict feedback before repeating the same mistake for the tenth time.",
+      "count": 13
+    },
+    {
+      "text": "Learning keeps the trader’s base sharp: market mechanics, levels, risk, momentum, psychology and setups.",
+      "count": 13
+    },
+    {
+      "text": "The trader stops consuming random content and studies only what improves decision quality inside the desk.",
+      "count": 13
+    },
+    {
+      "text": "Reports converts journal data into performance, setup quality, leaks, strengths and next focus.",
+      "count": 13
+    },
+    {
+      "text": "The trader stops guessing. The sample shows what pays, what leaks and what must be cut.",
+      "count": 13
+    },
+    {
+      "text": "Account controls access, plan level, AI capacity, referral balance and payout requests.",
+      "count": 13
+    },
+    {
+      "text": "The trader sees exactly what is active, what is limited and where the account needs action.",
+      "count": 13
+    },
+    {
+      "text": "Strategy Trust",
+      "count": 12
+    },
+    {
+      "text": "text-[15px] font-black uppercase tracking-[0.12em] text-white/58",
+      "count": 12
+    },
+    {
+      "text": ",\n    sentiment:",
+      "count": 12
+    },
+    {
+      "text": "text-sm font-black text-white",
+      "count": 11
+    },
+    {
+      "text": "Not enough data yet",
+      "count": 11
+    },
+    {
+      "text": "AI Market Brief",
+      "count": 10
+    },
+    {
+      "text": "lower high",
+      "count": 10
+    },
+    {
+      "text": "SkillEdge AI — Premium AI Trading Workspace",
+      "count": 10
+    },
+    {
+      "text": "mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl",
+      "count": 9
+    },
+    {
+      "text": ",\n    name:",
+      "count": 9
+    },
+    {
+      "text": ",\n    type:",
+      "count": 9
+    },
+    {
+      "text": "AI Scanner",
+      "count": 9
+    },
+    {
+      "text": "Dubai / Warsaw / Kyiv",
+      "count": 9
+    },
+    {
+      "text": "mt-5 flex flex-wrap gap-2",
+      "count": 8
+    },
+    {
+      "text": "failed breakout",
+      "count": 8
+    },
+    {
+      "text": "SkillEdge Support",
+      "count": 8
+    },
+    {
+      "text": "SkillEdge Trading Desk",
+      "count": 8
+    },
+    {
+      "text": "Win rate",
+      "count": 8
+    },
+    {
+      "text": "Build Strategy v1",
+      "count": 8
+    },
+    {
+      "text": "Before-Trade Gate",
+      "count": 8
+    },
+    {
+      "text": "Собрать Strategy v1",
+      "count": 8
+    },
+    {
+      "text": "flex flex-wrap items-start justify-between gap-3",
+      "count": 8
+    },
+    {
+      "text": "text-[12px] font-black uppercase tracking-[0.18em] text-white/36",
+      "count": 8
+    },
+    {
+      "text": "text-xl font-semibold text-white",
+      "count": 8
+    },
+    {
+      "text": "mt-1 text-lg font-black text-white",
+      "count": 7
+    },
+    {
+      "text": "flex flex-wrap gap-2",
+      "count": 7
+    },
+    {
+      "text": "flex items-center gap-3",
+      "count": 7
+    },
+    {
+      "text": "mt-5 grid gap-3",
+      "count": 7
+    },
+    {
+      "text": "Evidence Locker",
+      "count": 7
+    },
+    {
+      "text": "Profit Factor",
+      "count": 7
+    },
+    {
+      "text": "mt-2 text-2xl font-black text-white",
+      "count": 7
+    },
+    {
+      "text": "Stop / invalidation",
+      "count": 7
+    },
+    {
+      "text": "mt-4 flex flex-wrap gap-2",
+      "count": 7
+    },
+    {
+      "text": "rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[18px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white",
+      "count": 7
+    },
+    {
+      "text": "rounded-[1.35rem] border border-white/10 bg-black/18 p-4",
+      "count": 7
+    },
+    {
+      "text": "text-[12px] font-black uppercase tracking-[0.2em] text-white/40",
+      "count": 7
+    },
+    {
+      "text": "text-[12px] font-black uppercase tracking-[0.14em] text-white/46",
+      "count": 7
+    },
+    {
+      "text": "field-input mt-2",
+      "count": 7
+    },
+    {
+      "text": "Personal Edge Engine",
+      "count": 7
+    },
+    {
+      "text": "Outcome learning",
+      "count": 7
+    },
+    {
+      "text": "rounded-2xl border border-white/10 bg-black/20 p-3",
+      "count": 6
+    },
+    {
+      "text": "absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]",
+      "count": 6
+    },
+    {
+      "text": "mt-5 grid gap-2",
+      "count": 6
+    },
+    {
+      "text": "sessionId is required.",
+      "count": 6
+    },
+    {
+      "text": "Price action",
+      "count": 6
+    },
+    {
+      "text": "Reports Desk",
+      "count": 6
+    },
+    {
+      "text": "Elite demo",
+      "count": 6
+    },
+    {
+      "text": "20-trade experiment",
+      "count": 6
+    },
+    {
+      "text": "mt-3 text-2xl font-black tracking-[-0.04em] text-white",
+      "count": 6
+    },
+    {
+      "text": ": language ===",
+      "count": 6
+    },
+    {
+      "text": "Journal guide",
+      "count": 6
+    },
+    {
+      "text": "AI guide",
+      "count": 6
+    },
+    {
+      "text": "Last updated: May 2026",
+      "count": 6
+    },
+    {
+      "text": "Cookie Policy",
+      "count": 6
+    },
+    {
+      "text": "Privacy Policy",
+      "count": 6
+    },
+    {
+      "text": "Terms & Conditions",
+      "count": 6
+    },
+    {
+      "text": "AI Signals",
+      "count": 6
+    },
+    {
+      "text": "Market scan",
+      "count": 6
+    },
+    {
+      "text": "Outcome tracking",
+      "count": 6
+    },
+    {
+      "text": "TP1 >= 2R.",
+      "count": 6
+    },
+    {
+      "text": "flex items-start justify-between gap-4",
+      "count": 5
+    },
+    {
+      "text": "flex gap-2",
+      "count": 5
+    },
+    {
+      "text": "flex flex-wrap items-center gap-2",
+      "count": 5
+    },
+    {
+      "text": "text-[10px] font-black uppercase tracking-[0.16em] text-white/30",
+      "count": 5
+    },
+    {
+      "text": "No clear stop / invalidation saved",
+      "count": 5
+    },
+    {
+      "text": "Complete After-Trade Debrief after every attempt.",
+      "count": 5
+    },
+    {
+      "text": "Strategy Cockpit",
+      "count": 5
+    },
+    {
+      "text": "Session command note",
+      "count": 5
+    },
+    {
+      "text": "Add evidence",
+      "count": 5
+    },
+    {
+      "text": "Data Quality",
+      "count": 5
+    },
+    {
+      "text": "6 months",
+      "count": 5
+    },
+    {
+      "text": "Revenge trade",
+      "count": 5
+    },
+    {
+      "text": "rounded-[1.5rem] border border-white/10 bg-black/22 p-4",
+      "count": 5
+    },
+    {
+      "text": "text-[12px] font-black uppercase tracking-[0.22em] text-white/34",
+      "count": 5
+    },
+    {
+      "text": "mt-2 text-[14px] font-semibold leading-7 text-white/48",
+      "count": 5
+    },
+    {
+      "text": "mt-4 grid gap-3 md:grid-cols-2",
+      "count": 5
+    },
+    {
+      "text": "mt-5 grid gap-3 md:grid-cols-3",
+      "count": 5
+    },
+    {
+      "text": "rounded-2xl border border-white/10 bg-white/[0.035] p-4",
+      "count": 5
+    },
+    {
+      "text": "rounded-[1.4rem] border border-white/10 bg-black/20 p-4",
+      "count": 5
+    },
+    {
+      "text": "text-[15px] font-black uppercase tracking-[0.16em] text-white/48",
+      "count": 5
+    },
+    {
+      "text": "Referral program",
+      "count": 5
+    },
+    {
+      "text": "se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5",
+      "count": 5
+    },
+    {
+      "text": "mt-1 text-sm font-black text-white",
+      "count": 5
+    },
+    {
+      "text": "Choose plan",
+      "count": 5
+    },
+    {
+      "text": "Billing & Cancellation",
+      "count": 5
+    },
+    {
+      "text": "2 months",
+      "count": 5
+    },
+    {
+      "text": "Default answer format:",
+      "count": 5
+    },
+    {
+      "text": "No 5m confirmation.",
+      "count": 5
+    },
+    {
+      "text": "flex flex-wrap gap-3",
+      "count": 4
+    },
+    {
+      "text": "flex items-center justify-between",
+      "count": 4
+    },
+    {
+      "text": "mt-2 text-sm font-semibold leading-6 text-white/54",
+      "count": 4
+    },
+    {
+      "text": "relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-[#081522]/82 p-5 shadow-[0_28px_120px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-7",
+      "count": 4
+    },
+    {
+      "text": "absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(34,211,238,0.13),transparent_32%)]",
+      "count": 4
+    },
+    {
+      "text": "text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/56",
+      "count": 4
+    },
+    {
+      "text": "text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100/56",
+      "count": 4
+    },
+    {
+      "text": "grid gap-2",
+      "count": 4
+    },
+    {
+      "text": "Premarket Pump Short",
+      "count": 4
+    },
+    {
+      "text": "Chasing after move",
+      "count": 4
+    },
+    {
+      "text": "New SkillEdge AI support request",
+      "count": 4
+    },
+    {
+      "text": "TP1 was already reached before alert delivery.",
+      "count": 4
+    },
+    {
+      "text": "VWAP Reclaim Long",
+      "count": 4
+    },
+    {
+      "text": "Ask Desk Mentor",
+      "count": 4
+    },
+    {
+      "text": "Open chart",
+      "count": 4
+    },
+    {
+      "text": "Setup Academy",
+      "count": 4
+    },
+    {
+      "text": "After-Trade Debrief",
+      "count": 4
+    },
+    {
+      "text": "Desk report",
+      "count": 4
+    },
+    {
+      "text": "Trade database",
+      "count": 4
+    },
+    {
+      "text": "Market scanner",
+      "count": 4
+    },
+    {
+      "text": "Execution review",
+      "count": 4
+    },
+    {
+      "text": "text-xs font-black uppercase tracking-[0.18em] text-white/38",
+      "count": 4
+    },
+    {
+      "text": "mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36",
+      "count": 4
+    },
+    {
+      "text": "Market context",
+      "count": 4
+    },
+    {
+      "text": "Confirmation checklist",
+      "count": 4
+    },
+    {
+      "text": "Strategy Builder",
+      "count": 4
+    },
+    {
+      "text": "Strategy Intelligence",
+      "count": 4
+    },
+    {
+      "text": "Strategy Desk Review",
+      "count": 4
+    },
+    {
+      "text": "Setup / Playbook",
+      "count": 4
+    },
+    {
+      "text": "rounded-2xl border border-white/8 bg-white/[0.035] p-3",
+      "count": 4
+    },
+    {
+      "text": "mt-2 text-xl font-black tracking-[-0.035em] text-white",
+      "count": 4
+    },
+    {
+      "text": "flex flex-wrap items-center justify-between gap-3",
+      "count": 4
+    },
+    {
+      "text": "mt-6 flex flex-wrap justify-end gap-3",
+      "count": 4
+    },
+    {
+      "text": "mt-2 w-full rounded-2xl border border-violet-200/18 bg-violet-200/[0.045] px-5 py-4 text-[18px] font-semibold text-white outline-none transition placeholder:text-white/26 focus:border-violet-200/42",
+      "count": 4
+    },
+    {
+      "text": "block sm:col-span-2",
+      "count": 4
+    },
+    {
+      "text": "mt-2 w-full rounded-2xl border border-emerald-200/18 bg-emerald-200/[0.045] px-5 py-4 text-[18px] font-semibold text-white outline-none transition placeholder:text-white/26 focus:border-emerald-200/42",
+      "count": 4
+    },
+    {
+      "text": "mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-5 py-4 text-[18px] font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36",
+      "count": 4
+    },
+    {
+      "text": "Trade ticket",
+      "count": 4
+    },
+    {
+      "text": ">\n                  <option value=",
+      "count": 4
+    },
+    {
+      "text": ",\n    score:",
+      "count": 4
+    },
+    {
+      "text": ",\n    noData:",
+      "count": 4
+    },
+    {
+      "text": ",\n    provider:",
+      "count": 4
+    },
+    {
+      "text": ",\n      entryTouched:",
+      "count": 4
+    },
+    {
+      "text": ",\n    };\n  }\n\n  if (language ===",
+      "count": 4
+    },
+    {
+      "text": ";\n  } else if (reaction ===",
+      "count": 4
+    },
+    {
+      "text": ",\n      status:",
+      "count": 4
+    },
+    {
+      "text": "Open dashboard",
+      "count": 4
+    },
+    {
+      "text": "Anti-Setup Guard",
+      "count": 4
+    },
+    {
+      "text": "Risk Guard",
+      "count": 4
+    },
+    {
+      "text": "Personal Playbook",
+      "count": 4
+    },
+    {
+      "text": "Execution Review",
+      "count": 4
+    },
+    {
+      "text": "Setup Library",
+      "count": 4
+    },
+    {
+      "text": "w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none",
+      "count": 4
+    },
+    {
+      "text": "© 2026 SkillEdge AI. Все права защищены.",
+      "count": 4
+    },
+    {
+      "text": "View pricing",
+      "count": 4
+    },
+    {
+      "text": "© 2026 SkillEdge AI. All rights reserved.",
+      "count": 4
+    },
+    {
+      "text": "mt-1 text-xs font-semibold leading-5 text-white/48",
+      "count": 4
+    },
+    {
+      "text": "mt-3 grid grid-cols-2 gap-2",
+      "count": 4
+    },
+    {
+      "text": "flex items-center justify-between gap-2",
+      "count": 4
+    },
+    {
+      "text": "rounded-xl border border-white/10 bg-black/20 p-3",
+      "count": 4
+    },
+    {
+      "text": "text-[10px] uppercase tracking-[0.14em] text-white/38",
+      "count": 4
+    },
+    {
+      "text": "text-sm font-semibold text-white",
+      "count": 4
+    },
+    {
+      "text": "Request demo",
+      "count": 4
+    },
+    {
+      "text": "AI Reports",
+      "count": 4
+    },
+    {
+      "text": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+      "count": 4
+    },
+    {
+      "text": "Personal edge",
+      "count": 4
+    },
+    {
+      "text": "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.",
+      "count": 4
+    },
+    {
+      "text": "rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white",
+      "count": 4
+    },
+    {
+      "text": "relative z-10",
+      "count": 4
+    },
+    {
+      "text": "mt-6 flex flex-wrap gap-3",
+      "count": 4
+    },
+    {
+      "text": "Advanced reports",
+      "count": 4
+    },
+    {
+      "text": "Floating alerts widget",
+      "count": 4
+    }
+  ],
+  "nextAction": "REVIEW_AND_BUILD_CANONICAL_ENGLISH_MASTER_JSON"
+}

@@ -1,0 +1,20 @@
+# /etc/systemd/system/skilledge-stock-engine-api.service
+[Unit]
+Description=SkillEdge Stock Engine API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python -m uvicorn app.api.app:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+TimeoutStartSec=60
+KillSignal=SIGINT
+User=skilledge
+Group=skilledge
+
+[Install]
+WantedBy=multi-user.target

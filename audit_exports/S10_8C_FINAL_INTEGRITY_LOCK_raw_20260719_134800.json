@@ -1,0 +1,79 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_FINAL_INTEGRITY_LOCK_PASSED",
+    "inspectionOnly":  true,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "packageExecuted":  false,
+    "deploymentAuthorized":  false,
+    "armAllowed":  false,
+    "readinessPackage":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_8B_monday_readiness_20260719_134449",
+    "authorizedExecutor":  "S10_7Y2_DAY7D_execute_guarded_capacity_canary_FIXED.ps1",
+    "authorizedExecutorSha256":  "bf5e43b43dddb4dfa471f47942068072feb75f6f8a334016232bbc4d262980b9",
+    "forbiddenExecutor":  "S10_7Y_DAY7D_execute_guarded_capacity_canary.ps1",
+    "forbiddenExecutorMustNotRun":  true,
+    "exactRunCommand":  "powershell -ExecutionPolicy Bypass -File \".\\S10_7Y2_DAY7D_execute_guarded_capacity_canary_FIXED.ps1\" -ProjectRoot (Get-Location).Path -Execute",
+    "expectedStageOrder":  [
+                               25,
+                               50,
+                               100,
+                               150,
+                               250
+                           ],
+    "actualStageOrder":  [
+                             25,
+                             50,
+                             100,
+                             150,
+                             250
+                         ],
+    "hashChecks":  {
+                       "executor":  {
+                                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_7Y2_DAY7D_execute_guarded_capacity_canary_FIXED.ps1",
+                                        "expectedSha256":  "bf5e43b43dddb4dfa471f47942068072feb75f6f8a334016232bbc4d262980b9",
+                                        "actualSha256":  "bf5e43b43dddb4dfa471f47942068072feb75f6f8a334016232bbc4d262980b9",
+                                        "matches":  true
+                                    },
+                       "validationRaw":  {
+                                             "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_8A_Y2_OFFLINE_VALIDATION_raw_20260719_134234.json",
+                                             "expectedSha256":  "6ff25ad303868ffbcbeebdc60821e72bd5e1b6667a08415eccf818faeebe03ab",
+                                             "actualSha256":  "6ff25ad303868ffbcbeebdc60821e72bd5e1b6667a08415eccf818faeebe03ab",
+                                             "matches":  true
+                                         },
+                       "validationReport":  {
+                                                "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_8A_Y2_OFFLINE_VALIDATION_report_20260719_134234.txt",
+                                                "expectedSha256":  "bbac7d96e0c0174b65614999e1f90fab0dbd986bd367eed1c5c893a49b8dcad9",
+                                                "actualSha256":  "bbac7d96e0c0174b65614999e1f90fab0dbd986bd367eed1c5c893a49b8dcad9",
+                                                "matches":  true
+                                            },
+                       "universe":  {
+                                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_7P_VALIDATED_LIQUID_250_UNIVERSE_20260718_235427.json",
+                                        "expectedSha256":  "270c9db67b3e83789ca505a1b38172dc2254747dab3edcf2b147b000d71b4bf0",
+                                        "actualSha256":  "270c9db67b3e83789ca505a1b38172dc2254747dab3edcf2b147b000d71b4bf0",
+                                        "matches":  true
+                                    },
+                       "canaryPlan":  {
+                                          "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_7V_guarded_v2_canary_with_v3_20260719_123445\\config\\canary_plan.json",
+                                          "expectedSha256":  "39a0c35be3dba1ab1c2a8bff388abd6b2966e13b9d061709efdc6d63e1466f2a",
+                                          "actualSha256":  "39a0c35be3dba1ab1c2a8bff388abd6b2966e13b9d061709efdc6d63e1466f2a",
+                                          "matches":  true
+                                      },
+                       "packageManifest":  {
+                                               "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_7V_guarded_v2_canary_with_v3_20260719_123445\\manifest.json",
+                                               "expectedSha256":  "7ce2055c19c187bb6dedde218da5f0902aa309bb394e4d23796b0c712922e4d6",
+                                               "actualSha256":  "7ce2055c19c187bb6dedde218da5f0902aa309bb394e4d23796b0c712922e4d6",
+                                               "matches":  true
+                                           }
+                   },
+    "runbookValidated":  true,
+    "checksumVerifierPresent":  true,
+    "errors":  [
+
+               ],
+    "warnings":  [
+
+                 ],
+    "nextAction":  "MONDAY_RECHECK_HASHES_RUN_PREFLIGHT_EXECUTE_Y2"
+}

@@ -1,0 +1,568 @@
+﻿{
+    "ok":  true,
+    "version":  "s5_16b_entry_health_selection_fix_v1",
+    "date":  "2026-06-17",
+    "generatedAt":  "2026-06-17T15:55:40.542125+00:00",
+    "source":  "fresh_compact_cockpit_payload",
+    "lifecycleSource":  "direct_engine_lifecycle_cache_or_memory",
+    "runtimeStatus":  {
+                          "watchCount":  68,
+                          "armedCount":  14,
+                          "activeCount":  21,
+                          "actionableActiveCount":  21,
+                          "closedActiveCount":  4,
+                          "signalCount":  39,
+                          "lifecycleCount":  25,
+                          "rawWatchCount":  68,
+                          "rawArmedCount":  14,
+                          "rawActiveCount":  25,
+                          "rawSignalCount":  39,
+                          "activeSource":  "runtime_cache_or_memory",
+                          "sourceOfTruth":  "compact_cockpit_sections",
+                          "updatedAt":  "2026-06-17T15:55:39.723039+00:00"
+                      },
+    "counts":  {
+                   "watchCount":  68,
+                   "armedCount":  14,
+                   "activeCount":  21,
+                   "lifecycleCount":  25,
+                   "directLifecycleCount":  25,
+                   "rankedActiveCount":  21,
+                   "strictEligibleCount":  21,
+                   "entryHealthCandidateCount":  21,
+                   "paperTestOkCandidateCount":  19,
+                   "entryHealthSelectionEligibleCount":  19,
+                   "selectedBestCount":  5,
+                   "monitorCount":  16
+               },
+    "dailyDeskState":  {
+                           "state":  "BEST_IDEAS_READY",
+                           "lifecycleByStatus":  {
+                                                     "ENTRY_STILL_VALID":  21,
+                                                     "INVALIDATED":  4
+                                                 },
+                           "selectedLifecycleByStatus":  {
+                                                             "ENTRY_STILL_VALID":  5
+                                                         },
+                           "candidateEntryHealthByState":  {
+                                                               "HEALTHY_ENTRY_ZONE":  14,
+                                                               "CAUTION_AGAINST_ENTRY":  4,
+                                                               "WEAK_NEAR_STOP_WAIT_REENTRY":  2,
+                                                               "MILD_PULLBACK_STILL_VALID":  1
+                                                           },
+                           "selectedEntryHealthByState":  {
+                                                              "HEALTHY_ENTRY_ZONE":  5
+                                                          },
+                           "telegramEliteReadyCount":  0,
+                           "nearEliteCount":  0
+                       },
+    "selectedBestIdeas":  [
+                              {
+                                  "rank":  1,
+                                  "role":  "PRIMARY_IDEA",
+                                  "symbol":  "AAL",
+                                  "setupSlug":  "vwap_reclaim_long",
+                                  "setupName":  "VWAP Reclaim Long",
+                                  "direction":  "long",
+                                  "status":  "ENTRY_STILL_VALID",
+                                  "lifecycleStatus":  "ENTRY_STILL_VALID",
+                                  "tier":  "BEST_DESK_IDEA",
+                                  "selectorScore":  162.0,
+                                  "score":  100.0,
+                                  "rrToTp1":  2.0,
+                                  "entry":  15.87,
+                                  "stop":  15.6716,
+                                  "tp1":  16.2668,
+                                  "tp2":  16.4652,
+                                  "currentPrice":  15.8692,
+                                  "currentR":  0.0,
+                                  "deskPassed":  true,
+                                  "telegramPassed":  false,
+                                  "strictEligible":  true,
+                                  "isActionable":  true,
+                                  "strictBlockedReasons":  [
+
+                                                           ],
+                                  "reasons":  [
+                                                  "actionable_now",
+                                                  "desk_quality_passed",
+                                                  "grade_a_plus",
+                                                  "rr_2r_plus",
+                                                  "execution_confirmation_present",
+                                                  "multi_trigger_confirmation",
+                                                  "two_execution_triggers",
+                                                  "entry_distance_elite",
+                                                  "volume_3m_plus",
+                                                  "lifecycle_valid"
+                                              ],
+                                  "cautions":  [
+                                                   "telegram_requires_rr_2_2_plus"
+                                               ],
+                                  "whySelected":  [
+                                                      "actionable_now",
+                                                      "desk_quality_passed",
+                                                      "grade_a_plus",
+                                                      "rr_2r_plus",
+                                                      "execution_confirmation_present"
+                                                  ],
+                                  "whyNotElite":  [
+                                                      "telegram_requires_rr_2_2_plus"
+                                                  ],
+                                  "lifecycle":  {
+                                                    "symbol":  "AAL",
+                                                    "setupSlug":  "vwap_reclaim_long",
+                                                    "direction":  "long",
+                                                    "status":  "ENTRY_STILL_VALID",
+                                                    "currentR":  0.0,
+                                                    "mfeR":  null,
+                                                    "maeR":  null,
+                                                    "lastEventAt":  null,
+                                                    "reason":  null
+                                                },
+                                  "outcome":  null,
+                                  "entryHealth":  {
+                                                      "state":  "HEALTHY_ENTRY_ZONE",
+                                                      "currentR":  0.0,
+                                                      "paperTestOk":  true,
+                                                      "priorityScore":  162.0,
+                                                      "action":  "paper_test_candidate",
+                                                      "reasons":  [
+                                                                      "price_near_or_slightly_in_favor",
+                                                                      "lifecycle:entry_still_valid"
+                                                                  ]
+                                                  }
+                              },
+                              {
+                                  "rank":  2,
+                                  "role":  "BACKUP_IDEA",
+                                  "symbol":  "CRVO",
+                                  "setupSlug":  "vwap_reclaim_long",
+                                  "setupName":  "VWAP Reclaim Long",
+                                  "direction":  "long",
+                                  "status":  "ENTRY_STILL_VALID",
+                                  "lifecycleStatus":  "ENTRY_STILL_VALID",
+                                  "tier":  "BEST_DESK_IDEA",
+                                  "selectorScore":  162.0,
+                                  "score":  100.0,
+                                  "rrToTp1":  2.0,
+                                  "entry":  3.87,
+                                  "stop":  3.8216,
+                                  "tp1":  3.9668,
+                                  "tp2":  4.0152,
+                                  "currentPrice":  3.885,
+                                  "currentR":  0.31,
+                                  "deskPassed":  true,
+                                  "telegramPassed":  false,
+                                  "strictEligible":  true,
+                                  "isActionable":  true,
+                                  "strictBlockedReasons":  [
+
+                                                           ],
+                                  "reasons":  [
+                                                  "actionable_now",
+                                                  "desk_quality_passed",
+                                                  "grade_a_plus",
+                                                  "rr_2r_plus",
+                                                  "execution_confirmation_present",
+                                                  "multi_trigger_confirmation",
+                                                  "two_execution_triggers",
+                                                  "entry_distance_elite",
+                                                  "volume_3m_plus",
+                                                  "lifecycle_valid"
+                                              ],
+                                  "cautions":  [
+                                                   "telegram_requires_rr_2_2_plus"
+                                               ],
+                                  "whySelected":  [
+                                                      "actionable_now",
+                                                      "desk_quality_passed",
+                                                      "grade_a_plus",
+                                                      "rr_2r_plus",
+                                                      "execution_confirmation_present"
+                                                  ],
+                                  "whyNotElite":  [
+                                                      "telegram_requires_rr_2_2_plus"
+                                                  ],
+                                  "lifecycle":  {
+                                                    "symbol":  "CRVO",
+                                                    "setupSlug":  "vwap_reclaim_long",
+                                                    "direction":  "long",
+                                                    "status":  "ENTRY_STILL_VALID",
+                                                    "currentR":  0.31,
+                                                    "mfeR":  null,
+                                                    "maeR":  null,
+                                                    "lastEventAt":  null,
+                                                    "reason":  null
+                                                },
+                                  "outcome":  {
+                                                  "symbol":  "CRVO",
+                                                  "setupSlug":  "vwap_reclaim_long",
+                                                  "direction":  "long",
+                                                  "status":  "OPEN",
+                                                  "event":  null,
+                                                  "resultR":  0.0,
+                                                  "mfeR":  0.0,
+                                                  "maeR":  0.0,
+                                                  "firstEventAt":  null,
+                                                  "timeToFirstEventMinutes":  null
+                                              },
+                                  "entryHealth":  {
+                                                      "state":  "HEALTHY_ENTRY_ZONE",
+                                                      "currentR":  0.31,
+                                                      "paperTestOk":  true,
+                                                      "priorityScore":  162.0,
+                                                      "action":  "paper_test_candidate",
+                                                      "reasons":  [
+                                                                      "price_near_or_slightly_in_favor",
+                                                                      "lifecycle:entry_still_valid"
+                                                                  ]
+                                                  }
+                              },
+                              {
+                                  "rank":  3,
+                                  "role":  "BACKUP_IDEA",
+                                  "symbol":  "EOSE",
+                                  "setupSlug":  "vwap_reclaim_long",
+                                  "setupName":  "VWAP Reclaim Long",
+                                  "direction":  "long",
+                                  "status":  "ENTRY_STILL_VALID",
+                                  "lifecycleStatus":  "ENTRY_STILL_VALID",
+                                  "tier":  "BEST_DESK_IDEA",
+                                  "selectorScore":  162.0,
+                                  "score":  100.0,
+                                  "rrToTp1":  2.0,
+                                  "entry":  7.62,
+                                  "stop":  7.4943,
+                                  "tp1":  7.8714,
+                                  "tp2":  7.9971,
+                                  "currentPrice":  7.6399,
+                                  "currentR":  0.16,
+                                  "deskPassed":  true,
+                                  "telegramPassed":  false,
+                                  "strictEligible":  true,
+                                  "isActionable":  true,
+                                  "strictBlockedReasons":  [
+
+                                                           ],
+                                  "reasons":  [
+                                                  "actionable_now",
+                                                  "desk_quality_passed",
+                                                  "grade_a_plus",
+                                                  "rr_2r_plus",
+                                                  "execution_confirmation_present",
+                                                  "multi_trigger_confirmation",
+                                                  "two_execution_triggers",
+                                                  "entry_distance_elite",
+                                                  "volume_3m_plus",
+                                                  "lifecycle_valid"
+                                              ],
+                                  "cautions":  [
+                                                   "telegram_requires_rr_2_2_plus"
+                                               ],
+                                  "whySelected":  [
+                                                      "actionable_now",
+                                                      "desk_quality_passed",
+                                                      "grade_a_plus",
+                                                      "rr_2r_plus",
+                                                      "execution_confirmation_present"
+                                                  ],
+                                  "whyNotElite":  [
+                                                      "telegram_requires_rr_2_2_plus"
+                                                  ],
+                                  "lifecycle":  {
+                                                    "symbol":  "EOSE",
+                                                    "setupSlug":  "vwap_reclaim_long",
+                                                    "direction":  "long",
+                                                    "status":  "ENTRY_STILL_VALID",
+                                                    "currentR":  0.16,
+                                                    "mfeR":  null,
+                                                    "maeR":  null,
+                                                    "lastEventAt":  null,
+                                                    "reason":  null
+                                                },
+                                  "outcome":  null,
+                                  "entryHealth":  {
+                                                      "state":  "HEALTHY_ENTRY_ZONE",
+                                                      "currentR":  0.16,
+                                                      "paperTestOk":  true,
+                                                      "priorityScore":  162.0,
+                                                      "action":  "paper_test_candidate",
+                                                      "reasons":  [
+                                                                      "price_near_or_slightly_in_favor",
+                                                                      "lifecycle:entry_still_valid"
+                                                                  ]
+                                                  }
+                              },
+                              {
+                                  "rank":  4,
+                                  "role":  "BACKUP_IDEA",
+                                  "symbol":  "SNAP",
+                                  "setupSlug":  "large_cap_vwap_trend_long",
+                                  "setupName":  "Large Cap VWAP Trend Long",
+                                  "direction":  "long",
+                                  "status":  "ENTRY_STILL_VALID",
+                                  "lifecycleStatus":  "ENTRY_STILL_VALID",
+                                  "tier":  "BEST_DESK_IDEA",
+                                  "selectorScore":  162.0,
+                                  "score":  100.0,
+                                  "rrToTp1":  2.0,
+                                  "entry":  4.93,
+                                  "stop":  4.8684,
+                                  "tp1":  5.0532,
+                                  "tp2":  5.1148,
+                                  "currentPrice":  4.93,
+                                  "currentR":  0.0,
+                                  "deskPassed":  true,
+                                  "telegramPassed":  false,
+                                  "strictEligible":  true,
+                                  "isActionable":  true,
+                                  "strictBlockedReasons":  [
+
+                                                           ],
+                                  "reasons":  [
+                                                  "actionable_now",
+                                                  "desk_quality_passed",
+                                                  "grade_a_plus",
+                                                  "rr_2r_plus",
+                                                  "execution_confirmation_present",
+                                                  "multi_trigger_confirmation",
+                                                  "two_execution_triggers",
+                                                  "entry_distance_elite",
+                                                  "volume_3m_plus",
+                                                  "lifecycle_valid"
+                                              ],
+                                  "cautions":  [
+                                                   "telegram_requires_rr_2_2_plus"
+                                               ],
+                                  "whySelected":  [
+                                                      "actionable_now",
+                                                      "desk_quality_passed",
+                                                      "grade_a_plus",
+                                                      "rr_2r_plus",
+                                                      "execution_confirmation_present"
+                                                  ],
+                                  "whyNotElite":  [
+                                                      "telegram_requires_rr_2_2_plus"
+                                                  ],
+                                  "lifecycle":  {
+                                                    "symbol":  "SNAP",
+                                                    "setupSlug":  "large_cap_vwap_trend_long",
+                                                    "direction":  "long",
+                                                    "status":  "ENTRY_STILL_VALID",
+                                                    "currentR":  0.0,
+                                                    "mfeR":  null,
+                                                    "maeR":  null,
+                                                    "lastEventAt":  null,
+                                                    "reason":  null
+                                                },
+                                  "outcome":  {
+                                                  "symbol":  "SNAP",
+                                                  "setupSlug":  "large_cap_vwap_trend_long",
+                                                  "direction":  "long",
+                                                  "status":  "OPEN",
+                                                  "event":  null,
+                                                  "resultR":  0.0,
+                                                  "mfeR":  0.0,
+                                                  "maeR":  0.0,
+                                                  "firstEventAt":  null,
+                                                  "timeToFirstEventMinutes":  null
+                                              },
+                                  "entryHealth":  {
+                                                      "state":  "HEALTHY_ENTRY_ZONE",
+                                                      "currentR":  0.0,
+                                                      "paperTestOk":  true,
+                                                      "priorityScore":  162.0,
+                                                      "action":  "paper_test_candidate",
+                                                      "reasons":  [
+                                                                      "price_near_or_slightly_in_favor",
+                                                                      "lifecycle:entry_still_valid"
+                                                                  ]
+                                                  }
+                              },
+                              {
+                                  "rank":  5,
+                                  "role":  "BACKUP_IDEA",
+                                  "symbol":  "EZGO",
+                                  "setupSlug":  "vwap_reclaim_long",
+                                  "setupName":  "VWAP Reclaim Long",
+                                  "direction":  "long",
+                                  "status":  "ENTRY_STILL_VALID",
+                                  "lifecycleStatus":  "ENTRY_STILL_VALID",
+                                  "tier":  "BEST_DESK_IDEA",
+                                  "selectorScore":  157.0,
+                                  "score":  100.0,
+                                  "rrToTp1":  2.0,
+                                  "entry":  1.67,
+                                  "stop":  1.6283,
+                                  "tp1":  1.7534,
+                                  "tp2":  1.7951,
+                                  "currentPrice":  1.67,
+                                  "currentR":  0.0,
+                                  "deskPassed":  true,
+                                  "telegramPassed":  false,
+                                  "strictEligible":  true,
+                                  "isActionable":  true,
+                                  "strictBlockedReasons":  [
+
+                                                           ],
+                                  "reasons":  [
+                                                  "actionable_now",
+                                                  "desk_quality_passed",
+                                                  "grade_a_plus",
+                                                  "rr_2r_plus",
+                                                  "execution_confirmation_present",
+                                                  "multi_trigger_confirmation",
+                                                  "entry_distance_elite",
+                                                  "volume_3m_plus",
+                                                  "lifecycle_valid"
+                                              ],
+                                  "cautions":  [
+                                                   "telegram_requires_rr_2_2_plus"
+                                               ],
+                                  "whySelected":  [
+                                                      "actionable_now",
+                                                      "desk_quality_passed",
+                                                      "grade_a_plus",
+                                                      "rr_2r_plus",
+                                                      "execution_confirmation_present"
+                                                  ],
+                                  "whyNotElite":  [
+                                                      "telegram_requires_rr_2_2_plus"
+                                                  ],
+                                  "lifecycle":  {
+                                                    "symbol":  "EZGO",
+                                                    "setupSlug":  "vwap_reclaim_long",
+                                                    "direction":  "long",
+                                                    "status":  "ENTRY_STILL_VALID",
+                                                    "currentR":  0.0,
+                                                    "mfeR":  null,
+                                                    "maeR":  null,
+                                                    "lastEventAt":  null,
+                                                    "reason":  null
+                                                },
+                                  "outcome":  {
+                                                  "symbol":  "EZGO",
+                                                  "setupSlug":  "vwap_reclaim_long",
+                                                  "direction":  "long",
+                                                  "status":  "OPEN",
+                                                  "event":  null,
+                                                  "resultR":  0.0,
+                                                  "mfeR":  0.0,
+                                                  "maeR":  0.0,
+                                                  "firstEventAt":  null,
+                                                  "timeToFirstEventMinutes":  null
+                                              },
+                                  "entryHealth":  {
+                                                      "state":  "HEALTHY_ENTRY_ZONE",
+                                                      "currentR":  0.0,
+                                                      "paperTestOk":  true,
+                                                      "priorityScore":  157.0,
+                                                      "action":  "paper_test_candidate",
+                                                      "reasons":  [
+                                                                      "price_near_or_slightly_in_favor",
+                                                                      "lifecycle:entry_still_valid"
+                                                                  ]
+                                                  }
+                              }
+                          ],
+    "monitoring":  {
+                       "notSelectedCount":  16,
+                       "entryHealthByState":  {
+                                                  "HEALTHY_ENTRY_ZONE":  14,
+                                                  "CAUTION_AGAINST_ENTRY":  4,
+                                                  "WEAK_NEAR_STOP_WAIT_REENTRY":  2,
+                                                  "MILD_PULLBACK_STILL_VALID":  1
+                                              },
+                       "strictBlockedByReason":  {
+                                                     "not_selected_lower_rank":  16
+                                                 },
+                       "telegramBlockedByReason":  [
+                                                       {
+                                                           "reason":  "telegram_requires_rr_2_2_plus",
+                                                           "count":  25,
+                                                           "examples":  [
+                                                                            "YMAT",
+                                                                            "LNAI",
+                                                                            "FTHM",
+                                                                            "RXT",
+                                                                            "ALOT",
+                                                                            "PLUG",
+                                                                            "SNAP",
+                                                                            "FLZH"
+                                                                        ]
+                                                       },
+                                                       {
+                                                           "reason":  "desk_quality_not_passed",
+                                                           "count":  14,
+                                                           "examples":  [
+                                                                            "SPRO",
+                                                                            "SNBR",
+                                                                            "BIRD",
+                                                                            "INTC",
+                                                                            "SOFI",
+                                                                            "MRVL",
+                                                                            "KEEL",
+                                                                            "HOOD"
+                                                                        ]
+                                                       },
+                                                       {
+                                                           "reason":  "telegram_small_cap_requires_1m_volume",
+                                                           "count":  3,
+                                                           "examples":  [
+                                                                            "ALOT",
+                                                                            "FLZH",
+                                                                            "WNC"
+                                                                        ]
+                                                       },
+                                                       {
+                                                           "reason":  "telegram_requires_multi_confirmation_or_setup_specific_break",
+                                                           "count":  2,
+                                                           "examples":  [
+                                                                            "SLBT",
+                                                                            "LZB"
+                                                                        ]
+                                                       },
+                                                       {
+                                                           "reason":  "telegram_blocks_sub_1_dollar_names",
+                                                           "count":  1,
+                                                           "examples":  [
+                                                                            "YMAT"
+                                                                        ]
+                                                       }
+                                                   ]
+                   },
+    "outcomes":  {
+                     "matchedSelectedOutcomes":  3,
+                     "note":  "Intraday lifecycle is available now; final outcome stats become meaningful after outcomes run near/after session close."
+                 },
+    "noTradeReasons":  [
+
+                       ],
+    "learningNotes":  [
+                          "all_best_ideas_are_desk_only_not_telegram_elite",
+                          "elite_blocker_rr_2_2_threshold_is_main_gap",
+                          "entry_health_guard_penalized_candidates_already_more_than_minus_0_5r"
+                      ],
+    "nextActions":  [
+                        "Keep selectedBestIdeas for paper/forward-test only; obey entryHealth.action and avoid chase/near-stop states.",
+                        "After market close run outcomes, then compare selectedBestIdeas against TP1/STOP/INVALIDATED/MFE/MAE.",
+                        "Use repeated daily reports as input for S6 Historical Replay and S7 Calibration/Re-ranking."
+                    ],
+    "lifecycleRefresh":  {
+                             "requested":  true,
+                             "ok":  true,
+                             "count":  25,
+                             "sourceActiveCount":  25,
+                             "lifecycleSource":  "sorted_signal_items",
+                             "summary":  {
+                                             "count":  25,
+                                             "byStatus":  {
+                                                              "ENTRY_STILL_VALID":  21,
+                                                              "INVALIDATED":  4
+                                                          },
+                                             "activeLikeCount":  21,
+                                             "closedLikeCount":  4
+                                         },
+                             "interval":  "5min"
+                         }
+}

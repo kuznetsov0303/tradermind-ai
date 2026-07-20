@@ -1,0 +1,66 @@
+﻿{
+    "stages":  [
+                   {
+                       "stage":  25,
+                       "durationMinutes":  5,
+                       "purpose":  "baseline",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  50,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  100,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  150,
+                       "durationMinutes":  10,
+                       "purpose":  "intermediate-canary",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  250,
+                       "durationMinutes":  30,
+                       "purpose":  "final-capacity-canary",
+                       "rollbackOnFailure":  true
+                   }
+               ],
+    "rollbackRules":  {
+                          "serviceUnhealthy":  true,
+                          "reconnectBurst":  true,
+                          "providerErrorsIncrease":  true,
+                          "negativeQuoteAge":  true,
+                          "quoteFreshnessP95RegressionPercent":  50,
+                          "processingLagP95RegressionPercent":  50,
+                          "cpuPercentCeiling":  85,
+                          "rssGrowthPercentCeiling":  50,
+                          "candleCompletenessFloorPercent":  99,
+                          "scannerCycleRegressionPercent":  100,
+                          "setupCycleRegressionPercent":  100,
+                          "snapshotWriteRegressionPercent":  100,
+                          "returnToUniverseSize":  25
+                      },
+    "baselineStageDeltasRequired":  true,
+    "executionAuthorized":  false,
+    "requiredMetrics":  [
+                            "rawRecordsPerSecond",
+                            "marketEventsPerSecond",
+                            "processingLagP95Ms",
+                            "quoteFreshnessP95Seconds",
+                            "cpuPercent",
+                            "rssBytes",
+                            "snapshotWriteLatencyMs",
+                            "candleCompletenessPercent",
+                            "providerReconnectCount",
+                            "providerErrorCount",
+                            "scannerCycleMs",
+                            "setupCycleMs"
+                        ],
+    "currentProductionUniverseMustRemain":  25
+}

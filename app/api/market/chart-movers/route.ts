@@ -1,51 +1,61 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type MoverSide = "gainers" | "losers";
-
-type FmpMover = {
-  symbol?: string | null;
-  ticker?: string | null;
-  name?: string | null;
-  companyName?: string | null;
-  price?: number | string | null;
-  changesPercentage?: number | string | null;
-  changePercentage?: number | string | null;
-  percentageChange?: number | string | null;
-  change?: number | string | null;
-  changes?: number | string | null;
-  volume?: number | string | null;
-  exchange?: string | null;
-  exchangeShortName?: string | null;
-};
-
-type FmpIntradayCandle = {
-  date?: string | null;
-  datetime?: string | null;
-  open?: number | string | null;
-  high?: number | string | null;
-  low?: number | string | null;
-  close?: number | string | null;
-  volume?: number | string | null;
-};
-
-type Candidate = {
+type MoverItem = {
   symbol: string;
   name: string;
-  providerChangePct: number | null;
-  providerPrice: number | null;
-  providerVolume: number | null;
+  price: number | null;
+  changePct: number;
+  volume: string;
+  rawVolume: number | null;
+  exchange: string;
+  volumeSource?: string;
 };
 
-type SessionWindow = {
-  thresholdKey: string;
-  startHourKyiv: number;
-  startLabelKyiv: string;
-  startLabelMarket: string;
-  marketDate: string;
-};
+function toNumber(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+
+  if (typeof value === "string") {
+    const normalized = value
+      .replace(/[()%,$\s]/g, "")
+      .replace(/^\+/, "")
+      .trim();
+
+    const parsed = Number(normalized);
+
+    if (Number.isFinite(parsed)) return parsed;
+  }
+
+  return null;
+}
+
+function firstNumber(...values: unknown[]) {
+  for (const value of values) {
+    const parsed = toNumber(value);
+    if (parsed !== null) return parsed;
+  }
+
+  return null;
+}
+
+function normalizeSymbol(value: unknown) {
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/[^A-Z0-9.-]/g, "");
+}
+
+function formatCompactNumber(value: number | null) {
+  if (value === null || !Number.isFinite(value) || value <= 0) return "N/A";
+
+  return new Intl.NumberFormat("en", {
+    notation: "compact",
+    maximumFractionDigits: 2,
+  }).format(value);
+}
 
 function getFmpApiKey() {
   return (
@@ -56,543 +66,422 @@ function getFmpApiKey() {
   ).trim();
 }
 
-function getFmpStableBaseUrl() {
-  return (
-    process.env.FMP_STABLE_BASE_URL ||
-    "https://financialmodelingprep.com/stable"
-  ).replace(/\/+$/g, "");
+function getFmpBaseUrl() {
+  return (process.env.FMP_STABLE_BASE_URL || "https://financialmodelingprep.com/stable").replace(
+    /\/+$/g,
+    ""
+  );
 }
 
-function getFmpLegacyBaseUrl() {
-  return (
-    process.env.FMP_LEGACY_BASE_URL ||
-    "https://financialmodelingprep.com/api/v3"
-  ).replace(/\/+$/g, "");
-}
+function normalizeFmpListPayload(payload: unknown): any[] {
+  if (Array.isArray(payload)) return payload;
 
-function parseNumber(value: unknown): number | null {
-  if (typeof value === "number") {
-    return Number.isFinite(value) ? value : null;
+  if (payload && typeof payload === "object") {
+    const record = payload as Record<string, unknown>;
+
+    for (const key of ["data", "items", "results", "quotes", "stocks"]) {
+      const value = record[key];
+
+      if (Array.isArray(value)) return value;
+    }
   }
 
-  if (typeof value === "string") {
-    const hasParentheses = value.includes("(") && value.includes(")");
-    const cleaned = value
-      .replace("%", "")
-      .replace(/[()+]/g, "")
-      .replace(/,/g, "")
-      .trim();
+  return [];
+}
 
-    const parsed = Number(cleaned);
+async function fetchJsonList(url: string): Promise<any[]> {
+  try {
+    const response = await fetch(url, {
+      cache: "no-store",
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
-    if (!Number.isFinite(parsed)) {
-      return null;
+    if (!response.ok) return [];
+
+    const payload = await response.json();
+
+    return normalizeFmpListPayload(payload);
+  } catch {
+    return [];
+  }
+}
+
+async function fetchFmpList(path: string, apiKey: string): Promise<any[]> {
+  const stableUrl = new URL(`${getFmpBaseUrl()}/${path}`);
+  stableUrl.searchParams.set("apikey", apiKey);
+
+  return fetchJsonList(stableUrl.toString());
+}
+
+function chunkArray<T>(items: T[], size: number) {
+  const chunks: T[][] = [];
+
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size));
+  }
+
+  return chunks;
+}
+
+function readVolumeFromQuote(row: any): number | null {
+  if (!row || typeof row !== "object") {
+    return null;
+  }
+
+  return firstNumber(
+    row.volume,
+    row.volAvg,
+    row.avgVolume,
+    row.averageVolume,
+    row.sharesVolume,
+    row.dayVolume
+  );
+}
+
+async function fetchFmpQuoteMap(symbols: string[], apiKey: string) {
+  const uniqueSymbols = Array.from(new Set(symbols.map(normalizeSymbol).filter(Boolean))).slice(0, 150);
+  const quoteBySymbol = new Map<string, any>();
+
+  for (const chunk of chunkArray(uniqueSymbols, 50)) {
+    const joined = chunk.join(",");
+
+    const stableBatchUrl = new URL(`${getFmpBaseUrl()}/batch-quote`);
+    stableBatchUrl.searchParams.set("symbols", joined);
+    stableBatchUrl.searchParams.set("apikey", apiKey);
+
+    let rows = await fetchJsonList(stableBatchUrl.toString());
+
+    if (rows.length === 0) {
+      const stableQuoteUrl = new URL(`${getFmpBaseUrl()}/quote`);
+      stableQuoteUrl.searchParams.set("symbol", joined);
+      stableQuoteUrl.searchParams.set("apikey", apiKey);
+
+      rows = await fetchJsonList(stableQuoteUrl.toString());
     }
 
-    return hasParentheses && parsed > 0 ? -parsed : parsed;
+    if (rows.length === 0) {
+      rows = await fetchJsonList(
+        `https://financialmodelingprep.com/api/v3/quote/${encodeURIComponent(joined)}?apikey=${encodeURIComponent(apiKey)}`
+      );
+    }
+
+    for (const row of rows) {
+      const symbol = normalizeSymbol(row.symbol || row.ticker);
+
+      if (symbol) {
+        quoteBySymbol.set(symbol, row);
+      }
+    }
   }
 
-  return null;
+  return quoteBySymbol;
 }
 
-function normalizeSymbol(value: unknown) {
-  return String(value || "")
-    .trim()
-    .toUpperCase()
-    .replace(/[^A-Z.\-]/g, "");
-}
-
-function isProbablyUsCommonStock(symbol: string, name: string) {
+function isTradeableUsStock(symbol: string) {
   if (!symbol) return false;
-  if (!/^[A-Z][A-Z.\-]{0,7}$/.test(symbol)) return false;
+  if (!/^[A-Z]{1,5}(\.[A-Z])?$/.test(symbol)) return false;
 
-  const upperName = name.toUpperCase();
+  const blocked = new Set([
+    "SPY",
+    "QQQ",
+    "IWM",
+    "DIA",
+    "VXX",
+    "UVXY",
+    "SQQQ",
+    "TQQQ",
+    "SOXL",
+    "SOXS",
+  ]);
 
-  const blockedNameParts = [
-    " ETF",
-    " ETN",
-    " TRUST",
-    " FUND",
-    " 2X ",
-    " 3X ",
-    " 2X",
-    " 3X",
-    "DAILY BULL",
-    "DAILY BEAR",
-    "DIREXION",
-    "PROSHARES",
-    "GRANITESHARES",
-    "LEVERAGE SHARES",
-    "ULTRASHORT",
-    "ULTRAPRO",
-    "WARRANT",
-    "RIGHTS",
-    "UNIT",
-  ];
-
-  if (blockedNameParts.some((part) => upperName.includes(part))) {
-    return false;
-  }
-
-  const blockedSymbolPatterns = [
-    /W$/,
-    /WS$/,
-    /WT$/,
-    /U$/,
-    /UN$/,
-    /R$/,
-  ];
-
-  if (symbol.length >= 5 && blockedSymbolPatterns.some((pattern) => pattern.test(symbol))) {
-    return false;
-  }
-
-  return true;
+  return !blocked.has(symbol);
 }
 
-function formatCompactNumber(value: number | null | undefined): string {
-  const numericValue = Number(value ?? 0);
+function isAllowedCryptoSymbol(symbol: string) {
+  if (!symbol) return false;
 
-  if (!Number.isFinite(numericValue) || numericValue <= 0) {
-    return "—";
-  }
+  const blocked = new Set([
+    "USDT",
+    "USDC",
+    "FDUSD",
+    "TUSD",
+    "DAI",
+    "BUSD",
+    "EUR",
+    "TRY",
+    "USD",
+  ]);
 
-  return new Intl.NumberFormat("en", {
-    notation: "compact",
-    maximumFractionDigits: 2,
-  }).format(numericValue);
+  if (blocked.has(symbol)) return false;
+
+  return /^[A-Z0-9]{2,15}$/.test(symbol);
 }
 
-function formatPercent(value: number) {
-  return Number.isFinite(value) ? Number(value.toFixed(2)) : 0;
-}
+function buildStockMover(item: any, quote: any | null): MoverItem | null {
+  const symbol = normalizeSymbol(item.symbol || item.ticker);
+  const price = firstNumber(item.price, item.lastPrice, quote?.price);
+  const changePct =
+    firstNumber(
+      item.changesPercentage,
+      item.changePercentage,
+      item.changePercent,
+      item.priceChangePercentage,
+      item.change,
+      item.changes,
+      quote?.changesPercentage,
+      quote?.changePercentage
+    ) ?? 0;
 
-function pad2(value: number) {
-  return String(value).padStart(2, "0");
-}
+  const volume = readVolumeFromQuote(item) ?? readVolumeFromQuote(quote);
 
-function getZonedParts(date: Date, timeZone: string) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(date);
-
-  const map = new Map(parts.map((part) => [part.type, part.value]));
+  if (!isTradeableUsStock(symbol)) return null;
+  if (price === null || price < 0.4 || price > 500) return null;
 
   return {
-    year: Number(map.get("year")),
-    month: Number(map.get("month")),
-    day: Number(map.get("day")),
-    hour: Number(map.get("hour")),
-    minute: Number(map.get("minute")),
-    second: Number(map.get("second")),
+    symbol,
+    name: item.name || item.companyName || quote?.name || symbol,
+    price,
+    changePct,
+    volume: formatCompactNumber(volume),
+    rawVolume: volume,
+    exchange: item.exchangeShortName || item.exchange || quote?.exchangeShortName || quote?.exchange || "US",
+    volumeSource: volume === null ? "missing" : quote ? "quote" : "mover",
   };
 }
 
-function getTimeZoneOffsetMinutes(timeZone: string, date: Date) {
-  const parts = getZonedParts(date, timeZone);
-  const localAsUtc = Date.UTC(
-    parts.year,
-    parts.month - 1,
-    parts.day,
-    parts.hour,
-    parts.minute,
-    parts.second
-  );
+async function getStockMovers(side: "gainers" | "losers", limit: number) {
+  const apiKey = getFmpApiKey();
 
-  return (localAsUtc - date.getTime()) / 60000;
-}
-
-function zonedTimeToUtc(
-  timeZone: string,
-  parts: {
-    year: number;
-    month: number;
-    day: number;
-    hour: number;
-    minute: number;
-    second?: number;
+  if (!apiKey) {
+    return {
+      items: [] as MoverItem[],
+      error: "Stock movers provider is not configured.",
+      debug: { reason: "missing_fmp_key" },
+    };
   }
-) {
-  const utcGuess = Date.UTC(
-    parts.year,
-    parts.month - 1,
-    parts.day,
-    parts.hour,
-    parts.minute,
-    parts.second ?? 0
-  );
 
-  const guessedDate = new Date(utcGuess);
-  const offsetMinutes = getTimeZoneOffsetMinutes(timeZone, guessedDate);
+  const [gainers, losers, active] = await Promise.all([
+    fetchFmpList("biggest-gainers", apiKey),
+    fetchFmpList("biggest-losers", apiKey),
+    fetchFmpList("most-actives", apiKey),
+  ]);
 
-  return new Date(utcGuess - offsetMinutes * 60_000);
+  const sourceRows = [...gainers, ...losers, ...active];
+  const symbols = sourceRows.map((row) => normalizeSymbol(row.symbol || row.ticker)).filter(Boolean);
+  const quoteBySymbol = await fetchFmpQuoteMap(symbols, apiKey);
+
+  const minVolume = Number(process.env.CHART_MOVERS_STOCK_MIN_VOLUME || "100000");
+  const minChangePct = Number(process.env.CHART_MOVERS_STOCK_MIN_CHANGE_PCT || "2");
+
+  const bySymbol = new Map<string, MoverItem>();
+  let parsedRows = 0;
+  let missingVolumeRows = 0;
+
+  for (const raw of sourceRows) {
+    const symbol = normalizeSymbol(raw.symbol || raw.ticker);
+    const item = buildStockMover(raw, quoteBySymbol.get(symbol) || null);
+
+    if (!item) continue;
+
+    parsedRows += 1;
+
+    if (item.rawVolume === null) {
+      missingVolumeRows += 1;
+    }
+
+    const sideOk = side === "gainers" ? item.changePct > 0 : item.changePct < 0;
+    const changeOk = Math.abs(item.changePct) >= minChangePct;
+    const volumeOk = item.rawVolume !== null && item.rawVolume >= minVolume;
+
+    // Для Charts показываем кандидатов даже если FMP не дал volume,
+    // но такие строки будут помечены volume: "—".
+    // Для Signals seed volume всё равно будет обязательным.
+    const displayFallback = item.rawVolume === null && changeOk;
+
+    if (!sideOk || (!volumeOk && !displayFallback)) continue;
+
+    const existing = bySymbol.get(item.symbol);
+
+    if (!existing || Math.abs(item.changePct) > Math.abs(existing.changePct)) {
+      bySymbol.set(item.symbol, item);
+    }
+  }
+
+  const items = Array.from(bySymbol.values())
+    .sort((a, b) => side === "gainers" ? b.changePct - a.changePct : a.changePct - b.changePct)
+    .slice(0, limit);
+
+  return {
+    items,
+    error:
+      items.length === 0
+        ? "Stock provider returned rows, but none passed display filters."
+        : null,
+    debug: {
+      stableRows: {
+        gainers: gainers.length,
+        losers: losers.length,
+        active: active.length,
+      },
+      quoteRows: quoteBySymbol.size,
+      parsedRows,
+      missingVolumeRows,
+      minVolume,
+      minChangePct,
+    },
+  };
 }
 
-function getSessionWindowFromKyivStart(): SessionWindow {
-  const startHourKyiv = Math.max(
-    0,
-    Math.min(23, Number(process.env.CHART_STOCK_MOVERS_START_HOUR_KYIV || 13))
-  );
-
-  const now = new Date();
-  const kyivToday = getZonedParts(now, "Europe/Kyiv");
-
-  const startUtc = zonedTimeToUtc("Europe/Kyiv", {
-    year: kyivToday.year,
-    month: kyivToday.month,
-    day: kyivToday.day,
-    hour: startHourKyiv,
-    minute: 0,
-    second: 0,
+async function getBinanceMovers(): Promise<MoverItem[]> {
+  const response = await fetch("https://api.binance.com/api/v3/ticker/24hr", {
+    cache: "no-store",
+    headers: { Accept: "application/json" },
   });
 
-  const marketParts = getZonedParts(startUtc, "America/New_York");
+  if (!response.ok) return [];
 
-  const marketDate = `${marketParts.year}-${pad2(marketParts.month)}-${pad2(
-    marketParts.day
-  )}`;
+  const payload = await response.json();
 
-  const marketTime = `${pad2(marketParts.hour)}:${pad2(marketParts.minute)}`;
+  if (!Array.isArray(payload)) return [];
 
-  return {
-    thresholdKey: `${marketDate} ${marketTime}:00`,
-    startHourKyiv,
-    startLabelKyiv: `${pad2(startHourKyiv)}:00 Kyiv`,
-    startLabelMarket: `${marketTime} New York`,
-    marketDate,
-  };
+  return payload.flatMap((item: any) => {
+    const rawSymbol = String(item.symbol || "");
+    if (!rawSymbol.endsWith("USDT")) return [];
+
+    if (
+      rawSymbol.includes("UPUSDT") ||
+      rawSymbol.includes("DOWNUSDT") ||
+      rawSymbol.includes("BULLUSDT") ||
+      rawSymbol.includes("BEARUSDT")
+    ) {
+      return [];
+    }
+
+    const symbol = normalizeSymbol(rawSymbol.replace(/USDT$/g, ""));
+    const price = firstNumber(item.lastPrice);
+    const changePct = firstNumber(item.priceChangePercent) ?? 0;
+    const volume = firstNumber(item.quoteVolume);
+
+    if (!isAllowedCryptoSymbol(symbol)) return [];
+    if (price === null || volume === null || volume <= 0) return [];
+
+    return [{
+      symbol,
+      name: `${symbol}/USDT`,
+      price,
+      changePct,
+      volume: formatCompactNumber(volume),
+      rawVolume: volume,
+      exchange: "BINANCE",
+    }];
+  });
 }
 
-function normalizeFmpDate(value: unknown) {
-  const text = String(value || "").trim();
-
-  const match = text.match(/^(\d{4}-\d{2}-\d{2})[T\s](\d{2}:\d{2}:\d{2})/);
-
-  if (match) {
-    return `${match[1]} ${match[2]}`;
-  }
-
-  return text.replace("T", " ").slice(0, 19);
-}
-
-async function fetchFmpArray(url: URL) {
-  const response = await fetch(url, {
+async function getHyperliquidMovers(): Promise<MoverItem[]> {
+  const response = await fetch("https://api.hyperliquid.xyz/info", {
+    method: "POST",
     cache: "no-store",
     headers: {
       Accept: "application/json",
+      "Content-Type": "application/json",
     },
+    body: JSON.stringify({ type: "metaAndAssetCtxs" }),
   });
 
-  if (!response.ok) {
-    return [];
-  }
+  if (!response.ok) return [];
 
-  const data = await response.json();
+  const payload = await response.json();
 
-  return Array.isArray(data) ? data : [];
+  if (!Array.isArray(payload) || payload.length < 2) return [];
+
+  const meta = payload[0] as { universe?: Array<{ name?: string | null }> };
+  const contexts = payload[1] as Array<Record<string, unknown>>;
+  const universe = Array.isArray(meta.universe) ? meta.universe : [];
+
+  return universe.flatMap((coin, index) => {
+    const symbol = normalizeSymbol(coin?.name || "");
+    const ctx = contexts[index] || {};
+    const price = firstNumber(ctx.markPx, ctx.midPx, ctx.oraclePx);
+    const prevDay = firstNumber(ctx.prevDayPx);
+    const volume = firstNumber(ctx.dayNtlVlm, ctx.dayBaseVlm);
+
+    if (!isAllowedCryptoSymbol(symbol)) return [];
+    if (price === null || volume === null || volume <= 0) return [];
+
+    const changePct = prevDay !== null && prevDay > 0 ? ((price - prevDay) / prevDay) * 100 : 0;
+
+    return [{
+      symbol,
+      name: `${symbol} Perp`,
+      price,
+      changePct,
+      volume: formatCompactNumber(volume),
+      rawVolume: volume,
+      exchange: "HYPERLIQUID",
+    }];
+  });
 }
 
-async function fetchCandidateEndpoint(path: string, apiKey: string) {
-  const url = new URL(`${getFmpStableBaseUrl()}/${path}`);
-  url.searchParams.set("apikey", apiKey);
+async function getCryptoMovers(side: "gainers" | "losers", limit: number) {
+  const minVolume = Number(process.env.CHART_MOVERS_CRYPTO_MIN_VOLUME_USD || "1000000");
+  const minChangePct = Number(process.env.CHART_MOVERS_CRYPTO_MIN_CHANGE_PCT || "2");
 
-  return fetchFmpArray(url) as Promise<FmpMover[]>;
-}
-
-async function fetchCandidateMovers(side: MoverSide, apiKey: string) {
-  const primaryPath = side === "losers" ? "biggest-losers" : "biggest-gainers";
-
-  const [primary, active] = await Promise.all([
-    fetchCandidateEndpoint(primaryPath, apiKey),
-    fetchCandidateEndpoint("most-actives", apiKey),
+  const [binance, hyperliquid] = await Promise.all([
+    getBinanceMovers(),
+    getHyperliquidMovers(),
   ]);
 
-  const seen = new Set<string>();
-  const candidates: Candidate[] = [];
+  const bySymbol = new Map<string, MoverItem>();
 
-  for (const item of [...primary, ...active]) {
-    const symbol = normalizeSymbol(item.symbol || item.ticker);
-    const name = item.companyName || item.name || symbol;
+  for (const item of [...binance, ...hyperliquid]) {
+    if (item.rawVolume === null || item.rawVolume < minVolume) continue;
 
-    if (!isProbablyUsCommonStock(symbol, name)) continue;
-    if (seen.has(symbol)) continue;
+    const sideOk = side === "gainers" ? item.changePct > 0 : item.changePct < 0;
+    const changeOk = Math.abs(item.changePct) >= minChangePct;
+    const volumeFallback = item.rawVolume >= minVolume * 5 && Math.abs(item.changePct) >= 0.75;
 
-    seen.add(symbol);
+    if (!sideOk || (!changeOk && !volumeFallback)) continue;
 
-    candidates.push({
-      symbol,
-      name,
-      providerChangePct:
-        parseNumber(item.changesPercentage) ??
-        parseNumber(item.changePercentage) ??
-        parseNumber(item.percentageChange) ??
-        parseNumber(item.change) ??
-        parseNumber(item.changes),
-      providerPrice: parseNumber(item.price),
-      providerVolume: parseNumber(item.volume),
-    });
+    const existing = bySymbol.get(item.symbol);
+
+    if (!existing || (item.rawVolume ?? 0) > (existing.rawVolume ?? 0)) {
+      bySymbol.set(item.symbol, item);
+    }
   }
-
-  return candidates;
-}
-
-async function fetchIntradayCandles(symbol: string, apiKey: string) {
-  const stableUrl = new URL(`${getFmpStableBaseUrl()}/historical-chart/1min`);
-  stableUrl.searchParams.set("symbol", symbol);
-  stableUrl.searchParams.set("apikey", apiKey);
-
-  const stableData = await fetchFmpArray(stableUrl);
-
-  if (stableData.length > 0) {
-    return stableData as FmpIntradayCandle[];
-  }
-
-  const legacyUrl = new URL(
-    `${getFmpLegacyBaseUrl()}/historical-chart/1min/${encodeURIComponent(symbol)}`
-  );
-  legacyUrl.searchParams.set("apikey", apiKey);
-
-  const legacyData = await fetchFmpArray(legacyUrl);
-
-  return legacyData as FmpIntradayCandle[];
-}
-
-function buildSessionMover(
-  candidate: Candidate,
-  candles: FmpIntradayCandle[],
-  side: MoverSide,
-  session: SessionWindow,
-  minChangePct: number,
-  minVolume: number
-) {
-  const normalizedCandles = candles
-    .map((item) => {
-      const dateKey = normalizeFmpDate(item.date || item.datetime);
-      const open = parseNumber(item.open);
-      const close = parseNumber(item.close);
-      const volume = parseNumber(item.volume);
-
-      return {
-        dateKey,
-        open,
-        close,
-        volume: volume ?? 0,
-      };
-    })
-    .filter((item) => {
-      if (!item.dateKey || item.dateKey.length < 19) return false;
-      if (item.dateKey < session.thresholdKey) return false;
-      if (item.open === null && item.close === null) return false;
-
-      return true;
-    })
-    .sort((a, b) => a.dateKey.localeCompare(b.dateKey));
-
-  if (normalizedCandles.length === 0) {
-    return null;
-  }
-
-  const first = normalizedCandles[0];
-  const last = normalizedCandles[normalizedCandles.length - 1];
-
-  const startPrice =
-    typeof first.open === "number" && first.open > 0
-      ? first.open
-      : typeof first.close === "number" && first.close > 0
-        ? first.close
-        : null;
-
-  const lastPrice =
-    typeof last.close === "number" && last.close > 0
-      ? last.close
-      : typeof last.open === "number" && last.open > 0
-        ? last.open
-        : null;
-
-  if (!startPrice || !lastPrice) {
-    return null;
-  }
-
-  const sessionVolumeFromCandles = normalizedCandles.reduce((sum, item) => {
-    return sum + (Number.isFinite(item.volume) && item.volume > 0 ? item.volume : 0);
-  }, 0);
-
-  const sessionVolume =
-    sessionVolumeFromCandles > 0
-      ? sessionVolumeFromCandles
-      : candidate.providerVolume ?? 0;
-
-  const changePct = ((lastPrice - startPrice) / startPrice) * 100;
-
-  if (side === "gainers" && changePct < minChangePct) return null;
-  if (side === "losers" && changePct > -minChangePct) return null;
-  if (sessionVolume < minVolume) return null;
 
   return {
-    symbol: candidate.symbol,
-    name: candidate.name,
-    price: Number(lastPrice.toFixed(4)),
-    changePct: formatPercent(changePct),
-    volume: formatCompactNumber(sessionVolume),
-    sessionVolume,
-    sessionStartKyiv: session.startLabelKyiv,
-    sessionStartMarket: session.startLabelMarket,
-    source: "intraday_1min_since_kyiv_start",
+    items: Array.from(bySymbol.values())
+      .sort((a, b) => side === "gainers" ? b.changePct - a.changePct : a.changePct - b.changePct)
+      .slice(0, limit),
+    error: null,
+    debug: {
+      binanceRows: binance.length,
+      hyperliquidRows: hyperliquid.length,
+      minVolume,
+      minChangePct,
+    },
   };
 }
 
-async function mapWithConcurrency<T, R>(
-  items: T[],
-  concurrency: number,
-  mapper: (item: T, index: number) => Promise<R | null>
-) {
-  const results = new Array<R | null>(items.length).fill(null);
-  let nextIndex = 0;
-
-  async function worker() {
-    while (nextIndex < items.length) {
-      const currentIndex = nextIndex;
-      nextIndex += 1;
-
-      try {
-        results[currentIndex] = await mapper(items[currentIndex], currentIndex);
-      } catch {
-        results[currentIndex] = null;
-      }
-    }
-  }
-
-  const workers = Array.from(
-    { length: Math.min(concurrency, Math.max(1, items.length)) },
-    () => worker()
-  );
-
-  await Promise.all(workers);
-
-  return results.filter((item): item is R => item !== null);
-}
-
 export async function GET(request: Request) {
-  try {
-    const apiKey = getFmpApiKey();
+  const url = new URL(request.url);
+  const market = url.searchParams.get("market") === "crypto" ? "crypto" : "stocks";
+  const side = url.searchParams.get("side") === "losers" ? "losers" : "gainers";
+  const limit = Math.max(1, Math.min(Number(url.searchParams.get("limit") || "25"), 50));
 
-    if (!apiKey) {
-      throw new Error("Stock movers are not configured on the current market data stack.");
-    }
+  const result =
+    market === "crypto"
+      ? await getCryptoMovers(side, limit)
+      : await getStockMovers(side, limit);
 
-    const { searchParams } = new URL(request.url);
-
-    const side: MoverSide =
-      searchParams.get("side") === "losers" ? "losers" : "gainers";
-
-    const rawLimit = Number(searchParams.get("limit") || 10);
-    const limit = Math.max(5, Math.min(50, Number.isFinite(rawLimit) ? rawLimit : 25));
-
-    const candidateLimit = Math.max(
-      limit,
-      Math.min(
-        80,
-        Number(process.env.CHART_STOCK_MOVERS_CANDIDATE_LIMIT || 120)
-      )
-    );
-
-    const concurrency = Math.max(
-      1,
-      Math.min(8, Number(process.env.CHART_STOCK_MOVERS_CONCURRENCY || 5))
-    );
-
-    const minChangePct = Math.max(
-      0,
-      Number(process.env.CHART_STOCK_MOVERS_MIN_CHANGE_PCT || 10)
-    );
-
-    const minVolume = Math.max(
-      0,
-      Number(process.env.CHART_STOCK_MOVERS_MIN_VOLUME || 100000)
-    );
-
-    const session = getSessionWindowFromKyivStart();
-
-    const candidates = (await fetchCandidateMovers(side, apiKey)).slice(
-      0,
-      candidateLimit
-    );
-
-    const scanned = await mapWithConcurrency(
-      candidates,
-      concurrency,
-      async (candidate) => {
-        const candles = await fetchIntradayCandles(candidate.symbol, apiKey);
-
-        return buildSessionMover(
-          candidate,
-          candles,
-          side,
-          session,
-          minChangePct,
-          minVolume
-        );
-      }
-    );
-
-    const items = scanned
-      .sort((a, b) =>
-        side === "gainers"
-          ? b.changePct - a.changePct || b.sessionVolume - a.sessionVolume
-          : a.changePct - b.changePct || b.sessionVolume - a.sessionVolume
-      )
-      .slice(0, limit)
-      .map(({ sessionVolume, ...item }) => item);
-
-    return NextResponse.json(
-      {
-        ok: true,
-        market: "stocks",
-        side,
-        items,
-        meta: {
-          mode: "kyiv_13_intraday_session",
-          candidateCount: candidates.length,
-          matchedCount: scanned.length,
-          returnedCount: items.length,
-          minChangePct,
-          minVolume,
-          sessionStartKyiv: session.startLabelKyiv,
-          sessionStartMarket: session.startLabelMarket,
-          thresholdKey: session.thresholdKey,
-          marketDate: session.marketDate,
-          updatedAt: new Date().toISOString(),
-        },
-      },
-      {
-        headers: {
-          "Cache-Control": "no-store",
-        },
-      }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      {
-        ok: false,
-        items: [],
-        error:
-          error instanceof Error
-            ? error.message
-            : "Stock movers are unavailable on the current market data stack.",
-      },
-      {
-        status: 503,
-        headers: {
-          "Cache-Control": "no-store",
-        },
-      }
-    );
-  }
+  return NextResponse.json({
+    source: market === "crypto" ? "binance_hyperliquid_market_activity" : "fmp_market_activity",
+    market,
+    side,
+    items: result.items,
+    error: result.error,
+    debug: result.debug,
+  });
 }

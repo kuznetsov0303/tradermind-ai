@@ -1,0 +1,11 @@
+[Unit]
+Description=Run SkillEdge S10 guarded paper entry check every 5 minutes, staggered from evaluation
+
+[Timer]
+OnActiveSec=3min
+OnUnitInactiveSec=5min
+AccuracySec=10s
+Unit=skilledge-s10-paper-trading.service
+
+[Install]
+WantedBy=timers.target

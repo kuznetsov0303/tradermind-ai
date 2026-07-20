@@ -1,0 +1,43 @@
+S10.5A REAL-TIME READINESS AUDIT
+Generated=20260714_212631
+READ_ONLY=true
+NO_DELETE=true
+NO_MOVE=true
+NO_DEPLOY=true
+NO_RESTART=true
+NO_SERVICE_STATE_CHANGE=true
+NO_PAPER_POST=true
+
+=== SUMMARY ===
+FILES_SCANNED=110
+ROUTES=254
+RELEVANT_FUNCTIONS=184
+WEBSOCKET_FILES=0
+POLLING_FILES=39
+FMP_FILES=5
+QUOTE_FILES=2
+REDIS_FILES=4
+SUPABASE_FILES=15
+PAPER_FILES=11
+SYSTEMD_UNITS_INSPECTED=31
+MATCHED_PROCESSES=4
+LISTENING_SOCKETS=7
+
+=== READ-ONLY PROBES ===
+health: ok=True status=200
+engine_status: ok=True status=200
+paper_status: ok=True status=200
+paper_trades: ok=True status=200
+
+=== COMPONENT CLASSIFICATION ===
+LEGACY_FALLBACK | Current paper point-quote evaluator | Point-in-time polling can miss intrabar stop/target order and is unsuitable as primary execution truth.
+EXTEND | Current app.py paper lifecycle logic | Existing state machine and ledger logic can be reused, but trigger input must become event-driven.
+EXTEND | FMP provider integration | Existing authenticated provider integration should be wrapped behind a streaming provider adapter.
+REUSE | SQLite/Supabase durable records | Suitable for durable lifecycle, trade, signal and outcome persistence; not raw high-frequency tick storage.
+REUSE | Upstash runtime cache | Suitable for shared latest-state/cache coordination; should not be sole durable source for critical lifecycle events.
+NEW_COMPONENT_REQUIRED | Market stream ingestor | No primary event-driven market stream service is established by current paper polling architecture.
+NEW_COMPONENT_REQUIRED | Real-time trade state engine | Needs deterministic event ordering, stop/target permanence, stale guards, gap detection and recovery.
+AUDIT_FRONTEND_REQUIRED | Client real-time fanout gateway | Backend audit alone cannot prove current browser polling/fanout architecture.
+
+=== OUTPUTS ===
+Raw=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_5A_realtime_readiness_audit_raw_20260714_212631.json

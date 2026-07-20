@@ -1,0 +1,24 @@
+S10.9V COMPLETE LANDING LOCALE BUNDLE
+Generated=20260720_014836
+OK=True
+CLASSIFICATION=COMPLETE_LANDING_LOCALE_BUNDLE_MERGED
+BASE_ENTRIES=252
+SUPPLEMENTAL_ENTRIES=194
+COMPLETE_ENTRIES_PER_LOCALE=446
+LOCALES_MERGED=15
+RESOLVED_PATH_ASSIGNMENTS=352
+AMBIGUOUS_OVERRIDES_RESOLVED=15
+TECHNICAL_PATHS_SKIPPED=3
+KEY_PARITY_PASSED=True
+BUILD_PASSED=True
+LANDING_COMPONENT_CHANGED=False
+RUNTIME_AI_TRANSLATION=False
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+COMPLETE_DIRECTORY=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\locales\landing-complete
+PATH_MAP=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\locales\landing-complete\path-map.json
+LOADER_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\lib\i18n\landing-complete-locales.ts
+BACKUP_ROOT=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\S10_9V_complete_landing_backup_20260720_014836
+BUILD_LOG=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9V_COMPLETE_LANDING_LOCALES_build_20260720_014836.txt
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9V_COMPLETE_LANDING_LOCALES_raw_20260720_014836.json
+NEXT_ACTION=WIRE_LANDING_TO_COMPLETE_AST_PATH_MAP

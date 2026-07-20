@@ -1,0 +1,37 @@
+S10.4K FINAL LOCAL ROOT CLEANUP + OPS/OPS DEDUPE
+Generated=20260714_191908
+ProjectRoot=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai
+ArchiveSession=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4K_final_local_cleanup_20260714_191908
+
+=== RESULT ===
+ARCHIVED_HISTORICAL_ROOT_SCRIPTS=3
+REMAINING_HISTORICAL_ROOT_SCRIPTS=0
+DELETED_OPS_OPS_EXACT_DUPLICATES=9
+KEPT_OPS_OPS_REVIEW_REQUIRED=0
+OPS_OPS_STILL_EXISTS=False
+REMAINING_OPS_OPS_FILES=0
+CANONICAL_PATHS_PRESENT=true
+VPS_TOUCHED=false
+DEPLOY_PERFORMED=false
+RESTART_PERFORMED=false
+
+=== ARCHIVED HISTORICAL ROOT SCRIPTS ===
+S8_77B_walk_forward_validation_key_hotfix.ps1 | sha256=1cf08b17dcf85aaa7d553f1d4cc4ad7bcf177b22b0d28cee0829dfc253730dcf | archive=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4K_final_local_cleanup_20260714_191908\archived_root_artifacts\S8_77B_walk_forward_validation_key_hotfix.ps1
+S8_88A_fmp_key_locator_endpoint_audit.ps1 | sha256=696dcad7db3e9cf0f5c481a1a7378bf9047dead6884be250e0a5de548ec388d6 | archive=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4K_final_local_cleanup_20260714_191908\archived_root_artifacts\S8_88A_fmp_key_locator_endpoint_audit.ps1
+S9_11B_fmp_key_locator_universe_v2_rebuild.ps1 | sha256=95cf28b32bc3f3f71940e61e6b1c13aecc35b02dd73535f070c04dd1f8ec986f | archive=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4K_final_local_cleanup_20260714_191908\archived_root_artifacts\S9_11B_fmp_key_locator_universe_v2_rebuild.ps1
+
+=== DELETED OPS/OPS EXACT DUPLICATES ===
+README_VPS_DEPLOY.md
+nginx\stock-engine.nginx.conf
+scripts\deploy_ubuntu_systemd.sh
+scripts\server_healthcheck.py
+systemd\skilledge-daily-ai-desk.service
+systemd\skilledge-nightly-self-learning.service
+systemd\skilledge-nightly-self-learning.timer
+systemd\skilledge-stock-engine-api.service
+systemd\skilledge-telegram-consumer.service
+
+=== KEPT OPS/OPS FOR REVIEW ===
+
+=== OUTPUTS ===
+Inventory=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4K_final_local_root_inventory_20260714_191908.json

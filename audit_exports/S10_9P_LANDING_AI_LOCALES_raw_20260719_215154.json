@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "classification": "LANDING_AI_LOCALE_GENERATION_COMPLETE",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "runtimeAiTranslation": false,
+  "existingProviderUsed": "OpenAI API",
+  "oneTimeApiUsage": true,
+  "model": "gpt-5.6-luna",
+  "englishEntries": 252,
+  "generatedLocales": 14,
+  "generatedFiles": 15,
+  "outputDirectory": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing",
+  "nextAction": "VALIDATE_AND_CONNECT_LANDING_LOCALE_FILES"
+}

@@ -1,0 +1,113 @@
+{
+  "ok": true,
+  "classification": "LANDING_LOCALE_BUNDLE_INSTALLED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "runtimeAiTranslation": false,
+  "filesChanged": [
+    "locales/landing/*.json",
+    "lib/i18n/landing-locales.ts",
+    "lib/i18n/index.ts"
+  ],
+  "localesInstalled": 15,
+  "entriesPerLocale": 252,
+  "hashParityPassed": true,
+  "keyParityPassed": true,
+  "buildPassed": true,
+  "landingComponentChanged": false,
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9R_landing_locale_bundle_backup_20260719_231232",
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9R_LANDING_LOCALE_BUNDLE_build_20260719_231232.txt",
+  "copiedLocales": [
+    {
+      "locale": "en",
+      "sourceSha256": "8bcdd681d25518a72c3b3df330fc963a62ae209a423d2371f30e7e6ef009671c",
+      "targetSha256": "8bcdd681d25518a72c3b3df330fc963a62ae209a423d2371f30e7e6ef009671c",
+      "entries": 252
+    },
+    {
+      "locale": "ru",
+      "sourceSha256": "abb8b690d40ac327e3d61abcbaa515d05fc23908591bb300827a1b44eadf673b",
+      "targetSha256": "abb8b690d40ac327e3d61abcbaa515d05fc23908591bb300827a1b44eadf673b",
+      "entries": 252
+    },
+    {
+      "locale": "uk",
+      "sourceSha256": "e093fc00924e97c9a637f9db36d4b97cdedd2292469b9d66bbfd44e2c036be20",
+      "targetSha256": "e093fc00924e97c9a637f9db36d4b97cdedd2292469b9d66bbfd44e2c036be20",
+      "entries": 252
+    },
+    {
+      "locale": "zh",
+      "sourceSha256": "5ce55c87cb731fd5e2dab19606cbf3ede95a5d37dbe77dc2c6bf2c1a46c7ce48",
+      "targetSha256": "5ce55c87cb731fd5e2dab19606cbf3ede95a5d37dbe77dc2c6bf2c1a46c7ce48",
+      "entries": 252
+    },
+    {
+      "locale": "de",
+      "sourceSha256": "3293bd9371e3ec9e543ddfa2c1fd7160b5a0169f613c710460dc1c25ab967a40",
+      "targetSha256": "3293bd9371e3ec9e543ddfa2c1fd7160b5a0169f613c710460dc1c25ab967a40",
+      "entries": 252
+    },
+    {
+      "locale": "fr",
+      "sourceSha256": "e9c73ce7ee6bcd53d086f5dd49662ead55efa1e61452cc4775141d2a14fbb368",
+      "targetSha256": "e9c73ce7ee6bcd53d086f5dd49662ead55efa1e61452cc4775141d2a14fbb368",
+      "entries": 252
+    },
+    {
+      "locale": "es",
+      "sourceSha256": "affc3d96fb62a3d237fe2e05a7a8e993701e01c1a9fc0a60eb0d3ec97916cc47",
+      "targetSha256": "affc3d96fb62a3d237fe2e05a7a8e993701e01c1a9fc0a60eb0d3ec97916cc47",
+      "entries": 252
+    },
+    {
+      "locale": "ar",
+      "sourceSha256": "0d8798a1e6a2b3931933cdf2150f103e2cf7fdb555fd3d7510c91ddc98aec4fc",
+      "targetSha256": "0d8798a1e6a2b3931933cdf2150f103e2cf7fdb555fd3d7510c91ddc98aec4fc",
+      "entries": 252
+    },
+    {
+      "locale": "it",
+      "sourceSha256": "5475796537ecea2629b827d8f4791ac75d6777a3f10778900eba38d35c735e1f",
+      "targetSha256": "5475796537ecea2629b827d8f4791ac75d6777a3f10778900eba38d35c735e1f",
+      "entries": 252
+    },
+    {
+      "locale": "nb",
+      "sourceSha256": "bad3f9676b7212d91fb0341251daefa4860d965aaa91d5bf75cd1d938ce3be57",
+      "targetSha256": "bad3f9676b7212d91fb0341251daefa4860d965aaa91d5bf75cd1d938ce3be57",
+      "entries": 252
+    },
+    {
+      "locale": "ka",
+      "sourceSha256": "2b83d71e9fac3781dc5807a2e0b5671cd7ce448b732207f194673ef84e60eddc",
+      "targetSha256": "2b83d71e9fac3781dc5807a2e0b5671cd7ce448b732207f194673ef84e60eddc",
+      "entries": 252
+    },
+    {
+      "locale": "pl",
+      "sourceSha256": "2842dd392d702d2ecb4f7ed848e628752e60b1fd2edab776ab4eeeabae62df54",
+      "targetSha256": "2842dd392d702d2ecb4f7ed848e628752e60b1fd2edab776ab4eeeabae62df54",
+      "entries": 252
+    },
+    {
+      "locale": "tr",
+      "sourceSha256": "07a86fe4e0db363aa9828d632f89bffd2a63398e12d1f42197798a2a09eaffe7",
+      "targetSha256": "07a86fe4e0db363aa9828d632f89bffd2a63398e12d1f42197798a2a09eaffe7",
+      "entries": 252
+    },
+    {
+      "locale": "el",
+      "sourceSha256": "43352ae7258c993d9f5df18288277fe6e4f0560c062d524fa145d4cc110a9f0b",
+      "targetSha256": "43352ae7258c993d9f5df18288277fe6e4f0560c062d524fa145d4cc110a9f0b",
+      "entries": 252
+    },
+    {
+      "locale": "hi",
+      "sourceSha256": "50dda5133441a0362993246c6bfbdd89f21ed618fb8b0c4e31c0a3a0e6d412ce",
+      "targetSha256": "50dda5133441a0362993246c6bfbdd89f21ed618fb8b0c4e31c0a3a0e6d412ce",
+      "entries": 252
+    }
+  ],
+  "nextAction": "WIRE_LANDING_COMPONENT_TO_TYPED_LOCALE_BUNDLE"
+}

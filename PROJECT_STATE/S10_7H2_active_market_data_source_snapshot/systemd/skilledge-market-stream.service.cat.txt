@@ -1,0 +1,27 @@
+# /etc/systemd/system/skilledge-market-stream.service
+[Unit]
+Description=SkillEdge Databento Market Stream
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONPATH=/opt/skilledge/stock-engine
+Environment=SKILLEDGE_MARKET_STREAM_DATASET=EQUS.MINI
+Environment=SKILLEDGE_MARKET_STREAM_SCHEMA=mbp-1
+Environment=SKILLEDGE_MARKET_STREAM_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,NFLX,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW
+Environment=SKILLEDGE_MARKET_STREAM_HEARTBEAT_SECONDS=10
+Environment=SKILLEDGE_MARKET_STREAM_STATUS_INTERVAL_SECONDS=2
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python -m app.market_data.stream_service
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGTERM
+NoNewPrivileges=true
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target

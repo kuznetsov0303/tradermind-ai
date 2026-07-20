@@ -1,0 +1,31 @@
+S10.5C TLS / CA READ-ONLY DIAGNOSTIC
+Generated=20260714_215521
+HOST=websockets.financialmodelingprep.com
+PORT=443
+CLASSIFICATION=SYSTEM_OR_ENDPOINT_CHAIN_PROBLEM
+
+=== OBSERVED ===
+VENV_TLS_OK=False
+SYSTEM_PYTHON_TLS_OK=False
+OPENSSL_VERIFY_OK=False
+CURL_HTTPS_OK=False
+
+=== DNS ===
+DNS_OK=True
+ADDRESSES=3.228.115.47,54.204.233.43,52.2.213.16,34.199.226.59
+
+=== CA FILES ===
+/etc/ssl/certs/ca-certificates.crt | exists=True | isFile=True | size=182140
+/etc/pki/tls/certs/ca-bundle.crt | exists=False | isFile=False | size=
+/etc/ssl/cert.pem | exists=False | isFile=False | size=
+
+=== SAFETY ===
+INSTALL_PERFORMED=False
+PACKAGE_CHANGED=False
+CA_CHANGED=False
+SSL_VERIFICATION_DISABLED=False
+DEPLOY_PERFORMED=False
+RESTART_PERFORMED=False
+SERVICE_STATE_CHANGED=False
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_5C_tls_ca_diagnostic_raw_20260714_215521.json

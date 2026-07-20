@@ -1,0 +1,14 @@
+﻿S10.6O DAY 7C PRODUCTION DEPLOY
+Generated=20260717_193031
+OK=True
+CLASSIFICATION=DAY7C_PRODUCTION_PATCH_VERIFIED
+OLD_PID=814306
+NEW_PID=817084
+PID_CHANGED=True
+SYMBOL_COUNT=25
+NEGATIVE_LAST_TRADE_AGE_COUNT=0
+APPLIED_TRADES_GROWTH=476
+AUTO_ROLLBACK_EXECUTED=False
+ROLLBACK_SNAPSHOT=/opt/skilledge/stock-engine/rollback_snapshots/S10_6O_DAY7C_PRODUCTION_DEPLOY_20260717_193031
+NOTE=Today opening range may remain unavailable if the pre-deploy snapshot already lacked 09:30-09:35 values.
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_6O_DAY7C_PRODUCTION_DEPLOY_raw_20260717_193031.json

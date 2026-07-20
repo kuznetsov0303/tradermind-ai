@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "classification": "CLEAN_ENGLISH_MASTER_CANDIDATE_BUILT",
+  "inspectionOnly": true,
+  "productionMutation": false,
+  "vpsTouched": false,
+  "sourceCandidateFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_exports\\english_master_candidates_20260719_212251.json",
+  "sourceDictionaryFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_exports\\english_dictionary_candidates_20260719_212251.json",
+  "rawCandidatesRead": 12730,
+  "dictionaryCandidatesRead": 693,
+  "cleanUiCandidates": 4403,
+  "cleanDictionaryCandidates": 469,
+  "protectedTermsFound": 19,
+  "rejected": {
+    "file_not_client_ui": 3469,
+    "not_user_facing": 3328,
+    "duplicate": 1530
+  },
+  "namespaces": [
+    "aiGuide",
+    "alerts",
+    "dashboard",
+    "dashboardGuide",
+    "footer",
+    "journalGuide",
+    "landing",
+    "referral",
+    "shared",
+    "signals",
+    "support"
+  ],
+  "nextAction": "REVIEW_CLEAN_MASTER_THEN_GENERATE_LOCALE_FILES"
+}

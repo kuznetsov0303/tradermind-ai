@@ -1,0 +1,13 @@
+[Unit]
+Description=Run SkillEdge Forward Shadow Evaluator after US regular close
+
+[Timer]
+# Server-local time. On the current VPS this is intended to run after US regular close.
+# If server timezone is UTC, 20:30 UTC is safely after 16:00 NY close during most configurations.
+OnCalendar=Mon..Fri *-*-* 20:30:00
+Persistent=true
+RandomizedDelaySec=300
+Unit=skilledge-forward-shadow-daily.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,45 @@
+S10.9O LANDING ENGLISH MASTER
+Generated=20260719_213942
+OK=True
+CLASSIFICATION=LANDING_ENGLISH_MASTER_ISOLATED
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+LANDING_RECORDS_READ=421
+ENGLISH_MASTER_ENTRIES=252
+PROTECTED_ENTRIES=5
+DUPLICATE_SOURCE_KEYS=23
+
+=== EXCLUDED ===
+cyrillic=169
+
+=== DUPLICATE SOURCE KEYS ===
+badge=8
+bestFor=7
+button=2
+cta=4
+description=2
+disclaimer=2
+eyebrow=9
+finalText=5
+finalTitle=5
+gradient=10
+headline=5
+heroBadge=3
+heroText=5
+heroTitle=5
+label=18
+name=12
+note=2
+primary=4
+principlesTitle=2
+secondary=3
+subtitle=2
+text=17
+title=14
+
+MASTER_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\landing_en_master_20260719_213942.json
+REVIEW_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\landing_en_master_review_20260719_213942.json
+TRANSLATION_MANIFEST=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\landing_translation_manifest_20260719_213942.json
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9O_LANDING_ENGLISH_MASTER_raw_20260719_213942.json
+NEXT_ACTION=GENERATE_LANDING_LOCALE_FILES

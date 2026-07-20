@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "name": "skilledge_guarded_2_symbol_rotation_canary_package",
+  "mode": "package_only",
+  "executionAuthorized": false,
+  "currentSymbolsCount": 25,
+  "nextSymbolsCount": 25,
+  "additions": [
+    "SDOT",
+    "SLND"
+  ],
+  "removals": [
+    "RIVN",
+    "SOFI"
+  ],
+  "protectedCoreCount": 21,
+  "soakMinutes": 30,
+  "packageExecuted": false,
+  "productionMutation": false,
+  "serviceRestarted": false,
+  "systemdTouched": false,
+  "streamSymbolsChanged": false,
+  "nextAction": "REVIEW_AND_ARM_CONTROLLED_CANARY"
+}

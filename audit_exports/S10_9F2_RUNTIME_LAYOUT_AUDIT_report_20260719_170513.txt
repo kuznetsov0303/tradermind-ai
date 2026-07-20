@@ -1,0 +1,3331 @@
+S10.9F2 RUNTIME LAYOUT CONTEXT AUDIT
+Generated=20260719_170513
+OK=True
+CLASSIFICATION=RUNTIME_LAYOUT_CONTEXT_AUDIT_COMPLETE
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+
+=== LANDING OUTER SHELL ===
+1180:   
+1181:   return (
+1182:   <div className="relative isolate min-h-screen overflow-hidden bg-[#07111F] text-white">
+1183:     <AnimatePresence>
+1184:       {showSplashIntro ? <SkillEdgeSplashIntro language={language} /> : null}
+1185:     </AnimatePresence>
+1186: 
+1187:     <TradingBackground variant={backgroundVariant} />
+1188:       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#07111F]/70 backdrop-blur-xl">
+1189:         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-8">
+1190:           <Link href="/" className="flex items-center gap-3">
+1191:             <BrandMark size="sm" />
+1192:             <div className="text-left">
+1193:               <div className="text-lg font-semibold">SkillEdge AI</div>
+1194:               <div className="text-xs uppercase tracking-[0.2em] text-white/45">{t.brandTag}</div>
+1195:             </div>
+1196:           </Link>
+1197: 
+1198:           <nav className="hidden items-center gap-2 md:flex">
+1199:             {navKeys.map((key) => (
+1200:               <Link
+1201:                 key={key}
+1202:                 href={pageHref[key]}
+1203:                 className={`rounded-full px-4 py-2 text-sm transition ${
+1204:                   active === key ? "bg-white text-black" : "text-white/65 hover:bg-white/5 hover:text-white"
+1205:                 }`}
+1206:               >
+1207:                 {t.nav[key]}
+1208:               </Link>
+1209:             ))}
+1210:           </nav>
+1211: 
+1212:           <div className="hidden items-center gap-3 md:flex">
+1213:             <button
+1214:               onClick={cycle}
+1215:               className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
+1216:             >
+1217:               <Icon name="globe" className="mr-2 h-4 w-4" />
+1218:               {t.lang}
+1219:             </button>
+1220: 
+1221: 
+1222:             {currentUserEmail ? (
+1223:               <>
+1224:                 <a href="/dashboard" className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]">
+1225:                   {authLabels.dashboard}
+1226:                 </a>
+1227:                 <button
+1228:                   onClick={handleLogout}
+1229:                   className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+1230:                 >
+1231:                   {authLabels.logout}
+1232:                 </button>
+1233:               </>
+1234:             ) : (
+1235:               <>
+1236:                 <button
+1237:                   onClick={() => openAuthModal("login")}
+1238:                   className="rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white"
+1239:                 >
+1240:                   {authLabels.login}
+1241:                 </button>
+1242:                 <button
+1243:                   onClick={() => openAuthModal("register")}
+1244:                   className="rounded-full bg-white px-5 py-3 text-sm font-medium text-black transition hover:scale-[1.02]"
+1245:                 >
+1246:                   {authLabels.register}
+1247:                 </button>
+1248:               </>
+1249:             )}
+1250:           </div>
+1251: 
+1252:           <button onClick={() => setMenuOpen((value) => !value)} className="md:hidden">
+1253:             <Icon name={menuOpen ? "close" : "menu"} className="h-6 w-6" />
+1254:           </button>
+1255:         </div>
+1256: 
+1257:         <AnimatePresence>
+1258:           {menuOpen && (
+1259:             <motion.div
+1260:               initial={{ opacity: 0, height: 0 }}
+1261:               animate={{ opacity: 1, height: "auto" }}
+1262:               exit={{ opacity: 0, height: 0 }}
+1263:               className="border-t border-white/10 bg-[#07111F]/95 px-4 pb-4 md:hidden"
+1264:             >
+1265:               <div className="flex flex-col gap-2 pt-4">
+1266:                 <button onClick={cycle} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75">
+1267:                   {t.switchLanguage}: {t.lang}
+1268:                 </button>
+1269: 
+1270:                 {navKeys.map((key) => (
+1271:                   <Link
+1272:                     key={key}
+1273:                     href={pageHref[key]}
+1274:                     onClick={() => setMenuOpen(false)}
+1275:                     className={`rounded-2xl px-4 py-3 text-left text-sm ${active === key ? "bg-white text-black" : "bg-white/[0.04] text-white/75"}`}
+1276:                   >
+1277:                     {t.nav[key]}
+1278:                   </Link>
+1279:                 ))}
+1280: 
+1281:                 {currentUserEmail ? (
+1282:                   <>
+1283:                     <a href="/dashboard" onClick={() => setMenuOpen(false)} className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black">
+1284:                       {authLabels.dashboard}
+1285:                     </a>
+1286:                     <button
+1287:                       onClick={() => {
+1288:                         setMenuOpen(false);
+1289:                         handleLogout();
+1290:                       }}
+1291:                       className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
+1292:                     >
+1293:                       {authLabels.logout}
+1294:                     </button>
+1295:                   </>
+1296:                 ) : (
+1297:                   <>
+1298:                     <button
+1299:                       onClick={() => {
+1300:                         setMenuOpen(false);
+1301:                         openAuthModal("login");
+1302:                       }}
+1303:                       className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75"
+1304:                     >
+1305:                       {authLabels.login}
+1306:                     </button>
+1307:                     <button
+1308:                       onClick={() => {
+1309:                         setMenuOpen(false);
+1310:                         openAuthModal("register");
+1311:                       }}
+1312:                       className="rounded-2xl bg-white px-4 py-3 text-left text-sm font-medium text-black"
+1313:                     >
+1314:                       {authLabels.register}
+1315:                     </button>
+1316:                   </>
+1317:                 )}
+1318:               </div>
+1319:             </motion.div>
+1320:           )}
+1321:         </AnimatePresence>
+1322:       </header>
+1323: 
+1324:       <main className="relative z-10 mx-auto max-w-6xl px-4 py-12 md:px-8">
+1325:                 <AnimatePresence mode="wait">
+1326:           {active === "home" && (
+1327:             <motion.div key="home">
+1328:               <HomePage t={t} setActive={setActive} />
+1329:             </motion.div>
+1330:           )}
+1331: 
+1332:           {active === "desk" && (
+
+=== LANDING HOME HERO ===
+2238: }
+2239: 
+2240: function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
+2241:   const copy = getHomePremiumCopy(t.lang);
+2242: 
+2243:   return (
+2244:     <motion.div
+2245:       initial={{ opacity: 0, y: 18 }}
+2246:       animate={{ opacity: 1, y: 0 }}
+2247:       exit={{ opacity: 0, y: -18 }}
+2248:       transition={{ duration: 0.35 }}
+2249:       className="mx-auto w-full max-w-[1760px] space-y-14 px-4 pb-24 pt-8 sm:px-6 lg:px-10 xl:px-14 2xl:px-16"
+2250:     >
+2251:       <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[2.8rem] border border-white/14 bg-[#111C2D]/82 p-6 shadow-[0_44px_170px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10 xl:p-14">
+2252:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(200,169,107,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
+2253:         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
+2254: 
+2255:         <div className="relative grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+2256:           <div>
+2257:             <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
+2258:               {copy.badge}
+2259:             </div>
+2260: 
+2261:             <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.95] tracking-[-0.065em] text-white md:text-6xl xl:text-8xl">
+2262:               {copy.title.split("по структуре.")[0]}
+2263:               <span className="bg-gradient-to-r from-[#C8A96B] via-[#00D084] to-[#00C076] bg-clip-text text-transparent">
+2264:                 {copy.title.includes("по структуре.") ? "по структуре." : ""}
+2265:               </span>
+2266:             </h1>
+2267: 
+2268:             <p className="mt-6 max-w-2xl text-base font-semibold leading-8 text-white/70 md:text-lg">
+2269:               {copy.text}
+2270:             </p>
+2271: 
+2272:             <p className="mt-2 text-lg font-black text-[#00D084]">
+2273:               {copy.accent}
+2274:             </p>
+2275: 
+2276:             <div className="mt-9 flex flex-wrap gap-3">
+2277:               <button
+2278:                 type="button"
+2279:                 onClick={() => setActive("product")}
+2280:                 className="rounded-full bg-white px-7 py-3.5 text-sm font-black text-[#07111F] shadow-[0_18px_70px_rgba(255,255,255,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_90px_rgba(0,192,118,0.25)]"
+2281:               >
+2282:                 {copy.primary}
+2283:                 <span className="ml-2">→</span>
+2284:               </button>
+2285: 
+2286:               <button
+2287:                 type="button"
+2288:                 onClick={() => setActive("pricing")}
+2289:                 className="rounded-full border border-[#C8A96B]/22 bg-[#C8A96B]/[0.07] px-7 py-3.5 text-sm font-black text-[#E6EDF7] transition duration-300 hover:-translate-y-0.5 hover:bg-[#C8A96B]/[0.12]"
+2290:               >
+2291:                 {copy.secondary}
+2292:               </button>
+2293: 
+2294:               <button
+2295:                 type="button"
+2296:                 onClick={() => { window.location.href = "/dashboard-guide"; }}
+2297:                 className="rounded-full border border-white/12 bg-white/[0.04] px-7 py-3.5 text-sm font-black text-white/78 transition duration-300 hover:-translate-y-0.5 hover:bg-white/[0.075]"
+2298:               >
+2299:                 {copy.how}
+2300:                 <span className="ml-2">↗</span>
+2301:               </button>
+2302:             </div>
+2303: 
+2304:             <div className="mt-7 grid gap-4 md:grid-cols-3">
+2305:               {copy.trustItems.map((item) => (
+2306:                 <button
+2307:                   key={item[0]}
+2308:                   type="button"
+2309:                   onClick={() => setActive("product")}
+2310:                   className="rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.07]"
+2311:                 >
+2312:                   <div className="text-sm font-black text-white">{item[0]}</div>
+2313:                   <p className="mt-2 text-xs font-semibold leading-5 text-white/48">
+2314:                     {item[1]}
+2315:                   </p>
+2316:                 </button>
+2317:               ))}
+2318:             </div>
+2319:           </div>
+2320: 
+2321:           <HomeClientPnlVisual lang={t.lang} />
+2322:         </div>
+2323: 
+2324:         <div className="relative mt-9 grid gap-4 lg:grid-cols-4">
+2325:           {copy.features.map((feature, index) => (
+2326:             <button
+2327:               key={feature[0]}
+2328:               type="button"
+2329:               onClick={() =>
+2330:                 setActive(index === 0 ? "pricing" : index === 3 ? "product" : "product")
+2331:               }
+2332:               className="group rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-left shadow-[0_18px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.075]"
+2333:             >
+2334:               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/16 bg-[#C8A96B]/[0.08] text-sm font-black text-[#E6EDF7]">
+2335:                 0{index + 1}
+2336:               </div>
+2337: 
+2338:               <div className="mt-5 text-lg font-black text-white">{feature[0]}</div>
+2339: 
+2340:               <p className="mt-3 text-sm font-semibold leading-7 text-white/56">
+2341:                 {feature[1]}
+2342:               </p>
+2343: 
+2344:               <div className="mt-5 inline-flex rounded-full border border-white/10 bg-black/20 px-4 py-2 text-xs font-black text-white/66 transition group-hover:border-[#C8A96B]/28 group-hover:text-[#E6EDF7]">
+2345:                 {feature[2]}
+2346:                 <span className="ml-2">→</span>
+2347:               </div>
+2348:             </button>
+2349:           ))}
+2350:         </div>
+2351:       </section>
+2352: 
+2353:       <ClientResultsCarousel lang={t.lang} setActive={setActive} />
+2354: 
+2355:       <section className="relative overflow-hidden rounded-[2.7rem] border border-white/10 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
+2356:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.12),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(200,169,107,0.1),transparent_30%)]" />
+2357: 
+2358:         <div className="relative">
+2359:           <div className="text-center text-[11px] font-black uppercase tracking-[0.28em] text-white/38">
+2360:             {copy.proofTitle}
+2361:           </div>
+2362: 
+2363:           <div className="mt-6 grid gap-4 md:grid-cols-3">
+2364:             {copy.trustItems.map((item, index) => (
+2365:               <button
+2366:                 key={`${item[0]}-bottom`}
+2367:                 type="button"
+2368:                 onClick={() => setActive("product")}
+2369:                 className="rounded-[1.6rem] border border-white/10 bg-black/18 p-5 text-left transition hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.07]"
+2370:               >
+2371:                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#C8A96B]/15 bg-[#C8A96B]/[0.07] text-xs font-black text-[#E6EDF7]">
+2372:                   0{index + 1}
+2373:                 </div>
+2374: 
+2375:                 <div className="mt-4 text-lg font-black text-white">{item[0]}</div>
+2376: 
+2377:                 <p className="mt-2 text-sm font-semibold leading-7 text-white/55">
+2378:                   {item[1]}
+2379:                 </p>
+2380:               </button>
+2381:             ))}
+2382:           </div>
+2383:         </div>
+2384:       </section>
+2385:     </motion.div>
+2386:   );
+2387: }
+2388: 
+2389: function DeskVideoPreview() {
+2390:   return (
+2391:     <div className="relative">
+2392:       <motion.div
+2393:         initial={{ opacity: 0, y: 24, scale: 0.97 }}
+2394:         animate={{ opacity: 1, y: 0, scale: 1 }}
+2395:         transition={{ delay: 0.28, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+2396:         className="relative overflow-hidden rounded-[2.8rem] border border-[#C8A96B]/12 bg-[#07111F]/72 p-3 shadow-[0_34px_130px_rgba(0,0,0,0.22)] backdrop-blur-2xl"
+2397:       >
+2398:         <div className="pointer-events-none absolute inset-0 z-20 rounded-[2.8rem] bg-[radial-gradient(circle_at_20%_0%,rgba(0,192,118,0.16),transparent_34%),radial-gradient(circle_at_90%_20%,rgba(200,169,107,0.11),transparent_32%),linear-gradient(180deg,rgba(3,7,18,0.16),rgba(3,7,18,0.42))]" />
+2399: 
+2400:         <div className="pointer-events-none absolute inset-0 z-30 rounded-[2.8rem] ring-1 ring-inset ring-white/8" />
+2401: 
+2402:         <motion.div
+2403:           aria-hidden
+2404:           animate={{ x: ["-25%", "125%"] }}
+2405:           transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+2406:           className="pointer-events-none absolute left-0 top-0 z-30 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/42 to-transparent"
+2407:         />
+2408: 
+2409:         <div className="relative z-10 overflow-hidden rounded-[2.25rem] bg-[#07111F]">
+2410:           <video
+2411:             src="/media/desk-preview.mp4"
+2412:             autoPlay
+2413:             muted
+2414:             loop
+2415:             playsInline
+2416:             preload="metadata"
+2417:             className="h-[620px] w-full object-cover opacity-[0.42] mix-blend-screen saturate-[0.72] contrast-[1.08] brightness-[0.68]"
+2418:           />
+2419: 
+2420:           <div className="pointer-events-none absolute inset-0 bg-[#07111F]/34" />
+2421:           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#07111F] via-[#07111F]/18 to-[#07111F]/45" />
+2422: 
+2423:           <div className="pointer-events-none absolute left-5 top-5 rounded-full border border-[#C8A96B]/16 bg-[#C8A96B]/[0.065] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/70 backdrop-blur-xl">
+2424:             SkillEdge AI visual layer
+2425:           </div>
+2426: 
+2427:           <div className="pointer-events-none absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-[#07111F]/62 p-4 backdrop-blur-xl">
+2428:             <div className="flex items-center justify-between gap-4">
+2429:               <div>
+2430:                 <div className="text-xs font-black uppercase tracking-[0.22em] text-white/38">
+2431:                   Live desk preview
+2432:                 </div>
+2433:                 <div className="mt-1 text-xl font-black text-white">
+2434:                   Market context → plan → review
+2435:                 </div>
+2436:               </div>
+2437: 
+2438:               <div className="rounded-full border border-[#00C076]/20 bg-[#00D084]/[0.08] px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] text-[#DFFFEF]/75">
+2439:                 Active
+2440:               </div>
+2441:             </div>
+2442:           </div>
+2443:         </div>
+2444:       </motion.div>
+2445: 
+2446:       <div className="pointer-events-none absolute -right-16 top-12 h-44 w-44 rounded-full bg-[#00C076]/10 blur-3xl" />
+2447:       <div className="pointer-events-none absolute -bottom-16 left-10 h-52 w-52 rounded-full bg-[#00C076]/8 blur-3xl" />
+2448:     </div>
+2449:   );
+2450: }
+2451: 
+2452: function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => void }) {
+
+=== EDGE RUNTIME ===
+300:   ];
+301: 
+302:   const topFingerprints: EdgeAny[] = Array.isArray(summary?.fingerprints)
+303:   ? summary.fingerprints
+304:   : [];
+305: 
+306: const playbook: EdgeAny[] = Array.isArray(summary?.playbook)
+307:   ? summary.playbook
+308:   : [];
+309: 
+310: const rules: EdgeAny[] = Array.isArray(summary?.rules)
+311:   ? summary.rules
+312:   : [];
+313: 
+314: const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
+315:   ? summary.recentReviews
+316:   : [];
+317: 
+318:   const missingData: string[] = Array.isArray(summary?.readiness?.missingData)
+319:   ? summary.readiness.missingData
+320:   : [];
+321: 
+322:   return (
+323:     <div className="space-y-6">
+324:       <section className="se-dashboard-panel relative overflow-hidden rounded-[2.35rem] border border-white/[0.08] p-6 shadow-[0_34px_130px_rgba(0,0,0,0.38)]">
+325:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_10%,rgba(200,169,107,0.15),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.045),transparent_46%)]" />
+326:         <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#00C076]/10 blur-3xl" />
+327:         <div className="absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-[#C8A96B]/10 blur-3xl" />
+328: 
+329:         <div className="relative flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
+330:           <div className="max-w-4xl">
+331:             <div className="flex flex-wrap items-center gap-2">
+332:               <span className="rounded-full border border-[#C8A96B]/25 bg-[#C8A96B]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-[#F4E8C8]/85">
+333:                 {copy.badge}
+334:               </span>
+335:               <span className="rounded-full border border-[#00C076]/22 bg-[#00C076]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#DFFFEF]/82">
+336:                 {summary?.profile.stage.label || copy.noDataTitle}
+337:               </span>
+338:             </div>
+339: 
+340:             <h2 className="mt-5 max-w-4xl text-3xl font-black tracking-[-0.055em] text-[#E6EDF7] md:text-5xl">
+341:               {copy.title}
+342:             </h2>
+343: 
+344:             <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 text-[#94A3B8] md:text-base">
+345:               {summary ? stageDescription() : copy.text}
+346:             </p>
+347: 
+348:             <div className="mt-5 flex flex-wrap gap-2">
+349:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+350:                 {summary?.profile.totalReviewedTrades || 0} {copy.reviewedTrades}
+351:               </span>
+352:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+353:                 {summary?.profile.totalScreenshotReviews || 0} {copy.screenshots}
+354:               </span>
+355:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+356:                 {summary?.profile.totalAlertLinkedTrades || 0} {copy.alertLinked}
+357:               </span>
+358:             </div>
+359:           </div>
+360: 
+361:           <div className="flex flex-wrap gap-2 xl:justify-end">
+362:             <button
+363:               type="button"
+364:               onClick={onOpenJournal}
+365:               className="rounded-full border border-[#00D084]/38 bg-gradient-to-r from-[#00C076] via-[#00D084] to-[#00C076] px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#03140D] shadow-[0_18px_60px_rgba(0,192,118,0.22)] transition hover:-translate-y-0.5 hover:shadow-[0_24px_80px_rgba(0,192,118,0.32)]"
+366:             >
+367:               {copy.reviewTrade}
+368:             </button>
+369: 
+370:             <button
+371:               type="button"
+372:               onClick={onRefresh}
+373:               disabled={loading}
+374:               className="rounded-full border border-[#C8A96B]/25 bg-[#C8A96B]/10 px-5 py-3 text-xs font-black uppercase tracking-[0.16em] text-[#F4E8C8] transition hover:bg-[#C8A96B]/16 disabled:cursor-not-allowed disabled:opacity-50"
+375:             >
+376:               {loading ? copy.loading : copy.refresh}
+377:             </button>
+378:           </div>
+379:         </div>
+380: 
+381:         {error ? (
+382:           <div className="relative mt-5 rounded-2xl border border-[#FF5A5F]/20 bg-[#FF5A5F]/10 px-4 py-3 text-xs font-bold leading-5 text-rose-100">
+383:             {error}
+384:           </div>
+385:         ) : null}
+386: 
+387:         {!summary ? (
+388:           <div className="relative mt-6 rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+389:             <div className="text-sm font-black text-white">{copy.noDataTitle}</div>
+390:             <p className="mt-2 text-sm font-semibold leading-6 text-white/54">{copy.noDataText}</p>
+391:           </div>
+392:         ) : (
+393:           <div className="relative mt-6 grid gap-3 md:grid-cols-4">
+394:             {scoreCards.map((card) => (
+395:               <div key={card.label} className="rounded-[1.35rem] border border-white/10 bg-[#07111F]/46 p-4">
+396:                 <div className="flex items-center justify-between gap-3">
+397:                   <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/42">{card.label}</span>
+398:                   <span className="text-sm font-black text-[#E6EDF7]">{formatScore(card.value)}</span>
+399:                 </div>
+400:                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+401:                   <div className={`h-full rounded-full bg-gradient-to-r ${card.gradient}`} style={widthStyle(card.value)} />
+402:                 </div>
+403:               </div>
+404:             ))}
+405:           </div>
+406:         )}
+407:       </section>
+408: 
+409:       {summary ? (
+410:         <>
+411:           <section className="grid gap-4 xl:grid-cols-5">
+412:             {([
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+414:   [copy.bestDirection, translate(summary.highlights.bestDirection), "border-white/10 bg-white/[0.045]"],
+415:   [copy.bestAsset, translate(summary.highlights.bestAssetType), "border-white/10 bg-white/[0.045]"],
+416:   [copy.mainRisk, translate(summary.highlights.mainRiskPattern), "border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.07]"],
+417:   [copy.strongestCondition, translate(summary.highlights.strongestCondition), "border-[#C8A96B]/20 bg-[#C8A96B]/[0.08]"],
+418: ] as Array<[string, string, string]>).map(([label, value, className]) => (
+419:               <div key={label} className={`rounded-[1.5rem] border p-5 ${className}`}>
+420:                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/38">{label}</div>
+421:                 <div className="mt-3 text-lg font-black text-[#E6EDF7]">{value}</div>
+422:               </div>
+423:             ))}
+424:           </section>
+425: 
+426:           <section className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+427:             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+428:               <div className="flex items-center justify-between gap-4">
+429:                 <div>
+430:                   <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#00D084]/75">{copy.fingerprints}</div>
+431:                   <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+432:                     {topFingerprints.length} {copy.fingerprints}
+433:                   </h3>
+434:                 </div>
+435:               </div>
+436: 
+437:               <div className="mt-5 grid gap-3">
+438:                 {topFingerprints.length ? (
+439:                   topFingerprints.slice(0, 5).map((item) => (
+440:                     <div key={item.id} className="rounded-[1.4rem] border border-white/10 bg-[#07111F]/42 p-4">
+441:                       <div className="flex flex-wrap items-start justify-between gap-3">
+442:                         <div>
+443:                           <div className="text-base font-black text-white">{translate(item.setupName)}</div>
+444:                           <div className="mt-1 text-xs font-bold text-white/42">
+445:                             {copy.asset}: {translate(item.assetType)} · {copy.direction}: {translate(item.direction)} · {copy.tier}: {item.tier}
+446:                           </div>
+447:                         </div>
+448: 
+449:                         <div className="rounded-full border border-[#C8A96B]/20 bg-[#C8A96B]/10 px-3 py-1 text-[11px] font-black text-[#F4E8C8]">
+450:                           {copy.confidence}: {formatScore(item.confidenceScore)}
+451:                         </div>
+452:                       </div>
+453: 
+454:                       <div className="mt-4 grid gap-2 md:grid-cols-3">
+455:                         <MetricPill label={copy.winRate} value={formatScore(item.winRate)} />
+456:                         <MetricPill label={copy.trades} value={String(item.totalTrades)} />
+457:                         <MetricPill label={copy.execution} value={formatScore(item.avgExecutionScore)} />
+458:                       </div>
+459: 
+460:                       {item.confirmationRules.length > 0 ? (
+461:                         <div className="mt-4">
+462:                           <div className="text-[10px] font-black uppercase tracking-[0.18em] text-white/35">{copy.confirmation}</div>
+463:                           <div className="mt-2 flex flex-wrap gap-2">
+464:                             {item.confirmationRules.slice(0, 4).map((rule: unknown, index: number) => (
+465:                               <span key={`${item.id}-rule-${index}`} className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1 text-[11px] font-bold text-white/58">
+466:                                 {translate(asText(rule))}
+467:                               </span>
+468:                             ))}
+469:                           </div>
+470:                         </div>
+471:                       ) : null}
+472:                     </div>
+473:                   ))
+474:                 ) : (
+475:                   <EmptyEdgeState text={copy.emptyFingerprints} />
+476:                 )}
+477:               </div>
+478:             </div>
+479: 
+480:             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+481:               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#FFB4B7]/75">{copy.guard}</div>
+482:               <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+483:                 {translate(summary.highlights.mainRiskPattern)}
+484:               </h3>
+485:               <p className="mt-3 text-sm font-semibold leading-7 text-white/55">{riskDescription()}</p>
+486: 
+487:               <div className="mt-5 space-y-2">
+488:                 {rules.length ? (
+489:                   rules.slice(0, 5).map((rule: EdgeAny) => (
+490:                     <div key={rule.id} className="rounded-[1.2rem] border border-white/10 bg-[#07111F]/42 p-4">
+491:                       <div className="flex items-start justify-between gap-3">
+492:                         <div>
+493:                           <div className="text-sm font-black text-white">{translate(rule.title)}</div>
+494:                           {rule.description ? (
+495:                             <p className="mt-1 text-xs font-semibold leading-5 text-white/48">{translate(rule.description)}</p>
+496:                           ) : null}
+497:                         </div>
+498:                         <span className="rounded-full border border-[#FF5A5F]/18 bg-[#FF5A5F]/10 px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-[#FFB4B7]">
+499:                           {rule.action}
+500:                         </span>
+501:                       </div>
+502:                     </div>
+503:                   ))
+504:                 ) : (
+505:                   <EmptyEdgeState text={copy.emptyRules} />
+506:                 )}
+507:               </div>
+508:             </div>
+509:           </section>
+510: 
+511:           <section className="grid gap-5 xl:grid-cols-2">
+512:             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+513:               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8A96B]/80">{copy.playbook}</div>
+514:               <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+515:                 {playbook.length} {copy.playbook}
+516:               </h3>
+517: 
+518:               <div className="mt-5 grid gap-3">
+519:                 {playbook.length ? (
+520:                   playbook.slice(0, 5).map((item: EdgeAny) => (
+521:                     <div key={item.id} className="rounded-[1.35rem] border border-white/10 bg-[#07111F]/42 p-4">
+522:                       <div className="flex flex-wrap items-center justify-between gap-3">
+523:                         <div className="text-base font-black text-white">{translate(item.title)}</div>
+524:                         <div className="rounded-full border border-[#C8A96B]/20 bg-[#C8A96B]/10 px-3 py-1 text-[11px] font-black text-[#F4E8C8]">
+525:                           {formatScore(item.confidenceScore)}
+526:                         </div>
+527:                       </div>
+528:                       {item.description ? (
+529:                         <p className="mt-2 text-xs font-semibold leading-5 text-white/48">{translate(item.description)}</p>
+530:                       ) : null}
+531:                     </div>
+532:                   ))
+533:                 ) : (
+534:                   <EmptyEdgeState text={copy.emptyPlaybook} />
+535:                 )}
+536:               </div>
+537:             </div>
+538: 
+539:             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+540:               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#00D084]/75">{copy.recentReviews}</div>
+541:               <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+542:                 {reviews.length} {copy.recentReviews}
+543:               </h3>
+544: 
+545:               <div className="mt-5 grid gap-3">
+546:                 {reviews.length ? (
+547:                   reviews.slice(0, 5).map((review: EdgeAny, index: number) => (
+548:                     <div key={review.id || index} className="rounded-[1.35rem] border border-white/10 bg-[#07111F]/42 p-4">
+549:                       <div className="flex flex-wrap items-start justify-between gap-3">
+550:                         <div>
+551:                           <div className="text-base font-black text-white">
+552:                             {review.symbol || "TRADE"} · {translate(review.setupName)}
+553:                           </div>
+554:                           <div className="mt-1 text-xs font-bold text-white/42">
+555:                             {copy.execution}: {formatScore(review.executionScore)} · Risk: {formatScore(review.riskScore)} · RR: {formatScore(review.rrScore)}
+556:                           </div>
+557:                         </div>
+558: 
+559:                         <div className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+560:                           review.aPlusCandidate
+561:                             ? "border-[#00C076]/25 bg-[#00C076]/10 text-[#DFFFEF]"
+562:                             : review.avoidPattern
+563:                               ? "border-[#FF5A5F]/22 bg-[#FF5A5F]/10 text-[#FFB4B7]"
+564:                               : "border-white/10 bg-white/[0.05] text-white/50"
+565:                         }`}>
+566:                           {review.aPlusCandidate ? "A+" : review.avoidPattern ? "Guard" : "Review"}
+567:                         </div>
+568:                       </div>
+569: 
+570:                       {review.publicSummary ? (
+571:                         <p className="mt-2 text-xs font-semibold leading-5 text-white/48">{translate(review.publicSummary)}</p>
+572:                       ) : null}
+573:                     </div>
+574:                   ))
+575:                 ) : (
+576:                   <EmptyEdgeState text={copy.emptyReviews} />
+577:                 )}
+578:               </div>
+579:             </div>
+580:           </section>
+581: 
+582:           <section className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+583:             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{copy.nextFocus}</div>
+584:             <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+585:               {translate(summary.profile.nextFocus)}
+586:             </h3>
+587: 
+588:             {missingData.length > 0 ? (
+589:               <>
+590:                 <div className="mt-5 text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{copy.missing}</div>
+591:                 <div className="mt-3 flex flex-wrap gap-2">
+592:                   {missingData.map((item) => (
+593:                     <span key={item} className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[11px] font-bold text-white/58">
+594:                       {translate(item)}
+595:                     </span>
+596:                   ))}
+597:                 </div>
+598:               </>
+599:             ) : null}
+600:           </section>
+601:         </>
+602:       ) : null}
+603:     </div>
+604:   );
+605: }
+606: 
+607: function MetricPill({ label, value }: { label: string; value: string }) {
+608:   return (
+609:     <div className="rounded-[1rem] border border-white/10 bg-white/[0.04] px-3 py-2">
+610:       <div className="text-[9px] font-black uppercase tracking-[0.18em] text-white/32">{label}</div>
+611:       <div className="mt-1 text-sm font-black text-white">{value}</div>
+612:     </div>
+613:   );
+614: }
+615: 
+616: function EmptyEdgeState({ text }: { text: string }) {
+617:   return (
+618:     <div className="rounded-[1.35rem] border border-dashed border-white/12 bg-white/[0.025] p-5 text-sm font-semibold leading-6 text-white/45">
+619:       {text}
+620:     </div>
+621:   );
+622: }
+
+=== JOURNAL CONTEXTS ===
+
+-- line 2505 | matched=review --
+2498:       reviewTitle: "Execution review",
+2499:       reviewText:
+2500:         "Чем конкретнее описание, тем полезнее ответ. Укажи тикер, вход, стоп, причину входа, эмоции и результат.",
+2501:       placeholder:
+2502:         "Пример: сегодня зашёл в шорт после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка.",
+2503:       ask: "Спросить Desk Mentor",
+2504:       analyzing: "Desk Mentor разбирает...",
+2505:       newReview: "Новый desk review",
+2506:       answerTitle: "Desk Mentor review",
+2507:       answerPlaceholder:
+2508:         "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой.",
+2509:       historyTitle: "История desk reviews",
+2510:       historyText: "Последние 10 запросов к Desk Coach.",
+2511:       historyEmpty: "Review tape пустой. Первый разбор появится после ответа Desk Mentor.",
+2512:       loginFirst: "Войди в аккаунт, чтобы работать в desk.",
+2513:       messageRequired: "Введите вопрос или описание сделки.",
+2514:       coachError: "Desk Mentor не ответил.",
+2515:       error: "Запрос к Desk Mentor не прошёл.",
+2516:       failed: "Desk Mentor не ответил. Повтори запрос.",
+
+-- line 2506 | matched=review --
+2499:       reviewText:
+2500:         "Чем конкретнее описание, тем полезнее ответ. Укажи тикер, вход, стоп, причину входа, эмоции и результат.",
+2501:       placeholder:
+2502:         "Пример: сегодня зашёл в шорт после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка.",
+2503:       ask: "Спросить Desk Mentor",
+2504:       analyzing: "Desk Mentor разбирает...",
+2505:       newReview: "Новый desk review",
+2506:       answerTitle: "Desk Mentor review",
+2507:       answerPlaceholder:
+2508:         "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой.",
+2509:       historyTitle: "История desk reviews",
+2510:       historyText: "Последние 10 запросов к Desk Coach.",
+2511:       historyEmpty: "Review tape пустой. Первый разбор появится после ответа Desk Mentor.",
+2512:       loginFirst: "Войди в аккаунт, чтобы работать в desk.",
+2513:       messageRequired: "Введите вопрос или описание сделки.",
+2514:       coachError: "Desk Mentor не ответил.",
+2515:       error: "Запрос к Desk Mentor не прошёл.",
+2516:       failed: "Desk Mentor не ответил. Повтори запрос.",
+2517:       needPlan: "Для Desk Mentor нужен активный тариф или demo-доступ.",
+
+-- line 2509 | matched=review --
+2502:         "Пример: сегодня зашёл в шорт после премаркет-пампа, увидел слабость под VWAP, но передвинул стоп и пересидел убыток. Разбери, где была ошибка.",
+2503:       ask: "Спросить Desk Mentor",
+2504:       analyzing: "Desk Mentor разбирает...",
+2505:       newReview: "Новый desk review",
+2506:       answerTitle: "Desk Mentor review",
+2507:       answerPlaceholder:
+2508:         "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой.",
+2509:       historyTitle: "История desk reviews",
+2510:       historyText: "Последние 10 запросов к Desk Coach.",
+2511:       historyEmpty: "Review tape пустой. Первый разбор появится после ответа Desk Mentor.",
+2512:       loginFirst: "Войди в аккаунт, чтобы работать в desk.",
+2513:       messageRequired: "Введите вопрос или описание сделки.",
+2514:       coachError: "Desk Mentor не ответил.",
+2515:       error: "Запрос к Desk Mentor не прошёл.",
+2516:       failed: "Desk Mentor не ответил. Повтори запрос.",
+2517:       needPlan: "Для Desk Mentor нужен активный тариф или demo-доступ.",
+2518:       limitReached:
+2519:         "Лимит AI-запросов закончился. Выберите тариф выше или дождитесь обновления лимита.",
+2520:     },
+
+-- line 2511 | matched=review --
+2504:       analyzing: "Desk Mentor разбирает...",
+2505:       newReview: "Новый desk review",
+2506:       answerTitle: "Desk Mentor review",
+2507:       answerPlaceholder:
+2508:         "Здесь появится разбор: что было хорошо, где ошибка, какой урок занести в журнал и что проверить перед следующей сделкой.",
+2509:       historyTitle: "История desk reviews",
+2510:       historyText: "Последние 10 запросов к Desk Coach.",
+2511:       historyEmpty: "Review tape пустой. Первый разбор появится после ответа Desk Mentor.",
+2512:       loginFirst: "Войди в аккаунт, чтобы работать в desk.",
+2513:       messageRequired: "Введите вопрос или описание сделки.",
+2514:       coachError: "Desk Mentor не ответил.",
+2515:       error: "Запрос к Desk Mentor не прошёл.",
+2516:       failed: "Desk Mentor не ответил. Повтори запрос.",
+2517:       needPlan: "Для Desk Mentor нужен активный тариф или demo-доступ.",
+2518:       limitReached:
+2519:         "Лимит AI-запросов закончился. Выберите тариф выше или дождитесь обновления лимита.",
+2520:     },
+2521:   },
+2522: 
+
+-- line 2545 | matched=review --
+2538:     createReport: "Зібрати desk report",
+2539:     overview: {
+2540:       title: "Trading Desk Command",
+2541:       text: "PnL, win rate, дисципліна, сильні сетапи й leaks. Один екран. Без шуму. Тільки execution.",
+2542:       pnlMonth: "PnL за місяць",
+2543:       winRate: "Відсоток прибуткових",
+2544:       discipline: "Оцінка дисципліни",
+2545:       weeklyAi: "Тижневий desk review",
+2546:       weeklyAiText:
+2547:         "SkillEdge збирає Journal, risk, дисципліну та повторювані leaks у торгову місію на тиждень.",
+2548:     },
+2549:     charts: {
+2550:       title: "Графіки TradingView",
+2551:       text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
+2552:       placeholder: "Chart Execution Desk готовий у вкладці Charts.",
+2553:       analyzeCurrentChart: "Проаналізувати графік",
+2554:       workspaceText: "Графік, watchlist, movers і decision context в одному execution workspace.",
+2555:       watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2556:       openWatchlist: "Відкрити список",
+
+-- line 2547 | matched=journal --
+2540:       title: "Trading Desk Command",
+2541:       text: "PnL, win rate, дисципліна, сильні сетапи й leaks. Один екран. Без шуму. Тільки execution.",
+2542:       pnlMonth: "PnL за місяць",
+2543:       winRate: "Відсоток прибуткових",
+2544:       discipline: "Оцінка дисципліни",
+2545:       weeklyAi: "Тижневий desk review",
+2546:       weeklyAiText:
+2547:         "SkillEdge збирає Journal, risk, дисципліну та повторювані leaks у торгову місію на тиждень.",
+2548:     },
+2549:     charts: {
+2550:       title: "Графіки TradingView",
+2551:       text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
+2552:       placeholder: "Chart Execution Desk готовий у вкладці Charts.",
+2553:       analyzeCurrentChart: "Проаналізувати графік",
+2554:       workspaceText: "Графік, watchlist, movers і decision context в одному execution workspace.",
+2555:       watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2556:       openWatchlist: "Відкрити список",
+2557:       hideWatchlist: "Сховати список",
+2558:       watchlistTitle: "Список спостереження",
+
+-- line 2556 | matched=open --
+2549:     charts: {
+2550:       title: "Графіки TradingView",
+2551:       text: "Вбудований графік TradingView для аналізу тикерів, рівнів і сетапів.",
+2552:       placeholder: "Chart Execution Desk готовий у вкладці Charts.",
+2553:       analyzeCurrentChart: "Проаналізувати графік",
+2554:       workspaceText: "Графік, watchlist, movers і decision context в одному execution workspace.",
+2555:       watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2556:       openWatchlist: "Відкрити список",
+2557:       hideWatchlist: "Сховати список",
+2558:       watchlistTitle: "Список спостереження",
+2559:       watchlistSubtitle: "Тикер / 24h % / обʼєм",
+2560:       addTickerButton: "Додати",
+2561:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2562:       addTickerHint: "Приклад: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+2563:       sortSymbol: "Тикер",
+2564:       sortChange: "% 24h",
+2565:       sortVolume: "Обʼєм",
+2566:       symbolColumn: "Тикер",
+2567:       percentColumn: "%",
+
+-- line 2560 | matched=ticker --
+2553:       analyzeCurrentChart: "Проаналізувати графік",
+2554:       workspaceText: "Графік, watchlist, movers і decision context в одному execution workspace.",
+2555:       watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2556:       openWatchlist: "Відкрити список",
+2557:       hideWatchlist: "Сховати список",
+2558:       watchlistTitle: "Список спостереження",
+2559:       watchlistSubtitle: "Тикер / 24h % / обʼєм",
+2560:       addTickerButton: "Додати",
+2561:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2562:       addTickerHint: "Приклад: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+2563:       sortSymbol: "Тикер",
+2564:       sortChange: "% 24h",
+2565:       sortVolume: "Обʼєм",
+2566:       symbolColumn: "Тикер",
+2567:       percentColumn: "%",
+2568:       volumeColumn: "Обʼєм",
+2569:       loadingWatchlist: "Завантажуємо список спостереження...",
+2570:       emptyWatchlist: "Watchlist порожній. Збери execution universe до початку сесії.",
+2571:       removeFromWatchlist: "Видалити зі списку",
+
+-- line 2561 | matched=ticker --
+2554:       workspaceText: "Графік, watchlist, movers і decision context в одному execution workspace.",
+2555:       watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2556:       openWatchlist: "Відкрити список",
+2557:       hideWatchlist: "Сховати список",
+2558:       watchlistTitle: "Список спостереження",
+2559:       watchlistSubtitle: "Тикер / 24h % / обʼєм",
+2560:       addTickerButton: "Додати",
+2561:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2562:       addTickerHint: "Приклад: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+2563:       sortSymbol: "Тикер",
+2564:       sortChange: "% 24h",
+2565:       sortVolume: "Обʼєм",
+2566:       symbolColumn: "Тикер",
+2567:       percentColumn: "%",
+2568:       volumeColumn: "Обʼєм",
+2569:       loadingWatchlist: "Завантажуємо список спостереження...",
+2570:       emptyWatchlist: "Watchlist порожній. Збери execution universe до початку сесії.",
+2571:       removeFromWatchlist: "Видалити зі списку",
+2572:       loginFirst: "Спочатку увійдіть в акаунт.",
+
+-- line 2562 | matched=ticker --
+2555:       watchlistExamples: "Приклади списку спостереження: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2556:       openWatchlist: "Відкрити список",
+2557:       hideWatchlist: "Сховати список",
+2558:       watchlistTitle: "Список спостереження",
+2559:       watchlistSubtitle: "Тикер / 24h % / обʼєм",
+2560:       addTickerButton: "Додати",
+2561:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+2562:       addTickerHint: "Приклад: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+2563:       sortSymbol: "Тикер",
+2564:       sortChange: "% 24h",
+2565:       sortVolume: "Обʼєм",
+2566:       symbolColumn: "Тикер",
+2567:       percentColumn: "%",
+2568:       volumeColumn: "Обʼєм",
+2569:       loadingWatchlist: "Завантажуємо список спостереження...",
+2570:       emptyWatchlist: "Watchlist порожній. Збери execution universe до початку сесії.",
+2571:       removeFromWatchlist: "Видалити зі списку",
+2572:       loginFirst: "Спочатку увійдіть в акаунт.",
+2573:       settingsLoadError: "Не вдалося завантажити налаштування графіків.",
+
+-- line 2571 | matched=remove --
+2564:       sortChange: "% 24h",
+2565:       sortVolume: "Обʼєм",
+2566:       symbolColumn: "Тикер",
+2567:       percentColumn: "%",
+2568:       volumeColumn: "Обʼєм",
+2569:       loadingWatchlist: "Завантажуємо список спостереження...",
+2570:       emptyWatchlist: "Watchlist порожній. Збери execution universe до початку сесії.",
+2571:       removeFromWatchlist: "Видалити зі списку",
+2572:       loginFirst: "Спочатку увійдіть в акаунт.",
+2573:       settingsLoadError: "Не вдалося завантажити налаштування графіків.",
+2574:       addTickerError: "Не вдалося додати тикер до списку спостереження.",
+2575:       removeTickerError: "Не вдалося видалити тикер зі списку спостереження.",
+2576:       moversStocks: "Акції",
+2577:       moversCrypto: "Крипто",
+2578:       moversGainers: "Лідери росту",
+2579:       moversLosers: "Лідери падіння",
+2580:       moversCollapse: "Згорнути",
+2581:       moversExpand: "Розгорнути",
+2582:       moversName: "Назва",
+
+-- line 2574 | matched=ticker --
+2567:       percentColumn: "%",
+2568:       volumeColumn: "Обʼєм",
+2569:       loadingWatchlist: "Завантажуємо список спостереження...",
+2570:       emptyWatchlist: "Watchlist порожній. Збери execution universe до початку сесії.",
+2571:       removeFromWatchlist: "Видалити зі списку",
+2572:       loginFirst: "Спочатку увійдіть в акаунт.",
+2573:       settingsLoadError: "Не вдалося завантажити налаштування графіків.",
+2574:       addTickerError: "Не вдалося додати тикер до списку спостереження.",
+2575:       removeTickerError: "Не вдалося видалити тикер зі списку спостереження.",
+2576:       moversStocks: "Акції",
+2577:       moversCrypto: "Крипто",
+2578:       moversGainers: "Лідери росту",
+2579:       moversLosers: "Лідери падіння",
+2580:       moversCollapse: "Згорнути",
+2581:       moversExpand: "Розгорнути",
+2582:       moversName: "Назва",
+2583:       moversPercentChange: "% зміни",
+2584:       moversLoading: "Завантажуємо лідерів руху...",
+2585:       moversEmpty: "Немає інструментів під цей фільтр.",
+
+-- line 2575 | matched=ticker,remove --
+2568:       volumeColumn: "Обʼєм",
+2569:       loadingWatchlist: "Завантажуємо список спостереження...",
+2570:       emptyWatchlist: "Watchlist порожній. Збери execution universe до початку сесії.",
+2571:       removeFromWatchlist: "Видалити зі списку",
+2572:       loginFirst: "Спочатку увійдіть в акаунт.",
+2573:       settingsLoadError: "Не вдалося завантажити налаштування графіків.",
+2574:       addTickerError: "Не вдалося додати тикер до списку спостереження.",
+2575:       removeTickerError: "Не вдалося видалити тикер зі списку спостереження.",
+2576:       moversStocks: "Акції",
+2577:       moversCrypto: "Крипто",
+2578:       moversGainers: "Лідери росту",
+2579:       moversLosers: "Лідери падіння",
+2580:       moversCollapse: "Згорнути",
+2581:       moversExpand: "Розгорнути",
+2582:       moversName: "Назва",
+2583:       moversPercentChange: "% зміни",
+2584:       moversLoading: "Завантажуємо лідерів руху...",
+2585:       moversEmpty: "Немає інструментів під цей фільтр.",
+2586:       moversStocksNeedKey:
+
+-- line 2611 | matched=ticker --
+2604:         "SkillEdge не завантажив ринкові дані по цьому тикеру на поточному тарифі даних. Спробуй більш ліквідний тикер: AAPL, TSLA, NVDA, SPY або QQQ.",
+2605:       marketDataPremiumTitle: "Потрібен преміум-доступ до ринкових даних",
+2606:       marketDataPremiumText:
+2607:   "Цей тикер, таймфрейм або джерело даних вимагає вищий тариф ринкових даних. SkillEdge використовує преміальне ринкове покриття там, де воно доступне.",
+2608:       marketDataGenericErrorTitle: "Аналіз тимчасово недоступний",
+2609:       marketDataGenericErrorText:
+2610:         "Зараз не вдалося виконати аналіз графіка. Спробуй інший тикер, таймфрейм або запусти аналіз ще раз.",
+2611:       chartControlTickerLabel: "Тікер",
+2612:       chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+2613:       chartControlIntervalLabel: "Таймфрейм",
+2614:       chartControlOpenChart: "Відкрити графік",
+2615:       chartControlHint:
+2616:         "Використовуй цю панель для керування TradingView та AI-аналізом. Зміни всередині самого TradingView можуть не синхронізуватися назад у SkillEdge.",
+2617:     },
+2618:     strategy: {
+2619:       title: "Стратегія",
+2620:       text: "Керована система розвитку, яка фіксує перетворити хаотичні угоди на повторювану торгову систему: логіку сетапу, базу доказів, правила, зв’язок із журналом і Personal Playbook.",
+2621:       badge: "Strategy Growth Engine",
+2622:       heroTitle: "Побудуй свою торгову систему разом зі SkillEdge.",
+
+-- line 2612 | matched=ticker --
+2605:       marketDataPremiumTitle: "Потрібен преміум-доступ до ринкових даних",
+2606:       marketDataPremiumText:
+2607:   "Цей тикер, таймфрейм або джерело даних вимагає вищий тариф ринкових даних. SkillEdge використовує преміальне ринкове покриття там, де воно доступне.",
+2608:       marketDataGenericErrorTitle: "Аналіз тимчасово недоступний",
+2609:       marketDataGenericErrorText:
+2610:         "Зараз не вдалося виконати аналіз графіка. Спробуй інший тикер, таймфрейм або запусти аналіз ще раз.",
+2611:       chartControlTickerLabel: "Тікер",
+2612:       chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+2613:       chartControlIntervalLabel: "Таймфрейм",
+2614:       chartControlOpenChart: "Відкрити графік",
+2615:       chartControlHint:
+2616:         "Використовуй цю панель для керування TradingView та AI-аналізом. Зміни всередині самого TradingView можуть не синхронізуватися назад у SkillEdge.",
+2617:     },
+2618:     strategy: {
+2619:       title: "Стратегія",
+2620:       text: "Керована система розвитку, яка фіксує перетворити хаотичні угоди на повторювану торгову систему: логіку сетапу, базу доказів, правила, зв’язок із журналом і Personal Playbook.",
+2621:       badge: "Strategy Growth Engine",
+2622:       heroTitle: "Побудуй свою торгову систему разом зі SkillEdge.",
+2623:       heroText:
+
+-- line 2614 | matched=open --
+2607:   "Цей тикер, таймфрейм або джерело даних вимагає вищий тариф ринкових даних. SkillEdge використовує преміальне ринкове покриття там, де воно доступне.",
+2608:       marketDataGenericErrorTitle: "Аналіз тимчасово недоступний",
+2609:       marketDataGenericErrorText:
+2610:         "Зараз не вдалося виконати аналіз графіка. Спробуй інший тикер, таймфрейм або запусти аналіз ще раз.",
+2611:       chartControlTickerLabel: "Тікер",
+2612:       chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+2613:       chartControlIntervalLabel: "Таймфрейм",
+2614:       chartControlOpenChart: "Відкрити графік",
+2615:       chartControlHint:
+2616:         "Використовуй цю панель для керування TradingView та AI-аналізом. Зміни всередині самого TradingView можуть не синхронізуватися назад у SkillEdge.",
+2617:     },
+2618:     strategy: {
+2619:       title: "Стратегія",
+2620:       text: "Керована система розвитку, яка фіксує перетворити хаотичні угоди на повторювану торгову систему: логіку сетапу, базу доказів, правила, зв’язок із журналом і Personal Playbook.",
+2621:       badge: "Strategy Growth Engine",
+2622:       heroTitle: "Побудуй свою торгову систему разом зі SkillEdge.",
+2623:       heroText:
+2624:         "Цей модуль веде трейдера через зрозумілий цикл розвитку: обрати один сетап, вивчити логіку, зібрати докази, створити Strategy v1, протестувати через журнал, розібрати помилки, тренувати дисципліну, покращувати версії та переносити тільки доведені правила в Personal Playbook.",
+2625:       connectedTitle: "Пов’язано з журналом угод",
+
+-- line 2627 | matched=review --
+2620:       text: "Керована система розвитку, яка фіксує перетворити хаотичні угоди на повторювану торгову систему: логіку сетапу, базу доказів, правила, зв’язок із журналом і Personal Playbook.",
+2621:       badge: "Strategy Growth Engine",
+2622:       heroTitle: "Побудуй свою торгову систему разом зі SkillEdge.",
+2623:       heroText:
+2624:         "Цей модуль веде трейдера через зрозумілий цикл розвитку: обрати один сетап, вивчити логіку, зібрати докази, створити Strategy v1, протестувати через журнал, розібрати помилки, тренувати дисципліну, покращувати версії та переносити тільки доведені правила в Personal Playbook.",
+2625:       connectedTitle: "Пов’язано з журналом угод",
+2626:       connectedText:
+2627:         "Угоди з журналу стають фактичною базою для Strategy Score, дисципліни, карти помилок, desk reviews, переходу в playbook і майбутніх персональних сигналів.",
+2628:       cockpit: "Пульт стратегії",
+2629:       currentMission: "Поточна місія",
+2630:       roadmap: "Desk roadmap",
+2631:       setupAcademy: "Академія сетапів",
+2632:       firstSevenDaysTitle: "Перші 7 днів запуску",
+2633:       playbookLibraryTitle: "Професійна бібліотека сетапів",
+2634:       activeTemplatesLabel: "активних",
+2635:       quickCommandCenter: "Панель дій",
+2636:       quickLive: "Live",
+2637:       quickAddTradeDescription: "Відкрити форму угоди в журналі",
+2638:       quickStrategyDescription: "Відкрити модуль побудови стратегії",
+
+-- line 2650 | matched=journal,open --
+2643:       termsTitle: "Пояснення термінів і кнопок",
+2644:       emptyTitle: "Активний playbook ще не вибраний",
+2645:       emptyText:
+2646:         "Почни з професійного setup playbook. SkillEdge збере перший маршрут, чеклист, задачі по доказах і 20-trade experiment навколо обраного сетапу.",
+2647:       startButton: "Почати побудову стратегії",
+2648:       continueButton: "Продовжити місію",
+2649:       addExampleButton: "Додати приклад",
+2650:       openJournalButton: "Відкрити журнал",
+2651:       reviewProgressButton: "Розібрати прогрес",
+2652:       loading: "Завантажуємо робочу зону стратегії...",
+2653:       loadError: "Не вдалося завантажити робочу зону стратегії.",
+2654:       stageLabel: "Етап",
+2655:       progressLabel: "Прогрес",
+2656:       trustScore: "Довіра до стратегії",
+2657:       discipline: "Дисципліна",
+2658:       dataQuality: "Якість даних",
+2659:       activeStrategies: "Активні стратегії",
+2660:       evidence: "Приклади-докази",
+2661:       tasksOpen: "Відкриті задачі",
+
+-- line 2651 | matched=review --
+2644:       emptyTitle: "Активний playbook ще не вибраний",
+2645:       emptyText:
+2646:         "Почни з професійного setup playbook. SkillEdge збере перший маршрут, чеклист, задачі по доказах і 20-trade experiment навколо обраного сетапу.",
+2647:       startButton: "Почати побудову стратегії",
+2648:       continueButton: "Продовжити місію",
+2649:       addExampleButton: "Додати приклад",
+2650:       openJournalButton: "Відкрити журнал",
+2651:       reviewProgressButton: "Розібрати прогрес",
+2652:       loading: "Завантажуємо робочу зону стратегії...",
+2653:       loadError: "Не вдалося завантажити робочу зону стратегії.",
+2654:       stageLabel: "Етап",
+2655:       progressLabel: "Прогрес",
+2656:       trustScore: "Довіра до стратегії",
+2657:       discipline: "Дисципліна",
+2658:       dataQuality: "Якість даних",
+2659:       activeStrategies: "Активні стратегії",
+2660:       evidence: "Приклади-докази",
+2661:       tasksOpen: "Відкриті задачі",
+2662:       notReady: "Ще не готово",
+
+-- line 2661 | matched=open --
+2654:       stageLabel: "Етап",
+2655:       progressLabel: "Прогрес",
+2656:       trustScore: "Довіра до стратегії",
+2657:       discipline: "Дисципліна",
+2658:       dataQuality: "Якість даних",
+2659:       activeStrategies: "Активні стратегії",
+2660:       evidence: "Приклади-докази",
+2661:       tasksOpen: "Відкриті задачі",
+2662:       notReady: "Ще не готово",
+2663:       insufficientData: "Поки недостатньо даних",
+2664:       beginner: "Новачок",
+2665:       advanced: "Просунутий",
+2666:       market: "Ринок",
+2667:       direction: "Напрямок",
+2668:       difficulty: "Складність",
+2669:       category: "Категорія",
+2670:       learnSetup: "Вивчити сетап",
+2671:       buildStrategy: "Зібрати стратегію",
+2672:       noTemplates: "Активних шаблонів сетапів поки немає.",
+
+-- line 2680 | matched=review --
+2673:       roadmapSteps: [
+2674:         "Профіль трейдера та рівень",
+2675:         "Вибір першого сетапу",
+2676:         "Вивчення професійного playbook",
+2677:         "Збір історичних прикладів",
+2678:         "Створення Strategy v1",
+2679:         "20-trade experiment",
+2680:         "desk review і покращення версії",
+2681:         "Перехід у Personal Playbook",
+2682:       ],
+2683:       firstSevenDays: [
+2684:         "День 1: визначити ринок, стиль і рівень досвіду.",
+2685:         "День 2: обрати один професійний сетап для фокусу.",
+2686:         "День 3: вивчити контекст, тригери, стоп і правила уникнення.",
+2687:         "День 4: зібрати 3 історичні приклади.",
+2688:         "День 5: завантажити скрин і отримати desk review.",
+2689:         "День 6: зібрати Strategy v1 і чеклист.",
+2690:         "День 7: запустити 20-trade experiment.",
+2691:       ],
+
+-- line 2688 | matched=review --
+2681:         "Перехід у Personal Playbook",
+2682:       ],
+2683:       firstSevenDays: [
+2684:         "День 1: визначити ринок, стиль і рівень досвіду.",
+2685:         "День 2: обрати один професійний сетап для фокусу.",
+2686:         "День 3: вивчити контекст, тригери, стоп і правила уникнення.",
+2687:         "День 4: зібрати 3 історичні приклади.",
+2688:         "День 5: завантажити скрин і отримати desk review.",
+2689:         "День 6: зібрати Strategy v1 і чеклист.",
+2690:         "День 7: запустити 20-trade experiment.",
+2691:       ],
+2692:       processSteps: [
+2693:         "Вивчити логіку сетапу.",
+2694:         "Спостерігати історичні приклади.",
+2695:         "Позначати valid, invalid і no-trade ситуації.",
+2696:         "Зібрати правила та чеклист.",
+2697:         "Заносити кожну спробу в журнал.",
+2698:         "Розбирати виконання через SkillEdge.",
+2699:         "Покращувати v2/v3 на фактах, а не емоціях.",
+
+-- line 2724 | matched=review --
+2717:       overviewLabel: "Огляд навчання",
+2718:       modulesLabel: "Модулі",
+2719:       lessonsLabel: "уроків",
+2720:       progressLabel: "Прогрес",
+2721:       totalProgressLabel: "Загальний прогрес",
+2722:       startButton: "Почати",
+2723:       continueButton: "Продовжити drill",
+2724:       reviewButton: "Повторити",
+2725:       notStartedStatus: "Не розпочато",
+2726:       inProgressStatus: "У процесі",
+2727:       completedStatus: "Пройдено",
+2728:       lockedLabel: "Скоро",
+2729:       estimatedTimeLabel: "Час",
+2730:       levelLabel: "Рівень",
+2731:       beginnerLevel: "Початковий",
+2732:       intermediateLevel: "Середній",
+2733:       advancedLevel: "Просунутий",
+2734:       moduleOneTitle: "Основи ринку",
+2735:       moduleOneText:
+
+-- line 2775 | matched=review --
+2768:       lessonDiscipline: "Дисципліна",
+2769:       lessonOvertrading: "Переторговка",
+2770:       lessonRevengeTrading: "Торгівля з помсти",
+2771:       lessonPatience: "Терпіння",
+2772:       lessonSetupChecklist: "Чеклист сетапу",
+2773:       lessonEntryTrigger: "Тригер входу",
+2774:       lessonInvalidation: "Invalidation",
+2775:       lessonReviewProcess: "Процес розбору",
+2776:       advancedTracksLabel: "Додаткові напрямки",
+2777:       advancedTracksText:
+2778:         "Додаткові спеціалізовані напрями навчання для поглиблення торгової системи всередині SkillEdge.",
+2779:       comingSoonButton: "Незабаром",
+2780:       activeModuleLabel: "Активний модуль",
+2781:       openLessonButton: "Відкрити drill",
+2782:       selectedModuleHint:
+2783:         "Обери модуль, щоб побачити уроки, прогрес і наступний крок навчання.",
+2784:       nextLessonLabel: "Наступний урок",
+2785:       moduleDetailsLabel: "Деталі модуля",
+2786:       lessonViewerLabel: "Перегляд уроку",
+
+-- line 2781 | matched=open --
+2774:       lessonInvalidation: "Invalidation",
+2775:       lessonReviewProcess: "Процес розбору",
+2776:       advancedTracksLabel: "Додаткові напрямки",
+2777:       advancedTracksText:
+2778:         "Додаткові спеціалізовані напрями навчання для поглиблення торгової системи всередині SkillEdge.",
+2779:       comingSoonButton: "Незабаром",
+2780:       activeModuleLabel: "Активний модуль",
+2781:       openLessonButton: "Відкрити drill",
+2782:       selectedModuleHint:
+2783:         "Обери модуль, щоб побачити уроки, прогрес і наступний крок навчання.",
+2784:       nextLessonLabel: "Наступний урок",
+2785:       moduleDetailsLabel: "Деталі модуля",
+2786:       lessonViewerLabel: "Перегляд уроку",
+2787:       lessonContentLabel: "Зміст уроку",
+2788:       lessonCloseButton: "Закрити урок",
+2789:       lessonStartText:
+2790:         "Цей урок оформлено як короткий практичний блок SkillEdge. Вивчи ключові ідеї, виконай завдання та звʼяжи концепцію зі своїми угодами.",
+2791:       lessonKeyPointsLabel: "Ключові ідеї",
+2792:       lessonPracticeLabel: "Практичне завдання",
+
+-- line 2785 | matched=details --
+2778:         "Додаткові спеціалізовані напрями навчання для поглиблення торгової системи всередині SkillEdge.",
+2779:       comingSoonButton: "Незабаром",
+2780:       activeModuleLabel: "Активний модуль",
+2781:       openLessonButton: "Відкрити drill",
+2782:       selectedModuleHint:
+2783:         "Обери модуль, щоб побачити уроки, прогрес і наступний крок навчання.",
+2784:       nextLessonLabel: "Наступний урок",
+2785:       moduleDetailsLabel: "Деталі модуля",
+2786:       lessonViewerLabel: "Перегляд уроку",
+2787:       lessonContentLabel: "Зміст уроку",
+2788:       lessonCloseButton: "Закрити урок",
+2789:       lessonStartText:
+2790:         "Цей урок оформлено як короткий практичний блок SkillEdge. Вивчи ключові ідеї, виконай завдання та звʼяжи концепцію зі своїми угодами.",
+2791:       lessonKeyPointsLabel: "Ключові ідеї",
+2792:       lessonPracticeLabel: "Практичне завдання",
+2793:       lessonPracticeText:
+2794:         "Розбери концепцію, знайди один приклад на графіку і запиши, що підтверджує або ламає ідею.",
+2795:       markLessonCompletedButton: "Позначити урок пройденим",
+2796:       lessonCompletedButton: "Урок пройдено",
+
+-- line 2904 | matched=delete --
+2897:       aiReportHistoryLabel: "Історія",
+2898:       aiReportHistoryTitle: "Історія desk reports",
+2899:       aiReportHistoryText:
+2900:         "Відкривай попередні AI-зведення за фільтрами та швидко повертайся до найважливіших висновків.",
+2901:       aiReportHistoryEmpty: "Поки що збережених desk reports немає.",
+2902:       currentSummaryLabel: "Поточне зведення",
+2903:       allPeriods: "Усі періоди",
+2904:       deleteAiReport: "Видалити звіт",
+2905:       copyAiReport: "Скопіювати",
+2906:       downloadAiReport: "Завантажити .txt",
+2907:       aiReportCopied: "desk report скопійовано.",
+2908:       aiReportCopyFailed: "Не вдалося скопіювати звіт.",
+2909:       aiReportDownloaded: "desk report завантажено.",
+2910:       upgradeForAiReports: "Потрібен Edge",
+2911:       aiReportUpgradeRequired:
+2912:         "desk reportи доступні на тарифах SkillEdge Edge та SkillEdge Elite.",
+2913:       aiReportLockedText:
+2914:         "desk reportи розбирають вибрані угоди, знайти найкращі сетапи, помилки та наступний фокус. Ця функція доступна на тарифах SkillEdge Edge та SkillEdge Elite.",
+2915:       aiReportPlanHint: "desk reports на місяць на поточному тарифі",
+
+-- line 2917 | matched=journal --
+2910:       upgradeForAiReports: "Потрібен Edge",
+2911:       aiReportUpgradeRequired:
+2912:         "desk reportи доступні на тарифах SkillEdge Edge та SkillEdge Elite.",
+2913:       aiReportLockedText:
+2914:         "desk reportи розбирають вибрані угоди, знайти найкращі сетапи, помилки та наступний фокус. Ця функція доступна на тарифах SkillEdge Edge та SkillEdge Elite.",
+2915:       aiReportPlanHint: "desk reports на місяць на поточному тарифі",
+2916:     },
+2917:     journal: {
+2918:       title: "Журнал угод",
+2919:       text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
+2920:       locked: "Для додавання угод потрібен активний тариф або пробний доступ.",
+2921:       addTitle: "Додати угоду",
+2922:       editTitle: "Редагувати угоду",
+2923:       addModeText: "Додай нову угоду до особистого журналу.",
+2924:       addText:
+2925:         "Заповни базові дані, додай скріншоти та використовуй desk review для оцінки угоди.",
+2926:       totalTrades: "Усього угод",
+2927:       totalPnl: "Загальний PnL",
+2928:       winRate: "Відсоток прибуткових",
+
+-- line 2922 | matched=edit --
+2915:       aiReportPlanHint: "desk reports на місяць на поточному тарифі",
+2916:     },
+2917:     journal: {
+2918:       title: "Журнал угод",
+2919:       text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
+2920:       locked: "Для додавання угод потрібен активний тариф або пробний доступ.",
+2921:       addTitle: "Додати угоду",
+2922:       editTitle: "Редагувати угоду",
+2923:       addModeText: "Додай нову угоду до особистого журналу.",
+2924:       addText:
+2925:         "Заповни базові дані, додай скріншоти та використовуй desk review для оцінки угоди.",
+2926:       totalTrades: "Усього угод",
+2927:       totalPnl: "Загальний PnL",
+2928:       winRate: "Відсоток прибуткових",
+2929:       avgPnl: "Середній PnL",
+2930:       grossProfit: "Валовий прибуток",
+2931:       grossLoss: "Валовий збиток",
+2932:       bestTrade: "Найкраща угода",
+2933:       worstTrade: "Найгірша угода",
+
+-- line 2925 | matched=review --
+2918:       title: "Журнал угод",
+2919:       text: "Додавайте угоди, фіксуйте ризик, результат, емоції, помилки та уроки.",
+2920:       locked: "Для додавання угод потрібен активний тариф або пробний доступ.",
+2921:       addTitle: "Додати угоду",
+2922:       editTitle: "Редагувати угоду",
+2923:       addModeText: "Додай нову угоду до особистого журналу.",
+2924:       addText:
+2925:         "Заповни базові дані, додай скріншоти та використовуй desk review для оцінки угоди.",
+2926:       totalTrades: "Усього угод",
+2927:       totalPnl: "Загальний PnL",
+2928:       winRate: "Відсоток прибуткових",
+2929:       avgPnl: "Середній PnL",
+2930:       grossProfit: "Валовий прибуток",
+2931:       grossLoss: "Валовий збиток",
+2932:       bestTrade: "Найкраща угода",
+2933:       worstTrade: "Найгірша угода",
+2934:       profitFactor: "Profit Factor",
+2935:       equityTitle: "Крива дохідності",
+2936:       equityText: "Накопичувальний PnL на основі збережених угод.",
+
+-- line 2956 | matched=delete --
+2949:         lesson: "Урок",
+2950:         notes: "Нотатки",
+2951:       },
+2952:       fullTitle: "Повний журнал",
+2953:       fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
+2954:       downloadCsv: "Завантажити CSV",
+2955:       downloadXlsx: "Завантажити XLSX",
+2956:       deleteTradeButton: "Видалити угоду",
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+
+-- line 2957 | matched=edit --
+2950:         notes: "Нотатки",
+2951:       },
+2952:       fullTitle: "Повний журнал",
+2953:       fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
+2954:       downloadCsv: "Завантажити CSV",
+2955:       downloadXlsx: "Завантажити XLSX",
+2956:       deleteTradeButton: "Видалити угоду",
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+2968:       screenshotsCount: "скріншотів",
+
+-- line 2958 | matched=open --
+2951:       },
+2952:       fullTitle: "Повний журнал",
+2953:       fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
+2954:       downloadCsv: "Завантажити CSV",
+2955:       downloadXlsx: "Завантажити XLSX",
+2956:       deleteTradeButton: "Видалити угоду",
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+2968:       screenshotsCount: "скріншотів",
+2969:       screenshotTradeLabel: "Угода",
+
+-- line 2959 | matched=edit --
+2952:       fullTitle: "Повний журнал",
+2953:       fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
+2954:       downloadCsv: "Завантажити CSV",
+2955:       downloadXlsx: "Завантажити XLSX",
+2956:       deleteTradeButton: "Видалити угоду",
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+2968:       screenshotsCount: "скріншотів",
+2969:       screenshotTradeLabel: "Угода",
+2970:       screenshotFileLabel: "Скріншот",
+
+-- line 2960 | matched=edit --
+2953:       fullText: "Повний список угод. Нижче доступні фільтри та експорт.",
+2954:       downloadCsv: "Завантажити CSV",
+2955:       downloadXlsx: "Завантажити XLSX",
+2956:       deleteTradeButton: "Видалити угоду",
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+2968:       screenshotsCount: "скріншотів",
+2969:       screenshotTradeLabel: "Угода",
+2970:       screenshotFileLabel: "Скріншот",
+2971:       screenshotChoose: "Вибрати chart evidence",
+
+-- line 2961 | matched=edit --
+2954:       downloadCsv: "Завантажити CSV",
+2955:       downloadXlsx: "Завантажити XLSX",
+2956:       deleteTradeButton: "Видалити угоду",
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+2968:       screenshotsCount: "скріншотів",
+2969:       screenshotTradeLabel: "Угода",
+2970:       screenshotFileLabel: "Скріншот",
+2971:       screenshotChoose: "Вибрати chart evidence",
+2972:       screenshotNoFile: "Файл не вибрано",
+
+-- line 2963 | matched=delete --
+2956:       deleteTradeButton: "Видалити угоду",
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+2968:       screenshotsCount: "скріншотів",
+2969:       screenshotTradeLabel: "Угода",
+2970:       screenshotFileLabel: "Скріншот",
+2971:       screenshotChoose: "Вибрати chart evidence",
+2972:       screenshotNoFile: "Файл не вибрано",
+2973:       screenshotSelected: "Вибраний файл",
+2974:       screenshotHint:
+
+-- line 2964 | matched=delete --
+2957:       editTradeButton: "Редагувати",
+2958:       openChartButton: "Відкрити графік",
+2959:       cancelEditButton: "Скасувати редагування",
+2960:       editModeTitle: "Режим редагування",
+2961:       editModeText: "Зміни підсвічені поля та збережи угоду.",
+2962:       actions: "Дії",
+2963:       deleteTradeConfirm: "Видалити цю угоду? Цю дію не можна скасувати.",
+2964:       deleteTradeError: "Не вдалося видалити угоду.",
+2965:       uploadScreenshotTitle: "Завантаження скріншота угоди",
+2966:       uploadScreenshotText:
+2967:         "Додавайте скріншоти графіків до збережених угод. SkillEdge використовуватиме їх для аналізу входів, виходів, стопів і повторюваних помилок на графіку.",
+2968:       screenshotsCount: "скріншотів",
+2969:       screenshotTradeLabel: "Угода",
+2970:       screenshotFileLabel: "Скріншот",
+2971:       screenshotChoose: "Вибрати chart evidence",
+2972:       screenshotNoFile: "Файл не вибрано",
+2973:       screenshotSelected: "Вибраний файл",
+2974:       screenshotHint:
+2975:         "Кроки: 1) Оберіть угоду  2) Натисніть «Вибрати скріншот»  3) Натисніть «Завантажити»",
+
+-- line 2980 | matched=open --
+2973:       screenshotSelected: "Вибраний файл",
+2974:       screenshotHint:
+2975:         "Кроки: 1) Оберіть угоду  2) Натисніть «Вибрати скріншот»  3) Натисніть «Завантажити»",
+2976:       screenshotUploadHintCompact:
+2977:         "Завантажуй від одного до трьох скрінів з різними таймфреймами для глибшого аналізу.",
+2978:       screenshotFormats: "Підтримувані формати: PNG, JPG, WEBP",
+2979:       screenshotsColumn: "Скріни",
+2980:       openScreenshots: "Відкрити",
+2981:       noScreenshotsForTrade: "Для цієї угоди скріни не завантажені.",
+2982:       screenshotViewerTitle: "Скріни угоди",
+2983:       loadingScreenshots: "Завантажуємо скріни...",
+2984:       uploadButton: "Завантажити evidence",
+2985:       uploadingButton: "Завантажуємо evidence...",
+2986:       selectTradePlaceholder: "Оберіть угоду",
+2987:       stepOne: "Крок 1",
+2988:       stepTwo: "Крок 2",
+2989:       stepThree: "Крок 3",
+2990:       chartAnalyzeButton: "Розібрати графік",
+2991:       chartAnalyzingButton: "Аналіз графіка...",
+
+-- line 2993 | matched=journal --
+2986:       selectTradePlaceholder: "Оберіть угоду",
+2987:       stepOne: "Крок 1",
+2988:       stepTwo: "Крок 2",
+2989:       stepThree: "Крок 3",
+2990:       chartAnalyzeButton: "Розібрати графік",
+2991:       chartAnalyzingButton: "Аналіз графіка...",
+2992:       chartScreenshotsLabel: "скріншотів",
+2993:       journalAnalysisTitle: "AI-аналіз журналу угод",
+2994:       journalAnalysisText:
+2995:         "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+2996:       journalAnalyzeButton: "Розібрати журнал",
+2997:       journalAnalyzingButton: "Аналіз...",
+2998:       savedChartAnalysis: "Збережений Chart review",
+2999:       showChartHistory: "Показати AI-розбори",
+3000:       hideChartHistory: "Сховати AI-розбори",
+3001:       noChartHistory: "Збережених розборів графіка ще немає.",
+3002:       searchTicker: "Пошук тикера",
+3003:       allMarkets: "Усі ринки",
+3004:       allSides: "Усі напрямки",
+
+-- line 2994 | matched=journal --
+2987:       stepOne: "Крок 1",
+2988:       stepTwo: "Крок 2",
+2989:       stepThree: "Крок 3",
+2990:       chartAnalyzeButton: "Розібрати графік",
+2991:       chartAnalyzingButton: "Аналіз графіка...",
+2992:       chartScreenshotsLabel: "скріншотів",
+2993:       journalAnalysisTitle: "AI-аналіз журналу угод",
+2994:       journalAnalysisText:
+2995:         "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+2996:       journalAnalyzeButton: "Розібрати журнал",
+2997:       journalAnalyzingButton: "Аналіз...",
+2998:       savedChartAnalysis: "Збережений Chart review",
+2999:       showChartHistory: "Показати AI-розбори",
+3000:       hideChartHistory: "Сховати AI-розбори",
+3001:       noChartHistory: "Збережених розборів графіка ще немає.",
+3002:       searchTicker: "Пошук тикера",
+3003:       allMarkets: "Усі ринки",
+3004:       allSides: "Усі напрямки",
+3005:       allResults: "Усі результати",
+
+-- line 2996 | matched=journal --
+2989:       stepThree: "Крок 3",
+2990:       chartAnalyzeButton: "Розібрати графік",
+2991:       chartAnalyzingButton: "Аналіз графіка...",
+2992:       chartScreenshotsLabel: "скріншотів",
+2993:       journalAnalysisTitle: "AI-аналіз журналу угод",
+2994:       journalAnalysisText:
+2995:         "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+2996:       journalAnalyzeButton: "Розібрати журнал",
+2997:       journalAnalyzingButton: "Аналіз...",
+2998:       savedChartAnalysis: "Збережений Chart review",
+2999:       showChartHistory: "Показати AI-розбори",
+3000:       hideChartHistory: "Сховати AI-розбори",
+3001:       noChartHistory: "Збережених розборів графіка ще немає.",
+3002:       searchTicker: "Пошук тикера",
+3003:       allMarkets: "Усі ринки",
+3004:       allSides: "Усі напрямки",
+3005:       allResults: "Усі результати",
+3006:       marketLabels: {
+3007:         stocks: "Акції",
+
+-- line 2997 | matched=journal --
+2990:       chartAnalyzeButton: "Розібрати графік",
+2991:       chartAnalyzingButton: "Аналіз графіка...",
+2992:       chartScreenshotsLabel: "скріншотів",
+2993:       journalAnalysisTitle: "AI-аналіз журналу угод",
+2994:       journalAnalysisText:
+2995:         "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+2996:       journalAnalyzeButton: "Розібрати журнал",
+2997:       journalAnalyzingButton: "Аналіз...",
+2998:       savedChartAnalysis: "Збережений Chart review",
+2999:       showChartHistory: "Показати AI-розбори",
+3000:       hideChartHistory: "Сховати AI-розбори",
+3001:       noChartHistory: "Збережених розборів графіка ще немає.",
+3002:       searchTicker: "Пошук тикера",
+3003:       allMarkets: "Усі ринки",
+3004:       allSides: "Усі напрямки",
+3005:       allResults: "Усі результати",
+3006:       marketLabels: {
+3007:         stocks: "Акції",
+3008:         crypto: "Крипто",
+
+-- line 2998 | matched=review --
+2991:       chartAnalyzingButton: "Аналіз графіка...",
+2992:       chartScreenshotsLabel: "скріншотів",
+2993:       journalAnalysisTitle: "AI-аналіз журналу угод",
+2994:       journalAnalysisText:
+2995:         "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+2996:       journalAnalyzeButton: "Розібрати журнал",
+2997:       journalAnalyzingButton: "Аналіз...",
+2998:       savedChartAnalysis: "Збережений Chart review",
+2999:       showChartHistory: "Показати AI-розбори",
+3000:       hideChartHistory: "Сховати AI-розбори",
+3001:       noChartHistory: "Збережених розборів графіка ще немає.",
+3002:       searchTicker: "Пошук тикера",
+3003:       allMarkets: "Усі ринки",
+3004:       allSides: "Усі напрямки",
+3005:       allResults: "Усі результати",
+3006:       marketLabels: {
+3007:         stocks: "Акції",
+3008:         crypto: "Крипто",
+3009:         futures: "Ф’ючерси",
+
+-- line 3002 | matched=ticker --
+2995:         "AI проаналізує збережені угоди, повторювані помилки, сетапи, емоції, ризик і якість виконання.",
+2996:       journalAnalyzeButton: "Розібрати журнал",
+2997:       journalAnalyzingButton: "Аналіз...",
+2998:       savedChartAnalysis: "Збережений Chart review",
+2999:       showChartHistory: "Показати AI-розбори",
+3000:       hideChartHistory: "Сховати AI-розбори",
+3001:       noChartHistory: "Збережених розборів графіка ще немає.",
+3002:       searchTicker: "Пошук тикера",
+3003:       allMarkets: "Усі ринки",
+3004:       allSides: "Усі напрямки",
+3005:       allResults: "Усі результати",
+3006:       marketLabels: {
+3007:         stocks: "Акції",
+3008:         crypto: "Крипто",
+3009:         futures: "Ф’ючерси",
+3010:         forex: "Форекс",
+3011:         options: "Опціони",
+3012:       },
+3013:       directionLabels: {
+
+-- line 3025 | matched=ticker --
+3018:         win: "Прибуткова",
+3019:         loss: "Збиткова",
+3020:         breakeven: "Беззбиткова",
+3021:         notSet: "Не задано",
+3022:       },
+3023:       table: {
+3024:         date: "Дата",
+3025:         ticker: "Тикер",
+3026:         market: "Ринок",
+3027:         side: "Сторона",
+3028:         entry: "Вхід",
+3029:         exit: "Вихід",
+3030:         stop: "Стоп",
+3031:         risk: "Risk",
+3032:         pnl: "PnL",
+3033:         result: "Результат",
+3034:         setup: "Сетап",
+3035:       },
+3036:       recentTitle: "Останні виконання",
+
+-- line 3046 | matched=ticker --
+3039:       empty:
+3040:         "Угод поки немає. Додайте першу угоду, щоб почати збирати базу своєї статистики.",
+3041:       tradesCount: "угод",
+3042:       saving: "Зберігаємо...",
+3043:       save: "Зафіксувати угоду",
+3044:       updateTradeButton: "Оновити execution",
+3045:       updatingTradeButton: "Оновлення...",
+3046:       tickerRequired: "Введіть тикер.",
+3047:       tradeLimitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
+3048:       tradeUsageTitle: "Використано угод",
+3049:       tradesLeftLabel: "залишилось",
+3050:       screenshotLimitReached: "Досягнуто ліміт скриншотів для цієї угоди",
+3051:       screenshotUsageTitle: "Використано скриншотів",
+3052:       limitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
+3053:       loginFirst: "Спочатку увійдіть в акаунт.",
+3054:       saveFailed: "Не вдалося зберегти угоду.",
+3055:       fields: {
+3056:         ticker: "Тикер",
+3057:         date: "Дата",
+
+-- line 3056 | matched=ticker --
+3049:       tradesLeftLabel: "залишилось",
+3050:       screenshotLimitReached: "Досягнуто ліміт скриншотів для цієї угоди",
+3051:       screenshotUsageTitle: "Використано скриншотів",
+3052:       limitReached: "Досягнуто ліміт угод для вашого поточного тарифу",
+3053:       loginFirst: "Спочатку увійдіть в акаунт.",
+3054:       saveFailed: "Не вдалося зберегти угоду.",
+3055:       fields: {
+3056:         ticker: "Тикер",
+3057:         date: "Дата",
+3058:         market: "Ринок",
+3059:         direction: "Напрямок",
+3060:         entry: "Вхід",
+3061:         exit: "Вихід",
+3062:         stop: "Стоп",
+3063:         size: "Розмір позиції",
+3064:         risk: "Ризик $",
+3065:         pnl: "PnL $",
+3066:         result: "Результат",
+3067:         setup: "Сетап",
+
+-- line 3074 | matched=ticker --
+3067:         setup: "Сетап",
+3068:         emotion: "Емоція",
+3069:         mistake: "Помилка",
+3070:         lesson: "Урок",
+3071:         notes: "Нотатки",
+3072:       },
+3073:       placeholders: {
+3074:         ticker: "AAPL / BTC / NQ",
+3075:         entry: "100",
+3076:         exit: "105",
+3077:         stop: "98",
+3078:         size: "Акції / контракти",
+3079:         risk: "50",
+3080:         pnl: "-25 / 120",
+3081:         setup: "повернення VWAP / згасання гепу",
+3082:         emotion: "Спокій / FOMO / страх",
+3083:         mistake: "Що було зроблено неправильно?",
+3084:         lesson: "Що потрібно запамʼятати на наступну угоду?",
+3085:         notes: "Контекст, каталізатор, стрічка, рівні...",
+
+-- line 3097 | matched=review --
+3090:         loss: "Мінус",
+3091:         breakeven: "Беззбиток",
+3092:       },
+3093:     },
+3094:     locked: {
+3095:       title: "Активуй desk access",
+3096:       label: "Доступ закрито",
+3097:       text: "Після оплати відкриються журнал угод, SkillEdge Desk Coach, графіки TradingView, навчання, звіти та історія desk reviews.",
+3098:       button: "Обрати тариф",
+3099:     },
+3100:     tabs: {
+3101:   overview: "Огляд",
+3102:   edge: "Edge",
+3103:   journal: "Журнал угод",
+3104:   strategy: "Стратегія",
+3105:       charts: "Графіки",
+3106:       market: "Ринок",
+3107:       cockpit: "Сповіщення",
+3108:       alerts: "AI Alerts",
+
+-- line 3103 | matched=journal --
+3096:       label: "Доступ закрито",
+3097:       text: "Після оплати відкриються журнал угод, SkillEdge Desk Coach, графіки TradingView, навчання, звіти та історія desk reviews.",
+3098:       button: "Обрати тариф",
+3099:     },
+3100:     tabs: {
+3101:   overview: "Огляд",
+3102:   edge: "Edge",
+3103:   journal: "Журнал угод",
+3104:   strategy: "Стратегія",
+3105:       charts: "Графіки",
+3106:       market: "Ринок",
+3107:       cockpit: "Сповіщення",
+3108:       alerts: "AI Alerts",
+3109:       coach: "Desk Coach",
+3110:       learning: "Навчання",
+3111:       reports: "Звіти",
+3112:       billing: "Акаунт",
+3113:     },
+3114:     periods: {
+
+-- line 3159 | matched=journal --
+3152:       aiUsage: "Використання AI",
+3153:       billingNoteLabel: "Важливо",
+3154:       billingNoteText:
+3155:         "Розділ акаунта показує поточний тариф, ліміти, рівень доступу, використання AI та статус підписки. Оплата карткою готується через погодженого платіжного провайдера, а крипто-доступ доступний на етапі запуску.",
+3156:       currentLimitsLabel: "Ліміти",
+3157:       currentLimitsTitle: "Що входить у поточний тариф",
+3158:       aiCoachLimit: "Desk Coach / місяць",
+3159:       journalAiLimit: "AI-аналіз журналу / місяць",
+3160:       chartAiLimit: "AI-аналіз графіка / місяць",
+3161:       aiReportsLimit: "desk reportи / місяць",
+3162:       maxTradesLimit: "Максимум угод",
+3163:       screenshotsLimit: "Скріншотів на угоду",
+3164:       aiReportsAccess: "desk reportи",
+3165:       supportAssistantAccess: "Помічник підтримки",
+3166:       socialTickersAccess: "Соціальні тикери",
+3167:       aiScannerAccess: "Market scanner",
+3168:       aiAlertsAccess: "AI-сигнали",
+3169:       premiumChartAccess: "Преміум-аналіз графіка",
+3170:       exportReportsAccess: "Експорт звітів",
+
+-- line 3166 | matched=ticker --
+3159:       journalAiLimit: "AI-аналіз журналу / місяць",
+3160:       chartAiLimit: "AI-аналіз графіка / місяць",
+3161:       aiReportsLimit: "desk reportи / місяць",
+3162:       maxTradesLimit: "Максимум угод",
+3163:       screenshotsLimit: "Скріншотів на угоду",
+3164:       aiReportsAccess: "desk reportи",
+3165:       supportAssistantAccess: "Помічник підтримки",
+3166:       socialTickersAccess: "Соціальні тикери",
+3167:       aiScannerAccess: "Market scanner",
+3168:       aiAlertsAccess: "AI-сигнали",
+3169:       premiumChartAccess: "Преміум-аналіз графіка",
+3170:       exportReportsAccess: "Експорт звітів",
+3171:       included: "Увімкнено",
+3172:       locked: "Закрито",
+3173:       comparePlansLabel: "Порівняння",
+3174:       comparePlansTitle: "Порівняння тарифів",
+3175:       comparePlansText:
+3176:         "Перевір, що трейдер чітко бачить різницю між Core, Edge та Elite.",
+3177:       current: "Поточний",
+
+-- line 3195 | matched=review --
+3188:       reachedText:
+3189:         "Ви використали всі AI-запити, доступні у вашому поточному тарифі цього місяця. Оновіть тариф або дочекайтеся наступного місячного скидання.",
+3190:       remainingPrefix: "Залишилось AI-запитів",
+3191:     },
+3192:     coach: {
+3193:       title: "Desk Coach",
+3194:       text: "Опишіть угоду, емоції, помилку або торгову ситуацію — Desk Coach зробить розбір дисципліни, ризику та якості рішення.",
+3195:       reviewTitle: "Розбір угоди",
+3196:       reviewText:
+3197:         "Чим конкретніший опис, тим корисніша відповідь. Вкажіть тикер, вхід, стоп, причину входу, емоції та результат.",
+3198:       placeholder:
+3199:         "Приклад: сьогодні зайшов у шорт після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
+3200:       ask: "Запитати AI",
+3201:       analyzing: "AI аналізує...",
+3202:       newReview: "Новий desk review",
+3203:       answerTitle: "Desk Mentor review",
+3204:       answerPlaceholder:
+3205:         "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
+3206:       historyTitle: "Історія desk reviews",
+
+-- line 3196 | matched=review --
+3189:         "Ви використали всі AI-запити, доступні у вашому поточному тарифі цього місяця. Оновіть тариф або дочекайтеся наступного місячного скидання.",
+3190:       remainingPrefix: "Залишилось AI-запитів",
+3191:     },
+3192:     coach: {
+3193:       title: "Desk Coach",
+3194:       text: "Опишіть угоду, емоції, помилку або торгову ситуацію — Desk Coach зробить розбір дисципліни, ризику та якості рішення.",
+3195:       reviewTitle: "Розбір угоди",
+3196:       reviewText:
+3197:         "Чим конкретніший опис, тим корисніша відповідь. Вкажіть тикер, вхід, стоп, причину входу, емоції та результат.",
+3198:       placeholder:
+3199:         "Приклад: сьогодні зайшов у шорт після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
+3200:       ask: "Запитати AI",
+3201:       analyzing: "AI аналізує...",
+3202:       newReview: "Новий desk review",
+3203:       answerTitle: "Desk Mentor review",
+3204:       answerPlaceholder:
+3205:         "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
+3206:       historyTitle: "Історія desk reviews",
+3207:       historyText: "Останні 10 запитів до Desk Coach.",
+
+-- line 3202 | matched=review --
+3195:       reviewTitle: "Розбір угоди",
+3196:       reviewText:
+3197:         "Чим конкретніший опис, тим корисніша відповідь. Вкажіть тикер, вхід, стоп, причину входу, емоції та результат.",
+3198:       placeholder:
+3199:         "Приклад: сьогодні зайшов у шорт після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
+3200:       ask: "Запитати AI",
+3201:       analyzing: "AI аналізує...",
+3202:       newReview: "Новий desk review",
+3203:       answerTitle: "Desk Mentor review",
+3204:       answerPlaceholder:
+3205:         "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
+3206:       historyTitle: "Історія desk reviews",
+3207:       historyText: "Останні 10 запитів до Desk Coach.",
+3208:       historyEmpty: "Review tape порожній. Перший розбір зʼявиться після відповіді Desk Mentor.",
+3209:       loginFirst: "Спочатку увійдіть в акаунт.",
+3210:       messageRequired: "Введіть питання або опис угоди.",
+3211:       coachError: "Desk Mentor не відповів.",
+3212:       error: "Запит до Desk Mentor не пройшов.",
+3213:       failed: "Не вдалося отримати відповідь Desk Coach.",
+
+-- line 3203 | matched=review --
+3196:       reviewText:
+3197:         "Чим конкретніший опис, тим корисніша відповідь. Вкажіть тикер, вхід, стоп, причину входу, емоції та результат.",
+3198:       placeholder:
+3199:         "Приклад: сьогодні зайшов у шорт після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
+3200:       ask: "Запитати AI",
+3201:       analyzing: "AI аналізує...",
+3202:       newReview: "Новий desk review",
+3203:       answerTitle: "Desk Mentor review",
+3204:       answerPlaceholder:
+3205:         "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
+3206:       historyTitle: "Історія desk reviews",
+3207:       historyText: "Останні 10 запитів до Desk Coach.",
+3208:       historyEmpty: "Review tape порожній. Перший розбір зʼявиться після відповіді Desk Mentor.",
+3209:       loginFirst: "Спочатку увійдіть в акаунт.",
+3210:       messageRequired: "Введіть питання або опис угоди.",
+3211:       coachError: "Desk Mentor не відповів.",
+3212:       error: "Запит до Desk Mentor не пройшов.",
+3213:       failed: "Не вдалося отримати відповідь Desk Coach.",
+3214:       needPlan: "Для Desk Mentor потрібен активний тариф або demo-доступ.",
+
+-- line 3206 | matched=review --
+3199:         "Приклад: сьогодні зайшов у шорт після премаркет-пампу, побачив слабкість під VWAP, але пересунув стоп і пересидів збиток. Розбери, де була помилка.",
+3200:       ask: "Запитати AI",
+3201:       analyzing: "AI аналізує...",
+3202:       newReview: "Новий desk review",
+3203:       answerTitle: "Desk Mentor review",
+3204:       answerPlaceholder:
+3205:         "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
+3206:       historyTitle: "Історія desk reviews",
+3207:       historyText: "Останні 10 запитів до Desk Coach.",
+3208:       historyEmpty: "Review tape порожній. Перший розбір зʼявиться після відповіді Desk Mentor.",
+3209:       loginFirst: "Спочатку увійдіть в акаунт.",
+3210:       messageRequired: "Введіть питання або опис угоди.",
+3211:       coachError: "Desk Mentor не відповів.",
+3212:       error: "Запит до Desk Mentor не пройшов.",
+3213:       failed: "Не вдалося отримати відповідь Desk Coach.",
+3214:       needPlan: "Для Desk Mentor потрібен активний тариф або demo-доступ.",
+3215:       limitReached:
+3216:         "Ліміт AI-запитів закінчився. Оберіть тариф вище або дочекайтеся оновлення ліміту.",
+3217:     },
+
+-- line 3208 | matched=review --
+3201:       analyzing: "AI аналізує...",
+3202:       newReview: "Новий desk review",
+3203:       answerTitle: "Desk Mentor review",
+3204:       answerPlaceholder:
+3205:         "Тут зʼявиться розбір: що було добре, де помилка, який урок записати в журнал і що перевірити перед наступною угодою.",
+3206:       historyTitle: "Історія desk reviews",
+3207:       historyText: "Останні 10 запитів до Desk Coach.",
+3208:       historyEmpty: "Review tape порожній. Перший розбір зʼявиться після відповіді Desk Mentor.",
+3209:       loginFirst: "Спочатку увійдіть в акаунт.",
+3210:       messageRequired: "Введіть питання або опис угоди.",
+3211:       coachError: "Desk Mentor не відповів.",
+3212:       error: "Запит до Desk Mentor не пройшов.",
+3213:       failed: "Не вдалося отримати відповідь Desk Coach.",
+3214:       needPlan: "Для Desk Mentor потрібен активний тариф або demo-доступ.",
+3215:       limitReached:
+3216:         "Ліміт AI-запитів закінчився. Оберіть тариф вище або дочекайтеся оновлення ліміту.",
+3217:     },
+3218:   },
+3219: } as const;
+
+-- line 3225 | matched=journal --
+3218:   },
+3219: } as const;
+3220: 
+3221: 
+3222: const tabs: { id: TabId }[] = [
+3223:   { id: "overview" },
+3224:   { id: "edge" },
+3225:   { id: "journal" },
+3226:   { id: "strategy" },
+3227:   { id: "charts" },
+3228:   { id: "market" },
+3229:   { id: "cockpit" },
+3230:   { id: "coach" },
+3231:   { id: "learning" },
+3232:   { id: "reports" },
+3233:   { id: "billing" },
+3234: ];
+3235: 
+3236: const planNames: Record<PlanId, string> = {
+
+-- line 3293 | matched=ticker --
+3286:       }
+3287: 
+3288:       return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+3289:     })
+3290:     .reduce<
+3291:       {
+3292:         date: string;
+3293:         ticker: string;
+3294:         pnl: number;
+3295:         equity: number;
+3296:       }[]
+3297:     >((acc, trade) => {
+3298:       const previousEquity = acc.length > 0 ? acc[acc.length - 1].equity : 0;
+3299:       const pnl = trade.pnl ?? 0;
+3300: 
+3301:       acc.push({
+3302:         date: trade.trade_date,
+3303:         ticker: trade.ticker,
+3304:         pnl,
+
+-- line 3303 | matched=ticker --
+3296:       }[]
+3297:     >((acc, trade) => {
+3298:       const previousEquity = acc.length > 0 ? acc[acc.length - 1].equity : 0;
+3299:       const pnl = trade.pnl ?? 0;
+3300: 
+3301:       acc.push({
+3302:         date: trade.trade_date,
+3303:         ticker: trade.ticker,
+3304:         pnl,
+3305:         equity: previousEquity + pnl,
+3306:       });
+3307: 
+3308:       return acc;
+3309:     }, []);
+3310: }
+3311: 
+3312: const DASHBOARD_COMMAND_EVENT = "skilledge:dashboard-command";
+3313: 
+3314: function getDashboardCommandTarget(event: Event) {
+
+-- line 3358 | matched=open --
+3351:   }, delay);
+3352: }
+3353: 
+3354: export default function DashboardPage() {
+3355:   const [email, setEmail] = useState<string | null>(null);
+3356:   const [isAdmin, setIsAdmin] = useState(false);
+3357:   const [activeTab, setActiveTab] = useState<TabId>("overview");
+3358:   const [quickNoteOpen, setQuickNoteOpen] = useState(false);
+3359: const [quickNoteContent, setQuickNoteContent] = useState("");
+3360: const [quickNoteLoading, setQuickNoteLoading] = useState(false);
+3361: const [quickNoteSaving, setQuickNoteSaving] = useState(false);
+3362: const [quickNoteSavedAt, setQuickNoteSavedAt] = useState("");
+3363: const [quickNoteError, setQuickNoteError] = useState("");
+3364: const [quickNoteHydrated, setQuickNoteHydrated] = useState(false);
+3365:   const [requestedAlertAssetFilter, setRequestedAlertAssetFilter] =
+3366:   useState<AlertAssetFilter>("all");
+3367:    useEffect(() => {
+3368:   if (typeof window === "undefined") return;
+3369: 
+
+-- line 3383 | matched=journal --
+3376:   setRequestedAlertAssetFilter(requestedAssetType);
+3377: 
+3378:   const tabAliases: Record<string, TabId> = {
+3379:     home: "overview",
+3380:     overview: "overview",
+3381:     personal: "edge",
+3382:     edge: "edge",
+3383:     journal: "journal",
+3384:     trades: "journal",
+3385:     strategy: "strategy",
+3386:     strategies: "strategy",
+3387:     charts: "charts",
+3388:     chart: "charts",
+3389:     market: "market",
+3390:     scanner: "market",
+3391:     cockpit: "cockpit",
+3392:     "ai-cockpit": "cockpit",
+3393:     "signal-cockpit": "cockpit",
+3394:     "trading-desk": "cockpit",
+
+-- line 3384 | matched=journal --
+3377: 
+3378:   const tabAliases: Record<string, TabId> = {
+3379:     home: "overview",
+3380:     overview: "overview",
+3381:     personal: "edge",
+3382:     edge: "edge",
+3383:     journal: "journal",
+3384:     trades: "journal",
+3385:     strategy: "strategy",
+3386:     strategies: "strategy",
+3387:     charts: "charts",
+3388:     chart: "charts",
+3389:     market: "market",
+3390:     scanner: "market",
+3391:     cockpit: "cockpit",
+3392:     "ai-cockpit": "cockpit",
+3393:     "signal-cockpit": "cockpit",
+3394:     "trading-desk": "cockpit",
+3395:     alerts: "alerts",
+
+-- line 3417 | matched=open --
+3410: 
+3411:   if (nextTab) {
+3412:     setActiveTab(nextTab);
+3413:   }
+3414: }, []);
+3415: 
+3416: useEffect(() => {
+3417:   if (!quickNoteOpen || quickNoteHydrated) return;
+3418: 
+3419:   loadQuickNote();
+3420: }, [quickNoteOpen, quickNoteHydrated]);
+3421: 
+3422: useEffect(() => {
+3423:   if (!quickNoteOpen || !quickNoteHydrated) return;
+3424: 
+3425:   const timer = window.setTimeout(() => {
+3426:     saveQuickNote(quickNoteContent);
+3427:   }, 900);
+3428: 
+
+-- line 3420 | matched=open --
+3413:   }
+3414: }, []);
+3415: 
+3416: useEffect(() => {
+3417:   if (!quickNoteOpen || quickNoteHydrated) return;
+3418: 
+3419:   loadQuickNote();
+3420: }, [quickNoteOpen, quickNoteHydrated]);
+3421: 
+3422: useEffect(() => {
+3423:   if (!quickNoteOpen || !quickNoteHydrated) return;
+3424: 
+3425:   const timer = window.setTimeout(() => {
+3426:     saveQuickNote(quickNoteContent);
+3427:   }, 900);
+3428: 
+3429:   return () => window.clearTimeout(timer);
+3430: }, [quickNoteContent, quickNoteOpen, quickNoteHydrated]); 
+3431:   const [chartSymbolFromJournal, setChartSymbolFromJournal] = useState("");
+
+-- line 3423 | matched=open --
+3416: useEffect(() => {
+3417:   if (!quickNoteOpen || quickNoteHydrated) return;
+3418: 
+3419:   loadQuickNote();
+3420: }, [quickNoteOpen, quickNoteHydrated]);
+3421: 
+3422: useEffect(() => {
+3423:   if (!quickNoteOpen || !quickNoteHydrated) return;
+3424: 
+3425:   const timer = window.setTimeout(() => {
+3426:     saveQuickNote(quickNoteContent);
+3427:   }, 900);
+3428: 
+3429:   return () => window.clearTimeout(timer);
+3430: }, [quickNoteContent, quickNoteOpen, quickNoteHydrated]); 
+3431:   const [chartSymbolFromJournal, setChartSymbolFromJournal] = useState("");
+3432:   const [loading, setLoading] = useState(true);
+3433:   const [coachMessage, setCoachMessage] = useState("");
+3434:   const [coachAnswer, setCoachAnswer] = useState("");
+
+-- line 3430 | matched=open --
+3423:   if (!quickNoteOpen || !quickNoteHydrated) return;
+3424: 
+3425:   const timer = window.setTimeout(() => {
+3426:     saveQuickNote(quickNoteContent);
+3427:   }, 900);
+3428: 
+3429:   return () => window.clearTimeout(timer);
+3430: }, [quickNoteContent, quickNoteOpen, quickNoteHydrated]); 
+3431:   const [chartSymbolFromJournal, setChartSymbolFromJournal] = useState("");
+3432:   const [loading, setLoading] = useState(true);
+3433:   const [coachMessage, setCoachMessage] = useState("");
+3434:   const [coachAnswer, setCoachAnswer] = useState("");
+3435:   const [coachLoading, setCoachLoading] = useState(false);
+3436:   const [language, setLanguage] = useState<Language>("en");
+3437:   const t = dashboardDict[language];
+3438:   const [coachError, setCoachError] = useState("");
+3439:   const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
+3440:   const [trades, setTrades] = useState<Trade[]>([]);
+3441:   const [tradeScreenshots, setTradeScreenshots] = useState<TradeScreenshot[]>([]);
+
+-- line 3431 | matched=journal --
+3424: 
+3425:   const timer = window.setTimeout(() => {
+3426:     saveQuickNote(quickNoteContent);
+3427:   }, 900);
+3428: 
+3429:   return () => window.clearTimeout(timer);
+3430: }, [quickNoteContent, quickNoteOpen, quickNoteHydrated]); 
+3431:   const [chartSymbolFromJournal, setChartSymbolFromJournal] = useState("");
+3432:   const [loading, setLoading] = useState(true);
+3433:   const [coachMessage, setCoachMessage] = useState("");
+3434:   const [coachAnswer, setCoachAnswer] = useState("");
+3435:   const [coachLoading, setCoachLoading] = useState(false);
+3436:   const [language, setLanguage] = useState<Language>("en");
+3437:   const t = dashboardDict[language];
+3438:   const [coachError, setCoachError] = useState("");
+3439:   const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
+3440:   const [trades, setTrades] = useState<Trade[]>([]);
+3441:   const [tradeScreenshots, setTradeScreenshots] = useState<TradeScreenshot[]>([]);
+3442: const [selectedTradeIdForScreenshot, setSelectedTradeIdForScreenshot] = useState("");
+
+-- line 3442 | matched=selectedTrade --
+3435:   const [coachLoading, setCoachLoading] = useState(false);
+3436:   const [language, setLanguage] = useState<Language>("en");
+3437:   const t = dashboardDict[language];
+3438:   const [coachError, setCoachError] = useState("");
+3439:   const [coachHistory, setCoachHistory] = useState<AiAnalysis[]>([]);
+3440:   const [trades, setTrades] = useState<Trade[]>([]);
+3441:   const [tradeScreenshots, setTradeScreenshots] = useState<TradeScreenshot[]>([]);
+3442: const [selectedTradeIdForScreenshot, setSelectedTradeIdForScreenshot] = useState("");
+3443: const [screenshotFiles, setScreenshotFiles] = useState<File[]>([]);
+3444: const [screenshotUploading, setScreenshotUploading] = useState(false);
+3445: const [screenshotError, setScreenshotError] = useState("");
+3446: const [chartAnalysisTradeId, setChartAnalysisTradeId] = useState("");
+3447: const [chartAnalysis, setChartAnalysis] = useState("");
+3448: const [chartAnalysisLoading, setChartAnalysisLoading] = useState(false);
+3449: const [chartAnalysisError, setChartAnalysisError] = useState("");
+3450: const [chartAnalysisHistory, setChartAnalysisHistory] = useState<AiAnalysis[]>([]);
+3451: const [expandedChartAnalysisTradeId, setExpandedChartAnalysisTradeId] =
+3452:   useState(""); 
+3453: const [equityExpanded, setEquityExpanded] = useState(false);
+
+-- line 3457 | matched=ticker --
+3450: const [chartAnalysisHistory, setChartAnalysisHistory] = useState<AiAnalysis[]>([]);
+3451: const [expandedChartAnalysisTradeId, setExpandedChartAnalysisTradeId] =
+3452:   useState(""); 
+3453: const [equityExpanded, setEquityExpanded] = useState(false);
+3454: const [tradeDraftAlert, setTradeDraftAlert] =
+3455:   useState<DashboardMarketAlert | null>(null);
+3456: const [tradeForm, setTradeForm] = useState({
+3457:   ticker: "",
+3458:   market: "stocks",
+3459:   direction: "long",
+3460:   entryPrice: "",
+3461:   exitPrice: "",
+3462:   stopLoss: "",
+3463:   positionSize: "",
+3464:   riskAmount: "",
+3465:   pnl: "",
+3466:   result: "",
+3467:   setup: "",
+3468:   strategyId: "",
+
+-- line 3481 | matched=ticker --
+3474:   lesson: "",
+3475:   notes: "",
+3476:   tradeDate: new Date().toISOString().slice(0, 10),
+3477: });
+3478: const resetTradeForm = () => {
+3479:     setTradeDraftAlert(null);
+3480:   setTradeForm({
+3481:     ticker: "",
+3482:     market: "stocks",
+3483:     direction: "long",
+3484:     entryPrice: "",
+3485:     exitPrice: "",
+3486:     stopLoss: "",
+3487:     positionSize: "",
+3488:     riskAmount: "",
+3489:     pnl: "",
+3490:     result: "",
+3491:     setup: "",
+3492:     strategyId: "",
+
+-- line 3503 | matched=edit --
+3496:     emotion: "",
+3497:     mistake: "",
+3498:     lesson: "",
+3499:     notes: "",
+3500:     tradeDate: new Date().toISOString().slice(0, 10),
+3501:   });
+3502: };
+3503: const [editingTradeId, setEditingTradeId] = useState("");
+3504: const [tradeSaving, setTradeSaving] = useState(false);
+3505: const [tradeError, setTradeError] = useState("");
+3506: const [journalAnalysis, setJournalAnalysis] = useState("");
+3507: const [journalAnalysisLoading, setJournalAnalysisLoading] = useState(false);
+3508: const [journalAnalysisError, setJournalAnalysisError] = useState("");
+3509: const [referralBalance, setReferralBalance] =
+3510:   useState<ReferralBalanceSummary>(emptyReferralBalance);
+3511: const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+3512: const [withdrawAmount, setWithdrawAmount] = useState("");
+3513: const [withdrawWallet, setWithdrawWallet] = useState("");
+3514: const [withdrawNetwork, setWithdrawNetwork] = useState("");
+
+-- line 3506 | matched=journal --
+3499:     notes: "",
+3500:     tradeDate: new Date().toISOString().slice(0, 10),
+3501:   });
+3502: };
+3503: const [editingTradeId, setEditingTradeId] = useState("");
+3504: const [tradeSaving, setTradeSaving] = useState(false);
+3505: const [tradeError, setTradeError] = useState("");
+3506: const [journalAnalysis, setJournalAnalysis] = useState("");
+3507: const [journalAnalysisLoading, setJournalAnalysisLoading] = useState(false);
+3508: const [journalAnalysisError, setJournalAnalysisError] = useState("");
+3509: const [referralBalance, setReferralBalance] =
+3510:   useState<ReferralBalanceSummary>(emptyReferralBalance);
+3511: const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+3512: const [withdrawAmount, setWithdrawAmount] = useState("");
+3513: const [withdrawWallet, setWithdrawWallet] = useState("");
+3514: const [withdrawNetwork, setWithdrawNetwork] = useState("");
+3515: const [withdrawEmail, setWithdrawEmail] = useState("");
+3516: const [withdrawSaving, setWithdrawSaving] = useState(false);
+3517: const [withdrawError, setWithdrawError] = useState("");
+
+-- line 3507 | matched=journal --
+3500:     tradeDate: new Date().toISOString().slice(0, 10),
+3501:   });
+3502: };
+3503: const [editingTradeId, setEditingTradeId] = useState("");
+3504: const [tradeSaving, setTradeSaving] = useState(false);
+3505: const [tradeError, setTradeError] = useState("");
+3506: const [journalAnalysis, setJournalAnalysis] = useState("");
+3507: const [journalAnalysisLoading, setJournalAnalysisLoading] = useState(false);
+3508: const [journalAnalysisError, setJournalAnalysisError] = useState("");
+3509: const [referralBalance, setReferralBalance] =
+3510:   useState<ReferralBalanceSummary>(emptyReferralBalance);
+3511: const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+3512: const [withdrawAmount, setWithdrawAmount] = useState("");
+3513: const [withdrawWallet, setWithdrawWallet] = useState("");
+3514: const [withdrawNetwork, setWithdrawNetwork] = useState("");
+3515: const [withdrawEmail, setWithdrawEmail] = useState("");
+3516: const [withdrawSaving, setWithdrawSaving] = useState(false);
+3517: const [withdrawError, setWithdrawError] = useState("");
+3518: const [withdrawSuccess, setWithdrawSuccess] = useState("");
+
+-- line 3508 | matched=journal --
+3501:   });
+3502: };
+3503: const [editingTradeId, setEditingTradeId] = useState("");
+3504: const [tradeSaving, setTradeSaving] = useState(false);
+3505: const [tradeError, setTradeError] = useState("");
+3506: const [journalAnalysis, setJournalAnalysis] = useState("");
+3507: const [journalAnalysisLoading, setJournalAnalysisLoading] = useState(false);
+3508: const [journalAnalysisError, setJournalAnalysisError] = useState("");
+3509: const [referralBalance, setReferralBalance] =
+3510:   useState<ReferralBalanceSummary>(emptyReferralBalance);
+3511: const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+3512: const [withdrawAmount, setWithdrawAmount] = useState("");
+3513: const [withdrawWallet, setWithdrawWallet] = useState("");
+3514: const [withdrawNetwork, setWithdrawNetwork] = useState("");
+3515: const [withdrawEmail, setWithdrawEmail] = useState("");
+3516: const [withdrawSaving, setWithdrawSaving] = useState(false);
+3517: const [withdrawError, setWithdrawError] = useState("");
+3518: const [withdrawSuccess, setWithdrawSuccess] = useState("");
+3519: const [referralDashboard, setReferralDashboard] =
+
+-- line 3511 | matched=open --
+3504: const [tradeSaving, setTradeSaving] = useState(false);
+3505: const [tradeError, setTradeError] = useState("");
+3506: const [journalAnalysis, setJournalAnalysis] = useState("");
+3507: const [journalAnalysisLoading, setJournalAnalysisLoading] = useState(false);
+3508: const [journalAnalysisError, setJournalAnalysisError] = useState("");
+3509: const [referralBalance, setReferralBalance] =
+3510:   useState<ReferralBalanceSummary>(emptyReferralBalance);
+3511: const [withdrawModalOpen, setWithdrawModalOpen] = useState(false);
+3512: const [withdrawAmount, setWithdrawAmount] = useState("");
+3513: const [withdrawWallet, setWithdrawWallet] = useState("");
+3514: const [withdrawNetwork, setWithdrawNetwork] = useState("");
+3515: const [withdrawEmail, setWithdrawEmail] = useState("");
+3516: const [withdrawSaving, setWithdrawSaving] = useState(false);
+3517: const [withdrawError, setWithdrawError] = useState("");
+3518: const [withdrawSuccess, setWithdrawSuccess] = useState("");
+3519: const [referralDashboard, setReferralDashboard] =
+3520:   useState<ReferralDashboardData>(emptyReferralDashboard);
+3521: const [referralDashboardLoading, setReferralDashboardLoading] = useState(false);
+3522: const [referralDashboardError, setReferralDashboardError] = useState("");
+
+-- line 3591 | matched=remove --
+3584:       },
+3585:       body: JSON.stringify({ referralCode }),
+3586:     });
+3587: 
+3588:     const attachResult = await attachResponse.json().catch(() => ({}));
+3589: 
+3590:     if (attachResponse.ok && attachResult.attached) {
+3591:       localStorage.removeItem("skilledge_referral_code");
+3592:       document.cookie =
+3593:         "skilledge_referral_code=; path=/; max-age=0; SameSite=Lax";
+3594:     }
+3595:   }
+3596: } catch {
+3597:   // Referral attach is optional and must not block dashboard loading.
+3598: }
+3599:       try {
+3600:   const adminResponse = await authFetch("/api/admin/me", {
+3601:     method: "GET",
+3602:   });
+
+-- line 3766 | matched=delete --
+3759:   } catch {
+3760:     setCoachError(t.coach.failed);
+3761:   } finally {
+3762:     setCoachLoading(false);
+3763:   }
+3764: };
+3765: 
+3766: const handleTradeDelete = async (tradeId: string) => {
+3767:   const confirmed = window.confirm(t.journal.deleteTradeConfirm);
+3768: 
+3769:   if (!confirmed) return;
+3770: 
+3771:   setTradeError("");
+3772: 
+3773:   const screenshotPaths = tradeScreenshots
+3774:     .filter((screenshot) => screenshot.trade_id === tradeId)
+3775:     .map((screenshot) => screenshot.file_path)
+3776:     .filter(Boolean);
+3777: 
+
+=== JOURNAL BUTTON CLUSTERS ===
+
+-- line 11093 --
+11093:     <div id="strategy-command-center" className="space-y-6 scroll-mt-28 [text-rendering:geometricPrecision]">
+11094:       <div className="relative overflow-hidden rounded-[2rem] border border-cyan-200/14 bg-[#071522]/86 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+11095:         <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-emerald-300/14 blur-3xl" />
+11096:         <div className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-cyan-300/12 blur-3xl" />
+11097: 
+11098:         <div className="relative grid gap-6 xl:grid-cols-[1.25fr_0.75fr] xl:items-start">
+11099:           <div>
+11100:             <div className="inline-flex rounded-full border border-emerald-200/16 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.24em] text-emerald-100/75">
+11101:               {copy.badge}
+11102:             </div>
+11103: 
+11104:             <h2 className="mt-4 text-3xl font-black tracking-[-0.055em] text-white md:text-5xl">
+11105:               {copy.heroTitle}
+11106:             </h2>
+11107: 
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+
+-- line 11094 --
+11094:       <div className="relative overflow-hidden rounded-[2rem] border border-cyan-200/14 bg-[#071522]/86 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+11095:         <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-emerald-300/14 blur-3xl" />
+11096:         <div className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-cyan-300/12 blur-3xl" />
+11097: 
+11098:         <div className="relative grid gap-6 xl:grid-cols-[1.25fr_0.75fr] xl:items-start">
+11099:           <div>
+11100:             <div className="inline-flex rounded-full border border-emerald-200/16 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.24em] text-emerald-100/75">
+11101:               {copy.badge}
+11102:             </div>
+11103: 
+11104:             <h2 className="mt-4 text-3xl font-black tracking-[-0.055em] text-white md:text-5xl">
+11105:               {copy.heroTitle}
+11106:             </h2>
+11107: 
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+
+-- line 11095 --
+11095:         <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-emerald-300/14 blur-3xl" />
+11096:         <div className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-cyan-300/12 blur-3xl" />
+11097: 
+11098:         <div className="relative grid gap-6 xl:grid-cols-[1.25fr_0.75fr] xl:items-start">
+11099:           <div>
+11100:             <div className="inline-flex rounded-full border border-emerald-200/16 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.24em] text-emerald-100/75">
+11101:               {copy.badge}
+11102:             </div>
+11103: 
+11104:             <h2 className="mt-4 text-3xl font-black tracking-[-0.055em] text-white md:text-5xl">
+11105:               {copy.heroTitle}
+11106:             </h2>
+11107: 
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+
+-- line 11096 --
+11096:         <div className="pointer-events-none absolute -bottom-28 -left-24 h-72 w-72 rounded-full bg-cyan-300/12 blur-3xl" />
+11097: 
+11098:         <div className="relative grid gap-6 xl:grid-cols-[1.25fr_0.75fr] xl:items-start">
+11099:           <div>
+11100:             <div className="inline-flex rounded-full border border-emerald-200/16 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.24em] text-emerald-100/75">
+11101:               {copy.badge}
+11102:             </div>
+11103: 
+11104:             <h2 className="mt-4 text-3xl font-black tracking-[-0.055em] text-white md:text-5xl">
+11105:               {copy.heroTitle}
+11106:             </h2>
+11107: 
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+11140:                 disabled={loading || Boolean(strategyActionLoading)}
+
+-- line 11098 --
+11098:         <div className="relative grid gap-6 xl:grid-cols-[1.25fr_0.75fr] xl:items-start">
+11099:           <div>
+11100:             <div className="inline-flex rounded-full border border-emerald-200/16 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.24em] text-emerald-100/75">
+11101:               {copy.badge}
+11102:             </div>
+11103: 
+11104:             <h2 className="mt-4 text-3xl font-black tracking-[-0.055em] text-white md:text-5xl">
+11105:               {copy.heroTitle}
+11106:             </h2>
+11107: 
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+11140:                 disabled={loading || Boolean(strategyActionLoading)}
+11141:                 className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.06] px-5 py-3 text-[15px] font-black text-cyan-100/75 transition hover:bg-cyan-200/[0.1] disabled:cursor-not-allowed disabled:opacity-60"
+11142:               >
+
+-- line 11100 --
+11100:             <div className="inline-flex rounded-full border border-emerald-200/16 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.24em] text-emerald-100/75">
+11101:               {copy.badge}
+11102:             </div>
+11103: 
+11104:             <h2 className="mt-4 text-3xl font-black tracking-[-0.055em] text-white md:text-5xl">
+11105:               {copy.heroTitle}
+11106:             </h2>
+11107: 
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+11140:                 disabled={loading || Boolean(strategyActionLoading)}
+11141:                 className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.06] px-5 py-3 text-[15px] font-black text-cyan-100/75 transition hover:bg-cyan-200/[0.1] disabled:cursor-not-allowed disabled:opacity-60"
+11142:               >
+11143:                 {copy.reviewProgressButton}
+11144:               </button>
+
+-- line 11104 --
+11104:             <h2 className="mt-4 text-3xl font-black tracking-[-0.055em] text-white md:text-5xl">
+11105:               {copy.heroTitle}
+11106:             </h2>
+11107: 
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+11140:                 disabled={loading || Boolean(strategyActionLoading)}
+11141:                 className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.06] px-5 py-3 text-[15px] font-black text-cyan-100/75 transition hover:bg-cyan-200/[0.1] disabled:cursor-not-allowed disabled:opacity-60"
+11142:               >
+11143:                 {copy.reviewProgressButton}
+11144:               </button>
+11145:             </div>
+11146:           </div>
+11147: 
+11148:           <div className="rounded-[1.5rem] border border-emerald-200/14 bg-emerald-200/[0.055] p-5">
+
+-- line 11108 --
+11108:             <p className="mt-4 max-w-4xl text-[15px] font-semibold leading-8 text-white/58">
+11109:               {copy.heroText}
+11110:             </p>
+11111: 
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+11140:                 disabled={loading || Boolean(strategyActionLoading)}
+11141:                 className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.06] px-5 py-3 text-[15px] font-black text-cyan-100/75 transition hover:bg-cyan-200/[0.1] disabled:cursor-not-allowed disabled:opacity-60"
+11142:               >
+11143:                 {copy.reviewProgressButton}
+11144:               </button>
+11145:             </div>
+11146:           </div>
+11147: 
+11148:           <div className="rounded-[1.5rem] border border-emerald-200/14 bg-emerald-200/[0.055] p-5">
+11149:             <p className="text-[12px] font-black uppercase tracking-[0.22em] text-emerald-100/55">
+11150:               {copy.connectedTitle}
+11151:             </p>
+11152:             <p className="mt-3 text-[15px] font-semibold leading-8 text-white/58">
+
+-- line 11112 --
+11112:             <div className="mt-5 flex flex-wrap gap-4">
+11113:               <button
+11114:                 type="button"
+11115:                 disabled={(!firstTemplate && strategies.length === 0) || Boolean(strategyActionLoading)}
+11116:                 onClick={() => {
+11117:                   if (strategies.length > 0) {
+11118:                     setStrategyLibraryOpen(true);
+11119:                     return;
+11120:                   }
+11121: 
+11122:                   handleBuildStrategy(firstTemplate);
+11123:                 }}
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+11140:                 disabled={loading || Boolean(strategyActionLoading)}
+11141:                 className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.06] px-5 py-3 text-[15px] font-black text-cyan-100/75 transition hover:bg-cyan-200/[0.1] disabled:cursor-not-allowed disabled:opacity-60"
+11142:               >
+11143:                 {copy.reviewProgressButton}
+11144:               </button>
+11145:             </div>
+11146:           </div>
+11147: 
+11148:           <div className="rounded-[1.5rem] border border-emerald-200/14 bg-emerald-200/[0.055] p-5">
+11149:             <p className="text-[12px] font-black uppercase tracking-[0.22em] text-emerald-100/55">
+11150:               {copy.connectedTitle}
+11151:             </p>
+11152:             <p className="mt-3 text-[15px] font-semibold leading-8 text-white/58">
+11153:               {copy.connectedText}
+11154:             </p>
+11155:           </div>
+11156:         </div>
+
+-- line 11124 --
+11124:                 className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[17px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.18)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11125:               >
+11126:                 {strategyActionLoading.startsWith("build:") ? actionCopy.saving : strategies.length > 0 ? strategyLibraryCopy.openSwitcher : copy.startButton}
+11127:               </button>
+11128: 
+11129:               <button
+11130:                 type="button"
+11131:                 onClick={onOpenJournal}
+11132:                 className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[17px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white"
+11133:               >
+11134:                 {copy.openJournalButton}
+11135:               </button>
+11136: 
+11137:               <button
+11138:                 type="button"
+11139:                 onClick={onRefresh}
+11140:                 disabled={loading || Boolean(strategyActionLoading)}
+11141:                 className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.06] px-5 py-3 text-[15px] font-black text-cyan-100/75 transition hover:bg-cyan-200/[0.1] disabled:cursor-not-allowed disabled:opacity-60"
+11142:               >
+11143:                 {copy.reviewProgressButton}
+11144:               </button>
+11145:             </div>
+11146:           </div>
+11147: 
+11148:           <div className="rounded-[1.5rem] border border-emerald-200/14 bg-emerald-200/[0.055] p-5">
+11149:             <p className="text-[12px] font-black uppercase tracking-[0.22em] text-emerald-100/55">
+11150:               {copy.connectedTitle}
+11151:             </p>
+11152:             <p className="mt-3 text-[15px] font-semibold leading-8 text-white/58">
+11153:               {copy.connectedText}
+11154:             </p>
+11155:           </div>
+11156:         </div>
+11157:       </div>
+11158: 
+11159:       {strategyActionMessage ? (
+11160:         <div className="rounded-[1.4rem] border border-emerald-300/18 bg-emerald-300/[0.08] p-4 text-[15px] font-semibold leading-8 text-emerald-100">
+11161:           {strategyActionMessage}
+11162:         </div>
+11163:       ) : null}
+11164: 
+11165:       {strategyActionError ? (
+11166:         <div className="rounded-[1.4rem] border border-rose-300/18 bg-rose-300/[0.08] p-4 text-[15px] font-semibold leading-8 text-rose-100">
+11167:           {strategyActionError}
+11168:         </div>
+
+-- line 11313 --
+11313:             <div className="rounded-[1.5rem] border border-emerald-200/14 bg-emerald-200/[0.055] p-5">
+11314:               <div className="inline-flex rounded-full border border-emerald-200/14 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.22em] text-emerald-100/70">
+11315:                 {clarityCopy.missionLabel}
+11316:               </div>
+11317:               <h3 className="mt-3 text-2xl font-black tracking-[-0.04em] text-white">
+11318:                 {clarityCopy.missionTitle}
+11319:               </h3>
+11320:               <p className="mt-3 text-[15px] font-semibold leading-8 text-white/56">
+11321:                 {clarityCopy.missionText}
+11322:               </p>
+11323: 
+11324:               <div className="mt-5 grid gap-3 md:grid-cols-2">
+11325:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11326:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.status}</p>
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+
+-- line 11314 --
+11314:               <div className="inline-flex rounded-full border border-emerald-200/14 bg-emerald-200/[0.07] px-3.5 py-1.5 text-[12px] font-black uppercase tracking-[0.22em] text-emerald-100/70">
+11315:                 {clarityCopy.missionLabel}
+11316:               </div>
+11317:               <h3 className="mt-3 text-2xl font-black tracking-[-0.04em] text-white">
+11318:                 {clarityCopy.missionTitle}
+11319:               </h3>
+11320:               <p className="mt-3 text-[15px] font-semibold leading-8 text-white/56">
+11321:                 {clarityCopy.missionText}
+11322:               </p>
+11323: 
+11324:               <div className="mt-5 grid gap-3 md:grid-cols-2">
+11325:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11326:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.status}</p>
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+
+-- line 11317 --
+11317:               <h3 className="mt-3 text-2xl font-black tracking-[-0.04em] text-white">
+11318:                 {clarityCopy.missionTitle}
+11319:               </h3>
+11320:               <p className="mt-3 text-[15px] font-semibold leading-8 text-white/56">
+11321:                 {clarityCopy.missionText}
+11322:               </p>
+11323: 
+11324:               <div className="mt-5 grid gap-3 md:grid-cols-2">
+11325:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11326:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.status}</p>
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+
+-- line 11320 --
+11320:               <p className="mt-3 text-[15px] font-semibold leading-8 text-white/56">
+11321:                 {clarityCopy.missionText}
+11322:               </p>
+11323: 
+11324:               <div className="mt-5 grid gap-3 md:grid-cols-2">
+11325:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11326:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.status}</p>
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+11362:                     {commandCopy.drill}
+11363:                   </button>
+11364:                 </div>
+
+-- line 11324 --
+11324:               <div className="mt-5 grid gap-3 md:grid-cols-2">
+11325:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11326:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.status}</p>
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+11362:                     {commandCopy.drill}
+11363:                   </button>
+11364:                 </div>
+11365:               </div>
+11366:             </div>
+11367: 
+11368:             <div className="grid gap-4">
+
+-- line 11325 --
+11325:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11326:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.status}</p>
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+11362:                     {commandCopy.drill}
+11363:                   </button>
+11364:                 </div>
+11365:               </div>
+11366:             </div>
+11367: 
+11368:             <div className="grid gap-4">
+11369:               <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+
+-- line 11326 --
+11326:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.status}</p>
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+11362:                     {commandCopy.drill}
+11363:                   </button>
+11364:                 </div>
+11365:               </div>
+11366:             </div>
+11367: 
+11368:             <div className="grid gap-4">
+11369:               <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+11370:                 <div className="flex flex-wrap items-start justify-between gap-3">
+
+-- line 11327 --
+11327:                   <p className="mt-2 text-[18px] font-black text-white">{strategyHealthState}</p>
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+11362:                     {commandCopy.drill}
+11363:                   </button>
+11364:                 </div>
+11365:               </div>
+11366:             </div>
+11367: 
+11368:             <div className="grid gap-4">
+11369:               <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+11370:                 <div className="flex flex-wrap items-start justify-between gap-3">
+11371:                   <div>
+
+-- line 11328 --
+11328:                   <p className="mt-1 text-[13px] font-semibold leading-6 text-white/48">{clarityCopy.healthHelper}</p>
+11329:                 </div>
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+11362:                     {commandCopy.drill}
+11363:                   </button>
+11364:                 </div>
+11365:               </div>
+11366:             </div>
+11367: 
+11368:             <div className="grid gap-4">
+11369:               <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+11370:                 <div className="flex flex-wrap items-start justify-between gap-3">
+11371:                   <div>
+11372:                     <p className="text-[12px] font-black uppercase tracking-[0.22em] text-white/40">{clarityCopy.currentSetup}</p>
+
+-- line 11330 --
+11330:                 <div className="rounded-[1.2rem] border border-white/10 bg-black/20 p-4">
+11331:                   <p className="text-[12px] font-black uppercase tracking-[0.18em] text-white/38">{clarityCopy.bottleneck}</p>
+11332:                   <p className="mt-2 text-[15px] font-black leading-7 text-white/82">{strategyBottleneckText}</p>
+11333:                 </div>
+11334:               </div>
+11335: 
+11336:               <div className="mt-4 rounded-[1.25rem] border border-cyan-200/14 bg-cyan-200/[0.055] p-4">
+11337:                 <p className="text-[12px] font-black uppercase tracking-[0.2em] text-cyan-100/62">{clarityCopy.nextAction}</p>
+11338:                 <p className="mt-2 text-[20px] font-black tracking-[-0.025em] text-white">{strategyMissionActionLabel}</p>
+11339:                 <p className="mt-2 text-[14px] font-semibold leading-7 text-white/56">{strategyMissionReason}</p>
+11340:                 <div className="mt-4 flex flex-wrap gap-2">
+11341:                   <button
+11342:                     type="button"
+11343:                     onClick={(event) => {
+11344:                       if (strategyMissionAction === "build") return handleBuildStrategy(selectedTemplate || firstTemplate);
+11345:                       if (strategyMissionAction === "evidence") return openExampleForm(selectedTemplate || firstTemplate || undefined, event);
+11346:                       if (strategyMissionAction === "gate") return openBeforeTradeGate();
+11347:                       if (strategyMissionAction === "debrief") return openAfterTradeDebrief();
+11348:                       if (strategyMissionAction === "version") return handleGenerateStrategyVersion();
+11349:                       if (strategyMissionAction === "review") return handleStrategyReview();
+11350:                       return handleRunGraduationCheck();
+11351:                     }}
+11352:                     disabled={Boolean(strategyActionLoading) || strategyReviewSaving || strategyVersionSaving || graduationSaving}
+11353:                     className="rounded-full bg-gradient-to-r from-cyan-100 via-white to-emerald-100 px-5 py-3 text-[15px] font-black text-[#06111d] shadow-[0_14px_45px_rgba(103,232,249,0.16)] transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+11354:                   >
+11355:                     {clarityCopy.actionButton}
+11356:                   </button>
+11357:                   <button
+11358:                     type="button"
+11359:                     onClick={() => handleOpenStrategyZone("drill")}
+11360:                     className="rounded-full border border-cyan-200/14 bg-cyan-200/[0.065] px-5 py-3 text-[14px] font-black text-cyan-100/76 transition hover:bg-cyan-200/[0.1]"
+11361:                   >
+11362:                     {commandCopy.drill}
+11363:                   </button>
+11364:                 </div>
+11365:               </div>
+11366:             </div>
+11367: 
+11368:             <div className="grid gap-4">
+11369:               <div className="rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+11370:                 <div className="flex flex-wrap items-start justify-between gap-3">
+11371:                   <div>
+11372:                     <p className="text-[12px] font-black uppercase tracking-[0.22em] text-white/40">{clarityCopy.currentSetup}</p>
+11373:                     <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+11374:                       {getStrategyDisplayTitle(currentStrategy.title || currentStrategy.name, currentStrategy.primary_setup_slug || currentStrategy.setup_slug, language)}
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9F2_RUNTIME_LAYOUT_AUDIT_raw_20260719_170513.json
+NEXT_ACTION=BUILD_EXACT_LANDING_EDGE_JOURNAL_LAYOUT_PATCH

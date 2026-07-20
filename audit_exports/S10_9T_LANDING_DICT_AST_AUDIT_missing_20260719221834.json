@@ -1,0 +1,2151 @@
+[
+  {
+    "provisionalKey": "landingMissing.0001",
+    "text": "EN",
+    "paths": [
+      "dict.en.lang"
+    ],
+    "nearestNamedKeys": [
+      "lang"
+    ],
+    "firstLine": 31
+  },
+  {
+    "provisionalKey": "landingMissing.0002",
+    "text": "Language",
+    "paths": [
+      "dict.en.switchLanguage"
+    ],
+    "nearestNamedKeys": [
+      "switchLanguage"
+    ],
+    "firstLine": 32
+  },
+  {
+    "provisionalKey": "landingMissing.0003",
+    "text": "Home",
+    "paths": [
+      "dict.en.nav.home",
+      "dict.en.footer.productLinks[0]"
+    ],
+    "nearestNamedKeys": [
+      "home",
+      "productLinks"
+    ],
+    "firstLine": 40
+  },
+  {
+    "provisionalKey": "landingMissing.0004",
+    "text": "Desk",
+    "paths": [
+      "dict.en.nav.desk"
+    ],
+    "nearestNamedKeys": [
+      "desk"
+    ],
+    "firstLine": 41
+  },
+  {
+    "provisionalKey": "landingMissing.0005",
+    "text": "Product",
+    "paths": [
+      "dict.en.nav.product",
+      "dict.en.productPage.heroBadge",
+      "dict.en.footer.product",
+      "dict.en.footer.productLinks[1]"
+    ],
+    "nearestNamedKeys": [
+      "heroBadge",
+      "product",
+      "productLinks"
+    ],
+    "firstLine": 42
+  },
+  {
+    "provisionalKey": "landingMissing.0006",
+    "text": "Pricing",
+    "paths": [
+      "dict.en.nav.pricing",
+      "dict.en.pricingPage.heroBadge",
+      "dict.en.footer.productLinks[2]"
+    ],
+    "nearestNamedKeys": [
+      "heroBadge",
+      "pricing",
+      "productLinks"
+    ],
+    "firstLine": 43
+  },
+  {
+    "provisionalKey": "landingMissing.0007",
+    "text": "Private beta",
+    "paths": [
+      "dict.en.stats[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 53
+  },
+  {
+    "provisionalKey": "landingMissing.0008",
+    "text": "built for serious active traders",
+    "paths": [
+      "dict.en.stats[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 53
+  },
+  {
+    "provisionalKey": "landingMissing.0009",
+    "text": "Journal-first",
+    "paths": [
+      "dict.en.stats[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 54
+  },
+  {
+    "provisionalKey": "landingMissing.0010",
+    "text": "your trades become the data source",
+    "paths": [
+      "dict.en.stats[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 54
+  },
+  {
+    "provisionalKey": "landingMissing.0011",
+    "text": "Edge+",
+    "paths": [
+      "dict.en.stats[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 55
+  },
+  {
+    "provisionalKey": "landingMissing.0012",
+    "text": "scanner and market brief access",
+    "paths": [
+      "dict.en.stats[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "stats"
+    ],
+    "firstLine": 55
+  },
+  {
+    "provisionalKey": "landingMissing.0013",
+    "text": "Journal & screenshots",
+    "paths": [
+      "dict.en.homeSections.cards[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 66
+  },
+  {
+    "provisionalKey": "landingMissing.0014",
+    "text": "Track trades, screenshots, emotions, mistakes, risk and lessons in one place.",
+    "paths": [
+      "dict.en.homeSections.cards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 66
+  },
+  {
+    "provisionalKey": "landingMissing.0015",
+    "text": "AI Coach",
+    "paths": [
+      "dict.en.homeSections.cards[1][0]",
+      "dict.en.pricingPage.comparison[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "cards",
+      "comparison"
+    ],
+    "firstLine": 67
+  },
+  {
+    "provisionalKey": "landingMissing.0016",
+    "text": "Get structured feedback on trade logic, risk, discipline and decision quality.",
+    "paths": [
+      "dict.en.homeSections.cards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 67
+  },
+  {
+    "provisionalKey": "landingMissing.0017",
+    "text": "Edge and Elite unlock the scanner layer for stocks, crypto and in-play market context.",
+    "paths": [
+      "dict.en.homeSections.cards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 68
+  },
+  {
+    "provisionalKey": "landingMissing.0018",
+    "text": "AI Alerts",
+    "paths": [
+      "dict.en.homeSections.cards[3][0]",
+      "dict.en.productPage.deskCards[2][0]",
+      "dict.en.productPage.modules[3][0]",
+      "dict.en.pricingPage.comparison[7][0]",
+      "dict.en.footer.featureLinks[1]"
+    ],
+    "nearestNamedKeys": [
+      "cards",
+      "comparison",
+      "deskCards",
+      "featureLinks",
+      "modules"
+    ],
+    "firstLine": 69
+  },
+  {
+    "provisionalKey": "landingMissing.0019",
+    "text": "Elite unlocks the premium alert workflow with setup, trigger, entry, stop, targets and outcome review.",
+    "paths": [
+      "dict.en.homeSections.cards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "cards"
+    ],
+    "firstLine": 69
+  },
+  {
+    "provisionalKey": "landingMissing.0020",
+    "text": "Market intelligence, alerts, journal and coaching in one system.",
+    "paths": [
+      "dict.en.productPage.heroCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 80
+  },
+  {
+    "provisionalKey": "landingMissing.0021",
+    "text": "Signal-to-Journal",
+    "paths": [
+      "dict.en.productPage.heroCards[1][0]",
+      "dict.en.productPage.modules[3][2][3]",
+      "dict.en.pricingPage.signalCards[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards",
+      "modules",
+      "signalCards"
+    ],
+    "firstLine": 81
+  },
+  {
+    "provisionalKey": "landingMissing.0022",
+    "text": "Create a trade draft from an alert and compare the plan with your execution.",
+    "paths": [
+      "dict.en.productPage.heroCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 81
+  },
+  {
+    "provisionalKey": "landingMissing.0023",
+    "text": "Personal Edge",
+    "paths": [
+      "dict.en.productPage.heroCards[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 82
+  },
+  {
+    "provisionalKey": "landingMissing.0024",
+    "text": "The long-term architecture is built around the trader’s own best and worst patterns.",
+    "paths": [
+      "dict.en.productPage.heroCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "heroCards"
+    ],
+    "firstLine": 82
+  },
+  {
+    "provisionalKey": "landingMissing.0025",
+    "text": "Find stocks and crypto that deserve attention before wasting time on dead charts.",
+    "paths": [
+      "dict.en.productPage.deskCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 88
+  },
+  {
+    "provisionalKey": "landingMissing.0026",
+    "text": "AI Scanner",
+    "paths": [
+      "dict.en.productPage.deskCards[1][0]",
+      "dict.en.pricingPage.comparison[6][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison",
+      "deskCards"
+    ],
+    "firstLine": 89
+  },
+  {
+    "provisionalKey": "landingMissing.0027",
+    "text": "Edge and Elite receive AI Market Brief logic around the best in-play candidates.",
+    "paths": [
+      "dict.en.productPage.deskCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 89
+  },
+  {
+    "provisionalKey": "landingMissing.0028",
+    "text": "Elite receives structured signals with setup, direction, trigger, entry zone, stop and targets.",
+    "paths": [
+      "dict.en.productPage.deskCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 90
+  },
+  {
+    "provisionalKey": "landingMissing.0029",
+    "text": "Track taken, skipped and missed alerts so every outcome becomes a learning point.",
+    "paths": [
+      "dict.en.productPage.deskCards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "deskCards"
+    ],
+    "firstLine": 91
+  },
+  {
+    "provisionalKey": "landingMissing.0030",
+    "text": "Workflow",
+    "paths": [
+      "dict.en.productPage.flowEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "flowEyebrow"
+    ],
+    "firstLine": 93
+  },
+  {
+    "provisionalKey": "landingMissing.0031",
+    "text": "01",
+    "paths": [
+      "dict.en.productPage.flow[0][0]",
+      "dict.en.teamPage.roadmap[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 98
+  },
+  {
+    "provisionalKey": "landingMissing.0032",
+    "text": "Market moves",
+    "paths": [
+      "dict.en.productPage.flow[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 98
+  },
+  {
+    "provisionalKey": "landingMissing.0033",
+    "text": "SkillEdge watches active stocks, crypto, unusual movement, catalysts and market context.",
+    "paths": [
+      "dict.en.productPage.flow[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 98
+  },
+  {
+    "provisionalKey": "landingMissing.0034",
+    "text": "02",
+    "paths": [
+      "dict.en.productPage.flow[1][0]",
+      "dict.en.teamPage.roadmap[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 99
+  },
+  {
+    "provisionalKey": "landingMissing.0035",
+    "text": "AI filters noise",
+    "paths": [
+      "dict.en.productPage.flow[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 99
+  },
+  {
+    "provisionalKey": "landingMissing.0036",
+    "text": "The system ranks opportunities by quality, freshness, risk and setup clarity.",
+    "paths": [
+      "dict.en.productPage.flow[1][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 99
+  },
+  {
+    "provisionalKey": "landingMissing.0037",
+    "text": "03",
+    "paths": [
+      "dict.en.productPage.flow[2][0]",
+      "dict.en.teamPage.roadmap[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 100
+  },
+  {
+    "provisionalKey": "landingMissing.0038",
+    "text": "Plan appears",
+    "paths": [
+      "dict.en.productPage.flow[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 100
+  },
+  {
+    "provisionalKey": "landingMissing.0039",
+    "text": "The trader sees direction, trigger, entry zone, stop, targets, management and invalidation.",
+    "paths": [
+      "dict.en.productPage.flow[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 100
+  },
+  {
+    "provisionalKey": "landingMissing.0040",
+    "text": "04",
+    "paths": [
+      "dict.en.productPage.flow[3][0]",
+      "dict.en.teamPage.roadmap[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow",
+      "roadmap"
+    ],
+    "firstLine": 101
+  },
+  {
+    "provisionalKey": "landingMissing.0041",
+    "text": "Journal connects",
+    "paths": [
+      "dict.en.productPage.flow[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 101
+  },
+  {
+    "provisionalKey": "landingMissing.0042",
+    "text": "A taken alert can become a journal trade with screenshots, notes and execution review.",
+    "paths": [
+      "dict.en.productPage.flow[3][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 101
+  },
+  {
+    "provisionalKey": "landingMissing.0043",
+    "text": "05",
+    "paths": [
+      "dict.en.productPage.flow[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 102
+  },
+  {
+    "provisionalKey": "landingMissing.0044",
+    "text": "Learning compounds",
+    "paths": [
+      "dict.en.productPage.flow[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 102
+  },
+  {
+    "provisionalKey": "landingMissing.0045",
+    "text": "Reports, outcome review and coaching turn repetition into a stronger process.",
+    "paths": [
+      "dict.en.productPage.flow[4][2]"
+    ],
+    "nearestNamedKeys": [
+      "flow"
+    ],
+    "firstLine": 102
+  },
+  {
+    "provisionalKey": "landingMissing.0046",
+    "text": "Modules",
+    "paths": [
+      "dict.en.productPage.modulesEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "modulesEyebrow"
+    ],
+    "firstLine": 104
+  },
+  {
+    "provisionalKey": "landingMissing.0047",
+    "text": "A serious journal that becomes the data source for analysis, reports and future personalization.",
+    "paths": [
+      "dict.en.productPage.modules[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109
+  },
+  {
+    "provisionalKey": "landingMissing.0048",
+    "text": "Trades and screenshots",
+    "paths": [
+      "dict.en.productPage.modules[0][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109
+  },
+  {
+    "provisionalKey": "landingMissing.0049",
+    "text": "PnL and win rate",
+    "paths": [
+      "dict.en.productPage.modules[0][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109
+  },
+  {
+    "provisionalKey": "landingMissing.0050",
+    "text": "CSV/XLSX export",
+    "paths": [
+      "dict.en.productPage.modules[0][2][2]",
+      "dict.en.pricingPage.plans[0].features[5]"
+    ],
+    "nearestNamedKeys": [
+      "features",
+      "modules"
+    ],
+    "firstLine": 109
+  },
+  {
+    "provisionalKey": "landingMissing.0051",
+    "text": "AI journal review",
+    "paths": [
+      "dict.en.productPage.modules[0][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 109
+  },
+  {
+    "provisionalKey": "landingMissing.0052",
+    "text": "Charts & Watchlists",
+    "paths": [
+      "dict.en.productPage.modules[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110
+  },
+  {
+    "provisionalKey": "landingMissing.0053",
+    "text": "A chart workspace connected to tickers, watchlists, screenshots and future premium chart analysis.",
+    "paths": [
+      "dict.en.productPage.modules[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110
+  },
+  {
+    "provisionalKey": "landingMissing.0054",
+    "text": "TradingView workspace",
+    "paths": [
+      "dict.en.productPage.modules[1][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110
+  },
+  {
+    "provisionalKey": "landingMissing.0055",
+    "text": "Ticker input",
+    "paths": [
+      "dict.en.productPage.modules[1][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110
+  },
+  {
+    "provisionalKey": "landingMissing.0056",
+    "text": "Watchlist",
+    "paths": [
+      "dict.en.productPage.modules[1][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110
+  },
+  {
+    "provisionalKey": "landingMissing.0057",
+    "text": "AI chart analysis foundation",
+    "paths": [
+      "dict.en.productPage.modules[1][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 110
+  },
+  {
+    "provisionalKey": "landingMissing.0058",
+    "text": "A scanner layer for finding active stocks and crypto with clear source transparency.",
+    "paths": [
+      "dict.en.productPage.modules[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111
+  },
+  {
+    "provisionalKey": "landingMissing.0059",
+    "text": "Stocks and crypto candidates",
+    "paths": [
+      "dict.en.productPage.modules[2][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111
+  },
+  {
+    "provisionalKey": "landingMissing.0060",
+    "text": "Market context",
+    "paths": [
+      "dict.en.productPage.modules[2][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111
+  },
+  {
+    "provisionalKey": "landingMissing.0061",
+    "text": "Source labels",
+    "paths": [
+      "dict.en.productPage.modules[2][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111
+  },
+  {
+    "provisionalKey": "landingMissing.0062",
+    "text": "AI Market Brief",
+    "paths": [
+      "dict.en.productPage.modules[2][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 111
+  },
+  {
+    "provisionalKey": "landingMissing.0063",
+    "text": "Elite-level actionable signals with structure, education and outcome review.",
+    "paths": [
+      "dict.en.productPage.modules[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112
+  },
+  {
+    "provisionalKey": "landingMissing.0064",
+    "text": "Floating alert widget",
+    "paths": [
+      "dict.en.productPage.modules[3][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112
+  },
+  {
+    "provisionalKey": "landingMissing.0065",
+    "text": "Full Alerts Center",
+    "paths": [
+      "dict.en.productPage.modules[3][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112
+  },
+  {
+    "provisionalKey": "landingMissing.0066",
+    "text": "Breakdown modal",
+    "paths": [
+      "dict.en.productPage.modules[3][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 112
+  },
+  {
+    "provisionalKey": "landingMissing.0067",
+    "text": "Reports & Learning",
+    "paths": [
+      "dict.en.productPage.modules[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113
+  },
+  {
+    "provisionalKey": "landingMissing.0068",
+    "text": "A review layer that turns trades into performance feedback and repeatable lessons.",
+    "paths": [
+      "dict.en.productPage.modules[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113
+  },
+  {
+    "provisionalKey": "landingMissing.0069",
+    "text": "AI reports",
+    "paths": [
+      "dict.en.productPage.modules[4][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113
+  },
+  {
+    "provisionalKey": "landingMissing.0070",
+    "text": "Learning blocks",
+    "paths": [
+      "dict.en.productPage.modules[4][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113
+  },
+  {
+    "provisionalKey": "landingMissing.0071",
+    "text": "Playbook foundation",
+    "paths": [
+      "dict.en.productPage.modules[4][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113
+  },
+  {
+    "provisionalKey": "landingMissing.0072",
+    "text": "Execution focus",
+    "paths": [
+      "dict.en.productPage.modules[4][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 113
+  },
+  {
+    "provisionalKey": "landingMissing.0073",
+    "text": "Support",
+    "paths": [
+      "dict.en.productPage.modules[5][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114
+  },
+  {
+    "provisionalKey": "landingMissing.0074",
+    "text": "A site-wide support assistant and operator flow for product, payment and access questions.",
+    "paths": [
+      "dict.en.productPage.modules[5][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114
+  },
+  {
+    "provisionalKey": "landingMissing.0075",
+    "text": "Support assistant",
+    "paths": [
+      "dict.en.productPage.modules[5][2][0]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114
+  },
+  {
+    "provisionalKey": "landingMissing.0076",
+    "text": "Operator request",
+    "paths": [
+      "dict.en.productPage.modules[5][2][1]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114
+  },
+  {
+    "provisionalKey": "landingMissing.0077",
+    "text": "Email support",
+    "paths": [
+      "dict.en.productPage.modules[5][2][2]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114
+  },
+  {
+    "provisionalKey": "landingMissing.0078",
+    "text": "Admin reply flow",
+    "paths": [
+      "dict.en.productPage.modules[5][2][3]"
+    ],
+    "nearestNamedKeys": [
+      "modules"
+    ],
+    "firstLine": 114
+  },
+  {
+    "provisionalKey": "landingMissing.0079",
+    "text": "Difference",
+    "paths": [
+      "dict.en.productPage.differentEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "differentEyebrow"
+    ],
+    "firstLine": 116
+  },
+  {
+    "provisionalKey": "landingMissing.0080",
+    "text": "Instead of a normal scanner",
+    "paths": [
+      "dict.en.productPage.comparisons[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 121
+  },
+  {
+    "provisionalKey": "landingMissing.0081",
+    "text": "You only see tickers and still have to guess what matters.",
+    "paths": [
+      "dict.en.productPage.comparisons[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 121
+  },
+  {
+    "provisionalKey": "landingMissing.0082",
+    "text": "SkillEdge explains why the ticker matters, what the setup is, what can go wrong and what confirms the idea.",
+    "paths": [
+      "dict.en.productPage.comparisons[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 121
+  },
+  {
+    "provisionalKey": "landingMissing.0083",
+    "text": "Instead of a simple journal",
+    "paths": [
+      "dict.en.productPage.comparisons[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 122
+  },
+  {
+    "provisionalKey": "landingMissing.0084",
+    "text": "You store trades but do not transform them into an edge.",
+    "paths": [
+      "dict.en.productPage.comparisons[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 122
+  },
+  {
+    "provisionalKey": "landingMissing.0085",
+    "text": "SkillEdge connects trades, screenshots, alerts, outcomes and mistakes into a personal improvement system.",
+    "paths": [
+      "dict.en.productPage.comparisons[1][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 122
+  },
+  {
+    "provisionalKey": "landingMissing.0086",
+    "text": "Instead of a generic chatbot",
+    "paths": [
+      "dict.en.productPage.comparisons[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 123
+  },
+  {
+    "provisionalKey": "landingMissing.0087",
+    "text": "You ask random questions and receive disconnected answers.",
+    "paths": [
+      "dict.en.productPage.comparisons[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 123
+  },
+  {
+    "provisionalKey": "landingMissing.0088",
+    "text": "SkillEdge works inside the workflow: alerts, journal, reports, execution, learning and playbook.",
+    "paths": [
+      "dict.en.productPage.comparisons[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparisons"
+    ],
+    "firstLine": 123
+  },
+  {
+    "provisionalKey": "landingMissing.0089",
+    "text": "Journal, screenshots and analytics",
+    "paths": [
+      "dict.en.productPage.finalChecklist[0]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 129
+  },
+  {
+    "provisionalKey": "landingMissing.0090",
+    "text": "AI Coach and chart review",
+    "paths": [
+      "dict.en.productPage.finalChecklist[1]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 130
+  },
+  {
+    "provisionalKey": "landingMissing.0091",
+    "text": "Market Intelligence and AI Scanner for Edge+",
+    "paths": [
+      "dict.en.productPage.finalChecklist[2]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 131
+  },
+  {
+    "provisionalKey": "landingMissing.0092",
+    "text": "AI Alerts and Signal-to-Journal for Elite",
+    "paths": [
+      "dict.en.productPage.finalChecklist[3]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 132
+  },
+  {
+    "provisionalKey": "landingMissing.0093",
+    "text": "Reports, learning blocks and playbook foundation",
+    "paths": [
+      "dict.en.productPage.finalChecklist[4]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 133
+  },
+  {
+    "provisionalKey": "landingMissing.0094",
+    "text": "Support assistant and operator request flow",
+    "paths": [
+      "dict.en.productPage.finalChecklist[5]"
+    ],
+    "nearestNamedKeys": [
+      "finalChecklist"
+    ],
+    "firstLine": 134
+  },
+  {
+    "provisionalKey": "landingMissing.0095",
+    "text": "1 month",
+    "paths": [
+      "dict.en.pricingPage.billingToggle.monthly"
+    ],
+    "nearestNamedKeys": [
+      "monthly"
+    ],
+    "firstLine": 143
+  },
+  {
+    "provisionalKey": "landingMissing.0096",
+    "text": "1 year",
+    "paths": [
+      "dict.en.pricingPage.billingToggle.yearly"
+    ],
+    "nearestNamedKeys": [
+      "yearly"
+    ],
+    "firstLine": 145
+  },
+  {
+    "provisionalKey": "landingMissing.0097",
+    "text": "Up to 300 trades",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[0]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174
+  },
+  {
+    "provisionalKey": "landingMissing.0098",
+    "text": "3 screenshots per trade",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[1]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174
+  },
+  {
+    "provisionalKey": "landingMissing.0099",
+    "text": "50 AI Coach requests / month",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[2]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174
+  },
+  {
+    "provisionalKey": "landingMissing.0100",
+    "text": "10 journal AI analyses / month",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[3]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174
+  },
+  {
+    "provisionalKey": "landingMissing.0101",
+    "text": "20 chart AI analyses / month",
+    "paths": [
+      "dict.en.pricingPage.plans[0].features[4]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 174
+  },
+  {
+    "provisionalKey": "landingMissing.0102",
+    "text": "Everything in Core",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[0]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 184
+  },
+  {
+    "provisionalKey": "landingMissing.0103",
+    "text": "Strategy OS: build your own trading strategy",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[1]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185
+  },
+  {
+    "provisionalKey": "landingMissing.0104",
+    "text": "Up to 2,000 trades",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[2]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185
+  },
+  {
+    "provisionalKey": "landingMissing.0105",
+    "text": "5 screenshots per trade",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[3]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185
+  },
+  {
+    "provisionalKey": "landingMissing.0106",
+    "text": "200 AI Coach requests / month",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[4]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185
+  },
+  {
+    "provisionalKey": "landingMissing.0107",
+    "text": "30 AI reports / month",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[5]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185
+  },
+  {
+    "provisionalKey": "landingMissing.0108",
+    "text": "AI Scanner / Market Intelligence",
+    "paths": [
+      "dict.en.pricingPage.plans[1].features[6]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 185
+  },
+  {
+    "provisionalKey": "landingMissing.0109",
+    "text": "Everything in Edge",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[0]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195
+  },
+  {
+    "provisionalKey": "landingMissing.0110",
+    "text": "Up to 10,000 trades",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[1]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195
+  },
+  {
+    "provisionalKey": "landingMissing.0111",
+    "text": "10 screenshots per trade",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[2]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195
+  },
+  {
+    "provisionalKey": "landingMissing.0112",
+    "text": "1,000 AI Coach requests / month",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[3]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195
+  },
+  {
+    "provisionalKey": "landingMissing.0113",
+    "text": "150 AI reports / month",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[4]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195
+  },
+  {
+    "provisionalKey": "landingMissing.0114",
+    "text": "AI Alerts + Signal-to-Journal",
+    "paths": [
+      "dict.en.pricingPage.plans[2].features[5]"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 195
+  },
+  {
+    "provisionalKey": "landingMissing.0115",
+    "text": "Structured signals",
+    "paths": [
+      "dict.en.pricingPage.signalCards[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 203
+  },
+  {
+    "provisionalKey": "landingMissing.0116",
+    "text": "Signals are structured setups with direction, trigger, entry zone, stop, targets and risk.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 203
+  },
+  {
+    "provisionalKey": "landingMissing.0117",
+    "text": "Breakdown before action",
+    "paths": [
+      "dict.en.pricingPage.signalCards[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 204
+  },
+  {
+    "provisionalKey": "landingMissing.0118",
+    "text": "Every serious alert explains why it appeared, what confirms it and what makes it dangerous.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 204
+  },
+  {
+    "provisionalKey": "landingMissing.0119",
+    "text": "A taken alert can become a journal trade so the plan and execution can be compared.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 205
+  },
+  {
+    "provisionalKey": "landingMissing.0120",
+    "text": "Outcome coaching",
+    "paths": [
+      "dict.en.pricingPage.signalCards[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 206
+  },
+  {
+    "provisionalKey": "landingMissing.0121",
+    "text": "Taken, skipped and missed decisions show missed opportunities, good skips and weak execution.",
+    "paths": [
+      "dict.en.pricingPage.signalCards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "signalCards"
+    ],
+    "firstLine": 206
+  },
+  {
+    "provisionalKey": "landingMissing.0122",
+    "text": "Feature",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211
+  },
+  {
+    "provisionalKey": "landingMissing.0123",
+    "text": "Core",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211
+  },
+  {
+    "provisionalKey": "landingMissing.0124",
+    "text": "Edge",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211
+  },
+  {
+    "provisionalKey": "landingMissing.0125",
+    "text": "Elite",
+    "paths": [
+      "dict.en.pricingPage.comparison[0][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 211
+  },
+  {
+    "provisionalKey": "landingMissing.0126",
+    "text": "Journal + screenshots",
+    "paths": [
+      "dict.en.pricingPage.comparison[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 212
+  },
+  {
+    "provisionalKey": "landingMissing.0127",
+    "text": "Yes",
+    "paths": [
+      "dict.en.pricingPage.comparison[1][1]",
+      "dict.en.pricingPage.comparison[1][2]",
+      "dict.en.pricingPage.comparison[1][3]",
+      "dict.en.pricingPage.comparison[6][2]",
+      "dict.en.pricingPage.comparison[6][3]",
+      "dict.en.pricingPage.comparison[7][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 212
+  },
+  {
+    "provisionalKey": "landingMissing.0128",
+    "text": "50 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[2][1]",
+      "dict.en.pricingPage.comparison[3][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 213
+  },
+  {
+    "provisionalKey": "landingMissing.0129",
+    "text": "200 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 213
+  },
+  {
+    "provisionalKey": "landingMissing.0130",
+    "text": "1,000 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[2][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 213
+  },
+  {
+    "provisionalKey": "landingMissing.0131",
+    "text": "Journal AI analysis",
+    "paths": [
+      "dict.en.pricingPage.comparison[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 214
+  },
+  {
+    "provisionalKey": "landingMissing.0132",
+    "text": "10 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 214
+  },
+  {
+    "provisionalKey": "landingMissing.0133",
+    "text": "300 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[3][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 214
+  },
+  {
+    "provisionalKey": "landingMissing.0134",
+    "text": "Chart AI analysis",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215
+  },
+  {
+    "provisionalKey": "landingMissing.0135",
+    "text": "20 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215
+  },
+  {
+    "provisionalKey": "landingMissing.0136",
+    "text": "100 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215
+  },
+  {
+    "provisionalKey": "landingMissing.0137",
+    "text": "500 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[4][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 215
+  },
+  {
+    "provisionalKey": "landingMissing.0138",
+    "text": "AI Reports",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][0]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216
+  },
+  {
+    "provisionalKey": "landingMissing.0139",
+    "text": "—",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][1]",
+      "dict.en.pricingPage.comparison[6][1]",
+      "dict.en.pricingPage.comparison[7][1]",
+      "dict.en.pricingPage.comparison[7][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216
+  },
+  {
+    "provisionalKey": "landingMissing.0140",
+    "text": "30 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216
+  },
+  {
+    "provisionalKey": "landingMissing.0141",
+    "text": "150 / month",
+    "paths": [
+      "dict.en.pricingPage.comparison[5][3]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 216
+  },
+  {
+    "provisionalKey": "landingMissing.0142",
+    "text": "Discipline",
+    "paths": [
+      "dict.en.pricingPage.comparison[8][1]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 219
+  },
+  {
+    "provisionalKey": "landingMissing.0143",
+    "text": "Active review",
+    "paths": [
+      "dict.en.pricingPage.comparison[8][2]"
+    ],
+    "nearestNamedKeys": [
+      "comparison"
+    ],
+    "firstLine": 219
+  },
+  {
+    "provisionalKey": "landingMissing.0144",
+    "text": "Signals without education create dependency.",
+    "paths": [
+      "dict.en.teamPage.beliefs[0]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 237
+  },
+  {
+    "provisionalKey": "landingMissing.0145",
+    "text": "A trade without a plan cannot be reviewed properly.",
+    "paths": [
+      "dict.en.teamPage.beliefs[1]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 238
+  },
+  {
+    "provisionalKey": "landingMissing.0146",
+    "text": "A journal without feedback becomes a graveyard of old trades.",
+    "paths": [
+      "dict.en.teamPage.beliefs[2]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 239
+  },
+  {
+    "provisionalKey": "landingMissing.0147",
+    "text": "The best product should make the trader calmer, sharper and more disciplined.",
+    "paths": [
+      "dict.en.teamPage.beliefs[3]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 240
+  },
+  {
+    "provisionalKey": "landingMissing.0148",
+    "text": "Personal AI alerts become powerful only when the trader builds clean historical data.",
+    "paths": [
+      "dict.en.teamPage.beliefs[4]"
+    ],
+    "nearestNamedKeys": [
+      "beliefs"
+    ],
+    "firstLine": 241
+  },
+  {
+    "provisionalKey": "landingMissing.0149",
+    "text": "Use these cards as the About Us layout. Later you can insert real team photos, names and roles without changing the page structure.",
+    "paths": [
+      "dict.en.teamPage.teamText"
+    ],
+    "nearestNamedKeys": [
+      "teamText"
+    ],
+    "firstLine": 250
+  },
+  {
+    "provisionalKey": "landingMissing.0150",
+    "text": "Founder / Product Vision",
+    "paths": [
+      "dict.en.teamPage.teamCards[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 252
+  },
+  {
+    "provisionalKey": "landingMissing.0151",
+    "text": "Owns the product direction, trader workflow, pricing logic and premium positioning.",
+    "paths": [
+      "dict.en.teamPage.teamCards[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 252
+  },
+  {
+    "provisionalKey": "landingMissing.0152",
+    "text": "Trading Research",
+    "paths": [
+      "dict.en.teamPage.teamCards[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 253
+  },
+  {
+    "provisionalKey": "landingMissing.0153",
+    "text": "Defines setups, alert logic, journal review criteria and educational playbooks.",
+    "paths": [
+      "dict.en.teamPage.teamCards[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 253
+  },
+  {
+    "provisionalKey": "landingMissing.0154",
+    "text": "AI & Data Layer",
+    "paths": [
+      "dict.en.teamPage.teamCards[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 254
+  },
+  {
+    "provisionalKey": "landingMissing.0155",
+    "text": "Builds scanner logic, AI prompts, data enrichment, usage limits and backend gates.",
+    "paths": [
+      "dict.en.teamPage.teamCards[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 254
+  },
+  {
+    "provisionalKey": "landingMissing.0156",
+    "text": "Design & Experience",
+    "paths": [
+      "dict.en.teamPage.teamCards[3][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 255
+  },
+  {
+    "provisionalKey": "landingMissing.0157",
+    "text": "Shapes the dashboard, public pages, locked states, loading states and premium interface.",
+    "paths": [
+      "dict.en.teamPage.teamCards[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 255
+  },
+  {
+    "provisionalKey": "landingMissing.0158",
+    "text": "Support Operations",
+    "paths": [
+      "dict.en.teamPage.teamCards[4][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 256
+  },
+  {
+    "provisionalKey": "landingMissing.0159",
+    "text": "Handles customer questions, operator flow, payments, access and product guidance.",
+    "paths": [
+      "dict.en.teamPage.teamCards[4][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 256
+  },
+  {
+    "provisionalKey": "landingMissing.0160",
+    "text": "Security & Infrastructure",
+    "paths": [
+      "dict.en.teamPage.teamCards[5][0]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 257
+  },
+  {
+    "provisionalKey": "landingMissing.0161",
+    "text": "Protects private access, platform data, rate limits and client workflows.",
+    "paths": [
+      "dict.en.teamPage.teamCards[5][1]"
+    ],
+    "nearestNamedKeys": [
+      "teamCards"
+    ],
+    "firstLine": 257
+  },
+  {
+    "provisionalKey": "landingMissing.0162",
+    "text": "Principles",
+    "paths": [
+      "dict.en.teamPage.principlesEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "principlesEyebrow"
+    ],
+    "firstLine": 259
+  },
+  {
+    "provisionalKey": "landingMissing.0163",
+    "text": "No fake certainty",
+    "paths": [
+      "dict.en.teamPage.principles[0][0]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 262
+  },
+  {
+    "provisionalKey": "landingMissing.0164",
+    "text": "Trading contains risk. SkillEdge AI must never pretend that any model or alert can guarantee profit.",
+    "paths": [
+      "dict.en.teamPage.principles[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 262
+  },
+  {
+    "provisionalKey": "landingMissing.0165",
+    "text": "Transparent logic",
+    "paths": [
+      "dict.en.teamPage.principles[1][0]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 263
+  },
+  {
+    "provisionalKey": "landingMissing.0166",
+    "text": "The client should understand why an alert appears, which sources are tracked and what part of the idea is strong or weak.",
+    "paths": [
+      "dict.en.teamPage.principles[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 263
+  },
+  {
+    "provisionalKey": "landingMissing.0167",
+    "text": "Premium product mindset",
+    "paths": [
+      "dict.en.teamPage.principles[2][0]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 264
+  },
+  {
+    "provisionalKey": "landingMissing.0168",
+    "text": "Every feature should feel useful, serious and connected to the trader’s real workflow.",
+    "paths": [
+      "dict.en.teamPage.principles[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "principles"
+    ],
+    "firstLine": 264
+  },
+  {
+    "provisionalKey": "landingMissing.0169",
+    "text": "Roadmap",
+    "paths": [
+      "dict.en.teamPage.roadmapEyebrow"
+    ],
+    "nearestNamedKeys": [
+      "roadmapEyebrow"
+    ],
+    "firstLine": 266
+  },
+  {
+    "provisionalKey": "landingMissing.0170",
+    "text": "Launch foundation",
+    "paths": [
+      "dict.en.teamPage.roadmap[0][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 271
+  },
+  {
+    "provisionalKey": "landingMissing.0171",
+    "text": "Journal, dashboard, screenshots, learning, reports, crypto access and support foundation.",
+    "paths": [
+      "dict.en.teamPage.roadmap[0][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 271
+  },
+  {
+    "provisionalKey": "landingMissing.0172",
+    "text": "Signals and behavior",
+    "paths": [
+      "dict.en.teamPage.roadmap[1][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 272
+  },
+  {
+    "provisionalKey": "landingMissing.0173",
+    "text": "AI alerts, decision tracking, trade drafts, outcome learning and missed opportunity coaching.",
+    "paths": [
+      "dict.en.teamPage.roadmap[1][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 272
+  },
+  {
+    "provisionalKey": "landingMissing.0174",
+    "text": "Premium data",
+    "paths": [
+      "dict.en.teamPage.roadmap[2][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 273
+  },
+  {
+    "provisionalKey": "landingMissing.0175",
+    "text": "Full ticker coverage, Binance universe, catalysts, heatmaps, halt screener and stronger scanner logic.",
+    "paths": [
+      "dict.en.teamPage.roadmap[2][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 273
+  },
+  {
+    "provisionalKey": "landingMissing.0176",
+    "text": "Personal edge",
+    "paths": [
+      "dict.en.teamPage.roadmap[3][1]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 274
+  },
+  {
+    "provisionalKey": "landingMissing.0177",
+    "text": "AI learns from the client’s best setups, weak patterns, execution mistakes and journal history.",
+    "paths": [
+      "dict.en.teamPage.roadmap[3][2]"
+    ],
+    "nearestNamedKeys": [
+      "roadmap"
+    ],
+    "firstLine": 274
+  },
+  {
+    "provisionalKey": "landingMissing.0178",
+    "text": "Features",
+    "paths": [
+      "dict.en.footer.features"
+    ],
+    "nearestNamedKeys": [
+      "features"
+    ],
+    "firstLine": 284
+  },
+  {
+    "provisionalKey": "landingMissing.0179",
+    "text": "Resources",
+    "paths": [
+      "dict.en.footer.resources"
+    ],
+    "nearestNamedKeys": [
+      "resources"
+    ],
+    "firstLine": 285
+  },
+  {
+    "provisionalKey": "landingMissing.0180",
+    "text": "Legal",
+    "paths": [
+      "dict.en.footer.legal"
+    ],
+    "nearestNamedKeys": [
+      "legal"
+    ],
+    "firstLine": 286
+  },
+  {
+    "provisionalKey": "landingMissing.0181",
+    "text": "Playbook",
+    "paths": [
+      "dict.en.footer.featureLinks[6]"
+    ],
+    "nearestNamedKeys": [
+      "featureLinks"
+    ],
+    "firstLine": 288
+  },
+  {
+    "provisionalKey": "landingMissing.0182",
+    "text": "Reports",
+    "paths": [
+      "dict.en.footer.featureLinks[7]"
+    ],
+    "nearestNamedKeys": [
+      "featureLinks"
+    ],
+    "firstLine": 288
+  },
+  {
+    "provisionalKey": "landingMissing.0183",
+    "text": "AI Alerts Guide",
+    "paths": [
+      "dict.en.footer.resourceLinks[3]"
+    ],
+    "nearestNamedKeys": [
+      "resourceLinks"
+    ],
+    "firstLine": 289
+  },
+  {
+    "provisionalKey": "landingMissing.0184",
+    "text": "Disclaimer Statement",
+    "paths": [
+      "dict.en.footer.legalLinks[2]"
+    ],
+    "nearestNamedKeys": [
+      "legalLinks"
+    ],
+    "firstLine": 290
+  },
+  {
+    "provisionalKey": "landingMissing.0185",
+    "text": "EULA",
+    "paths": [
+      "dict.en.footer.legalLinks[3]"
+    ],
+    "nearestNamedKeys": [
+      "legalLinks"
+    ],
+    "firstLine": 290
+  },
+  {
+    "provisionalKey": "landingMissing.0186",
+    "text": "Contacts",
+    "paths": [
+      "dict.en.footer.contact"
+    ],
+    "nearestNamedKeys": [
+      "contact"
+    ],
+    "firstLine": 296
+  },
+  {
+    "provisionalKey": "landingMissing.0187",
+    "text": "Login",
+    "paths": [
+      "dict.en.auth.login",
+      "dict.en.auth.loginButton"
+    ],
+    "nearestNamedKeys": [
+      "login",
+      "loginButton"
+    ],
+    "firstLine": 303
+  },
+  {
+    "provisionalKey": "landingMissing.0188",
+    "text": "Email",
+    "paths": [
+      "dict.en.auth.email"
+    ],
+    "nearestNamedKeys": [
+      "email"
+    ],
+    "firstLine": 305
+  },
+  {
+    "provisionalKey": "landingMissing.0189",
+    "text": "Password",
+    "paths": [
+      "dict.en.auth.password"
+    ],
+    "nearestNamedKeys": [
+      "password"
+    ],
+    "firstLine": 306
+  },
+  {
+    "provisionalKey": "landingMissing.0190",
+    "text": "Close",
+    "paths": [
+      "dict.en.auth.close"
+    ],
+    "nearestNamedKeys": [
+      "close"
+    ],
+    "firstLine": 307
+  },
+  {
+    "provisionalKey": "landingMissing.0191",
+    "text": "Dashboard",
+    "paths": [
+      "dict.en.auth.dashboard"
+    ],
+    "nearestNamedKeys": [
+      "dashboard"
+    ],
+    "firstLine": 312
+  }
+]

@@ -1,0 +1,192 @@
+{
+  "root": "/opt/skilledge/stock-engine",
+  "sourceFilesScanned": 42,
+  "directRuntimeRefs": [
+    ".env.server",
+    ".venv/bin/python",
+    "ops/scripts/capitalization_aware_backfill_runner.py",
+    "ops/scripts/engine_watchdog.py",
+    "ops/scripts/forward_shadow_daily_evaluator.py",
+    "ops/scripts/forward_shadow_promotion_gate_report.py",
+    "ops/scripts/internal_research_agents_daily.py",
+    "ops/scripts/nightly_research_optimizer_controller.py",
+    "ops/scripts/production_live_day_readiness.py",
+    "ops/scripts/s10_paper_entry_guarded_wrapper.py",
+    "ops/scripts/s10_paper_evaluation_only_wrapper.py",
+    "ops/scripts/universe_v1_overnight_backfill_runner.py",
+    "run_historical_learning_backfill.py"
+  ],
+  "edges": [
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.backtest"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.config"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.data.fmp_client"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.discovery"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.indicators"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.runtime_cache"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.setup_registry"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.state"
+    },
+    {
+      "from": "app/api/app.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.storage"
+    },
+    {
+      "from": "app/backtest.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.data.fmp_client"
+    },
+    {
+      "from": "app/discovery.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.data.fmp_client"
+    },
+    {
+      "from": "app/discovery.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.indicators"
+    },
+    {
+      "from": "app/discovery.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.setup_registry"
+    },
+    {
+      "from": "app/discovery.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.state"
+    },
+    {
+      "from": "app/discovery.py",
+      "to": "app/__init__.py",
+      "reason": "python_import",
+      "match": "app.storage"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/ops/scripts/server_healthcheck.py",
+      "reason": "filename_reference",
+      "match": "server_healthcheck.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/runner_utils.py",
+      "reason": "filename_reference",
+      "match": "runner_utils.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/scripts/server_healthcheck.py",
+      "reason": "filename_reference",
+      "match": "server_healthcheck.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_daily_ai_desk.py",
+      "reason": "filename_reference",
+      "match": "run_daily_ai_desk.py"
+    },
+    {
+      "from": "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_nightly_self_learning.py",
+      "reason": "filename_reference",
+      "match": "run_nightly_self_learning.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/ops/scripts/server_healthcheck.py",
+      "reason": "filename_reference",
+      "match": "server_healthcheck.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/runner_utils.py",
+      "reason": "filename_reference",
+      "match": "runner_utils.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "ops/scripts/server_healthcheck.py",
+      "reason": "filename_reference",
+      "match": "server_healthcheck.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_daily_ai_desk.py",
+      "reason": "filename_reference",
+      "match": "run_daily_ai_desk.py"
+    },
+    {
+      "from": "ops/scripts/deploy_ubuntu_systemd.sh",
+      "to": "run_nightly_self_learning.py",
+      "reason": "filename_reference",
+      "match": "run_nightly_self_learning.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_entry_guarded_wrapper.py",
+      "to": "ops/scripts/s10_paper_entry_guarded_daemon.py",
+      "reason": "filename_reference",
+      "match": "s10_paper_entry_guarded_daemon.py"
+    },
+    {
+      "from": "ops/scripts/s10_paper_evaluation_only_wrapper.py",
+      "to": "ops/scripts/s10_paper_evaluation_only_daemon.py",
+      "reason": "filename_reference",
+      "match": "s10_paper_evaluation_only_daemon.py"
+    }
+  ],
+  "excludedParts": [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "data",
+    "historical_learning",
+    "reports",
+    "venv"
+  ]
+}

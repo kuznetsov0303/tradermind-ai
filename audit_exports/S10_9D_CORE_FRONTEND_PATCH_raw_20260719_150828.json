@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "classification": "CORE_FRONTEND_I18N_NAVIGATION_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "filesChanged": [
+    "app\\dashboard\\page.tsx",
+    "components\\dashboard\\SignalCockpitTab.tsx"
+  ],
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9D_core_frontend_patch_backup_20260719_150828",
+  "dashboardMojibakeStringsRepaired": 5889,
+  "cockpitMojibakeStringsRepaired": 0,
+  "languageDropdownAdded": true,
+  "supportedLanguagesExposed": [
+    "en",
+    "ru",
+    "ua"
+  ],
+  "languagePersistenceAdded": true,
+  "dashboardBackToSiteAdded": true,
+  "signalsBackToDashboardAdded": true,
+  "visibleHollyReferencesRemoved": true,
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9D_CORE_FRONTEND_PATCH_build_20260719_150828.txt",
+  "nextAction": "LOCAL_VISUAL_SMOKE_TEST_CORE_FRONTEND_PATCH"
+}

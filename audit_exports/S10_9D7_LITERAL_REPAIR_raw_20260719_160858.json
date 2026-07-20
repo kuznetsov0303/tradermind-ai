@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "classification": "DASHBOARD_LITERAL_MOJIBAKE_REPAIR_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "fileChanged": "app/dashboard/page.tsx",
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9D7_literal_mojibake_repair_backup_20260719_160858",
+  "repairedStringLiterals": 113,
+  "repairPassesApplied": 113,
+  "exactReplacementHits": {
+    "РСЃРїРѕР»РЅРµРЅРёРµ 70+": 0,
+    "РСЃС‚РѕСЂРёСЏ СЂР°Р·РІРёС‚РёСЏ СЃС‚СЂР°С‚РµРіРёРё": 0,
+    "РР·Р±РµРіР°С‚СЊ РїСЂРё СЃРёР»СЊРЅРѕРј squeeze BTC/ETH.": 0,
+    "РСЃС‚РѕСЂРёСЏ СЃРёРіРЅР°Р»РѕРІ": 0,
+    "РСЃРїРѕР»РЅРµРЅРёРµ С‚СЂРµР№РґРµСЂР°": 0,
+    "РСЃС‚РѕС‡РЅРёРє": 0,
+    "РСЃС…РѕРґ СЃРёРіРЅР°Р»Р°": 0,
+    "РРЎРўРћР§РќРРљ": 0,
+    "РСЃС‚РѕСЂРёСЏ review": 0,
+    "РСЃРїРѕР»СЊР·СѓР№ РґРѕ РїРѕРІС‚РѕСЂРµРЅРёСЏ РѕС€РёР±РѕРє.": 0,
+    "РЎРѕР·РґР°Р№ desk-РѕС‚С‡С‘С‚. РР·РјРµСЂСЏР№ РїСЂРѕС†РµСЃСЃ.": 0
+  },
+  "c1ControlsBeforeStrip": 0,
+  "c1ControlsAfterStrip": 0,
+  "remainingSuspiciousLinesCount": 0,
+  "dashboardLanguageDropdownPresent": false,
+  "dashboardReadsPublicSiteLanguage": true,
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9D7_LITERAL_REPAIR_build_20260719_160858.txt",
+  "nextAction": "LOCAL_VISUAL_VERIFY_ALL_DASHBOARD_TABS"
+}

@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "classification": "EDGE_JOURNAL_LAYOUT_CORRECTION_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "fileChanged": "app/dashboard/page.tsx",
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9G4_edge_journal_correction_backup_20260719_175138",
+  "replacementResults": [
+    {
+      "name": "edge_remove_nested_dashboard_panel",
+      "hits": 1
+    },
+    {
+      "name": "dashboard_main_section_self_start",
+      "hits": 1
+    },
+    {
+      "name": "journal_remove_fixed_action_column",
+      "hits": 1
+    },
+    {
+      "name": "journal_full_width_action_row",
+      "hits": 1
+    },
+    {
+      "name": "journal_pnl_alignment",
+      "hits": 1
+    },
+    {
+      "name": "journal_analyze_button_auto_width",
+      "hits": 1
+    },
+    {
+      "name": "journal_open_chart_auto_width",
+      "hits": 1
+    },
+    {
+      "name": "journal_edit_auto_width",
+      "hits": 1
+    },
+    {
+      "name": "journal_delete_auto_width",
+      "hits": 1
+    },
+    {
+      "name": "journal_screenshot_count_inline",
+      "hits": 1
+    }
+  ],
+  "edgeNestedDashboardPanelRemoved": true,
+  "dashboardMainSectionSelfStart": true,
+  "journalFixedActionColumnRemoved": true,
+  "journalActionsFullWidthHorizontal": true,
+  "journalButtonsAutoWidth": true,
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9G4_EDGE_JOURNAL_CORRECTION_build_20260719_175138.txt",
+  "nextAction": "LOCAL_VISUAL_VERIFY_EDGE_AND_JOURNAL"
+}

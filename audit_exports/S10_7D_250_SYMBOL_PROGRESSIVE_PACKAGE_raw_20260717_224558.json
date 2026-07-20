@@ -1,0 +1,27 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_GUARDED_250_SYMBOL_PROGRESSIVE_CANARY_PACKAGE_VALIDATED",
+    "packageBuilt":  true,
+    "packageExecuted":  false,
+    "executionAuthorized":  false,
+    "currentVerifiedCapacity":  25,
+    "targetCapacity":  250,
+    "rampStages":  [
+                       50,
+                       100,
+                       150,
+                       250
+                   ],
+    "stageMicroSoakMinutes":  5,
+    "finalSoakMinutes":  30,
+    "rollbackTarget":  "Core25",
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "validationErrors":  [
+
+                         ],
+    "nextAction":  "REVIEW_AND_ARM_250_SYMBOL_PROGRESSIVE_CANARY",
+    "packageDirectory":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\guarded_250_symbol_progressive_canary_package_v1"
+}

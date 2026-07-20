@@ -1,0 +1,527 @@
+﻿{
+    "generated":  "20260714_191908",
+    "projectRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai",
+    "rootItems":  [
+                      {
+                          "name":  ".code-backups",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".env.example",
+                          "type":  "file",
+                          "size":  760
+                      },
+                      {
+                          "name":  ".env.local",
+                          "type":  "file",
+                          "size":  9962
+                      },
+                      {
+                          "name":  ".git",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".gitignore",
+                          "type":  "file",
+                          "size":  483
+                      },
+                      {
+                          "name":  ".local-start",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".next",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".vercel",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  ".vercelignore",
+                          "type":  "file",
+                          "size":  15
+                      },
+                      {
+                          "name":  ".vs",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "_archive",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "_context_build.log",
+                          "type":  "file",
+                          "size":  7472
+                      },
+                      {
+                          "name":  "_context_dev_3b2e_3b3.log",
+                          "type":  "file",
+                          "size":  832
+                      },
+                      {
+                          "name":  "_project_context",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "_s10_0_paper_trading_install.py",
+                          "type":  "file",
+                          "size":  26844
+                      },
+                      {
+                          "name":  "001-clean-env-signals-v2.ps1",
+                          "type":  "file",
+                          "size":  12373
+                      },
+                      {
+                          "name":  "333333.ps1",
+                          "type":  "file",
+                          "size":  10071
+                      },
+                      {
+                          "name":  "AGENTS.md",
+                          "type":  "file",
+                          "size":  327
+                      },
+                      {
+                          "name":  "app",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "audit_exports",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "CLAUDE.md",
+                          "type":  "file",
+                          "size":  11
+                      },
+                      {
+                          "name":  "components",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "components.json",
+                          "type":  "file",
+                          "size":  517
+                      },
+                      {
+                          "name":  "dashboard-current.tsx",
+                          "type":  "file",
+                          "size":  985613
+                      },
+                      {
+                          "name":  "deploy_stock_engine",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "eslint.config.mjs",
+                          "type":  "file",
+                          "size":  465
+                      },
+                      {
+                          "name":  "landing-current.txt",
+                          "type":  "file",
+                          "size":  154586
+                      },
+                      {
+                          "name":  "landing-pricing-current.tsx",
+                          "type":  "file",
+                          "size":  299449
+                      },
+                      {
+                          "name":  "landing-pricing-current.txt",
+                          "type":  "file",
+                          "size":  230480
+                      },
+                      {
+                          "name":  "legal-pages-bundle.txt",
+                          "type":  "file",
+                          "size":  51819
+                      },
+                      {
+                          "name":  "lib",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "market-alerts-route.txt",
+                          "type":  "file",
+                          "size":  29938
+                      },
+                      {
+                          "name":  "metadata-logo-bundle.txt",
+                          "type":  "file",
+                          "size":  17879
+                      },
+                      {
+                          "name":  "next.config.ts",
+                          "type":  "file",
+                          "size":  154
+                      },
+                      {
+                          "name":  "next-env.d.ts",
+                          "type":  "file",
+                          "size":  251
+                      },
+                      {
+                          "name":  "node_modules",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "package.json",
+                          "type":  "file",
+                          "size":  996
+                      },
+                      {
+                          "name":  "package-lock.json",
+                          "type":  "file",
+                          "size":  437460
+                      },
+                      {
+                          "name":  "postcss.config.mjs",
+                          "type":  "file",
+                          "size":  94
+                      },
+                      {
+                          "name":  "premium-recolor-landing-safe.ps1",
+                          "type":  "file",
+                          "size":  7637
+                      },
+                      {
+                          "name":  "PRODUCTION_MANIFEST_DRAFT.md",
+                          "type":  "file",
+                          "size":  2870
+                      },
+                      {
+                          "name":  "public",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "README.md",
+                          "type":  "file",
+                          "size":  1450
+                      },
+                      {
+                          "name":  "S10_4J_controlled_archive_and_clean_root.ps1",
+                          "type":  "file",
+                          "size":  12268
+                      },
+                      {
+                          "name":  "S10_4J_resume_verify_and_clean_root_FIXED.ps1",
+                          "type":  "file",
+                          "size":  12079
+                      },
+                      {
+                          "name":  "S10_4K_final_local_root_cleanup_and_ops_dedupe.ps1",
+                          "type":  "file",
+                          "size":  9919
+                      },
+                      {
+                          "name":  "s511b_restore_again",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "s58_start_scripts_fixed",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "s58_start_scripts_v2_fixed",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "s810a_trade_management_blocks.txt",
+                          "type":  "file",
+                          "size":  56200
+                      },
+                      {
+                          "name":  "s811_dashboard_signals_snippet.txt",
+                          "type":  "file",
+                          "size":  101478
+                      },
+                      {
+                          "name":  "s811_signal_cockpit_pinpoint.txt",
+                          "type":  "file",
+                          "size":  233410
+                      },
+                      {
+                          "name":  "s811d2_local_502_body.txt",
+                          "type":  "file",
+                          "size":  736
+                      },
+                      {
+                          "name":  "s812b_forward_report_live_check.txt",
+                          "type":  "file",
+                          "size":  11056
+                      },
+                      {
+                          "name":  "s812c_current_forward_report_shape.txt",
+                          "type":  "file",
+                          "size":  20180
+                      },
+                      {
+                          "name":  "s813_final_verification.txt",
+                          "type":  "file",
+                          "size":  12504
+                      },
+                      {
+                          "name":  "s813_post_close_evidence_validation.txt",
+                          "type":  "file",
+                          "size":  39004
+                      },
+                      {
+                          "name":  "s814a_elite_gate_validation.txt",
+                          "type":  "file",
+                          "size":  6808
+                      },
+                      {
+                          "name":  "s814a_selector_quality_pinpoint.txt",
+                          "type":  "file",
+                          "size":  135250
+                      },
+                      {
+                          "name":  "s814b_focused_service_check.txt",
+                          "type":  "file",
+                          "size":  84
+                      },
+                      {
+                          "name":  "s814b_permission_fix_validation.txt",
+                          "type":  "file",
+                          "size":  16140
+                      },
+                      {
+                          "name":  "s814b_setup_learning_validation.txt",
+                          "type":  "file",
+                          "size":  70778
+                      },
+                      {
+                          "name":  "s814c_learning_selector_validation.txt",
+                          "type":  "file",
+                          "size":  11204
+                      },
+                      {
+                          "name":  "s814d_investor_dashboard_validation.txt",
+                          "type":  "file",
+                          "size":  8076
+                      },
+                      {
+                          "name":  "s814e_admin_hub_pinpoint.txt",
+                          "type":  "file",
+                          "size":  12840
+                      },
+                      {
+                          "name":  "s815a_clean_elite_ledger_pinpoint.txt",
+                          "type":  "file",
+                          "size":  75848
+                      },
+                      {
+                          "name":  "s815a_clean_elite_ledger_validation.txt",
+                          "type":  "file",
+                          "size":  7590
+                      },
+                      {
+                          "name":  "s815b_clean_elite_investor_validation.txt",
+                          "type":  "file",
+                          "size":  21596
+                      },
+                      {
+                          "name":  "s815c_clean_elite_live_timer_validation.txt",
+                          "type":  "file",
+                          "size":  8778
+                      },
+                      {
+                          "name":  "s816a_elite_gate_calibration_pinpoint.txt",
+                          "type":  "file",
+                          "size":  130956
+                      },
+                      {
+                          "name":  "s816a1_forward_elite_test_validation.txt",
+                          "type":  "file",
+                          "size":  9418
+                      },
+                      {
+                          "name":  "s816a2_ledger_split_validation.txt",
+                          "type":  "file",
+                          "size":  3696
+                      },
+                      {
+                          "name":  "s819a_strategy_registry_local.ps1",
+                          "type":  "file",
+                          "size":  9616
+                      },
+                      {
+                          "name":  "s819a_strategy_registry_local_nocd.ps1",
+                          "type":  "file",
+                          "size":  9789
+                      },
+                      {
+                          "name":  "s820a_night_calibration_local.ps1",
+                          "type":  "file",
+                          "size":  9634
+                      },
+                      {
+                          "name":  "s824a_cockpit_root.json",
+                          "type":  "file",
+                          "size":  907227
+                      },
+                      {
+                          "name":  "s824a_symbol_SRFM.json",
+                          "type":  "file",
+                          "size":  21836
+                      },
+                      {
+                          "name":  "services",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "start_all_local.ps1",
+                          "type":  "file",
+                          "size":  4256
+                      },
+                      {
+                          "name":  "START_ALL_README.txt",
+                          "type":  "file",
+                          "size":  439
+                      },
+                      {
+                          "name":  "stop_local_ports.ps1",
+                          "type":  "file",
+                          "size":  1367
+                      },
+                      {
+                          "name":  "supabase",
+                          "type":  "dir",
+                          "size":  null
+                      },
+                      {
+                          "name":  "Supabase Snippet Untitled query.csv",
+                          "type":  "file",
+                          "size":  3804
+                      },
+                      {
+                          "name":  "tsconfig.json",
+                          "type":  "file",
+                          "size":  666
+                      },
+                      {
+                          "name":  "tsconfig.tsbuildinfo",
+                          "type":  "file",
+                          "size":  256880
+                      },
+                      {
+                          "name":  "vercel.json",
+                          "type":  "file",
+                          "size":  420
+                      }
+                  ],
+    "remainingHistoricalScripts":  [
+
+                                   ],
+    "opsOpsStillExists":  false,
+    "remainingOpsOpsFiles":  0,
+    "archivedHistoricalCount":  3,
+    "deletedOpsExactDuplicateCount":  9,
+    "keptOpsReviewCount":  0,
+    "opsResults":  [
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\README_VPS_DEPLOY.md",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\README_VPS_DEPLOY.md",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "f4efd6f480ad8ceecb2c7b680bac719e086a9cd7d3175311cf2690d380bea565",
+                           "canonicalSha256":  "f4efd6f480ad8ceecb2c7b680bac719e086a9cd7d3175311cf2690d380bea565",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\nginx\\stock-engine.nginx.conf",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\nginx\\stock-engine.nginx.conf",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "b490148e93379464d03db01458a4394c2eaf8d7fab3b35c028e42c0f2561699a",
+                           "canonicalSha256":  "b490148e93379464d03db01458a4394c2eaf8d7fab3b35c028e42c0f2561699a",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\scripts\\deploy_ubuntu_systemd.sh",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\deploy_ubuntu_systemd.sh",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "2279f2e77de079ecfdaa087b6cd328b19f60ab907943c18d30a9a6312423dec9",
+                           "canonicalSha256":  "2279f2e77de079ecfdaa087b6cd328b19f60ab907943c18d30a9a6312423dec9",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\scripts\\server_healthcheck.py",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\server_healthcheck.py",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "c15d890232662538e342e39f909bbaa33837bc96149364788ddf3a54d2b25463",
+                           "canonicalSha256":  "c15d890232662538e342e39f909bbaa33837bc96149364788ddf3a54d2b25463",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\systemd\\skilledge-daily-ai-desk.service",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-daily-ai-desk.service",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2",
+                           "canonicalSha256":  "174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\systemd\\skilledge-nightly-self-learning.service",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-nightly-self-learning.service",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693",
+                           "canonicalSha256":  "d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\systemd\\skilledge-nightly-self-learning.timer",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-nightly-self-learning.timer",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769",
+                           "canonicalSha256":  "831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\systemd\\skilledge-stock-engine-api.service",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-stock-engine-api.service",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c",
+                           "canonicalSha256":  "707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       },
+                       {
+                           "duplicatePath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\ops\\systemd\\skilledge-telegram-consumer.service",
+                           "canonicalPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-telegram-consumer.service",
+                           "canonicalExists":  true,
+                           "duplicateSha256":  "feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede",
+                           "canonicalSha256":  "feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede",
+                           "sameSha256":  true,
+                           "action":  "DELETED_EXACT_DUPLICATE"
+                       }
+                   ]
+}

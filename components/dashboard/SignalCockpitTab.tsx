@@ -438,9 +438,37 @@ function normalizeStatus(value?: string | null) {
   return String(value || "WATCH").toUpperCase();
 }
 
-function labelStatus(value?: string | null) {
+function labelStatus(value?: string | null, language: Language = "en") {
   const status = normalizeStatus(value);
-  return STATUS_RU[status] || status.replaceAll("_", " ").toLowerCase();
+
+  const statusUa: Record<string, string> = {
+    WATCH: "Спостереження",
+    ARMED: "Готується",
+    ACTIVE: "Активна ідея",
+    ENTRY_STILL_VALID: "Вхід актуальний",
+    STILL_VALID: "Ідея актуальна",
+    WAIT_FOR_REENTRY: "Чекати re-entry",
+    ENTRY_MISSED: "Вхід пропущено",
+    TP1_HIT: "TP1 досягнуто",
+    TP2_HIT: "TP2 досягнуто",
+    STOP_HIT: "Стоп",
+    INVALIDATED: "Скасовано",
+    SESSION_CLOSE: "Сесію закрито",
+    WAITING_CONFIRMATION: "Очікуємо підтвердження",
+    CLOSED_BY_SESSION: "Закрито сесією",
+    REJECT: "Відхилено",
+    PASSED: "Пройдено",
+  };
+
+  if (language === "ua") {
+    return statusUa[status] || status.replaceAll("_", " ").toLowerCase();
+  }
+
+  if (language === "ru") {
+    return STATUS_RU[status] || status.replaceAll("_", " ").toLowerCase();
+  }
+
+  return status.replaceAll("_", " ");
 }
 
 function translateText(value?: string | null) {
@@ -1651,7 +1679,7 @@ function TerminalChart({
         return {
           key: `${type}-${event.at || index}`,
           type,
-          label: labelStatus(type),
+          label: labelStatus(type, language),
           text: translateText(event.text),
           x,
           y,
@@ -2142,6 +2170,8 @@ function TickerTape({ items }: { items: DeskItem[] }) {
 }
 
 export default function SignalCockpitTab({ language }: { language: Language }) {
+  const ui = (en: string, ru: string, ua: string) =>
+    language === "en" ? en : language === "ua" ? ua : ru;
   const [overview, setOverview] = useState<CockpitValue | null>(null);
   const [selectedSymbol, setSelectedSymbol] = useState("");
   const [selected, setSelected] = useState<CockpitSelected | null>(null);
@@ -2749,8 +2779,8 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
   const managementActionText = tradeAction
     ? labelFromSnake(tradeAction)
     : selectedIsActionable === true
-      ? "candidate still valid"
-      : "monitor only";
+      ? ui("candidate still valid", "идея ещё актуальна", "ідея ще актуальна")
+      : ui("monitor only", "только наблюдение", "лише спостереження");
   const calibrationRun = calibrationPreview?.run || {};
   const calibrationSummary = calibrationPreview?.cockpitSummary || {};
   const calibrationRows = calibrationPreview?.previewRows || [];
@@ -2837,17 +2867,27 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
       `}</style>
 
       <div className="flex h-[46px] shrink-0 items-center gap-3 border-b border-white/10 bg-[#0b1018] px-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-400/15 text-sm font-black text-emerald-200">
+        <a
+          href="/dashboard"
+          aria-label={
+            language === "en"
+              ? "Back to dashboard"
+              : language === "ua"
+                ? "Повернутися до кабінету"
+                : "Вернуться в кабинет"
+          }
+          className="group flex items-center gap-3 rounded-xl px-1 py-1 transition hover:bg-white/[0.05]"
+        >
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-400/15 text-sm font-black text-emerald-200 transition group-hover:bg-emerald-400/22">
             SE
           </div>
           <div className="text-sm font-black tracking-[-0.02em] text-white">
             SkillEdge AI Desk
           </div>
           <span className="rounded-full border border-emerald-300/20 bg-emerald-300/[0.10] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100/82">
-            Holly-like cockpit
+            {ui("Live signal cockpit", "Панель сигналов", "Панель сповіщень")}
           </span>
-        </div>
+        </a>
 
         <div className="ml-4 hidden min-w-0 flex-1 items-center gap-2 overflow-hidden xl:flex">
           {deskItems.slice(0, 10).map((item) => {
@@ -2905,7 +2945,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
             disabled={loading}
             className="rounded-lg border border-emerald-300/22 bg-emerald-300/[0.12] px-3 py-2 text-[11px] font-black text-emerald-50 transition hover:bg-emerald-300/[0.18] disabled:opacity-50"
           >
-            {loading ? "Обновляем..." : "Обновить"}
+            {loading ? ui("Refreshing...", "Обновляем...", "Оновлюємо...") : ui("Refresh", "Обновить", "Оновити")}
           </button>
         </div>
       </div>
@@ -2916,31 +2956,31 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="text-[10px] font-black uppercase tracking-[0.18em] text-emerald-100/55">
-                  AI сопровождение
+                  {ui("AI guidance", "AI-сопровождение", "AI-супровід")}
                 </div>
                 <div className="mt-1 text-lg font-black tracking-[-0.04em]">
-                  {labelStatus(selectedStatus)}
+                  {labelStatus(selectedStatus, language)}
                 </div>
               </div>
               <span
                 className={`rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.1em] ${statusClass(selectedStatus)}`}
               >
-                {labelStatus(selectedStatus)}
+                {labelStatus(selectedStatus, language)}
               </span>
             </div>
             <div className="mt-3 rounded-xl bg-black/22 p-3 text-sm font-semibold leading-6 text-white/74">
               {guidance[0]
                 ? translateText(guidance[0])
-                : "Выбери тикер из watchlist. AI покажет план, риск и условия входа."}
+                : ui("Select a ticker from the watchlist. AI will show the plan, risk and entry conditions.", "Выбери тикер из списка наблюдения. AI покажет план, риск и условия входа.", "Обери тикер зі списку спостереження. AI покаже план, ризик та умови входу.")}
             </div>
           </Card>
 
-          <Card title="Trade management" className="mt-3">
+          <Card title={ui("Trade management", "Управление сделкой", "Керування угодою")} className="mt-3">
             <div className={`rounded-xl border p-3 ${managementBadgeClass(managementTone)}`}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="text-[10px] font-black uppercase tracking-[0.16em] opacity-60">
-                    Live action
+                    {ui("Live action", "Текущее действие", "Поточна дія")}
                   </div>
                   <div className="mt-1 line-clamp-2 text-sm font-black leading-5">
                     {managementActionText}
@@ -2953,27 +2993,27 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
 
               <div className="mt-3 grid grid-cols-2 gap-2">
                 <SmallMetric
-                  label="Current R"
+                  label={ui("Current R", "Текущий R", "Поточний R")}
                   value={formatSignedR(currentR)}
                   tone={Number(currentR) >= 0 ? "good" : "bad"}
                 />
                 <SmallMetric
-                  label="Freshness"
-                  value={priceFreshness}
+                  label={ui("Freshness", "Актуальность", "Актуальність")}
+                  value={priceFreshness === "UNKNOWN" ? ui("UNKNOWN", "НЕИЗВЕСТНО", "НЕВІДОМО") : priceFreshness}
                   tone={priceFreshnessTone(priceFreshness)}
                 />
                 <SmallMetric
-                  label="Price age"
+                  label={ui("Price age", "Возраст цены", "Вік ціни")}
                   value={formatPriceAge(priceAgeSeconds)}
                   tone={stalePriceBlocked ? "bad" : "info"}
                 />
                 <SmallMetric
-                  label="Actionable"
+                  label={ui("Actionable", "Можно действовать", "Можна діяти")}
                   value={
                     selectedIsActionable === true
-                      ? "YES"
+                      ? ui("YES", "ДА", "ТАК")
                       : selectedIsActionable === false
-                        ? "NO"
+                        ? ui("NO", "НЕТ", "НІ")
                         : "—"
                   }
                   tone={
@@ -2988,21 +3028,21 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
 
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <span className={`rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-[0.06em] ${priceFreshnessClass(priceFreshness)}`}>
-                  {priceFreshness}
+                  {priceFreshness === "UNKNOWN" ? ui("UNKNOWN", "НЕИЗВЕСТНО", "НЕВІДОМО") : priceFreshness}
                 </span>
                 {strictEligible === false ? (
                   <span className="rounded-full border border-amber-300/25 bg-amber-300/[0.10] px-2 py-1 text-[9px] font-black uppercase tracking-[0.06em] text-amber-100">
-                    strict blocked
+                    {ui("strict blocked", "строгий блок", "суворий блок")}
                   </span>
                 ) : null}
                 {lateSessionBlocked ? (
                   <span className="rounded-full border border-amber-300/25 bg-amber-300/[0.10] px-2 py-1 text-[9px] font-black uppercase tracking-[0.06em] text-amber-100">
-                    late session
+                    {ui("late session", "поздняя сессия", "пізня сесія")}
                   </span>
                 ) : null}
                 {marketClosedNewEntryBlocked ? (
                   <span className="rounded-full border border-rose-300/25 bg-rose-300/[0.10] px-2 py-1 text-[9px] font-black uppercase tracking-[0.06em] text-rose-100">
-                    market closed
+                    {ui("market closed", "рынок закрыт", "ринок закрито")}
                   </span>
                 ) : null}
               </div>
@@ -3019,19 +3059,19 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                   ))
                 ) : (
                   <div className="rounded-lg border border-emerald-300/14 bg-emerald-300/[0.055] px-2.5 py-2 text-[11px] font-semibold leading-4 text-emerald-50/70">
-                    No live blockers from the trade-management guard.
+                    {ui("No live blockers from the trade-management guard.", "Нет активных блокировок управления сделкой.", "Немає активних блокувань керування угодою.")}
                   </div>
                 )}
               </div>
             </div>
           </Card>
 
-          <Card title="Что делать дальше" className="mt-3">
+          <Card title={ui("What to do next", "Что делать дальше", "Що робити далі")} className="mt-3">
             <div className="space-y-2">
               {(nextActions.length
                 ? nextActions
                 : [
-                    "Ждать подтверждение. Не входить без setup + risk/reward + invalidation.",
+                    ui("Wait for confirmation. Do not enter without setup + risk/reward + invalidation.", "Ждать подтверждение. Не входить без setup + risk/reward + invalidation.", "Чекати підтвердження. Не входити без setup + risk/reward + invalidation."),
                   ]
               )
                 .slice(0, 3)
@@ -3046,14 +3086,14 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
             </div>
           </Card>
 
-          <Card title="План сделки" className="mt-3">
+          <Card title={ui("Trade plan", "План сделки", "План угоди")} className="mt-3">
             <div className="grid grid-cols-2 gap-2">
               <SmallMetric
-                label="Вход"
+                label={ui("Entry", "Вход", "Вхід")}
                 value={formatPrice(levels?.entry ?? selectedSignal?.entry)}
               />
               <SmallMetric
-                label="Стоп"
+                label={ui("Stop", "Стоп", "Стоп")}
                 value={formatPrice(levels?.stop ?? selectedSignal?.stop)}
                 tone="bad"
               />
@@ -3080,7 +3120,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
               <SmallMetric
-                label="R сейчас"
+                label={ui("Current R", "R сейчас", "Поточний R")}
                 value={formatSignedR(currentR)}
                 tone={Number(currentR) >= 0 ? "good" : "bad"}
               />
@@ -3104,7 +3144,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                   >
                     <div className="absolute -left-[5px] top-1 h-2.5 w-2.5 rounded-full bg-emerald-300" />
                     <div className="text-[10px] font-black uppercase tracking-[0.12em] text-emerald-100/72">
-                      {labelStatus(event.type)}
+                      {labelStatus(event.type, language)}
                     </div>
                     <div className="mt-1 text-xs font-semibold leading-5 text-white/62">
                       {translateText(event.text)}
@@ -3136,7 +3176,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                           className={`h-2 w-2 shrink-0 rounded-full ${dotClass(event.type)}`}
                         />
                         <span className="truncate text-xs font-black text-white/82">
-                          {event.symbol} · {labelStatus(event.type)}
+                          {event.symbol} · {labelStatus(event.type, language)}
                         </span>
                       </div>
                       <span className="shrink-0 text-[10px] font-bold text-white/35">
@@ -3422,7 +3462,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                     <span
                       className={`shrink-0 rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${statusClass(selected?.status || selectedStatus)}`}
                     >
-                      {labelStatus(selected?.status || selectedStatus)}
+                      {labelStatus(selected?.status || selectedStatus, language)}
                     </span>
                     {selectedSignal?.grade ? (
                       <span className="shrink-0 rounded-full border border-amber-300/25 bg-amber-300/[0.10] px-3 py-1 text-[10px] font-black text-amber-100">
@@ -3444,26 +3484,26 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                         selectedSignal?.setupName,
                         selectedSignal?.setupSlug,
                       ) ||
-                      "Выбери тикер справа"}
+                      ui("Select a ticker on the right", "Выбери тикер справа", "Обери тикер праворуч")}
                   </div>
                 </div>
 
                 <div className="grid w-[420px] shrink-0 grid-cols-4 gap-2">
-                  <SmallMetric label="Цена" value={formatPrice(currentPrice)} />
+                  <SmallMetric label={ui("Price", "Цена", "Ціна")} value={formatPrice(currentPrice)} />
                   <SmallMetric
                     label="R"
                     value={formatSignedR(currentR)}
                     tone={Number(currentR) >= 0 ? "good" : "bad"}
                   />
                   <SmallMetric
-                    label="Score"
+                    label={ui("Score", "Оценка", "Оцінка")}
                     value={formatNumber(
                       selectedSignal?.score ?? selectedWatch?.inPlayScore,
                       0,
                     )}
                   />
                   <SmallMetric
-                    label="Volume"
+                    label={ui("Volume", "Объём", "Обсяг")}
                     value={formatCompact(selectedWatch?.volume)}
                   />
                 </div>
@@ -3471,12 +3511,16 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
 
               <div className="flex min-h-0 items-center justify-between gap-3 border-t border-white/[0.06] pt-2">
                 <div className="flex shrink-0 items-center gap-2 rounded-xl border border-emerald-300/15 bg-emerald-300/[0.06] px-3 py-2 text-[10px] font-black uppercase tracking-[0.10em] text-emerald-50">
-                  3D 5M история + live
+                  {ui("3D 5M history + live", "3D 5M история + live", "3D 5M історія + live")}
                 </div>
                 <div className="min-w-0 flex-1 truncate rounded-xl border border-white/10 bg-black/18 px-3 py-2 text-[10px] font-black uppercase tracking-[0.08em] text-white/54">
                   {historyMeta?.loading
-                    ? "Грузим 3 дня 5m свечей: premarket + regular + postmarket"
-                    : `${historyMeta?.count || 0} свечей / ${historyMeta?.tradingDates?.length || 0} дн. · PRE ${sessionCount(historyMeta?.sessionStats, "premarket")} · REG ${sessionCount(historyMeta?.sessionStats, "regular")} · POST ${sessionCount(historyMeta?.sessionStats, "postmarket")} · ${historyProviderLabel(historyMeta)}`}
+                    ? ui(
+                        "Loading 3 days of 5m candles: premarket + regular + postmarket",
+                        "Грузим 3 дня 5m свечей: premarket + regular + postmarket",
+                        "Завантажуємо 3 дні 5m свічок: premarket + regular + postmarket",
+                      )
+                    : `${historyMeta?.count || 0} ${ui("candles", "свечей", "свічок")} / ${historyMeta?.tradingDates?.length || 0} ${ui("days", "дн.", "дн.")} · PRE ${sessionCount(historyMeta?.sessionStats, "premarket")} · REG ${sessionCount(historyMeta?.sessionStats, "regular")} · POST ${sessionCount(historyMeta?.sessionStats, "postmarket")} · ${historyProviderLabel(historyMeta)}`}
                 </div>
               </div>
             </div>
@@ -3503,8 +3547,8 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
               ) : (
                 <div className="flex h-full items-center justify-center rounded-2xl border border-white/10 bg-[#080f19] text-sm font-semibold text-white/45">
                   {selectedLoading || loading
-                    ? "Загружаем график..."
-                    : "Выбери тикер справа."}
+                    ? ui("Loading chart...", "Загружаем график...", "Завантажуємо графік...")
+                    : ui("Select a ticker on the right.", "Выбери тикер справа.", "Обери тикер праворуч.")}
                 </div>
               )}
             </div>
@@ -3533,7 +3577,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                 ))
               ) : (
                 <div className="col-span-4 rounded-2xl border border-white/10 bg-[#111923] p-4 text-sm font-semibold text-white/42">
-                  Confirmations появятся после загрузки candle context.
+                  {ui("Confirmations will appear after candle context loads.", "Подтверждения появятся после загрузки контекста свечей.", "Підтвердження з’являться після завантаження контексту свічок.")}
                 </div>
               )}
             </div>
@@ -3546,10 +3590,10 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/38">
-                    AI Watchlist
+                    {ui("AI Watchlist", "Список наблюдения AI", "Список спостереження AI")}
                   </div>
                   <div className="mt-1 text-xl font-black text-white">
-                    {filteredDeskItems.length}/{deskItems.length} тикеров
+                    {filteredDeskItems.length}/{deskItems.length} {ui("tickers", "тикеров", "тикерів")}
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-1.5 text-right text-[10px] font-black text-white/62">
@@ -3560,10 +3604,10 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                     A {armedCount}
                   </span>
                   <span className="rounded-lg bg-emerald-300/[0.10] px-2 py-1 text-emerald-100">
-                    Live {activeCount}
+                    {ui("Live", "Активно", "Активно")} {activeCount}
                   </span>
                   <span className="rounded-lg bg-amber-300/[0.10] px-2 py-1 text-amber-100">
-                    Closed {closedCount}
+                    {ui("Closed", "Закрыто", "Закрито")} {closedCount}
                   </span>
                 </div>
               </div>
@@ -3571,17 +3615,17 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
               <input
                 value={deskSearch}
                 onChange={(event) => setDeskSearch(event.target.value)}
-                placeholder="Поиск тикера..."
+                placeholder={ui("Search ticker...", "Поиск тикера...", "Пошук тикера...")}
                 className="mt-3 h-10 w-full rounded-xl border border-white/10 bg-black/24 px-3 text-sm font-bold text-white outline-none placeholder:text-white/28 focus:border-emerald-300/35"
               />
 
               <div className="mt-2 grid grid-cols-5 gap-1.5">
                 {[
-                  ["all", "Все"],
-                  ["watch", "Watch"],
-                  ["armed", "Armed"],
-                  ["active", "Active"],
-                  ["closed", "Closed"],
+                  ["all", ui("All", "Все", "Усі")],
+                  ["watch", ui("Watch", "Наблюдение", "Спостереження")],
+                  ["armed", ui("Armed", "Готовится", "Готується")],
+                  ["active", ui("Active", "Активные", "Активні")],
+                  ["closed", ui("Closed", "Закрытые", "Закриті")],
                 ].map(([key, label]) => (
                   <button
                     key={key}
@@ -3682,7 +3726,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                         <span
                           className={`shrink-0 rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-[0.08em] ${statusClass(status)}`}
                         >
-                          {labelStatus(status)}
+                          {labelStatus(status, language)}
                         </span>
                       </div>
 
@@ -3715,7 +3759,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                         <span
                           className={`rounded-full border px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] ${priceFreshnessClass(itemFreshness)}`}
                         >
-                          {itemFreshness}
+                          {itemFreshness === "UNKNOWN" ? ui("UNKNOWN", "НЕИЗВЕСТНО", "НЕВІДОМО") : itemFreshness}
                         </span>
                         {Number.isFinite(Number(itemCurrentR)) ? (
                           <span
@@ -3740,12 +3784,12 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                         ) : null}
                         {itemLateBlocked ? (
                           <span className="rounded-full border border-amber-300/20 bg-amber-300/[0.08] px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] text-amber-100">
-                            late
+                            {ui("late", "поздно", "пізно")}
                           </span>
                         ) : null}
                         {itemMarketClosedBlocked ? (
                           <span className="rounded-full border border-rose-300/20 bg-rose-300/[0.08] px-2 py-1 text-[9px] font-black uppercase tracking-[0.055em] text-rose-100">
-                            closed
+                            {ui("closed", "закрыто", "закрито")}
                           </span>
                         ) : null}
                       </div>
@@ -3769,7 +3813,7 @@ export default function SignalCockpitTab({ language }: { language: Language }) {
                 })
               ) : (
                 <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm font-semibold leading-6 text-white/50">
-                  Нет тикеров под выбранный фильтр.
+                  {ui("No tickers match the selected filter.", "Нет тикеров под выбранный фильтр.", "Немає тикерів за вибраним фільтром.")}
                 </div>
               )}
             </div>

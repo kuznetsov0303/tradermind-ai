@@ -1,0 +1,26 @@
+﻿S10.8A Y2 OFFLINE EXECUTOR VALIDATION
+Generated=20260719_134234
+OK=True
+CLASSIFICATION=DAY7D_Y2_OFFLINE_EXECUTOR_VALIDATION_PASSED
+EXECUTE_SWITCH_PRESENT=True
+EXECUTE_SWITCH_ENFORCED=True
+MARKET_HOURS_GATE_PRESENT=True
+REMOTE_BUNDLE_PATH_FIXED=True
+PAYLOAD_RESTORE_MANIFEST_PRESENT=True
+EXACT_PAYLOAD_RESTORE_ENFORCED=True
+REMOTE_CLEANUP_PRESENT=True
+EXPECTED_STAGE_ORDER=25→50→100→150→250
+ACTUAL_STAGE_ORDER=25→50→100→150→250
+SCENARIOS=all_pass_no_existing_dropin:rollback=False:core25=True:payload=True:newRemoved=True:dropin=True ; fail_100_no_existing_dropin:rollback=True:core25=True:payload=True:newRemoved=True:dropin=True ; all_pass_existing_dropin:rollback=False:core25=True:payload=True:newRemoved=True:dropin=True ; fail_150_existing_dropin:rollback=True:core25=True:payload=True:newRemoved=True:dropin=True
+ERRORS=
+WARNINGS=
+EXECUTOR_EXECUTED_AGAINST_VPS=False
+PRODUCTION_MUTATION=False
+SERVICE_RESTARTED=False
+SYSTEMD_TOUCHED=False
+STREAM_SYMBOLS_CHANGED=False
+PACKAGE_EXECUTED=False
+DEPLOYMENT_AUTHORIZED=False
+ARM_ALLOWED=False
+NEXT_ACTION=MONDAY_RUN_S10_7Y2_DURING_US_REGULAR_SESSION
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_8A_Y2_OFFLINE_VALIDATION_raw_20260719_134234.json

@@ -1,0 +1,32 @@
+S10.4Q FINAL LEGACY / NON-APP BACKUP PROOF
+Generated=20260714_204229
+READ_ONLY=true
+NO_DELETE=true
+NO_MOVE=true
+NO_DEPLOY=true
+NO_RESTART=true
+
+=== SUMMARY ===
+TEXT_FILES_SCANNED=116
+NON_APP_DELETE_CANDIDATES=5
+NON_APP_REVIEW_REQUIRED=0
+LEGACY_CLASSIFICATION=LEGACY_CONFIRMED
+ROLLBACK_SNAPSHOT_COUNT=1
+
+=== NON-APP BACKUPS ===
+DELETE_CANDIDATE | ops/scripts/forward_shadow_daily_evaluator.py.bak_s902_20260711T220858Z | hashMatchesAudit=True | currentExists=True | sameAsCurrent=False | refs=0 | reason=BACKUP_HASH_VERIFIED_NO_REFERENCES_CURRENT_CANONICAL_EXISTS
+DELETE_CANDIDATE | ops/scripts/post_close_evidence_automation.py.bak_s816e_20260626_204956 | hashMatchesAudit=True | currentExists=True | sameAsCurrent=False | refs=0 | reason=BACKUP_HASH_VERIFIED_NO_REFERENCES_CURRENT_CANONICAL_EXISTS
+DELETE_CANDIDATE | ops/scripts/post_close_evidence_automation.py.bak_s820d_20260629_214115 | hashMatchesAudit=True | currentExists=True | sameAsCurrent=False | refs=0 | reason=BACKUP_HASH_VERIFIED_NO_REFERENCES_CURRENT_CANONICAL_EXISTS
+DELETE_CANDIDATE | ops/scripts/post_close_evidence_automation.py.bak_s852b1_20260706_212019 | hashMatchesAudit=True | currentExists=True | sameAsCurrent=False | refs=0 | reason=BACKUP_HASH_VERIFIED_NO_REFERENCES_CURRENT_CANONICAL_EXISTS
+DELETE_CANDIDATE | run_nightly_self_learning.py.bak_s810d_20260623_000256 | hashMatchesAudit=True | currentExists=True | sameAsCurrent=False | refs=0 | reason=BACKUP_HASH_VERIFIED_NO_REFERENCES_CURRENT_CANONICAL_EXISTS
+
+=== LEGACY TARGET ===
+PATH=/opt/skilledge/stock-engine/ops/scripts/s10_paper_trading_daemon.py
+EXISTS=True
+CLASSIFICATION=LEGACY_CONFIRMED
+REFERENCES=0
+SYSTEMD_DIRECT_REFS=0
+REASON=ZERO_FIRST_PARTY_REFERENCES_ZERO_SYSTEMD_REFERENCES
+
+=== ROLLBACK SNAPSHOTS ===
+/opt/skilledge/stock-engine/rollback_snapshots/S10_4O_20260714_202759 | files=2 | bytes=352543

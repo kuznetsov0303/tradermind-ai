@@ -1,0 +1,98 @@
+{
+  "ok": true,
+  "classification": "CANONICAL_BILLING_PRICES_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "banxaTouched": false,
+  "filesChanged": [
+    "lib/billing-plans.ts",
+    "app/api/create-crypto-payment/route.ts"
+  ],
+  "canonicalPrices": {
+    "core": {
+      "monthly": 49,
+      "halfyear": 249,
+      "yearly": 399
+    },
+    "edge": {
+      "monthly": 99,
+      "halfyear": 499,
+      "yearly": 799
+    },
+    "elite": {
+      "monthly": 149,
+      "halfyear": 749,
+      "yearly": 1249
+    }
+  },
+  "cryptoRouteUsesCanonicalCatalog": true,
+  "halfyearSupported": true,
+  "webhookChanged": false,
+  "subscriptionActivationChanged": false,
+  "replacementResults": [
+    {
+      "name": "billing_period_halfyear",
+      "hits": 1
+    },
+    {
+      "name": "billing_plan_halfyear_field",
+      "hits": 1
+    },
+    {
+      "name": "core_prices",
+      "hits": 1
+    },
+    {
+      "name": "edge_prices",
+      "hits": 1
+    },
+    {
+      "name": "elite_prices",
+      "hits": 1
+    },
+    {
+      "name": "normalize_halfyear",
+      "hits": 1
+    },
+    {
+      "name": "canonical_amount_halfyear",
+      "hits": 1
+    },
+    {
+      "name": "period_label_halfyear",
+      "hits": 1
+    },
+    {
+      "name": "period_days_halfyear",
+      "hits": 1
+    },
+    {
+      "name": "route_canonical_imports",
+      "hits": 1
+    },
+    {
+      "name": "route_remove_local_period_type",
+      "hits": 1
+    },
+    {
+      "name": "route_remove_local_price_tables",
+      "hits": 1
+    },
+    {
+      "name": "route_remove_local_period_normalizer",
+      "hits": 1
+    },
+    {
+      "name": "route_use_canonical_amount",
+      "hits": 1
+    },
+    {
+      "name": "route_use_canonical_labels",
+      "hits": 1
+    }
+  ],
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9I_canonical_billing_backup_20260719_204047",
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9I_CANONICAL_BILLING_build_20260719_204047.txt",
+  "nextAction": "I18N_ARCHITECTURE_UNIFICATION_AUDIT"
+}

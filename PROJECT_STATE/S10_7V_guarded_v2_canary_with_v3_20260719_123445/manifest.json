@@ -1,0 +1,117 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_GUARDED_V2_CANARY_WITH_V3_PACKAGE_BUILT_NOT_ARMED",
+    "packageBuilt":  true,
+    "packageExecuted":  false,
+    "deploymentAuthorized":  false,
+    "armAllowed":  false,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "universeSource":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_7P_VALIDATED_LIQUID_250_UNIVERSE_20260718_235427.json",
+    "universeCount":  250,
+    "universeUniqueCount":  250,
+    "staticReviewSource":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_7Q_STATIC_REVIEW_raw_20260718_235759.json",
+    "v3ReviewSource":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_7T_V3_STATIC_ISOLATED_REVIEW_raw_20260719_122509.json",
+    "v3PackageSource":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_7S_capacity_instrumentation_patch_v3_20260719_003441",
+    "requiredMetrics":  [
+                            "rawRecordsPerSecond",
+                            "marketEventsPerSecond",
+                            "processingLagP95Ms",
+                            "quoteFreshnessP95Seconds",
+                            "cpuPercent",
+                            "rssBytes",
+                            "snapshotWriteLatencyMs",
+                            "candleCompletenessPercent",
+                            "providerReconnectCount",
+                            "providerErrorCount",
+                            "scannerCycleMs",
+                            "setupCycleMs"
+                        ],
+    "resolvedMetrics":  [
+                            "rawRecordsPerSecond",
+                            "marketEventsPerSecond",
+                            "processingLagP95Ms",
+                            "cpuPercent",
+                            "snapshotWriteLatencyMs",
+                            "candleCompletenessPercent",
+                            "providerReconnectCount",
+                            "scannerCycleMs",
+                            "quoteFreshnessP95Seconds",
+                            "rssBytes",
+                            "providerErrorCount",
+                            "setupCycleMs"
+                        ],
+    "missingMetrics":  [
+
+                       ],
+    "stages":  [
+                   {
+                       "stage":  25,
+                       "durationMinutes":  5,
+                       "purpose":  "baseline",
+                       "requiresExplicitApproval":  false,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  50,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  100,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  150,
+                       "durationMinutes":  10,
+                       "purpose":  "intermediate-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  250,
+                       "durationMinutes":  30,
+                       "purpose":  "final-capacity-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   }
+               ],
+    "rollbackRules":  {
+                          "serviceUnhealthy":  true,
+                          "negativeQuoteAge":  true,
+                          "providerReconnectBurst":  true,
+                          "providerErrorIncrease":  true,
+                          "processingLagP95RegressionPercent":  50,
+                          "quoteFreshnessP95RegressionPercent":  50,
+                          "cpuPercentCeiling":  85,
+                          "rssGrowthPercentCeiling":  50,
+                          "snapshotWriteRegressionPercent":  100,
+                          "candleCompletenessFloorPercent":  99,
+                          "scannerCycleRegressionPercent":  100,
+                          "setupCycleRegressionPercent":  100,
+                          "returnToUniverseSize":  25
+                      },
+    "baselineStageDeltasRequired":  true,
+    "explicitExecutionApprovalRequired":  true,
+    "liveProvider":  "databento",
+    "referenceProvider":  "fmp",
+    "clientEligibilityChanged":  false,
+    "telegramEligibilityChanged":  false,
+    "paperEligibilityChanged":  false,
+    "brokerEnabled":  false,
+    "realMoneyEnabled":  false,
+    "errors":  [
+
+               ],
+    "warnings":  [
+
+                 ],
+    "nextAction":  "RUN_FINAL_PACKAGE_STATIC_REVIEW_THEN_REQUEST_EXPLICIT_CANARY_EXECUTION_APPROVAL"
+}

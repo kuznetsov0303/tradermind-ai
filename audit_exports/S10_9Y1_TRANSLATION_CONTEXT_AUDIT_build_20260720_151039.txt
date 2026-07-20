@@ -1,0 +1,143 @@
+﻿
+> tradermind-ai@0.1.0 build
+> next build
+
+тЦ▓ Next.js 16.2.4 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+тЬУ Compiled successfully in 31.9s
+  Skipping validation of types
+  Finished TypeScript config validation in 12ms ...
+  Collecting page data using 11 workers ...
+тЪа Using edge runtime on a page currently disables static generation for that page
+  Generating static pages using 11 workers (0/66) ...
+  Generating static pages using 11 workers (16/66) 
+  Generating static pages using 11 workers (32/66) 
+  Generating static pages using 11 workers (49/66) 
+тЬУ Generating static pages using 11 workers (66/66) in 1026ms
+  Finalizing page optimization ...
+
+Route (app)
+тФМ тЧЛ /
+тФЬ тЧЛ /_not-found
+тФЬ тЧЛ /about
+тФЬ тЧЛ /admin
+тФЬ тЧЛ /admin/investor-dashboard
+тФЬ тЧЛ /admin/referrals
+тФЬ тЧЛ /admin/signals-review
+тФЬ тЧЛ /admin/support
+тФЬ тЧЛ /ai-guide
+тФЬ ╞Т /api/admin/me
+тФЬ ╞Т /api/admin/referrals/withdrawals
+тФЬ ╞Т /api/admin/signals/manual-approval
+тФЬ ╞Т /api/admin/signals/review-queue
+тФЬ ╞Т /api/admin/stats/activations
+тФЬ ╞Т /api/ai-coach
+тФЬ ╞Т /api/analyze-current-chart
+тФЬ ╞Т /api/analyze-trade-screenshot
+тФЬ ╞Т /api/create-crypto-payment
+тФЬ ╞Т /api/email-request
+тФЬ ╞Т /api/journal-analysis
+тФЬ ╞Т /api/market/ai-analysis
+тФЬ ╞Т /api/market/ai-briefs
+тФЬ ╞Т /api/market/alerts
+тФЬ ╞Т /api/market/alerts/cron
+тФЬ ╞Т /api/market/alerts/cron/all
+тФЬ ╞Т /api/market/alerts/cron/crypto
+тФЬ ╞Т /api/market/alerts/cron/stock
+тФЬ ╞Т /api/market/alerts/decision
+тФЬ ╞Т /api/market/alerts/outcomes
+тФЬ ╞Т /api/market/alerts/outcomes/resolve
+тФЬ ╞Т /api/market/alerts/personalized
+тФЬ ╞Т /api/market/alerts/viewed
+тФЬ ╞Т /api/market/chart-movers
+тФЬ ╞Т /api/market/intelligence
+тФЬ ╞Т /api/market/scanner
+тФЬ ╞Т /api/market/social-mentions
+тФЬ ╞Т /api/nowpayments-webhook
+тФЬ ╞Т /api/personal-edge/summary
+тФЬ ╞Т /api/playbook/setups
+тФЬ ╞Т /api/playbook/signal-profile
+тФЬ ╞Т /api/playbook/trade-patterns
+тФЬ ╞Т /api/referrals/attach
+тФЬ ╞Т /api/referrals/dashboard
+тФЬ ╞Т /api/referrals/withdraw
+тФЬ ╞Т /api/reports/ai-report
+тФЬ ╞Т /api/stock-engine/calibration/preview
+тФЬ ╞Т /api/stock-engine/cockpit
+тФЬ ╞Т /api/stock-engine/cockpit/history/[symbol]
+тФЬ ╞Т /api/stock-engine/cockpit/stream
+тФЬ ╞Т /api/stock-engine/cockpit/symbol/[symbol]
+тФЬ ╞Т /api/stock-engine/evidence/cache
+тФЬ ╞Т /api/stock-engine/evidence/run
+тФЬ ╞Т /api/stock-engine/evidence/today
+тФЬ ╞Т /api/stock-engine/health
+тФЬ ╞Т /api/stock-engine/investor-dashboard/cache
+тФЬ ╞Т /api/stock-engine/investor-dashboard/run
+тФЬ ╞Т /api/stock-engine/investor-dashboard/snapshot
+тФЬ ╞Т /api/stock-engine/lifecycle/run
+тФЬ ╞Т /api/stock-engine/market-session
+тФЬ ╞Т /api/stock-engine/promotion/evidence
+тФЬ ╞Т /api/stock-engine/promotion/evidence/[setup_slug]
+тФЬ ╞Т /api/stock-engine/research/failure-patterns
+тФЬ ╞Т /api/stock-engine/research/feature-matrix
+тФЬ ╞Т /api/stock-engine/research/live-feature-audit
+тФЬ ╞Т /api/stock-engine/research/readiness
+тФЬ ╞Т /api/stock-engine/research/status
+тФЬ ╞Т /api/stock-engine/signals/why-no-client-signals
+тФЬ ╞Т /api/stock-engine/unified-skilledge-output
+тФЬ ╞Т /api/strategy/after-trade-debriefs
+тФЬ ╞Т /api/strategy/analytics
+тФЬ ╞Т /api/strategy/before-trade-checks
+тФЬ ╞Т /api/strategy/drills
+тФЬ ╞Т /api/strategy/examples
+тФЬ ╞Т /api/strategy/overview
+тФЬ ╞Т /api/strategy/playbook/graduation
+тФЬ ╞Т /api/strategy/profile
+тФЬ ╞Т /api/strategy/review
+тФЬ ╞Т /api/strategy/strategies
+тФЬ ╞Т /api/strategy/tasks
+тФЬ ╞Т /api/strategy/templates
+тФЬ ╞Т /api/strategy/versions/generate
+тФЬ ╞Т /api/strategy/weekly-report
+тФЬ ╞Т /api/strategy/weekly-report/accept
+тФЬ ╞Т /api/support/admin/close
+тФЬ ╞Т /api/support/admin/messages
+тФЬ ╞Т /api/support/admin/reply
+тФЬ ╞Т /api/support/admin/sessions
+тФЬ ╞Т /api/support/email-request
+тФЬ ╞Т /api/support/messages
+тФЬ ╞Т /api/support/operator-request
+тФЬ ╞Т /api/support/session
+тФЬ ╞Т /api/telegram/signals/connect-code
+тФЬ ╞Т /api/telegram/signals/status
+тФЬ ╞Т /api/telegram/signals/webhook
+тФЬ ╞Т /apple-icon
+тФЬ тЧЛ /dashboard
+тФЬ тЧЛ /dashboard-guide
+тФЬ тЧЛ /desk
+тФЬ ╞Т /icon
+тФЬ тЧЛ /journal-guide
+тФЬ тЧЛ /legal/billing
+тФЬ тЧЛ /legal/cookies
+тФЬ тЧЛ /legal/disclaimer
+тФЬ тЧЛ /legal/eula
+тФЬ тЧЛ /legal/privacy-policy
+тФЬ тЧЛ /legal/terms
+тФЬ тЧЛ /login
+тФЬ ╞Т /opengraph-image
+тФЬ тЧЛ /pricing
+тФЬ тЧЛ /product
+тФЬ тЧЛ /referral
+тФЬ тЧЛ /register
+тФЬ тЧЛ /robots.txt
+тФЬ тЧЛ /sitemap.xml
+тФЬ тЧЛ /team
+тФФ ╞Т /twitter-image
+
+
+тЧЛ  (Static)   prerendered as static content
+╞Т  (Dynamic)  server-rendered on demand
+
+

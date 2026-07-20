@@ -1,0 +1,103 @@
+{
+  "ok": true,
+  "classification": "LANDING_EDGE_JOURNAL_LAYOUT_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "filesChanged": [
+    "components/Landing.tsx",
+    "components/dashboard/PersonalEdgeTab.tsx",
+    "app/dashboard/page.tsx"
+  ],
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9G_landing_edge_journal_layout_backup_20260719_171719",
+  "replacementResults": [
+    {
+      "name": "landing_home_outer_width",
+      "hits": 1
+    },
+    {
+      "name": "landing_hero_columns",
+      "hits": 1
+    },
+    {
+      "name": "landing_left_column",
+      "hits": 2
+    },
+    {
+      "name": "landing_title_wrap",
+      "hits": 1
+    },
+    {
+      "name": "landing_trust_card",
+      "hits": 1
+    },
+    {
+      "name": "landing_trust_title",
+      "hits": 2
+    },
+    {
+      "name": "landing_trust_text",
+      "hits": 1
+    },
+    {
+      "name": "landing_feature_card",
+      "hits": 1
+    },
+    {
+      "name": "landing_feature_title",
+      "hits": 1
+    },
+    {
+      "name": "landing_feature_text",
+      "hits": 2
+    },
+    {
+      "name": "edge_primary_grid_items_start",
+      "hits": 1
+    },
+    {
+      "name": "edge_secondary_grid_items_start",
+      "hits": 1
+    },
+    {
+      "name": "journal_card_actions_horizontal",
+      "hits": 1
+    },
+    {
+      "name": "journal_pnl_auto_width",
+      "hits": 1
+    },
+    {
+      "name": "journal_analyze_auto",
+      "hits": 1
+    },
+    {
+      "name": "journal_chart_auto",
+      "hits": 1
+    },
+    {
+      "name": "journal_edit_auto",
+      "hits": 1
+    },
+    {
+      "name": "journal_delete_auto",
+      "hits": 1
+    },
+    {
+      "name": "journal_screenshot_row",
+      "hits": 1
+    },
+    {
+      "name": "journal_table_actions_horizontal",
+      "hits": 1
+    }
+  ],
+  "landingHomeWideShell": true,
+  "landingResponsiveHero": true,
+  "landingTextOverflowProtection": true,
+  "edgeGridStretchRemoved": true,
+  "journalCardActionsHorizontal": true,
+  "journalTableActionsHorizontal": true,
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9G_LAYOUT_PATCH_build_20260719_171719.txt",
+  "nextAction": "LOCAL_VISUAL_VERIFY_LANDING_EDGE_JOURNAL"
+}

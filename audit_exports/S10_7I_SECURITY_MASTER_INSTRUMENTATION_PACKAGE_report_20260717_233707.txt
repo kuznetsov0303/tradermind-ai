@@ -1,0 +1,21 @@
+﻿S10.7I SECURITY MASTER AND INSTRUMENTATION PACKAGE
+Generated=20260717_233707
+OK=True
+CLASSIFICATION=DAY7D_SECURITY_MASTER_AND_INSTRUMENTATION_PATCH_PACKAGE_VALIDATED
+PACKAGE_BUILT=True
+PACKAGE_EXECUTED=False
+DEPLOYMENT_AUTHORIZED=False
+LIVE_PROVIDER=databento
+REFERENCE_PROVIDER=fmp
+FILES=app\market_data\stream_service.py,app\data\fmp_client.py,app\data\security_master.py,ops\scripts\build_validated_common_stock_universe.py,tests\test_security_master.py
+INSTRUMENTATION_FIELDS=rawRecordsPerSecond,marketEventsPerSecond,cpuPercent,callbackLatencyMs,snapshotWriteLatencyMs,scannerBuildLatencyMs,candleCompleteness
+CLIENT_ELIGIBILITY_CHANGED=False
+TELEGRAM_ELIGIBILITY_CHANGED=False
+PAPER_ELIGIBILITY_CHANGED=False
+NEXT_ACTION=RUN_ISOLATED_PACKAGE_TESTS_AND_REVIEW
+PRODUCTION_MUTATION=False
+SERVICE_RESTARTED=False
+SYSTEMD_TOUCHED=False
+STREAM_SYMBOLS_CHANGED=False
+PACKAGE_ROOT=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\S10_7I_security_master_instrumentation_patch_v1
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_7I_SECURITY_MASTER_INSTRUMENTATION_PACKAGE_raw_20260717_233707.json

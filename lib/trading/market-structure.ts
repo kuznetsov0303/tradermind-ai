@@ -319,11 +319,17 @@ function buildFallbackPlan({
 
   const entryMin = isShort ? price * 0.995 : price * 0.998;
   const entryMax = isShort ? price * 1.005 : price * 1.008;
-  const stop = isShort ? price * 1.018 : price * 0.982;
-  const target1 = isShort ? price * 0.98 : price * 1.022;
-  const target2 = isShort ? price * 0.955 : price * 1.045;
-  const target3 = isShort ? price * 0.93 : price * 1.07;
   const entry = (entryMin + entryMax) / 2;
+  const stop = isShort ? price * 1.018 : price * 0.982;
+  const risk = Math.abs(stop - entry);
+
+  // Fallback is never an actionable structure signal.
+  // It only keeps an in-play stock visible as WATCH Radar while the engine waits
+  // for real candles/levels/5m confirmation. Targets are expressed as R-multiples
+  // so the premium safety gate can keep the idea without pretending it is structure.
+  const target1 = isShort ? entry - risk * 2.1 : entry + risk * 2.1;
+  const target2 = isShort ? entry - risk * 3.2 : entry + risk * 3.2;
+  const target3 = isShort ? entry - risk * 4.3 : entry + risk * 4.3;
 
   return {
     source: "fallback",
@@ -352,7 +358,7 @@ function buildFallbackPlan({
     nearest_support: null,
     nearest_resistance: null,
     structure_notes: [
-      "Fallback plan used because candles/VWAP/levels were not available. Signal generator should reject fallback plans before client delivery.",
+      "Fallback WATCH Radar: candles/VWAP/levels are not available yet. Do not treat as an actionable signal until structure and 5m confirmation appear.",
     ],
     missing_structure_data: ["candles", "VWAP", "swing levels"],
   };

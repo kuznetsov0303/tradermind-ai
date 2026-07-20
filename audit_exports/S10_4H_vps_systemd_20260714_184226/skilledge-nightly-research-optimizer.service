@@ -1,0 +1,12 @@
+[Unit]
+Description=SkillEdge Cap-Aware Nightly Research Optimizer Controller
+After=network-online.target skilledge-stock-engine-api.service skilledge-cap-aware-backfill.service skilledge-internal-research-agents.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+Environment=S913_MIN_COMPLETED_JOBS=50
+Environment=S913_REQUIRE_ALL_BUCKETS=true
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/nightly_research_optimizer_controller.py
+User=root

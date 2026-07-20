@@ -1,0 +1,67 @@
+[
+  {
+    "line": 9240,
+    "score": 1,
+    "preview": "{ key: \"execution\", label: language === \"en\" ? \"Execution 70+\" : language === \"ua\" ? \"Виконання 70+\" : \"РСЃРїРѕР»РЅРµРЅРёРµ 70+\", done: strategyExecutionScore >= 70, value: `${Math.round(strategyExecutionScore)}%` },"
+  },
+  {
+    "line": 12629,
+    "score": 1,
+    "preview": "? language === \"en\" ? \"Strategy development timeline\" : language === \"ua\" ? \"Історія розвитку стратегії\" : \"РСЃС‚РѕСЂРёСЏ СЂР°Р·РІРёС‚РёСЏ СЃС‚СЂР°С‚РµРіРёРё\""
+  },
+  {
+    "line": 18543,
+    "score": 1,
+    "preview": "[/Avoid strong BTC\\/ETH squeeze\\./gi, \"РР·Р±РµРіР°С‚СЊ РїСЂРё СЃРёР»СЊРЅРѕРј squeeze BTC/ETH.\", \"Уникати при сильному squeeze BTC/ETH.\"],"
+  },
+  {
+    "line": 23395,
+    "score": 1,
+    "preview": "source: safeLanguage === \"en\" ? \"Signal history\" : safeLanguage === \"ua\" ? \"Історія сигналів\" : \"РСЃС‚РѕСЂРёСЏ СЃРёРіРЅР°Р»РѕРІ\","
+  },
+  {
+    "line": 25318,
+    "score": 1,
+    "preview": ": [\"РСЃРїРѕР»РЅРµРЅРёРµ С‚СЂРµР№РґРµСЂР°\", \"Показывается отдельно только когда сделка из журнала привязана к сигналу.\"],"
+  },
+  {
+    "line": 25425,
+    "score": 1,
+    "preview": "<th className=\"px-4 py-3\">{safeLanguage === \"en\" ? \"Source\" : safeLanguage === \"ua\" ? \"Джерело\" : \"РСЃС‚РѕС‡РЅРёРє\"}</th>"
+  },
+  {
+    "line": 27606,
+    "score": 1,
+    "preview": "label: safeLanguage === \"en\" ? \"Provider\" : safeLanguage === \"ua\" ? \"Джерело\" : \"РСЃС‚РѕС‡РЅРёРє\","
+  },
+  {
+    "line": 27799,
+    "score": 1,
+    "preview": "{safeLanguage === \"en\" ? \"Signal outcome\" : safeLanguage === \"ua\" ? \"Результат сигналу\" : \"РСЃС…РѕРґ СЃРёРіРЅР°Р»Р°\"}"
+  },
+  {
+    "line": 31346,
+    "score": 2,
+    "preview": "{safeLanguage === \"en\" ? \"SOURCE\" : safeLanguage === \"ua\" ? \"ДЖЕРЕЛО\" : \"РРЎРўРћР§РќРРљ\"}"
+  },
+  {
+    "line": 33357,
+    "score": 1,
+    "preview": "{ title: isEn ? \"Review history\" : isUa ? \"Історія review\" : \"РСЃС‚РѕСЂРёСЏ review\", text: isEn ? \"Recent coach answers.\" : isUa ? \"Останні відповіді коуча.\" : \"Последние ответы коуча.\", target: \"coach-history\", meta: common.open },"
+  },
+  {
+    "line": 33358,
+    "score": 1,
+    "preview": "{ title: \"Risk-first\", text: isEn ? \"Use it before repeating mistakes.\" : isUa ? \"Використовуй до повторення помилок.\" : \"РСЃРїРѕР»СЊР·СѓР№ РґРѕ РїРѕРІС‚РѕСЂРµРЅРёСЏ РѕС€РёР±РѕРє.\", target: \"coach-risk\", meta: common.open },"
+  },
+  {
+    "line": 33526,
+    "score": 1,
+    "preview": "report: isEn ? \"Generate the desk report. Measure the process.\" : isUa ? \"Створи desk-звіт. Вимірюй процес.\" : \"РЎРѕР·РґР°Р№ desk-РѕС‚С‡С‘С‚. РР·РјРµСЂСЏР№ РїСЂРѕС†РµСЃСЃ.\","
+  },
+  {
+    "line": 36352,
+    "score": 1,
+    "preview": ": { label: \"Training Desk\", title: \"Выбери следующий training layer.\", text: \"Маршрут, setup modules и active drills работают как один execution track.\", active: \"Открыто\", roadmapTitle: \"Training route\", roadmapText: \"Прогресс, следующий drill и текущий фокус"
+  }
+]

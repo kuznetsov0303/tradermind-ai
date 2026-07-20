@@ -1,0 +1,95 @@
+﻿{
+    "root":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd",
+    "units":  [
+                  {
+                      "unit":  "skilledge-clean-elite-capture.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-clean-elite-capture.service",
+                      "sha256":  "a24d3d8d2399797171636e00404deb4feb938891fcb0ed8eeb9778132f97f4b4",
+                      "content":  "[Unit]\nDescription=SkillEdge Clean Elite Live Capture\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/clean_elite_ledger.py --base-url http://127.0.0.1:8000 --initial-capital 50000 --risk-pct 0.01\nUser=skilledge\nGroup=skilledge"
+                  },
+                  {
+                      "unit":  "skilledge-clean-elite-capture.timer",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-clean-elite-capture.timer",
+                      "sha256":  "4b1f519d7f5709c839127cd64423450772338b330d6ba5c6e884f658aa425de2",
+                      "content":  "[Unit]\nDescription=Run SkillEdge Clean Elite Live Capture every 5 minutes\n\n[Timer]\nOnBootSec=2min\nOnUnitActiveSec=5min\nPersistent=true\nUnit=skilledge-clean-elite-capture.service\n\n[Install]\nWantedBy=timers.target"
+                  },
+                  {
+                      "unit":  "skilledge-daily-ai-desk.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-daily-ai-desk.service",
+                      "sha256":  "174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2",
+                      "content":  "[Unit]\nDescription=SkillEdge Daily AI Desk Runner\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python run_daily_ai_desk.py --loop --interval-seconds 300 --start-kyiv 11:00 --end-kyiv 23:00\nRestart=always\nRestartSec=10\nUser=skilledge\nGroup=skilledge\n\n[Install]\nWantedBy=multi-user.target\n"
+                  },
+                  {
+                      "unit":  "skilledge-engine-watchdog.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-engine-watchdog.service",
+                      "sha256":  "b276e12b635c9a9c3336fd9bee58280063bfa0464d663644c2724253ad91d5e7",
+                      "content":  "[Unit]\nDescription=SkillEdge Engine Watchdog\nWants=network-online.target\nAfter=network-online.target\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=-/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/engine_watchdog.py --public-url https://engine.upyourskills.site --auto-restart --alert\nUser=root\nGroup=root\n"
+                  },
+                  {
+                      "unit":  "skilledge-engine-watchdog.timer",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-engine-watchdog.timer",
+                      "sha256":  "95855f938715506bc7dc625f4b846266ead1274dcd235884d6106fd9f40c630d",
+                      "content":  "[Unit]\nDescription=Run SkillEdge Engine Watchdog every 5 minutes\n\n[Timer]\nOnBootSec=2min\nOnUnitActiveSec=5min\nAccuracySec=30s\nPersistent=true\nUnit=skilledge-engine-watchdog.service\n\n[Install]\nWantedBy=timers.target\n"
+                  },
+                  {
+                      "unit":  "skilledge-historical-learning-backfill.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-historical-learning-backfill.service",
+                      "sha256":  "52e7f3bcd35a4c9fe92cca1b32c18932fc5d6331a5c7796606390be0129c83ed",
+                      "content":  "[Unit]\r\nDescription=SkillEdge Historical Learning Backfill Scheduler\r\nWants=network-online.target\r\nAfter=network-online.target skilledge-stock-engine-api.service\r\n\r\n[Service]\r\nType=oneshot\r\nWorkingDirectory=/opt/skilledge/stock-engine\r\nEnvironmentFile=-/opt/skilledge/stock-engine/.env.server\r\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/run_historical_learning_backfill.py --symbols AAPL,NVDA,TSLA --intervals 5min --years-back 5 --max-days 5 --chunk-days 1 --max-jobs 1 --max-candidates 5000 --sync-supabase true\r\nNice=10\r\n"
+                  },
+                  {
+                      "unit":  "skilledge-historical-learning-backfill.timer",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-historical-learning-backfill.timer",
+                      "sha256":  "93f839c506b0195aeb5a154e8aaf5a5777f699710d74694ed2d3750cdf26156c",
+                      "content":  "[Unit]\r\nDescription=Run SkillEdge Historical Learning Backfill Scheduler nightly\r\n\r\n[Timer]\r\nOnCalendar=Mon..Sat *-*-* 01:15:00\r\nPersistent=true\r\nRandomizedDelaySec=300\r\nUnit=skilledge-historical-learning-backfill.service\r\n\r\n[Install]\r\nWantedBy=timers.target\r\n"
+                  },
+                  {
+                      "unit":  "skilledge-nightly-self-learning.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-nightly-self-learning.service",
+                      "sha256":  "d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693",
+                      "content":  "[Unit]\nDescription=SkillEdge Nightly Self Learning Runner\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python run_nightly_self_learning.py --lookback-days 3 --max-days 3 --min-closed 10\nUser=skilledge\nGroup=skilledge\n"
+                  },
+                  {
+                      "unit":  "skilledge-nightly-self-learning.timer",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-nightly-self-learning.timer",
+                      "sha256":  "831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769",
+                      "content":  "[Unit]\nDescription=Run SkillEdge Nightly Self Learning at 23:35 Kyiv\n\n[Timer]\nOnCalendar=Mon..Fri 23:35\nPersistent=true\nUnit=skilledge-nightly-self-learning.service\n\n[Install]\nWantedBy=timers.target\n"
+                  },
+                  {
+                      "unit":  "skilledge-post-close-evidence.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-post-close-evidence.service",
+                      "sha256":  "23117da6d25e42518927f1efa79d9d5b389212167fbf4514cbb7b170c101c43d",
+                      "content":  "[Unit]\r\nDescription=SkillEdge Post-Close Evidence Automation\r\nAfter=skilledge-stock-engine-api.service\r\nWants=skilledge-stock-engine-api.service\r\n\r\n[Service]\r\nType=oneshot\r\nWorkingDirectory=/opt/skilledge/stock-engine\r\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\r\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/post_close_evidence_automation.py --base-url http://127.0.0.1:8000 --limit 160 --max-best 5\r\nExecStartPost=/usr/bin/curl -fsS -X POST \"http://127.0.0.1:8000/engine/outcomes/repair-stale-stock-open?dry_run=false\u0026min_age_days=1\u0026limit=5000\"\r\nExecStartPost=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/setup_learning_report.py --db-path data/stock_engine.db --lookback-days 30 --min-closed 10 --initial-capital 50000 --risk-pct 0.005\r\nExecStartPost=/usr/bin/curl -fsS -X POST \"http://127.0.0.1:8000/engine/investor-dashboard/run?publish=true\"\r\nUser=skilledge\r\nGroup=skilledge\r\n"
+                  },
+                  {
+                      "unit":  "skilledge-post-close-evidence.timer",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-post-close-evidence.timer",
+                      "sha256":  "bf9171a30d1674e976a1e0803953fbe2c464893435947544143c2a97078d82cd",
+                      "content":  "[Unit]\nDescription=Run SkillEdge Post-Close Evidence Automation at 23:12 Kyiv\n\n[Timer]\nOnCalendar=Mon..Fri 23:12\nPersistent=true\nUnit=skilledge-post-close-evidence.service\n\n[Install]\nWantedBy=timers.target\r\n"
+                  },
+                  {
+                      "unit":  "skilledge-production-readiness.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-production-readiness.service",
+                      "sha256":  "7c60024504cd74fc75e9bd5364ad185ff0412f7c7f904055bd64fe078f016bac",
+                      "content":  "[Unit]\nDescription=SkillEdge Production Live-Day Readiness Check\nWants=network-online.target\nAfter=network-online.target skilledge-stock-engine-api.service\n\n[Service]\nType=oneshot\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=-/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/production_live_day_readiness.py --public-url https://engine.upyourskills.site --frontend-url https://www.upyourskills.site --alert-on-blocker\nUser=root\nGroup=root\n"
+                  },
+                  {
+                      "unit":  "skilledge-production-readiness.timer",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-production-readiness.timer",
+                      "sha256":  "301e821e9ea073cb598406c1c63f50dcff9b8d07906c92b3e6a63247f690e62e",
+                      "content":  "[Unit]\nDescription=Run SkillEdge Production Live-Day Readiness Check before US premarket\n\n[Timer]\nOnCalendar=Mon..Fri 10:45:00\nAccuracySec=60s\nPersistent=true\nUnit=skilledge-production-readiness.service\n\n[Install]\nWantedBy=timers.target\n"
+                  },
+                  {
+                      "unit":  "skilledge-stock-engine-api.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-stock-engine-api.service",
+                      "sha256":  "707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c",
+                      "content":  "[Unit]\nDescription=SkillEdge Stock Engine API\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python -m uvicorn app.api.app:app --host 127.0.0.1 --port 8000\nRestart=always\nRestartSec=5\nTimeoutStartSec=60\nKillSignal=SIGINT\nUser=skilledge\nGroup=skilledge\n\n[Install]\nWantedBy=multi-user.target\n"
+                  },
+                  {
+                      "unit":  "skilledge-telegram-consumer.service",
+                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\systemd\\skilledge-telegram-consumer.service",
+                      "sha256":  "feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede",
+                      "content":  "[Unit]\nDescription=SkillEdge Telegram Cache Consumer\nAfter=skilledge-stock-engine-api.service\nWants=skilledge-stock-engine-api.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/skilledge/stock-engine\nEnvironmentFile=/opt/skilledge/stock-engine/.env.server\nEnvironment=TELEGRAM_CONSUMER_DRY_RUN=false\nExecStart=/opt/skilledge/stock-engine/.venv/bin/python telegram_cache_consumer.py\nRestart=always\nRestartSec=10\nUser=skilledge\nGroup=skilledge\n\n[Install]\nWantedBy=multi-user.target\n"
+                  }
+              ]
+}

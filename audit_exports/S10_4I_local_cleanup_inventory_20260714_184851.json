@@ -1,0 +1,5801 @@
+{
+  "root": "C:\\Users\\milli\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\tradermind\\tradermind-ai",
+  "rootItems": [
+    {
+      "path": ".code-backups",
+      "name": ".code-backups",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": ".gitignore",
+      "name": ".gitignore",
+      "type": "file",
+      "size": 483
+    },
+    {
+      "path": ".local-start",
+      "name": ".local-start",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": ".vercelignore",
+      "name": ".vercelignore",
+      "type": "file",
+      "size": 15
+    },
+    {
+      "path": ".vs",
+      "name": ".vs",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "001-clean-env-signals-v2.ps1",
+      "name": "001-clean-env-signals-v2.ps1",
+      "type": "file",
+      "size": 12373
+    },
+    {
+      "path": "333333.ps1",
+      "name": "333333.ps1",
+      "type": "file",
+      "size": 10071
+    },
+    {
+      "path": "AGENTS.md",
+      "name": "AGENTS.md",
+      "type": "file",
+      "size": 327
+    },
+    {
+      "path": "CLAUDE.md",
+      "name": "CLAUDE.md",
+      "type": "file",
+      "size": 11
+    },
+    {
+      "path": "PRODUCTION_MANIFEST_DRAFT.md",
+      "name": "PRODUCTION_MANIFEST_DRAFT.md",
+      "type": "file",
+      "size": 2870
+    },
+    {
+      "path": "README.md",
+      "name": "README.md",
+      "type": "file",
+      "size": 1450
+    },
+    {
+      "path": "S10_0_50k_paper_trading_desk_installer.ps1",
+      "name": "S10_0_50k_paper_trading_desk_installer.ps1",
+      "type": "file",
+      "size": 27490
+    },
+    {
+      "path": "S10_1_paper_signal_source_bridge.ps1",
+      "name": "S10_1_paper_signal_source_bridge.ps1",
+      "type": "file",
+      "size": 13145
+    },
+    {
+      "path": "S10_1_paper_signal_source_bridge_FIX.ps1",
+      "name": "S10_1_paper_signal_source_bridge_FIX.ps1",
+      "type": "file",
+      "size": 13200
+    },
+    {
+      "path": "S10_2_paper_guard_hotfix_reset.ps1",
+      "name": "S10_2_paper_guard_hotfix_reset.ps1",
+      "type": "file",
+      "size": 17046
+    },
+    {
+      "path": "S10_3B_best_ideas_value_unwrap_hotfix.ps1",
+      "name": "S10_3B_best_ideas_value_unwrap_hotfix.ps1",
+      "type": "file",
+      "size": 7656
+    },
+    {
+      "path": "S10_3C_live_signal_timestamp_enrichment.ps1",
+      "name": "S10_3C_live_signal_timestamp_enrichment.ps1",
+      "type": "file",
+      "size": 15649
+    },
+    {
+      "path": "S10_3D_final_admission_gate_and_clean_reset.ps1",
+      "name": "S10_3D_final_admission_gate_and_clean_reset.ps1",
+      "type": "file",
+      "size": 11149
+    },
+    {
+      "path": "S10_3E_emergency_containment_reset.ps1",
+      "name": "S10_3E_emergency_containment_reset.ps1",
+      "type": "file",
+      "size": 2075
+    },
+    {
+      "path": "S10_3E_signals_schema_probe.ps1",
+      "name": "S10_3E_signals_schema_probe.ps1",
+      "type": "file",
+      "size": 8820
+    },
+    {
+      "path": "S10_3F_exact_live_signal_matcher_diagnostic_only.ps1",
+      "name": "S10_3F_exact_live_signal_matcher_diagnostic_only.ps1",
+      "type": "file",
+      "size": 10170
+    },
+    {
+      "path": "S10_3G_loopback_http_matcher_diagnostic_only.ps1",
+      "name": "S10_3G_loopback_http_matcher_diagnostic_only.ps1",
+      "type": "file",
+      "size": 11049
+    },
+    {
+      "path": "S10_3H_signal_source_of_truth_probe.ps1",
+      "name": "S10_3H_signal_source_of_truth_probe.ps1",
+      "type": "file",
+      "size": 8372
+    },
+    {
+      "path": "S10_3I_sqlite_signal_records_matcher_diagnostic_only.ps1",
+      "name": "S10_3I_sqlite_signal_records_matcher_diagnostic_only.ps1",
+      "type": "file",
+      "size": 10892
+    },
+    {
+      "path": "S10_3J_controlled_single_paper_run.ps1",
+      "name": "S10_3J_controlled_single_paper_run.ps1",
+      "type": "file",
+      "size": 2281
+    },
+    {
+      "path": "S10_3K_paper_evaluation_path_probe.ps1",
+      "name": "S10_3K_paper_evaluation_path_probe.ps1",
+      "type": "file",
+      "size": 4789
+    },
+    {
+      "path": "S10_3L_update_open_positions_probe.ps1",
+      "name": "S10_3L_update_open_positions_probe.ps1",
+      "type": "file",
+      "size": 5926
+    },
+    {
+      "path": "S10_3M_evaluation_only_endpoint_and_single_run.ps1",
+      "name": "S10_3M_evaluation_only_endpoint_and_single_run.ps1",
+      "type": "file",
+      "size": 11079
+    },
+    {
+      "path": "S10_3N_install_evaluation_only_timer.ps1",
+      "name": "S10_3N_install_evaluation_only_timer.ps1",
+      "type": "file",
+      "size": 6240
+    },
+    {
+      "path": "S10_3O_install_session_close_guard.ps1",
+      "name": "S10_3O_install_session_close_guard.ps1",
+      "type": "file",
+      "size": 9900
+    },
+    {
+      "path": "S10_3P_post_close_verification.ps1",
+      "name": "S10_3P_post_close_verification.ps1",
+      "type": "file",
+      "size": 2218
+    },
+    {
+      "path": "S10_3Q_install_market_hours_guarded_entry_timer.ps1",
+      "name": "S10_3Q_install_market_hours_guarded_entry_timer.ps1",
+      "type": "file",
+      "size": 7697
+    },
+    {
+      "path": "S10_3R_guarded_entry_timer_scheduling_probe.ps1",
+      "name": "S10_3R_guarded_entry_timer_scheduling_probe.ps1",
+      "type": "file",
+      "size": 2840
+    },
+    {
+      "path": "S10_3S_fix_guarded_entry_calendar_timer.ps1",
+      "name": "S10_3S_fix_guarded_entry_calendar_timer.ps1",
+      "type": "file",
+      "size": 3175
+    },
+    {
+      "path": "S10_3T_fix_guarded_entry_monotonic_timer.ps1",
+      "name": "S10_3T_fix_guarded_entry_monotonic_timer.ps1",
+      "type": "file",
+      "size": 3410
+    },
+    {
+      "path": "S10_3U_verify_first_automatic_entry_fire.ps1",
+      "name": "S10_3U_verify_first_automatic_entry_fire.ps1",
+      "type": "file",
+      "size": 2559
+    },
+    {
+      "path": "S10_3_best_desk_idea_paper_bridge.ps1",
+      "name": "S10_3_best_desk_idea_paper_bridge.ps1",
+      "type": "file",
+      "size": 46555
+    },
+    {
+      "path": "S10_3_best_desk_idea_paper_bridge_FIXED.ps1",
+      "name": "S10_3_best_desk_idea_paper_bridge_FIXED.ps1",
+      "type": "file",
+      "size": 46557
+    },
+    {
+      "path": "S10_4A_collect_full_audit_snapshot.ps1",
+      "name": "S10_4A_collect_full_audit_snapshot.ps1",
+      "type": "file",
+      "size": 7076
+    },
+    {
+      "path": "S10_4B_collect_vps_inventory_only.ps1",
+      "name": "S10_4B_collect_vps_inventory_only.ps1",
+      "type": "file",
+      "size": 7378
+    },
+    {
+      "path": "S10_4C_runtime_incident_probe.ps1",
+      "name": "S10_4C_runtime_incident_probe.ps1",
+      "type": "file",
+      "size": 7514
+    },
+    {
+      "path": "S10_4D_runtime_semantics_fix.ps1",
+      "name": "S10_4D_runtime_semantics_fix.ps1",
+      "type": "file",
+      "size": 14942
+    },
+    {
+      "path": "S10_4E_local_vps_reconciliation.ps1",
+      "name": "S10_4E_local_vps_reconciliation.ps1",
+      "type": "file",
+      "size": 11180
+    },
+    {
+      "path": "S10_4E_local_vps_reconciliation_FIXED.ps1",
+      "name": "S10_4E_local_vps_reconciliation_FIXED.ps1",
+      "type": "file",
+      "size": 13927
+    },
+    {
+      "path": "S10_4F_canonical_source_recovery.ps1",
+      "name": "S10_4F_canonical_source_recovery.ps1",
+      "type": "file",
+      "size": 9983
+    },
+    {
+      "path": "S10_4F_canonical_source_recovery_FIXED.ps1",
+      "name": "S10_4F_canonical_source_recovery_FIXED.ps1",
+      "type": "file",
+      "size": 10560
+    },
+    {
+      "path": "S10_4G_systemd_runtime_dependency_audit.ps1",
+      "name": "S10_4G_systemd_runtime_dependency_audit.ps1",
+      "type": "file",
+      "size": 13510
+    },
+    {
+      "path": "S10_4H_systemd_canonical_recovery_and_clean_dependency_map.ps1",
+      "name": "S10_4H_systemd_canonical_recovery_and_clean_dependency_map.ps1",
+      "type": "file",
+      "size": 13723
+    },
+    {
+      "path": "S10_4I_cleanup_classification_audit.ps1",
+      "name": "S10_4I_cleanup_classification_audit.ps1",
+      "type": "file",
+      "size": 15977
+    },
+    {
+      "path": "S8.34A_add_strategy_evidence.ps1",
+      "name": "S8.34A_add_strategy_evidence.ps1",
+      "type": "file",
+      "size": 14071
+    },
+    {
+      "path": "S8.35A_add_failure_analysis_agent.ps1",
+      "name": "S8.35A_add_failure_analysis_agent.ps1",
+      "type": "file",
+      "size": 24965
+    },
+    {
+      "path": "S8.36A_add_promotion_guard.ps1",
+      "name": "S8.36A_add_promotion_guard.ps1",
+      "type": "file",
+      "size": 16112
+    },
+    {
+      "path": "S8.37A_add_admin_ops_status.ps1",
+      "name": "S8.37A_add_admin_ops_status.ps1",
+      "type": "file",
+      "size": 12852
+    },
+    {
+      "path": "S8.38A_investor_snapshot_adapter.ps1",
+      "name": "S8.38A_investor_snapshot_adapter.ps1",
+      "type": "file",
+      "size": 13359
+    },
+    {
+      "path": "S8.38B_investor_dashboard_ui_cleanup.ps1",
+      "name": "S8.38B_investor_dashboard_ui_cleanup.ps1",
+      "type": "file",
+      "size": 23951
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix.ps1",
+      "type": "file",
+      "size": 2800
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix_v2.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix_v2.ps1",
+      "type": "file",
+      "size": 3423
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix_v3.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix_v3.ps1",
+      "type": "file",
+      "size": 4082
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix_v4.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix_v4.ps1",
+      "type": "file",
+      "size": 3394
+    },
+    {
+      "path": "S8.39A_add_manual_approval_storage.ps1",
+      "name": "S8.39A_add_manual_approval_storage.ps1",
+      "type": "file",
+      "size": 12041
+    },
+    {
+      "path": "S8.40A_add_outcome_repair_planner.ps1",
+      "name": "S8.40A_add_outcome_repair_planner.ps1",
+      "type": "file",
+      "size": 14587
+    },
+    {
+      "path": "S8.40A_fix_expired_session_status.ps1",
+      "name": "S8.40A_fix_expired_session_status.ps1",
+      "type": "file",
+      "size": 1427
+    },
+    {
+      "path": "S8.40B2_add_outcome_open_replay_probe_v2.ps1",
+      "name": "S8.40B2_add_outcome_open_replay_probe_v2.ps1",
+      "type": "file",
+      "size": 15749
+    },
+    {
+      "path": "S8.40B_add_outcome_open_replay_probe.ps1",
+      "name": "S8.40B_add_outcome_open_replay_probe.ps1",
+      "type": "file",
+      "size": 10417
+    },
+    {
+      "path": "S8.40C_add_no_eval_missing_candles_classifier.ps1",
+      "name": "S8.40C_add_no_eval_missing_candles_classifier.ps1",
+      "type": "file",
+      "size": 14955
+    },
+    {
+      "path": "S8.40D_add_no_eval_partial_open_classifier.ps1",
+      "name": "S8.40D_add_no_eval_partial_open_classifier.ps1",
+      "type": "file",
+      "size": 16010
+    },
+    {
+      "path": "S8.40E_outcome_evidence_reclassification.ps1",
+      "name": "S8.40E_outcome_evidence_reclassification.ps1",
+      "type": "file",
+      "size": 7904
+    },
+    {
+      "path": "S8.40F_fix_investor_narrative_after_repair.ps1",
+      "name": "S8.40F_fix_investor_narrative_after_repair.ps1",
+      "type": "file",
+      "size": 3144
+    },
+    {
+      "path": "S8.41_add_recalibrated_evidence_baseline.ps1",
+      "name": "S8.41_add_recalibrated_evidence_baseline.ps1",
+      "type": "file",
+      "size": 15751
+    },
+    {
+      "path": "S8.43_add_strategy_filter_review.ps1",
+      "name": "S8.43_add_strategy_filter_review.ps1",
+      "type": "file",
+      "size": 16587
+    },
+    {
+      "path": "S8.44_add_shadow_filter_experiment_plan.ps1",
+      "name": "S8.44_add_shadow_filter_experiment_plan.ps1",
+      "type": "file",
+      "size": 17288
+    },
+    {
+      "path": "S8.45_add_shadow_filter_evaluator.ps1",
+      "name": "S8.45_add_shadow_filter_evaluator.ps1",
+      "type": "file",
+      "size": 17936
+    },
+    {
+      "path": "S8.46_add_shadow_outcome_attribution.ps1",
+      "name": "S8.46_add_shadow_outcome_attribution.ps1",
+      "type": "file",
+      "size": 19546
+    },
+    {
+      "path": "S8.47_patch_post_close_shadow_automation.ps1",
+      "name": "S8.47_patch_post_close_shadow_automation.ps1",
+      "type": "file",
+      "size": 3253
+    },
+    {
+      "path": "S8.48_patch_post_close_quiet_mode.ps1",
+      "name": "S8.48_patch_post_close_quiet_mode.ps1",
+      "type": "file",
+      "size": 3402
+    },
+    {
+      "path": "S8_70A_hotfix_path_import.ps1",
+      "name": "S8_70A_hotfix_path_import.ps1",
+      "type": "file",
+      "size": 1537
+    },
+    {
+      "path": "S8_70A_ready_candidate_quality_audit_patch.ps1",
+      "name": "S8_70A_ready_candidate_quality_audit_patch.ps1",
+      "type": "file",
+      "size": 16688
+    },
+    {
+      "path": "S8_70B_ready_quality_rr_semantics_hotfix.ps1",
+      "name": "S8_70B_ready_quality_rr_semantics_hotfix.ps1",
+      "type": "file",
+      "size": 8833
+    },
+    {
+      "path": "S8_70C_ready_queue_topn_approval_candidates.ps1",
+      "name": "S8_70C_ready_queue_topn_approval_candidates.ps1",
+      "type": "file",
+      "size": 10299
+    },
+    {
+      "path": "S8_71A_historical_backtest_learning_plan.ps1",
+      "name": "S8_71A_historical_backtest_learning_plan.ps1",
+      "type": "file",
+      "size": 12734
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix.ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix.ps1",
+      "type": "file",
+      "size": 1281
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix_v2 (1).ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix_v2 (1).ps1",
+      "type": "file",
+      "size": 1786
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix_v2.ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix_v2.ps1",
+      "type": "file",
+      "size": 1786
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix_v3.ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix_v3.ps1",
+      "type": "file",
+      "size": 7804
+    },
+    {
+      "path": "S8_71B2_provider_compatibility_adapter.ps1",
+      "name": "S8_71B2_provider_compatibility_adapter.ps1",
+      "type": "file",
+      "size": 21233
+    },
+    {
+      "path": "S8_71B_historical_data_ingestion_worker.ps1",
+      "name": "S8_71B_historical_data_ingestion_worker.ps1",
+      "type": "file",
+      "size": 14315
+    },
+    {
+      "path": "S8_71B_historical_data_ingestion_worker_v2.ps1",
+      "name": "S8_71B_historical_data_ingestion_worker_v2.ps1",
+      "type": "file",
+      "size": 14283
+    },
+    {
+      "path": "S8_71C_historical_feature_builder.ps1",
+      "name": "S8_71C_historical_feature_builder.ps1",
+      "type": "file",
+      "size": 27534
+    },
+    {
+      "path": "S8_71D_historical_setup_replay.ps1",
+      "name": "S8_71D_historical_setup_replay.ps1",
+      "type": "file",
+      "size": 34564
+    },
+    {
+      "path": "S8_71E_historical_outcome_simulator.ps1",
+      "name": "S8_71E_historical_outcome_simulator.ps1",
+      "type": "file",
+      "size": 44163
+    },
+    {
+      "path": "S8_71F_historical_setup_stats_segment_recalibration.ps1",
+      "name": "S8_71F_historical_setup_stats_segment_recalibration.ps1",
+      "type": "file",
+      "size": 40619
+    },
+    {
+      "path": "S8_72B1_supabase_sync_report_path_fix.ps1",
+      "name": "S8_72B1_supabase_sync_report_path_fix.ps1",
+      "type": "file",
+      "size": 8063
+    },
+    {
+      "path": "S8_72B2_supabase_sync_path_import_hotfix.ps1",
+      "name": "S8_72B2_supabase_sync_path_import_hotfix.ps1",
+      "type": "file",
+      "size": 2885
+    },
+    {
+      "path": "S8_72B3_supabase_sync_json_read_path_hotfix.ps1",
+      "name": "S8_72B3_supabase_sync_json_read_path_hotfix.ps1",
+      "type": "file",
+      "size": 4716
+    },
+    {
+      "path": "S8_72B_historical_learning_supabase_sync.ps1",
+      "name": "S8_72B_historical_learning_supabase_sync.ps1",
+      "type": "file",
+      "size": 42059
+    },
+    {
+      "path": "S8_72_supabase_historical_learning_schema.ps1",
+      "name": "S8_72_supabase_historical_learning_schema.ps1",
+      "type": "file",
+      "size": 24459
+    },
+    {
+      "path": "S8_73A_backfill_duplicate_outcome_hotfix.ps1",
+      "name": "S8_73A_backfill_duplicate_outcome_hotfix.ps1",
+      "type": "file",
+      "size": 10057
+    },
+    {
+      "path": "S8_73_74_historical_backfill_orchestrator_scheduler.ps1",
+      "name": "S8_73_74_historical_backfill_orchestrator_scheduler.ps1",
+      "type": "file",
+      "size": 40032
+    },
+    {
+      "path": "S8_75B2_completed_day_backfill_guard.ps1",
+      "name": "S8_75B2_completed_day_backfill_guard.ps1",
+      "type": "file",
+      "size": 4627
+    },
+    {
+      "path": "S8_75B_completed_day_backfill_guard.ps1",
+      "name": "S8_75B_completed_day_backfill_guard.ps1",
+      "type": "file",
+      "size": 5123
+    },
+    {
+      "path": "S8_75_backfill_scaling_guard.ps1",
+      "name": "S8_75_backfill_scaling_guard.ps1",
+      "type": "file",
+      "size": 26663
+    },
+    {
+      "path": "S8_76A_candidate_sync_before_outcomes_hotfix.ps1",
+      "name": "S8_76A_candidate_sync_before_outcomes_hotfix.ps1",
+      "type": "file",
+      "size": 5522
+    },
+    {
+      "path": "S8_76_historical_universe_builder.ps1",
+      "name": "S8_76_historical_universe_builder.ps1",
+      "type": "file",
+      "size": 20880
+    },
+    {
+      "path": "S8_77A_walk_forward_supabase_schema_hotfix.ps1",
+      "name": "S8_77A_walk_forward_supabase_schema_hotfix.ps1",
+      "type": "file",
+      "size": 4828
+    },
+    {
+      "path": "S8_77B_walk_forward_validation_key_hotfix.ps1",
+      "name": "S8_77B_walk_forward_validation_key_hotfix.ps1",
+      "type": "file",
+      "size": 6274
+    },
+    {
+      "path": "S8_77_walk_forward_validation_foundation.ps1",
+      "name": "S8_77_walk_forward_validation_foundation.ps1",
+      "type": "file",
+      "size": 39972
+    },
+    {
+      "path": "S8_78_promotion_policy_writer.ps1",
+      "name": "S8_78_promotion_policy_writer.ps1",
+      "type": "file",
+      "size": 27282
+    },
+    {
+      "path": "S8_79_promotion_policy_hook.ps1",
+      "name": "S8_79_promotion_policy_hook.ps1",
+      "type": "file",
+      "size": 24336
+    },
+    {
+      "path": "S8_80_admin_investor_research_report.ps1",
+      "name": "S8_80_admin_investor_research_report.ps1",
+      "type": "file",
+      "size": 23727
+    },
+    {
+      "path": "S8_81A_no_data_chunk_guard.ps1",
+      "name": "S8_81A_no_data_chunk_guard.ps1",
+      "type": "file",
+      "size": 5509
+    },
+    {
+      "path": "S8_81_scale_backfill_plan.ps1",
+      "name": "S8_81_scale_backfill_plan.ps1",
+      "type": "file",
+      "size": 19858
+    },
+    {
+      "path": "S8_82_provider_coverage_probe.ps1",
+      "name": "S8_82_provider_coverage_probe.ps1",
+      "type": "file",
+      "size": 19487
+    },
+    {
+      "path": "S8_83A_coverage_queue_500_hotfix.ps1",
+      "name": "S8_83A_coverage_queue_500_hotfix.ps1",
+      "type": "file",
+      "size": 5239
+    },
+    {
+      "path": "S8_83B_coverage_queue_safe_endpoint.ps1",
+      "name": "S8_83B_coverage_queue_safe_endpoint.ps1",
+      "type": "file",
+      "size": 13879
+    },
+    {
+      "path": "S8_83_coverage_aware_queue_builder.ps1",
+      "name": "S8_83_coverage_aware_queue_builder.ps1",
+      "type": "file",
+      "size": 14618
+    },
+    {
+      "path": "S8_84A_setup_replay_jsonl_reader_hotfix.ps1",
+      "name": "S8_84A_setup_replay_jsonl_reader_hotfix.ps1",
+      "type": "file",
+      "size": 28655
+    },
+    {
+      "path": "S8_84B_feature_file_inspect.ps1",
+      "name": "S8_84B_feature_file_inspect.ps1",
+      "type": "file",
+      "size": 2249
+    },
+    {
+      "path": "S8_84B_robust_feature_builder_hotfix.ps1",
+      "name": "S8_84B_robust_feature_builder_hotfix.ps1",
+      "type": "file",
+      "size": 24694
+    },
+    {
+      "path": "S8_84C2_backfill_robust_chain_patch.ps1",
+      "name": "S8_84C2_backfill_robust_chain_patch.ps1",
+      "type": "file",
+      "size": 4804
+    },
+    {
+      "path": "S8_84C_backfill_robust_chain_patch.ps1",
+      "name": "S8_84C_backfill_robust_chain_patch.ps1",
+      "type": "file",
+      "size": 1990
+    },
+    {
+      "path": "S8_84D_robust_outcome_simulator_hotfix.ps1",
+      "name": "S8_84D_robust_outcome_simulator_hotfix.ps1",
+      "type": "file",
+      "size": 36084
+    },
+    {
+      "path": "S8_84_clean_empty_derived_files.ps1",
+      "name": "S8_84_clean_empty_derived_files.ps1",
+      "type": "file",
+      "size": 4816
+    },
+    {
+      "path": "S8_84_outcome_date_diagnostic.ps1",
+      "name": "S8_84_outcome_date_diagnostic.ps1",
+      "type": "file",
+      "size": 4464
+    },
+    {
+      "path": "S8_85_long_history_research_plan.ps1",
+      "name": "S8_85_long_history_research_plan.ps1",
+      "type": "file",
+      "size": 24801
+    },
+    {
+      "path": "S8_86_p1_long_history_runner.ps1",
+      "name": "S8_86_p1_long_history_runner.ps1",
+      "type": "file",
+      "size": 11137
+    },
+    {
+      "path": "S8_87_provider_coverage_audit.ps1",
+      "name": "S8_87_provider_coverage_audit.ps1",
+      "type": "file",
+      "size": 7913
+    },
+    {
+      "path": "S8_88A_fmp_key_locator_endpoint_audit.ps1",
+      "name": "S8_88A_fmp_key_locator_endpoint_audit.ps1",
+      "type": "file",
+      "size": 13676
+    },
+    {
+      "path": "S8_88B_robust_fmp_stable_intraday_ingestion.ps1",
+      "name": "S8_88B_robust_fmp_stable_intraday_ingestion.ps1",
+      "type": "file",
+      "size": 25114
+    },
+    {
+      "path": "S8_88_fmp_intraday_endpoint_audit.ps1",
+      "name": "S8_88_fmp_intraday_endpoint_audit.ps1",
+      "type": "file",
+      "size": 11124
+    },
+    {
+      "path": "S8_89_long_history_runner_v2.ps1",
+      "name": "S8_89_long_history_runner_v2.ps1",
+      "type": "file",
+      "size": 14327
+    },
+    {
+      "path": "S8_90_strategy_variant_miner.ps1",
+      "name": "S8_90_strategy_variant_miner.ps1",
+      "type": "file",
+      "size": 10761
+    },
+    {
+      "path": "S8_91_offline_walk_forward_audit.ps1",
+      "name": "S8_91_offline_walk_forward_audit.ps1",
+      "type": "file",
+      "size": 14614
+    },
+    {
+      "path": "S8_92B_safe_optimizer_background.ps1",
+      "name": "S8_92B_safe_optimizer_background.ps1",
+      "type": "file",
+      "size": 14229
+    },
+    {
+      "path": "S8_92C_optimizer_clean_background_start.ps1",
+      "name": "S8_92C_optimizer_clean_background_start.ps1",
+      "type": "file",
+      "size": 3680
+    },
+    {
+      "path": "S8_92D_optimizer_clean_background_start_fixed.ps1",
+      "name": "S8_92D_optimizer_clean_background_start_fixed.ps1",
+      "type": "file",
+      "size": 3937
+    },
+    {
+      "path": "S8_92E_optimizer_clean_background_start_ps51.ps1",
+      "name": "S8_92E_optimizer_clean_background_start_ps51.ps1",
+      "type": "file",
+      "size": 4644
+    },
+    {
+      "path": "S8_92_advanced_optimizer_v2.ps1",
+      "name": "S8_92_advanced_optimizer_v2.ps1",
+      "type": "file",
+      "size": 19056
+    },
+    {
+      "path": "S8_93_candidate_management_optimizer.ps1",
+      "name": "S8_93_candidate_management_optimizer.ps1",
+      "type": "file",
+      "size": 23920
+    },
+    {
+      "path": "S8_94_exact_candle_replay_confirmator.ps1",
+      "name": "S8_94_exact_candle_replay_confirmator.ps1",
+      "type": "file",
+      "size": 20010
+    },
+    {
+      "path": "S8_95_exact_pass_robustness_audit.ps1",
+      "name": "S8_95_exact_pass_robustness_audit.ps1",
+      "type": "file",
+      "size": 14387
+    },
+    {
+      "path": "S8_96_expanded_exact_replay_chain.ps1",
+      "name": "S8_96_expanded_exact_replay_chain.ps1",
+      "type": "file",
+      "size": 5273
+    },
+    {
+      "path": "S8_97_forward_shadow_candidate_registry.ps1",
+      "name": "S8_97_forward_shadow_candidate_registry.ps1",
+      "type": "file",
+      "size": 11603
+    },
+    {
+      "path": "S8_98_forward_shadow_daily_evaluator.ps1",
+      "name": "S8_98_forward_shadow_daily_evaluator.ps1",
+      "type": "file",
+      "size": 29591
+    },
+    {
+      "path": "S8_99_forward_shadow_nightly_scheduler.ps1",
+      "name": "S8_99_forward_shadow_nightly_scheduler.ps1",
+      "type": "file",
+      "size": 6633
+    },
+    {
+      "path": "S9_00_forward_shadow_promotion_gate_report.ps1",
+      "name": "S9_00_forward_shadow_promotion_gate_report.ps1",
+      "type": "file",
+      "size": 11212
+    },
+    {
+      "path": "S9_01_forward_shadow_promotion_gate_scheduler.ps1",
+      "name": "S9_01_forward_shadow_promotion_gate_scheduler.ps1",
+      "type": "file",
+      "size": 6828
+    },
+    {
+      "path": "S9_02_forward_shadow_dedupe_and_idempotency_patch.ps1",
+      "name": "S9_02_forward_shadow_dedupe_and_idempotency_patch.ps1",
+      "type": "file",
+      "size": 10071
+    },
+    {
+      "path": "S9_03_forward_shadow_ops_status_report.ps1",
+      "name": "S9_03_forward_shadow_ops_status_report.ps1",
+      "type": "file",
+      "size": 11160
+    },
+    {
+      "path": "S9_04_forward_shadow_admin_api_patch.ps1",
+      "name": "S9_04_forward_shadow_admin_api_patch.ps1",
+      "type": "file",
+      "size": 15832
+    },
+    {
+      "path": "S9_05_forward_shadow_admin_html_ui_patch.ps1",
+      "name": "S9_05_forward_shadow_admin_html_ui_patch.ps1",
+      "type": "file",
+      "size": 16253
+    },
+    {
+      "path": "S9_06_monday_forward_shadow_readiness_check.ps1",
+      "name": "S9_06_monday_forward_shadow_readiness_check.ps1",
+      "type": "file",
+      "size": 8689
+    },
+    {
+      "path": "S9_07_universe_v1_liquid_stocks_builder.ps1",
+      "name": "S9_07_universe_v1_liquid_stocks_builder.ps1",
+      "type": "file",
+      "size": 9541
+    },
+    {
+      "path": "S9_08B_universe_v1_overnight_backfill_scheduler.ps1",
+      "name": "S9_08B_universe_v1_overnight_backfill_scheduler.ps1",
+      "type": "file",
+      "size": 15507
+    },
+    {
+      "path": "S9_08_controlled_5y_backfill_queue.ps1",
+      "name": "S9_08_controlled_5y_backfill_queue.ps1",
+      "type": "file",
+      "size": 19464
+    },
+    {
+      "path": "S9_09_internal_research_agents_registry.ps1",
+      "name": "S9_09_internal_research_agents_registry.ps1",
+      "type": "file",
+      "size": 21311
+    },
+    {
+      "path": "S9_10_nightly_research_optimizer_controller.ps1",
+      "name": "S9_10_nightly_research_optimizer_controller.ps1",
+      "type": "file",
+      "size": 16731
+    },
+    {
+      "path": "S9_10_nightly_research_optimizer_controller_CLEAN.ps1",
+      "name": "S9_10_nightly_research_optimizer_controller_CLEAN.ps1",
+      "type": "file",
+      "size": 24975
+    },
+    {
+      "path": "S9_10_nightly_research_optimizer_controller_FIXED.ps1",
+      "name": "S9_10_nightly_research_optimizer_controller_FIXED.ps1",
+      "type": "file",
+      "size": 16741
+    },
+    {
+      "path": "S9_11B_fmp_key_locator_universe_v2_rebuild.ps1",
+      "name": "S9_11B_fmp_key_locator_universe_v2_rebuild.ps1",
+      "type": "file",
+      "size": 31128
+    },
+    {
+      "path": "S9_11_market_cap_buckets_universe_v2.ps1",
+      "name": "S9_11_market_cap_buckets_universe_v2.ps1",
+      "type": "file",
+      "size": 28463
+    },
+    {
+      "path": "S9_12B_capitalization_aware_backfill_scheduler.ps1",
+      "name": "S9_12B_capitalization_aware_backfill_scheduler.ps1",
+      "type": "file",
+      "size": 35643
+    },
+    {
+      "path": "S9_12_capitalization_aware_backfill_queue.ps1",
+      "name": "S9_12_capitalization_aware_backfill_queue.ps1",
+      "type": "file",
+      "size": 24590
+    },
+    {
+      "path": "S9_13_cap_aware_optimizer_controller_patch.ps1",
+      "name": "S9_13_cap_aware_optimizer_controller_patch.ps1",
+      "type": "file",
+      "size": 17628
+    },
+    {
+      "path": "S9_14B_outcome_artifact_locator.ps1",
+      "name": "S9_14B_outcome_artifact_locator.ps1",
+      "type": "file",
+      "size": 17078
+    },
+    {
+      "path": "S9_14C_cap_aware_evidence_miner_fixed.ps1",
+      "name": "S9_14C_cap_aware_evidence_miner_fixed.ps1",
+      "type": "file",
+      "size": 25418
+    },
+    {
+      "path": "S9_14_cap_aware_evidence_miner.ps1",
+      "name": "S9_14_cap_aware_evidence_miner.ps1",
+      "type": "file",
+      "size": 23820
+    },
+    {
+      "path": "S9_15B_leak_proof_cap_aware_variant_miner.ps1",
+      "name": "S9_15B_leak_proof_cap_aware_variant_miner.ps1",
+      "type": "file",
+      "size": 35260
+    },
+    {
+      "path": "S9_15C_actionable_pretrade_variant_miner.ps1",
+      "name": "S9_15C_actionable_pretrade_variant_miner.ps1",
+      "type": "file",
+      "size": 35494
+    },
+    {
+      "path": "S9_15D_actionable_reason_variant_miner.ps1",
+      "name": "S9_15D_actionable_reason_variant_miner.ps1",
+      "type": "file",
+      "size": 35885
+    },
+    {
+      "path": "S9_15E_payload_whitelist_actionable_variant_miner.ps1",
+      "name": "S9_15E_payload_whitelist_actionable_variant_miner.ps1",
+      "type": "file",
+      "size": 35692
+    },
+    {
+      "path": "S9_15_cap_aware_variant_miner.ps1",
+      "name": "S9_15_cap_aware_variant_miner.ps1",
+      "type": "file",
+      "size": 31880
+    },
+    {
+      "path": "S9_16B_exact_replay_confirmator.ps1",
+      "name": "S9_16B_exact_replay_confirmator.ps1",
+      "type": "file",
+      "size": 23436
+    },
+    {
+      "path": "S9_16_actionable_research_checkpoint.ps1",
+      "name": "S9_16_actionable_research_checkpoint.ps1",
+      "type": "file",
+      "size": 8858
+    },
+    {
+      "path": "START_ALL_README.txt",
+      "name": "START_ALL_README.txt",
+      "type": "file",
+      "size": 439
+    },
+    {
+      "path": "Supabase Snippet Untitled query.csv",
+      "name": "Supabase Snippet Untitled query.csv",
+      "type": "file",
+      "size": 3804
+    },
+    {
+      "path": "_archive",
+      "name": "_archive",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "_context_build.log",
+      "name": "_context_build.log",
+      "type": "file",
+      "size": 7472
+    },
+    {
+      "path": "_context_dev_3b2e_3b3.log",
+      "name": "_context_dev_3b2e_3b3.log",
+      "type": "file",
+      "size": 832
+    },
+    {
+      "path": "_project_context",
+      "name": "_project_context",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "_s10_0_paper_trading_install.py",
+      "name": "_s10_0_paper_trading_install.py",
+      "type": "file",
+      "size": 26844
+    },
+    {
+      "path": "_s875b_patch_tmp.py",
+      "name": "_s875b_patch_tmp.py",
+      "type": "file",
+      "size": 3269
+    },
+    {
+      "path": "app",
+      "name": "app",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "audit_exports",
+      "name": "audit_exports",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "components",
+      "name": "components",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "components.json",
+      "name": "components.json",
+      "type": "file",
+      "size": 517
+    },
+    {
+      "path": "dashboard-current.tsx",
+      "name": "dashboard-current.tsx",
+      "type": "file",
+      "size": 985613
+    },
+    {
+      "path": "deploy_stock_engine",
+      "name": "deploy_stock_engine",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "eslint.config.mjs",
+      "name": "eslint.config.mjs",
+      "type": "file",
+      "size": 465
+    },
+    {
+      "path": "landing-current.txt",
+      "name": "landing-current.txt",
+      "type": "file",
+      "size": 154586
+    },
+    {
+      "path": "landing-pricing-current.tsx",
+      "name": "landing-pricing-current.tsx",
+      "type": "file",
+      "size": 299449
+    },
+    {
+      "path": "landing-pricing-current.txt",
+      "name": "landing-pricing-current.txt",
+      "type": "file",
+      "size": 230480
+    },
+    {
+      "path": "legal-pages-bundle.txt",
+      "name": "legal-pages-bundle.txt",
+      "type": "file",
+      "size": 51819
+    },
+    {
+      "path": "lib",
+      "name": "lib",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "market-alerts-route.txt",
+      "name": "market-alerts-route.txt",
+      "type": "file",
+      "size": 29938
+    },
+    {
+      "path": "metadata-logo-bundle.txt",
+      "name": "metadata-logo-bundle.txt",
+      "type": "file",
+      "size": 17879
+    },
+    {
+      "path": "next-env.d.ts",
+      "name": "next-env.d.ts",
+      "type": "file",
+      "size": 251
+    },
+    {
+      "path": "next.config.ts",
+      "name": "next.config.ts",
+      "type": "file",
+      "size": 154
+    },
+    {
+      "path": "package-lock.json",
+      "name": "package-lock.json",
+      "type": "file",
+      "size": 437460
+    },
+    {
+      "path": "package.json",
+      "name": "package.json",
+      "type": "file",
+      "size": 996
+    },
+    {
+      "path": "postcss.config.mjs",
+      "name": "postcss.config.mjs",
+      "type": "file",
+      "size": 94
+    },
+    {
+      "path": "premium-recolor-landing-safe.ps1",
+      "name": "premium-recolor-landing-safe.ps1",
+      "type": "file",
+      "size": 7637
+    },
+    {
+      "path": "public",
+      "name": "public",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s511b_restore_again",
+      "name": "s511b_restore_again",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s511b_safe_patch",
+      "name": "s511b_safe_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s512_patch",
+      "name": "s512_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s512b_patch",
+      "name": "s512b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s513_patch",
+      "name": "s513_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s513_safe_patch",
+      "name": "s513_safe_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s513b_patch",
+      "name": "s513b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514_patch",
+      "name": "s514_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514b_patch",
+      "name": "s514b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514c_patch",
+      "name": "s514c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514d_patch",
+      "name": "s514d_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514e_patch",
+      "name": "s514e_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514e_runtime_source_of_truth_patch.zip",
+      "name": "s514e_runtime_source_of_truth_patch.zip",
+      "type": "file",
+      "size": 43484
+    },
+    {
+      "path": "s515_daily_forward_test_report_patch.zip",
+      "name": "s515_daily_forward_test_report_patch.zip",
+      "type": "file",
+      "size": 45746
+    },
+    {
+      "path": "s515_patch",
+      "name": "s515_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s515b_lifecycle_attach_forward_report_patch.zip",
+      "name": "s515b_lifecycle_attach_forward_report_patch.zip",
+      "type": "file",
+      "size": 46567
+    },
+    {
+      "path": "s515b_patch",
+      "name": "s515b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s515c_lifecycle_active_source_fallback_patch.zip",
+      "name": "s515c_lifecycle_active_source_fallback_patch.zip",
+      "type": "file",
+      "size": 47672
+    },
+    {
+      "path": "s515c_patch",
+      "name": "s515c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s516_entry_health_forward_report_patch.zip",
+      "name": "s516_entry_health_forward_report_patch.zip",
+      "type": "file",
+      "size": 48932
+    },
+    {
+      "path": "s516_patch",
+      "name": "s516_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s516b_entry_health_selection_fix_patch.zip",
+      "name": "s516b_entry_health_selection_fix_patch.zip",
+      "type": "file",
+      "size": 49282
+    },
+    {
+      "path": "s516b_patch",
+      "name": "s516b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s58_start_scripts_fixed",
+      "name": "s58_start_scripts_fixed",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s58_start_scripts_v2_fixed",
+      "name": "s58_start_scripts_v2_fixed",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s61_historical_replay_foundation_patch.zip",
+      "name": "s61_historical_replay_foundation_patch.zip",
+      "type": "file",
+      "size": 51377
+    },
+    {
+      "path": "s61_patch",
+      "name": "s61_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s61b_patch",
+      "name": "s61b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s61b_replay_readiness_diagnostics_fix_patch.zip",
+      "name": "s61b_replay_readiness_diagnostics_fix_patch.zip",
+      "type": "file",
+      "size": 52186
+    },
+    {
+      "path": "s62_historical_watchlist_builder_patch.zip",
+      "name": "s62_historical_watchlist_builder_patch.zip",
+      "type": "file",
+      "size": 55048
+    },
+    {
+      "path": "s62_patch",
+      "name": "s62_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s62b_historical_candle_timestamp_adapter_patch.zip",
+      "name": "s62b_historical_candle_timestamp_adapter_patch.zip",
+      "type": "file",
+      "size": 55811
+    },
+    {
+      "path": "s62b_patch",
+      "name": "s62b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s63_historical_setup_candidate_replay_patch.zip",
+      "name": "s63_historical_setup_candidate_replay_patch.zip",
+      "type": "file",
+      "size": 58388
+    },
+    {
+      "path": "s63_patch",
+      "name": "s63_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s63b_patch",
+      "name": "s63b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s63b_replay_candidate_quality_selector_patch.zip",
+      "name": "s63b_replay_candidate_quality_selector_patch.zip",
+      "type": "file",
+      "size": 59803
+    },
+    {
+      "path": "s64_patch",
+      "name": "s64_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s64_replay_outcome_evaluation_patch.zip",
+      "name": "s64_replay_outcome_evaluation_patch.zip",
+      "type": "file",
+      "size": 62827
+    },
+    {
+      "path": "s64b_patch",
+      "name": "s64b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s64b_persist_replay_outcomes_patch.zip",
+      "name": "s64b_persist_replay_outcomes_patch.zip",
+      "type": "file",
+      "size": 64189
+    },
+    {
+      "path": "s71_patch",
+      "name": "s71_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s71_replay_calibration_reranking_patch.zip",
+      "name": "s71_replay_calibration_reranking_patch.zip",
+      "type": "file",
+      "size": 66346
+    },
+    {
+      "path": "s72_multiday_replay_runner_patch.zip",
+      "name": "s72_multiday_replay_runner_patch.zip",
+      "type": "file",
+      "size": 67711
+    },
+    {
+      "path": "s72_patch",
+      "name": "s72_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s73_hybrid_calibration_merge_patch.zip",
+      "name": "s73_hybrid_calibration_merge_patch.zip",
+      "type": "file",
+      "size": 69578
+    },
+    {
+      "path": "s73_patch",
+      "name": "s73_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s74_controlled_adjustment_preview_patch.zip",
+      "name": "s74_controlled_adjustment_preview_patch.zip",
+      "type": "file",
+      "size": 71578
+    },
+    {
+      "path": "s74_patch",
+      "name": "s74_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s75_calibration_preview_cockpit_ui_patch.zip",
+      "name": "s75_calibration_preview_cockpit_ui_patch.zip",
+      "type": "file",
+      "size": 22982
+    },
+    {
+      "path": "s75_patch",
+      "name": "s75_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s75b_currentr_hotfix_patch.zip",
+      "name": "s75b_currentr_hotfix_patch.zip",
+      "type": "file",
+      "size": 23317
+    },
+    {
+      "path": "s75b_patch",
+      "name": "s75b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s75c_liveeventbus_hotfix_patch.zip",
+      "name": "s75c_liveeventbus_hotfix_patch.zip",
+      "type": "file",
+      "size": 23342
+    },
+    {
+      "path": "s75c_patch",
+      "name": "s75c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s80_nightly_server_runner_patch.zip",
+      "name": "s80_nightly_server_runner_patch.zip",
+      "type": "file",
+      "size": 7915
+    },
+    {
+      "path": "s80_patch",
+      "name": "s80_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s80b_patch",
+      "name": "s80b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s80b_runner_timeout_resilience_patch.zip",
+      "name": "s80b_runner_timeout_resilience_patch.zip",
+      "type": "file",
+      "size": 4087
+    },
+    {
+      "path": "s80c_cockpit_endpoint_fallback_patch.zip",
+      "name": "s80c_cockpit_endpoint_fallback_patch.zip",
+      "type": "file",
+      "size": 4663
+    },
+    {
+      "path": "s80c_patch",
+      "name": "s80c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s810a_trade_management_blocks.txt",
+      "name": "s810a_trade_management_blocks.txt",
+      "type": "file",
+      "size": 56200
+    },
+    {
+      "path": "s810c_session_guard_audit.txt",
+      "name": "s810c_session_guard_audit.txt",
+      "type": "file",
+      "size": 18852
+    },
+    {
+      "path": "s810d_nightly_window_audit.txt",
+      "name": "s810d_nightly_window_audit.txt",
+      "type": "file",
+      "size": 27960
+    },
+    {
+      "path": "s810e_outcome_cleanup_audit.txt",
+      "name": "s810e_outcome_cleanup_audit.txt",
+      "type": "file",
+      "size": 163788
+    },
+    {
+      "path": "s811_cockpit_ui_audit.txt",
+      "name": "s811_cockpit_ui_audit.txt",
+      "type": "file",
+      "size": 2155234
+    },
+    {
+      "path": "s811_dashboard_signals_snippet.txt",
+      "name": "s811_dashboard_signals_snippet.txt",
+      "type": "file",
+      "size": 101478
+    },
+    {
+      "path": "s811_focused_live_ui_audit.txt",
+      "name": "s811_focused_live_ui_audit.txt",
+      "type": "file",
+      "size": 3686
+    },
+    {
+      "path": "s811_signal_cockpit_pinpoint.txt",
+      "name": "s811_signal_cockpit_pinpoint.txt",
+      "type": "file",
+      "size": 233410
+    },
+    {
+      "path": "s811d2_local_502_body.txt",
+      "name": "s811d2_local_502_body.txt",
+      "type": "file",
+      "size": 736
+    },
+    {
+      "path": "s811d2_real_proxy_audit.txt",
+      "name": "s811d2_real_proxy_audit.txt",
+      "type": "file",
+      "size": 24062
+    },
+    {
+      "path": "s811d_proxy_env_audit.txt",
+      "name": "s811d_proxy_env_audit.txt",
+      "type": "file",
+      "size": 31494
+    },
+    {
+      "path": "s811e_chart_symbol_audit.txt",
+      "name": "s811e_chart_symbol_audit.txt",
+      "type": "file",
+      "size": 216354
+    },
+    {
+      "path": "s812a_forward_evidence_audit.txt",
+      "name": "s812a_forward_evidence_audit.txt",
+      "type": "file",
+      "size": 69054
+    },
+    {
+      "path": "s812b_forward_report_live_check.txt",
+      "name": "s812b_forward_report_live_check.txt",
+      "type": "file",
+      "size": 11056
+    },
+    {
+      "path": "s812c_current_forward_report_shape.txt",
+      "name": "s812c_current_forward_report_shape.txt",
+      "type": "file",
+      "size": 20180
+    },
+    {
+      "path": "s812c_evidence_snapshot_validation.txt",
+      "name": "s812c_evidence_snapshot_validation.txt",
+      "type": "file",
+      "size": 26860
+    },
+    {
+      "path": "s812c_investor_snapshot_audit.txt",
+      "name": "s812c_investor_snapshot_audit.txt",
+      "type": "file",
+      "size": 177720
+    },
+    {
+      "path": "s812d3_dashboard_router_audit.txt",
+      "name": "s812d3_dashboard_router_audit.txt",
+      "type": "file",
+      "size": 66566
+    },
+    {
+      "path": "s812d3_dashboard_router_deep_audit.txt",
+      "name": "s812d3_dashboard_router_deep_audit.txt",
+      "type": "file",
+      "size": 6475502
+    },
+    {
+      "path": "s812d_evidence_ui_audit.txt",
+      "name": "s812d_evidence_ui_audit.txt",
+      "type": "file",
+      "size": 226202
+    },
+    {
+      "path": "s813_final_verification.txt",
+      "name": "s813_final_verification.txt",
+      "type": "file",
+      "size": 12504
+    },
+    {
+      "path": "s813_post_close_evidence_automation_audit.txt",
+      "name": "s813_post_close_evidence_automation_audit.txt",
+      "type": "file",
+      "size": 45540
+    },
+    {
+      "path": "s813_post_close_evidence_validation.txt",
+      "name": "s813_post_close_evidence_validation.txt",
+      "type": "file",
+      "size": 39004
+    },
+    {
+      "path": "s814_evidence_outcome_quality_audit.txt",
+      "name": "s814_evidence_outcome_quality_audit.txt",
+      "type": "file",
+      "size": 72616
+    },
+    {
+      "path": "s814a_elite_gate_validation.txt",
+      "name": "s814a_elite_gate_validation.txt",
+      "type": "file",
+      "size": 6808
+    },
+    {
+      "path": "s814a_selector_quality_pinpoint.txt",
+      "name": "s814a_selector_quality_pinpoint.txt",
+      "type": "file",
+      "size": 135250
+    },
+    {
+      "path": "s814b_focused_service_check.txt",
+      "name": "s814b_focused_service_check.txt",
+      "type": "file",
+      "size": 84
+    },
+    {
+      "path": "s814b_permission_fix_validation.txt",
+      "name": "s814b_permission_fix_validation.txt",
+      "type": "file",
+      "size": 16140
+    },
+    {
+      "path": "s814b_service_diagnostic.txt",
+      "name": "s814b_service_diagnostic.txt",
+      "type": "file",
+      "size": 59524
+    },
+    {
+      "path": "s814b_setup_learning_validation.txt",
+      "name": "s814b_setup_learning_validation.txt",
+      "type": "file",
+      "size": 70778
+    },
+    {
+      "path": "s814c_learning_selector_validation.txt",
+      "name": "s814c_learning_selector_validation.txt",
+      "type": "file",
+      "size": 11204
+    },
+    {
+      "path": "s814d_investor_dashboard_validation.txt",
+      "name": "s814d_investor_dashboard_validation.txt",
+      "type": "file",
+      "size": 8076
+    },
+    {
+      "path": "s814e_admin_hub_pinpoint.txt",
+      "name": "s814e_admin_hub_pinpoint.txt",
+      "type": "file",
+      "size": 12840
+    },
+    {
+      "path": "s815a_clean_elite_ledger_pinpoint.txt",
+      "name": "s815a_clean_elite_ledger_pinpoint.txt",
+      "type": "file",
+      "size": 75848
+    },
+    {
+      "path": "s815a_clean_elite_ledger_validation.txt",
+      "name": "s815a_clean_elite_ledger_validation.txt",
+      "type": "file",
+      "size": 7590
+    },
+    {
+      "path": "s815b_clean_elite_investor_validation.txt",
+      "name": "s815b_clean_elite_investor_validation.txt",
+      "type": "file",
+      "size": 21596
+    },
+    {
+      "path": "s815c_clean_elite_live_timer_validation.txt",
+      "name": "s815c_clean_elite_live_timer_validation.txt",
+      "type": "file",
+      "size": 8778
+    },
+    {
+      "path": "s816a1_forward_elite_test_validation.txt",
+      "name": "s816a1_forward_elite_test_validation.txt",
+      "type": "file",
+      "size": 9418
+    },
+    {
+      "path": "s816a2_ledger_split_validation.txt",
+      "name": "s816a2_ledger_split_validation.txt",
+      "type": "file",
+      "size": 3696
+    },
+    {
+      "path": "s816a_elite_gate_calibration_pinpoint.txt",
+      "name": "s816a_elite_gate_calibration_pinpoint.txt",
+      "type": "file",
+      "size": 130956
+    },
+    {
+      "path": "s819a_strategy_registry_local.ps1",
+      "name": "s819a_strategy_registry_local.ps1",
+      "type": "file",
+      "size": 9616
+    },
+    {
+      "path": "s819a_strategy_registry_local_nocd.ps1",
+      "name": "s819a_strategy_registry_local_nocd.ps1",
+      "type": "file",
+      "size": 9789
+    },
+    {
+      "path": "s81_patch",
+      "name": "s81_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s81_vps_deploy_pack.zip",
+      "name": "s81_vps_deploy_pack.zip",
+      "type": "file",
+      "size": 7687
+    },
+    {
+      "path": "s81b_patch",
+      "name": "s81b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s81b_vps_deploy_pack_install_fix.zip",
+      "name": "s81b_vps_deploy_pack_install_fix.zip",
+      "type": "file",
+      "size": 9727
+    },
+    {
+      "path": "s820a_night_calibration_local.ps1",
+      "name": "s820a_night_calibration_local.ps1",
+      "type": "file",
+      "size": 9634
+    },
+    {
+      "path": "s824a_cockpit_root.json",
+      "name": "s824a_cockpit_root.json",
+      "type": "file",
+      "size": 907227
+    },
+    {
+      "path": "s824a_symbol_SRFM.json",
+      "name": "s824a_symbol_SRFM.json",
+      "type": "file",
+      "size": 21836
+    },
+    {
+      "path": "s826b_client_delivery_audit_raw.json",
+      "name": "s826b_client_delivery_audit_raw.json",
+      "type": "file",
+      "size": 16866
+    },
+    {
+      "path": "s82_patch",
+      "name": "s82_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s82_secure_engine_ingress_patch.zip",
+      "name": "s82_secure_engine_ingress_patch.zip",
+      "type": "file",
+      "size": 3814
+    },
+    {
+      "path": "s83_patch",
+      "name": "s83_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s83_secure_frontend_stock_engine_proxy_patch.zip",
+      "name": "s83_secure_frontend_stock_engine_proxy_patch.zip",
+      "type": "file",
+      "size": 5781
+    },
+    {
+      "path": "s845_db_source_audit.py",
+      "name": "s845_db_source_audit.py",
+      "type": "file",
+      "size": 1238
+    },
+    {
+      "path": "s845_db_source_audit_output.txt",
+      "name": "s845_db_source_audit_output.txt",
+      "type": "file",
+      "size": 89894
+    },
+    {
+      "path": "s846_shadow_outcome_attribution_audit.py",
+      "name": "s846_shadow_outcome_attribution_audit.py",
+      "type": "file",
+      "size": 2690
+    },
+    {
+      "path": "s846_shadow_outcome_attribution_audit_output.txt",
+      "name": "s846_shadow_outcome_attribution_audit_output.txt",
+      "type": "file",
+      "size": 43298
+    },
+    {
+      "path": "s84a_market_holiday_guard_patch.zip",
+      "name": "s84a_market_holiday_guard_patch.zip",
+      "type": "file",
+      "size": 9135
+    },
+    {
+      "path": "s84a_patch",
+      "name": "s84a_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s86_engine_monitoring_watchdog_patch.zip",
+      "name": "s86_engine_monitoring_watchdog_patch.zip",
+      "type": "file",
+      "size": 5270
+    },
+    {
+      "path": "s86_patch",
+      "name": "s86_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s88_patch",
+      "name": "s88_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s88_production_live_day_readiness_patch.zip",
+      "name": "s88_production_live_day_readiness_patch.zip",
+      "type": "file",
+      "size": 6977
+    },
+    {
+      "path": "services",
+      "name": "services",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "stable_s516b_entry_health_working_2026-06-17_19-40-48.zip",
+      "name": "stable_s516b_entry_health_working_2026-06-17_19-40-48.zip",
+      "type": "file",
+      "size": 125816
+    },
+    {
+      "path": "start_all_local.ps1",
+      "name": "start_all_local.ps1",
+      "type": "file",
+      "size": 4256
+    },
+    {
+      "path": "stock-engine-vps.zip",
+      "name": "stock-engine-vps.zip",
+      "type": "file",
+      "size": 2469938
+    },
+    {
+      "path": "stop_local_ports.ps1",
+      "name": "stop_local_ports.ps1",
+      "type": "file",
+      "size": 1367
+    },
+    {
+      "path": "supabase",
+      "name": "supabase",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "tsconfig.json",
+      "name": "tsconfig.json",
+      "type": "file",
+      "size": 666
+    },
+    {
+      "path": "tsconfig.tsbuildinfo",
+      "name": "tsconfig.tsbuildinfo",
+      "type": "file",
+      "size": 256880
+    },
+    {
+      "path": "vercel.json",
+      "name": "vercel.json",
+      "type": "file",
+      "size": 420
+    }
+  ],
+  "rootArtifacts": [
+    {
+      "path": "S10_0_50k_paper_trading_desk_installer.ps1",
+      "name": "S10_0_50k_paper_trading_desk_installer.ps1",
+      "type": "file",
+      "size": 27490
+    },
+    {
+      "path": "S10_1_paper_signal_source_bridge.ps1",
+      "name": "S10_1_paper_signal_source_bridge.ps1",
+      "type": "file",
+      "size": 13145
+    },
+    {
+      "path": "S10_1_paper_signal_source_bridge_FIX.ps1",
+      "name": "S10_1_paper_signal_source_bridge_FIX.ps1",
+      "type": "file",
+      "size": 13200
+    },
+    {
+      "path": "S10_2_paper_guard_hotfix_reset.ps1",
+      "name": "S10_2_paper_guard_hotfix_reset.ps1",
+      "type": "file",
+      "size": 17046
+    },
+    {
+      "path": "S10_3B_best_ideas_value_unwrap_hotfix.ps1",
+      "name": "S10_3B_best_ideas_value_unwrap_hotfix.ps1",
+      "type": "file",
+      "size": 7656
+    },
+    {
+      "path": "S10_3C_live_signal_timestamp_enrichment.ps1",
+      "name": "S10_3C_live_signal_timestamp_enrichment.ps1",
+      "type": "file",
+      "size": 15649
+    },
+    {
+      "path": "S10_3D_final_admission_gate_and_clean_reset.ps1",
+      "name": "S10_3D_final_admission_gate_and_clean_reset.ps1",
+      "type": "file",
+      "size": 11149
+    },
+    {
+      "path": "S10_3E_emergency_containment_reset.ps1",
+      "name": "S10_3E_emergency_containment_reset.ps1",
+      "type": "file",
+      "size": 2075
+    },
+    {
+      "path": "S10_3E_signals_schema_probe.ps1",
+      "name": "S10_3E_signals_schema_probe.ps1",
+      "type": "file",
+      "size": 8820
+    },
+    {
+      "path": "S10_3F_exact_live_signal_matcher_diagnostic_only.ps1",
+      "name": "S10_3F_exact_live_signal_matcher_diagnostic_only.ps1",
+      "type": "file",
+      "size": 10170
+    },
+    {
+      "path": "S10_3G_loopback_http_matcher_diagnostic_only.ps1",
+      "name": "S10_3G_loopback_http_matcher_diagnostic_only.ps1",
+      "type": "file",
+      "size": 11049
+    },
+    {
+      "path": "S10_3H_signal_source_of_truth_probe.ps1",
+      "name": "S10_3H_signal_source_of_truth_probe.ps1",
+      "type": "file",
+      "size": 8372
+    },
+    {
+      "path": "S10_3I_sqlite_signal_records_matcher_diagnostic_only.ps1",
+      "name": "S10_3I_sqlite_signal_records_matcher_diagnostic_only.ps1",
+      "type": "file",
+      "size": 10892
+    },
+    {
+      "path": "S10_3J_controlled_single_paper_run.ps1",
+      "name": "S10_3J_controlled_single_paper_run.ps1",
+      "type": "file",
+      "size": 2281
+    },
+    {
+      "path": "S10_3K_paper_evaluation_path_probe.ps1",
+      "name": "S10_3K_paper_evaluation_path_probe.ps1",
+      "type": "file",
+      "size": 4789
+    },
+    {
+      "path": "S10_3L_update_open_positions_probe.ps1",
+      "name": "S10_3L_update_open_positions_probe.ps1",
+      "type": "file",
+      "size": 5926
+    },
+    {
+      "path": "S10_3M_evaluation_only_endpoint_and_single_run.ps1",
+      "name": "S10_3M_evaluation_only_endpoint_and_single_run.ps1",
+      "type": "file",
+      "size": 11079
+    },
+    {
+      "path": "S10_3N_install_evaluation_only_timer.ps1",
+      "name": "S10_3N_install_evaluation_only_timer.ps1",
+      "type": "file",
+      "size": 6240
+    },
+    {
+      "path": "S10_3O_install_session_close_guard.ps1",
+      "name": "S10_3O_install_session_close_guard.ps1",
+      "type": "file",
+      "size": 9900
+    },
+    {
+      "path": "S10_3P_post_close_verification.ps1",
+      "name": "S10_3P_post_close_verification.ps1",
+      "type": "file",
+      "size": 2218
+    },
+    {
+      "path": "S10_3Q_install_market_hours_guarded_entry_timer.ps1",
+      "name": "S10_3Q_install_market_hours_guarded_entry_timer.ps1",
+      "type": "file",
+      "size": 7697
+    },
+    {
+      "path": "S10_3R_guarded_entry_timer_scheduling_probe.ps1",
+      "name": "S10_3R_guarded_entry_timer_scheduling_probe.ps1",
+      "type": "file",
+      "size": 2840
+    },
+    {
+      "path": "S10_3S_fix_guarded_entry_calendar_timer.ps1",
+      "name": "S10_3S_fix_guarded_entry_calendar_timer.ps1",
+      "type": "file",
+      "size": 3175
+    },
+    {
+      "path": "S10_3T_fix_guarded_entry_monotonic_timer.ps1",
+      "name": "S10_3T_fix_guarded_entry_monotonic_timer.ps1",
+      "type": "file",
+      "size": 3410
+    },
+    {
+      "path": "S10_3U_verify_first_automatic_entry_fire.ps1",
+      "name": "S10_3U_verify_first_automatic_entry_fire.ps1",
+      "type": "file",
+      "size": 2559
+    },
+    {
+      "path": "S10_3_best_desk_idea_paper_bridge.ps1",
+      "name": "S10_3_best_desk_idea_paper_bridge.ps1",
+      "type": "file",
+      "size": 46555
+    },
+    {
+      "path": "S10_3_best_desk_idea_paper_bridge_FIXED.ps1",
+      "name": "S10_3_best_desk_idea_paper_bridge_FIXED.ps1",
+      "type": "file",
+      "size": 46557
+    },
+    {
+      "path": "S10_4A_collect_full_audit_snapshot.ps1",
+      "name": "S10_4A_collect_full_audit_snapshot.ps1",
+      "type": "file",
+      "size": 7076
+    },
+    {
+      "path": "S10_4B_collect_vps_inventory_only.ps1",
+      "name": "S10_4B_collect_vps_inventory_only.ps1",
+      "type": "file",
+      "size": 7378
+    },
+    {
+      "path": "S10_4C_runtime_incident_probe.ps1",
+      "name": "S10_4C_runtime_incident_probe.ps1",
+      "type": "file",
+      "size": 7514
+    },
+    {
+      "path": "S10_4D_runtime_semantics_fix.ps1",
+      "name": "S10_4D_runtime_semantics_fix.ps1",
+      "type": "file",
+      "size": 14942
+    },
+    {
+      "path": "S10_4E_local_vps_reconciliation.ps1",
+      "name": "S10_4E_local_vps_reconciliation.ps1",
+      "type": "file",
+      "size": 11180
+    },
+    {
+      "path": "S10_4E_local_vps_reconciliation_FIXED.ps1",
+      "name": "S10_4E_local_vps_reconciliation_FIXED.ps1",
+      "type": "file",
+      "size": 13927
+    },
+    {
+      "path": "S10_4F_canonical_source_recovery.ps1",
+      "name": "S10_4F_canonical_source_recovery.ps1",
+      "type": "file",
+      "size": 9983
+    },
+    {
+      "path": "S10_4F_canonical_source_recovery_FIXED.ps1",
+      "name": "S10_4F_canonical_source_recovery_FIXED.ps1",
+      "type": "file",
+      "size": 10560
+    },
+    {
+      "path": "S10_4G_systemd_runtime_dependency_audit.ps1",
+      "name": "S10_4G_systemd_runtime_dependency_audit.ps1",
+      "type": "file",
+      "size": 13510
+    },
+    {
+      "path": "S10_4H_systemd_canonical_recovery_and_clean_dependency_map.ps1",
+      "name": "S10_4H_systemd_canonical_recovery_and_clean_dependency_map.ps1",
+      "type": "file",
+      "size": 13723
+    },
+    {
+      "path": "S10_4I_cleanup_classification_audit.ps1",
+      "name": "S10_4I_cleanup_classification_audit.ps1",
+      "type": "file",
+      "size": 15977
+    },
+    {
+      "path": "S8.34A_add_strategy_evidence.ps1",
+      "name": "S8.34A_add_strategy_evidence.ps1",
+      "type": "file",
+      "size": 14071
+    },
+    {
+      "path": "S8.35A_add_failure_analysis_agent.ps1",
+      "name": "S8.35A_add_failure_analysis_agent.ps1",
+      "type": "file",
+      "size": 24965
+    },
+    {
+      "path": "S8.36A_add_promotion_guard.ps1",
+      "name": "S8.36A_add_promotion_guard.ps1",
+      "type": "file",
+      "size": 16112
+    },
+    {
+      "path": "S8.37A_add_admin_ops_status.ps1",
+      "name": "S8.37A_add_admin_ops_status.ps1",
+      "type": "file",
+      "size": 12852
+    },
+    {
+      "path": "S8.38A_investor_snapshot_adapter.ps1",
+      "name": "S8.38A_investor_snapshot_adapter.ps1",
+      "type": "file",
+      "size": 13359
+    },
+    {
+      "path": "S8.38B_investor_dashboard_ui_cleanup.ps1",
+      "name": "S8.38B_investor_dashboard_ui_cleanup.ps1",
+      "type": "file",
+      "size": 23951
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix.ps1",
+      "type": "file",
+      "size": 2800
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix_v2.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix_v2.ps1",
+      "type": "file",
+      "size": 3423
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix_v3.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix_v3.ps1",
+      "type": "file",
+      "size": 4082
+    },
+    {
+      "path": "S8.38C_investor_dashboard_ascii_hotfix_v4.ps1",
+      "name": "S8.38C_investor_dashboard_ascii_hotfix_v4.ps1",
+      "type": "file",
+      "size": 3394
+    },
+    {
+      "path": "S8.39A_add_manual_approval_storage.ps1",
+      "name": "S8.39A_add_manual_approval_storage.ps1",
+      "type": "file",
+      "size": 12041
+    },
+    {
+      "path": "S8.40A_add_outcome_repair_planner.ps1",
+      "name": "S8.40A_add_outcome_repair_planner.ps1",
+      "type": "file",
+      "size": 14587
+    },
+    {
+      "path": "S8.40A_fix_expired_session_status.ps1",
+      "name": "S8.40A_fix_expired_session_status.ps1",
+      "type": "file",
+      "size": 1427
+    },
+    {
+      "path": "S8.40B2_add_outcome_open_replay_probe_v2.ps1",
+      "name": "S8.40B2_add_outcome_open_replay_probe_v2.ps1",
+      "type": "file",
+      "size": 15749
+    },
+    {
+      "path": "S8.40B_add_outcome_open_replay_probe.ps1",
+      "name": "S8.40B_add_outcome_open_replay_probe.ps1",
+      "type": "file",
+      "size": 10417
+    },
+    {
+      "path": "S8.40C_add_no_eval_missing_candles_classifier.ps1",
+      "name": "S8.40C_add_no_eval_missing_candles_classifier.ps1",
+      "type": "file",
+      "size": 14955
+    },
+    {
+      "path": "S8.40D_add_no_eval_partial_open_classifier.ps1",
+      "name": "S8.40D_add_no_eval_partial_open_classifier.ps1",
+      "type": "file",
+      "size": 16010
+    },
+    {
+      "path": "S8.40E_outcome_evidence_reclassification.ps1",
+      "name": "S8.40E_outcome_evidence_reclassification.ps1",
+      "type": "file",
+      "size": 7904
+    },
+    {
+      "path": "S8.40F_fix_investor_narrative_after_repair.ps1",
+      "name": "S8.40F_fix_investor_narrative_after_repair.ps1",
+      "type": "file",
+      "size": 3144
+    },
+    {
+      "path": "S8.41_add_recalibrated_evidence_baseline.ps1",
+      "name": "S8.41_add_recalibrated_evidence_baseline.ps1",
+      "type": "file",
+      "size": 15751
+    },
+    {
+      "path": "S8.43_add_strategy_filter_review.ps1",
+      "name": "S8.43_add_strategy_filter_review.ps1",
+      "type": "file",
+      "size": 16587
+    },
+    {
+      "path": "S8.44_add_shadow_filter_experiment_plan.ps1",
+      "name": "S8.44_add_shadow_filter_experiment_plan.ps1",
+      "type": "file",
+      "size": 17288
+    },
+    {
+      "path": "S8.45_add_shadow_filter_evaluator.ps1",
+      "name": "S8.45_add_shadow_filter_evaluator.ps1",
+      "type": "file",
+      "size": 17936
+    },
+    {
+      "path": "S8.46_add_shadow_outcome_attribution.ps1",
+      "name": "S8.46_add_shadow_outcome_attribution.ps1",
+      "type": "file",
+      "size": 19546
+    },
+    {
+      "path": "S8.47_patch_post_close_shadow_automation.ps1",
+      "name": "S8.47_patch_post_close_shadow_automation.ps1",
+      "type": "file",
+      "size": 3253
+    },
+    {
+      "path": "S8.48_patch_post_close_quiet_mode.ps1",
+      "name": "S8.48_patch_post_close_quiet_mode.ps1",
+      "type": "file",
+      "size": 3402
+    },
+    {
+      "path": "S8_70A_hotfix_path_import.ps1",
+      "name": "S8_70A_hotfix_path_import.ps1",
+      "type": "file",
+      "size": 1537
+    },
+    {
+      "path": "S8_70A_ready_candidate_quality_audit_patch.ps1",
+      "name": "S8_70A_ready_candidate_quality_audit_patch.ps1",
+      "type": "file",
+      "size": 16688
+    },
+    {
+      "path": "S8_70B_ready_quality_rr_semantics_hotfix.ps1",
+      "name": "S8_70B_ready_quality_rr_semantics_hotfix.ps1",
+      "type": "file",
+      "size": 8833
+    },
+    {
+      "path": "S8_70C_ready_queue_topn_approval_candidates.ps1",
+      "name": "S8_70C_ready_queue_topn_approval_candidates.ps1",
+      "type": "file",
+      "size": 10299
+    },
+    {
+      "path": "S8_71A_historical_backtest_learning_plan.ps1",
+      "name": "S8_71A_historical_backtest_learning_plan.ps1",
+      "type": "file",
+      "size": 12734
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix.ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix.ps1",
+      "type": "file",
+      "size": 1281
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix_v2 (1).ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix_v2 (1).ps1",
+      "type": "file",
+      "size": 1786
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix_v2.ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix_v2.ps1",
+      "type": "file",
+      "size": 1786
+    },
+    {
+      "path": "S8_71B1_historical_ingestion_no_requests_hotfix_v3.ps1",
+      "name": "S8_71B1_historical_ingestion_no_requests_hotfix_v3.ps1",
+      "type": "file",
+      "size": 7804
+    },
+    {
+      "path": "S8_71B2_provider_compatibility_adapter.ps1",
+      "name": "S8_71B2_provider_compatibility_adapter.ps1",
+      "type": "file",
+      "size": 21233
+    },
+    {
+      "path": "S8_71B_historical_data_ingestion_worker.ps1",
+      "name": "S8_71B_historical_data_ingestion_worker.ps1",
+      "type": "file",
+      "size": 14315
+    },
+    {
+      "path": "S8_71B_historical_data_ingestion_worker_v2.ps1",
+      "name": "S8_71B_historical_data_ingestion_worker_v2.ps1",
+      "type": "file",
+      "size": 14283
+    },
+    {
+      "path": "S8_71C_historical_feature_builder.ps1",
+      "name": "S8_71C_historical_feature_builder.ps1",
+      "type": "file",
+      "size": 27534
+    },
+    {
+      "path": "S8_71D_historical_setup_replay.ps1",
+      "name": "S8_71D_historical_setup_replay.ps1",
+      "type": "file",
+      "size": 34564
+    },
+    {
+      "path": "S8_71E_historical_outcome_simulator.ps1",
+      "name": "S8_71E_historical_outcome_simulator.ps1",
+      "type": "file",
+      "size": 44163
+    },
+    {
+      "path": "S8_71F_historical_setup_stats_segment_recalibration.ps1",
+      "name": "S8_71F_historical_setup_stats_segment_recalibration.ps1",
+      "type": "file",
+      "size": 40619
+    },
+    {
+      "path": "S8_72B1_supabase_sync_report_path_fix.ps1",
+      "name": "S8_72B1_supabase_sync_report_path_fix.ps1",
+      "type": "file",
+      "size": 8063
+    },
+    {
+      "path": "S8_72B2_supabase_sync_path_import_hotfix.ps1",
+      "name": "S8_72B2_supabase_sync_path_import_hotfix.ps1",
+      "type": "file",
+      "size": 2885
+    },
+    {
+      "path": "S8_72B3_supabase_sync_json_read_path_hotfix.ps1",
+      "name": "S8_72B3_supabase_sync_json_read_path_hotfix.ps1",
+      "type": "file",
+      "size": 4716
+    },
+    {
+      "path": "S8_72B_historical_learning_supabase_sync.ps1",
+      "name": "S8_72B_historical_learning_supabase_sync.ps1",
+      "type": "file",
+      "size": 42059
+    },
+    {
+      "path": "S8_72_supabase_historical_learning_schema.ps1",
+      "name": "S8_72_supabase_historical_learning_schema.ps1",
+      "type": "file",
+      "size": 24459
+    },
+    {
+      "path": "S8_73A_backfill_duplicate_outcome_hotfix.ps1",
+      "name": "S8_73A_backfill_duplicate_outcome_hotfix.ps1",
+      "type": "file",
+      "size": 10057
+    },
+    {
+      "path": "S8_73_74_historical_backfill_orchestrator_scheduler.ps1",
+      "name": "S8_73_74_historical_backfill_orchestrator_scheduler.ps1",
+      "type": "file",
+      "size": 40032
+    },
+    {
+      "path": "S8_75B2_completed_day_backfill_guard.ps1",
+      "name": "S8_75B2_completed_day_backfill_guard.ps1",
+      "type": "file",
+      "size": 4627
+    },
+    {
+      "path": "S8_75B_completed_day_backfill_guard.ps1",
+      "name": "S8_75B_completed_day_backfill_guard.ps1",
+      "type": "file",
+      "size": 5123
+    },
+    {
+      "path": "S8_75_backfill_scaling_guard.ps1",
+      "name": "S8_75_backfill_scaling_guard.ps1",
+      "type": "file",
+      "size": 26663
+    },
+    {
+      "path": "S8_76A_candidate_sync_before_outcomes_hotfix.ps1",
+      "name": "S8_76A_candidate_sync_before_outcomes_hotfix.ps1",
+      "type": "file",
+      "size": 5522
+    },
+    {
+      "path": "S8_76_historical_universe_builder.ps1",
+      "name": "S8_76_historical_universe_builder.ps1",
+      "type": "file",
+      "size": 20880
+    },
+    {
+      "path": "S8_77A_walk_forward_supabase_schema_hotfix.ps1",
+      "name": "S8_77A_walk_forward_supabase_schema_hotfix.ps1",
+      "type": "file",
+      "size": 4828
+    },
+    {
+      "path": "S8_77B_walk_forward_validation_key_hotfix.ps1",
+      "name": "S8_77B_walk_forward_validation_key_hotfix.ps1",
+      "type": "file",
+      "size": 6274
+    },
+    {
+      "path": "S8_77_walk_forward_validation_foundation.ps1",
+      "name": "S8_77_walk_forward_validation_foundation.ps1",
+      "type": "file",
+      "size": 39972
+    },
+    {
+      "path": "S8_78_promotion_policy_writer.ps1",
+      "name": "S8_78_promotion_policy_writer.ps1",
+      "type": "file",
+      "size": 27282
+    },
+    {
+      "path": "S8_79_promotion_policy_hook.ps1",
+      "name": "S8_79_promotion_policy_hook.ps1",
+      "type": "file",
+      "size": 24336
+    },
+    {
+      "path": "S8_80_admin_investor_research_report.ps1",
+      "name": "S8_80_admin_investor_research_report.ps1",
+      "type": "file",
+      "size": 23727
+    },
+    {
+      "path": "S8_81A_no_data_chunk_guard.ps1",
+      "name": "S8_81A_no_data_chunk_guard.ps1",
+      "type": "file",
+      "size": 5509
+    },
+    {
+      "path": "S8_81_scale_backfill_plan.ps1",
+      "name": "S8_81_scale_backfill_plan.ps1",
+      "type": "file",
+      "size": 19858
+    },
+    {
+      "path": "S8_82_provider_coverage_probe.ps1",
+      "name": "S8_82_provider_coverage_probe.ps1",
+      "type": "file",
+      "size": 19487
+    },
+    {
+      "path": "S8_83A_coverage_queue_500_hotfix.ps1",
+      "name": "S8_83A_coverage_queue_500_hotfix.ps1",
+      "type": "file",
+      "size": 5239
+    },
+    {
+      "path": "S8_83B_coverage_queue_safe_endpoint.ps1",
+      "name": "S8_83B_coverage_queue_safe_endpoint.ps1",
+      "type": "file",
+      "size": 13879
+    },
+    {
+      "path": "S8_83_coverage_aware_queue_builder.ps1",
+      "name": "S8_83_coverage_aware_queue_builder.ps1",
+      "type": "file",
+      "size": 14618
+    },
+    {
+      "path": "S8_84A_setup_replay_jsonl_reader_hotfix.ps1",
+      "name": "S8_84A_setup_replay_jsonl_reader_hotfix.ps1",
+      "type": "file",
+      "size": 28655
+    },
+    {
+      "path": "S8_84B_feature_file_inspect.ps1",
+      "name": "S8_84B_feature_file_inspect.ps1",
+      "type": "file",
+      "size": 2249
+    },
+    {
+      "path": "S8_84B_robust_feature_builder_hotfix.ps1",
+      "name": "S8_84B_robust_feature_builder_hotfix.ps1",
+      "type": "file",
+      "size": 24694
+    },
+    {
+      "path": "S8_84C2_backfill_robust_chain_patch.ps1",
+      "name": "S8_84C2_backfill_robust_chain_patch.ps1",
+      "type": "file",
+      "size": 4804
+    },
+    {
+      "path": "S8_84C_backfill_robust_chain_patch.ps1",
+      "name": "S8_84C_backfill_robust_chain_patch.ps1",
+      "type": "file",
+      "size": 1990
+    },
+    {
+      "path": "S8_84D_robust_outcome_simulator_hotfix.ps1",
+      "name": "S8_84D_robust_outcome_simulator_hotfix.ps1",
+      "type": "file",
+      "size": 36084
+    },
+    {
+      "path": "S8_84_clean_empty_derived_files.ps1",
+      "name": "S8_84_clean_empty_derived_files.ps1",
+      "type": "file",
+      "size": 4816
+    },
+    {
+      "path": "S8_84_outcome_date_diagnostic.ps1",
+      "name": "S8_84_outcome_date_diagnostic.ps1",
+      "type": "file",
+      "size": 4464
+    },
+    {
+      "path": "S8_85_long_history_research_plan.ps1",
+      "name": "S8_85_long_history_research_plan.ps1",
+      "type": "file",
+      "size": 24801
+    },
+    {
+      "path": "S8_86_p1_long_history_runner.ps1",
+      "name": "S8_86_p1_long_history_runner.ps1",
+      "type": "file",
+      "size": 11137
+    },
+    {
+      "path": "S8_87_provider_coverage_audit.ps1",
+      "name": "S8_87_provider_coverage_audit.ps1",
+      "type": "file",
+      "size": 7913
+    },
+    {
+      "path": "S8_88A_fmp_key_locator_endpoint_audit.ps1",
+      "name": "S8_88A_fmp_key_locator_endpoint_audit.ps1",
+      "type": "file",
+      "size": 13676
+    },
+    {
+      "path": "S8_88B_robust_fmp_stable_intraday_ingestion.ps1",
+      "name": "S8_88B_robust_fmp_stable_intraday_ingestion.ps1",
+      "type": "file",
+      "size": 25114
+    },
+    {
+      "path": "S8_88_fmp_intraday_endpoint_audit.ps1",
+      "name": "S8_88_fmp_intraday_endpoint_audit.ps1",
+      "type": "file",
+      "size": 11124
+    },
+    {
+      "path": "S8_89_long_history_runner_v2.ps1",
+      "name": "S8_89_long_history_runner_v2.ps1",
+      "type": "file",
+      "size": 14327
+    },
+    {
+      "path": "S8_90_strategy_variant_miner.ps1",
+      "name": "S8_90_strategy_variant_miner.ps1",
+      "type": "file",
+      "size": 10761
+    },
+    {
+      "path": "S8_91_offline_walk_forward_audit.ps1",
+      "name": "S8_91_offline_walk_forward_audit.ps1",
+      "type": "file",
+      "size": 14614
+    },
+    {
+      "path": "S8_92B_safe_optimizer_background.ps1",
+      "name": "S8_92B_safe_optimizer_background.ps1",
+      "type": "file",
+      "size": 14229
+    },
+    {
+      "path": "S8_92C_optimizer_clean_background_start.ps1",
+      "name": "S8_92C_optimizer_clean_background_start.ps1",
+      "type": "file",
+      "size": 3680
+    },
+    {
+      "path": "S8_92D_optimizer_clean_background_start_fixed.ps1",
+      "name": "S8_92D_optimizer_clean_background_start_fixed.ps1",
+      "type": "file",
+      "size": 3937
+    },
+    {
+      "path": "S8_92E_optimizer_clean_background_start_ps51.ps1",
+      "name": "S8_92E_optimizer_clean_background_start_ps51.ps1",
+      "type": "file",
+      "size": 4644
+    },
+    {
+      "path": "S8_92_advanced_optimizer_v2.ps1",
+      "name": "S8_92_advanced_optimizer_v2.ps1",
+      "type": "file",
+      "size": 19056
+    },
+    {
+      "path": "S8_93_candidate_management_optimizer.ps1",
+      "name": "S8_93_candidate_management_optimizer.ps1",
+      "type": "file",
+      "size": 23920
+    },
+    {
+      "path": "S8_94_exact_candle_replay_confirmator.ps1",
+      "name": "S8_94_exact_candle_replay_confirmator.ps1",
+      "type": "file",
+      "size": 20010
+    },
+    {
+      "path": "S8_95_exact_pass_robustness_audit.ps1",
+      "name": "S8_95_exact_pass_robustness_audit.ps1",
+      "type": "file",
+      "size": 14387
+    },
+    {
+      "path": "S8_96_expanded_exact_replay_chain.ps1",
+      "name": "S8_96_expanded_exact_replay_chain.ps1",
+      "type": "file",
+      "size": 5273
+    },
+    {
+      "path": "S8_97_forward_shadow_candidate_registry.ps1",
+      "name": "S8_97_forward_shadow_candidate_registry.ps1",
+      "type": "file",
+      "size": 11603
+    },
+    {
+      "path": "S8_98_forward_shadow_daily_evaluator.ps1",
+      "name": "S8_98_forward_shadow_daily_evaluator.ps1",
+      "type": "file",
+      "size": 29591
+    },
+    {
+      "path": "S8_99_forward_shadow_nightly_scheduler.ps1",
+      "name": "S8_99_forward_shadow_nightly_scheduler.ps1",
+      "type": "file",
+      "size": 6633
+    },
+    {
+      "path": "S9_00_forward_shadow_promotion_gate_report.ps1",
+      "name": "S9_00_forward_shadow_promotion_gate_report.ps1",
+      "type": "file",
+      "size": 11212
+    },
+    {
+      "path": "S9_01_forward_shadow_promotion_gate_scheduler.ps1",
+      "name": "S9_01_forward_shadow_promotion_gate_scheduler.ps1",
+      "type": "file",
+      "size": 6828
+    },
+    {
+      "path": "S9_02_forward_shadow_dedupe_and_idempotency_patch.ps1",
+      "name": "S9_02_forward_shadow_dedupe_and_idempotency_patch.ps1",
+      "type": "file",
+      "size": 10071
+    },
+    {
+      "path": "S9_03_forward_shadow_ops_status_report.ps1",
+      "name": "S9_03_forward_shadow_ops_status_report.ps1",
+      "type": "file",
+      "size": 11160
+    },
+    {
+      "path": "S9_04_forward_shadow_admin_api_patch.ps1",
+      "name": "S9_04_forward_shadow_admin_api_patch.ps1",
+      "type": "file",
+      "size": 15832
+    },
+    {
+      "path": "S9_05_forward_shadow_admin_html_ui_patch.ps1",
+      "name": "S9_05_forward_shadow_admin_html_ui_patch.ps1",
+      "type": "file",
+      "size": 16253
+    },
+    {
+      "path": "S9_06_monday_forward_shadow_readiness_check.ps1",
+      "name": "S9_06_monday_forward_shadow_readiness_check.ps1",
+      "type": "file",
+      "size": 8689
+    },
+    {
+      "path": "S9_07_universe_v1_liquid_stocks_builder.ps1",
+      "name": "S9_07_universe_v1_liquid_stocks_builder.ps1",
+      "type": "file",
+      "size": 9541
+    },
+    {
+      "path": "S9_08B_universe_v1_overnight_backfill_scheduler.ps1",
+      "name": "S9_08B_universe_v1_overnight_backfill_scheduler.ps1",
+      "type": "file",
+      "size": 15507
+    },
+    {
+      "path": "S9_08_controlled_5y_backfill_queue.ps1",
+      "name": "S9_08_controlled_5y_backfill_queue.ps1",
+      "type": "file",
+      "size": 19464
+    },
+    {
+      "path": "S9_09_internal_research_agents_registry.ps1",
+      "name": "S9_09_internal_research_agents_registry.ps1",
+      "type": "file",
+      "size": 21311
+    },
+    {
+      "path": "S9_10_nightly_research_optimizer_controller.ps1",
+      "name": "S9_10_nightly_research_optimizer_controller.ps1",
+      "type": "file",
+      "size": 16731
+    },
+    {
+      "path": "S9_10_nightly_research_optimizer_controller_CLEAN.ps1",
+      "name": "S9_10_nightly_research_optimizer_controller_CLEAN.ps1",
+      "type": "file",
+      "size": 24975
+    },
+    {
+      "path": "S9_10_nightly_research_optimizer_controller_FIXED.ps1",
+      "name": "S9_10_nightly_research_optimizer_controller_FIXED.ps1",
+      "type": "file",
+      "size": 16741
+    },
+    {
+      "path": "S9_11B_fmp_key_locator_universe_v2_rebuild.ps1",
+      "name": "S9_11B_fmp_key_locator_universe_v2_rebuild.ps1",
+      "type": "file",
+      "size": 31128
+    },
+    {
+      "path": "S9_11_market_cap_buckets_universe_v2.ps1",
+      "name": "S9_11_market_cap_buckets_universe_v2.ps1",
+      "type": "file",
+      "size": 28463
+    },
+    {
+      "path": "S9_12B_capitalization_aware_backfill_scheduler.ps1",
+      "name": "S9_12B_capitalization_aware_backfill_scheduler.ps1",
+      "type": "file",
+      "size": 35643
+    },
+    {
+      "path": "S9_12_capitalization_aware_backfill_queue.ps1",
+      "name": "S9_12_capitalization_aware_backfill_queue.ps1",
+      "type": "file",
+      "size": 24590
+    },
+    {
+      "path": "S9_13_cap_aware_optimizer_controller_patch.ps1",
+      "name": "S9_13_cap_aware_optimizer_controller_patch.ps1",
+      "type": "file",
+      "size": 17628
+    },
+    {
+      "path": "S9_14B_outcome_artifact_locator.ps1",
+      "name": "S9_14B_outcome_artifact_locator.ps1",
+      "type": "file",
+      "size": 17078
+    },
+    {
+      "path": "S9_14C_cap_aware_evidence_miner_fixed.ps1",
+      "name": "S9_14C_cap_aware_evidence_miner_fixed.ps1",
+      "type": "file",
+      "size": 25418
+    },
+    {
+      "path": "S9_14_cap_aware_evidence_miner.ps1",
+      "name": "S9_14_cap_aware_evidence_miner.ps1",
+      "type": "file",
+      "size": 23820
+    },
+    {
+      "path": "S9_15B_leak_proof_cap_aware_variant_miner.ps1",
+      "name": "S9_15B_leak_proof_cap_aware_variant_miner.ps1",
+      "type": "file",
+      "size": 35260
+    },
+    {
+      "path": "S9_15C_actionable_pretrade_variant_miner.ps1",
+      "name": "S9_15C_actionable_pretrade_variant_miner.ps1",
+      "type": "file",
+      "size": 35494
+    },
+    {
+      "path": "S9_15D_actionable_reason_variant_miner.ps1",
+      "name": "S9_15D_actionable_reason_variant_miner.ps1",
+      "type": "file",
+      "size": 35885
+    },
+    {
+      "path": "S9_15E_payload_whitelist_actionable_variant_miner.ps1",
+      "name": "S9_15E_payload_whitelist_actionable_variant_miner.ps1",
+      "type": "file",
+      "size": 35692
+    },
+    {
+      "path": "S9_15_cap_aware_variant_miner.ps1",
+      "name": "S9_15_cap_aware_variant_miner.ps1",
+      "type": "file",
+      "size": 31880
+    },
+    {
+      "path": "S9_16B_exact_replay_confirmator.ps1",
+      "name": "S9_16B_exact_replay_confirmator.ps1",
+      "type": "file",
+      "size": 23436
+    },
+    {
+      "path": "S9_16_actionable_research_checkpoint.ps1",
+      "name": "S9_16_actionable_research_checkpoint.ps1",
+      "type": "file",
+      "size": 8858
+    },
+    {
+      "path": "_s875b_patch_tmp.py",
+      "name": "_s875b_patch_tmp.py",
+      "type": "file",
+      "size": 3269
+    },
+    {
+      "path": "audit_exports",
+      "name": "audit_exports",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s511b_safe_patch",
+      "name": "s511b_safe_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s512_patch",
+      "name": "s512_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s512b_patch",
+      "name": "s512b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s513_patch",
+      "name": "s513_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s513_safe_patch",
+      "name": "s513_safe_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s513b_patch",
+      "name": "s513b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514_patch",
+      "name": "s514_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514b_patch",
+      "name": "s514b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514c_patch",
+      "name": "s514c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514d_patch",
+      "name": "s514d_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514e_patch",
+      "name": "s514e_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s514e_runtime_source_of_truth_patch.zip",
+      "name": "s514e_runtime_source_of_truth_patch.zip",
+      "type": "file",
+      "size": 43484
+    },
+    {
+      "path": "s515_daily_forward_test_report_patch.zip",
+      "name": "s515_daily_forward_test_report_patch.zip",
+      "type": "file",
+      "size": 45746
+    },
+    {
+      "path": "s515_patch",
+      "name": "s515_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s515b_lifecycle_attach_forward_report_patch.zip",
+      "name": "s515b_lifecycle_attach_forward_report_patch.zip",
+      "type": "file",
+      "size": 46567
+    },
+    {
+      "path": "s515b_patch",
+      "name": "s515b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s515c_lifecycle_active_source_fallback_patch.zip",
+      "name": "s515c_lifecycle_active_source_fallback_patch.zip",
+      "type": "file",
+      "size": 47672
+    },
+    {
+      "path": "s515c_patch",
+      "name": "s515c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s516_entry_health_forward_report_patch.zip",
+      "name": "s516_entry_health_forward_report_patch.zip",
+      "type": "file",
+      "size": 48932
+    },
+    {
+      "path": "s516_patch",
+      "name": "s516_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s516b_entry_health_selection_fix_patch.zip",
+      "name": "s516b_entry_health_selection_fix_patch.zip",
+      "type": "file",
+      "size": 49282
+    },
+    {
+      "path": "s516b_patch",
+      "name": "s516b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s61_historical_replay_foundation_patch.zip",
+      "name": "s61_historical_replay_foundation_patch.zip",
+      "type": "file",
+      "size": 51377
+    },
+    {
+      "path": "s61_patch",
+      "name": "s61_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s61b_patch",
+      "name": "s61b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s61b_replay_readiness_diagnostics_fix_patch.zip",
+      "name": "s61b_replay_readiness_diagnostics_fix_patch.zip",
+      "type": "file",
+      "size": 52186
+    },
+    {
+      "path": "s62_historical_watchlist_builder_patch.zip",
+      "name": "s62_historical_watchlist_builder_patch.zip",
+      "type": "file",
+      "size": 55048
+    },
+    {
+      "path": "s62_patch",
+      "name": "s62_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s62b_historical_candle_timestamp_adapter_patch.zip",
+      "name": "s62b_historical_candle_timestamp_adapter_patch.zip",
+      "type": "file",
+      "size": 55811
+    },
+    {
+      "path": "s62b_patch",
+      "name": "s62b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s63_historical_setup_candidate_replay_patch.zip",
+      "name": "s63_historical_setup_candidate_replay_patch.zip",
+      "type": "file",
+      "size": 58388
+    },
+    {
+      "path": "s63_patch",
+      "name": "s63_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s63b_patch",
+      "name": "s63b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s63b_replay_candidate_quality_selector_patch.zip",
+      "name": "s63b_replay_candidate_quality_selector_patch.zip",
+      "type": "file",
+      "size": 59803
+    },
+    {
+      "path": "s64_patch",
+      "name": "s64_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s64_replay_outcome_evaluation_patch.zip",
+      "name": "s64_replay_outcome_evaluation_patch.zip",
+      "type": "file",
+      "size": 62827
+    },
+    {
+      "path": "s64b_patch",
+      "name": "s64b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s64b_persist_replay_outcomes_patch.zip",
+      "name": "s64b_persist_replay_outcomes_patch.zip",
+      "type": "file",
+      "size": 64189
+    },
+    {
+      "path": "s71_patch",
+      "name": "s71_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s71_replay_calibration_reranking_patch.zip",
+      "name": "s71_replay_calibration_reranking_patch.zip",
+      "type": "file",
+      "size": 66346
+    },
+    {
+      "path": "s72_multiday_replay_runner_patch.zip",
+      "name": "s72_multiday_replay_runner_patch.zip",
+      "type": "file",
+      "size": 67711
+    },
+    {
+      "path": "s72_patch",
+      "name": "s72_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s73_hybrid_calibration_merge_patch.zip",
+      "name": "s73_hybrid_calibration_merge_patch.zip",
+      "type": "file",
+      "size": 69578
+    },
+    {
+      "path": "s73_patch",
+      "name": "s73_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s74_controlled_adjustment_preview_patch.zip",
+      "name": "s74_controlled_adjustment_preview_patch.zip",
+      "type": "file",
+      "size": 71578
+    },
+    {
+      "path": "s74_patch",
+      "name": "s74_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s75_calibration_preview_cockpit_ui_patch.zip",
+      "name": "s75_calibration_preview_cockpit_ui_patch.zip",
+      "type": "file",
+      "size": 22982
+    },
+    {
+      "path": "s75_patch",
+      "name": "s75_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s75b_currentr_hotfix_patch.zip",
+      "name": "s75b_currentr_hotfix_patch.zip",
+      "type": "file",
+      "size": 23317
+    },
+    {
+      "path": "s75b_patch",
+      "name": "s75b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s75c_liveeventbus_hotfix_patch.zip",
+      "name": "s75c_liveeventbus_hotfix_patch.zip",
+      "type": "file",
+      "size": 23342
+    },
+    {
+      "path": "s75c_patch",
+      "name": "s75c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s80_nightly_server_runner_patch.zip",
+      "name": "s80_nightly_server_runner_patch.zip",
+      "type": "file",
+      "size": 7915
+    },
+    {
+      "path": "s80_patch",
+      "name": "s80_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s80b_patch",
+      "name": "s80b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s80b_runner_timeout_resilience_patch.zip",
+      "name": "s80b_runner_timeout_resilience_patch.zip",
+      "type": "file",
+      "size": 4087
+    },
+    {
+      "path": "s80c_cockpit_endpoint_fallback_patch.zip",
+      "name": "s80c_cockpit_endpoint_fallback_patch.zip",
+      "type": "file",
+      "size": 4663
+    },
+    {
+      "path": "s80c_patch",
+      "name": "s80c_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s810c_session_guard_audit.txt",
+      "name": "s810c_session_guard_audit.txt",
+      "type": "file",
+      "size": 18852
+    },
+    {
+      "path": "s810d_nightly_window_audit.txt",
+      "name": "s810d_nightly_window_audit.txt",
+      "type": "file",
+      "size": 27960
+    },
+    {
+      "path": "s810e_outcome_cleanup_audit.txt",
+      "name": "s810e_outcome_cleanup_audit.txt",
+      "type": "file",
+      "size": 163788
+    },
+    {
+      "path": "s811_cockpit_ui_audit.txt",
+      "name": "s811_cockpit_ui_audit.txt",
+      "type": "file",
+      "size": 2155234
+    },
+    {
+      "path": "s811_focused_live_ui_audit.txt",
+      "name": "s811_focused_live_ui_audit.txt",
+      "type": "file",
+      "size": 3686
+    },
+    {
+      "path": "s811d2_real_proxy_audit.txt",
+      "name": "s811d2_real_proxy_audit.txt",
+      "type": "file",
+      "size": 24062
+    },
+    {
+      "path": "s811d_proxy_env_audit.txt",
+      "name": "s811d_proxy_env_audit.txt",
+      "type": "file",
+      "size": 31494
+    },
+    {
+      "path": "s811e_chart_symbol_audit.txt",
+      "name": "s811e_chart_symbol_audit.txt",
+      "type": "file",
+      "size": 216354
+    },
+    {
+      "path": "s812a_forward_evidence_audit.txt",
+      "name": "s812a_forward_evidence_audit.txt",
+      "type": "file",
+      "size": 69054
+    },
+    {
+      "path": "s812c_evidence_snapshot_validation.txt",
+      "name": "s812c_evidence_snapshot_validation.txt",
+      "type": "file",
+      "size": 26860
+    },
+    {
+      "path": "s812c_investor_snapshot_audit.txt",
+      "name": "s812c_investor_snapshot_audit.txt",
+      "type": "file",
+      "size": 177720
+    },
+    {
+      "path": "s812d3_dashboard_router_audit.txt",
+      "name": "s812d3_dashboard_router_audit.txt",
+      "type": "file",
+      "size": 66566
+    },
+    {
+      "path": "s812d3_dashboard_router_deep_audit.txt",
+      "name": "s812d3_dashboard_router_deep_audit.txt",
+      "type": "file",
+      "size": 6475502
+    },
+    {
+      "path": "s812d_evidence_ui_audit.txt",
+      "name": "s812d_evidence_ui_audit.txt",
+      "type": "file",
+      "size": 226202
+    },
+    {
+      "path": "s813_post_close_evidence_automation_audit.txt",
+      "name": "s813_post_close_evidence_automation_audit.txt",
+      "type": "file",
+      "size": 45540
+    },
+    {
+      "path": "s814_evidence_outcome_quality_audit.txt",
+      "name": "s814_evidence_outcome_quality_audit.txt",
+      "type": "file",
+      "size": 72616
+    },
+    {
+      "path": "s814b_service_diagnostic.txt",
+      "name": "s814b_service_diagnostic.txt",
+      "type": "file",
+      "size": 59524
+    },
+    {
+      "path": "s81_patch",
+      "name": "s81_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s81_vps_deploy_pack.zip",
+      "name": "s81_vps_deploy_pack.zip",
+      "type": "file",
+      "size": 7687
+    },
+    {
+      "path": "s81b_patch",
+      "name": "s81b_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s81b_vps_deploy_pack_install_fix.zip",
+      "name": "s81b_vps_deploy_pack_install_fix.zip",
+      "type": "file",
+      "size": 9727
+    },
+    {
+      "path": "s826b_client_delivery_audit_raw.json",
+      "name": "s826b_client_delivery_audit_raw.json",
+      "type": "file",
+      "size": 16866
+    },
+    {
+      "path": "s82_patch",
+      "name": "s82_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s82_secure_engine_ingress_patch.zip",
+      "name": "s82_secure_engine_ingress_patch.zip",
+      "type": "file",
+      "size": 3814
+    },
+    {
+      "path": "s83_patch",
+      "name": "s83_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s83_secure_frontend_stock_engine_proxy_patch.zip",
+      "name": "s83_secure_frontend_stock_engine_proxy_patch.zip",
+      "type": "file",
+      "size": 5781
+    },
+    {
+      "path": "s845_db_source_audit.py",
+      "name": "s845_db_source_audit.py",
+      "type": "file",
+      "size": 1238
+    },
+    {
+      "path": "s845_db_source_audit_output.txt",
+      "name": "s845_db_source_audit_output.txt",
+      "type": "file",
+      "size": 89894
+    },
+    {
+      "path": "s846_shadow_outcome_attribution_audit.py",
+      "name": "s846_shadow_outcome_attribution_audit.py",
+      "type": "file",
+      "size": 2690
+    },
+    {
+      "path": "s846_shadow_outcome_attribution_audit_output.txt",
+      "name": "s846_shadow_outcome_attribution_audit_output.txt",
+      "type": "file",
+      "size": 43298
+    },
+    {
+      "path": "s84a_market_holiday_guard_patch.zip",
+      "name": "s84a_market_holiday_guard_patch.zip",
+      "type": "file",
+      "size": 9135
+    },
+    {
+      "path": "s84a_patch",
+      "name": "s84a_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s86_engine_monitoring_watchdog_patch.zip",
+      "name": "s86_engine_monitoring_watchdog_patch.zip",
+      "type": "file",
+      "size": 5270
+    },
+    {
+      "path": "s86_patch",
+      "name": "s86_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s88_patch",
+      "name": "s88_patch",
+      "type": "dir",
+      "size": null
+    },
+    {
+      "path": "s88_production_live_day_readiness_patch.zip",
+      "name": "s88_production_live_day_readiness_patch.zip",
+      "type": "file",
+      "size": 6977
+    },
+    {
+      "path": "stable_s516b_entry_health_working_2026-06-17_19-40-48.zip",
+      "name": "stable_s516b_entry_health_working_2026-06-17_19-40-48.zip",
+      "type": "file",
+      "size": 125816
+    },
+    {
+      "path": "stock-engine-vps.zip",
+      "name": "stock-engine-vps.zip",
+      "type": "file",
+      "size": 2469938
+    }
+  ],
+  "duplicateGroups": [
+    {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "count": 16,
+      "paths": [
+        "deploy_stock_engine/app/__init__.py",
+        "deploy_stock_engine/app/api/__init__.py",
+        "deploy_stock_engine/app/data/__init__.py",
+        "deploy_stock_engine/debug_after_s512b_discovery.json",
+        "deploy_stock_engine/debug_s514_discovery_response.json",
+        "deploy_stock_engine/debug_s514e_discovery_raw.json",
+        "deploy_stock_engine/main.py",
+        "deploy_stock_engine/s512_discovery_debug.json",
+        "services/stock-engine/app/__init__.py",
+        "services/stock-engine/app/api/__init__.py",
+        "services/stock-engine/app/data/__init__.py",
+        "services/stock-engine/debug_after_s512b_discovery.json",
+        "services/stock-engine/debug_s514_discovery_response.json",
+        "services/stock-engine/debug_s514e_discovery_raw.json",
+        "services/stock-engine/main.py",
+        "services/stock-engine/s512_discovery_debug.json"
+      ]
+    },
+    {
+      "sha256": "174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2",
+      "count": 8,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-daily-ai-desk.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-daily-ai-desk.service",
+        "deploy_stock_engine/ops/ops/systemd/skilledge-daily-ai-desk.service",
+        "deploy_stock_engine/ops/systemd/skilledge-daily-ai-desk.service",
+        "s81_patch/services/stock-engine/ops/systemd/skilledge-daily-ai-desk.service",
+        "s81b_patch/services/stock-engine/ops/systemd/skilledge-daily-ai-desk.service",
+        "services/stock-engine/ops/ops/systemd/skilledge-daily-ai-desk.service",
+        "services/stock-engine/ops/systemd/skilledge-daily-ai-desk.service"
+      ]
+    },
+    {
+      "sha256": "d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693",
+      "count": 8,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-nightly-self-learning.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-nightly-self-learning.service",
+        "deploy_stock_engine/ops/ops/systemd/skilledge-nightly-self-learning.service",
+        "deploy_stock_engine/ops/systemd/skilledge-nightly-self-learning.service",
+        "s81_patch/services/stock-engine/ops/systemd/skilledge-nightly-self-learning.service",
+        "s81b_patch/services/stock-engine/ops/systemd/skilledge-nightly-self-learning.service",
+        "services/stock-engine/ops/ops/systemd/skilledge-nightly-self-learning.service",
+        "services/stock-engine/ops/systemd/skilledge-nightly-self-learning.service"
+      ]
+    },
+    {
+      "sha256": "831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769",
+      "count": 8,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-nightly-self-learning.timer",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-nightly-self-learning.timer",
+        "deploy_stock_engine/ops/ops/systemd/skilledge-nightly-self-learning.timer",
+        "deploy_stock_engine/ops/systemd/skilledge-nightly-self-learning.timer",
+        "s81_patch/services/stock-engine/ops/systemd/skilledge-nightly-self-learning.timer",
+        "s81b_patch/services/stock-engine/ops/systemd/skilledge-nightly-self-learning.timer",
+        "services/stock-engine/ops/ops/systemd/skilledge-nightly-self-learning.timer",
+        "services/stock-engine/ops/systemd/skilledge-nightly-self-learning.timer"
+      ]
+    },
+    {
+      "sha256": "707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c",
+      "count": 8,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-stock-engine-api.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-stock-engine-api.service",
+        "deploy_stock_engine/ops/ops/systemd/skilledge-stock-engine-api.service",
+        "deploy_stock_engine/ops/systemd/skilledge-stock-engine-api.service",
+        "s81_patch/services/stock-engine/ops/systemd/skilledge-stock-engine-api.service",
+        "s81b_patch/services/stock-engine/ops/systemd/skilledge-stock-engine-api.service",
+        "services/stock-engine/ops/ops/systemd/skilledge-stock-engine-api.service",
+        "services/stock-engine/ops/systemd/skilledge-stock-engine-api.service"
+      ]
+    },
+    {
+      "sha256": "feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede",
+      "count": 8,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-telegram-consumer.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-telegram-consumer.service",
+        "deploy_stock_engine/ops/ops/systemd/skilledge-telegram-consumer.service",
+        "deploy_stock_engine/ops/systemd/skilledge-telegram-consumer.service",
+        "s81_patch/services/stock-engine/ops/systemd/skilledge-telegram-consumer.service",
+        "s81b_patch/services/stock-engine/ops/systemd/skilledge-telegram-consumer.service",
+        "services/stock-engine/ops/ops/systemd/skilledge-telegram-consumer.service",
+        "services/stock-engine/ops/systemd/skilledge-telegram-consumer.service"
+      ]
+    },
+    {
+      "sha256": "f4efd6f480ad8ceecb2c7b680bac719e086a9cd7d3175311cf2690d380bea565",
+      "count": 6,
+      "paths": [
+        "deploy_stock_engine/ops/README_VPS_DEPLOY.md",
+        "deploy_stock_engine/ops/ops/README_VPS_DEPLOY.md",
+        "s81_patch/services/stock-engine/ops/README_VPS_DEPLOY.md",
+        "s81b_patch/services/stock-engine/ops/README_VPS_DEPLOY.md",
+        "services/stock-engine/ops/README_VPS_DEPLOY.md",
+        "services/stock-engine/ops/ops/README_VPS_DEPLOY.md"
+      ]
+    },
+    {
+      "sha256": "b490148e93379464d03db01458a4394c2eaf8d7fab3b35c028e42c0f2561699a",
+      "count": 6,
+      "paths": [
+        "deploy_stock_engine/ops/nginx/stock-engine.nginx.conf",
+        "deploy_stock_engine/ops/ops/nginx/stock-engine.nginx.conf",
+        "s81_patch/services/stock-engine/ops/nginx/stock-engine.nginx.conf",
+        "s81b_patch/services/stock-engine/ops/nginx/stock-engine.nginx.conf",
+        "services/stock-engine/ops/nginx/stock-engine.nginx.conf",
+        "services/stock-engine/ops/ops/nginx/stock-engine.nginx.conf"
+      ]
+    },
+    {
+      "sha256": "2279f2e77de079ecfdaa087b6cd328b19f60ab907943c18d30a9a6312423dec9",
+      "count": 6,
+      "paths": [
+        "deploy_stock_engine/ops/ops/scripts/deploy_ubuntu_systemd.sh",
+        "deploy_stock_engine/ops/scripts/deploy_ubuntu_systemd.sh",
+        "s81_patch/services/stock-engine/ops/scripts/deploy_ubuntu_systemd.sh",
+        "s81b_patch/services/stock-engine/ops/scripts/deploy_ubuntu_systemd.sh",
+        "services/stock-engine/ops/ops/scripts/deploy_ubuntu_systemd.sh",
+        "services/stock-engine/ops/scripts/deploy_ubuntu_systemd.sh"
+      ]
+    },
+    {
+      "sha256": "c15d890232662538e342e39f909bbaa33837bc96149364788ddf3a54d2b25463",
+      "count": 6,
+      "paths": [
+        "deploy_stock_engine/ops/ops/scripts/server_healthcheck.py",
+        "deploy_stock_engine/ops/scripts/server_healthcheck.py",
+        "s81_patch/services/stock-engine/ops/scripts/server_healthcheck.py",
+        "s81b_patch/services/stock-engine/ops/scripts/server_healthcheck.py",
+        "services/stock-engine/ops/ops/scripts/server_healthcheck.py",
+        "services/stock-engine/ops/scripts/server_healthcheck.py"
+      ]
+    },
+    {
+      "sha256": "b276e12b635c9a9c3336fd9bee58280063bfa0464d663644c2724253ad91d5e7",
+      "count": 4,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-engine-watchdog.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-engine-watchdog.service",
+        "s86_patch/services/stock-engine/ops/systemd/skilledge-engine-watchdog.service",
+        "services/stock-engine/ops/systemd/skilledge-engine-watchdog.service"
+      ]
+    },
+    {
+      "sha256": "95855f938715506bc7dc625f4b846266ead1274dcd235884d6106fd9f40c630d",
+      "count": 4,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-engine-watchdog.timer",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-engine-watchdog.timer",
+        "s86_patch/services/stock-engine/ops/systemd/skilledge-engine-watchdog.timer",
+        "services/stock-engine/ops/systemd/skilledge-engine-watchdog.timer"
+      ]
+    },
+    {
+      "sha256": "7c60024504cd74fc75e9bd5364ad185ff0412f7c7f904055bd64fe078f016bac",
+      "count": 4,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-production-readiness.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-production-readiness.service",
+        "s88_patch/services/stock-engine/ops/systemd/skilledge-production-readiness.service",
+        "services/stock-engine/ops/systemd/skilledge-production-readiness.service"
+      ]
+    },
+    {
+      "sha256": "301e821e9ea073cb598406c1c63f50dcff9b8d07906c92b3e6a63247f690e62e",
+      "count": 4,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-production-readiness.timer",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-production-readiness.timer",
+        "s88_patch/services/stock-engine/ops/systemd/skilledge-production-readiness.timer",
+        "services/stock-engine/ops/systemd/skilledge-production-readiness.timer"
+      ]
+    },
+    {
+      "sha256": "9440b678d7fea929b240cfaea0127e2447fb483eda3edae46ce33e307d14c6ea",
+      "count": 4,
+      "paths": [
+        "deploy_stock_engine/Dockerfile",
+        "s81_patch/services/stock-engine/Dockerfile",
+        "s81b_patch/services/stock-engine/Dockerfile",
+        "services/stock-engine/Dockerfile"
+      ]
+    },
+    {
+      "sha256": "173b1f26bbc2964c5e909d8b4d9a11b373ea069a85975d48d44fd7d5632f17dd",
+      "count": 4,
+      "paths": [
+        "deploy_stock_engine/docker-compose.stock-engine.yml",
+        "s81_patch/services/stock-engine/docker-compose.stock-engine.yml",
+        "s81b_patch/services/stock-engine/docker-compose.stock-engine.yml",
+        "services/stock-engine/docker-compose.stock-engine.yml"
+      ]
+    },
+    {
+      "sha256": "7f5561ecebddf792c7b537d887e6b617a12e7d421a0755e44b95ba2da60c273a",
+      "count": 3,
+      "paths": [
+        ".code-backups/signals-v1-patch-2c-2-fixed-stock-classifier-2026-05-29_13-55-12/market-alert-generator.ts",
+        ".code-backups/signals-v1-patch-2c-2-stock-classifier-balance-2026-05-29_13-52-04/lib__trading__market-alert-generator.ts",
+        ".code-backups/signals-v1-patch-2c-stock-classifier-balance-2026-05-28_23-21-47/lib__trading__market-alert-generator.ts"
+      ]
+    },
+    {
+      "sha256": "a24d3d8d2399797171636e00404deb4feb938891fcb0ed8eeb9778132f97f4b4",
+      "count": 3,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-clean-elite-capture.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-clean-elite-capture.service",
+        "services/stock-engine/ops/systemd/skilledge-clean-elite-capture.service"
+      ]
+    },
+    {
+      "sha256": "4b1f519d7f5709c839127cd64423450772338b330d6ba5c6e884f658aa425de2",
+      "count": 3,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-clean-elite-capture.timer",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-clean-elite-capture.timer",
+        "services/stock-engine/ops/systemd/skilledge-clean-elite-capture.timer"
+      ]
+    },
+    {
+      "sha256": "52e7f3bcd35a4c9fe92cca1b32c18932fc5d6331a5c7796606390be0129c83ed",
+      "count": 3,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-historical-learning-backfill.service",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-historical-learning-backfill.service",
+        "services/stock-engine/ops/systemd/skilledge-historical-learning-backfill.service"
+      ]
+    },
+    {
+      "sha256": "93f839c506b0195aeb5a154e8aaf5a5777f699710d74694ed2d3750cdf26156c",
+      "count": 3,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-historical-learning-backfill.timer",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-historical-learning-backfill.timer",
+        "services/stock-engine/ops/systemd/skilledge-historical-learning-backfill.timer"
+      ]
+    },
+    {
+      "sha256": "bf9171a30d1674e976a1e0803953fbe2c464893435947544143c2a97078d82cd",
+      "count": 3,
+      "paths": [
+        "audit_exports/S10_4H_systemd_backup_20260714_184226/skilledge-post-close-evidence.timer",
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-post-close-evidence.timer",
+        "services/stock-engine/ops/systemd/skilledge-post-close-evidence.timer"
+      ]
+    },
+    {
+      "sha256": "ce2116f885f6ace2144ceee5378dafcec13bfb8c66b7840f5305cc6ac4bfeef6",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/app/discovery.py",
+        "s512_patch/services/stock-engine/app/discovery.py",
+        "services/stock-engine/app/discovery.py"
+      ]
+    },
+    {
+      "sha256": "5f9c954a6dc142327624cccff04fbf12c589e491cab9fddb2a4e4cc235d26be5",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/ops/README_S80B_TIMEOUT_RESILIENCE.md",
+        "s80b_patch/services/stock-engine/ops/README_S80B_TIMEOUT_RESILIENCE.md",
+        "services/stock-engine/ops/README_S80B_TIMEOUT_RESILIENCE.md"
+      ]
+    },
+    {
+      "sha256": "1eeac0175c6033cbd272d39d59dd4c963bd9f91d20832cdefb380eed347595f5",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/ops/README_S80C_COCKPIT_FALLBACK.md",
+        "s80c_patch/services/stock-engine/ops/README_S80C_COCKPIT_FALLBACK.md",
+        "services/stock-engine/ops/README_S80C_COCKPIT_FALLBACK.md"
+      ]
+    },
+    {
+      "sha256": "b17e2d9504f4659ae86ca6a72b588d9eb4b04c2bfa4e916bc1d6a6c0eba03bcc",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/ops/README_SERVER_DEPLOY.md",
+        "s80_patch/services/stock-engine/ops/README_SERVER_DEPLOY.md",
+        "services/stock-engine/ops/README_SERVER_DEPLOY.md"
+      ]
+    },
+    {
+      "sha256": "685e366343a30ae4376d4cbad469962691d605a3502995d34e31735f1684d2e6",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/ops/runner_utils.py",
+        "s80c_patch/services/stock-engine/ops/runner_utils.py",
+        "services/stock-engine/ops/runner_utils.py"
+      ]
+    },
+    {
+      "sha256": "b9a44c2bf1d6b90f5c4d84e40bf213fce79f80de7a41ef3a6a1d4381a61858e0",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/ops/windows_task_scheduler_examples.ps1",
+        "s80_patch/services/stock-engine/ops/windows_task_scheduler_examples.ps1",
+        "services/stock-engine/ops/windows_task_scheduler_examples.ps1"
+      ]
+    },
+    {
+      "sha256": "acad7d9b870d978d05314016ae86274db08847e785919125605c5bdc9f6ad200",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/start_daily_ai_desk.ps1",
+        "s80_patch/services/stock-engine/start_daily_ai_desk.ps1",
+        "services/stock-engine/start_daily_ai_desk.ps1"
+      ]
+    },
+    {
+      "sha256": "de7b6744697a4af2b306406598789204ce1da1cebbc6df7d6a500c07feac5974",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/start_nightly_self_learning.ps1",
+        "s80_patch/services/stock-engine/start_nightly_self_learning.ps1",
+        "services/stock-engine/start_nightly_self_learning.ps1"
+      ]
+    },
+    {
+      "sha256": "c831e1243a34d9013cdaff1d0087e1c6dd726d105d8e19a371dd05da75d2a892",
+      "count": 3,
+      "paths": [
+        "deploy_stock_engine/start_stock_engine_server.ps1",
+        "s80_patch/services/stock-engine/start_stock_engine_server.ps1",
+        "services/stock-engine/start_stock_engine_server.ps1"
+      ]
+    },
+    {
+      "sha256": "6e2e38f39038e4cac86255dc7416b42a6167c750704a6757d63228bdfc04ac3b",
+      "count": 3,
+      "paths": [
+        "s75_patch/app/api/stock-engine/calibration/preview/route.ts",
+        "s75b_patch/app/api/stock-engine/calibration/preview/route.ts",
+        "s75c_patch/app/api/stock-engine/calibration/preview/route.ts"
+      ]
+    },
+    {
+      "sha256": "f6e0c582d6d45af5416e3323e12a5908b4dbc3531ca49410a13035cddefef3d7",
+      "count": 2,
+      "paths": [
+        ".code-backups/app/api/ai-coach/route.ts.backup-before-ai-master-prompt",
+        "_project_context/app/api/ai-coach/route.ts"
+      ]
+    },
+    {
+      "sha256": "0c9e48671b1ca288a9aa0426df11a18a746251a89b740202a9bbbee8ee6ae041",
+      "count": 2,
+      "paths": [
+        ".code-backups/app/api/analyze-current-chart/route.ts.backup-before-ai-master-prompt",
+        "_project_context/app/api/analyze-current-chart/route.ts"
+      ]
+    },
+    {
+      "sha256": "4c96f87452028542ab729305ec59623a95a5897be8c82f08e08f078e4ebbdc1a",
+      "count": 2,
+      "paths": [
+        ".code-backups/app/api/analyze-trade-screenshot/route.ts.backup-before-ai-master-prompt",
+        "_project_context/app/api/analyze-trade-screenshot/route.ts"
+      ]
+    },
+    {
+      "sha256": "5be6fb426ce170e31eae99dee2f900cf26aed7c7b563cc74a839a3f98c2eace5",
+      "count": 2,
+      "paths": [
+        ".code-backups/app/api/journal-analysis/route.ts.backup-before-ai-master-prompt",
+        "_project_context/app/api/journal-analysis/route.ts"
+      ]
+    },
+    {
+      "sha256": "0a7780f6b077c42d5e0f1c163c062f863337b6b7d8c11dccd52389f889adb8a4",
+      "count": 2,
+      "paths": [
+        ".code-backups/app/api/market/ai-analysis/route.ts.backup-before-ai-master-prompt",
+        "_project_context/app/api/market/ai-analysis/route.ts"
+      ]
+    },
+    {
+      "sha256": "4c2a2e77a754400747668798462ad1d873e486e21386cd041de6509fdf397fb2",
+      "count": 2,
+      "paths": [
+        ".code-backups/app/api/market/alerts/personalized/route.backup-before-create.ts",
+        "_project_context/app/api/market/alerts/personalized/route.ts"
+      ]
+    },
+    {
+      "sha256": "8e2bafeb93364416ea1a2b9259d11f77e9fc7db9c224480e50b6e02166c6cce3",
+      "count": 2,
+      "paths": [
+        ".code-backups/app/api/reports/ai-report/route.ts.backup-before-ai-master-prompt",
+        "_project_context/app/api/reports/ai-report/route.ts"
+      ]
+    },
+    {
+      "sha256": "d75ad94eb9d53724d7a2c847b610371765b6ad4abbe81ac76550e89210c05bc1",
+      "count": 2,
+      "paths": [
+        ".code-backups/components/Landing.backup-before-footer-demo-prop-clean.tsx",
+        ".code-backups/components/Landing.backup-before-visible-home-copy-fix.tsx"
+      ]
+    },
+    {
+      "sha256": "d6a6ad21cf5b85f48a486f3e26b5d36c0445f94eb1b92c338916de3e08b1ed6e",
+      "count": 2,
+      "paths": [
+        ".code-backups/components/Landing.backup-before-force-strategy-matrix-insert.tsx",
+        ".code-backups/components/Landing.backup-before-pricing-strategy-os-feature.tsx"
+      ]
+    },
+    {
+      "sha256": "92cd840f7317102dbd87a46c1a2239288c8eb1b133d8905e9b726b3853208165",
+      "count": 2,
+      "paths": [
+        ".code-backups/components/Landing.backup-before-remove-features-footer.tsx",
+        "_project_context/components/Landing.tsx"
+      ]
+    },
+    {
+      "sha256": "8d45046e5f28109d3adb1127daa45e5ef63d2f05d1047192fe2f292501e1d72e",
+      "count": 2,
+      "paths": [
+        ".code-backups/fix-manual-alerts-run-stock-watchlist-enrichment-2026-05-31_22-08-24/market-alert-generator.ts",
+        ".code-backups/fix-manual-stock-seed-offhours-2026-05-31_22-12-03/market-alert-generator.ts"
+      ]
+    },
+    {
+      "sha256": "0ab6f0c561b8205b43d7fd9bbeb0659aa025667c09b68b6e56069fda05d53eaa",
+      "count": 2,
+      "paths": [
+        ".code-backups/fix-market-alerts-post-use-generator-2026-05-31_22-17-40/route.ts",
+        "_project_context/app/api/market/alerts/route.ts"
+      ]
+    },
+    {
+      "sha256": "34fe0ff5a4712e789e62b49f72385709439a1ba7c7db9ab3193a2303607c40a2",
+      "count": 2,
+      "paths": [
+        ".code-backups/lib/billing-plans.backup-before-strategy-billing-copy.ts",
+        "_project_context/lib/billing-plans.ts"
+      ]
+    },
+    {
+      "sha256": "ca8f77fd9b036ee57722662661d964a259c7dcb7124119c0c2f62e3f5e73f106",
+      "count": 2,
+      "paths": [
+        ".code-backups/lib/plan-limits.backup-before-strategy-access-gates.ts",
+        "_project_context/lib/plan-limits.ts"
+      ]
+    },
+    {
+      "sha256": "b18467ce90d76528d88f6d3cfc68b500608cfdbc0c9a1ab4098413cd46be0d9b",
+      "count": 2,
+      "paths": [
+        ".code-backups/page.backup-before-alert-refresh-copy-2026-05-27_14-39-34.tsx",
+        ".code-backups/page.backup-before-chart-movers-upgrade-2026-05-27_15-12-12.tsx"
+      ]
+    },
+    {
+      "sha256": "f4ac9ef8ddf11bdadf4bfe649200a63b9d707ab8d4b3f84f8f680d8bebc60248",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-crypto-smc-strict-2026-05-27_23-13-36/lib__trading__skill-edge-alert-engine.ts",
+        ".code-backups/signals-repair-structure-targets-2026-05-27_22-48-24/lib__trading__skill-edge-alert-engine.ts"
+      ]
+    },
+    {
+      "sha256": "efa3e23b6bdd2967174ff962e320698c95845ece693739e85248415fac9727ef",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-repair-structure-targets-2026-05-27_22-48-24/lib__trading__setup-playbook.ts",
+        ".code-backups/signals-v1-patch-1c-clean-playbook-2026-05-28_22-50-42/lib__trading__setup-playbook.ts"
+      ]
+    },
+    {
+      "sha256": "3f814ee6d5bd4f1b52ddbdb016911eb4c3d9a705837c2c2d4ec2d8949a5f1e63",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-structure-5m-rr-2026-05-27_22-45-45/lib__trading__market-alert-generator.ts",
+        "_project_context/lib/trading/market-alert-generator.ts"
+      ]
+    },
+    {
+      "sha256": "606da903a61780ecee68d6a1287a417bb0ac90bdeb629fe06dfe30ac01ff48a5",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-structure-5m-rr-2026-05-27_22-45-45/lib__trading__market-structure.ts",
+        "_project_context/lib/trading/market-structure.ts"
+      ]
+    },
+    {
+      "sha256": "32e130fa91baa6ad35d711ed7cd161d1090d987afb9c134a38a72b0f6ee45ff4",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-structure-5m-rr-2026-05-27_22-45-45/lib__trading__setup-playbook.ts",
+        "_project_context/lib/trading/setup-playbook.ts"
+      ]
+    },
+    {
+      "sha256": "f6e935675e7affd24591482e46af11a7f8527490b1eb158c64eebaa8678e8bca",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-structure-5m-rr-2026-05-27_22-45-45/lib__trading__skill-edge-alert-engine.ts",
+        "_project_context/lib/trading/skill-edge-alert-engine.ts"
+      ]
+    },
+    {
+      "sha256": "91c30fa7d97038067c5e0968e0f71fa9282b2cc5130c4f744265feebcdb672b4",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-v1-patch-2d-fmp-stable-candles-2026-05-29_14-26-56/market-candles-provider.ts",
+        "_project_context/lib/trading/market-candles-provider.ts"
+      ]
+    },
+    {
+      "sha256": "1cbf3faaf54b3c557d0540511af62fd2a226ab8ae2395f3a50c5df0803009050",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-v1-patch-2h-2-hard-stock-score-gate-2026-05-29_17-18-50/market-alert-generator.ts",
+        ".code-backups/signals-v1-patch-2h-3-repair-stock-score-gate-2026-05-29_17-24-18/market-alert-generator.ts"
+      ]
+    },
+    {
+      "sha256": "2ab953b7cdb8607e3ac739a25fe044b876f7b7a7d10097a3c7fa68220dd3143f",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-v1-patch-3a-2-persistent-session-watchlist-2026-05-29_20-38-45/market-alert-generator.ts",
+        ".code-backups/signals-v1-patch-3a-2-persistent-watchlist-fixed-2026-05-29_20-44-47/market-alert-generator.ts"
+      ]
+    },
+    {
+      "sha256": "77d593659aaef9873bfe4c4653ede5dff3b83601922a9eb4ed0c976297db6b92",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-v1-patch-3b-4i-d-feed-dedupe-2026-06-01_13-21-39/market-alert-feed.ts",
+        "_project_context/lib/trading/market-alert-feed.ts"
+      ]
+    },
+    {
+      "sha256": "ead9a7b85725a1698143e4621dff4beb870ec0ba5dcd7c5bd950acad68321447",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-v1-patch-3b-4i-e-telegram-logical-cooldown-2026-06-01_13-51-33/signal-delivery.ts",
+        "_project_context/lib/trading/signal-delivery.ts"
+      ]
+    },
+    {
+      "sha256": "fad9d6f82d0eda8b5b9d8dc9466efa7a35190a6364eab307629be66506570630",
+      "count": 2,
+      "paths": [
+        ".code-backups/signals-v1-patch-3b-4n-c-telegram-clarity-entry-safety-2026-06-02_14-00-50/telegram-signal-alerts.ts",
+        "_project_context/lib/trading/telegram-signal-alerts.ts"
+      ]
+    },
+    {
+      "sha256": "f44e60feedce706c770eb0caa80600cb6c1417d519286c0fd09ad3114bf0d768",
+      "count": 2,
+      "paths": [
+        "333333.ps1",
+        "S9_02_forward_shadow_dedupe_and_idempotency_patch.ps1"
+      ]
+    },
+    {
+      "sha256": "766746f0f2bf2aa6767692bc02e96dc791f7eaf147be1d1c77c527d4df9a29b9",
+      "count": 2,
+      "paths": [
+        "S8_71B1_historical_ingestion_no_requests_hotfix_v2 (1).ps1",
+        "S8_71B1_historical_ingestion_no_requests_hotfix_v2.ps1"
+      ]
+    },
+    {
+      "sha256": "733efc7bb6028f73a393921fb54e9fa7b932c0557f559684a671723860621c89",
+      "count": 2,
+      "paths": [
+        "_archive/Landing.before-premium-recolor.tsx",
+        "_project_context/components/Landing.before-premium-recolor.tsx"
+      ]
+    },
+    {
+      "sha256": "2937da144fb1a2fa82d1fed6470cd3baee12accfb2a07ddbd40c8fe37c6fc13c",
+      "count": 2,
+      "paths": [
+        "_project_context/app/about/page.tsx",
+        "app/about/page.tsx"
+      ]
+    },
+    {
+      "sha256": "ee8c47e12fd9f323277b4d85af533c052d57a59288e9ef1c3923b2c485ef40da",
+      "count": 2,
+      "paths": [
+        "_project_context/app/admin/referrals/page.tsx",
+        "app/admin/referrals/page.tsx"
+      ]
+    },
+    {
+      "sha256": "2068263bb7376137e5d5ed148f896e92f81d6c163883a0754fd9ecb565cc9647",
+      "count": 2,
+      "paths": [
+        "_project_context/app/admin/support/page.tsx",
+        "app/admin/support/page.tsx"
+      ]
+    },
+    {
+      "sha256": "3e49e393c6c3c3834e0134290c5998297b26d17463f80af084ed79fcfe8fb65c",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/admin/me/route.ts",
+        "app/api/admin/me/route.ts"
+      ]
+    },
+    {
+      "sha256": "b463bb6c21785ae855a2e8b5d8e0848f775b80ec1e87bf7497bebaea0d582468",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/admin/referrals/withdrawals/route.ts",
+        "app/api/admin/referrals/withdrawals/route.ts"
+      ]
+    },
+    {
+      "sha256": "c3e81be4becbc2e3573ba24e73e64f4b7699918d04b50a47d0e3449ffba0c6c6",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/admin/stats/activations/route.ts",
+        "app/api/admin/stats/activations/route.ts"
+      ]
+    },
+    {
+      "sha256": "7bd6049763d2d22c476c018c4b369d30bca75d680b9263fc0ceeaca68e6e991c",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/create-crypto-payment/route.ts",
+        "app/api/create-crypto-payment/route.ts"
+      ]
+    },
+    {
+      "sha256": "a9903ae5c9bd50d747842d9b02ea3488679838115f24216ec3a7ffd2fe389963",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/email-request/route.ts",
+        "app/api/email-request/route.ts"
+      ]
+    },
+    {
+      "sha256": "e8b1c8ed8a0cf23de3475c9c9d3a2b412e4a21f4f6744c85175d104dff3c4d7c",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/ai-briefs/route.ts",
+        "app/api/market/ai-briefs/route.ts"
+      ]
+    },
+    {
+      "sha256": "152b101d9d606cff29249bb0695cd0e0f6619f9e578018b9a51a732ebd0715d8",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/alerts/cron/all/route.ts",
+        "app/api/market/alerts/cron/all/route.ts"
+      ]
+    },
+    {
+      "sha256": "f598fa5fb1a2104a5caf0ee3829f64dba2628181100a0d71a718f4af316120cb",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/alerts/cron/crypto/route.ts",
+        "app/api/market/alerts/cron/crypto/route.ts"
+      ]
+    },
+    {
+      "sha256": "a31f01b3196f462ab6ff2b3caa255ccdbc6d8cb2b819a070cab5d26d7915ae66",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/alerts/cron/route.ts",
+        "app/api/market/alerts/cron/route.ts"
+      ]
+    },
+    {
+      "sha256": "32b70b4c0522936c2d7acbfb844327d295ee0f124ea29c89d44bf38711d02013",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/alerts/decision/route.ts",
+        "app/api/market/alerts/decision/route.ts"
+      ]
+    },
+    {
+      "sha256": "60d314b339d2e2384aeac64fd4ea74c40e0b9499e4e0044b21e8b5ddd175c232",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/alerts/outcomes/route.ts",
+        "app/api/market/alerts/outcomes/route.ts"
+      ]
+    },
+    {
+      "sha256": "d3e8ca676c73632a56a0bb55d0ec3946d05bfdcc48739f7b56b2e26ccb222777",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/alerts/viewed/route.ts",
+        "app/api/market/alerts/viewed/route.ts"
+      ]
+    },
+    {
+      "sha256": "b98bb09a13edf454e4f27dc181201251beb6615716d83d9a2dd35e2166e854cb",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/intelligence/route.ts",
+        "app/api/market/intelligence/route.ts"
+      ]
+    },
+    {
+      "sha256": "3898b2d6be5ae60b9b73a0d8f0c836bea3a8016ddf1a91bf3519ed8bb63992ff",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/scanner/route.ts",
+        "app/api/market/scanner/route.ts"
+      ]
+    },
+    {
+      "sha256": "b451b37f4060b096d40f514ba77cd981dd3bebe11a37dcbe338b63439c8333b1",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/market/social-mentions/route.ts",
+        "app/api/market/social-mentions/route.ts"
+      ]
+    },
+    {
+      "sha256": "9096c51c6a1ee67036fd6fa3bf27f9769729c86b9aab252ffc1ad60750be1f9d",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/nowpayments-webhook/route.ts",
+        "app/api/nowpayments-webhook/route.ts"
+      ]
+    },
+    {
+      "sha256": "64041c389e7f7d1af2388ad27fab221dfcb76669966763c8b855cfbb111c2a33",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/personal-edge/summary/route.ts",
+        "app/api/personal-edge/summary/route.ts"
+      ]
+    },
+    {
+      "sha256": "0f54cfe693356c1dff9d53e237e12e7781894cfdd011d9d62fa8902fcee36d6a",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/playbook/setups/route.ts",
+        "app/api/playbook/setups/route.ts"
+      ]
+    },
+    {
+      "sha256": "fae70c6340b6b795682a80defe2fe2d27eb649ef3e88a3891da8a96bf4875405",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/playbook/signal-profile/route.ts",
+        "app/api/playbook/signal-profile/route.ts"
+      ]
+    },
+    {
+      "sha256": "6c07ad4a4aad0493c32bad00309da41d2e3b61deaee4d06390c0b1cb21b46a05",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/playbook/trade-patterns/route.ts",
+        "app/api/playbook/trade-patterns/route.ts"
+      ]
+    },
+    {
+      "sha256": "28ac65612ce09a7b60760678fdabeeb50b894d3306cb22831850e363953fbb4b",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/referrals/attach/route.ts",
+        "app/api/referrals/attach/route.ts"
+      ]
+    },
+    {
+      "sha256": "9009ad5e31adf5d30af7f97cae4cc91e4f7520f3eb6c619517e14d10ee14a8df",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/referrals/dashboard/route.ts",
+        "app/api/referrals/dashboard/route.ts"
+      ]
+    },
+    {
+      "sha256": "2674b2f2684d9d030d1e7dab6a670844166f934e5efa45d39ef805d96695d8c5",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/referrals/withdraw/route.ts",
+        "app/api/referrals/withdraw/route.ts"
+      ]
+    },
+    {
+      "sha256": "836b9760a08dcd780456d0deeb9f440c81e6760699fabb26d93b9d6569078196",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/after-trade-debriefs/route.ts",
+        "app/api/strategy/after-trade-debriefs/route.ts"
+      ]
+    },
+    {
+      "sha256": "2361d81cdbfd9c80658fe70d2f84d7aed69494ec4f524bbe29539065b15c9042",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/analytics/route.ts",
+        "app/api/strategy/analytics/route.ts"
+      ]
+    },
+    {
+      "sha256": "c0d2bc0ac03a9910a435960f9156d8b699a94b30d54b85fa2af19ed77ce98ff4",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/before-trade-checks/route.ts",
+        "app/api/strategy/before-trade-checks/route.ts"
+      ]
+    },
+    {
+      "sha256": "2abf6308ccea83d5f73a748e9301fb525c883e51b647393876d3d7c1e62cdbd3",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/drills/route.ts",
+        "app/api/strategy/drills/route.ts"
+      ]
+    },
+    {
+      "sha256": "5462716788bf76fb1b613d18def05500cc427a91f304801cd6005a6274fc01db",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/examples/route.ts",
+        "app/api/strategy/examples/route.ts"
+      ]
+    },
+    {
+      "sha256": "166e017f441ae7d3da04f40277a2cc05cbf5296cc6255e6089752bfc64061d6a",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/overview/route.ts",
+        "app/api/strategy/overview/route.ts"
+      ]
+    },
+    {
+      "sha256": "153c77558dcdbcd785e34a43e304f4c368f8a06df16f1861f54276fa7746d4fb",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/playbook/graduation/route.ts",
+        "app/api/strategy/playbook/graduation/route.ts"
+      ]
+    },
+    {
+      "sha256": "547f1f38f40472c3ddbd8f3b7778f0ed5bf143293c62f417be8d99ce6e4c918d",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/profile/route.ts",
+        "app/api/strategy/profile/route.ts"
+      ]
+    },
+    {
+      "sha256": "5aaf48e20367cdd1e62abf41e45fb3491c2d91acde62725e3874f600a4405048",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/review/route.ts",
+        "app/api/strategy/review/route.ts"
+      ]
+    },
+    {
+      "sha256": "5b46bd5fa34ace6c4896aff66863d414bd7492e3b8b1699a62103c33938f449c",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/strategies/route.ts",
+        "app/api/strategy/strategies/route.ts"
+      ]
+    },
+    {
+      "sha256": "d309ee20f63f5f2191ee3e5e3f67b6533f1a3fe6a00da24df803452ef40af3d9",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/tasks/route.ts",
+        "app/api/strategy/tasks/route.ts"
+      ]
+    },
+    {
+      "sha256": "af030990a2bc799a69160bb11e830b0c5a435d17f89c7c88e5f904e9af6f7296",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/templates/route.ts",
+        "app/api/strategy/templates/route.ts"
+      ]
+    },
+    {
+      "sha256": "12190209374f68e57428a0d942275e63074d8acaf1907db957e14bf897fde781",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/versions/generate/route.ts",
+        "app/api/strategy/versions/generate/route.ts"
+      ]
+    },
+    {
+      "sha256": "4477a90fc7b50341bf31775191ecea2f7f968aaeb3065f92353b77096e5abe45",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/weekly-report/accept/route.ts",
+        "app/api/strategy/weekly-report/accept/route.ts"
+      ]
+    },
+    {
+      "sha256": "3c24f443de60098997c34e3b98af0778e5129c7d6960fb42aa9fbe5a33120cae",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/strategy/weekly-report/route.ts",
+        "app/api/strategy/weekly-report/route.ts"
+      ]
+    },
+    {
+      "sha256": "e3636bcb5cdff209adb2d61fdff79c323f41194fe79b14df54cb615acfa7dde6",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/admin/close/route.ts",
+        "app/api/support/admin/close/route.ts"
+      ]
+    },
+    {
+      "sha256": "479ff6925ceb2ede4ca695aa6371c1074841746ca519e64da4c63f6f63931a00",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/admin/messages/route.ts",
+        "app/api/support/admin/messages/route.ts"
+      ]
+    },
+    {
+      "sha256": "bd43369fcf69f252540f546271e4ca8238c65e8e86dc36dee6350cbd9639d75f",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/admin/reply/route.ts",
+        "app/api/support/admin/reply/route.ts"
+      ]
+    },
+    {
+      "sha256": "8575ba4de470da77c053f91de418319d5c15ab3a9920f7b1598ebb0b7ff6076f",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/admin/sessions/route.ts",
+        "app/api/support/admin/sessions/route.ts"
+      ]
+    },
+    {
+      "sha256": "2efc7649906d32d2a9ec7b090e0817892e20f12cdc56cfa28e960f90a3688bb9",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/email-request/route.ts",
+        "app/api/support/email-request/route.ts"
+      ]
+    },
+    {
+      "sha256": "f30e13335f8aab4d802a15a8d18a194c39408b12e9a28d2104b95b68c81af280",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/messages/route.ts",
+        "app/api/support/messages/route.ts"
+      ]
+    },
+    {
+      "sha256": "c68656b2252834e4e140e75c730db8a4e2c3340160da5c1c60c1b845f30acd2d",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/operator-request/route.ts",
+        "app/api/support/operator-request/route.ts"
+      ]
+    },
+    {
+      "sha256": "6380f6bb58cfbb6e52e4d3fe147e5a733145d12c9098196ca52d38f4a3b1d043",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/support/session/route.ts",
+        "app/api/support/session/route.ts"
+      ]
+    },
+    {
+      "sha256": "532658663ad3255e266603cfb5df197704e1c169f50f041faddfe019b21d1108",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/telegram/signals/connect-code/route.ts",
+        "app/api/telegram/signals/connect-code/route.ts"
+      ]
+    },
+    {
+      "sha256": "401999af5d70189eb38d0901d12523765cbdc88d143d1e62662beacc20cd3cac",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/telegram/signals/status/route.ts",
+        "app/api/telegram/signals/status/route.ts"
+      ]
+    },
+    {
+      "sha256": "64f1ce749fb8b0494ceec0ddb4876648691d973b52e98d9429f59bbe662998dc",
+      "count": 2,
+      "paths": [
+        "_project_context/app/api/telegram/signals/webhook/route.ts",
+        "app/api/telegram/signals/webhook/route.ts"
+      ]
+    },
+    {
+      "sha256": "f6b5b8db10df9e001d12a5807e505c23cfa5d14a3500704fe08ce9ba9bb36213",
+      "count": 2,
+      "paths": [
+        "_project_context/app/apple-icon.tsx",
+        "app/apple-icon.tsx"
+      ]
+    },
+    {
+      "sha256": "37f7a235aa5c0086f6a2b6908484286cae3c218e79f49ad1c7b7e9c896b9b4c9",
+      "count": 2,
+      "paths": [
+        "_project_context/app/desk/page.tsx",
+        "app/desk/page.tsx"
+      ]
+    },
+    {
+      "sha256": "2b8ad2d33455a8f736fc3a8ebf8f0bdea8848ad4c0db48a2833bd0f9cd775932",
+      "count": 2,
+      "paths": [
+        "_project_context/app/favicon.ico",
+        "app/favicon.ico"
+      ]
+    },
+    {
+      "sha256": "bfc731826c4408f715187015a2cb780ed91c59d528b5178e58826de460fab1ea",
+      "count": 2,
+      "paths": [
+        "_project_context/app/globals.css",
+        "app/globals.css"
+      ]
+    },
+    {
+      "sha256": "35d290bfe1b22b2c6b1b5d1a737868a3fb46eed0486c22ef46d048e95020a283",
+      "count": 2,
+      "paths": [
+        "_project_context/app/icon.tsx",
+        "app/icon.tsx"
+      ]
+    },
+    {
+      "sha256": "240a02e88326b60241b05f44b2eb8d3a6fd71d034026411a17f58d26fe962ffe",
+      "count": 2,
+      "paths": [
+        "_project_context/app/layout.tsx",
+        "app/layout.tsx"
+      ]
+    },
+    {
+      "sha256": "9da5151ac53992fcdd44c2cf0ac6f41a5065a6f1ce9c9164984ac12d57c80165",
+      "count": 2,
+      "paths": [
+        "_project_context/app/legal/billing/page.tsx",
+        "app/legal/billing/page.tsx"
+      ]
+    },
+    {
+      "sha256": "dcd4350a92d934820bb1f9e29399e36337d41922ee84851625c86600d25c80c7",
+      "count": 2,
+      "paths": [
+        "_project_context/app/legal/cookies/page.tsx",
+        "app/legal/cookies/page.tsx"
+      ]
+    },
+    {
+      "sha256": "f333cfa9aaded26382cf4d6088580428dfe54821cffd832520518a2d9095aecf",
+      "count": 2,
+      "paths": [
+        "_project_context/app/legal/disclaimer/page.tsx",
+        "app/legal/disclaimer/page.tsx"
+      ]
+    },
+    {
+      "sha256": "929ef65f4e4a55efc7fc5218db65d8e342313910ac70a18fa5b642ec575a4b61",
+      "count": 2,
+      "paths": [
+        "_project_context/app/legal/eula/page.tsx",
+        "app/legal/eula/page.tsx"
+      ]
+    },
+    {
+      "sha256": "9492a62b5361d072702959a050bd01452b8368951ab080e0608b8ddfc2e248f3",
+      "count": 2,
+      "paths": [
+        "_project_context/app/legal/privacy-policy/page.tsx",
+        "app/legal/privacy-policy/page.tsx"
+      ]
+    },
+    {
+      "sha256": "249a3d8101e379b9357c0fd55e5d877a5e74b0d031369e28be0c845b62608160",
+      "count": 2,
+      "paths": [
+        "_project_context/app/legal/terms/page.tsx",
+        "app/legal/terms/page.tsx"
+      ]
+    },
+    {
+      "sha256": "b66058ad95e6e7009809fa36326d08528d2a40ca282e58a3db10b2f2f2b263cf",
+      "count": 2,
+      "paths": [
+        "_project_context/app/opengraph-image.tsx",
+        "app/opengraph-image.tsx"
+      ]
+    },
+    {
+      "sha256": "d0ff200db1de5618312ac20bcb85f083ff491473cb351afa2a07eebce0cf5c57",
+      "count": 2,
+      "paths": [
+        "_project_context/app/page.tsx",
+        "app/page.tsx"
+      ]
+    },
+    {
+      "sha256": "1004000ffd2195e7460e5af3bb10ff9eb47049f3f593a528bf0c5ba4fe05b117",
+      "count": 2,
+      "paths": [
+        "_project_context/app/pricing/page.tsx",
+        "app/pricing/page.tsx"
+      ]
+    },
+    {
+      "sha256": "e25afcba006419e9afac63cd51777281bd9ad8ae91e9bd14376d71853b0671e1",
+      "count": 2,
+      "paths": [
+        "_project_context/app/product/page.tsx",
+        "app/product/page.tsx"
+      ]
+    },
+    {
+      "sha256": "bf53b4287411e7f115ce8edd24563c9dbfb8e8576c1c0c7d7343b76068264588",
+      "count": 2,
+      "paths": [
+        "_project_context/app/robots.ts",
+        "app/robots.ts"
+      ]
+    },
+    {
+      "sha256": "4107bf71faf7bcede694ac0e38c06f0c2d263f0809985866d35da23df0b9916c",
+      "count": 2,
+      "paths": [
+        "_project_context/app/sitemap.ts",
+        "app/sitemap.ts"
+      ]
+    },
+    {
+      "sha256": "4faa48cd86804eb4957defb115aeb75dc62431bfd5716796dedc2c9aa1924495",
+      "count": 2,
+      "paths": [
+        "_project_context/app/team/page.tsx",
+        "app/team/page.tsx"
+      ]
+    },
+    {
+      "sha256": "dabca5d6d753a8d0ff0a59a97e63783081e97c822d93e01e23fd013c3994e9ee",
+      "count": 2,
+      "paths": [
+        "_project_context/app/twitter-image.tsx",
+        "app/twitter-image.tsx"
+      ]
+    },
+    {
+      "sha256": "47c8890aa9738c6073980339bf9cf7ba9cda7afc9aa84af9f46d17fdb316546c",
+      "count": 2,
+      "paths": [
+        "_project_context/components/ReferralTracker.tsx",
+        "components/ReferralTracker.tsx"
+      ]
+    },
+    {
+      "sha256": "c3259df19bae4782178d0d4beed91143e8db29cb23effe88c5b276f3db549708",
+      "count": 2,
+      "paths": [
+        "_project_context/components/SupportWidget.tsx",
+        "components/SupportWidget.tsx"
+      ]
+    },
+    {
+      "sha256": "3bafbdcc8774f4c1345d6dbcba2642186e4d98e62e3b3caae1ca96819a7c5b12",
+      "count": 2,
+      "paths": [
+        "_project_context/components/admin/AdminActivationStatsBlock.tsx",
+        "components/admin/AdminActivationStatsBlock.tsx"
+      ]
+    },
+    {
+      "sha256": "8c8266236a710d738b3494d997522767d7d7db636d245818475b59546b0bea5a",
+      "count": 2,
+      "paths": [
+        "_project_context/components/dashboard/PersonalEdgeTab.tsx",
+        "components/dashboard/PersonalEdgeTab.tsx"
+      ]
+    },
+    {
+      "sha256": "ecb4daead7fcb487fcb1da9f59a93cc426c9e8d503693f376b391ef605ea81f0",
+      "count": 2,
+      "paths": [
+        "_project_context/components/dashboard/TelegramSignalsConnectButton.tsx",
+        "components/dashboard/TelegramSignalsConnectButton.tsx"
+      ]
+    },
+    {
+      "sha256": "39a734fecc1f11849e18bdfa2913d716b6e2800bf825bdfcaabad3c74b4c3df3",
+      "count": 2,
+      "paths": [
+        "_project_context/components/dashboard/~$legramSignalsConnectButton.tsx",
+        "components/dashboard/~$legramSignalsConnectButton.tsx"
+      ]
+    },
+    {
+      "sha256": "418d4fddb28341fff6d938fe772bd5820a2ba7c08f18adea3fb5547a1d6dca16",
+      "count": 2,
+      "paths": [
+        "_project_context/components/marketing/BrandMark.tsx",
+        "components/marketing/BrandMark.tsx"
+      ]
+    },
+    {
+      "sha256": "ac7c174058c00766c7a4e54ef410349a82ed421eb50c7d6f92e7f7cb50a9aebb",
+      "count": 2,
+      "paths": [
+        "_project_context/components/marketing/CookieConsent.tsx",
+        "components/marketing/CookieConsent.tsx"
+      ]
+    },
+    {
+      "sha256": "86f351cbeb7e7cd231bd6dbcb55f16710f4f6bc119ffd4f0ebf90efb83a56e89",
+      "count": 2,
+      "paths": [
+        "_project_context/components/marketing/LegalPageShell.tsx",
+        "components/marketing/LegalPageShell.tsx"
+      ]
+    },
+    {
+      "sha256": "f119d5ec72c8ead33f58fcca5251d9f0df078d0f56fc9993dbdb4ec6c2ae9cc5",
+      "count": 2,
+      "paths": [
+        "_project_context/components/marketing/SeoJsonLd.tsx",
+        "components/marketing/SeoJsonLd.tsx"
+      ]
+    },
+    {
+      "sha256": "f005679570b550afb17683c2b8186120811b010aaa0f9a37b80f70b259addb44",
+      "count": 2,
+      "paths": [
+        "_project_context/components/marketing/TradingBackground.tsx",
+        "components/marketing/TradingBackground.tsx"
+      ]
+    },
+    {
+      "sha256": "6f7d18705d50ab348f8d47fc040ed296503a6300fea6686c0acae42dbf20099a",
+      "count": 2,
+      "paths": [
+        "_project_context/components/ui/button.tsx",
+        "components/ui/button.tsx"
+      ]
+    },
+    {
+      "sha256": "a41b4d3d618416128d0093af2575048a2de8ef25c0926bcea4f19a24a59de476",
+      "count": 2,
+      "paths": [
+        "_project_context/components/ui/card.tsx",
+        "components/ui/card.tsx"
+      ]
+    },
+    {
+      "sha256": "661f48242b16b27299e91f7f207bdc46abc34b797ab12c29364efd2ce3acd3a9",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/ai-usage-limits.ts",
+        "lib/ai-usage-limits.ts"
+      ]
+    },
+    {
+      "sha256": "5d24a319a2de72cbaf1908f3dcd0a4d9b68ebf0d55957309e4e47dcbb244abf9",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/ai/skill-edge-prompts.ts",
+        "lib/ai/skill-edge-prompts.ts"
+      ]
+    },
+    {
+      "sha256": "e89b92f2f02bdcc9855ced10a022677c80b7324d15df1ae4c47099cd24d227ae",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/fondy.ts",
+        "lib/fondy.ts"
+      ]
+    },
+    {
+      "sha256": "a0303b1feb509e8d61a21dd949bd0abae4aef79812d46969adb8650935f5f8aa",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/i18n/config.ts",
+        "lib/i18n/config.ts"
+      ]
+    },
+    {
+      "sha256": "9cdb7b33f9e0aacc051c994a07b72bbbd9d629a5a61d43fd3984b5513b61627f",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/i18n/dictionaries.ts",
+        "lib/i18n/dictionaries.ts"
+      ]
+    },
+    {
+      "sha256": "2a3ac3eb5eadd29c31e133e7adfd58897ba79e26d9a9aa1b62b95df494632ce7",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/i18n/dictionary-types.ts",
+        "lib/i18n/dictionary-types.ts"
+      ]
+    },
+    {
+      "sha256": "27f2ba195f3b8519cfe4ae6411bc86c72cd4a6bc6636a9d0a894db9f7d6b47c2",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/i18n/index.ts",
+        "lib/i18n/index.ts"
+      ]
+    },
+    {
+      "sha256": "46ef6ebc451610a2750597ecf63a1e00b71409f3815c127b71cd7750a8fbc1fb",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/admin-access.ts",
+        "lib/security/admin-access.ts"
+      ]
+    },
+    {
+      "sha256": "118c6685f24bdedd73a0db18de71e1c318ac5c36eb2bc4d65e96b3d46ea90dc2",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/admin-route-gate.ts",
+        "lib/security/admin-route-gate.ts"
+      ]
+    },
+    {
+      "sha256": "8a32b7382a6ce40104102cb9c9167b015931deb7ccdcffc9e0a28923c1027528",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/ai-route-gate.ts",
+        "lib/security/ai-route-gate.ts"
+      ]
+    },
+    {
+      "sha256": "43e8286133bec6c66e631e329e85252d4e6d351b2e57f335357c383873b65235",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/client-auth-fetch.ts",
+        "lib/security/client-auth-fetch.backup-before-singleton-supabase.ts"
+      ]
+    },
+    {
+      "sha256": "bf371e47a9b00b942732a29dfe14eb17a24d4929943eada5ce453d11a9417774",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/feature-gate.ts",
+        "lib/security/feature-gate.ts"
+      ]
+    },
+    {
+      "sha256": "5f5a9da4360625979c06af4e77c5ffd25d98ba6946a7ddb78a1ca469b9f7d0d1",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/rate-limit.ts",
+        "lib/security/rate-limit.ts"
+      ]
+    },
+    {
+      "sha256": "c96888d92ab766b02cac39cc7d92acddbbbfa176037e059c0c95a5c40e980339",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/server-auth.ts",
+        "lib/security/server-auth.ts"
+      ]
+    },
+    {
+      "sha256": "d579697e66b550bff7a150b29412dea17007e8dc5d0f93e02a7ca8653e83a2fd",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/server-env.ts",
+        "lib/security/server-env.ts"
+      ]
+    },
+    {
+      "sha256": "bbf1a7ffc86d544a8e77f56707c2cb552cf59b821294944630ea20d3168f259d",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/security/subscription-access.ts",
+        "lib/security/subscription-access.ts"
+      ]
+    },
+    {
+      "sha256": "015ba779746c244eb51ef0fc64a63e91e2ff6a807915a9d6dfd86779bc95f5ec",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/site.ts",
+        "lib/site.ts"
+      ]
+    },
+    {
+      "sha256": "ec21badfc455fef205044962861de619dc310ee1f2e4fc9638d4efaa655e7b0d",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/supabaseAdmin.ts",
+        "lib/supabaseAdmin.ts"
+      ]
+    },
+    {
+      "sha256": "79319325f892a0f6d00ba2245e25351cf01bf79a317cf1ce81e5594e00db82eb",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/supabaseClient.ts",
+        "lib/supabaseClient.ts"
+      ]
+    },
+    {
+      "sha256": "3eb1ec1269d28a8262ee714b5a4e4cab63b8251f9e11b882416d83a4321de6fb",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/trading/market-alert-cron-runner.ts",
+        "lib/trading/market-alert-cron-runner.ts"
+      ]
+    },
+    {
+      "sha256": "fc381a1fc42633dc89b4555b555fcda4eb19ab57afe8c29bf39e841da512c15f",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/trading/market-data-stack.ts",
+        "lib/trading/market-data-stack.ts"
+      ]
+    },
+    {
+      "sha256": "f43c76d0589d5351d0c8da6fd00073a79ead562f195b2122bfc359f56cef1b2a",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/trading/price-action-patterns.ts",
+        "lib/trading/price-action-patterns.ts"
+      ]
+    },
+    {
+      "sha256": "4b319a79d54b6253dcd8b177eaa347395071619157bef137cf8b175a92591d02",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/trading/signal-confidence.ts",
+        "lib/trading/signal-confidence.ts"
+      ]
+    },
+    {
+      "sha256": "13d14b6270eee61c0f528a83a08dcbad6dc556c86f4c766de63bc9fab00d1323",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/trading/signal-personalization.ts",
+        "lib/trading/signal-personalization.ts"
+      ]
+    },
+    {
+      "sha256": "a40be247975f6843b9bc29b0c2dbb6c425f7e7166396bd5f8f262e3792daa0b3",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/trading/signal-quality-layers.ts",
+        "lib/trading/signal-quality-layers.ts"
+      ]
+    },
+    {
+      "sha256": "7c8c3dfc0cdd370d44932828eb067ef771c8fe7996693221d5d4b90af6d54f2d",
+      "count": 2,
+      "paths": [
+        "_project_context/lib/utils.ts",
+        "lib/utils.ts"
+      ]
+    },
+    {
+      "sha256": "719c7ed1e237d12b95c4a59feffcfc4d846fe940f967ec9ecf462dbde3d65d76",
+      "count": 2,
+      "paths": [
+        "_project_context/next.config.ts",
+        "next.config.ts"
+      ]
+    },
+    {
+      "sha256": "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde",
+      "count": 2,
+      "paths": [
+        "_project_context/postcss.config.mjs",
+        "postcss.config.mjs"
+      ]
+    },
+    {
+      "sha256": "2b67812c325c199a02536cdbeea0c593a72f707d323b72ee3e08dbab06753bd4",
+      "count": 2,
+      "paths": [
+        "_project_context/public/file.svg",
+        "public/file.svg"
+      ]
+    },
+    {
+      "sha256": "b614b9bf183925957661ac851498fe1d8029fd43a62fbfed86f9e2624a57e7cf",
+      "count": 2,
+      "paths": [
+        "_project_context/public/globe.svg",
+        "public/globe.svg"
+      ]
+    },
+    {
+      "sha256": "703d8dacd4665808d65d53bea9db33a0dab09178ece965f5bad1fee090db2c23",
+      "count": 2,
+      "paths": [
+        "_project_context/public/learning/Smart_Money_Blueprint.pptx",
+        "public/learning/Smart_Money_Blueprint.pptx"
+      ]
+    },
+    {
+      "sha256": "5089a32d47801bc329ac63e1f0e4fd457a3f4128bf6e9091c98fd2a669e2eec0",
+      "count": 2,
+      "paths": [
+        "_project_context/public/marketing/trading-desk-loop.mp4",
+        "public/marketing/trading-desk-loop.mp4"
+      ]
+    },
+    {
+      "sha256": "71477f66e9975fb3958bfda32deddc43f9e82c414d8578dce0f30601efdbda70",
+      "count": 2,
+      "paths": [
+        "_project_context/public/media/desk-preview.mp4",
+        "public/media/desk-preview.mp4"
+      ]
+    },
+    {
+      "sha256": "55995dfad6ecb4945a1e856ddca03c5e16aa5bf13fd21b4df6a74ae79357bcfc",
+      "count": 2,
+      "paths": [
+        "_project_context/public/next.svg",
+        "public/next.svg"
+      ]
+    },
+    {
+      "sha256": "f081337b2fee635b455b63275406a3e7f39d6a014e25ad90dab5a67e62a12ac4",
+      "count": 2,
+      "paths": [
+        "_project_context/public/vercel.svg",
+        "public/vercel.svg"
+      ]
+    },
+    {
+      "sha256": "644768c4aaeb4767bce293344eeb0c125fb804a94d801440424072202d85e3a1",
+      "count": 2,
+      "paths": [
+        "_project_context/public/window.svg",
+        "public/window.svg"
+      ]
+    },
+    {
+      "sha256": "be18523b23b78b6e1a876ddd107d330f0168bddf09d751b57e0b5edce69c66f3",
+      "count": 2,
+      "paths": [
+        "_project_context/tsconfig.json",
+        "tsconfig.json"
+      ]
+    },
+    {
+      "sha256": "4be259fb4befa5661606d60e1a8c4b62f4f5e00f93a4a28012f2e54848577b27",
+      "count": 2,
+      "paths": [
+        "app/api/stock-engine/calibration/preview/route.ts",
+        "s83_patch/app/api/stock-engine/calibration/preview/route.ts"
+      ]
+    },
+    {
+      "sha256": "85833fa25e7bffeb10e038f5eb57fe51c60d97f31d1539d4f3fc9e64728b5164",
+      "count": 2,
+      "paths": [
+        "app/api/stock-engine/cockpit/route.ts",
+        "s84a_patch/app/api/stock-engine/cockpit/route.ts"
+      ]
+    },
+    {
+      "sha256": "9da7a9ec5ec7ae4110390ab41d1a3abf59342eff0570f0774e367ec817d54467",
+      "count": 2,
+      "paths": [
+        "app/api/stock-engine/cockpit/stream/route.ts",
+        "s83_patch/app/api/stock-engine/cockpit/stream/route.ts"
+      ]
+    },
+    {
+      "sha256": "59b916717b30c3fea1395050f4d9c6794a83776d75d940d453f78b2d1a6ffd1f",
+      "count": 2,
+      "paths": [
+        "app/api/stock-engine/health/route.ts",
+        "s83_patch/app/api/stock-engine/health/route.ts"
+      ]
+    },
+    {
+      "sha256": "5eccb11181b2d6d9225e6944e10baa5f59898d01c60822011fee2ca95cdd2116",
+      "count": 2,
+      "paths": [
+        "app/api/stock-engine/market-session/route.ts",
+        "s84a_patch/app/api/stock-engine/market-session/route.ts"
+      ]
+    },
+    {
+      "sha256": "1be8da24b6279be6f646800318066f1ed86f60eaa660b461a703cbbe89d33626",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_reconciliation_backup_20260714_183205/requirements.txt",
+        "deploy_stock_engine/requirements.txt"
+      ]
+    },
+    {
+      "sha256": "bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/app/api/app.py",
+        "services/stock-engine/app/api/app.py"
+      ]
+    },
+    {
+      "sha256": "dfe8b1722872000f37686de5010ef7d9e9764d6e4ecd3527f8db2300f59ad95f",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/capitalization_aware_backfill_runner.py",
+        "services/stock-engine/ops/scripts/capitalization_aware_backfill_runner.py"
+      ]
+    },
+    {
+      "sha256": "1950a39a571db6df38fd2b03861503604001f80c384d82a9b057d3200d6119be",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/forward_shadow_daily_evaluator.py",
+        "services/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py"
+      ]
+    },
+    {
+      "sha256": "8544acb395ddf1af45640fd824ed9029248d1a03a9da023b3ad882f63ab408a5",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/forward_shadow_promotion_gate_report.py",
+        "services/stock-engine/ops/scripts/forward_shadow_promotion_gate_report.py"
+      ]
+    },
+    {
+      "sha256": "b75ede6079ea7119b62d477bf4c6a88f6b7417135fa8860c2893ec4bd1c3c8b0",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/internal_research_agents_daily.py",
+        "services/stock-engine/ops/scripts/internal_research_agents_daily.py"
+      ]
+    },
+    {
+      "sha256": "641b74798a7cd7bfcc0e99644132e92c9d6da6ca9f5071c4c659019888cf8336",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/nightly_research_optimizer_controller.py",
+        "services/stock-engine/ops/scripts/nightly_research_optimizer_controller.py"
+      ]
+    },
+    {
+      "sha256": "1229cdb19f54bb6b72f5946a6653db17b13b8021631a7029fd578c7bfd9eede1",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/s10_paper_entry_guarded_daemon.py",
+        "services/stock-engine/ops/scripts/s10_paper_entry_guarded_daemon.py"
+      ]
+    },
+    {
+      "sha256": "752b8504a3c66d0094cb91934aca5308439684155b9c0daff16ca7b06185ba37",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/s10_paper_entry_guarded_wrapper.py",
+        "services/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py"
+      ]
+    },
+    {
+      "sha256": "bb1a6a4bcc18a35c4a7632c1cd3dccf031acd4b174e52f0c434e691135419acd",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/s10_paper_evaluation_only_daemon.py",
+        "services/stock-engine/ops/scripts/s10_paper_evaluation_only_daemon.py"
+      ]
+    },
+    {
+      "sha256": "4789c8d2cc3b5e828cbc90115fb6300618b42fed6cc8df345e375450fd821926",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/s10_paper_evaluation_only_wrapper.py",
+        "services/stock-engine/ops/scripts/s10_paper_evaluation_only_wrapper.py"
+      ]
+    },
+    {
+      "sha256": "e12153d1daff2c8e43522b55424a44fa70540c66aae1dbf2a0f627e0a614c512",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/ops/scripts/universe_v1_overnight_backfill_runner.py",
+        "services/stock-engine/ops/scripts/universe_v1_overnight_backfill_runner.py"
+      ]
+    },
+    {
+      "sha256": "90fd0d91e04cee447e23936c0992debaa2066b0553a61893c722500369a522ba",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4F_vps_canonical_20260714_183205/requirements.txt",
+        "services/stock-engine/requirements.txt"
+      ]
+    },
+    {
+      "sha256": "6ad80da9e098f011eb256b10dd75fde957f005772b5c7780041a6b42fe7c474d",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-cap-aware-backfill.service",
+        "services/stock-engine/ops/systemd/skilledge-cap-aware-backfill.service"
+      ]
+    },
+    {
+      "sha256": "f036eea7104bef9527a0bfe6fc8255136dc5be3fde18ec711e1542b2e0eb29b8",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-cap-aware-backfill.timer",
+        "services/stock-engine/ops/systemd/skilledge-cap-aware-backfill.timer"
+      ]
+    },
+    {
+      "sha256": "e8215e5f928046c32901b0f44f560c8e5a793abed0c579ebacf07255feded4d6",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-forward-shadow-daily.service",
+        "services/stock-engine/ops/systemd/skilledge-forward-shadow-daily.service"
+      ]
+    },
+    {
+      "sha256": "1bc443261df2845bc76bad5c63cefeece6745efa2555c725f4001abc21bd64de",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-forward-shadow-daily.timer",
+        "services/stock-engine/ops/systemd/skilledge-forward-shadow-daily.timer"
+      ]
+    },
+    {
+      "sha256": "8717a690efc1146dc09fbd70dea38b2044e157a5973009f9f5207107282bf911",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-forward-shadow-promotion-gate.service",
+        "services/stock-engine/ops/systemd/skilledge-forward-shadow-promotion-gate.service"
+      ]
+    },
+    {
+      "sha256": "d56e16006f6d02f5d5ffb63f25f4d866c30ab1b2133860f158096eec909a058d",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-forward-shadow-promotion-gate.timer",
+        "services/stock-engine/ops/systemd/skilledge-forward-shadow-promotion-gate.timer"
+      ]
+    },
+    {
+      "sha256": "56f1525693904b208a22d877d7c0ad34f64e2cf8a5638d53fc2304b8ab12bb97",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-internal-research-agents.service",
+        "services/stock-engine/ops/systemd/skilledge-internal-research-agents.service"
+      ]
+    },
+    {
+      "sha256": "4e29b018bf87226f3ea00cfaa7dda4a33f4190ef90570897760201bcc7936575",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-internal-research-agents.timer",
+        "services/stock-engine/ops/systemd/skilledge-internal-research-agents.timer"
+      ]
+    },
+    {
+      "sha256": "4293858801424b8851cef42cc0cf7b2beaa88e920462f973e320b2e3be4a9b01",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-nightly-research-optimizer.service",
+        "services/stock-engine/ops/systemd/skilledge-nightly-research-optimizer.service"
+      ]
+    },
+    {
+      "sha256": "12944670f2759a6441cf0c57b09cb9a2609d86378b93bd2011f89769c9482f85",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-nightly-research-optimizer.timer",
+        "services/stock-engine/ops/systemd/skilledge-nightly-research-optimizer.timer"
+      ]
+    },
+    {
+      "sha256": "7020b0c9da8bc4cfd71e93f192b2de55d21c79b57ef36c4d4c8b152693735e95",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-post-close-evidence.service",
+        "services/stock-engine/ops/systemd/skilledge-post-close-evidence.service"
+      ]
+    },
+    {
+      "sha256": "71459ed66d43e1cd5b10566ca45df096500558c3a952fb06e09700e259e3d90f",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-s10-paper-evaluation.service",
+        "services/stock-engine/ops/systemd/skilledge-s10-paper-evaluation.service"
+      ]
+    },
+    {
+      "sha256": "c6cbacb060b6077002208d46a279d1cbfe4cbe0c52fb0cdf36080a1e91056a17",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-s10-paper-evaluation.timer",
+        "services/stock-engine/ops/systemd/skilledge-s10-paper-evaluation.timer"
+      ]
+    },
+    {
+      "sha256": "ab2155022521904096ab2b76ef39e2746b6da76fb44ca3f8306d801f250c72a4",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-s10-paper-trading.service",
+        "services/stock-engine/ops/systemd/skilledge-s10-paper-trading.service"
+      ]
+    },
+    {
+      "sha256": "eb74da39516589efdaaeefb94f72ff37a549b2a20701e0da2778f6259dce7a23",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-s10-paper-trading.timer",
+        "services/stock-engine/ops/systemd/skilledge-s10-paper-trading.timer"
+      ]
+    },
+    {
+      "sha256": "58dd804f5d52e3ade78be2dcd2ba9363b700a20710f7003005a757bd03258cc6",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-universe-v1-backfill.service",
+        "services/stock-engine/ops/systemd/skilledge-universe-v1-backfill.service"
+      ]
+    },
+    {
+      "sha256": "fddd553b8fcc6716e3a2ce00c16efd866a65ca09ca1f0edf2cdda57cb2f50064",
+      "count": 2,
+      "paths": [
+        "audit_exports/S10_4H_vps_systemd_20260714_184226/skilledge-universe-v1-backfill.timer",
+        "services/stock-engine/ops/systemd/skilledge-universe-v1-backfill.timer"
+      ]
+    },
+    {
+      "sha256": "b15d1bf7c8d95eab509d6c019bd8c2656bc2b7709e9864f7f29abb588acc83a3",
+      "count": 2,
+      "paths": [
+        "components/Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "components/Landing.backup-before-pricing-strategy-simple-fix.tsx"
+      ]
+    },
+    {
+      "sha256": "64b74584028051da92831339019b4f0b23c61ca29ab2f24affc93c4590e79976",
+      "count": 2,
+      "paths": [
+        "components/Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "components/Landing.backup-before-pricing-cards-strategy-feature.tsx"
+      ]
+    },
+    {
+      "sha256": "3479c5490bc5196d48eb878c8433cb619a81446d0d1a96877cc80d3602ff5141",
+      "count": 2,
+      "paths": [
+        "components/Landing.tsx",
+        "components/Landing.tsx.backup-before-referral-hero-copy-fix"
+      ]
+    },
+    {
+      "sha256": "313eb907b154183f381a341fac391dbfe3b184c328d3f044270edeac45c4d360",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/api/app.py",
+        "s74_patch/services/stock-engine/app/api/app.py"
+      ]
+    },
+    {
+      "sha256": "b75e1c6b181b5efaacde9efb8a6b9a862ccc8167d5ff97a213e8bb4b5d375829",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/backtest.py",
+        "services/stock-engine/app/backtest.py"
+      ]
+    },
+    {
+      "sha256": "dce8c4f134d3a8e4ffd801ef68a28949b6837b0718b4904a2048cd14f851c327",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/config.py",
+        "services/stock-engine/app/config.py"
+      ]
+    },
+    {
+      "sha256": "2f359694854eb11db880cdf834ad71383c42f6e6c297d75367e08024d958ef38",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/data/fmp_client.py",
+        "services/stock-engine/app/data/fmp_client.py"
+      ]
+    },
+    {
+      "sha256": "489d1704625695937db834ba686d760436fb5cde3a7cd5905e7fdb9c90665cb6",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/indicators.py",
+        "services/stock-engine/app/indicators.py"
+      ]
+    },
+    {
+      "sha256": "b2e2dbe201af0c96a841c74a9cce1193c81803a87bf0e707781f908c60fb5027",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/models.py",
+        "services/stock-engine/app/models.py"
+      ]
+    },
+    {
+      "sha256": "3667c6fd8d7a097c7620f5575397aad5ad7161e69555c2c76ec186fd3b6bb2e4",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/runtime_cache.py",
+        "services/stock-engine/app/runtime_cache.py"
+      ]
+    },
+    {
+      "sha256": "816e33d1626d7eb951cf1714451e27efb66f0666dfeaa397743170e097e28a17",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/setup_registry.py",
+        "services/stock-engine/app/setup_registry.py"
+      ]
+    },
+    {
+      "sha256": "56ffc54e091fcb16c52cf9665116219846da07b4e2a1b246f785db71c92d5b7f",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/state.py",
+        "services/stock-engine/app/state.py"
+      ]
+    },
+    {
+      "sha256": "a66b92b43f0e6615bc253852d1c71cd601bee845a546f48c4a85244cd6af666e",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/app/storage.py",
+        "services/stock-engine/app/storage.py"
+      ]
+    },
+    {
+      "sha256": "39734f5086c9f1817ae8270a72f72f97f5856dec63d35fd1e09c54d04b661a48",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/data/runtime_cache.json",
+        "services/stock-engine/data/runtime_cache.json"
+      ]
+    },
+    {
+      "sha256": "92be267c8621215467521757897487bfcd42e58113d9fc66858762bd085f1c64",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/debug_s514e_selected_best_ideas.json",
+        "services/stock-engine/debug_s514e_selected_best_ideas.json"
+      ]
+    },
+    {
+      "sha256": "11018620e3815bd62ab58ef5c4ee03cc0dcf2925ac883c1064a2e7537b05d976",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/debug_s515_daily_forward_report.json",
+        "services/stock-engine/debug_s515_daily_forward_report.json"
+      ]
+    },
+    {
+      "sha256": "e3bc4fa007ee5c4c791aa2e93c678a3bb5bf4aed71740826f51f17edc4be8876",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/debug_s516b_forward_report_working.json",
+        "services/stock-engine/debug_s516b_forward_report_working.json"
+      ]
+    },
+    {
+      "sha256": "46747277361677e69f01706747fb07642d74be89925441d9d11a4774c8e5fe55",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/run_daily_ai_desk.py",
+        "s80c_patch/services/stock-engine/run_daily_ai_desk.py"
+      ]
+    },
+    {
+      "sha256": "be8dc5c046b34f3052ea1961b9b13c15232532c83669f4bea4b31e0def76b962",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/run_engine_loop.py",
+        "services/stock-engine/run_engine_loop.py"
+      ]
+    },
+    {
+      "sha256": "35201b900807970c28547379cc3c92d31ba6d08d5d1ba7a9770d60fe9ee89776",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/run_nightly_self_learning.py",
+        "s80_patch/services/stock-engine/run_nightly_self_learning.py"
+      ]
+    },
+    {
+      "sha256": "776c0324214c4e9ca7eef08385b0090373fbc1059fab0e9add62276427251165",
+      "count": 2,
+      "paths": [
+        "deploy_stock_engine/telegram_cache_consumer.py",
+        "services/stock-engine/telegram_cache_consumer.py"
+      ]
+    },
+    {
+      "sha256": "6c3fde3253c14f33d990e478ef649c768483b743c9f5c66966451fc3a773c9b6",
+      "count": 2,
+      "paths": [
+        "lib/marketSession.ts",
+        "s84a_patch/lib/marketSession.ts"
+      ]
+    },
+    {
+      "sha256": "db2b494c9df3bc1b457696c5535c5e99901eb3fcb5cdb42010e541b8e3fef99c",
+      "count": 2,
+      "paths": [
+        "s58_start_scripts_v2_fixed/start_all_local.ps1",
+        "start_all_local.ps1"
+      ]
+    },
+    {
+      "sha256": "7924e96c55c89cb61c4b07359c40fb35e225e9ad412e30b8e7c398506ccd4b7d",
+      "count": 2,
+      "paths": [
+        "s58_start_scripts_v2_fixed/stop_local_ports.ps1",
+        "stop_local_ports.ps1"
+      ]
+    },
+    {
+      "sha256": "497b6605e448ebda8d7c708e8bcb1442930bce795fc358a56b078517bd164fec",
+      "count": 2,
+      "paths": [
+        "s82_patch/services/stock-engine/ops/README_S82_SECURE_ENGINE_INGRESS.md",
+        "services/stock-engine/ops/README_S82_SECURE_ENGINE_INGRESS.md"
+      ]
+    },
+    {
+      "sha256": "4b8e743b6c1f39e8688b483aa6b725ba4e1197bad2d6191a17bb2199e88f8541",
+      "count": 2,
+      "paths": [
+        "s82_patch/services/stock-engine/ops/nginx/skilledge-engine-secure.nginx.template.conf",
+        "services/stock-engine/ops/nginx/skilledge-engine-secure.nginx.template.conf"
+      ]
+    },
+    {
+      "sha256": "dfc7afd5f767d880f3386eaf92bed8f04d0408e7d14a64d3643ca14fe8aa5f21",
+      "count": 2,
+      "paths": [
+        "s82_patch/services/stock-engine/ops/scripts/check_secure_engine_proxy.sh",
+        "services/stock-engine/ops/scripts/check_secure_engine_proxy.sh"
+      ]
+    },
+    {
+      "sha256": "486fbfe0b3a887523f020fa9107e249ede34a50aa7221a7481aedae7a984898f",
+      "count": 2,
+      "paths": [
+        "s82_patch/services/stock-engine/ops/scripts/setup_nginx_secure_engine_proxy.sh",
+        "services/stock-engine/ops/scripts/setup_nginx_secure_engine_proxy.sh"
+      ]
+    },
+    {
+      "sha256": "4763b6976144f7179daf9065fc00b28b259d0f6d8edf881affd6c7170d473f05",
+      "count": 2,
+      "paths": [
+        "s84a_patch/services/stock-engine/ops/README_S84A_MARKET_HOLIDAY_GUARD.md",
+        "services/stock-engine/ops/README_S84A_MARKET_HOLIDAY_GUARD.md"
+      ]
+    },
+    {
+      "sha256": "0c911e1aa44a8d7fbe066c99afc90b05610c9b614fb98d2d60b730fc58e819b0",
+      "count": 2,
+      "paths": [
+        "s84a_patch/services/stock-engine/ops/market_calendar.py",
+        "services/stock-engine/ops/market_calendar.py"
+      ]
+    },
+    {
+      "sha256": "432b625006fd8fc40d77bb40dd9f5ad9b1fc163c8d38436a7d335076c6940f20",
+      "count": 2,
+      "paths": [
+        "s84a_patch/services/stock-engine/run_daily_ai_desk.py",
+        "services/stock-engine/run_daily_ai_desk.py"
+      ]
+    },
+    {
+      "sha256": "cc7227957aed1a56b66d606a8c05051f36eb3eedbc55c45b46e9995506742730",
+      "count": 2,
+      "paths": [
+        "s86_patch/services/stock-engine/ops/README_S86_ENGINE_WATCHDOG.md",
+        "services/stock-engine/ops/README_S86_ENGINE_WATCHDOG.md"
+      ]
+    },
+    {
+      "sha256": "78dffea5058c14a38c801f43e1ba67d554d08c95caf4d42919c1f1a6773e9bef",
+      "count": 2,
+      "paths": [
+        "s86_patch/services/stock-engine/ops/scripts/engine_watchdog.py",
+        "services/stock-engine/ops/scripts/engine_watchdog.py"
+      ]
+    },
+    {
+      "sha256": "a3f5635ed802c49b62af60d0e334ec6956d39004e07c498bb928c801e9571efd",
+      "count": 2,
+      "paths": [
+        "s88_patch/services/stock-engine/ops/README_S88_PRODUCTION_LIVE_DAY_READINESS.md",
+        "services/stock-engine/ops/README_S88_PRODUCTION_LIVE_DAY_READINESS.md"
+      ]
+    },
+    {
+      "sha256": "bf6b9c2442179f5728a1490fd0ed8632fca77f8a3c05c59d37df9b3d8a75be93",
+      "count": 2,
+      "paths": [
+        "s88_patch/services/stock-engine/ops/scripts/production_live_day_readiness.py",
+        "services/stock-engine/ops/scripts/production_live_day_readiness.py"
+      ]
+    },
+    {
+      "sha256": "66dadb9e92427ed03bcb4213b84dd3ab109b1833f2675be24e45ab19f4ba8407",
+      "count": 2,
+      "paths": [
+        "services/stock-engine/ops/sql/s872_historical_learning_schema.sql",
+        "supabase/migrations/20260708_s872_historical_learning_schema.sql"
+      ]
+    },
+    {
+      "sha256": "e1d2fa15035316bd7863aec25a3d13764b6ddef7b2550eb3c5d6f552a5462533",
+      "count": 2,
+      "paths": [
+        "services/stock-engine/ops/sql/s877a_walk_forward_supabase_schema_hotfix.sql",
+        "supabase/migrations/20260709_s877a_walk_forward_supabase_schema_hotfix.sql"
+      ]
+    },
+    {
+      "sha256": "1339fc2820f91a6f7a27509a139711adc567e4b54402b6d530308ea5e0338987",
+      "count": 2,
+      "paths": [
+        "services/stock-engine/ops/sql/s878_strategy_promotion_policy_schema.sql",
+        "supabase/migrations/20260709_s878_strategy_promotion_policy_schema.sql"
+      ]
+    },
+    {
+      "sha256": "e8122d290e4785df74d1a2ad642e91527f62f3425b6f4256867f7ff8dc7471df",
+      "count": 2,
+      "paths": [
+        "services/stock-engine/reports/daily_ai_desk/20260618_202001.json",
+        "services/stock-engine/reports/daily_ai_desk/latest.json"
+      ]
+    },
+    {
+      "sha256": "b95e230d8690996bb1e0b0c13a5e6fafc85e715e2cc12843b1f212f145317598",
+      "count": 2,
+      "paths": [
+        "services/stock-engine/reports/nightly_self_learning/20260618_201402.json",
+        "services/stock-engine/reports/nightly_self_learning/latest.json"
+      ]
+    }
+  ],
+  "opsOpsPairs": [
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/README_VPS_DEPLOY.md",
+      "canonicalPath": "services/stock-engine/ops/README_VPS_DEPLOY.md",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/nginx/stock-engine.nginx.conf",
+      "canonicalPath": "services/stock-engine/ops/nginx/stock-engine.nginx.conf",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/scripts/deploy_ubuntu_systemd.sh",
+      "canonicalPath": "services/stock-engine/ops/scripts/deploy_ubuntu_systemd.sh",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/scripts/server_healthcheck.py",
+      "canonicalPath": "services/stock-engine/ops/scripts/server_healthcheck.py",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/systemd/skilledge-daily-ai-desk.service",
+      "canonicalPath": "services/stock-engine/ops/systemd/skilledge-daily-ai-desk.service",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/systemd/skilledge-nightly-self-learning.service",
+      "canonicalPath": "services/stock-engine/ops/systemd/skilledge-nightly-self-learning.service",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/systemd/skilledge-nightly-self-learning.timer",
+      "canonicalPath": "services/stock-engine/ops/systemd/skilledge-nightly-self-learning.timer",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/systemd/skilledge-stock-engine-api.service",
+      "canonicalPath": "services/stock-engine/ops/systemd/skilledge-stock-engine-api.service",
+      "canonicalExists": true,
+      "sameSha256": true
+    },
+    {
+      "duplicatePath": "services/stock-engine/ops/ops/systemd/skilledge-telegram-consumer.service",
+      "canonicalPath": "services/stock-engine/ops/systemd/skilledge-telegram-consumer.service",
+      "canonicalExists": true,
+      "sameSha256": true
+    }
+  ]
+}

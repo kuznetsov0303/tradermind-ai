@@ -1,0 +1,12 @@
+[Unit]
+Description=SkillEdge Production Live-Day Readiness Check
+Wants=network-online.target
+After=network-online.target skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=-/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/production_live_day_readiness.py --public-url https://engine.upyourskills.site --frontend-url https://www.upyourskills.site --alert-on-blocker
+User=root
+Group=root

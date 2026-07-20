@@ -1,0 +1,1548 @@
+{
+  "ok": false,
+  "version": "s8_0_daily_ai_desk_runner_v1",
+  "mode": "daily_ai_desk_once",
+  "generatedAtKyiv": "2026-06-18T19:50:24.024789+03:00",
+  "window": {
+    "startKyiv": "11:00",
+    "endKyiv": "23:00",
+    "insideWindow": true
+  },
+  "steps": [
+    {
+      "name": "health",
+      "ok": true,
+      "status": 200,
+      "url": "http://127.0.0.1:8000/health",
+      "durationSec": 1.892,
+      "payload": {
+        "ok": true,
+        "service": "SkillEdge Persistent Stock Engine",
+        "engineVersion": "holly_persistent_v2",
+        "env": "local",
+        "stockPersistentEngineEnabled": true,
+        "stockLegacyEngineEnabled": false,
+        "localDatabase": {
+          "storageVersion": "s410_supabase_sqlite_persistence_v1",
+          "dbPath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\stock_engine.db",
+          "signalsCount": 2105,
+          "outcomesCount": 3155,
+          "closedOutcomeCount": 565,
+          "workedOutcomeCount": 138,
+          "failedOutcomeCount": 427,
+          "winRateClosed": 24.42,
+          "primaryStore": "supabase",
+          "sqlite": {
+            "storageVersion": "s410_supabase_sqlite_persistence_v1",
+            "dbPath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\stock_engine.db",
+            "signalsCount": 2105,
+            "outcomesCount": 3155,
+            "closedOutcomeCount": 565,
+            "workedOutcomeCount": 138,
+            "failedOutcomeCount": 427,
+            "winRateClosed": 24.42
+          },
+          "supabase": {
+            "enabled": true,
+            "configured": true,
+            "url": "https://wddkqtclrtkavxzezgyv.supabase.co",
+            "signalsCount": 1000,
+            "outcomesCount": 1000,
+            "closedOutcomeCount": 159,
+            "workedOutcomeCount": 48,
+            "failedOutcomeCount": 111,
+            "winRateClosed": 30.19,
+            "lastError": null
+          }
+        },
+        "runtimeCache": {
+          "cacheVersion": "s412_runtime_cache_v1",
+          "enabled": true,
+          "mode": "upstash_redis_rest",
+          "configured": true,
+          "hasUpstashUrl": true,
+          "hasUpstashToken": true,
+          "cachePath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\runtime_cache.json",
+          "lastError": null
+        },
+        "connections": {
+          "hasSupabaseUrl": true,
+          "hasSupabaseServiceKey": true,
+          "hasRedisUrl": false,
+          "hasFmpApiKey": true,
+          "fmpPlan": "premium"
+        }
+      }
+    },
+    {
+      "name": "runtime_source_status",
+      "ok": true,
+      "status": 200,
+      "url": "http://127.0.0.1:8000/engine/runtime/source-status?limit=160",
+      "durationSec": 3.366,
+      "payload": {
+        "ok": true,
+        "storageVersion": "s5_14e_runtime_source_of_truth_v1",
+        "freshCockpit": {
+          "runtimeStatus": {
+            "watchCount": 59,
+            "armedCount": 31,
+            "activeCount": 37,
+            "actionableActiveCount": 37,
+            "closedActiveCount": 15,
+            "signalCount": 0,
+            "lifecycleCount": 52,
+            "rawWatchCount": 59,
+            "rawArmedCount": 31,
+            "rawActiveCount": 52,
+            "rawSignalCount": 0,
+            "activeSource": "runtime_cache_or_memory",
+            "sourceOfTruth": "compact_cockpit_sections",
+            "updatedAt": "2026-06-18T16:50:21.397830+00:00"
+          },
+          "watchlistCount": 59,
+          "activeCount": 37,
+          "armedCount": 31,
+          "lifecycleCount": 52,
+          "bestIdeaTotals": {
+            "watchCount": 59,
+            "activeCount": 37,
+            "armedCount": 31,
+            "lifecycleCount": 52,
+            "rankedActiveCount": 37,
+            "selectedCount": 5,
+            "strictEligibleCount": 37,
+            "monitorCount": 32,
+            "waitingArmedCount": 25,
+            "strictBlockedByReason": {
+              "not_selected_lower_rank": 32
+            },
+            "eliteReadyCount": 0,
+            "nearEliteCount": 0
+          }
+        },
+        "cachedCompact": {
+          "exists": true,
+          "runtimeStatus": {
+            "watchCount": 59,
+            "armedCount": 31,
+            "activeCount": 37,
+            "actionableActiveCount": 37,
+            "closedActiveCount": 15,
+            "signalCount": 0,
+            "lifecycleCount": 52,
+            "rawWatchCount": 59,
+            "rawArmedCount": 31,
+            "rawActiveCount": 52,
+            "rawSignalCount": 0,
+            "activeSource": "runtime_cache_or_memory",
+            "sourceOfTruth": "compact_cockpit_sections",
+            "updatedAt": "2026-06-18T16:50:18.280807+00:00"
+          },
+          "watchlistCount": 59,
+          "activeCount": 37,
+          "armedCount": 31,
+          "lifecycleCount": 52
+        },
+        "publishRuntimeCacheProbe": {
+          "ok": true,
+          "written": 6,
+          "failed": 0,
+          "keys": [
+            "engine:runtime_status",
+            "engine:watchlist",
+            "engine:armed",
+            "engine:active",
+            "engine:signals",
+            "engine:telegram_signals"
+          ],
+          "cache": {
+            "cacheVersion": "s412_runtime_cache_v1",
+            "enabled": true,
+            "mode": "upstash_redis_rest",
+            "configured": true,
+            "hasUpstashUrl": true,
+            "hasUpstashToken": true,
+            "cachePath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\runtime_cache.json",
+            "lastError": null
+          },
+          "reason": "source_status_probe",
+          "runtimeStatus": {
+            "startedAt": "2026-06-18T15:41:31.225425+00:00",
+            "watchCount": 59,
+            "armedCount": 31,
+            "activeCount": 52,
+            "signalCount": 0,
+            "telegramEligibleSignalCount": 0,
+            "backtestOutcomeCount": 26,
+            "updatedAt": "2026-06-18T16:50:22.427895+00:00",
+            "source": "s5_14e_runtime_source_of_truth"
+          },
+          "storageVersion": "s412_runtime_cache_v1"
+        },
+        "cache": {
+          "cacheVersion": "s412_runtime_cache_v1",
+          "enabled": true,
+          "mode": "upstash_redis_rest",
+          "configured": true,
+          "hasUpstashUrl": true,
+          "hasUpstashToken": true,
+          "cachePath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\runtime_cache.json",
+          "lastError": null
+        }
+      }
+    },
+    {
+      "name": "cockpit_snapshot",
+      "ok": false,
+      "status": 404,
+      "url": "http://127.0.0.1:8000/engine/signal-cockpit?limit=160",
+      "durationSec": 0.001,
+      "error": {
+        "detail": "Not Found"
+      }
+    },
+    {
+      "name": "calibration_preview_cache",
+      "ok": true,
+      "status": 200,
+      "url": "http://127.0.0.1:8000/engine/calibration/preview/cache",
+      "durationSec": 0.194,
+      "payload": {
+        "ok": true,
+        "key": "engine:controlled_adjustment_preview:latest",
+        "value": {
+          "ok": true,
+          "version": "s7_4_controlled_adjustment_preview_v1",
+          "sourceCalibrationVersion": "s7_3_hybrid_calibration_merge_v1",
+          "generatedAt": "2026-06-18T15:41:40.382302+00:00",
+          "mode": "report_only_controlled_adjustment_preview",
+          "applyAdjustments": false,
+          "safety": {
+            "engineMutationAllowed": false,
+            "reason": "S7.4 is a dry-run preview. It never calls db.upsert_setup_adjustment().",
+            "globalBlockers": [
+              "date_count_below_3",
+              "forward_closed_below_10",
+              "hybrid_not_ready_for_production_weighting"
+            ]
+          },
+          "run": {
+            "sessionDates": [
+              "2026-06-17",
+              "2026-06-18"
+            ],
+            "dateCount": 2,
+            "source": "hybrid",
+            "outcomeCount": 581,
+            "closedCount": 22,
+            "workedCount": 8,
+            "failedCount": 14,
+            "expiredSessionCount": 6,
+            "winRateClosed": 36.36,
+            "avgResultRClosed": 0.18,
+            "sourceBreakdown": {
+              "replayCount": 20,
+              "forwardCount": 561,
+              "replayClosed": 14,
+              "forwardClosed": 8,
+              "replayWinRateClosed": 42.86,
+              "forwardWinRateClosed": 25.0,
+              "replayAvgResultRClosed": 0.29,
+              "forwardAvgResultRClosed": 0.0
+            },
+            "adjustmentCount": 10,
+            "readyToApplyCount": 0,
+            "blockedCount": 10,
+            "negativeWatchCount": 4,
+            "positiveWatchCount": 0
+          },
+          "previewRows": [
+            {
+              "setupSlug": "opening_range_breakout_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 141,
+              "closedCount": 7,
+              "workedCount": 3,
+              "failedCount": 4,
+              "expiredSessionCount": 0,
+              "winRateClosed": 42.86,
+              "avgResultRClosed": 0.57,
+              "avgMfeR": 0.13,
+              "avgMaeR": 0.07,
+              "sourceBreakdown": {
+                "replayCount": 2,
+                "forwardCount": 139,
+                "replayClosed": 2,
+                "forwardClosed": 5,
+                "replayWinRateClosed": 50.0,
+                "forwardWinRateClosed": 40.0,
+                "replayAvgResultRClosed": 0.5,
+                "forwardAvgResultRClosed": 0.6
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "neutral",
+                "headline": "opening_range_breakout_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "vwap_reclaim_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 113,
+              "closedCount": 5,
+              "workedCount": 3,
+              "failedCount": 2,
+              "expiredSessionCount": 0,
+              "winRateClosed": 60.0,
+              "avgResultRClosed": 0.8,
+              "avgMfeR": 0.08,
+              "avgMaeR": 0.1,
+              "sourceBreakdown": {
+                "replayCount": 3,
+                "forwardCount": 110,
+                "replayClosed": 3,
+                "forwardClosed": 2,
+                "replayWinRateClosed": 100.0,
+                "forwardWinRateClosed": 0.0,
+                "replayAvgResultRClosed": 2.0,
+                "forwardAvgResultRClosed": -1.0
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "vwap_reclaim_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "gap_and_crap_short",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 96,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 3,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.02,
+              "avgMaeR": 0.05,
+              "sourceBreakdown": {
+                "replayCount": 3,
+                "forwardCount": 93,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "gap_and_crap_short: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "opening_range_breakdown_short",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 95,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 0,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.0,
+              "avgMaeR": 0.0,
+              "sourceBreakdown": {
+                "replayCount": 0,
+                "forwardCount": 95,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "opening_range_breakdown_short: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "vwap_rejection_short",
+              "action": "OBSERVE_NEGATIVE",
+              "actionLabel": "observe_negative",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 50,
+              "closedCount": 1,
+              "workedCount": 0,
+              "failedCount": 1,
+              "expiredSessionCount": 0,
+              "winRateClosed": 0.0,
+              "avgResultRClosed": -1.0,
+              "avgMfeR": 0.02,
+              "avgMaeR": 0.02,
+              "sourceBreakdown": {
+                "replayCount": 1,
+                "forwardCount": 49,
+                "replayClosed": 1,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 0.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": -1.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "negative",
+                "headline": "vwap_rejection_short: observe_negative"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Tiny sample is negative; watch closely before applying. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "large_cap_vwap_trend_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 44,
+              "closedCount": 4,
+              "workedCount": 1,
+              "failedCount": 3,
+              "expiredSessionCount": 1,
+              "winRateClosed": 25.0,
+              "avgResultRClosed": -0.25,
+              "avgMfeR": 0.11,
+              "avgMaeR": 0.14,
+              "sourceBreakdown": {
+                "replayCount": 4,
+                "forwardCount": 40,
+                "replayClosed": 3,
+                "forwardClosed": 1,
+                "replayWinRateClosed": 33.33,
+                "forwardWinRateClosed": 0.0,
+                "replayAvgResultRClosed": 0.0,
+                "forwardAvgResultRClosed": -1.0
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "neutral",
+                "headline": "large_cap_vwap_trend_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "large_cap_gap_continuation",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 21,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 0,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.0,
+              "avgMaeR": 0.0,
+              "sourceBreakdown": {
+                "replayCount": 0,
+                "forwardCount": 21,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "large_cap_gap_continuation: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "gap_hold_continuation_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 11,
+              "closedCount": 1,
+              "workedCount": 1,
+              "failedCount": 0,
+              "expiredSessionCount": 2,
+              "winRateClosed": 100.0,
+              "avgResultRClosed": 2.0,
+              "avgMfeR": 0.35,
+              "avgMaeR": 0.14,
+              "sourceBreakdown": {
+                "replayCount": 3,
+                "forwardCount": 8,
+                "replayClosed": 1,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 100.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": 2.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "gap_hold_continuation_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "premarket_pump_short",
+              "action": "OBSERVE_NEGATIVE",
+              "actionLabel": "observe_negative",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 6,
+              "closedCount": 4,
+              "workedCount": 0,
+              "failedCount": 4,
+              "expiredSessionCount": 0,
+              "winRateClosed": 0.0,
+              "avgResultRClosed": -1.0,
+              "avgMfeR": 0.6,
+              "avgMaeR": 0.75,
+              "sourceBreakdown": {
+                "replayCount": 4,
+                "forwardCount": 2,
+                "replayClosed": 4,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 0.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": -1.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "negative",
+                "headline": "premarket_pump_short: observe_negative"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Tiny sample is negative; watch closely before applying. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "orb_pullback_continuation",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 4,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 0,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.0,
+              "avgMaeR": 0.0,
+              "sourceBreakdown": {
+                "replayCount": 0,
+                "forwardCount": 4,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "orb_pullback_continuation: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            }
+          ],
+          "readyToApplyRows": [],
+          "blockedRows": [
+            {
+              "setupSlug": "opening_range_breakout_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 141,
+              "closedCount": 7,
+              "workedCount": 3,
+              "failedCount": 4,
+              "expiredSessionCount": 0,
+              "winRateClosed": 42.86,
+              "avgResultRClosed": 0.57,
+              "avgMfeR": 0.13,
+              "avgMaeR": 0.07,
+              "sourceBreakdown": {
+                "replayCount": 2,
+                "forwardCount": 139,
+                "replayClosed": 2,
+                "forwardClosed": 5,
+                "replayWinRateClosed": 50.0,
+                "forwardWinRateClosed": 40.0,
+                "replayAvgResultRClosed": 0.5,
+                "forwardAvgResultRClosed": 0.6
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "neutral",
+                "headline": "opening_range_breakout_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "vwap_reclaim_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 113,
+              "closedCount": 5,
+              "workedCount": 3,
+              "failedCount": 2,
+              "expiredSessionCount": 0,
+              "winRateClosed": 60.0,
+              "avgResultRClosed": 0.8,
+              "avgMfeR": 0.08,
+              "avgMaeR": 0.1,
+              "sourceBreakdown": {
+                "replayCount": 3,
+                "forwardCount": 110,
+                "replayClosed": 3,
+                "forwardClosed": 2,
+                "replayWinRateClosed": 100.0,
+                "forwardWinRateClosed": 0.0,
+                "replayAvgResultRClosed": 2.0,
+                "forwardAvgResultRClosed": -1.0
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "vwap_reclaim_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "gap_and_crap_short",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 96,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 3,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.02,
+              "avgMaeR": 0.05,
+              "sourceBreakdown": {
+                "replayCount": 3,
+                "forwardCount": 93,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "gap_and_crap_short: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "opening_range_breakdown_short",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 95,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 0,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.0,
+              "avgMaeR": 0.0,
+              "sourceBreakdown": {
+                "replayCount": 0,
+                "forwardCount": 95,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "opening_range_breakdown_short: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "vwap_rejection_short",
+              "action": "OBSERVE_NEGATIVE",
+              "actionLabel": "observe_negative",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 50,
+              "closedCount": 1,
+              "workedCount": 0,
+              "failedCount": 1,
+              "expiredSessionCount": 0,
+              "winRateClosed": 0.0,
+              "avgResultRClosed": -1.0,
+              "avgMfeR": 0.02,
+              "avgMaeR": 0.02,
+              "sourceBreakdown": {
+                "replayCount": 1,
+                "forwardCount": 49,
+                "replayClosed": 1,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 0.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": -1.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "negative",
+                "headline": "vwap_rejection_short: observe_negative"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Tiny sample is negative; watch closely before applying. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "large_cap_vwap_trend_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 44,
+              "closedCount": 4,
+              "workedCount": 1,
+              "failedCount": 3,
+              "expiredSessionCount": 1,
+              "winRateClosed": 25.0,
+              "avgResultRClosed": -0.25,
+              "avgMfeR": 0.11,
+              "avgMaeR": 0.14,
+              "sourceBreakdown": {
+                "replayCount": 4,
+                "forwardCount": 40,
+                "replayClosed": 3,
+                "forwardClosed": 1,
+                "replayWinRateClosed": 33.33,
+                "forwardWinRateClosed": 0.0,
+                "replayAvgResultRClosed": 0.0,
+                "forwardAvgResultRClosed": -1.0
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "neutral",
+                "headline": "large_cap_vwap_trend_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "large_cap_gap_continuation",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 21,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 0,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.0,
+              "avgMaeR": 0.0,
+              "sourceBreakdown": {
+                "replayCount": 0,
+                "forwardCount": 21,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "large_cap_gap_continuation: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "gap_hold_continuation_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 11,
+              "closedCount": 1,
+              "workedCount": 1,
+              "failedCount": 0,
+              "expiredSessionCount": 2,
+              "winRateClosed": 100.0,
+              "avgResultRClosed": 2.0,
+              "avgMfeR": 0.35,
+              "avgMaeR": 0.14,
+              "sourceBreakdown": {
+                "replayCount": 3,
+                "forwardCount": 8,
+                "replayClosed": 1,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 100.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": 2.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "gap_hold_continuation_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "premarket_pump_short",
+              "action": "OBSERVE_NEGATIVE",
+              "actionLabel": "observe_negative",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 6,
+              "closedCount": 4,
+              "workedCount": 0,
+              "failedCount": 4,
+              "expiredSessionCount": 0,
+              "winRateClosed": 0.0,
+              "avgResultRClosed": -1.0,
+              "avgMfeR": 0.6,
+              "avgMaeR": 0.75,
+              "sourceBreakdown": {
+                "replayCount": 4,
+                "forwardCount": 2,
+                "replayClosed": 4,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 0.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": -1.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "negative",
+                "headline": "premarket_pump_short: observe_negative"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Tiny sample is negative; watch closely before applying. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "orb_pullback_continuation",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "OBSERVE_ONLY",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 4,
+              "closedCount": 0,
+              "workedCount": 0,
+              "failedCount": 0,
+              "expiredSessionCount": 0,
+              "winRateClosed": null,
+              "avgResultRClosed": null,
+              "avgMfeR": 0.0,
+              "avgMaeR": 0.0,
+              "sourceBreakdown": {
+                "replayCount": 0,
+                "forwardCount": 4,
+                "replayClosed": 0,
+                "forwardClosed": 0,
+                "replayWinRateClosed": null,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": null,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "OBSERVE",
+                "tone": "neutral",
+                "headline": "orb_pullback_continuation: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Hybrid calibration has too little forward/live evidence for controlled apply."
+            }
+          ],
+          "negativeWatchRows": [
+            {
+              "setupSlug": "opening_range_breakout_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 141,
+              "closedCount": 7,
+              "workedCount": 3,
+              "failedCount": 4,
+              "expiredSessionCount": 0,
+              "winRateClosed": 42.86,
+              "avgResultRClosed": 0.57,
+              "avgMfeR": 0.13,
+              "avgMaeR": 0.07,
+              "sourceBreakdown": {
+                "replayCount": 2,
+                "forwardCount": 139,
+                "replayClosed": 2,
+                "forwardClosed": 5,
+                "replayWinRateClosed": 50.0,
+                "forwardWinRateClosed": 40.0,
+                "replayAvgResultRClosed": 0.5,
+                "forwardAvgResultRClosed": 0.6
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "neutral",
+                "headline": "opening_range_breakout_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "vwap_rejection_short",
+              "action": "OBSERVE_NEGATIVE",
+              "actionLabel": "observe_negative",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 50,
+              "closedCount": 1,
+              "workedCount": 0,
+              "failedCount": 1,
+              "expiredSessionCount": 0,
+              "winRateClosed": 0.0,
+              "avgResultRClosed": -1.0,
+              "avgMfeR": 0.02,
+              "avgMaeR": 0.02,
+              "sourceBreakdown": {
+                "replayCount": 1,
+                "forwardCount": 49,
+                "replayClosed": 1,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 0.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": -1.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "negative",
+                "headline": "vwap_rejection_short: observe_negative"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Tiny sample is negative; watch closely before applying. Hybrid calibration has too little forward/live evidence for controlled apply."
+            },
+            {
+              "setupSlug": "large_cap_vwap_trend_long",
+              "action": "OBSERVE",
+              "actionLabel": "observe_only",
+              "status": "INSUFFICIENT_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 44,
+              "closedCount": 4,
+              "workedCount": 1,
+              "failedCount": 3,
+              "expiredSessionCount": 1,
+              "winRateClosed": 25.0,
+              "avgResultRClosed": -0.25,
+              "avgMfeR": 0.11,
+              "avgMaeR": 0.14,
+              "sourceBreakdown": {
+                "replayCount": 4,
+                "forwardCount": 40,
+                "replayClosed": 3,
+                "forwardClosed": 1,
+                "replayWinRateClosed": 33.33,
+                "forwardWinRateClosed": 0.0,
+                "replayAvgResultRClosed": 0.0,
+                "forwardAvgResultRClosed": -1.0
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "neutral",
+                "headline": "large_cap_vwap_trend_long: observe_only"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking."
+            },
+            {
+              "setupSlug": "premarket_pump_short",
+              "action": "OBSERVE_NEGATIVE",
+              "actionLabel": "observe_negative",
+              "status": "INSUFFICIENT_HYBRID_SAMPLE",
+              "applyState": "BLOCKED_NEGATIVE_WATCH",
+              "wouldApply": false,
+              "blockReasons": [
+                "action_is_report_only",
+                "closed_sample_below_10",
+                "date_count_below_3",
+                "forward_closed_below_10",
+                "hybrid_not_ready_for_production_weighting",
+                "sample_confidence_too_low",
+                "status_insufficient_hybrid_sample"
+              ],
+              "sampleConfidence": "VERY_LOW",
+              "sampleCount": 6,
+              "closedCount": 4,
+              "workedCount": 0,
+              "failedCount": 4,
+              "expiredSessionCount": 0,
+              "winRateClosed": 0.0,
+              "avgResultRClosed": -1.0,
+              "avgMfeR": 0.6,
+              "avgMaeR": 0.75,
+              "sourceBreakdown": {
+                "replayCount": 4,
+                "forwardCount": 2,
+                "replayClosed": 4,
+                "forwardClosed": 0,
+                "replayWinRateClosed": 0.0,
+                "forwardWinRateClosed": null,
+                "replayAvgResultRClosed": -1.0,
+                "forwardAvgResultRClosed": null
+              },
+              "proposedEngineEffect": {
+                "scoreAdjustment": 0,
+                "strictnessAdjustment": 0,
+                "riskAdjustment": 0.0,
+                "willBeApplied": false,
+                "dryRunOnly": true
+              },
+              "ui": {
+                "badge": "NEGATIVE WATCH",
+                "tone": "negative",
+                "headline": "premarket_pump_short: observe_negative"
+              },
+              "reason": "Need at least 10 closed replay outcomes before active re-ranking. Tiny sample is negative; watch closely before applying. Hybrid calibration has too little forward/live evidence for controlled apply."
+            }
+          ],
+          "positiveWatchRows": [],
+          "cockpitSummary": {
+            "title": "Controlled calibration preview",
+            "state": "REPORT_ONLY",
+            "topWarnings": [
+              "opening_range_breakout_long",
+              "vwap_rejection_short",
+              "large_cap_vwap_trend_long",
+              "premarket_pump_short"
+            ],
+            "topPotentialBoosts": [],
+            "copy": "No engine weights were changed. This preview exists for Cockpit/Reports visibility before any future apply gate."
+          },
+          "interpretation": {
+            "readyForControlledApply": false,
+            "applied": false,
+            "nextStep": "S7.5 UI surface for this preview in Cockpit/Reports, then explicit apply gate after 3-5 replay days.",
+            "notes": [
+              "S7.4 intentionally blocks automatic changes.",
+              "Rows with OBSERVE/INSUFFICIENT_* are useful warnings, not engine mutations.",
+              "Do not enable apply until dateCount>=3, replayClosed>=10 and forwardClosed>=10 in hybrid mode."
+            ]
+          },
+          "database": {
+            "storageVersion": "s410_supabase_sqlite_persistence_v1",
+            "dbPath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\stock_engine.db",
+            "signalsCount": 2056,
+            "outcomesCount": 3129,
+            "closedOutcomeCount": 565,
+            "workedOutcomeCount": 138,
+            "failedOutcomeCount": 427,
+            "winRateClosed": 24.42,
+            "primaryStore": "supabase",
+            "sqlite": {
+              "storageVersion": "s410_supabase_sqlite_persistence_v1",
+              "dbPath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\stock_engine.db",
+              "signalsCount": 2056,
+              "outcomesCount": 3129,
+              "closedOutcomeCount": 565,
+              "workedOutcomeCount": 138,
+              "failedOutcomeCount": 427,
+              "winRateClosed": 24.42
+            },
+            "supabase": {
+              "enabled": true,
+              "configured": true,
+              "url": "https://wddkqtclrtkavxzezgyv.supabase.co",
+              "signalsCount": 1000,
+              "outcomesCount": 1000,
+              "closedOutcomeCount": 175,
+              "workedOutcomeCount": 51,
+              "failedOutcomeCount": 124,
+              "winRateClosed": 29.14,
+              "lastError": null
+            }
+          },
+          "cache": {
+            "cacheVersion": "s412_runtime_cache_v1",
+            "enabled": true,
+            "mode": "upstash_redis_rest",
+            "configured": true,
+            "hasUpstashUrl": true,
+            "hasUpstashToken": true,
+            "cachePath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\runtime_cache.json",
+            "lastError": null
+          }
+        },
+        "storageVersion": "s7_4_controlled_adjustment_preview_v1",
+        "cache": {
+          "cacheVersion": "s412_runtime_cache_v1",
+          "enabled": true,
+          "mode": "upstash_redis_rest",
+          "configured": true,
+          "hasUpstashUrl": true,
+          "hasUpstashToken": true,
+          "cachePath": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\data\\runtime_cache.json",
+          "lastError": null
+        }
+      }
+    }
+  ]
+}

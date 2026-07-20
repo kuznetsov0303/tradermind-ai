@@ -1,0 +1,15 @@
+[Unit]
+Description=SkillEdge Post-Close Evidence Automation
+After=skilledge-stock-engine-api.service
+Wants=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/post_close_evidence_automation.py --base-url http://127.0.0.1:8000 --limit 160 --max-best 5
+ExecStartPost=/usr/bin/curl -fsS -X POST "http://127.0.0.1:8000/engine/outcomes/repair-stale-stock-open?dry_run=false&min_age_days=1&limit=5000"
+ExecStartPost=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/setup_learning_report.py --db-path data/stock_engine.db --lookback-days 30 --min-closed 10 --initial-capital 50000 --risk-pct 0.005
+ExecStartPost=/usr/bin/curl -fsS -X POST "http://127.0.0.1:8000/engine/investor-dashboard/run?publish=true"
+User=skilledge
+Group=skilledge

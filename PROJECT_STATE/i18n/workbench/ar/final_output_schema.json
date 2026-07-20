@@ -1,0 +1,9 @@
+﻿{
+    "type":  "object",
+    "description":  "Canonical path to final reviewed translation.",
+    "requiredKeyCount":  446,
+    "additionalProperties":  {
+                                 "type":  "string",
+                                 "minLength":  1
+                             }
+}

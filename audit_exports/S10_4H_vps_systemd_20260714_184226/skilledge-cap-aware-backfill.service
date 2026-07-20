@@ -1,0 +1,17 @@
+[Unit]
+Description=SkillEdge Capitalization-Aware Research Backfill
+After=network-online.target skilledge-stock-engine-api.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+Environment=S912B_START_DATE=2021-07-12
+Environment=S912B_END_DATE=2026-07-10
+Environment=S912B_SYMBOLS_PER_JOB=8
+Environment=S912B_DAYS_PER_JOB=5
+Environment=S912B_MAX_JOBS_PER_RUN=60
+Environment=S912B_SLEEP_SECONDS=2
+Environment=S912B_REBUILD_QUEUE_IF_SMOKE=true
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/capitalization_aware_backfill_runner.py
+User=root

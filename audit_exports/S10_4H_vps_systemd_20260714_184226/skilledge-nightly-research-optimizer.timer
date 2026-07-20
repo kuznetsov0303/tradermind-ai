@@ -1,0 +1,10 @@
+[Unit]
+Description=Run SkillEdge Cap-Aware Nightly Research Optimizer Controller
+
+[Timer]
+OnCalendar=*-*-* 03:20:00
+Persistent=true
+RandomizedDelaySec=300
+
+[Install]
+WantedBy=timers.target

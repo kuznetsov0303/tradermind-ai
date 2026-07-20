@@ -1,0 +1,152 @@
+COMMAND=C:\WINDOWS\system32\cmd.exe /d /s /c npm run build
+STATUS=0
+SIGNAL=null
+SPAWN_ERROR=NONE
+
+--- STDOUT ---
+
+> tradermind-ai@0.1.0 build
+> next build
+
+▲ Next.js 16.2.4 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 29.2s
+  Skipping validation of types
+  Finished TypeScript config validation in 10ms ...
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/66) ...
+  Generating static pages using 11 workers (16/66) 
+  Generating static pages using 11 workers (32/66) 
+  Generating static pages using 11 workers (49/66) 
+✓ Generating static pages using 11 workers (66/66) in 872ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /about
+├ ○ /admin
+├ ○ /admin/investor-dashboard
+├ ○ /admin/referrals
+├ ○ /admin/signals-review
+├ ○ /admin/support
+├ ○ /ai-guide
+├ ƒ /api/admin/me
+├ ƒ /api/admin/referrals/withdrawals
+├ ƒ /api/admin/signals/manual-approval
+├ ƒ /api/admin/signals/review-queue
+├ ƒ /api/admin/stats/activations
+├ ƒ /api/ai-coach
+├ ƒ /api/analyze-current-chart
+├ ƒ /api/analyze-trade-screenshot
+├ ƒ /api/create-crypto-payment
+├ ƒ /api/email-request
+├ ƒ /api/journal-analysis
+├ ƒ /api/market/ai-analysis
+├ ƒ /api/market/ai-briefs
+├ ƒ /api/market/alerts
+├ ƒ /api/market/alerts/cron
+├ ƒ /api/market/alerts/cron/all
+├ ƒ /api/market/alerts/cron/crypto
+├ ƒ /api/market/alerts/cron/stock
+├ ƒ /api/market/alerts/decision
+├ ƒ /api/market/alerts/outcomes
+├ ƒ /api/market/alerts/outcomes/resolve
+├ ƒ /api/market/alerts/personalized
+├ ƒ /api/market/alerts/viewed
+├ ƒ /api/market/chart-movers
+├ ƒ /api/market/intelligence
+├ ƒ /api/market/scanner
+├ ƒ /api/market/social-mentions
+├ ƒ /api/nowpayments-webhook
+├ ƒ /api/personal-edge/summary
+├ ƒ /api/playbook/setups
+├ ƒ /api/playbook/signal-profile
+├ ƒ /api/playbook/trade-patterns
+├ ƒ /api/referrals/attach
+├ ƒ /api/referrals/dashboard
+├ ƒ /api/referrals/withdraw
+├ ƒ /api/reports/ai-report
+├ ƒ /api/stock-engine/calibration/preview
+├ ƒ /api/stock-engine/cockpit
+├ ƒ /api/stock-engine/cockpit/history/[symbol]
+├ ƒ /api/stock-engine/cockpit/stream
+├ ƒ /api/stock-engine/cockpit/symbol/[symbol]
+├ ƒ /api/stock-engine/evidence/cache
+├ ƒ /api/stock-engine/evidence/run
+├ ƒ /api/stock-engine/evidence/today
+├ ƒ /api/stock-engine/health
+├ ƒ /api/stock-engine/investor-dashboard/cache
+├ ƒ /api/stock-engine/investor-dashboard/run
+├ ƒ /api/stock-engine/investor-dashboard/snapshot
+├ ƒ /api/stock-engine/lifecycle/run
+├ ƒ /api/stock-engine/market-session
+├ ƒ /api/stock-engine/promotion/evidence
+├ ƒ /api/stock-engine/promotion/evidence/[setup_slug]
+├ ƒ /api/stock-engine/research/failure-patterns
+├ ƒ /api/stock-engine/research/feature-matrix
+├ ƒ /api/stock-engine/research/live-feature-audit
+├ ƒ /api/stock-engine/research/readiness
+├ ƒ /api/stock-engine/research/status
+├ ƒ /api/stock-engine/signals/why-no-client-signals
+├ ƒ /api/stock-engine/unified-skilledge-output
+├ ƒ /api/strategy/after-trade-debriefs
+├ ƒ /api/strategy/analytics
+├ ƒ /api/strategy/before-trade-checks
+├ ƒ /api/strategy/drills
+├ ƒ /api/strategy/examples
+├ ƒ /api/strategy/overview
+├ ƒ /api/strategy/playbook/graduation
+├ ƒ /api/strategy/profile
+├ ƒ /api/strategy/review
+├ ƒ /api/strategy/strategies
+├ ƒ /api/strategy/tasks
+├ ƒ /api/strategy/templates
+├ ƒ /api/strategy/versions/generate
+├ ƒ /api/strategy/weekly-report
+├ ƒ /api/strategy/weekly-report/accept
+├ ƒ /api/support/admin/close
+├ ƒ /api/support/admin/messages
+├ ƒ /api/support/admin/reply
+├ ƒ /api/support/admin/sessions
+├ ƒ /api/support/email-request
+├ ƒ /api/support/messages
+├ ƒ /api/support/operator-request
+├ ƒ /api/support/session
+├ ƒ /api/telegram/signals/connect-code
+├ ƒ /api/telegram/signals/status
+├ ƒ /api/telegram/signals/webhook
+├ ƒ /apple-icon
+├ ○ /dashboard
+├ ○ /dashboard-guide
+├ ○ /desk
+├ ƒ /icon
+├ ○ /journal-guide
+├ ○ /legal/billing
+├ ○ /legal/cookies
+├ ○ /legal/disclaimer
+├ ○ /legal/eula
+├ ○ /legal/privacy-policy
+├ ○ /legal/terms
+├ ○ /login
+├ ƒ /opengraph-image
+├ ○ /pricing
+├ ○ /product
+├ ○ /referral
+├ ○ /register
+├ ○ /robots.txt
+├ ○ /sitemap.xml
+├ ○ /team
+└ ƒ /twitter-image
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+
+--- STDERR ---
+⚠ Using edge runtime on a page currently disables static generation for that page
+

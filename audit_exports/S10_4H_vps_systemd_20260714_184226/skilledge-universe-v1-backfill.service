@@ -1,0 +1,18 @@
+[Unit]
+Description=SkillEdge Universe v1 Overnight Research Backfill
+After=network-online.target skilledge-stock-engine-api.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+Environment=S908B_START_DATE=2021-07-12
+Environment=S908B_END_DATE=2026-07-10
+Environment=S908B_MAX_SYMBOLS=150
+Environment=S908B_SYMBOLS_PER_JOB=10
+Environment=S908B_DAYS_PER_JOB=5
+Environment=S908B_MAX_JOBS_PER_RUN=80
+Environment=S908B_SLEEP_SECONDS=2
+Environment=S908B_REBUILD_QUEUE=false
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/universe_v1_overnight_backfill_runner.py
+User=root

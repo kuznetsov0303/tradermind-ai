@@ -1,0 +1,35 @@
+S10.9Q LANDING LOCALE VALIDATION
+Generated=20260719_230402
+OK=True
+CLASSIFICATION=LANDING_LOCALE_VALIDATION_PASSED
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+LOCALES_CHECKED=15
+ENGLISH_ENTRIES=252
+HARD_ISSUES=0
+WARNINGS=0
+
+=== LOCALE SUMMARY ===
+en: entries=252 translated=0 unchanged=0 hardIssues=0 scriptRatio=None
+ru: entries=252 translated=226 unchanged=26 hardIssues=0 scriptRatio=1.0
+uk: entries=252 translated=226 unchanged=26 hardIssues=0 scriptRatio=0.216814
+zh: entries=252 translated=226 unchanged=26 hardIssues=0 scriptRatio=1.0
+de: entries=252 translated=224 unchanged=28 hardIssues=0 scriptRatio=None
+fr: entries=252 translated=225 unchanged=27 hardIssues=0 scriptRatio=None
+es: entries=252 translated=225 unchanged=27 hardIssues=0 scriptRatio=None
+ar: entries=252 translated=226 unchanged=26 hardIssues=0 scriptRatio=1.0
+it: entries=252 translated=224 unchanged=28 hardIssues=0 scriptRatio=None
+nb: entries=252 translated=223 unchanged=29 hardIssues=0 scriptRatio=None
+ka: entries=252 translated=234 unchanged=18 hardIssues=0 scriptRatio=1.0
+pl: entries=252 translated=225 unchanged=27 hardIssues=0 scriptRatio=None
+tr: entries=252 translated=226 unchanged=26 hardIssues=0 scriptRatio=None
+el: entries=252 translated=220 unchanged=32 hardIssues=0 scriptRatio=1.0
+hi: entries=252 translated=224 unchanged=28 hardIssues=0 scriptRatio=1.0
+
+=== HARD ISSUES ===
+
+=== WARNINGS ===
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9Q_LANDING_LOCALE_VALIDATION_raw_20260719_230402.json
+NEXT_ACTION=CONNECT_VALIDATED_LANDING_LOCALES

@@ -1,0 +1,36 @@
+S10.9N CLEAN ENGLISH MASTER
+Generated=20260719_213114
+OK=True
+CLASSIFICATION=CLEAN_ENGLISH_MASTER_CANDIDATE_BUILT
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+RAW_CANDIDATES_READ=12730
+DICTIONARY_CANDIDATES_READ=693
+CLEAN_UI_CANDIDATES=4403
+CLEAN_DICTIONARY_CANDIDATES=469
+PROTECTED_TERMS_FOUND=19
+
+=== REJECTED ===
+duplicate=1530
+file_not_client_ui=3469
+not_user_facing=3328
+
+=== NAMESPACES ===
+aiGuide
+alerts
+dashboard
+dashboardGuide
+footer
+journalGuide
+landing
+referral
+shared
+signals
+support
+
+CANONICAL_MASTER_CANDIDATE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\canonical_en_master_candidate_20260719_213114.json
+REVIEW_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\canonical_en_master_review_20260719_213114.json
+DICTIONARY_REVIEW_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\canonical_dictionary_review_20260719_213114.json
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9N_CLEAN_ENGLISH_MASTER_raw_20260719_213114.json
+NEXT_ACTION=REVIEW_CLEAN_MASTER_THEN_GENERATE_LOCALE_FILES

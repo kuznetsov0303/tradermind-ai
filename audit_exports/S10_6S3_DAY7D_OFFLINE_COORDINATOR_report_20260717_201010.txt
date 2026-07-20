@@ -1,0 +1,31 @@
+﻿S10.6S3 DAY 7D OFFLINE COORDINATOR
+Generated=20260717_201010
+OK=True
+CLASSIFICATION=DAY7D_OFFLINE_COORDINATOR_VALIDATED
+COMPILE_RETURN_CODE=0
+TEST_RETURN_CODE=0
+RUN_RETURN_CODE=0
+DETERMINISTIC=True
+GENERATION_ID=c1068090da25f1360cea
+CAPACITY=25
+DESIRED_SYMBOL_COUNT=25
+ADDED_SYMBOLS=SDOT,SLND,STAK,BIYA,CJMB,VIVK,TGHL,KLRS,RUBI,SG,ATPC,ASTS,JSPR,SLS,ISRG,TRVI,RGNX,LEDS,BNRG,LCID,GORO,ZNTL,LASE,ALTO
+REMOVED_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW
+VALIDATION_ERRORS=
+STREAM_SYMBOLS_CHANGED=False
+SYSTEMD_TOUCHED=False
+NEXT_ACTION=RUN_DYNAMIC_UNIVERSE_SHADOW_COMPARE
+COMPILE_OUTPUT=
+TEST_OUTPUT=test_capacity_dedup_and_gates (test_offline_coordinator.OfflineCoordinatorTests.test_capacity_dedup_and_gates) ... ok
+test_deterministic (test_offline_coordinator.OfflineCoordinatorTests.test_deterministic) ... ok
+test_legitimate_core_symbols_with_r_or_u_are_allowed (test_offline_coordinator.OfflineCoordinatorTests.test_legitimate_core_symbols_with_r_or_u_are_allowed) ... ok
+test_untradeable_warrant_filtered (test_offline_coordinator.OfflineCoordinatorTests.test_untradeable_warrant_filtered) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.002s
+
+OK
+
+RUNTIME_ERROR=
+GENERATION_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\dynamic_universe_generation_preview_v1.json
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_6S3_DAY7D_OFFLINE_COORDINATOR_raw_20260717_201010.json

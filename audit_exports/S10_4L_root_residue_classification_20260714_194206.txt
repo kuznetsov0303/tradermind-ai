@@ -1,0 +1,141 @@
+S10.4L FINAL ROOT RESIDUE CLASSIFICATION
+Generated=20260714_194206
+READ_ONLY=true
+NO_DELETE=true
+NO_MOVE=true
+NO_DEPLOY=true
+NO_RESTART=true
+
+=== SUMMARY ===
+KEEP_ACTIVE=6
+KEEP_DEV_TOOLING=6
+ARCHIVE_HISTORY=46
+DELETE_AFTER_VERIFY=0
+DO_NOT_TOUCH=22
+REVIEW_REQUIRED=8
+
+=== KEEP_ACTIVE ===
+app | type=dir | files=120 | bytes=3415837 | canonicalDuplicates=120 | uniqueFiles=0
+components | type=dir | files=29 | bytes=3501061 | canonicalDuplicates=29 | uniqueFiles=0
+lib | type=dir | files=49 | bytes=732849 | canonicalDuplicates=49 | uniqueFiles=0
+public | type=dir | files=18 | bytes=27225551 | canonicalDuplicates=18 | uniqueFiles=0
+services | type=dir | files=3366 | bytes=72971807 | canonicalDuplicates=3366 | uniqueFiles=0
+supabase | type=dir | files=3 | bytes=22515 | canonicalDuplicates=3 | uniqueFiles=0
+
+=== KEEP_DEV_TOOLING ===
+.local-start | type=dir | files=4 | bytes=2960 | canonicalDuplicates=4 | uniqueFiles=0
+.next | type=dir | files=5543 | bytes=1324869466 | canonicalDuplicates=4 | uniqueFiles=5539
+.vercel | type=dir | files=2 | bytes=737 | canonicalDuplicates=0 | uniqueFiles=2
+.vs | type=dir | files=6 | bytes=349800 | canonicalDuplicates=6 | uniqueFiles=0
+node_modules | type=dir | files=42726 | bytes=596556519 | canonicalDuplicates=134 | uniqueFiles=42592
+tsconfig.tsbuildinfo | type=file | files=1 | bytes=256880 | canonicalDuplicates=1 | uniqueFiles=0
+
+=== ARCHIVE_HISTORY ===
+.code-backups | type=dir | files=159 | bytes=69682348 | canonicalDuplicates=0 | uniqueFiles=159
+_archive | type=dir | files=1 | bytes=303685 | canonicalDuplicates=0 | uniqueFiles=1
+_project_context | type=dir | files=161 | bytes=32821069 | canonicalDuplicates=122 | uniqueFiles=39
+_s10_0_paper_trading_install.py | type=file | files=1 | bytes=26844 | canonicalDuplicates=1 | uniqueFiles=0
+001-clean-env-signals-v2.ps1 | type=file | files=1 | bytes=12373 | canonicalDuplicates=1 | uniqueFiles=0
+333333.ps1 | type=file | files=1 | bytes=10071 | canonicalDuplicates=1 | uniqueFiles=0
+dashboard-current.tsx | type=file | files=1 | bytes=985613 | canonicalDuplicates=1 | uniqueFiles=0
+deploy_stock_engine | type=dir | files=59 | bytes=25034100 | canonicalDuplicates=54 | uniqueFiles=5
+landing-current.txt | type=file | files=1 | bytes=154586 | canonicalDuplicates=1 | uniqueFiles=0
+landing-pricing-current.tsx | type=file | files=1 | bytes=299449 | canonicalDuplicates=1 | uniqueFiles=0
+landing-pricing-current.txt | type=file | files=1 | bytes=230480 | canonicalDuplicates=1 | uniqueFiles=0
+legal-pages-bundle.txt | type=file | files=1 | bytes=51819 | canonicalDuplicates=1 | uniqueFiles=0
+market-alerts-route.txt | type=file | files=1 | bytes=29938 | canonicalDuplicates=1 | uniqueFiles=0
+metadata-logo-bundle.txt | type=file | files=1 | bytes=17879 | canonicalDuplicates=1 | uniqueFiles=0
+premium-recolor-landing-safe.ps1 | type=file | files=1 | bytes=7637 | canonicalDuplicates=1 | uniqueFiles=0
+s511b_restore_again | type=dir | files=0 | bytes=0 | canonicalDuplicates=0 | uniqueFiles=0
+s58_start_scripts_fixed | type=dir | files=3 | bytes=4303 | canonicalDuplicates=3 | uniqueFiles=0
+s58_start_scripts_v2_fixed | type=dir | files=3 | bytes=6165 | canonicalDuplicates=3 | uniqueFiles=0
+s810a_trade_management_blocks.txt | type=file | files=1 | bytes=56200 | canonicalDuplicates=1 | uniqueFiles=0
+s811_dashboard_signals_snippet.txt | type=file | files=1 | bytes=101478 | canonicalDuplicates=1 | uniqueFiles=0
+s811_signal_cockpit_pinpoint.txt | type=file | files=1 | bytes=233410 | canonicalDuplicates=1 | uniqueFiles=0
+s811d2_local_502_body.txt | type=file | files=1 | bytes=736 | canonicalDuplicates=1 | uniqueFiles=0
+s812b_forward_report_live_check.txt | type=file | files=1 | bytes=11056 | canonicalDuplicates=1 | uniqueFiles=0
+s812c_current_forward_report_shape.txt | type=file | files=1 | bytes=20180 | canonicalDuplicates=1 | uniqueFiles=0
+s813_final_verification.txt | type=file | files=1 | bytes=12504 | canonicalDuplicates=1 | uniqueFiles=0
+s813_post_close_evidence_validation.txt | type=file | files=1 | bytes=39004 | canonicalDuplicates=1 | uniqueFiles=0
+s814a_elite_gate_validation.txt | type=file | files=1 | bytes=6808 | canonicalDuplicates=1 | uniqueFiles=0
+s814a_selector_quality_pinpoint.txt | type=file | files=1 | bytes=135250 | canonicalDuplicates=1 | uniqueFiles=0
+s814b_focused_service_check.txt | type=file | files=1 | bytes=84 | canonicalDuplicates=1 | uniqueFiles=0
+s814b_permission_fix_validation.txt | type=file | files=1 | bytes=16140 | canonicalDuplicates=1 | uniqueFiles=0
+s814b_setup_learning_validation.txt | type=file | files=1 | bytes=70778 | canonicalDuplicates=1 | uniqueFiles=0
+s814c_learning_selector_validation.txt | type=file | files=1 | bytes=11204 | canonicalDuplicates=1 | uniqueFiles=0
+s814d_investor_dashboard_validation.txt | type=file | files=1 | bytes=8076 | canonicalDuplicates=1 | uniqueFiles=0
+s814e_admin_hub_pinpoint.txt | type=file | files=1 | bytes=12840 | canonicalDuplicates=1 | uniqueFiles=0
+s815a_clean_elite_ledger_pinpoint.txt | type=file | files=1 | bytes=75848 | canonicalDuplicates=1 | uniqueFiles=0
+s815a_clean_elite_ledger_validation.txt | type=file | files=1 | bytes=7590 | canonicalDuplicates=1 | uniqueFiles=0
+s815b_clean_elite_investor_validation.txt | type=file | files=1 | bytes=21596 | canonicalDuplicates=1 | uniqueFiles=0
+s815c_clean_elite_live_timer_validation.txt | type=file | files=1 | bytes=8778 | canonicalDuplicates=1 | uniqueFiles=0
+s816a_elite_gate_calibration_pinpoint.txt | type=file | files=1 | bytes=130956 | canonicalDuplicates=1 | uniqueFiles=0
+s816a1_forward_elite_test_validation.txt | type=file | files=1 | bytes=9418 | canonicalDuplicates=1 | uniqueFiles=0
+s816a2_ledger_split_validation.txt | type=file | files=1 | bytes=3696 | canonicalDuplicates=1 | uniqueFiles=0
+s819a_strategy_registry_local.ps1 | type=file | files=1 | bytes=9616 | canonicalDuplicates=1 | uniqueFiles=0
+s819a_strategy_registry_local_nocd.ps1 | type=file | files=1 | bytes=9789 | canonicalDuplicates=1 | uniqueFiles=0
+s820a_night_calibration_local.ps1 | type=file | files=1 | bytes=9634 | canonicalDuplicates=1 | uniqueFiles=0
+s824a_cockpit_root.json | type=file | files=1 | bytes=907227 | canonicalDuplicates=1 | uniqueFiles=0
+s824a_symbol_SRFM.json | type=file | files=1 | bytes=21836 | canonicalDuplicates=1 | uniqueFiles=0
+
+=== DELETE_AFTER_VERIFY ===
+
+=== DO_NOT_TOUCH ===
+.env.example | type=file | files=1 | bytes=760 | canonicalDuplicates=1 | uniqueFiles=0
+.env.local | type=file | files=1 | bytes=9962 | canonicalDuplicates=1 | uniqueFiles=0
+.git | type=dir | files=2323 | bytes=62849211 | canonicalDuplicates=0 | uniqueFiles=2323
+.gitignore | type=file | files=1 | bytes=483 | canonicalDuplicates=1 | uniqueFiles=0
+.vercelignore | type=file | files=1 | bytes=15 | canonicalDuplicates=1 | uniqueFiles=0
+AGENTS.md | type=file | files=1 | bytes=327 | canonicalDuplicates=1 | uniqueFiles=0
+audit_exports | type=dir | files=80 | bytes=88954356 | canonicalDuplicates=57 | uniqueFiles=23
+CLAUDE.md | type=file | files=1 | bytes=11 | canonicalDuplicates=1 | uniqueFiles=0
+components.json | type=file | files=1 | bytes=517 | canonicalDuplicates=1 | uniqueFiles=0
+eslint.config.mjs | type=file | files=1 | bytes=465 | canonicalDuplicates=1 | uniqueFiles=0
+next.config.ts | type=file | files=1 | bytes=154 | canonicalDuplicates=1 | uniqueFiles=0
+next-env.d.ts | type=file | files=1 | bytes=251 | canonicalDuplicates=1 | uniqueFiles=0
+package.json | type=file | files=1 | bytes=996 | canonicalDuplicates=1 | uniqueFiles=0
+package-lock.json | type=file | files=1 | bytes=437460 | canonicalDuplicates=1 | uniqueFiles=0
+postcss.config.mjs | type=file | files=1 | bytes=94 | canonicalDuplicates=1 | uniqueFiles=0
+PRODUCTION_MANIFEST_DRAFT.md | type=file | files=1 | bytes=2870 | canonicalDuplicates=1 | uniqueFiles=0
+README.md | type=file | files=1 | bytes=1450 | canonicalDuplicates=1 | uniqueFiles=0
+start_all_local.ps1 | type=file | files=1 | bytes=4256 | canonicalDuplicates=1 | uniqueFiles=0
+START_ALL_README.txt | type=file | files=1 | bytes=439 | canonicalDuplicates=1 | uniqueFiles=0
+stop_local_ports.ps1 | type=file | files=1 | bytes=1367 | canonicalDuplicates=1 | uniqueFiles=0
+tsconfig.json | type=file | files=1 | bytes=666 | canonicalDuplicates=1 | uniqueFiles=0
+vercel.json | type=file | files=1 | bytes=420 | canonicalDuplicates=1 | uniqueFiles=0
+
+=== REVIEW_REQUIRED ===
+_context_build.log | type=file | files=1 | bytes=7472 | canonicalDuplicates=1 | uniqueFiles=0
+_context_dev_3b2e_3b3.log | type=file | files=1 | bytes=832 | canonicalDuplicates=1 | uniqueFiles=0
+S10_4J_controlled_archive_and_clean_root.ps1 | type=file | files=1 | bytes=12268 | canonicalDuplicates=1 | uniqueFiles=0
+S10_4J_resume_verify_and_clean_root_FIXED.ps1 | type=file | files=1 | bytes=12079 | canonicalDuplicates=1 | uniqueFiles=0
+S10_4K_final_local_root_cleanup_and_ops_dedupe.ps1 | type=file | files=1 | bytes=9919 | canonicalDuplicates=1 | uniqueFiles=0
+S10_4L_final_root_residue_classification.ps1 | type=file | files=1 | bytes=10909 | canonicalDuplicates=1 | uniqueFiles=0
+S10_4L_final_root_residue_classification_FIXED.ps1 | type=file | files=1 | bytes=11133 | canonicalDuplicates=1 | uniqueFiles=0
+Supabase Snippet Untitled query.csv | type=file | files=1 | bytes=3804 | canonicalDuplicates=1 | uniqueFiles=0
+
+=== IMPORTANT SPOT CHECKS ===
+.code-backups | class=ARCHIVE_HISTORY | files=159 | canonicalDuplicates=0 | uniqueFiles=159
+_archive | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=0 | uniqueFiles=1
+_project_context | class=ARCHIVE_HISTORY | files=161 | canonicalDuplicates=122 | uniqueFiles=39
+deploy_stock_engine | class=ARCHIVE_HISTORY | files=59 | canonicalDuplicates=54 | uniqueFiles=5
+_s10_0_paper_trading_install.py | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+001-clean-env-signals-v2.ps1 | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+333333.ps1 | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+dashboard-current.tsx | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+landing-current.txt | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+landing-pricing-current.tsx | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+landing-pricing-current.txt | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+legal-pages-bundle.txt | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+market-alerts-route.txt | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+metadata-logo-bundle.txt | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+premium-recolor-landing-safe.ps1 | class=ARCHIVE_HISTORY | files=1 | canonicalDuplicates=1 | uniqueFiles=0
+s511b_restore_again | class=ARCHIVE_HISTORY | files=0 | canonicalDuplicates=0 | uniqueFiles=0
+s58_start_scripts_fixed | class=ARCHIVE_HISTORY | files=3 | canonicalDuplicates=3 | uniqueFiles=0
+s58_start_scripts_v2_fixed | class=ARCHIVE_HISTORY | files=3 | canonicalDuplicates=3 | uniqueFiles=0
+
+=== NEXT SAFE RULE ===
+ARCHIVE_HISTORY items are candidates for external archive, not immediate permanent deletion.
+REVIEW_REQUIRED items must be inspected before movement.
+KEEP_DEV_TOOLING may remain locally but should stay outside production deployment artifacts.
+DO_NOT_TOUCH includes current project configuration, env files, manifests, and audit trail.

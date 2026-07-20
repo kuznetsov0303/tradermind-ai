@@ -1,0 +1,2018 @@
+[
+  {
+    "canonicalKey": "landing.brandTag",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "brandTag",
+    "occurrence": 1,
+    "text": "Performance intelligence",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.requestDemo",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "requestDemo",
+    "occurrence": 1,
+    "text": "Request demo",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.choosePlan",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "choosePlan",
+    "occurrence": 1,
+    "text": "Choose plan",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.viewProduct",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "viewProduct",
+    "occurrence": 1,
+    "text": "View product",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.viewPricing",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "viewPricing",
+    "occurrence": 1,
+    "text": "View pricing",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.viewAbout",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "viewAbout",
+    "occurrence": 1,
+    "text": "About us",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.team",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "team",
+    "occurrence": 1,
+    "text": "About us",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroBadge",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroBadge",
+    "occurrence": 1,
+    "text": "Premium AI trading workspace",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroTitle",
+    "occurrence": 1,
+    "text": "Turn market noise, trade history and execution mistakes into a clearer trading process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroText",
+    "occurrence": 1,
+    "text": "SkillEdge AI connects your journal, screenshots, chart review, market intelligence, AI scanner, alerts, reports and learning workflow into one premium trading workspace — without promising profits or replacing your own judgment.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.start",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "start",
+    "occurrence": 1,
+    "text": "Start with a plan",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.tour",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "tour",
+    "occurrence": 1,
+    "text": "View product flow",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.problemEyebrow",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "problemEyebrow",
+    "occurrence": 1,
+    "text": "The problem",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.problemTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "problemTitle",
+    "occurrence": 1,
+    "text": "Most traders do not need more noise. They need a cleaner process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.problemText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "problemText",
+    "occurrence": 1,
+    "text": "Charts, screenshots, emotions, watchlists, notes and mistakes often live in different places. SkillEdge AI brings them into one workflow so the trader can review decisions, understand patterns and build a repeatable process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.whyTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "whyTitle",
+    "occurrence": 1,
+    "text": "What SkillEdge AI helps you organize",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.whyText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "whyText",
+    "occurrence": 1,
+    "text": "The platform is designed around the real trading loop: find what matters, plan the trade, execute with discipline, record the result and learn from the outcome.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroTitle.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroTitle",
+    "occurrence": 2,
+    "text": "One connected workspace for trading performance.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroText.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroText",
+    "occurrence": 2,
+    "text": "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.ctaPrimary",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "ctaPrimary",
+    "occurrence": 1,
+    "text": "Choose your plan",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.ctaSecondary",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "ctaSecondary",
+    "occurrence": 1,
+    "text": "Why SkillEdge exists",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.deskTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "deskTitle",
+    "occurrence": 1,
+    "text": "A trading desk should give context, not blind calls.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.deskText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "deskText",
+    "occurrence": 1,
+    "text": "SkillEdge AI is designed to explain why an opportunity matters, what confirms it, what invalidates it and where the risk sits. The goal is better decision-making, not blind dependency.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.flowTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "flowTitle",
+    "occurrence": 1,
+    "text": "From market scan to personal improvement — one connected loop.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.flowText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "flowText",
+    "occurrence": 1,
+    "text": "Every serious trading idea should become data: what the market showed, what the trader planned, what was executed and what the outcome taught.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.modulesTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "modulesTitle",
+    "occurrence": 1,
+    "text": "Everything is designed to work together.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.modulesText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "modulesText",
+    "occurrence": 1,
+    "text": "Each module can be useful alone. Together they create a premium workspace where the trader can discover opportunities, execute with structure and review performance.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.differentTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "differentTitle",
+    "occurrence": 1,
+    "text": "This is not another signal service. It is a performance system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.differentText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "differentText",
+    "occurrence": 1,
+    "text": "The best traders do not only search for entries. They build process, risk control, review, discipline and repeatable patterns. SkillEdge AI is being built around that reality.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalTitle",
+    "occurrence": 1,
+    "text": "Build a trading system around your real behavior.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalText",
+    "occurrence": 1,
+    "text": "SkillEdge AI is for traders who are tired of scattered tools, emotional decisions and unclear reviews. The product helps the client see the market cleaner, execute with more structure and understand what to improve next.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroTitle.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroTitle",
+    "occurrence": 3,
+    "text": "Choose the level of intelligence around your trading process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroText.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroText",
+    "occurrence": 3,
+    "text": "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.halfyear",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "halfyear",
+    "occurrence": 1,
+    "text": "6 months",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cardPayment",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cardPayment",
+    "occurrence": 1,
+    "text": "Card payment is being prepared",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cryptoNote",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cryptoNote",
+    "occurrence": 1,
+    "text": "* crypto payment through the available launch flow",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.checking",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "checking",
+    "occurrence": 1,
+    "text": "Checking your account...",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.invoice",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "invoice",
+    "occurrence": 1,
+    "text": "Creating crypto invoice...",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.noUrl",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "noUrl",
+    "occurrence": 1,
+    "text": "Crypto invoice was created, but payment URL was not returned.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.unavailable",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "unavailable",
+    "occurrence": 1,
+    "text": "Crypto payment is not available right now.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.core",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "core",
+    "occurrence": 1,
+    "text": "Start with discipline",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.edge",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "edge",
+    "occurrence": 1,
+    "text": "Best active-trader value",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.elite",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "elite",
+    "occurrence": 1,
+    "text": "Full AI Trading Desk",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 1,
+    "text": "SkillEdge Core",
+    "protected": true
+  },
+  {
+    "canonicalKey": "landing.headline",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "headline",
+    "occurrence": 1,
+    "text": "For traders who need structure first.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 1,
+    "text": "Build the foundation: journal, screenshots, AI Coach, chart analysis foundation, exports and a cleaner review process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bestFor",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bestFor",
+    "occurrence": 1,
+    "text": "Best for building discipline, tracking trades and stopping reliance on memory.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cta",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cta",
+    "occurrence": 1,
+    "text": "Start with Core",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 2,
+    "text": "SkillEdge Edge",
+    "protected": true
+  },
+  {
+    "canonicalKey": "landing.headline.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "headline",
+    "occurrence": 2,
+    "text": "For active traders who need deeper review and market context.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 2,
+    "text": "Unlock higher limits, AI reports, premium chart analysis, social/market context and the AI Scanner / AI Market Brief layer.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bestFor.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bestFor",
+    "occurrence": 2,
+    "text": "Best for active traders who review seriously and want better setup and mistake discovery.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cta.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cta",
+    "occurrence": 2,
+    "text": "Upgrade to Edge",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 3,
+    "text": "SkillEdge Elite",
+    "protected": true
+  },
+  {
+    "canonicalKey": "landing.headline.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "headline",
+    "occurrence": 3,
+    "text": "For serious traders who want the full AI Trading Desk.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 3,
+    "text": "Unlock AI Alerts, floating alert widget, Signal-to-Journal workflow, decision tracking, outcome learning and maximum AI limits.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bestFor.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bestFor",
+    "occurrence": 3,
+    "text": "Best for advanced traders who want structured signals and a complete feedback loop.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cta.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cta",
+    "occurrence": 3,
+    "text": "Unlock Elite",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.signalEyebrow",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "signalEyebrow",
+    "occurrence": 1,
+    "text": "Why the signal layer matters",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.signalTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "signalTitle",
+    "occurrence": 1,
+    "text": "SkillEdge signals are built to educate, not to make the trader blindly click.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.signalText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "signalText",
+    "occurrence": 1,
+    "text": "A weak signal service creates dependency. A strong trading system creates clarity: setup, risk, confirmation, invalidation and the lesson after the outcome.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.comparisonTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "comparisonTitle",
+    "occurrence": 1,
+    "text": "Plan comparison",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.comparisonText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "comparisonText",
+    "occurrence": 1,
+    "text": "Choose the plan that matches your current trading process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalTitle.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalTitle",
+    "occurrence": 2,
+    "text": "The clean recommendation",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalText.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalText",
+    "occurrence": 2,
+    "text": "Choose Core for structure, Edge for scanner intelligence and active review, Elite for real-time AI Alerts and the full signal-to-journal workflow.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.disclaimer",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "disclaimer",
+    "occurrence": 1,
+    "text": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroBadge.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroBadge",
+    "occurrence": 2,
+    "text": "About SkillEdge AI",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroTitle.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroTitle",
+    "occurrence": 4,
+    "text": "We are building the AI trading system serious traders wish already existed.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroText.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroText",
+    "occurrence": 4,
+    "text": "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.ctaProduct",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "ctaProduct",
+    "occurrence": 1,
+    "text": "Explore product",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.ctaPricing",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "ctaPricing",
+    "occurrence": 1,
+    "text": "View plans",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.philosophyBadge",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "philosophyBadge",
+    "occurrence": 1,
+    "text": "Product philosophy",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.philosophyTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "philosophyTitle",
+    "occurrence": 1,
+    "text": "Process over prediction",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.storyEyebrow",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "storyEyebrow",
+    "occurrence": 1,
+    "text": "Our story",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.storyTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "storyTitle",
+    "occurrence": 1,
+    "text": "SkillEdge AI is built for traders who want discipline, structure and measurable improvement.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.storyText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "storyText",
+    "occurrence": 1,
+    "text": "The product was born from the same problem many active traders face: the market gives too much information, but almost no honest feedback about execution. SkillEdge AI is designed to connect the trader’s decisions, screenshots, journal, alerts and outcomes into one serious review system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.teamEyebrow",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "teamEyebrow",
+    "occurrence": 1,
+    "text": "Team structure",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.teamTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "teamTitle",
+    "occurrence": 1,
+    "text": "Built like a focused product team — trading, product, data and support.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.principlesTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "principlesTitle",
+    "occurrence": 1,
+    "text": "A serious trading product must be honest about risk and serious about process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.roadmapTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "roadmapTitle",
+    "occurrence": 1,
+    "text": "We are building toward a premium AI Trading Desk.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.roadmapText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "roadmapText",
+    "occurrence": 1,
+    "text": "The launch foundation is product-focused: journal, alerts, learning, reports, support, billing and market intelligence. The next layer is premium data, full market scanning and personal alerts based on the client’s own history.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalTitle.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalTitle",
+    "occurrence": 3,
+    "text": "Help traders stop operating from chaos and start operating from a system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalText.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalText",
+    "occurrence": 3,
+    "text": "SkillEdge AI is for traders who want to review harder, think cleaner, execute with more discipline and build a repeatable edge from real data instead of emotion and memory.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.description",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "description",
+    "occurrence": 1,
+    "text": "Premium AI trading workspace for serious traders: market intelligence, AI alerts, journal, execution review, playbook, reports and coaching in one connected system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cookieSettings",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cookieSettings",
+    "occurrence": 1,
+    "text": "Cookie settings",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.risk",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "risk",
+    "occurrence": 1,
+    "text": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.location",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "location",
+    "occurrence": 1,
+    "text": "Dubai / Warsaw / Kyiv",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.demo",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "demo",
+    "occurrence": 1,
+    "text": "Product demo by request",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.rights",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "rights",
+    "occurrence": 1,
+    "text": "© 2026 SkillEdge AI. All rights reserved.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bottom",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bottom",
+    "occurrence": 1,
+    "text": "Built for traders who want structure, discipline and measurable improvement.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.register",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "register",
+    "occurrence": 1,
+    "text": "Sign up",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.loginTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "loginTitle",
+    "occurrence": 1,
+    "text": "Login to SkillEdge AI",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.registerTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "registerTitle",
+    "occurrence": 1,
+    "text": "Create account",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.registerButton",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "registerButton",
+    "occurrence": 1,
+    "text": "Sign up",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.logout",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "logout",
+    "occurrence": 1,
+    "text": "Log out",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.switchToLogin",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "switchToLogin",
+    "occurrence": 1,
+    "text": "Already have an account? Login",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.switchToRegister",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "switchToRegister",
+    "occurrence": 1,
+    "text": "No account? Sign up",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.creatingAccount",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "creatingAccount",
+    "occurrence": 1,
+    "text": "Creating account...",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.creatingInvoice",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "creatingInvoice",
+    "occurrence": 1,
+    "text": "Creating crypto invoice...",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.loginRequired",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "loginRequired",
+    "occurrence": 1,
+    "text": "Login or sign up to pay for a plan.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.afterRegister",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "afterRegister",
+    "occurrence": 1,
+    "text": "Account created. Confirm your email if required.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.authError",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "authError",
+    "occurrence": 1,
+    "text": "Authorization error.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 1,
+    "text": "Built by traders for traders",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 1,
+    "text": "Trading without a system costs more than the subscription.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 4,
+    "text": "SkillEdge AI turns market chaos, trades, screenshots, mistakes and alerts into one trading workflow — so you see structure, not noise.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.accent",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "accent",
+    "occurrence": 1,
+    "text": "Setup. Risk. Execution. Review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.primary",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "primary",
+    "occurrence": 1,
+    "text": "Open product",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.secondary",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "secondary",
+    "occurrence": 1,
+    "text": "View pricing",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.how",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "how",
+    "occurrence": 1,
+    "text": "How it works",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.proofTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "proofTitle",
+    "occurrence": 1,
+    "text": "Professional-grade trust",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 1,
+    "text": "Client performance examples",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 2,
+    "text": "Different starting capital. One principle: discipline, journaling and execution review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.subtitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "subtitle",
+    "occurrence": 1,
+    "text": "Clients start with different account sizes, trading styles and growth speeds. But when a trader journals consistently, tracks trades and reviews execution, the process usually becomes cleaner, stronger and more stable.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.note",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "note",
+    "occurrence": 1,
+    "text": "These are product examples, not a profit promise. Trading involves risk. SkillEdge AI helps traders build structure, review decisions and improve execution discipline.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cta.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cta",
+    "occurrence": 4,
+    "text": "Open product",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.secondaryCta",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "secondaryCta",
+    "occurrence": 1,
+    "text": "View pricing",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.capitalLabel",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "capitalLabel",
+    "occurrence": 1,
+    "text": "Starting capital",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.pnlLabel",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "pnlLabel",
+    "occurrence": 1,
+    "text": "Net profit",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.winRateLabel",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "winRateLabel",
+    "occurrence": 1,
+    "text": "Win rate",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.avgRLabel",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "avgRLabel",
+    "occurrence": 1,
+    "text": "Average R",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.drawdownLabel",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "drawdownLabel",
+    "occurrence": 1,
+    "text": "Max drawdown",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.chartLabel",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "chartLabel",
+    "occurrence": 1,
+    "text": "Cumulative Net PnL",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.clickHint",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "clickHint",
+    "occurrence": 1,
+    "text": "Click the card to open the product",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.trustTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "trustTitle",
+    "occurrence": 1,
+    "text": "Why this matters",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 2,
+    "text": "Desk standard",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 3,
+    "text": "SkillEdge Trading Desk",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.subtitle.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "subtitle",
+    "occurrence": 2,
+    "text": "A structured workflow for serious traders.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.main",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "main",
+    "occurrence": 1,
+    "text": "From market noise to a working trade plan.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.note.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "note",
+    "occurrence": 2,
+    "text": "Every idea must pass market context, setup quality, trigger, risk, invalidation, R:R and journal review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 2,
+    "text": "SkillEdge AI Trading Desk",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 4,
+    "text": "Turn market noise into a clear execution process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 5,
+    "text": "A premium workspace for traders who want structure: market context, AI alerts, journal, screenshots, reports and review logic in one connected desk.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.primary.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "primary",
+    "occurrence": 2,
+    "text": "Open pricing",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.secondary.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "secondary",
+    "occurrence": 2,
+    "text": "View product",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.outcomeTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "outcomeTitle",
+    "occurrence": 1,
+    "text": "What the trader gets",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.outcomeText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "outcomeText",
+    "occurrence": 1,
+    "text": "SkillEdge AI is not built to throw random signals. It is built to help you understand the setup, the risk, the trigger and your own execution quality.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.workflowTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "workflowTitle",
+    "occurrence": 1,
+    "text": "Desk workflow",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalTitle.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalTitle",
+    "occurrence": 4,
+    "text": "Build your process like a trading desk.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalText.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalText",
+    "occurrence": 4,
+    "text": "Use SkillEdge AI to scan cleaner, plan faster, track mistakes and improve the way you trade over time.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 3,
+    "text": "Built from zero for trading",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 5,
+    "text": "Not another AI chat. A full trading product built around execution.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 6,
+    "text": "SkillEdge AI is a dedicated AI Trading Desk created for real trading workflow: market context, journal, screenshots, AI review, reports, scanner, alerts and performance feedback in one connected system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.second",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "second",
+    "occurrence": 1,
+    "text": "A generic AI tool only answers the question you type. SkillEdge AI is different: it works around your process. Every trade, screenshot, setup, mistake and report becomes part of your personal trading context.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.third",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "third",
+    "occurrence": 1,
+    "text": "That is why SkillEdge AI cannot be replaced by a free tool. It is not a prompt box. It is a structured product built by specialists in AI engineering, software development and trading workflow design to help traders build discipline, understand risk and improve execution quality.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 4,
+    "text": "Signature feature",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 6,
+    "text": "Create a real trading strategy, not another note in a document.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 7,
+    "text": "Strategy OS turns a trader’s idea into a living playbook: setup logic, rules, evidence, before-trade gate, after-trade debrief, versions and measurable trust score.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.punch",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "punch",
+    "occurrence": 1,
+    "text": "This is the reason Edge becomes a professional workspace: the trader stops jumping between random ideas and starts building one repeatable decision system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.primary.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "primary",
+    "occurrence": 3,
+    "text": "Unlock Strategy OS",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.secondary.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "secondary",
+    "occurrence": 3,
+    "text": "Open dashboard guide",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.center",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "center",
+    "occurrence": 1,
+    "text": "Strategy Builder",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.score",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "score",
+    "occurrence": 1,
+    "text": "Strategy Trust",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroBadge.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroBadge",
+    "occurrence": 3,
+    "text": "Premium access board",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroTitle.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroTitle",
+    "occurrence": 5,
+    "text": "Choose the SkillEdge AI level that matches your trading process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.heroText.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "heroText",
+    "occurrence": 5,
+    "text": "Core gives structure. Edge adds market intelligence. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.billingTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "billingTitle",
+    "occurrence": 1,
+    "text": "Choose billing period",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.billingText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "billingText",
+    "occurrence": 1,
+    "text": "Monthly is flexible. Longer periods are better for building a real review habit and tracking progress over time.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 3,
+    "text": "Start with discipline",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.8",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 8,
+    "text": "Build the foundation: journal, screenshots, AI Coach, exports and a cleaner review process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bestFor.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bestFor",
+    "occurrence": 4,
+    "text": "Best for journaling discipline and basic AI review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 4,
+    "text": "Active trader",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.headline.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "headline",
+    "occurrence": 4,
+    "text": "For active traders who need market context.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.9",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 9,
+    "text": "Add market intelligence, AI Scanner, deeper reports and stronger review for active trading.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bestFor.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bestFor",
+    "occurrence": 5,
+    "text": "Best for traders who actively review setups and mistakes.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 5,
+    "text": "Full AI Trading Desk",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.headline.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "headline",
+    "occurrence": 5,
+    "text": "For serious traders who want the full signal workflow.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.10",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 10,
+    "text": "Unlock AI Alerts, floating alert widget, Signal-to-Journal, decision tracking and outcome learning.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bestFor.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bestFor",
+    "occurrence": 6,
+    "text": "Best for traders who want alerts, journal sync and outcome review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 5,
+    "text": "Elite spotlight",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 7,
+    "text": "The full AI Trading Desk.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.11",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 11,
+    "text": "Elite is built for traders who want actionable alerts, structured risk, signal-to-journal workflow and measurable outcome review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.button",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "button",
+    "occurrence": 1,
+    "text": "Unlock Elite",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 6,
+    "text": "Signal quality",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.8",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 8,
+    "text": "Signals should teach the trader, not make them click blindly.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.12",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 12,
+    "text": "SkillEdge alerts are structured trade ideas: setup, trigger, entry zone, stop, targets, RR, risk and invalidation.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 7,
+    "text": "Access matrix",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.9",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 9,
+    "text": "Compare plans by workflow depth.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.13",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 13,
+    "text": "Each plan adds a deeper layer: structure, market intelligence, then the full signal workflow.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.8",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 8,
+    "text": "Clean recommendation",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.10",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 10,
+    "text": "Choose by process depth, not hype.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.14",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 14,
+    "text": "Start where your workflow is today. Upgrade when you are ready for market intelligence and the full alert loop.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.disclaimer.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "disclaimer",
+    "occurrence": 2,
+    "text": "SkillEdge AI is not financial advice and does not guarantee profits. It is built to improve structure, review, decision quality and trading process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bestFor.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bestFor",
+    "occurrence": 7,
+    "text": "Best for",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.checkout",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "checkout",
+    "occurrence": 1,
+    "text": "Checkout status",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.eyebrow.9",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "eyebrow",
+    "occurrence": 9,
+    "text": "Institutional-grade trading infrastructure",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.11",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 11,
+    "text": "Not another empty shell, but a working tool that turns market context, trades and mistakes into a controlled system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.15",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 15,
+    "text": "SkillEdge AI connects journal, screenshots, Strategy OS, Personal Edge, Market Intelligence, AI Scanner, Reports and Elite Alerts into one premium trading desk — so every decision moves through context, risk, execution and review.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.strong",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "strong",
+    "occurrence": 1,
+    "text": "A basic AI tool answers a prompt. SkillEdge AI builds infrastructure around the trader: from market scan and trade planning to journal review, outcome tracking and Personal Edge development. This is not a one-trade suggestion — it is a system for making trading measurable.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 6,
+    "text": "Elite demo",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.12",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 12,
+    "text": "Try SkillEdge Elite for 3 days",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.16",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 16,
+    "text": "Get full Elite access for 3 days: journal, AI Coach, reports, Market Intelligence, AI Alerts and the floating alerts widget.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.warning",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "warning",
+    "occurrence": 1,
+    "text": "Best activated Monday–Thursday. We do not recommend activating the demo on Friday because the US stock market is closed on the weekend and live stock signals will be limited. Crypto signals may still appear.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.button.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "button",
+    "occurrence": 2,
+    "text": "Activate demo",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 7,
+    "text": "Team manifesto",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.13",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 13,
+    "text": "Built by traders, product people and risk-first operators.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.text.17",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "text",
+    "occurrence": 17,
+    "text": "SkillEdge AI is not built as another signal feed. It is built like a trading desk: market intelligence, setup logic, journal feedback, execution review and a process that makes the trader sharper over time.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.primary.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "primary",
+    "occurrence": 4,
+    "text": "Choose access",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.carouselBadge",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "carouselBadge",
+    "occurrence": 1,
+    "text": "Global desk team",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.carouselTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "carouselTitle",
+    "occurrence": 1,
+    "text": "Seven people, one mission: turn trading into a repeatable process.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.principlesEyebrow",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "principlesEyebrow",
+    "occurrence": 1,
+    "text": "Operating principles",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.principlesTitle.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "principlesTitle",
+    "occurrence": 2,
+    "text": "What this team is building.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.refuseTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "refuseTitle",
+    "occurrence": 1,
+    "text": "What we refuse to build",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.buildTitle",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "buildTitle",
+    "occurrence": 1,
+    "text": "What SkillEdge is built for",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalTitle.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalTitle",
+    "occurrence": 5,
+    "text": "A premium trading process, not another noisy tool.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.finalText.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "finalText",
+    "occurrence": 5,
+    "text": "SkillEdge AI is being built for traders who want structure, discipline, market context and a serious feedback loop.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 4,
+    "text": "Aida Sarynova",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 1,
+    "text": "linear-gradient(135deg, rgba(0,192,118,0.36), rgba(15,23,42,0.92) 48%, rgba(16,185,129,0.26))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 5,
+    "text": "Niamh O’Connor",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 2,
+    "text": "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(59,130,246,0.28))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 6,
+    "text": "Oliver Reed",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 3,
+    "text": "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 50%, rgba(0,192,118,0.26))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 7,
+    "text": "James Whitfield",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 4,
+    "text": "linear-gradient(135deg, rgba(14,165,233,0.32), rgba(15,23,42,0.92) 50%, rgba(244,114,182,0.18))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.8",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 8,
+    "text": "Lukas Schneider",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 5,
+    "text": "linear-gradient(135deg, rgba(6,182,212,0.28), rgba(15,23,42,0.92) 52%, rgba(251,191,36,0.2))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.9",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 9,
+    "text": "Marcus Hayes",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 6,
+    "text": "linear-gradient(135deg, rgba(37,99,235,0.32), rgba(15,23,42,0.92) 52%, rgba(16,185,129,0.23))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 7,
+    "text": "linear-gradient(135deg, rgba(0,192,118,0.32), rgba(15,23,42,0.92) 48%, rgba(248,113,113,0.22))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.10",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 10,
+    "text": "Jakub Zieliński",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.8",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 8,
+    "text": "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(15,23,42,0.92) 48%, rgba(34,197,94,0.22))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.11",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 11,
+    "text": "Dilnoza Karimova",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.9",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 9,
+    "text": "linear-gradient(135deg, rgba(16,185,129,0.34), rgba(15,23,42,0.92) 48%, rgba(217,70,239,0.2))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.name.12",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "name",
+    "occurrence": 12,
+    "text": "Kenji Watanabe",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.gradient.10",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "gradient",
+    "occurrence": 10,
+    "text": "linear-gradient(135deg, rgba(45,212,191,0.3), rgba(15,23,42,0.92) 52%, rgba(248,113,113,0.18))",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.badge.8",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "badge",
+    "occurrence": 8,
+    "text": "Secure checkout",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.title.14",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "title",
+    "occurrence": 14,
+    "text": "Choose payment method",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.crypto",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "crypto",
+    "occurrence": 1,
+    "text": "Pay with crypto",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cryptoText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cryptoText",
+    "occurrence": 1,
+    "text": "USDT TRC20 invoice through the active launch payment flow.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.card",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "card",
+    "occurrence": 1,
+    "text": "Pay by card",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.cardText",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "cardText",
+    "occurrence": 1,
+    "text": "Card payment is being prepared and will be available soon.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.demoNote",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "demoNote",
+    "occurrence": 1,
+    "text": "Demo gives full SkillEdge Elite access for 3 days. Best activated Monday–Thursday.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 1,
+    "text": "AI Trading Desk",
+    "protected": true
+  },
+  {
+    "canonicalKey": "landing.status",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "status",
+    "occurrence": 1,
+    "text": "Initializing market intelligence",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.description.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "description",
+    "occurrence": 2,
+    "text": "Premium AI trading workspace for serious traders: market intelligence, AI signals, journal, execution review, playbook, reports and coaching in one connected system.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.bottomNote",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "bottomNote",
+    "occurrence": 1,
+    "text": "Built for traders who want structure, discipline and measurable improvement.",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.2",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 2,
+    "text": "About Us",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.3",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 3,
+    "text": "AI Signals",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.4",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 4,
+    "text": "Market Intelligence",
+    "protected": true
+  },
+  {
+    "canonicalKey": "landing.label.5",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 5,
+    "text": "Journal & Screenshots",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.6",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 6,
+    "text": "Execution Coach",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.7",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 7,
+    "text": "Outcome Learning",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.8",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 8,
+    "text": "Learning Center",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.9",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 9,
+    "text": "Support Assistant",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.10",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 10,
+    "text": "Getting Started",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.11",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 11,
+    "text": "How SkillEdge Works",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.12",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 12,
+    "text": "Trading Journal Guide",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.13",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 13,
+    "text": "AI Signals Guide",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.14",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 14,
+    "text": "Referral program",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.15",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 15,
+    "text": "Privacy Policy",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.16",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 16,
+    "text": "Terms & Conditions",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.17",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 17,
+    "text": "Billing & Cancellation",
+    "protected": false
+  },
+  {
+    "canonicalKey": "landing.label.18",
+    "sourceFile": "components/Landing.tsx",
+    "sourceKey": "label",
+    "occurrence": 18,
+    "text": "Cookie Policy",
+    "protected": false
+  }
+]

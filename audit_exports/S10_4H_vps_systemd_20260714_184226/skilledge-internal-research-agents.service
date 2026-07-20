@@ -1,0 +1,10 @@
+[Unit]
+Description=SkillEdge Internal Research Agents Daily Report
+After=network-online.target skilledge-stock-engine-api.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/internal_research_agents_daily.py
+User=root

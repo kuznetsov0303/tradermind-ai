@@ -1,0 +1,3 @@
+ExecStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python -m uvicorn app.api.app:app --host 127.0.0.1 --port 8000 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }
+EnvironmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=no)
+FragmentPath=/etc/systemd/system/skilledge-stock-engine-api.service

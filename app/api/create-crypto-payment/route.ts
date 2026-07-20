@@ -1,48 +1,16 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import {
+  getBillingAmountUsd,
+  getBillingPeriodLabel,
+  getBillingPlan,
+  normalizeBillingPeriod as normalizeCanonicalBillingPeriod,
+  type BillingPeriod,
+} from "@/lib/billing-plans";
 
 type PlanId = "core" | "edge" | "elite";
 type PurchaseId = PlanId | "demo";
-type BillingPeriod = "monthly" | "halfyear" | "yearly";
 
-const PLANS: Record<
-  PlanId,
-  {
-    name: string;
-    prices: Record<BillingPeriod, number>;
-  }
-> = {
-  core: {
-    name: "SkillEdge Core",
-    prices: {
-      monthly: 49,
-      halfyear: 249,
-      yearly: 399,
-    },
-  },
-  edge: {
-    name: "SkillEdge Edge",
-    prices: {
-      monthly: 99,
-      halfyear: 499,
-      yearly: 799,
-    },
-  },
-  elite: {
-    name: "SkillEdge Elite",
-    prices: {
-      monthly: 149,
-      halfyear: 749,
-      yearly: 1249,
-    },
-  },
-};
-
-const PERIOD_LABELS: Record<BillingPeriod, string> = {
-  monthly: "1 month",
-  halfyear: "6 months",
-  yearly: "1 year",
-};
 
 function normalizePurchase(planId: unknown): PurchaseId {
   if (planId === "starter" || planId === "core") {
@@ -58,14 +26,6 @@ function normalizePurchase(planId: unknown): PurchaseId {
   }
 
   return "core";
-}
-
-function normalizeBillingPeriod(period: unknown): BillingPeriod {
-  if (period === "monthly" || period === "halfyear" || period === "yearly") {
-    return period;
-  }
-
-  return "monthly";
 }
 
 export async function POST(req: Request) {
@@ -110,11 +70,13 @@ export async function POST(req: Request) {
     const isDemo = purchaseId === "demo";
 
     const planId: PlanId = isDemo ? "elite" : purchaseId;
-    const billingPeriod = normalizeBillingPeriod(body?.billingPeriod);
+    const billingPeriod = normalizeCanonicalBillingPeriod(body?.billingPeriod);
 
-    const plan = PLANS[planId];
+    const plan = getBillingPlan(planId);
 
-    const amount = isDemo ? 11.99 : plan.prices[billingPeriod];
+    const amount = isDemo
+      ? 11.99
+      : getBillingAmountUsd(planId, billingPeriod);
 
     const siteUrl =
       process.env.NEXT_PUBLIC_SITE_URL || "https://www.upyourskills.site";
@@ -125,7 +87,7 @@ export async function POST(req: Request) {
 
    const orderDescription = isDemo
   ? "SkillEdge AI Demo access - $11.99 - SkillEdge Elite - 3 days - full Elite demo access - USDT TRC20 payment"
-  : `${plan.name} subscription - ${PERIOD_LABELS[billingPeriod]} - USDT TRC20 payment`;
+  : `${plan.publicName} subscription - ${getBillingPeriodLabel(billingPeriod)} - USDT TRC20 payment`;
 
     const { error: profileError } = await supabaseAdmin.from("profiles").upsert({
       id: user.id,

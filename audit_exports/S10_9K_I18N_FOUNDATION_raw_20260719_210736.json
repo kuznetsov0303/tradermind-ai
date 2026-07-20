@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "classification": "UNIFIED_I18N_FOUNDATION_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "filesChanged": [
+    "lib/i18n/index.ts",
+    "lib/i18n/runtime.ts",
+    "lib/i18n/glossary.ts",
+    "scripts/i18n/validate-locales.mjs"
+  ],
+  "storageKey": "skilledge_language",
+  "eventName": "skilledge:language-changed",
+  "defaultLocale": "en",
+  "aliases": {
+    "ua": "uk",
+    "no": "nb"
+  },
+  "rtlLocale": "ar",
+  "runtimeAiTranslation": false,
+  "localeValidationScriptReady": true,
+  "buildPassed": true,
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9K_i18n_foundation_backup_20260719_210736",
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9K_I18N_FOUNDATION_build_20260719_210736.txt",
+  "nextAction": "MIGRATE_LANDING_LANGUAGE_SELECTOR_TO_UNIFIED_RUNTIME"
+}

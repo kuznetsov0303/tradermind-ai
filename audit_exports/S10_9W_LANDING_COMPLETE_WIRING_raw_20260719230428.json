@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "classification": "LANDING_COMPLETE_LOCALE_WIRING_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "runtimeAiTranslation": false,
+  "localesWired": 15,
+  "completeEntriesPerLocale": 446,
+  "astPathAssignmentsUsed": 352,
+  "uniqueLocaleKeysUsed": 312,
+  "technicalPathsPreserved": 3,
+  "landingComponentChanged": true,
+  "structuredLoaderCreated": true,
+  "oldThreeLanguageSelectorBypassed": true,
+  "buildPassed": true,
+  "originalLandingSha256": "1f9eecb61b3ce9dd37dc98afbc9dec8a5dde35601d69b04e303016967be9d18a",
+  "finalLandingSha256": "e3fbee5863334ea2453e63c86fbb67f9d671145b423efa1963e30e5a485cf1a7",
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9W_landing_wiring_backup_20260719230428",
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9W_LANDING_COMPLETE_WIRING_build_20260719230428.txt",
+  "nextAction": "RUN_LOCAL_VISUAL_AND_LANGUAGE_SWITCH_QA"
+}

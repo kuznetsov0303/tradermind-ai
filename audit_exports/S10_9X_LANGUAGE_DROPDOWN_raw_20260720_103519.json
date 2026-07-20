@@ -1,0 +1,18 @@
+﻿{
+    "ok":  true,
+    "classification":  "LANDING_LANGUAGE_DROPDOWN_PASSED",
+    "landingComponentChanged":  true,
+    "desktopDropdown":  true,
+    "mobileLanguageGrid":  true,
+    "outsideClickClose":  true,
+    "escapeClose":  true,
+    "nativeLanguageNames":  true,
+    "localePersistence":  true,
+    "documentLocaleApplied":  true,
+    "buildPassed":  true,
+    "productionMutation":  false,
+    "vpsTouched":  false,
+    "backupRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9X_language_dropdown_backup_20260720_103519",
+    "buildLog":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9X_LANGUAGE_DROPDOWN_build_20260720_103519.txt",
+    "nextAction":  "REBUILD_AND_QA_ALL_TRANSLATION_DICTIONARIES"
+}

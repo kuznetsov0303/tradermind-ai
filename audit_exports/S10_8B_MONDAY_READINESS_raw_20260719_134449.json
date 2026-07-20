@@ -1,0 +1,94 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_MONDAY_READINESS_PACKAGE_BUILT",
+    "inspectionOnly":  true,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "packageExecuted":  false,
+    "deploymentAuthorized":  false,
+    "armAllowed":  false,
+    "authorizedExecutor":  {
+                               "filename":  "S10_7Y2_DAY7D_execute_guarded_capacity_canary_FIXED.ps1",
+                               "fullPath":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_7Y2_DAY7D_execute_guarded_capacity_canary_FIXED.ps1",
+                               "sha256":  "bf5e43b43dddb4dfa471f47942068072feb75f6f8a334016232bbc4d262980b9"
+                           },
+    "forbiddenExecutor":  {
+                              "filename":  "S10_7Y_DAY7D_execute_guarded_capacity_canary.ps1",
+                              "present":  true,
+                              "mustNotRun":  true
+                          },
+    "hashes":  {
+                   "executor":  {
+                                    "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_7Y2_DAY7D_execute_guarded_capacity_canary_FIXED.ps1",
+                                    "sha256":  "bf5e43b43dddb4dfa471f47942068072feb75f6f8a334016232bbc4d262980b9",
+                                    "sizeBytes":  26269
+                                },
+                   "validationRaw":  {
+                                         "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_8A_Y2_OFFLINE_VALIDATION_raw_20260719_134234.json",
+                                         "sha256":  "6ff25ad303868ffbcbeebdc60821e72bd5e1b6667a08415eccf818faeebe03ab",
+                                         "sizeBytes":  9514
+                                     },
+                   "validationReport":  {
+                                            "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_8A_Y2_OFFLINE_VALIDATION_report_20260719_134234.txt",
+                                            "sha256":  "bbac7d96e0c0174b65614999e1f90fab0dbd986bd367eed1c5c893a49b8dcad9",
+                                            "sizeBytes":  1295
+                                        },
+                   "universe":  {
+                                    "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_7P_VALIDATED_LIQUID_250_UNIVERSE_20260718_235427.json",
+                                    "sha256":  "270c9db67b3e83789ca505a1b38172dc2254747dab3edcf2b147b000d71b4bf0",
+                                    "sizeBytes":  29336
+                                },
+                   "canaryPlan":  {
+                                      "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_7V_guarded_v2_canary_with_v3_20260719_123445\\config\\canary_plan.json",
+                                      "sha256":  "39a0c35be3dba1ab1c2a8bff388abd6b2966e13b9d061709efdc6d63e1466f2a",
+                                      "sizeBytes":  3552
+                                  },
+                   "packageManifest":  {
+                                           "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_7V_guarded_v2_canary_with_v3_20260719_123445\\manifest.json",
+                                           "sha256":  "7ce2055c19c187bb6dedde218da5f0902aa309bb394e4d23796b0c712922e4d6",
+                                           "sizeBytes":  5418
+                                       }
+               },
+    "exactRunCommand":  "powershell -ExecutionPolicy Bypass -File \".\\S10_7Y2_DAY7D_execute_guarded_capacity_canary_FIXED.ps1\" -ProjectRoot (Get-Location).Path -Execute",
+    "preRunChecklist":  [
+                            "Confirm current day is Monday 2026-07-20 or another US trading weekday",
+                            "Confirm current time is between 16:35 and 21:45 Kyiv",
+                            "Confirm US regular session is open",
+                            "Run S10.7X2 adaptive preflight and require OK=True",
+                            "Confirm market and API services are active",
+                            "Confirm current production universe is Core25",
+                            "Confirm S10.8A Y2 offline validation is OK=True",
+                            "Confirm executor SHA-256 matches readiness manifest",
+                            "Do not run old S10.7Y executor",
+                            "Do not run manual paper run-once",
+                            "Do not start paper service",
+                            "Do not reset paper boundary"
+                        ],
+    "postRunChecklist":  [
+                             "Confirm classification is COMPLETED_CORE25_RESTORED or ROLLED_BACK",
+                             "Confirm productionUniverseRestoredTo25=True",
+                             "Confirm productionPayloadRestored=True",
+                             "Confirm clientEligibilityChanged=False",
+                             "Confirm telegramEligibilityChanged=False",
+                             "Confirm paperEligibilityChanged=False",
+                             "Confirm paperRunOnceExecuted=False",
+                             "Confirm paperServiceStarted=False",
+                             "Confirm paperBoundaryReset=False",
+                             "Confirm brokerEnabled=False",
+                             "Confirm realMoneyEnabled=False",
+                             "Archive raw, report, and milestone outputs"
+                         ],
+    "expectedStageOrder":  [
+                               25,
+                               50,
+                               100,
+                               150,
+                               250
+                           ],
+    "expectedDurationMinutesApprox":  57,
+    "explicitExecutionApprovalAlreadyRecorded":  true,
+    "mondayReminderScheduled":  true,
+    "nextAction":  "MONDAY_RUN_PREFLIGHT_THEN_EXECUTE_AUTHORIZED_Y2"
+}

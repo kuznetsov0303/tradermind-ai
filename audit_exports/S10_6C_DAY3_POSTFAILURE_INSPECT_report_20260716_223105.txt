@@ -1,0 +1,44 @@
+﻿S10.6C DAY 3 POST-FAILURE INSPECTION
+Generated=20260716_223105
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+SERVICE_RESTARTED=False
+APP_SHA256=bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785
+MARKET_DATA_FILES_PRESENT=__init__.py,contracts.py,provider.py,databento_adapter.py,stream_service.py
+UNIT_EXISTS=True
+DATABENTO_PACKAGE=Name: databento | Version: 0.81.0 | Summary: Official Python client library for Databento | Home-page: https://databento.com | Author: Databento | Author-email: support@databento.com | License-Expression: Apache-2.0 | Location: /opt/skilledge/stock-engine/.venv/lib/python3.12/site-packages | Requires: aiohttp, databento-dbn, numpy, pandas, pyarrow, requests, zstandard | Required-by:
+COMPILE_RETURN_CODE=0
+STATUS_FILE_EXISTS=False
+STATUS=NONE
+STATUS_PARSE_ERROR=
+API_HEALTH_RETURN_CODE=0
+
+=== MARKET STREAM SERVICE ===
+MainPID=0
+Result=exit-code
+NRestarts=69
+LoadState=loaded
+ActiveState=activating
+SubState=auto-restart
+UnitFileState=enabled
+
+=== PAPER TIMER ===
+Result=success
+ActiveState=inactive
+SubState=dead
+UnitFileState=disabled
+
+=== PAPER SERVICE ===
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+
+=== API SERVICE ===
+MainPID=789739
+Result=success
+NRestarts=0
+ActiveState=active
+SubState=running
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_6C_DAY3_POSTFAILURE_INSPECT_raw_20260716_223105.json

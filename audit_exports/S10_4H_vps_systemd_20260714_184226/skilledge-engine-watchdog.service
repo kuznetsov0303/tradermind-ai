@@ -1,0 +1,12 @@
+[Unit]
+Description=SkillEdge Engine Watchdog
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=-/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/engine_watchdog.py --public-url https://engine.upyourskills.site --auto-restart --alert
+User=root
+Group=root

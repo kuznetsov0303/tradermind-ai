@@ -1,0 +1,343 @@
+﻿{
+    "ok":  false,
+    "classification":  "DAY7D_OFFLINE_CANARY_EXECUTOR_VALIDATION_BLOCKED",
+    "inspectionOnly":  true,
+    "executorExecutedAgainstVps":  false,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "packageExecuted":  false,
+    "deploymentAuthorized":  false,
+    "armAllowed":  false,
+    "executeSwitchPresent":  true,
+    "executeSwitchEnforced":  true,
+    "marketHoursGatePresent":  true,
+    "exactCore25RestorePresent":  true,
+    "scenarioSummary":  [
+                            "all_pass_no_existing_dropin:rollback=False:core25=True:dropinExact=True",
+                            "fail_at_100_no_existing_dropin:rollback=True:core25=True:dropinExact=True",
+                            "all_pass_existing_dropin:rollback=False:core25=True:dropinExact=True",
+                            "fail_at_150_existing_dropin:rollback=True:core25=True:dropinExact=True"
+                        ],
+    "scenarios":  [
+                      {
+                          "name":  "all_pass_no_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  150,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  250,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         }
+                                     ],
+                          "rollbackPerformed":  false,
+                          "restored":  true,
+                          "finalSymbols":  [
+                                               "AAPL",
+                                               "MSFT",
+                                               "NVDA",
+                                               "TSLA",
+                                               "AMD",
+                                               "AMZN",
+                                               "META",
+                                               "GOOGL",
+                                               "AVGO",
+                                               "PLTR",
+                                               "SMCI",
+                                               "MSTR",
+                                               "COIN",
+                                               "NFLX",
+                                               "CRM",
+                                               "ORCL",
+                                               "INTC",
+                                               "MU",
+                                               "ARM",
+                                               "UBER",
+                                               "SHOP",
+                                               "RIVN",
+                                               "SOFI",
+                                               "CRWD",
+                                               "NOW"
+                                           ],
+                          "finalDropin":  null,
+                          "originalDropin":  null,
+                          "dropinRestoredExactly":  true,
+                          "core25Restored":  true,
+                          "restarts":  7,
+                          "daemonReloads":  7,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      },
+                      {
+                          "name":  "fail_at_100_no_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  false,
+                                             "failures":  [
+                                                              "PROCESSING_LAG_REGRESSION"
+                                                          ]
+                                         }
+                                     ],
+                          "rollbackPerformed":  true,
+                          "restored":  true,
+                          "finalSymbols":  [
+                                               "AAPL",
+                                               "MSFT",
+                                               "NVDA",
+                                               "TSLA",
+                                               "AMD",
+                                               "AMZN",
+                                               "META",
+                                               "GOOGL",
+                                               "AVGO",
+                                               "PLTR",
+                                               "SMCI",
+                                               "MSTR",
+                                               "COIN",
+                                               "NFLX",
+                                               "CRM",
+                                               "ORCL",
+                                               "INTC",
+                                               "MU",
+                                               "ARM",
+                                               "UBER",
+                                               "SHOP",
+                                               "RIVN",
+                                               "SOFI",
+                                               "CRWD",
+                                               "NOW"
+                                           ],
+                          "finalDropin":  null,
+                          "originalDropin":  null,
+                          "dropinRestoredExactly":  true,
+                          "core25Restored":  true,
+                          "restarts":  5,
+                          "daemonReloads":  5,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      },
+                      {
+                          "name":  "all_pass_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  150,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  250,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         }
+                                     ],
+                          "rollbackPerformed":  false,
+                          "restored":  true,
+                          "finalSymbols":  [
+                                               "AAPL",
+                                               "MSFT",
+                                               "NVDA",
+                                               "TSLA",
+                                               "AMD",
+                                               "AMZN",
+                                               "META",
+                                               "GOOGL",
+                                               "AVGO",
+                                               "PLTR",
+                                               "SMCI",
+                                               "MSTR",
+                                               "COIN",
+                                               "NFLX",
+                                               "CRM",
+                                               "ORCL",
+                                               "INTC",
+                                               "MU",
+                                               "ARM",
+                                               "UBER",
+                                               "SHOP",
+                                               "RIVN",
+                                               "SOFI",
+                                               "CRWD",
+                                               "NOW"
+                                           ],
+                          "finalDropin":  "[Service]\nEnvironment=\"SKILLEDGE_MARKET_STREAM_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,NFLX,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW\"\n",
+                          "originalDropin":  "[Service]\nEnvironment=\"SKILLEDGE_MARKET_STREAM_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,NFLX,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW\"\n",
+                          "dropinRestoredExactly":  true,
+                          "core25Restored":  true,
+                          "restarts":  7,
+                          "daemonReloads":  7,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      },
+                      {
+                          "name":  "fail_at_150_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  true,
+                                             "failures":  [
+
+                                                          ]
+                                         },
+                                         {
+                                             "stage":  150,
+                                             "passed":  false,
+                                             "failures":  [
+                                                              "PROCESSING_LAG_REGRESSION"
+                                                          ]
+                                         }
+                                     ],
+                          "rollbackPerformed":  true,
+                          "restored":  true,
+                          "finalSymbols":  [
+                                               "AAPL",
+                                               "MSFT",
+                                               "NVDA",
+                                               "TSLA",
+                                               "AMD",
+                                               "AMZN",
+                                               "META",
+                                               "GOOGL",
+                                               "AVGO",
+                                               "PLTR",
+                                               "SMCI",
+                                               "MSTR",
+                                               "COIN",
+                                               "NFLX",
+                                               "CRM",
+                                               "ORCL",
+                                               "INTC",
+                                               "MU",
+                                               "ARM",
+                                               "UBER",
+                                               "SHOP",
+                                               "RIVN",
+                                               "SOFI",
+                                               "CRWD",
+                                               "NOW"
+                                           ],
+                          "finalDropin":  "[Service]\nEnvironment=\"SKILLEDGE_MARKET_STREAM_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,NFLX,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW\"\n",
+                          "originalDropin":  "[Service]\nEnvironment=\"SKILLEDGE_MARKET_STREAM_SYMBOLS=AAPL,MSFT,NVDA,TSLA,AMD,AMZN,META,GOOGL,AVGO,PLTR,SMCI,MSTR,COIN,NFLX,CRM,ORCL,INTC,MU,ARM,UBER,SHOP,RIVN,SOFI,CRWD,NOW\"\n",
+                          "dropinRestoredExactly":  true,
+                          "core25Restored":  true,
+                          "restarts":  6,
+                          "daemonReloads":  6,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      }
+                  ],
+    "errors":  [
+                   "MISSING_EXECUTOR_TOKEN_150"
+               ],
+    "warnings":  [
+
+                 ],
+    "nextAction":  "FIX_OFFLINE_EXECUTOR_VALIDATION"
+}

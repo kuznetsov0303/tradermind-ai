@@ -1,0 +1,33 @@
+﻿S10.6D SAFE PAPER TIMER RESTORE
+Generated=20260716_224842
+OK=True
+CLASSIFICATION=TIMER_ENABLED_AND_STARTED_OUTSIDE_ENTRY_WINDOW
+TIMER_SHA_MATCHED=True
+SERVICE_SHA_MATCHED=True
+NEW_YORK_TIME=2026-07-16T15:48:44.869066-04:00
+INSIDE_ENTRY_WINDOW=False
+TIMER_ENABLED_BY_SCRIPT=True
+TIMER_STARTED_BY_SCRIPT=True
+SERVICE_STARTED_MANUALLY=False
+PAPER_RUN_ONCE_EXECUTED=False
+PAPER_RESET_EXECUTED=False
+PRODUCTION_SOURCE_CHANGED=False
+SYSTEMD_UNIT_CHANGED=False
+
+=== TIMER AFTER ===
+NextElapseUSecRealtime=
+LastTriggerUSec=
+Result=success
+LoadState=loaded
+ActiveState=active
+SubState=waiting
+UnitFileState=enabled
+
+=== SERVICE AFTER ===
+Result=success
+ExecMainStatus=0
+LoadState=loaded
+ActiveState=inactive
+SubState=dead
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_6D_RESTORE_PAPER_TIMER_raw_20260716_224842.json

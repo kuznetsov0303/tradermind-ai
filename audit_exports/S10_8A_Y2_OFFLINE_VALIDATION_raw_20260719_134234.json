@@ -1,0 +1,193 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_Y2_OFFLINE_EXECUTOR_VALIDATION_PASSED",
+    "inspectionOnly":  true,
+    "executorExecutedAgainstVps":  false,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "packageExecuted":  false,
+    "deploymentAuthorized":  false,
+    "armAllowed":  false,
+    "executeSwitchPresent":  true,
+    "executeSwitchEnforced":  true,
+    "marketHoursGatePresent":  true,
+    "remoteBundlePathFixed":  true,
+    "payloadRestoreManifestPresent":  true,
+    "exactPayloadRestoreEnforced":  true,
+    "remoteCleanupPresent":  true,
+    "expectedStageOrder":  [
+                               25,
+                               50,
+                               100,
+                               150,
+                               250
+                           ],
+    "actualStageOrder":  [
+                             25,
+                             50,
+                             100,
+                             150,
+                             250
+                         ],
+    "scenarios":  [
+                      {
+                          "name":  "all_pass_no_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  150,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  250,
+                                             "passed":  true
+                                         }
+                                     ],
+                          "rollbackPerformed":  false,
+                          "core25Restored":  true,
+                          "payloadRestored":  true,
+                          "existingFilesRestoredExactly":  true,
+                          "newFilesRemoved":  true,
+                          "dropinRestoredExactly":  true,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      },
+                      {
+                          "name":  "fail_100_no_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  false
+                                         }
+                                     ],
+                          "rollbackPerformed":  true,
+                          "core25Restored":  true,
+                          "payloadRestored":  true,
+                          "existingFilesRestoredExactly":  true,
+                          "newFilesRemoved":  true,
+                          "dropinRestoredExactly":  true,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      },
+                      {
+                          "name":  "all_pass_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  150,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  250,
+                                             "passed":  true
+                                         }
+                                     ],
+                          "rollbackPerformed":  false,
+                          "core25Restored":  true,
+                          "payloadRestored":  true,
+                          "existingFilesRestoredExactly":  true,
+                          "newFilesRemoved":  true,
+                          "dropinRestoredExactly":  true,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      },
+                      {
+                          "name":  "fail_150_existing_dropin",
+                          "stages":  [
+                                         {
+                                             "stage":  25,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  50,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  100,
+                                             "passed":  true
+                                         },
+                                         {
+                                             "stage":  150,
+                                             "passed":  false
+                                         }
+                                     ],
+                          "rollbackPerformed":  true,
+                          "core25Restored":  true,
+                          "payloadRestored":  true,
+                          "existingFilesRestoredExactly":  true,
+                          "newFilesRemoved":  true,
+                          "dropinRestoredExactly":  true,
+                          "paperRunOnceExecuted":  false,
+                          "paperServiceStarted":  false,
+                          "paperBoundaryReset":  false,
+                          "clientEligibilityChanged":  false,
+                          "telegramEligibilityChanged":  false,
+                          "paperEligibilityChanged":  false,
+                          "brokerEnabled":  false,
+                          "realMoneyEnabled":  false
+                      }
+                  ],
+    "scenarioSummary":  [
+                            "all_pass_no_existing_dropin:rollback=False:core25=True:payload=True:newRemoved=True:dropin=True",
+                            "fail_100_no_existing_dropin:rollback=True:core25=True:payload=True:newRemoved=True:dropin=True",
+                            "all_pass_existing_dropin:rollback=False:core25=True:payload=True:newRemoved=True:dropin=True",
+                            "fail_150_existing_dropin:rollback=True:core25=True:payload=True:newRemoved=True:dropin=True"
+                        ],
+    "errors":  [
+
+               ],
+    "warnings":  [
+
+                 ],
+    "nextAction":  "MONDAY_RUN_S10_7Y2_DURING_US_REGULAR_SESSION"
+}

@@ -1,0 +1,30 @@
+{
+  "baseEntries": 252,
+  "supplementalEntries": 194,
+  "completeEntries": 446,
+  "resolvedPathAssignments": 352,
+  "ambiguousOverrides": {
+    "dict.en.viewProduct": "landing.viewProduct",
+    "dict.en.viewPricing": "landing.viewPricing",
+    "dict.en.viewAbout": "landing.viewAbout",
+    "dict.en.nav.team": "landing.team",
+    "dict.en.pricingPage.checkoutStatus.invoice": "landing.invoice",
+    "dict.en.pricingPage.planBadge.core": "landing.core",
+    "dict.en.pricingPage.planBadge.elite": "landing.elite",
+    "dict.en.pricingPage.plans[2].cta": "landing.cta.3",
+    "dict.en.pricingPage.disclaimer": "landing.disclaimer",
+    "dict.en.footer.productLinks[3]": "landing.team",
+    "dict.en.footer.risk": "landing.risk",
+    "dict.en.footer.bottom": "landing.bottom",
+    "dict.en.auth.register": "landing.register",
+    "dict.en.auth.registerButton": "landing.registerButton",
+    "dict.en.auth.creatingInvoice": "landing.creatingInvoice"
+  },
+  "technicalPathsSkipped": [
+    "dict.en.pricingPage.plans[0].id",
+    "dict.en.pricingPage.plans[1].id",
+    "dict.en.pricingPage.plans[2].id"
+  ],
+  "sourceLeavesFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9T_LANDING_DICT_AST_AUDIT_leaves_20260719221834.json",
+  "sourceSupplementalPathMap": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\path-map.json"
+}

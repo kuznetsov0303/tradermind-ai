@@ -1,0 +1,760 @@
+﻿{
+    "generated":  "20260714_202759",
+    "sourceAudit":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_4N_vps_cleanup_audit_raw_20260714_202015.json",
+    "snapshot":  {
+                     "created":  true,
+                     "archiveVerified":  true,
+                     "snapshotDir":  "/opt/skilledge/stock-engine/rollback_snapshots/S10_4O_20260714_202759",
+                     "archivePath":  "/opt/skilledge/stock-engine/rollback_snapshots/S10_4O_20260714_202759/skilledge_rollback_20260714_202759.tar.gz",
+                     "manifestPath":  "/opt/skilledge/stock-engine/rollback_snapshots/S10_4O_20260714_202759/sha256_manifest.json",
+                     "archiveSha256":  "64e3a440052a2f8b754c60c71924f0e7a5bba0f36e16a90243a134d768289e57",
+                     "archiveSize":  344388,
+                     "containsEnvServer":  true,
+                     "permissions":  {
+                                         "snapshotDir":  "0o700",
+                                         "archive":  "0o600",
+                                         "manifest":  "0o600"
+                                     }
+                 },
+    "keep":  {
+                 "appBackupsRecent":  [
+                                          {
+                                              "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103o_20260713T194931Z",
+                                              "rel":  "app/api/app.py.bak_s103o_20260713T194931Z",
+                                              "sha256":  "a447441e717e5bf5bb58c3a0bb9cf014acb54674adf69bcda9aac58935667b3c",
+                                              "reason":  "KEEP_ROLLBACK_RECENT"
+                                          },
+                                          {
+                                              "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103m_20260713T193502Z",
+                                              "rel":  "app/api/app.py.bak_s103m_20260713T193502Z",
+                                              "sha256":  "f3ea4dd06f245d27b95da2b08420a900a1ec0433f27d45e7534a7ec135d3251a",
+                                              "reason":  "KEEP_ROLLBACK_RECENT"
+                                          },
+                                          {
+                                              "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103i_20260713T191912Z",
+                                              "rel":  "app/api/app.py.bak_s103i_20260713T191912Z",
+                                              "sha256":  "8afb1340e321648e7005ca06dbb89d473d77a1ac9243a675d1323232db5edd16",
+                                              "reason":  "KEEP_ROLLBACK_RECENT"
+                                          }
+                                      ]
+             },
+    "deleteAfterSnapshot":  {
+                                "oldAppBackups":  [
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103g_20260713T191403Z",
+                                                          "rel":  "app/api/app.py.bak_s103g_20260713T191403Z",
+                                                          "sha256":  "ee65e70b4392d8b2207513301e11f8393dffb61ee5cd132e8ee79b17e976bfc6",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103f_20260713T190452Z",
+                                                          "rel":  "app/api/app.py.bak_s103f_20260713T190452Z",
+                                                          "sha256":  "b2062b2eb975cd62efcd8cbfbb7cfdef8bc69acd77ceb03a1668f9eea411a381",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103d_20260713T175038Z",
+                                                          "rel":  "app/api/app.py.bak_s103d_20260713T175038Z",
+                                                          "sha256":  "6236ef683ee0d259f81cdfc682a875a8a87669df68bb0c80e4877a4cb266fa73",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103c_20260713T172357Z",
+                                                          "rel":  "app/api/app.py.bak_s103c_20260713T172357Z",
+                                                          "sha256":  "8d88fc337fc30691844db88f82d3cd5510c037bc9277ef7fcb87d1da7d07fb2a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103b_20260713T165318Z",
+                                                          "rel":  "app/api/app.py.bak_s103b_20260713T165318Z",
+                                                          "sha256":  "86ac7476e1341258f8c4d576a3bd09b47f05b0f07975c7bcbab2efa3b21f63bf",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s103_20260713T163454Z",
+                                                          "rel":  "app/api/app.py.bak_s103_20260713T163454Z",
+                                                          "sha256":  "0d23440b11481a3c59a4014f586c7ea08c6ef85a71dca909ce90666874d2d8bc",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s102_20260713T152827Z",
+                                                          "rel":  "app/api/app.py.bak_s102_20260713T152827Z",
+                                                          "sha256":  "27f3c373b52a28d1852444312b0ab62d8072ab308aad37f4afa7a607ff375835",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s101_20260713T151126Z",
+                                                          "rel":  "app/api/app.py.bak_s101_20260713T151126Z",
+                                                          "sha256":  "3026e90fe1a4934e1e3289f15b0ae4f5d4aa51581297558402349d84031f344a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s101_20260713T150000Z",
+                                                          "rel":  "app/api/app.py.bak_s101_20260713T150000Z",
+                                                          "sha256":  "b587c58b1dff3c0bd44b74766bd1f395a34fc39e95c5799ec6bc62f4de5dffb5",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s100_20260713T143830Z",
+                                                          "rel":  "app/api/app.py.bak_s100_20260713T143830Z",
+                                                          "sha256":  "d3930d0ef8ec9332fbe38ebbee7e8f92afbe8dc13c4d6eebe789b127f388d457",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s905_20260711T234835Z",
+                                                          "rel":  "app/api/app.py.bak_s905_20260711T234835Z",
+                                                          "sha256":  "5540d960d45716405c8f7ff36cae4a7f22266e774395f3b8ccf2202408281ab3",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s904_20260711T230414Z",
+                                                          "rel":  "app/api/app.py.bak_s904_20260711T230414Z",
+                                                          "sha256":  "841d5dcaf97a0c6ff4a01fcc3bc94cf736fcf775739e33aa7a31c553270f7f6e",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s864_20260708_125537",
+                                                          "rel":  "app/api/app.py.bak_s864_20260708_125537",
+                                                          "sha256":  "08016dc6ca0bce89ca75a7fe5c78b132e79e0a8d0fc40cbe7c6074b11f598699",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s863_20260707_223213",
+                                                          "rel":  "app/api/app.py.bak_s863_20260707_223213",
+                                                          "sha256":  "1421fe2b46bc7304eb55238a894404e091b94cfd7c6471e02463936976da9ba7",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s862_20260707_221956",
+                                                          "rel":  "app/api/app.py.bak_s862_20260707_221956",
+                                                          "sha256":  "1612946f96a4fb91f2d138aab0d6b9daa8d15931e7eaba5f7e8f1459a4c767c0",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s861_20260707_204713",
+                                                          "rel":  "app/api/app.py.bak_s861_20260707_204713",
+                                                          "sha256":  "2911094d47fd84efb9e8ed285011cb8089c624aba298b4b6b7fe1165c95a24a3",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s860_20260707_202952",
+                                                          "rel":  "app/api/app.py.bak_s860_20260707_202952",
+                                                          "sha256":  "a931d38019778c87b80f9cd697e8574265ce578b616e420340d229d841e7d855",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s859b_20260707_200858",
+                                                          "rel":  "app/api/app.py.bak_s859b_20260707_200858",
+                                                          "sha256":  "e6fd79d60edf7f99793277002ed83ee9fe7321073d32313fbc267aa53d76b092",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s859a_20260707_195040",
+                                                          "rel":  "app/api/app.py.bak_s859a_20260707_195040",
+                                                          "sha256":  "a71616ae8c12ba88e67ae56be89c96f1e1fe8e6f647d707429466a62573e7f7f",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s858c_20260707_192722",
+                                                          "rel":  "app/api/app.py.bak_s858c_20260707_192722",
+                                                          "sha256":  "58f6747cd858db34f32bd838d7bc041c63a67633ff085f599b05bdc8ebed077f",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s858a_20260707_190757",
+                                                          "rel":  "app/api/app.py.bak_s858a_20260707_190757",
+                                                          "sha256":  "783735f856236ffddadb1124c06d053d2d8013059678c0597185dc7dad3e25f3",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s857a_20260707_183206",
+                                                          "rel":  "app/api/app.py.bak_s857a_20260707_183206",
+                                                          "sha256":  "efb5ce0cd8c6d537631d551bb91bbde2c2b6ef6d4e09e6ff14f1adfd7b89696a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s856_20260707_155505",
+                                                          "rel":  "app/api/app.py.bak_s856_20260707_155505",
+                                                          "sha256":  "4e64a183fa3df98650294b470c55c7efe41899ce7f0e4f31e82037e022bda864",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s855b_20260707_154955",
+                                                          "rel":  "app/api/app.py.bak_s855b_20260707_154955",
+                                                          "sha256":  "c503d03513ce5b820a854e91d6cdc817bb1c74b2b0628dee2befe6e083511f61",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s855a_20260707_153056",
+                                                          "rel":  "app/api/app.py.bak_s855a_20260707_153056",
+                                                          "sha256":  "84c1da8b318a102454f02fb79ac5f7cad025130d04c6d9fd19285cf04216aadf",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s853_s854_20260706_213902",
+                                                          "rel":  "app/api/app.py.bak_s853_s854_20260706_213902",
+                                                          "sha256":  "f4e42d468f8bbd7495d80eb463a90348ef62b14a601c9a1aba54ebe12a5b5446",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s852_20260706_211125",
+                                                          "rel":  "app/api/app.py.bak_s852_20260706_211125",
+                                                          "sha256":  "ba8521e64c61ea82a14d1a711946283a0739bab63c818852e6c56bf29e13a76a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s851b3_20260706_210225",
+                                                          "rel":  "app/api/app.py.bak_s851b3_20260706_210225",
+                                                          "sha256":  "ea8f68178f8bc54acdde821f9d55715f4c1a5e24668f04bf80aefc551942bc04",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s851b2_20260706_205845",
+                                                          "rel":  "app/api/app.py.bak_s851b2_20260706_205845",
+                                                          "sha256":  "ea8f68178f8bc54acdde821f9d55715f4c1a5e24668f04bf80aefc551942bc04",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s851b_20260706_195312",
+                                                          "rel":  "app/api/app.py.bak_s851b_20260706_195312",
+                                                          "sha256":  "45b20c39efec8205c57f61a25a47db362486959dc2c857d41f3a39aa54fc337c",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s851a_20260706_180140",
+                                                          "rel":  "app/api/app.py.bak_s851a_20260706_180140",
+                                                          "sha256":  "6934af554403549b7f8d1c564727946a4cc3aba4c9cd274b1cca61750d1175a7",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s850n_20260706_164610",
+                                                          "rel":  "app/api/app.py.bak_s850n_20260706_164610",
+                                                          "sha256":  "540970587ed48c63107f4bf098ad37334b02d8c65d89aacc186a7a93d5aaa42f",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s850l_20260706_161514",
+                                                          "rel":  "app/api/app.py.bak_s850l_20260706_161514",
+                                                          "sha256":  "db8fb3697f49d823d797cc73a6556c14d02eaaac1e5c1c379b6872dfb4848265",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s850j_",
+                                                          "rel":  "app/api/app.py.bak_s850j_",
+                                                          "sha256":  "759cf7422be986ddf77f2b4cae98bb962ac19c81d5dc78d32137c5d931a9c65a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s823c_20260630_155855",
+                                                          "rel":  "app/api/app.py.bak_s823c_20260630_155855",
+                                                          "sha256":  "3ec77e10e98a15d09e4d311e0e1f2e32fc9514d0f4d15e346257fc616ad61216",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s823a_20260630_153850",
+                                                          "rel":  "app/api/app.py.bak_s823a_20260630_153850",
+                                                          "sha256":  "8d423f14f7908ef36a5e5f17011d9491c9c0be5cffc105743667d8959ff2c31b",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s822b_20260630_150732",
+                                                          "rel":  "app/api/app.py.bak_s822b_20260630_150732",
+                                                          "sha256":  "c9b5a8e8962302473a4dbec858ce65c368d403be8f6aa4485f4dd65cf1804c82",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s822a_20260629_232818",
+                                                          "rel":  "app/api/app.py.bak_s822a_20260629_232818",
+                                                          "sha256":  "5a9ee10265e547cef25d103f44b63209aa4b3541516bed7a692a14f9215e29e8",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s821_20260629_220558",
+                                                          "rel":  "app/api/app.py.bak_s821_20260629_220558",
+                                                          "sha256":  "318358de847769b4e312d09b26c3fb0abf013c0e7b22caef55e4787d6fa4b1bb",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s820e_20260629_215809",
+                                                          "rel":  "app/api/app.py.bak_s820e_20260629_215809",
+                                                          "sha256":  "8e49a9650eaf2b163ca8d2c1247a5957d0cec047662add56516d5c8858b4995a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s820c_20260629_212334",
+                                                          "rel":  "app/api/app.py.bak_s820c_20260629_212334",
+                                                          "sha256":  "8e49a9650eaf2b163ca8d2c1247a5957d0cec047662add56516d5c8858b4995a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s820c_20260629_212113",
+                                                          "rel":  "app/api/app.py.bak_s820c_20260629_212113",
+                                                          "sha256":  "8c1f42af3943085fc4a85fafd3ce19fc99c9dfe688379f9101340ba0d2d09b72",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s820b_20260629_210001",
+                                                          "rel":  "app/api/app.py.bak_s820b_20260629_210001",
+                                                          "sha256":  "092bcfe4439e068881eb925709b7089db9d9b9459858cfa27866a2fe389910bf",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s820a_20260629_150916",
+                                                          "rel":  "app/api/app.py.bak_s820a_20260629_150916",
+                                                          "sha256":  "dc205edad5441aacac12fe2199ba88ec3dcb09413c0f561722a56bd18f7b329e",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s819d_20260629_145815",
+                                                          "rel":  "app/api/app.py.bak_s819d_20260629_145815",
+                                                          "sha256":  "a93b9fe97bc82cdcb657acc64aeddcce2860beb3c3a912bf086a946c0bb22059",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s819c_20260629_134935",
+                                                          "rel":  "app/api/app.py.bak_s819c_20260629_134935",
+                                                          "sha256":  "a2cc0d23c3602d873357777de10203e3613565d4ce82bd930f8efb3baae06395",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s819b_20260629_131646",
+                                                          "rel":  "app/api/app.py.bak_s819b_20260629_131646",
+                                                          "sha256":  "a3a189b850a0c97cb0c16adac287bae0c39c25efc5a5ff41a66b248823717dfe",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s819a_20260629_125742",
+                                                          "rel":  "app/api/app.py.bak_s819a_20260629_125742",
+                                                          "sha256":  "94c97348fb3aa0d3153b298d38335052d08ec90de3fe78c0b6cd14030d201500",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s818d_20260629_120635",
+                                                          "rel":  "app/api/app.py.bak_s818d_20260629_120635",
+                                                          "sha256":  "f0dbd28dc224127d93610b2ece1c9da3057d52dc13a5ecdd825fd7bfd58947e4",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s818c_20260629_115939",
+                                                          "rel":  "app/api/app.py.bak_s818c_20260629_115939",
+                                                          "sha256":  "96cb3d12262b16b4006f15e6f43eec3299b755f2e7644f7b5aee2cf389278ee7",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s818b_20260629_114936",
+                                                          "rel":  "app/api/app.py.bak_s818b_20260629_114936",
+                                                          "sha256":  "d27f812672c97c7efde372db6f8f4379686f4d977997e80ec2d0814b16861ced",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s817b_20260629_093601",
+                                                          "rel":  "app/api/app.py.bak_s817b_20260629_093601",
+                                                          "sha256":  "11656c3c5087c4ab27850be19c3abac3e36ebceb9a9b555cabb9c607cd42e1e6",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s817a_fix_20260627_001831",
+                                                          "rel":  "app/api/app.py.bak_s817a_fix_20260627_001831",
+                                                          "sha256":  "ab06c4fc25241b1239c69ddc0d0429a10f36250b949dbe208dea1747fd5311d0",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s817a_20260627_001512",
+                                                          "rel":  "app/api/app.py.bak_s817a_20260627_001512",
+                                                          "sha256":  "d6f282c2553927d76b7a9c6f419249153a40ba24207a10a3994cc3f693276605",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816fc2_20260626_235556",
+                                                          "rel":  "app/api/app.py.bak_s816fc2_20260626_235556",
+                                                          "sha256":  "9bfbd49b559a08afeeead73fd0ca544e2ad8ccec33670f68cc1faba0c390250a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816fc_20260626_235022",
+                                                          "rel":  "app/api/app.py.bak_s816fc_20260626_235022",
+                                                          "sha256":  "d2e455bb6478916a7c8bbf93b07d198c94307459c3c5360dfe71da6fce834698",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816f_small_20260626_233843",
+                                                          "rel":  "app/api/app.py.bak_s816f_small_20260626_233843",
+                                                          "sha256":  "0b56f68dd25017c15254058434661d0d352509a38df9e50563ed96196b26a0a5",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816f_20260626_232602",
+                                                          "rel":  "app/api/app.py.bak_s816f_20260626_232602",
+                                                          "sha256":  "1f66d88d0ffbe9b907ca36ad7474e2c9a39658d3ebd00fc0882ac3b255ec5a9f",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816d_live_fix_20260626_193506",
+                                                          "rel":  "app/api/app.py.bak_s816d_live_fix_20260626_193506",
+                                                          "sha256":  "aa93d5c6850fdb0b28e7b580492968eb9a73287f8ba6c2faf4129b3ec464380f",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816d_live_20260626_193328",
+                                                          "rel":  "app/api/app.py.bak_s816d_live_20260626_193328",
+                                                          "sha256":  "aa93d5c6850fdb0b28e7b580492968eb9a73287f8ba6c2faf4129b3ec464380f",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816d_live_20260626_193148",
+                                                          "rel":  "app/api/app.py.bak_s816d_live_20260626_193148",
+                                                          "sha256":  "3103ea3129882ec90d92edd156c97a1ab127c5ff386e4a4679ba733607d04725",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816d_20260626_192843",
+                                                          "rel":  "app/api/app.py.bak_s816d_20260626_192843",
+                                                          "sha256":  "cbd0ffe3523c1fc9532d0fe98e76c3d1cf707f5f1292264e62ad4e7ab150902d",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816c2c_20260626_183702",
+                                                          "rel":  "app/api/app.py.bak_s816c2c_20260626_183702",
+                                                          "sha256":  "d3a4fd9ae22d050448c20dc8ba1396ca2440c0e7433e30b166635fd2d78ee43f",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816c2b_20260626_182442",
+                                                          "rel":  "app/api/app.py.bak_s816c2b_20260626_182442",
+                                                          "sha256":  "dd564d19fb5b836ee341fa038571aa6d1102c32c4ef64818e5c414efca6a10e4",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816c2fix_20260626_180640",
+                                                          "rel":  "app/api/app.py.bak_s816c2fix_20260626_180640",
+                                                          "sha256":  "db2d2ab23be079b82f5fb99c602f3b0e8bf1e86273d1f7186247793888e4f9fe",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816c2_20260626_173101",
+                                                          "rel":  "app/api/app.py.bak_s816c2_20260626_173101",
+                                                          "sha256":  "db2d2ab23be079b82f5fb99c602f3b0e8bf1e86273d1f7186247793888e4f9fe",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816c2_20260626_173013",
+                                                          "rel":  "app/api/app.py.bak_s816c2_20260626_173013",
+                                                          "sha256":  "d2ed4de31352d7670276d04e72493a1192380d3720e0af8c806dd4cf2fc73dd3",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816b3_20260626_154007",
+                                                          "rel":  "app/api/app.py.bak_s816b3_20260626_154007",
+                                                          "sha256":  "6b5b26c9b6a8d15ab8dcc2257026ce8fa159de8b29eee7f6f55c60f58c5491b5",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816b2_20260626_150301",
+                                                          "rel":  "app/api/app.py.bak_s816b2_20260626_150301",
+                                                          "sha256":  "497e65452e99b2ad8499a46dfad834f3a7e52fb2ebe2e2dff898d1e840d34c9b",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816b1fix3_20260626_000330",
+                                                          "rel":  "app/api/app.py.bak_s816b1fix3_20260626_000330",
+                                                          "sha256":  "992aab16c785c5a0e019706fe7fed2a591722f0fcd50f17393b7b396621a1e8d",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816b1fix2_20260625_233737",
+                                                          "rel":  "app/api/app.py.bak_s816b1fix2_20260625_233737",
+                                                          "sha256":  "22c66cb1823b45fc0038b7612238a22963e7be54135571d0777a430d16cc9f18",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816b1_20260625_225938",
+                                                          "rel":  "app/api/app.py.bak_s816b1_20260625_225938",
+                                                          "sha256":  "c141c5d47173a5a35d822afc06b62b07f44842fd5db78f05dbe42b18ae3ce3c1",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816a2_20260625_224825",
+                                                          "rel":  "app/api/app.py.bak_s816a2_20260625_224825",
+                                                          "sha256":  "4d2d1a8ac0b63bf6edb964263a8b2505b86d6e0b696b7c6bc3faec050c7a7e51",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s816a1_20260625_222748",
+                                                          "rel":  "app/api/app.py.bak_s816a1_20260625_222748",
+                                                          "sha256":  "4b372aab977acd1d1fdf4e2e145cadb89542a4e8b212bf129f59c1a5be6bfbec",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s815b_20260625_210326",
+                                                          "rel":  "app/api/app.py.bak_s815b_20260625_210326",
+                                                          "sha256":  "a442a73cf2d0b6d40f18f10554926a24d675c98bcccee6ebc6e789bcb9027909",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s815a_20260625_205904",
+                                                          "rel":  "app/api/app.py.bak_s815a_20260625_205904",
+                                                          "sha256":  "12a96548e01e2911be90bccc3c43acd899b8cc1908db0af6cb63dded54a73c80",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s814d_20260625_143930",
+                                                          "rel":  "app/api/app.py.bak_s814d_20260625_143930",
+                                                          "sha256":  "bc450513085789d834bf5b9be8c4bafd5dc05c1f8a361c3d5c3199b0f9da0c31",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s814c_20260625_143237",
+                                                          "rel":  "app/api/app.py.bak_s814c_20260625_143237",
+                                                          "sha256":  "6e7b7025e4013c63876d2eafa944776008004e5b7754b57202967b513c92ab4e",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s814a_20260625_123041",
+                                                          "rel":  "app/api/app.py.bak_s814a_20260625_123041",
+                                                          "sha256":  "a22e5a97336b0fd5a775ba43608a847276649355a8f2ee4060ef0267f3b498d8",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s812c2_20260624_181744",
+                                                          "rel":  "app/api/app.py.bak_s812c2_20260624_181744",
+                                                          "sha256":  "4b34362608affae624d0b33e357195fb52c1f207027f3b7550d3f6ce4cbf6346",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s812c_20260624_163851",
+                                                          "rel":  "app/api/app.py.bak_s812c_20260624_163851",
+                                                          "sha256":  "f51510e15c50f4c804c955cad66761b212b9aa54f5aeb07bb30dc6508fe22c6a",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s812b_20260624_154552",
+                                                          "rel":  "app/api/app.py.bak_s812b_20260624_154552",
+                                                          "sha256":  "12821b16e43ea85140adf37fed6c853078103f7d7474e9e5ff6fbce0b117631d",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s810e_20260623_001415",
+                                                          "rel":  "app/api/app.py.bak_s810e_20260623_001415",
+                                                          "sha256":  "56cffc5e7bc81fb0ddcebb8f2dae8c2a7c920f406c48483c13f27f4676038d17",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s810c_20260622_233029",
+                                                          "rel":  "app/api/app.py.bak_s810c_20260622_233029",
+                                                          "sha256":  "874d9152139a735bda7b7e8a863da64b1baa072eaf5ec7e56bf0108fcb8835df",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s810b2_20260622_204634",
+                                                          "rel":  "app/api/app.py.bak_s810b2_20260622_204634",
+                                                          "sha256":  "3eb48e7adab73d7448fa06bab0d43750a0f5bd304357000a1c2de3d8c545f787",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s810b_20260622_194103",
+                                                          "rel":  "app/api/app.py.bak_s810b_20260622_194103",
+                                                          "sha256":  "1367031a980d1bbb19c995a62677461222f17bc0b236515c2fa40d32fd523467",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      },
+                                                      {
+                                                          "path":  "/opt/skilledge/stock-engine/app/api/app.py.bak_s810a_20260622_184943",
+                                                          "rel":  "app/api/app.py.bak_s810a_20260622_184943",
+                                                          "sha256":  "313eb907b154183f381a341fac391dbfe3b184c328d3f044270edeac45c4d360",
+                                                          "directRuntimeRef":  false,
+                                                          "reason":  "OLD_APP_BACKUP_NOT_RUNTIME_REFERENCED"
+                                                      }
+                                                  ],
+                                "opsOpsExactDuplicates":  [
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/README_VPS_DEPLOY.md",
+                                                                  "rel":  "ops/ops/README_VPS_DEPLOY.md",
+                                                                  "sha256":  "f4efd6f480ad8ceecb2c7b680bac719e086a9cd7d3175311cf2690d380bea565",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/scripts/deploy_ubuntu_systemd.sh",
+                                                                  "rel":  "ops/ops/scripts/deploy_ubuntu_systemd.sh",
+                                                                  "sha256":  "2279f2e77de079ecfdaa087b6cd328b19f60ab907943c18d30a9a6312423dec9",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/scripts/server_healthcheck.py",
+                                                                  "rel":  "ops/ops/scripts/server_healthcheck.py",
+                                                                  "sha256":  "c15d890232662538e342e39f909bbaa33837bc96149364788ddf3a54d2b25463",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/nginx/stock-engine.nginx.conf",
+                                                                  "rel":  "ops/ops/nginx/stock-engine.nginx.conf",
+                                                                  "sha256":  "b490148e93379464d03db01458a4394c2eaf8d7fab3b35c028e42c0f2561699a",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/systemd/skilledge-stock-engine-api.service",
+                                                                  "rel":  "ops/ops/systemd/skilledge-stock-engine-api.service",
+                                                                  "sha256":  "707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/systemd/skilledge-daily-ai-desk.service",
+                                                                  "rel":  "ops/ops/systemd/skilledge-daily-ai-desk.service",
+                                                                  "sha256":  "174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/systemd/skilledge-nightly-self-learning.service",
+                                                                  "rel":  "ops/ops/systemd/skilledge-nightly-self-learning.service",
+                                                                  "sha256":  "d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/systemd/skilledge-telegram-consumer.service",
+                                                                  "rel":  "ops/ops/systemd/skilledge-telegram-consumer.service",
+                                                                  "sha256":  "feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              },
+                                                              {
+                                                                  "path":  "/opt/skilledge/stock-engine/ops/ops/systemd/skilledge-nightly-self-learning.timer",
+                                                                  "rel":  "ops/ops/systemd/skilledge-nightly-self-learning.timer",
+                                                                  "sha256":  "831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769",
+                                                                  "reason":  "EXACT_DUPLICATE_OF_CANONICAL_OPS_TREE"
+                                                              }
+                                                          ]
+                            },
+    "reviewRequired":  {
+                           "nonAppBackups":  [
+                                                 {
+                                                     "path":  "/opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py.bak_s902_20260711T220858Z",
+                                                     "rel":  "ops/scripts/forward_shadow_daily_evaluator.py.bak_s902_20260711T220858Z",
+                                                     "sha256":  "56496985a26e2986c3f7ead2e5b12d9dbcd610f04e63b23c77ad59509833956d",
+                                                     "directRuntimeRef":  false,
+                                                     "reason":  "NON_APP_BACKUP_REQUIRES_RETENTION_DECISION"
+                                                 },
+                                                 {
+                                                     "path":  "/opt/skilledge/stock-engine/ops/scripts/post_close_evidence_automation.py.bak_s816e_20260626_204956",
+                                                     "rel":  "ops/scripts/post_close_evidence_automation.py.bak_s816e_20260626_204956",
+                                                     "sha256":  "efd178cfd471462ba7f14f81fff06e266109f5a377218412cfd8ff2287b2f769",
+                                                     "directRuntimeRef":  false,
+                                                     "reason":  "NON_APP_BACKUP_REQUIRES_RETENTION_DECISION"
+                                                 },
+                                                 {
+                                                     "path":  "/opt/skilledge/stock-engine/ops/scripts/post_close_evidence_automation.py.bak_s820d_20260629_214115",
+                                                     "rel":  "ops/scripts/post_close_evidence_automation.py.bak_s820d_20260629_214115",
+                                                     "sha256":  "a24f102ba6dfe32e564604aec78326d5cb26f567b08ec888a93e2e0669ada1f4",
+                                                     "directRuntimeRef":  false,
+                                                     "reason":  "NON_APP_BACKUP_REQUIRES_RETENTION_DECISION"
+                                                 },
+                                                 {
+                                                     "path":  "/opt/skilledge/stock-engine/ops/scripts/post_close_evidence_automation.py.bak_s852b1_20260706_212019",
+                                                     "rel":  "ops/scripts/post_close_evidence_automation.py.bak_s852b1_20260706_212019",
+                                                     "sha256":  "2760791bb44be858093230a2a9ab42605b58e047f718bea6e64733aab5ca2ee1",
+                                                     "directRuntimeRef":  false,
+                                                     "reason":  "NON_APP_BACKUP_REQUIRES_RETENTION_DECISION"
+                                                 },
+                                                 {
+                                                     "path":  "/opt/skilledge/stock-engine/run_nightly_self_learning.py.bak_s810d_20260623_000256",
+                                                     "rel":  "run_nightly_self_learning.py.bak_s810d_20260623_000256",
+                                                     "sha256":  "35201b900807970c28547379cc3c92d31ba6d08d5d1ba7a9770d60fe9ee89776",
+                                                     "directRuntimeRef":  false,
+                                                     "reason":  "NON_APP_BACKUP_REQUIRES_RETENTION_DECISION"
+                                                 }
+                                             ],
+                           "legacyCandidate":  {
+                                                   "path":  "/opt/skilledge/stock-engine/ops/scripts/s10_paper_trading_daemon.py",
+                                                   "rel":  "ops/scripts/s10_paper_trading_daemon.py",
+                                                   "classification":  "LEGACY_CANDIDATE"
+                                               }
+                       },
+    "safety":  {
+                   "noDeletePerformed":  true,
+                   "noDeployPerformed":  true,
+                   "noRestartPerformed":  true,
+                   "currentAppHash":  "bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785"
+               }
+}

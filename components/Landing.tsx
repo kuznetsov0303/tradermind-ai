@@ -1,20 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { supabase } from "@/lib/supabaseClient";
 import CookieConsent from "@/components/marketing/CookieConsent";
 import BrandMark from "@/components/marketing/BrandMark";
 import TradingBackground from "@/components/marketing/TradingBackground";
+import { LOCALES, type Locale } from "@/lib/i18n/config";
+import { applyDocumentLocale, getSavedLocale, saveLocale } from "@/lib/i18n/runtime";
+import { getStructuredLandingDictionary } from "@/lib/i18n/landing-structured-locales";
 
-type Language = "en" | "ru" | "ua";
+type Language = Locale;
 type PageKey = "home" | "desk" | "product" | "pricing" | "team";
 type BillingPeriod = "monthly" | "halfyear" | "yearly";
 type AuthMode = "login" | "register" | null;
 
 const navKeys: PageKey[] = ["home", "desk", "product", "pricing", "team"];
+
+const LANDING_LANGUAGE_OPTIONS: ReadonlyArray<{
+  locale: Locale;
+  shortLabel: string;
+  nativeLabel: string;
+}> = [
+  { locale: "en", shortLabel: "EN", nativeLabel: "English" },
+  { locale: "ru", shortLabel: "RU", nativeLabel: "Русский" },
+  { locale: "uk", shortLabel: "UA", nativeLabel: "Українська" },
+  { locale: "zh", shortLabel: "ZH", nativeLabel: "中文" },
+  { locale: "de", shortLabel: "DE", nativeLabel: "Deutsch" },
+  { locale: "fr", shortLabel: "FR", nativeLabel: "Français" },
+  { locale: "es", shortLabel: "ES", nativeLabel: "Español" },
+  { locale: "ar", shortLabel: "AR", nativeLabel: "العربية" },
+  { locale: "it", shortLabel: "IT", nativeLabel: "Italiano" },
+  { locale: "nb", shortLabel: "NO", nativeLabel: "Norsk" },
+  { locale: "ka", shortLabel: "KA", nativeLabel: "ქართული" },
+  { locale: "pl", shortLabel: "PL", nativeLabel: "Polski" },
+  { locale: "tr", shortLabel: "TR", nativeLabel: "Türkçe" },
+  { locale: "el", shortLabel: "EL", nativeLabel: "Ελληνικά" },
+  { locale: "hi", shortLabel: "HI", nativeLabel: "हिन्दी" },
+];
+
+const LANDING_LANGUAGE_SHORT_LABEL: Record<Locale, string> =
+  Object.fromEntries(
+    LANDING_LANGUAGE_OPTIONS.map(({ locale, shortLabel }) => [
+      locale,
+      shortLabel,
+    ]),
+  ) as Record<Locale, string>;
 
 const pageHref: Record<PageKey, string> = {
   home: "/",
@@ -915,6 +948,17 @@ const priceMatrix = {
   elite: { monthly: 149, halfyear: 749, yearly: 1249 },
 } as const;
 
+function getLandingDictionaryLocale(locale: Locale): "en" | "ru" | "ua" {
+  if (locale === "ru") return "ru";
+  if (locale === "uk") return "ua";
+  return "en";
+}
+
+function getNextLandingLocale(locale: Locale): Locale {
+  const currentIndex = LOCALES.indexOf(locale);
+  return LOCALES[(currentIndex + 1) % LOCALES.length];
+}
+
 export default function Landing({
   initialPage = "home",
 }: {
@@ -923,6 +967,9 @@ export default function Landing({
   const [language, setLanguage] = useState<Language>("en");
   const [active, setActiveState] = useState<PageKey>(initialPage);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [languageMenuOpen, setLanguageMenuOpen] = useState(false);
+  const [languageSearch, setLanguageSearch] = useState("");
+  const languageMenuRef = useRef<HTMLDivElement | null>(null);
   const [showSplashIntro, setShowSplashIntro] = useState(false);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [checkoutStatus, setCheckoutStatus] = useState("");
@@ -941,7 +988,21 @@ export default function Landing({
 
   const router = useRouter();
   const pathname = usePathname();
-  const t = dict[language];
+  const t = getStructuredLandingDictionary(language);
+
+  const filteredLanguageOptions = useMemo(() => {
+    const query = languageSearch.trim().toLocaleLowerCase();
+
+    if (!query) return LANDING_LANGUAGE_OPTIONS;
+
+    return LANDING_LANGUAGE_OPTIONS.filter((option) =>
+      [
+        option.locale,
+        option.shortLabel,
+        option.nativeLabel,
+      ].some((value) => value.toLocaleLowerCase().includes(query)),
+    );
+  }, [languageSearch]);
   const authLabels = t.auth;
 
   useEffect(() => {
@@ -965,12 +1026,37 @@ useEffect(() => {
 }, [initialPage]);
 
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("skilledge_language");
-
-    if (savedLanguage === "en" || savedLanguage === "ru" || savedLanguage === "ua") {
-      setLanguage(savedLanguage);
-    }
+    const savedLocale = getSavedLocale();
+    setLanguage(savedLocale);
+    applyDocumentLocale(savedLocale);
   }, []);
+
+  useEffect(() => {
+    if (!languageMenuOpen) return;
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (
+        languageMenuRef.current &&
+        !languageMenuRef.current.contains(event.target as Node)
+      ) {
+        setLanguageMenuOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLanguageMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [languageMenuOpen]);
 
   useEffect(() => {
     const loadSession = async () => {
@@ -1020,21 +1106,14 @@ if (page === "about") {
     }
   };
 
-  const cycle = () => {
-  const nextLanguage =
-    language === "en" ? "ru" : language === "ru" ? "ua" : "en";
-
-  setLanguage(nextLanguage);
-  localStorage.setItem("skilledge_language", nextLanguage);
-
-  window.setTimeout(() => {
-    window.dispatchEvent(
-      new CustomEvent("skilledge:language-changed", {
-        detail: { language: nextLanguage },
-      })
-    );
-  }, 0);
-};
+  const selectLanguage = (nextLanguage: Locale) => {
+    setLanguage(nextLanguage);
+    saveLocale(nextLanguage);
+    applyDocumentLocale(nextLanguage);
+    setLanguageMenuOpen(false);
+    setLanguageSearch("");
+    setMenuOpen(false);
+  };
 
   const openAuthModal = (mode: "login" | "register") => {
     setAuthMode(mode);
@@ -1210,13 +1289,124 @@ const backgroundVariant = active === "desk" ? "product" : active;
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <button
-              onClick={cycle}
-              className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
-            >
-              <Icon name="globe" className="mr-2 h-4 w-4" />
-              {t.lang}
-            </button>
+            <div ref={languageMenuRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setLanguageMenuOpen((open) => !open)}
+                aria-haspopup="listbox"
+                aria-expanded={languageMenuOpen}
+                aria-label="Choose language"
+                className={`flex h-11 min-w-[78px] items-center justify-center rounded-full border px-4 text-sm font-medium text-white transition ${
+                  languageMenuOpen
+                    ? "border-emerald-300/35 bg-white/10"
+                    : "border-white/10 bg-white/5 hover:bg-white/10"
+                }`}
+              >
+                <span
+                  aria-hidden="true"
+                  className="mr-2 h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.75)]"
+                />
+                {LANDING_LANGUAGE_SHORT_LABEL[language]}
+                <span
+                  aria-hidden="true"
+                  className={`ml-2 text-[10px] text-white/45 transition-transform ${
+                    languageMenuOpen ? "rotate-180" : ""
+                  }`}
+                >
+                 ⌄
+                </span>
+              </button>
+
+              <AnimatePresence>
+                {languageMenuOpen ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                    transition={{ duration: 0.16 }}
+                    role="listbox"
+                    aria-label="Languages"
+                    className="absolute right-0 top-[calc(100%+10px)] z-[80] w-[292px] overflow-hidden rounded-2xl border border-white/10 bg-[#101A31]/98 p-2.5 shadow-[0_24px_70px_rgba(0,0,0,0.52)] backdrop-blur-2xl"
+                  >
+                    <div className="relative mb-2">
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
+                      >
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m20 20-3.5-3.5" />
+                      </svg>
+                      <input
+                        value={languageSearch}
+                        onChange={(event) => setLanguageSearch(event.target.value)}
+                        placeholder="Find language"
+                        autoComplete="off"
+                        className="h-10 w-full rounded-xl border border-white/10 bg-[#091121] pl-10 pr-3 text-sm text-white outline-none placeholder:text-white/30 focus:border-emerald-300/35"
+                      />
+                    </div>
+
+                    <div
+                      className="space-y-1 overflow-y-auto pr-0 [&::-webkit-scrollbar]:hidden"
+                      style={{
+                        height: "92px",
+                        maxHeight: "92px",
+                        overflowY: "auto",
+                        scrollbarWidth: "none",
+                        msOverflowStyle: "none",
+                      }}
+                    >
+                      {filteredLanguageOptions.map((option) => {
+                        const selected = option.locale === language;
+
+                        return (
+                          <button
+                            key={option.locale}
+                            type="button"
+                            role="option"
+                            aria-selected={selected}
+                            onClick={() => selectLanguage(option.locale)}
+                            className={`flex h-11 w-full items-center rounded-xl px-3 text-left transition ${
+                              selected
+                                ? "bg-teal-400/18 text-white"
+                                : "text-white/68 hover:bg-white/[0.06] hover:text-white"
+                            }`}
+                          >
+                            <span className="w-12 text-[13px] font-semibold tracking-[0.12em] text-white">
+                              {option.shortLabel}
+                            </span>
+                            <span className="min-w-0 flex-1 truncate text-sm">
+                              {option.nativeLabel}
+                            </span>
+                            {selected ? (
+                              <svg
+                                aria-hidden="true"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.2"
+                                className="ml-3 h-4 w-4 text-emerald-300"
+                              >
+                                <path d="m5 12 4 4L19 6" />
+                              </svg>
+                            ) : null}
+                          </button>
+                        );
+                      })}
+
+                      {filteredLanguageOptions.length === 0 ? (
+                        <div className="px-3 py-6 text-center text-sm text-white/38">
+                          No languages found
+                        </div>
+                      ) : null}
+                    </div>
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </div>
 
 
             {currentUserEmail ? (
@@ -1263,9 +1453,33 @@ const backgroundVariant = active === "desk" ? "product" : active;
               className="border-t border-white/10 bg-[#07111F]/95 px-4 pb-4 md:hidden"
             >
               <div className="flex flex-col gap-2 pt-4">
-                <button onClick={cycle} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm text-white/75">
-                  {t.switchLanguage}: {t.lang}
-                </button>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-2">
+                  <div className="px-2 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/38">
+                    Language
+                  </div>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {LANDING_LANGUAGE_OPTIONS.map((option) => {
+                      const selected = option.locale === language;
+
+                      return (
+                        <button
+                          key={option.locale}
+                          type="button"
+                          onClick={() => selectLanguage(option.locale)}
+                          title={option.nativeLabel}
+                          aria-label={option.nativeLabel}
+                          className={`flex h-10 items-center justify-center rounded-xl border text-[11px] font-semibold tracking-[0.08em] transition ${
+                            selected
+                              ? "border-emerald-300/35 bg-emerald-400/12 text-emerald-200"
+                              : "border-white/[0.06] bg-white/[0.025] text-white/58 hover:border-white/12 hover:bg-white/[0.07] hover:text-white"
+                          }`}
+                        >
+                          {option.shortLabel}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
 
                 {navKeys.map((key) => (
                   <Link
@@ -1321,7 +1535,7 @@ const backgroundVariant = active === "desk" ? "product" : active;
         </AnimatePresence>
       </header>
 
-      <main className="relative z-10 mx-auto max-w-6xl px-4 py-12 md:px-8">
+      <main className={`relative z-10 mx-auto w-full py-12 ${active === "home" ? "max-w-[1760px] px-0" : "max-w-6xl px-4 md:px-8"}`}>
                 <AnimatePresence mode="wait">
           {active === "home" && (
             <motion.div key="home">
@@ -2046,8 +2260,8 @@ function ClientResultsCarousel({
 
       <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-stretch">
         <div className="flex flex-col justify-between">
-          <div>
-            <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
+          <div className="min-w-0">
+            <div className="inline-flex max-w-full rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
               {copy.eyebrow}
             </div>
 
@@ -2078,7 +2292,7 @@ function ClientResultsCarousel({
                   </div>
 
                   <div>
-                    <div className="text-sm font-black text-white">{item[0]}</div>
+                    <div className="break-words text-sm font-black leading-6 text-white">{item[0]}</div>
                     <p className="mt-1 text-xs font-semibold leading-5 text-white/48">
                       {item[1]}
                     </p>
@@ -2252,13 +2466,13 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(200,169,107,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
 
-        <div className="relative grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
-          <div>
-            <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
+        <div className="relative grid min-w-0 gap-10 xl:grid-cols-[1.05fr_0.95fr] xl:items-center 2xl:grid-cols-[1.08fr_0.92fr]">
+          <div className="min-w-0">
+            <div className="inline-flex max-w-full rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
               {copy.badge}
             </div>
 
-            <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.95] tracking-[-0.065em] text-white md:text-6xl xl:text-8xl">
+            <h1 className="mt-7 max-w-5xl break-words text-4xl font-black leading-[0.98] tracking-[-0.055em] text-white md:text-6xl xl:text-7xl 2xl:text-8xl">
               {copy.title.split("по структуре.")[0]}
               <span className="bg-gradient-to-r from-[#C8A96B] via-[#00D084] to-[#00C076] bg-clip-text text-transparent">
                 {copy.title.includes("по структуре.") ? "по структуре." : ""}
@@ -2307,10 +2521,10 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
                   key={item[0]}
                   type="button"
                   onClick={() => setActive("product")}
-                  className="rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.07]"
+                  className="min-w-0 rounded-[1.35rem] border border-white/10 bg-white/[0.04] p-4 text-left transition hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.07]"
                 >
-                  <div className="text-sm font-black text-white">{item[0]}</div>
-                  <p className="mt-2 text-xs font-semibold leading-5 text-white/48">
+                  <div className="break-words text-sm font-black leading-6 text-white">{item[0]}</div>
+                  <p className="mt-2 break-words text-xs font-semibold leading-5 text-white/48">
                     {item[1]}
                   </p>
                 </button>
@@ -2329,15 +2543,15 @@ function HomePage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
               onClick={() =>
                 setActive(index === 0 ? "pricing" : index === 3 ? "product" : "product")
               }
-              className="group rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-left shadow-[0_18px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.075]"
+              className="group min-w-0 rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-left shadow-[0_18px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.075]"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/16 bg-[#C8A96B]/[0.08] text-sm font-black text-[#E6EDF7]">
                 0{index + 1}
               </div>
 
-              <div className="mt-5 text-lg font-black text-white">{feature[0]}</div>
+              <div className="mt-5 break-words text-lg font-black leading-7 text-white">{feature[0]}</div>
 
-              <p className="mt-3 text-sm font-semibold leading-7 text-white/56">
+              <p className="mt-3 break-words text-sm font-semibold leading-7 text-white/56">
                 {feature[1]}
               </p>
 
@@ -2489,7 +2703,7 @@ function DeskPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
             "Personal edge from your own data",
           ],
         }
-      : language === "ua"
+      : language === "uk"
         ? {
             eyebrow: "SkillEdge AI Trading Desk",
             title: "Перетвори ринковий шум на чіткий процес виконання.",
@@ -4794,7 +5008,7 @@ function TeamPage({ t, setActive }: { t: any; setActive: (value: PageKey) => voi
                   {item[0]}
                 </div>
 
-                <p className="mt-3 text-sm font-semibold leading-7 text-white/56">
+                <p className="mt-3 break-words text-sm font-semibold leading-7 text-white/56">
                   {item[1]}
                 </p>
               </motion.div>
@@ -4914,7 +5128,7 @@ function PaymentMethodModal({
             yearly: "1 year",
           },
         }
-      : language === "ua"
+      : language === "uk"
         ? {
             badge: "Secure checkout",
             title: "Обери спосіб оплати",
@@ -4969,7 +5183,7 @@ function PaymentMethodModal({
     selectedPlanId === "demo"
       ? language === "en"
         ? "3 days"
-        : language === "ua"
+        : language === "uk"
           ? "3 дні"
           : "3 дня"
       : copy.billing[selection.billingPeriod];
@@ -5098,7 +5312,7 @@ function SkillEdgeSplashIntro({ language }: { language: Language }) {
           status: "Initializing market intelligence",
           modules: ["Market scan", "Risk engine", "AI alerts"],
         }
-      : language === "ua"
+      : language === "uk"
         ? {
             label: "AI Trading Desk",
             status: "Запускаємо ринкову аналітику",

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run SkillEdge Forward Shadow Promotion Gate Report
+
+[Timer]
+# Runs shortly after skilledge-forward-shadow-daily.timer.
+OnCalendar=Mon..Fri *-*-* 20:45:00
+Persistent=true
+RandomizedDelaySec=180
+Unit=skilledge-forward-shadow-promotion-gate.service
+
+[Install]
+WantedBy=timers.target

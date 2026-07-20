@@ -1,0 +1,45 @@
+﻿S10.6S2 DAY 7D OFFLINE COORDINATOR
+Generated=20260717_200832
+OK=False
+CLASSIFICATION=DAY7D_OFFLINE_COORDINATOR_FAILED
+COMPILE_RETURN_CODE=0
+TEST_RETURN_CODE=1
+RUN_RETURN_CODE=0
+DETERMINISTIC=
+GENERATION_ID=
+CAPACITY=
+DESIRED_SYMBOL_COUNT=0
+ADDED_SYMBOLS=
+REMOVED_SYMBOLS=
+VALIDATION_ERRORS=
+STREAM_SYMBOLS_CHANGED=False
+SYSTEMD_TOUCHED=False
+NEXT_ACTION=FIX_OFFLINE_COORDINATOR_IN_ISOLATION
+COMPILE_OUTPUT=
+TEST_OUTPUT=test_capacity_dedup_and_gates (test_offline_coordinator.OfflineCoordinatorTests.test_capacity_dedup_and_gates) ... FAIL
+test_deterministic (test_offline_coordinator.OfflineCoordinatorTests.test_deterministic) ... ok
+test_untradeable_warrant_filtered (test_offline_coordinator.OfflineCoordinatorTests.test_untradeable_warrant_filtered) ... ok
+
+======================================================================
+FAIL: test_capacity_dedup_and_gates (test_offline_coordinator.OfflineCoordinatorTests.test_capacity_dedup_and_gates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/s10_6s2_offline_coordinator/test_offline_coordinator.py", line 64, in test_capacity_dedup_and_gates
+    self.assertEqual(validate_generation(generation),[])
+AssertionError: Lists differ: ['UNTRADEABLE_SYMBOL_SELECTED'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'UNTRADEABLE_SYMBOL_SELECTED'
+
+- ['UNTRADEABLE_SYMBOL_SELECTED']
++ []
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+FAILED (failures=1)
+
+RUNTIME_ERROR=
+GENERATION_FILE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\dynamic_universe_generation_preview_v1.json
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_6S2_DAY7D_OFFLINE_COORDINATOR_raw_20260717_200832.json

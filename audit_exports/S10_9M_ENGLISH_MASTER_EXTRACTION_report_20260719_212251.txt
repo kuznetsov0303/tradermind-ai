@@ -1,0 +1,264 @@
+S10.9M ENGLISH MASTER EXTRACTION AUDIT
+Generated=20260719_212251
+OK=True
+CLASSIFICATION=ENGLISH_MASTER_EXTRACTION_AUDIT_COMPLETE
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+SOURCE_FILES_SCANNED=189
+UI_STRING_CANDIDATES=12730
+UNIQUE_UI_STRING_CANDIDATES=9977
+DICTIONARY_CANDIDATES=693
+
+=== TOP FILES BY UI STRING CANDIDATES ===
+4733	app/dashboard/page.tsx
+1940	components/Landing.tsx
+1094	app/dashboard-guide/page.tsx
+291	components/dashboard/SignalCockpitTab.tsx
+274	lib/trading/setup-playbook.ts
+231	components/SupportWidget.tsx
+226	lib/ai/skill-edge-prompts.ts
+225	lib/trading/market-alert-generator.ts
+216	components/dashboard/PersonalEdgeTab.tsx
+138	app/api/market/alerts/route.ts
+136	lib/ai/skill-edge-ai-master-prompt.ts
+130	app/api/analyze-trade-screenshot/route.ts
+129	app/referral/page.tsx
+128	lib/trading/signal-text-i18n.ts
+118	app/ai-guide/page.tsx
+107	components/admin/InvestorDashboardSection.tsx
+94	app/admin/signals-review/page.tsx
+91	app/journal-guide/page.tsx
+83	components/dashboard/UnifiedSkillEdgeSignalWidget.tsx
+80	app/api/market/social-mentions/route.ts
+79	lib/i18n/dictionaries.ts
+75	lib/trading/signal-ai-validator.ts
+74	lib/trading/skill-edge-alert-engine.ts
+72	lib/trading/signal-confidence.ts
+60	app/admin/page.tsx
+60	components/GlobalAlertsWidget.tsx
+57	app/api/market/ai-analysis/route.ts
+55	app/admin/support/page.tsx
+53	lib/trading/price-action-patterns.ts
+52	components/marketing/LegalPageShell.tsx
+
+=== DUPLICATE UI TEXTS ===
+33	Strategy OS
+28	AI Alerts
+26	Market Intelligence
+24	use client
+23	Personal Edge
+22	flex flex-wrap items-start justify-between gap-4
+21	Desk Coach
+19	SkillEdge AI
+17	AI Trading Desk
+16	SkillEdge Core
+16	: ""}
+15	SkillEdge Elite
+15	flex items-start justify-between gap-3
+14	flex items-center justify-between gap-3
+14	SkillEdge Edge
+13	mt-2 text-2xl font-black tracking-[-0.04em] text-white
+13	AI Coach
+13	plan_id, status, expires_at
+13	Command Home shows the current state of the trader: performance, discipline, mistakes, plan of the day and the next best action.
+13	The trader opens one screen and understands where to work, what to stop doing and what the desk demands today.
+13	Personal Edge reads the trader’s best and worst behavior: winning fingerprints, weak setups, rules and risk warnings.
+13	This is where the dashboard stops being generic. It adapts around the trader’s own evidence.
+13	Journal is the source of truth. Every trade, screenshot, mistake, setup, result and review starts here.
+13	Without facts there is no edge. Journal turns emotions into data and gives the desk something real to improve.
+13	Strategy OS turns random trading into a structured playbook: setup logic, evidence, rules, drills and version upgrades.
+13	The trader stops jumping between ideas and develops one repeatable edge with proof.
+13	Charts is the visual execution terminal: ticker, TradingView chart, watchlist, movers and chart review.
+13	The trader reads structure before acting: levels, zones, volume, timeframe context and invalidation.
+13	Market scans stocks and crypto, ranks candidates and builds an AI Market Brief from real market context.
+13	The trader sees where the market is active before wasting energy on dead tickers.
+13	Signals Desk shows actionable setups only when the market gives a trigger, entry zone, stop, targets and risk note.
+13	The trader receives a plan, not noise: direction, reason, invalidation, targets and later the real outcome.
+13	Desk Coach answers trading questions, reviews process and keeps the trader inside risk-first thinking.
+13	The trader gets strict feedback before repeating the same mistake for the tenth time.
+13	Learning keeps the trader’s base sharp: market mechanics, levels, risk, momentum, psychology and setups.
+13	The trader stops consuming random content and studies only what improves decision quality inside the desk.
+13	Reports converts journal data into performance, setup quality, leaks, strengths and next focus.
+13	The trader stops guessing. The sample shows what pays, what leaks and what must be cut.
+13	Account controls access, plan level, AI capacity, referral balance and payout requests.
+13	The trader sees exactly what is active, what is limited and where the account needs action.
+12	Strategy Trust
+12	text-[15px] font-black uppercase tracking-[0.12em] text-white/58
+12	,
+    sentiment:
+11	text-sm font-black text-white
+11	Not enough data yet
+10	AI Market Brief
+10	lower high
+10	SkillEdge AI — Premium AI Trading Workspace
+9	mt-4 text-3xl font-black tracking-[-0.04em] md:text-4xl
+9	,
+    name:
+9	,
+    type:
+9	AI Scanner
+9	Dubai / Warsaw / Kyiv
+8	mt-5 flex flex-wrap gap-2
+8	failed breakout
+8	SkillEdge Support
+8	SkillEdge Trading Desk
+8	Win rate
+8	Build Strategy v1
+8	Before-Trade Gate
+8	Собрать Strategy v1
+8	flex flex-wrap items-start justify-between gap-3
+8	text-[12px] font-black uppercase tracking-[0.18em] text-white/36
+8	text-xl font-semibold text-white
+7	mt-1 text-lg font-black text-white
+7	flex flex-wrap gap-2
+7	flex items-center gap-3
+7	mt-5 grid gap-3
+7	Evidence Locker
+7	Profit Factor
+7	mt-2 text-2xl font-black text-white
+7	Stop / invalidation
+7	mt-4 flex flex-wrap gap-2
+7	rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-[18px] font-black text-white/70 transition hover:bg-white/[0.09] hover:text-white
+7	rounded-[1.35rem] border border-white/10 bg-black/18 p-4
+7	text-[12px] font-black uppercase tracking-[0.2em] text-white/40
+7	text-[12px] font-black uppercase tracking-[0.14em] text-white/46
+7	field-input mt-2
+7	Personal Edge Engine
+7	Outcome learning
+6	rounded-2xl border border-white/10 bg-black/20 p-3
+6	absolute -left-20 top-0 h-full w-16 rotate-12 bg-white/70 blur-md transition duration-700 group-hover:left-[120%]
+6	mt-5 grid gap-2
+6	sessionId is required.
+6	Price action
+6	Reports Desk
+6	Elite demo
+6	20-trade experiment
+6	mt-3 text-2xl font-black tracking-[-0.04em] text-white
+6	: language ===
+6	Journal guide
+6	AI guide
+6	Last updated: May 2026
+6	Cookie Policy
+6	Privacy Policy
+6	Terms & Conditions
+6	AI Signals
+6	Market scan
+6	Outcome tracking
+6	TP1 >= 2R.
+5	flex items-start justify-between gap-4
+5	flex gap-2
+5	flex flex-wrap items-center gap-2
+5	text-[10px] font-black uppercase tracking-[0.16em] text-white/30
+5	No clear stop / invalidation saved
+5	Complete After-Trade Debrief after every attempt.
+5	Strategy Cockpit
+5	Session command note
+5	Add evidence
+5	Data Quality
+5	6 months
+5	Revenge trade
+5	rounded-[1.5rem] border border-white/10 bg-black/22 p-4
+5	text-[12px] font-black uppercase tracking-[0.22em] text-white/34
+5	mt-2 text-[14px] font-semibold leading-7 text-white/48
+5	mt-4 grid gap-3 md:grid-cols-2
+5	mt-5 grid gap-3 md:grid-cols-3
+5	rounded-2xl border border-white/10 bg-white/[0.035] p-4
+5	rounded-[1.4rem] border border-white/10 bg-black/20 p-4
+5	text-[15px] font-black uppercase tracking-[0.16em] text-white/48
+5	Referral program
+5	se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5
+5	mt-1 text-sm font-black text-white
+5	Choose plan
+5	Billing & Cancellation
+5	2 months
+5	Default answer format:
+5	No 5m confirmation.
+4	flex flex-wrap gap-3
+4	flex items-center justify-between
+4	mt-2 text-sm font-semibold leading-6 text-white/54
+4	relative overflow-hidden rounded-[2.4rem] border border-cyan-200/12 bg-[#081522]/82 p-5 shadow-[0_28px_120px_rgba(8,47,73,0.22)] backdrop-blur-xl md:p-7
+4	absolute inset-0 bg-[radial-gradient(circle_at_82%_0%,rgba(34,211,238,0.13),transparent_32%)]
+4	text-[10px] font-black uppercase tracking-[0.24em] text-cyan-100/56
+4	text-[10px] font-black uppercase tracking-[0.24em] text-emerald-100/56
+4	grid gap-2
+4	Premarket Pump Short
+4	Chasing after move
+4	New SkillEdge AI support request
+4	TP1 was already reached before alert delivery.
+4	VWAP Reclaim Long
+4	Ask Desk Mentor
+4	Open chart
+4	Setup Academy
+4	After-Trade Debrief
+4	Desk report
+4	Trade database
+4	Market scanner
+4	Execution review
+4	text-xs font-black uppercase tracking-[0.18em] text-white/38
+4	mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36
+4	Market context
+4	Confirmation checklist
+4	Strategy Builder
+4	Strategy Intelligence
+4	Strategy Desk Review
+4	Setup / Playbook
+4	rounded-2xl border border-white/8 bg-white/[0.035] p-3
+4	mt-2 text-xl font-black tracking-[-0.035em] text-white
+4	flex flex-wrap items-center justify-between gap-3
+4	mt-6 flex flex-wrap justify-end gap-3
+4	mt-2 w-full rounded-2xl border border-violet-200/18 bg-violet-200/[0.045] px-5 py-4 text-[18px] font-semibold text-white outline-none transition placeholder:text-white/26 focus:border-violet-200/42
+4	block sm:col-span-2
+4	mt-2 w-full rounded-2xl border border-emerald-200/18 bg-emerald-200/[0.045] px-5 py-4 text-[18px] font-semibold text-white outline-none transition placeholder:text-white/26 focus:border-emerald-200/42
+4	mt-2 w-full rounded-2xl border border-white/10 bg-black/24 px-5 py-4 text-[18px] font-semibold text-white outline-none transition placeholder:text-white/24 focus:border-cyan-200/36
+4	Trade ticket
+4	>
+                  <option value=
+4	,
+    score:
+4	,
+    noData:
+4	,
+    provider:
+4	,
+      entryTouched:
+4	,
+    };
+  }
+
+  if (language ===
+4	;
+  } else if (reaction ===
+4	,
+      status:
+4	Open dashboard
+4	Anti-Setup Guard
+4	Risk Guard
+4	Personal Playbook
+4	Execution Review
+4	Setup Library
+4	w-full rounded-2xl border border-white/10 bg-black/30 px-4 py-3 text-white outline-none
+4	© 2026 SkillEdge AI. Все права защищены.
+4	View pricing
+4	© 2026 SkillEdge AI. All rights reserved.
+4	mt-1 text-xs font-semibold leading-5 text-white/48
+4	mt-3 grid grid-cols-2 gap-2
+4	flex items-center justify-between gap-2
+4	rounded-xl border border-white/10 bg-black/20 p-3
+4	text-[10px] uppercase tracking-[0.14em] text-white/38
+4	text-sm font-semibold text-white
+4	Request demo
+4	AI Reports
+4	SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.
+4	Personal edge
+4	SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.
+4	rounded-full border border-white/10 bg-white/[0.04] px-5 py-3 text-sm text-white/70 transition hover:bg-white/10 hover:text-white
+4	relative z-10
+4	mt-6 flex flex-wrap gap-3
+4	Advanced reports
+4	Floating alerts widget
+
+CANDIDATE_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\english_master_candidates_20260719_212251.json
+DICTIONARY_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\i18n_exports\english_dictionary_candidates_20260719_212251.json
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9M_ENGLISH_MASTER_EXTRACTION_raw_20260719_212251.json
+NEXT_ACTION=REVIEW_AND_BUILD_CANONICAL_ENGLISH_MASTER_JSON

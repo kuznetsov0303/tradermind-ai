@@ -1,0 +1,8651 @@
+{
+  "ok": true,
+  "classification": "WEEKEND_FRONTEND_PAYMENTS_I18N_AUDIT_COMPLETED",
+  "inspectionOnly": true,
+  "productionMutation": false,
+  "vpsTouched": false,
+  "sourceFilesScanned": 194,
+  "rootsScanned": [
+    "app",
+    "components",
+    "lib",
+    "public"
+  ],
+  "packageJsonPresent": true,
+  "paymentDependencies": [],
+  "i18nDependencies": [],
+  "dictionaryFiles": [
+    {
+      "path": "app\\api\\support\\messages\\route.ts",
+      "sizeBytes": 5244
+    },
+    {
+      "path": "app\\api\\support\\admin\\messages\\route.ts",
+      "sizeBytes": 3402
+    },
+    {
+      "path": "lib\\i18n\\config.ts",
+      "sizeBytes": 2714
+    },
+    {
+      "path": "lib\\i18n\\dictionaries.ts",
+      "sizeBytes": 13866
+    },
+    {
+      "path": "lib\\i18n\\dictionary-types.ts",
+      "sizeBytes": 1781
+    },
+    {
+      "path": "lib\\i18n\\index.ts",
+      "sizeBytes": 95
+    },
+    {
+      "path": "lib\\trading\\signal-text-i18n.ts",
+      "sizeBytes": 23353
+    }
+  ],
+  "translationInventory": {
+    "en": [],
+    "ru": [],
+    "ua": [],
+    "uk": [],
+    "other": [
+      "app\\api\\support\\messages\\route.ts",
+      "app\\api\\support\\admin\\messages\\route.ts",
+      "lib\\i18n\\config.ts",
+      "lib\\i18n\\dictionaries.ts",
+      "lib\\i18n\\dictionary-types.ts",
+      "lib\\i18n\\index.ts",
+      "lib\\trading\\signal-text-i18n.ts"
+    ]
+  },
+  "apiRouteFiles": [
+    {
+      "path": "app\\api\\ai-coach\\route.ts",
+      "sizeBytes": 7530
+    },
+    {
+      "path": "app\\api\\analyze-current-chart\\route.ts",
+      "sizeBytes": 12744
+    },
+    {
+      "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+      "sizeBytes": 44869
+    },
+    {
+      "path": "app\\api\\create-crypto-payment\\route.ts",
+      "sizeBytes": 5672
+    },
+    {
+      "path": "app\\api\\email-request\\route.ts",
+      "sizeBytes": 7595
+    },
+    {
+      "path": "app\\api\\journal-analysis\\route.ts",
+      "sizeBytes": 9256
+    },
+    {
+      "path": "app\\api\\nowpayments-webhook\\route.ts",
+      "sizeBytes": 11789
+    },
+    {
+      "path": "app\\api\\admin\\me\\route.ts",
+      "sizeBytes": 1355
+    },
+    {
+      "path": "app\\api\\admin\\referrals\\withdrawals\\route.ts",
+      "sizeBytes": 5399
+    },
+    {
+      "path": "app\\api\\admin\\signals\\manual-approval\\route.ts",
+      "sizeBytes": 5283
+    },
+    {
+      "path": "app\\api\\admin\\signals\\review-queue\\route.ts",
+      "sizeBytes": 4154
+    },
+    {
+      "path": "app\\api\\admin\\stats\\activations\\route.ts",
+      "sizeBytes": 4475
+    },
+    {
+      "path": "app\\api\\market\\ai-analysis\\route.ts",
+      "sizeBytes": 15275
+    },
+    {
+      "path": "app\\api\\market\\ai-briefs\\route.ts",
+      "sizeBytes": 3688
+    },
+    {
+      "path": "app\\api\\market\\alerts\\route.ts",
+      "sizeBytes": 95499
+    },
+    {
+      "path": "app\\api\\market\\chart-movers\\route.ts",
+      "sizeBytes": 13334
+    },
+    {
+      "path": "app\\api\\market\\intelligence\\route.ts",
+      "sizeBytes": 19059
+    },
+    {
+      "path": "app\\api\\market\\scanner\\route.ts",
+      "sizeBytes": 7503
+    },
+    {
+      "path": "app\\api\\market\\social-mentions\\route.ts",
+      "sizeBytes": 32040
+    },
+    {
+      "path": "app\\api\\market\\alerts\\cron\\route.ts",
+      "sizeBytes": 5670
+    },
+    {
+      "path": "app\\api\\market\\alerts\\decision\\route.ts",
+      "sizeBytes": 4279
+    },
+    {
+      "path": "app\\api\\market\\alerts\\outcomes\\route.ts",
+      "sizeBytes": 31361
+    },
+    {
+      "path": "app\\api\\market\\alerts\\personalized\\route.ts",
+      "sizeBytes": 1534
+    },
+    {
+      "path": "app\\api\\market\\alerts\\viewed\\route.ts",
+      "sizeBytes": 4107
+    },
+    {
+      "path": "app\\api\\market\\alerts\\cron\\all\\route.ts",
+      "sizeBytes": 426
+    },
+    {
+      "path": "app\\api\\market\\alerts\\cron\\crypto\\route.ts",
+      "sizeBytes": 429
+    },
+    {
+      "path": "app\\api\\market\\alerts\\cron\\stock\\route.ts",
+      "sizeBytes": 1276
+    },
+    {
+      "path": "app\\api\\market\\alerts\\outcomes\\resolve\\route.ts",
+      "sizeBytes": 2479
+    },
+    {
+      "path": "app\\api\\personal-edge\\summary\\route.ts",
+      "sizeBytes": 21121
+    },
+    {
+      "path": "app\\api\\playbook\\setups\\route.ts",
+      "sizeBytes": 7961
+    },
+    {
+      "path": "app\\api\\playbook\\signal-profile\\route.ts",
+      "sizeBytes": 11589
+    },
+    {
+      "path": "app\\api\\playbook\\trade-patterns\\route.ts",
+      "sizeBytes": 12894
+    },
+    {
+      "path": "app\\api\\referrals\\attach\\route.ts",
+      "sizeBytes": 3296
+    },
+    {
+      "path": "app\\api\\referrals\\dashboard\\route.ts",
+      "sizeBytes": 10130
+    },
+    {
+      "path": "app\\api\\referrals\\withdraw\\route.ts",
+      "sizeBytes": 4643
+    },
+    {
+      "path": "app\\api\\reports\\ai-report\\route.ts",
+      "sizeBytes": 6576
+    },
+    {
+      "path": "app\\api\\stock-engine\\cockpit\\route.ts",
+      "sizeBytes": 1735
+    },
+    {
+      "path": "app\\api\\stock-engine\\health\\route.ts",
+      "sizeBytes": 200
+    },
+    {
+      "path": "app\\api\\stock-engine\\market-session\\route.ts",
+      "sizeBytes": 299
+    },
+    {
+      "path": "app\\api\\stock-engine\\unified-skilledge-output\\route.ts",
+      "sizeBytes": 7833
+    },
+    {
+      "path": "app\\api\\stock-engine\\calibration\\preview\\route.ts",
+      "sizeBytes": 631
+    },
+    {
+      "path": "app\\api\\stock-engine\\cockpit\\stream\\route.ts",
+      "sizeBytes": 5516
+    },
+    {
+      "path": "app\\api\\stock-engine\\cockpit\\history\\[symbol]\\route.ts",
+      "sizeBytes": 2649
+    },
+    {
+      "path": "app\\api\\stock-engine\\cockpit\\symbol\\[symbol]\\route.ts",
+      "sizeBytes": 748
+    },
+    {
+      "path": "app\\api\\stock-engine\\evidence\\cache\\route.ts",
+      "sizeBytes": 257
+    },
+    {
+      "path": "app\\api\\stock-engine\\evidence\\run\\route.ts",
+      "sizeBytes": 468
+    },
+    {
+      "path": "app\\api\\stock-engine\\evidence\\today\\route.ts",
+      "sizeBytes": 444
+    },
+    {
+      "path": "app\\api\\stock-engine\\investor-dashboard\\cache\\route.ts",
+      "sizeBytes": 663
+    },
+    {
+      "path": "app\\api\\stock-engine\\investor-dashboard\\run\\route.ts",
+      "sizeBytes": 662
+    },
+    {
+      "path": "app\\api\\stock-engine\\investor-dashboard\\snapshot\\route.ts",
+      "sizeBytes": 666
+    },
+    {
+      "path": "app\\api\\stock-engine\\lifecycle\\run\\route.ts",
+      "sizeBytes": 457
+    },
+    {
+      "path": "app\\api\\stock-engine\\promotion\\evidence\\route.ts",
+      "sizeBytes": 472
+    },
+    {
+      "path": "app\\api\\stock-engine\\promotion\\evidence\\[setup_slug]\\route.ts",
+      "sizeBytes": 926
+    },
+    {
+      "path": "app\\api\\stock-engine\\research\\failure-patterns\\route.ts",
+      "sizeBytes": 413
+    },
+    {
+      "path": "app\\api\\stock-engine\\research\\feature-matrix\\route.ts",
+      "sizeBytes": 414
+    },
+    {
+      "path": "app\\api\\stock-engine\\research\\live-feature-audit\\route.ts",
+      "sizeBytes": 418
+    },
+    {
+      "path": "app\\api\\stock-engine\\research\\readiness\\route.ts",
+      "sizeBytes": 406
+    },
+    {
+      "path": "app\\api\\stock-engine\\research\\status\\route.ts",
+      "sizeBytes": 3472
+    },
+    {
+      "path": "app\\api\\stock-engine\\signals\\why-no-client-signals\\route.ts",
+      "sizeBytes": 471
+    },
+    {
+      "path": "app\\api\\strategy\\after-trade-debriefs\\route.ts",
+      "sizeBytes": 3547
+    },
+    {
+      "path": "app\\api\\strategy\\analytics\\route.ts",
+      "sizeBytes": 15042
+    },
+    {
+      "path": "app\\api\\strategy\\before-trade-checks\\route.ts",
+      "sizeBytes": 3118
+    },
+    {
+      "path": "app\\api\\strategy\\drills\\route.ts",
+      "sizeBytes": 20740
+    },
+    {
+      "path": "app\\api\\strategy\\examples\\route.ts",
+      "sizeBytes": 4914
+    },
+    {
+      "path": "app\\api\\strategy\\overview\\route.ts",
+      "sizeBytes": 14877
+    },
+    {
+      "path": "app\\api\\strategy\\profile\\route.ts",
+      "sizeBytes": 4846
+    },
+    {
+      "path": "app\\api\\strategy\\review\\route.ts",
+      "sizeBytes": 19373
+    },
+    {
+      "path": "app\\api\\strategy\\strategies\\route.ts",
+      "sizeBytes": 17670
+    },
+    {
+      "path": "app\\api\\strategy\\tasks\\route.ts",
+      "sizeBytes": 2747
+    },
+    {
+      "path": "app\\api\\strategy\\templates\\route.ts",
+      "sizeBytes": 1458
+    },
+    {
+      "path": "app\\api\\strategy\\weekly-report\\route.ts",
+      "sizeBytes": 13447
+    },
+    {
+      "path": "app\\api\\strategy\\playbook\\graduation\\route.ts",
+      "sizeBytes": 19113
+    },
+    {
+      "path": "app\\api\\strategy\\versions\\generate\\route.ts",
+      "sizeBytes": 18475
+    },
+    {
+      "path": "app\\api\\strategy\\weekly-report\\accept\\route.ts",
+      "sizeBytes": 8441
+    },
+    {
+      "path": "app\\api\\support\\email-request\\route.ts",
+      "sizeBytes": 8392
+    },
+    {
+      "path": "app\\api\\support\\messages\\route.ts",
+      "sizeBytes": 5244
+    },
+    {
+      "path": "app\\api\\support\\operator-request\\route.ts",
+      "sizeBytes": 5994
+    },
+    {
+      "path": "app\\api\\support\\session\\route.ts",
+      "sizeBytes": 3390
+    },
+    {
+      "path": "app\\api\\support\\admin\\close\\route.ts",
+      "sizeBytes": 2263
+    },
+    {
+      "path": "app\\api\\support\\admin\\messages\\route.ts",
+      "sizeBytes": 3402
+    },
+    {
+      "path": "app\\api\\support\\admin\\reply\\route.ts",
+      "sizeBytes": 3259
+    },
+    {
+      "path": "app\\api\\support\\admin\\sessions\\route.ts",
+      "sizeBytes": 1940
+    },
+    {
+      "path": "app\\api\\telegram\\signals\\connect-code\\route.ts",
+      "sizeBytes": 2871
+    },
+    {
+      "path": "app\\api\\telegram\\signals\\status\\route.ts",
+      "sizeBytes": 2252
+    },
+    {
+      "path": "app\\api\\telegram\\signals\\webhook\\route.ts",
+      "sizeBytes": 4512
+    }
+  ],
+  "safeEnvVariableNames": [
+    "FMP_API_KEY",
+    "NEXT_PUBLIC_SITE_URL",
+    "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NOWPAYMENTS_API_KEY",
+    "NOWPAYMENTS_IPN_SECRET",
+    "OPENAI_API_KEY",
+    "SKILLEDGE_AI_MARKET_MODEL",
+    "STOCKTWITS_ENABLED",
+    "STOCKTWITS_MAX_CANDIDATES_PER_REFRESH",
+    "STOCKTWITS_SYMBOL_MESSAGE_LIMIT",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPPORT_ADMIN_EMAIL",
+    "TELEGRAM_ADMIN_CHAT_ID",
+    "TELEGRAM_BOT_TOKEN"
+  ],
+  "matches": {
+    "payments": [
+      {
+        "path": "app\\robots.ts",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          18
+        ]
+      },
+      {
+        "path": "app\\sitemap.ts",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "path": "app\\admin\\page.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          375
+        ]
+      },
+      {
+        "path": "app\\admin\\page.tsx",
+        "pattern": "\\bwebhook\\b",
+        "lines": [
+          375
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          10,
+          1491,
+          2187
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          1554,
+          1561
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          1037,
+          1072,
+          1073,
+          1074,
+          1075,
+          1076,
+          1077,
+          1078,
+          1079,
+          1080,
+          1081,
+          1082,
+          1083,
+          1084,
+          1085,
+          1086,
+          1106
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          113,
+          116,
+          120,
+          121,
+          129,
+          130
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          118
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          106
+        ]
+      },
+      {
+        "path": "app\\admin\\referrals\\page.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          219
+        ]
+      },
+      {
+        "path": "app\\api\\ai-coach\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          130,
+          143,
+          150,
+          153,
+          162,
+          180,
+          192,
+          195,
+          196,
+          210,
+          249,
+          253,
+          270,
+          272
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-current-chart\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          304,
+          308,
+          437,
+          443,
+          444,
+          474
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-current-chart\\route.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          72,
+          73,
+          83,
+          84
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          1124,
+          1132,
+          1191,
+          1326
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          47,
+          192,
+          198
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          195
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          127,
+          128,
+          158,
+          159,
+          196,
+          215
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          128
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          215
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          127,
+          128
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bnowpayments\\b",
+        "lines": [
+          145,
+          157,
+          168,
+          180,
+          198
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bwebhook\\b",
+        "lines": [
+          157
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          157,
+          165,
+          197,
+          306
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          101,
+          109,
+          116,
+          126,
+          144,
+          159,
+          170,
+          197,
+          296,
+          302,
+          305,
+          317,
+          321,
+          328,
+          338,
+          346,
+          351,
+          352,
+          353,
+          361
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          346,
+          367,
+          391,
+          435
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          1,
+          53,
+          59
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bnowpayments\\b",
+        "lines": [
+          266,
+          272
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bwebhook\\b",
+        "lines": [
+          445
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-analysis\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          19,
+          384,
+          405
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          67,
+          214,
+          216,
+          227,
+          271,
+          278,
+          282,
+          290,
+          630,
+          631,
+          677,
+          690,
+          697,
+          702,
+          709,
+          717,
+          718,
+          735,
+          776,
+          824
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          333,
+          445
+        ]
+      },
+      {
+        "path": "app\\api\\market\\chart-movers\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          470,
+          475,
+          480
+        ]
+      },
+      {
+        "path": "app\\api\\market\\chart-movers\\route.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          206,
+          351,
+          362,
+          372
+        ]
+      },
+      {
+        "path": "app\\api\\market\\intelligence\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          196,
+          197,
+          668
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          435
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\bcoinbase\\b",
+        "lines": [
+          142
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\cron\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          9,
+          77,
+          78
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\outcomes\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          178
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\outcomes\\route.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          165,
+          166,
+          167,
+          169,
+          180
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\cron\\crypto\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\outcomes\\resolve\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          23,
+          24
+        ]
+      },
+      {
+        "path": "app\\api\\reports\\ai-report\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          114,
+          122,
+          127,
+          129,
+          130,
+          131,
+          135
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\playbook\\graduation\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          302
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\connect-code\\route.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          1
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\status\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          56
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\webhook\\route.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          134
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\webhook\\route.ts",
+        "pattern": "\\bwebhook\\b",
+        "lines": [
+          61
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          14,
+          19,
+          23,
+          27,
+          31,
+          35,
+          39,
+          47,
+          51,
+          55,
+          71
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          23,
+          31,
+          39
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          5,
+          7,
+          13,
+          22,
+          23,
+          39,
+          43,
+          55,
+          67,
+          71
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          7,
+          14,
+          26,
+          27,
+          35,
+          47
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\btransaction\\b",
+        "lines": [
+          27,
+          35,
+          51
+        ]
+      },
+      {
+        "path": "app\\legal\\cookies\\page.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          7,
+          34,
+          35,
+          51
+        ]
+      },
+      {
+        "path": "app\\legal\\cookies\\page.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          35,
+          47
+        ]
+      },
+      {
+        "path": "app\\legal\\cookies\\page.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\eula\\page.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          47,
+          55
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          14,
+          19,
+          35,
+          39
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          19,
+          34,
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          19,
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\btransaction\\b",
+        "lines": [
+          19,
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          35,
+          39,
+          55,
+          67
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          39
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\btransaction\\b",
+        "lines": [
+          39
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          393,
+          405
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          9,
+          21,
+          48,
+          72,
+          96,
+          132,
+          158,
+          164,
+          360
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          161
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          4897,
+          4899,
+          4901,
+          4903,
+          4920,
+          4938
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3318,
+          3478,
+          3637,
+          3923,
+          4896,
+          4915,
+          4933
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3748,
+          3751,
+          3787,
+          3848,
+          3897,
+          3933,
+          3991,
+          4027,
+          4230,
+          4907,
+          4926,
+          4944,
+          4963,
+          5274,
+          5327
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3763,
+          3773,
+          3782,
+          4899,
+          4900
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4901,
+          4920,
+          4938
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          4895,
+          4897,
+          4899,
+          4901,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3318,
+          3477,
+          3635,
+          3921,
+          4894,
+          4913,
+          4931
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3746,
+          3749,
+          3785,
+          3846,
+          3895,
+          3931,
+          3989,
+          4025,
+          4228,
+          4905,
+          4924,
+          4942,
+          4969,
+          5280,
+          5333
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3761,
+          3771,
+          3780,
+          4897,
+          4898
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4899,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          4895,
+          4897,
+          4899,
+          4901,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3318,
+          3477,
+          3635,
+          3921,
+          4894,
+          4913,
+          4931
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3746,
+          3749,
+          3785,
+          3846,
+          3895,
+          3931,
+          3989,
+          4025,
+          4228,
+          4905,
+          4924,
+          4942,
+          4961,
+          5272,
+          5325
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3761,
+          3771,
+          3780,
+          4897,
+          4898
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4899,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          4895,
+          4897,
+          4899,
+          4901,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3318,
+          3477,
+          3635,
+          3921,
+          4894,
+          4913,
+          4931
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3746,
+          3749,
+          3785,
+          3846,
+          3895,
+          3931,
+          3989,
+          4025,
+          4228,
+          4905,
+          4924,
+          4942,
+          4961,
+          5272,
+          5325
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3761,
+          3771,
+          3780,
+          4897,
+          4898
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4899,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          4895,
+          4897,
+          4899,
+          4901,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3318,
+          3477,
+          3635,
+          3921,
+          4894,
+          4913,
+          4931
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3746,
+          3749,
+          3785,
+          3846,
+          3895,
+          3931,
+          3989,
+          4025,
+          4228,
+          4905,
+          4924,
+          4942,
+          4969,
+          5280,
+          5333
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3761,
+          3771,
+          3780,
+          4897,
+          4898
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4899,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          4895,
+          4897,
+          4899,
+          4901,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3318,
+          3477,
+          3635,
+          3921,
+          4894,
+          4913,
+          4931
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3746,
+          3749,
+          3785,
+          3846,
+          3895,
+          3931,
+          3989,
+          4025,
+          4228,
+          4905,
+          4924,
+          4942,
+          4961,
+          5272,
+          5325
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3761,
+          3771,
+          3780,
+          4897,
+          4898
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4899,
+          4918,
+          4936
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          3174,
+          3335,
+          3495,
+          4901,
+          4903,
+          4905,
+          4907,
+          4924,
+          4942
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3319,
+          3480,
+          3640,
+          3926,
+          4900,
+          4919,
+          4937
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3751,
+          3754,
+          3790,
+          3851,
+          3900,
+          3936,
+          3994,
+          4030,
+          4233,
+          4911,
+          4930,
+          4948,
+          4967,
+          5278,
+          5331
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3174,
+          3335,
+          3495,
+          3766,
+          3776
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4905,
+          4924,
+          4942
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1122,
+          1173,
+          1381,
+          3173,
+          3174,
+          3335,
+          3495,
+          4901,
+          4903,
+          4905,
+          4907,
+          4924,
+          4942
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1092,
+          1095,
+          1098,
+          3319,
+          3480,
+          3640,
+          3926,
+          4900,
+          4919,
+          4937
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          266,
+          287,
+          580,
+          873,
+          3169,
+          3751,
+          3754,
+          3790,
+          3851,
+          3900,
+          3936,
+          3994,
+          4030,
+          4233,
+          4911,
+          4930,
+          4948,
+          4967,
+          5278,
+          5331
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          981,
+          987,
+          1417
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          268,
+          315,
+          561,
+          854,
+          1122,
+          1865,
+          2470,
+          3174,
+          3335,
+          3495,
+          3766,
+          3776
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4905,
+          4924,
+          4942
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          112,
+          150,
+          151,
+          155,
+          156,
+          1125,
+          1176,
+          1384,
+          3176,
+          4901,
+          4903,
+          4905,
+          4907,
+          4924,
+          4942
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bcheckout\\b",
+        "lines": [
+          1095,
+          1098,
+          1101,
+          3322,
+          3482,
+          3641,
+          3927,
+          4900,
+          4919,
+          4937
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          267,
+          288,
+          582,
+          876,
+          3172,
+          3752,
+          3755,
+          3791,
+          3852,
+          3901,
+          3937,
+          3995,
+          4031,
+          4234,
+          4911,
+          4930,
+          4948,
+          4975,
+          5286,
+          5339
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          984,
+          990,
+          1420
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          66,
+          86,
+          96,
+          109,
+          151,
+          154,
+          155,
+          156,
+          269,
+          316,
+          563,
+          857,
+          1125,
+          1868,
+          2473,
+          3767,
+          3777,
+          3786,
+          4903,
+          4904
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          4905,
+          4924,
+          4942
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          83,
+          92,
+          101,
+          103,
+          116,
+          120,
+          348,
+          430,
+          431,
+          433,
+          482
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          95,
+          349,
+          432,
+          501,
+          569
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          120,
+          266,
+          346,
+          430
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          351
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bstripe\\b",
+        "lines": [
+          353,
+          432,
+          501,
+          569
+        ]
+      },
+      {
+        "path": "components\\admin\\InvestorDashboardSection.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          409
+        ]
+      },
+      {
+        "path": "components\\dashboard\\PersonalEdgeTab.tsx",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          212,
+          236
+        ]
+      },
+      {
+        "path": "components\\dashboard\\TelegramSignalsConnectButton.tsx",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          8,
+          90,
+          111
+        ]
+      },
+      {
+        "path": "components\\marketing\\LegalPageShell.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          22
+        ]
+      },
+      {
+        "path": "components\\marketing\\SiteFooter.tsx",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          74,
+          112,
+          150
+        ]
+      },
+      {
+        "path": "lib\\billing-plans.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "lib\\billing-plans.ts",
+        "pattern": "\\bfondy\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "lib\\fondy.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          1,
+          33,
+          47
+        ]
+      },
+      {
+        "path": "lib\\fondy.ts",
+        "pattern": "\\bfondy\\b",
+        "lines": [
+          12,
+          61
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-ai-master-prompt.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          93,
+          94
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          433
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          433
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          198,
+          433
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\bpayment\\b",
+        "lines": [
+          89
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          47,
+          138,
+          230
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionary-types.ts",
+        "pattern": "\\bbilling\\b",
+        "lines": [
+          45
+        ]
+      },
+      {
+        "path": "lib\\security\\ai-route-gate.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          8
+        ]
+      },
+      {
+        "path": "lib\\security\\feature-gate.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          11
+        ]
+      },
+      {
+        "path": "lib\\security\\subscription-access.ts",
+        "pattern": "\\bsubscription\\b",
+        "lines": [
+          120
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-cron-runner.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-feed.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          3,
+          16,
+          43,
+          125,
+          156,
+          217,
+          293,
+          294
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-generator.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          61,
+          197,
+          199,
+          208,
+          215,
+          259,
+          266,
+          270,
+          278,
+          2039,
+          2098,
+          2109,
+          2110,
+          2240,
+          2305,
+          2644,
+          2645,
+          2691,
+          2704,
+          2711
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-generator.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          2055,
+          2150,
+          2161,
+          2170,
+          2347,
+          2459
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-candles-provider.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          11,
+          214
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-candles-provider.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          75,
+          79
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-data-stack.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          35,
+          286,
+          340,
+          356,
+          357,
+          358,
+          359,
+          369,
+          376,
+          739,
+          870,
+          881,
+          893,
+          903,
+          951,
+          963,
+          964
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-data-stack.ts",
+        "pattern": "\\busdt\\b",
+        "lines": [
+          212,
+          852
+        ]
+      },
+      {
+        "path": "lib\\trading\\playbook-rag.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          347,
+          348
+        ]
+      },
+      {
+        "path": "lib\\trading\\setup-playbook.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          3,
+          223,
+          230,
+          231,
+          240,
+          246,
+          253,
+          254,
+          263,
+          269,
+          276,
+          286,
+          292,
+          299,
+          309
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-ai-validator.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          393,
+          410,
+          530,
+          531
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-confidence.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          336,
+          344
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-delivery.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          14,
+          508
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-outcome-resolver.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          47,
+          184,
+          203,
+          204,
+          211,
+          212,
+          219,
+          223,
+          237,
+          282,
+          284,
+          293,
+          297,
+          303
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-layers.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          149,
+          239,
+          241,
+          288,
+          342,
+          349
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-layers.ts",
+        "pattern": "\\bcoinbase\\b",
+        "lines": [
+          203
+        ]
+      },
+      {
+        "path": "lib\\trading\\skill-edge-alert-engine.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          124,
+          125,
+          278,
+          293
+        ]
+      },
+      {
+        "path": "lib\\trading\\telegram-signal-alerts.ts",
+        "pattern": "\\bcrypto\\b",
+        "lines": [
+          4,
+          53
+        ]
+      }
+    ],
+    "translations": [
+      {
+        "path": "app\\ai-guide\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          382
+        ]
+      },
+      {
+        "path": "app\\dashboard\\layout.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          11
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          150,
+          180,
+          210,
+          240,
+          270,
+          300,
+          330,
+          360,
+          390,
+          420,
+          450,
+          480,
+          510,
+          540,
+          565,
+          570,
+          1290,
+          1855,
+          1873,
+          1874
+        ]
+      },
+      {
+        "path": "app\\journal-guide\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          327
+        ]
+      },
+      {
+        "path": "app\\login\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          70
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          8,
+          145,
+          157,
+          158,
+          162,
+          163,
+          169,
+          172,
+          173,
+          174,
+          176,
+          191,
+          195,
+          201,
+          206,
+          207,
+          436
+        ]
+      },
+      {
+        "path": "app\\register\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          74
+        ]
+      },
+      {
+        "path": "app\\admin\\support\\page.tsx",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          52,
+          185,
+          201,
+          482,
+          487
+        ]
+      },
+      {
+        "path": "app\\admin\\support\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12
+        ]
+      },
+      {
+        "path": "app\\api\\ai-coach\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          191
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-current-chart\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          11,
+          272,
+          281,
+          298,
+          399,
+          400,
+          401,
+          455
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          126,
+          127,
+          128,
+          131,
+          132,
+          135,
+          1100,
+          1101,
+          1102,
+          1221,
+          1226,
+          1273
+        ]
+      },
+      {
+        "path": "app\\api\\email-request\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          16,
+          50,
+          56,
+          77,
+          114,
+          120,
+          146,
+          158,
+          184,
+          210,
+          233,
+          263,
+          271
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          247
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          53,
+          54,
+          55,
+          58,
+          59,
+          62,
+          131,
+          132,
+          133,
+          224,
+          257
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-analysis\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          35,
+          165,
+          166,
+          167,
+          250,
+          257,
+          263,
+          337,
+          339,
+          340,
+          347,
+          351,
+          384,
+          385,
+          433,
+          443
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-briefs\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          98,
+          116
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          99,
+          784,
+          788
+        ]
+      },
+      {
+        "path": "app\\api\\reports\\ai-report\\route.ts",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          217
+        ]
+      },
+      {
+        "path": "app\\api\\reports\\ai-report\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          202
+        ]
+      },
+      {
+        "path": "app\\api\\support\\email-request\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          17,
+          51,
+          57,
+          78,
+          115,
+          121,
+          161,
+          172,
+          203,
+          229,
+          252,
+          282,
+          293
+        ]
+      },
+      {
+        "path": "app\\api\\support\\messages\\route.ts",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          71,
+          97,
+          109,
+          112,
+          115,
+          124,
+          136,
+          154,
+          169,
+          193,
+          196,
+          199
+        ]
+      },
+      {
+        "path": "app\\api\\support\\operator-request\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          15,
+          78,
+          119,
+          163
+        ]
+      },
+      {
+        "path": "app\\api\\support\\session\\route.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          13,
+          52,
+          85,
+          110
+        ]
+      },
+      {
+        "path": "app\\api\\support\\admin\\messages\\route.ts",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          54,
+          92,
+          107,
+          108,
+          115,
+          118,
+          121
+        ]
+      },
+      {
+        "path": "app\\legal\\cookies\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          27
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          19
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          19,
+          43
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          8,
+          115,
+          255,
+          262,
+          305,
+          311,
+          312,
+          320,
+          321,
+          326,
+          327,
+          333,
+          334,
+          342,
+          351,
+          376,
+          380,
+          596,
+          601
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4890,
+          4894,
+          4913,
+          5081,
+          5083,
+          5089,
+          5222,
+          5384
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4888,
+          4892,
+          4911,
+          4964,
+          4966,
+          5087,
+          5089,
+          5095,
+          5228
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4888,
+          4892,
+          4911,
+          5079,
+          5081,
+          5087,
+          5220,
+          5382
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4888,
+          4892,
+          4911,
+          5079,
+          5081,
+          5087,
+          5220,
+          5382
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4888,
+          4892,
+          4911,
+          4964,
+          4966,
+          5087,
+          5089,
+          5095,
+          5228
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4888,
+          4892,
+          4911,
+          5079,
+          5081,
+          5087,
+          5220,
+          5382
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4894,
+          4898,
+          4917,
+          5085,
+          5087,
+          5093,
+          5226,
+          5388
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          920,
+          941,
+          1022,
+          1029,
+          1030,
+          1181,
+          2450,
+          2454,
+          2489,
+          4894,
+          4898,
+          4917,
+          5085,
+          5087,
+          5093,
+          5226,
+          5388
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          30,
+          923,
+          944,
+          1025,
+          1032,
+          1033,
+          1184,
+          2453,
+          2457,
+          2492,
+          4894,
+          4898,
+          4917,
+          4970,
+          4972,
+          5093,
+          5095,
+          5101,
+          5234
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\blocale\\b",
+        "lines": [
+          193
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bmessages\\b",
+        "lines": [
+          687,
+          757,
+          771,
+          773,
+          814,
+          830,
+          848,
+          858,
+          894,
+          905,
+          1276,
+          1281
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          192,
+          273,
+          279,
+          280,
+          288,
+          289,
+          298,
+          299,
+          324,
+          417,
+          486,
+          626,
+          631,
+          638,
+          641,
+          677,
+          690,
+          705,
+          711,
+          736
+        ]
+      },
+      {
+        "path": "components\\dashboard\\PersonalEdgeTab.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          1,
+          7,
+          45,
+          52,
+          53
+        ]
+      },
+      {
+        "path": "components\\dashboard\\SignalCockpitTab.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          12,
+          2144
+        ]
+      },
+      {
+        "path": "components\\dashboard\\UnifiedSkillEdgeSignalWidget.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          15,
+          18,
+          19,
+          35,
+          36,
+          188,
+          189
+        ]
+      },
+      {
+        "path": "components\\marketing\\LegalFooter.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          4
+        ]
+      },
+      {
+        "path": "components\\marketing\\SiteFooter.tsx",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          9,
+          14,
+          15,
+          185,
+          189
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-ai-master-prompt.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          2,
+          25,
+          46,
+          47,
+          48,
+          49,
+          51,
+          195,
+          300
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          16,
+          23,
+          25,
+          54,
+          56,
+          90,
+          91,
+          166,
+          214,
+          478
+        ]
+      },
+      {
+        "path": "lib\\i18n\\config.ts",
+        "pattern": "\\blocale\\b",
+        "lines": [
+          19,
+          21,
+          23,
+          26,
+          32,
+          125,
+          126,
+          129,
+          151,
+          152
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\blocale\\b",
+        "lines": [
+          2,
+          5,
+          295,
+          296
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\bdictionary\\b",
+        "lines": [
+          1,
+          5,
+          281,
+          282,
+          283,
+          284,
+          285,
+          286,
+          287,
+          288,
+          289,
+          290,
+          291,
+          292,
+          295,
+          297,
+          299,
+          300
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          93
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionary-types.ts",
+        "pattern": "\\bdictionary\\b",
+        "lines": [
+          87
+        ]
+      },
+      {
+        "path": "lib\\i18n\\index.ts",
+        "pattern": "\\bdictionary\\b",
+        "lines": [
+          2
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-data-stack.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          592,
+          602
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-layers.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          235
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-text-i18n.ts",
+        "pattern": "\\blanguage\\b",
+        "lines": [
+          3,
+          4,
+          5,
+          12,
+          19,
+          434,
+          471,
+          480,
+          482
+        ]
+      }
+    ],
+    "frontendRisks": [
+      {
+        "path": "app\\admin\\page.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          87,
+          91,
+          397
+        ]
+      },
+      {
+        "path": "app\\admin\\page.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          44,
+          78,
+          277,
+          391
+        ]
+      },
+      {
+        "path": "app\\ai-guide\\page.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          66,
+          103,
+          155,
+          161,
+          178,
+          223,
+          252,
+          281,
+          318,
+          342
+        ]
+      },
+      {
+        "path": "app\\ai-guide\\page.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          54,
+          88,
+          129,
+          148,
+          203,
+          220,
+          249,
+          277,
+          315,
+          339,
+          358
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          2465
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1907,
+          1966,
+          2246
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2433,
+          2465
+        ]
+      },
+      {
+        "path": "app\\journal-guide\\page.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          56,
+          93,
+          145,
+          151,
+          169,
+          216,
+          244,
+          270
+        ]
+      },
+      {
+        "path": "app\\journal-guide\\page.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          44,
+          78,
+          119,
+          138,
+          196,
+          213,
+          241,
+          266,
+          303
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          225,
+          271,
+          321,
+          387,
+          402
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          213,
+          256,
+          297,
+          316,
+          367,
+          384,
+          399,
+          420
+        ]
+      },
+      {
+        "path": "app\\admin\\investor-dashboard\\page.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          8
+        ]
+      },
+      {
+        "path": "app\\admin\\referrals\\page.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          241
+        ]
+      },
+      {
+        "path": "app\\admin\\referrals\\page.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          287
+        ]
+      },
+      {
+        "path": "app\\admin\\signals-review\\page.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          161,
+          162,
+          163,
+          164,
+          165
+        ]
+      },
+      {
+        "path": "app\\admin\\signals-review\\page.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          156,
+          278
+        ]
+      },
+      {
+        "path": "app\\admin\\support\\page.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          497
+        ]
+      },
+      {
+        "path": "app\\api\\market\\intelligence\\route.ts",
+        "pattern": "console\\.log",
+        "lines": [
+          672
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "console\\.log",
+        "lines": [
+          371,
+          458,
+          771,
+          887,
+          924,
+          962,
+          1090
+        ]
+      },
+      {
+        "path": "app\\legal\\eula\\page.tsx",
+        "pattern": "\\bHACK\\b",
+        "lines": [
+          31
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\bHACK\\b",
+        "lines": [
+          59
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          503,
+          590
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          500
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          498
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3708,
+          3730,
+          3892,
+          3896,
+          3922,
+          3963,
+          3974,
+          4000,
+          4009
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3696
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4143
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3810,
+          4718
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3706,
+          3728,
+          3890,
+          3894,
+          3920,
+          3961,
+          3972,
+          3998,
+          4007
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3694
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4141
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3808,
+          4716
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3706,
+          3728,
+          3890,
+          3894,
+          3920,
+          3961,
+          3972,
+          3998,
+          4007
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3694
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4141
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3808,
+          4716
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3706,
+          3728,
+          3890,
+          3894,
+          3920,
+          3961,
+          3972,
+          3998,
+          4007
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3694
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4141
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3808,
+          4716
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3706,
+          3728,
+          3890,
+          3894,
+          3920,
+          3961,
+          3972,
+          3998,
+          4007
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3694
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4141
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3808,
+          4716
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3706,
+          3728,
+          3890,
+          3894,
+          3920,
+          3961,
+          3972,
+          3998,
+          4007
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3694
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4141
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3808,
+          4716
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3711,
+          3733,
+          3895,
+          3899,
+          3925,
+          3966,
+          3977,
+          4003,
+          4012
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3699
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4146
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3813,
+          4722
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1940,
+          2047,
+          2073,
+          2420,
+          2435,
+          2595,
+          2829,
+          2855,
+          2967,
+          3014,
+          3020,
+          3711,
+          3733,
+          3895,
+          3899,
+          3925,
+          3966,
+          3977,
+          4003,
+          4012
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1179,
+          1770,
+          1927,
+          2041,
+          2096,
+          2248,
+          2352,
+          2393,
+          2406,
+          2567,
+          2627,
+          2683,
+          2700,
+          2733,
+          2746,
+          2817,
+          2954,
+          2987,
+          3009,
+          3699
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1212,
+          4146
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2246,
+          2565,
+          3813,
+          4722
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1943,
+          2050,
+          2076,
+          2423,
+          2438,
+          2598,
+          2832,
+          2858,
+          2970,
+          3017,
+          3023,
+          3712,
+          3734,
+          3896,
+          3900,
+          3926,
+          3967,
+          3978,
+          4004,
+          4013
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1182,
+          1773,
+          1930,
+          2044,
+          2099,
+          2251,
+          2355,
+          2396,
+          2409,
+          2570,
+          2630,
+          2686,
+          2703,
+          2736,
+          2749,
+          2820,
+          2957,
+          2990,
+          3012,
+          3700
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          1215,
+          4147
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2249,
+          2568,
+          3814,
+          4722
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1257
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1080,
+          1132,
+          1167
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          1080,
+          1289
+        ]
+      },
+      {
+        "path": "components\\admin\\AdminActivationStatsBlock.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          67
+        ]
+      },
+      {
+        "path": "components\\admin\\AdminActivationStatsBlock.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          97
+        ]
+      },
+      {
+        "path": "components\\admin\\InvestorDashboardSection.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          148
+        ]
+      },
+      {
+        "path": "components\\admin\\InvestorDashboardSection.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          540
+        ]
+      },
+      {
+        "path": "components\\dashboard\\PersonalEdgeTab.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          332,
+          335,
+          397,
+          420,
+          430,
+          462,
+          481,
+          498,
+          513,
+          540,
+          559,
+          583,
+          590,
+          610
+        ]
+      },
+      {
+        "path": "components\\dashboard\\PersonalEdgeTab.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          324,
+          400
+        ]
+      },
+      {
+        "path": "components\\dashboard\\SignalCockpitTab.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          1240,
+          1268,
+          1980,
+          2019,
+          2035,
+          2042,
+          2059,
+          2068,
+          2071,
+          2076,
+          2081,
+          2084,
+          2090,
+          2102,
+          2847,
+          2876,
+          2899,
+          2918,
+          2926,
+          2942
+        ]
+      },
+      {
+        "path": "components\\dashboard\\SignalCockpitTab.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          1970,
+          2119,
+          2783,
+          2852,
+          3413,
+          3484,
+          3512,
+          3543,
+          3759
+        ]
+      },
+      {
+        "path": "components\\dashboard\\SignalCockpitTab.tsx",
+        "pattern": "max-w-\\[",
+        "lines": [
+          2042,
+          2067,
+          3419,
+          3441
+        ]
+      },
+      {
+        "path": "components\\dashboard\\UnifiedSkillEdgeSignalWidget.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          164,
+          168,
+          172,
+          176,
+          242,
+          277,
+          286,
+          295,
+          304
+        ]
+      },
+      {
+        "path": "components\\dashboard\\UnifiedSkillEdgeSignalWidget.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          239
+        ]
+      },
+      {
+        "path": "components\\marketing\\BrandMark.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "path": "components\\marketing\\BrandMark.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          21
+        ]
+      },
+      {
+        "path": "components\\marketing\\CookieConsent.tsx",
+        "pattern": "text-\\[(8|9|10)px\\]",
+        "lines": [
+          126,
+          189
+        ]
+      },
+      {
+        "path": "components\\marketing\\CookieConsent.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          115
+        ]
+      },
+      {
+        "path": "components\\marketing\\CookieConsent.tsx",
+        "pattern": "min-w-\\[",
+        "lines": [
+          151
+        ]
+      },
+      {
+        "path": "components\\marketing\\LegalPageShell.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          39,
+          114
+        ]
+      },
+      {
+        "path": "components\\marketing\\SiteFooter.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          218
+        ]
+      },
+      {
+        "path": "components\\marketing\\TradingBackground.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          23
+        ]
+      },
+      {
+        "path": "components\\ui\\card.tsx",
+        "pattern": "overflow-hidden",
+        "lines": [
+          15
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-layers.ts",
+        "pattern": "\\bHACK\\b",
+        "lines": [
+          251
+        ]
+      }
+    ],
+    "authAndPlans": [
+      {
+        "path": "app\\apple-icon.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\globals.css",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          133,
+          300,
+          305,
+          314,
+          320,
+          324,
+          346,
+          358,
+          368,
+          378,
+          389,
+          487
+        ]
+      },
+      {
+        "path": "app\\globals.css",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          271,
+          272
+        ]
+      },
+      {
+        "path": "app\\icon.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\layout.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          30,
+          32,
+          52,
+          60,
+          66
+        ]
+      },
+      {
+        "path": "app\\layout.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          68
+        ]
+      },
+      {
+        "path": "app\\opengraph-image.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          5,
+          122
+        ]
+      },
+      {
+        "path": "app\\opengraph-image.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\page.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          5,
+          12,
+          14,
+          21,
+          27
+        ]
+      },
+      {
+        "path": "app\\page.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          7,
+          29
+        ]
+      },
+      {
+        "path": "app\\twitter-image.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          5
+        ]
+      },
+      {
+        "path": "app\\twitter-image.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\about\\page.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "path": "app\\admin\\page.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          5
+        ]
+      },
+      {
+        "path": "app\\admin\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          254,
+          257,
+          418
+        ]
+      },
+      {
+        "path": "app\\ai-guide\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          20,
+          171,
+          187
+        ]
+      },
+      {
+        "path": "app\\ai-guide\\page.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          11
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          11,
+          126,
+          149,
+          246,
+          276,
+          299,
+          306,
+          329,
+          396,
+          419,
+          456,
+          479,
+          539,
+          546,
+          569,
+          581,
+          604,
+          607,
+          608,
+          609
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          1803,
+          1804,
+          1805
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          10,
+          671,
+          672,
+          676,
+          683,
+          684,
+          685,
+          687,
+          688,
+          689,
+          690,
+          691,
+          692,
+          693,
+          694,
+          695,
+          696,
+          697,
+          700,
+          701
+        ]
+      },
+      {
+        "path": "app\\dashboard-guide\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          1496,
+          1520,
+          1523,
+          1524,
+          1525,
+          1526,
+          1527,
+          1528,
+          1529,
+          1530,
+          1531,
+          1532,
+          1533,
+          1534,
+          1554,
+          1560,
+          1576,
+          2188
+        ]
+      },
+      {
+        "path": "app\\journal-guide\\page.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          39,
+          305
+        ]
+      },
+      {
+        "path": "app\\login\\page.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "path": "app\\pricing\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "path": "app\\pricing\\page.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          7,
+          14,
+          29
+        ]
+      },
+      {
+        "path": "app\\pricing\\page.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          7,
+          14,
+          29
+        ]
+      },
+      {
+        "path": "app\\pricing\\page.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          7,
+          14,
+          29
+        ]
+      },
+      {
+        "path": "app\\product\\page.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          7,
+          29
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          119
+        ]
+      },
+      {
+        "path": "app\\referral\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          119,
+          126
+        ]
+      },
+      {
+        "path": "app\\register\\page.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "path": "app\\admin\\referrals\\page.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          5
+        ]
+      },
+      {
+        "path": "app\\admin\\signals-review\\page.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          5
+        ]
+      },
+      {
+        "path": "app\\admin\\signals-review\\page.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          283
+        ]
+      },
+      {
+        "path": "app\\admin\\signals-review\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          273
+        ]
+      },
+      {
+        "path": "app\\admin\\support\\page.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          5,
+          98
+        ]
+      },
+      {
+        "path": "app\\api\\ai-coach\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          99
+        ]
+      },
+      {
+        "path": "app\\api\\ai-coach\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          153,
+          170,
+          192,
+          195
+        ]
+      },
+      {
+        "path": "app\\api\\ai-coach\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          23
+        ]
+      },
+      {
+        "path": "app\\api\\ai-coach\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          8,
+          24,
+          36
+        ]
+      },
+      {
+        "path": "app\\api\\ai-coach\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          25,
+          32
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-current-chart\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          299,
+          429,
+          482
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-current-chart\\route.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          473
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-current-chart\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          6,
+          54
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-current-chart\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          50
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          1115
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          381,
+          1134,
+          1205,
+          1227,
+          1230,
+          1272
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\btier\\b",
+        "lines": [
+          807,
+          827,
+          840,
+          867,
+          869,
+          873,
+          885,
+          887,
+          901,
+          903
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          119,
+          123
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          8,
+          111,
+          120,
+          618,
+          678,
+          736,
+          828,
+          1005,
+          1053,
+          1216,
+          1275,
+          1344
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          107,
+          121
+        ]
+      },
+      {
+        "path": "app\\api\\analyze-trade-screenshot\\route.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          1134
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          95
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          87,
+          115,
+          117,
+          128,
+          158,
+          159
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          4,
+          15,
+          16,
+          48,
+          49,
+          60
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          4,
+          23,
+          24,
+          52,
+          53
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          4,
+          31,
+          32,
+          56,
+          112,
+          127
+        ]
+      },
+      {
+        "path": "app\\api\\create-crypto-payment\\route.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          127
+        ]
+      },
+      {
+        "path": "app\\api\\email-request\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          28
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          148
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          167,
+          212,
+          225,
+          228,
+          256,
+          280,
+          317
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          46,
+          50
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          8,
+          38,
+          47
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          34,
+          48
+        ]
+      },
+      {
+        "path": "app\\api\\journal-analysis\\route.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          167
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          4
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          236
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          236
+        ]
+      },
+      {
+        "path": "app\\api\\nowpayments-webhook\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          236,
+          356
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\me\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          36
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\referrals\\withdrawals\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          47,
+          67
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\signals\\manual-approval\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          50
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\signals\\review-queue\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          41
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\stats\\activations\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          73,
+          93
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\stats\\activations\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          121,
+          125,
+          137,
+          143
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\stats\\activations\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          4,
+          7,
+          114
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\stats\\activations\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          4,
+          7,
+          114
+        ]
+      },
+      {
+        "path": "app\\api\\admin\\stats\\activations\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          4,
+          7,
+          114
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-analysis\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          82
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-analysis\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          4,
+          229,
+          348,
+          350,
+          373,
+          434
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-analysis\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          105
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-analysis\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          11,
+          65,
+          295
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-analysis\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          61,
+          295
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-briefs\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          30
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-briefs\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-briefs\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          53
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-briefs\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          84
+        ]
+      },
+      {
+        "path": "app\\api\\market\\ai-briefs\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          84
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          116
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3,
+          1585,
+          1589,
+          1593,
+          1621,
+          1631,
+          1632,
+          1634,
+          1635,
+          1636,
+          1653,
+          1665,
+          1682,
+          1694,
+          2214,
+          2219,
+          2220,
+          2221,
+          2222,
+          2227
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\btier\\b",
+        "lines": [
+          2915
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          136
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          5,
+          1249,
+          1318,
+          1319
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          2958,
+          2960,
+          3107,
+          3109
+        ]
+      },
+      {
+        "path": "app\\api\\market\\intelligence\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          127
+        ]
+      },
+      {
+        "path": "app\\api\\market\\intelligence\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\market\\intelligence\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          150
+        ]
+      },
+      {
+        "path": "app\\api\\market\\intelligence\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          593
+        ]
+      },
+      {
+        "path": "app\\api\\market\\intelligence\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          593
+        ]
+      },
+      {
+        "path": "app\\api\\market\\scanner\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          44
+        ]
+      },
+      {
+        "path": "app\\api\\market\\scanner\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\market\\scanner\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          64
+        ]
+      },
+      {
+        "path": "app\\api\\market\\scanner\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          166
+        ]
+      },
+      {
+        "path": "app\\api\\market\\scanner\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          166
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          232
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          773
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          255
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          1124
+        ]
+      },
+      {
+        "path": "app\\api\\market\\social-mentions\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          1124
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\cron\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          173
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\cron\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          153
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\decision\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          18
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\decision\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\decision\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          38
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\decision\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          64
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\decision\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          64
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\outcomes\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          961,
+          1033
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\personalized\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          34,
+          45
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\viewed\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\viewed\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\viewed\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          36
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\viewed\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          62
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\viewed\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          62
+        ]
+      },
+      {
+        "path": "app\\api\\market\\alerts\\outcomes\\resolve\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "path": "app\\api\\personal-edge\\summary\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          366
+        ]
+      },
+      {
+        "path": "app\\api\\personal-edge\\summary\\route.ts",
+        "pattern": "\\btier\\b",
+        "lines": [
+          46,
+          453,
+          624,
+          628
+        ]
+      },
+      {
+        "path": "app\\api\\personal-edge\\summary\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          206,
+          222,
+          305,
+          341,
+          430,
+          584,
+          644,
+          647
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\setups\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          46
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\setups\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\setups\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          66
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\setups\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          97,
+          149
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\setups\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          97,
+          149
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\signal-profile\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          33
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\signal-profile\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3,
+          137,
+          148
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\signal-profile\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          53
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\signal-profile\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          350,
+          401
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\signal-profile\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          350,
+          401
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\trade-patterns\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          35
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\trade-patterns\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\trade-patterns\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          55
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\trade-patterns\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          413,
+          464
+        ]
+      },
+      {
+        "path": "app\\api\\playbook\\trade-patterns\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          413,
+          464
+        ]
+      },
+      {
+        "path": "app\\api\\referrals\\attach\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          45,
+          54
+        ]
+      },
+      {
+        "path": "app\\api\\referrals\\dashboard\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          90,
+          99,
+          219
+        ]
+      },
+      {
+        "path": "app\\api\\referrals\\withdraw\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          67
+        ]
+      },
+      {
+        "path": "app\\api\\reports\\ai-report\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          105
+        ]
+      },
+      {
+        "path": "app\\api\\reports\\ai-report\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          9,
+          203,
+          205
+        ]
+      },
+      {
+        "path": "app\\api\\reports\\ai-report\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          16,
+          31,
+          144
+        ]
+      },
+      {
+        "path": "app\\api\\reports\\ai-report\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          27,
+          144
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\after-trade-debriefs\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          72
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\analytics\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          151
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\before-trade-checks\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          73
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\before-trade-checks\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          52
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\drills\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          33,
+          42,
+          51,
+          70
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\examples\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          40,
+          69
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\overview\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          333
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\profile\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          89,
+          109,
+          161
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\review\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          294,
+          456
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\review\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          222,
+          223
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\strategies\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          35,
+          44,
+          53,
+          72
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\tasks\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          28,
+          74
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\weekly-report\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          92,
+          269,
+          270,
+          278,
+          296,
+          297,
+          301,
+          311,
+          314
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\weekly-report\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          67
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\playbook\\graduation\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          78
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\playbook\\graduation\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          64,
+          313,
+          314,
+          315
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\playbook\\graduation\\route.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          252
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\versions\\generate\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          176
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\versions\\generate\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          129,
+          295,
+          297,
+          337,
+          338
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\weekly-report\\accept\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          108
+        ]
+      },
+      {
+        "path": "app\\api\\strategy\\weekly-report\\accept\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          114,
+          119,
+          146,
+          147,
+          154,
+          207,
+          240
+        ]
+      },
+      {
+        "path": "app\\api\\support\\email-request\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          29,
+          146
+        ]
+      },
+      {
+        "path": "app\\api\\support\\email-request\\route.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          308
+        ]
+      },
+      {
+        "path": "app\\api\\support\\messages\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          24
+        ]
+      },
+      {
+        "path": "app\\api\\support\\messages\\route.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          91,
+          93,
+          148,
+          150,
+          163
+        ]
+      },
+      {
+        "path": "app\\api\\support\\operator-request\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          33
+        ]
+      },
+      {
+        "path": "app\\api\\support\\operator-request\\route.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          107
+        ]
+      },
+      {
+        "path": "app\\api\\support\\session\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          27
+        ]
+      },
+      {
+        "path": "app\\api\\support\\admin\\close\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          21
+        ]
+      },
+      {
+        "path": "app\\api\\support\\admin\\messages\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          15
+        ]
+      },
+      {
+        "path": "app\\api\\support\\admin\\reply\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          20
+        ]
+      },
+      {
+        "path": "app\\api\\support\\admin\\sessions\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          17
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\connect-code\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          17
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\connect-code\\route.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          4
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\connect-code\\route.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          37
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\connect-code\\route.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          67,
+          69
+        ]
+      },
+      {
+        "path": "app\\api\\telegram\\signals\\status\\route.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          15
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          19,
+          27,
+          39,
+          47,
+          54,
+          55,
+          67
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          19
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          19
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          19
+        ]
+      },
+      {
+        "path": "app\\legal\\billing\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          14,
+          18,
+          19,
+          23,
+          27,
+          34,
+          35,
+          39,
+          43,
+          47,
+          51,
+          55,
+          59,
+          71
+        ]
+      },
+      {
+        "path": "app\\legal\\cookies\\page.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          23,
+          43
+        ]
+      },
+      {
+        "path": "app\\legal\\cookies\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          23,
+          47
+        ]
+      },
+      {
+        "path": "app\\legal\\disclaimer\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          31,
+          39
+        ]
+      },
+      {
+        "path": "app\\legal\\eula\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          31,
+          43
+        ]
+      },
+      {
+        "path": "app\\legal\\eula\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          7,
+          14,
+          19,
+          23,
+          27,
+          31,
+          43,
+          47
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          19,
+          23,
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\privacy-policy\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          23,
+          34,
+          35,
+          47,
+          51
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          31,
+          35,
+          39,
+          59
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          35
+        ]
+      },
+      {
+        "path": "app\\legal\\terms\\page.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          7,
+          14,
+          31,
+          34,
+          35,
+          39,
+          55,
+          59
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          6,
+          386,
+          394,
+          418
+        ]
+      },
+      {
+        "path": "components\\GlobalAlertsWidget.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          61,
+          85,
+          109,
+          286
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-compact-pricing-hero.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3282,
+          3325,
+          3484,
+          3761,
+          4053,
+          4261,
+          4905,
+          5011
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3282,
+          3325,
+          3483,
+          3759,
+          4051,
+          4259,
+          4903,
+          5017
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3282,
+          3325,
+          3483,
+          3759,
+          4051,
+          4259,
+          4903,
+          5009
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3282,
+          3325,
+          3483,
+          3759,
+          4051,
+          4259,
+          4903,
+          5009
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3282,
+          3325,
+          3483,
+          3759,
+          4051,
+          4259,
+          4903,
+          5017
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3282,
+          3325,
+          3483,
+          3759,
+          4051,
+          4259,
+          4903,
+          5009
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3283,
+          3326,
+          3486,
+          3764,
+          4056,
+          4265,
+          4909,
+          5015
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          299,
+          592,
+          885,
+          942,
+          974,
+          982,
+          1049,
+          1062,
+          1080,
+          1110
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          202,
+          205,
+          206,
+          235,
+          289,
+          316,
+          1860,
+          1867,
+          1873,
+          1888,
+          1908,
+          2431,
+          2468,
+          2478
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          249,
+          252,
+          261,
+          264,
+          266,
+          270,
+          279,
+          337,
+          340,
+          360,
+          367,
+          398,
+          401
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          208,
+          220,
+          432,
+          452,
+          459,
+          464,
+          475,
+          501,
+          513,
+          725,
+          745,
+          752,
+          757,
+          768,
+          794
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          192,
+          208,
+          220,
+          271,
+          275,
+          346,
+          359,
+          380,
+          422,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          185,
+          186,
+          191,
+          208,
+          220,
+          359,
+          360,
+          380,
+          381,
+          403,
+          423,
+          432
+        ]
+      },
+      {
+        "path": "components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          253,
+          254,
+          268,
+          3165,
+          3283,
+          3326,
+          3486,
+          3764,
+          4056,
+          4265,
+          4909,
+          5015
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          300,
+          594,
+          888,
+          945,
+          977,
+          985,
+          1052,
+          1065,
+          1083,
+          1113
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          33,
+          48,
+          62,
+          75,
+          79,
+          98,
+          203,
+          206,
+          207,
+          236,
+          290,
+          317,
+          1863,
+          1870,
+          1876,
+          1891,
+          1911,
+          2434,
+          2471,
+          2481
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          44,
+          47,
+          67,
+          74,
+          105,
+          108,
+          179,
+          250,
+          253,
+          262,
+          265,
+          267,
+          271,
+          280,
+          338,
+          341,
+          361,
+          368,
+          399,
+          402
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          139,
+          159,
+          166,
+          171,
+          182,
+          209,
+          221,
+          433,
+          453,
+          460,
+          465,
+          476,
+          503,
+          515,
+          727,
+          747,
+          754,
+          759,
+          770,
+          797
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          53,
+          66,
+          80,
+          87,
+          120,
+          129,
+          139,
+          160,
+          176,
+          181,
+          193,
+          209,
+          221,
+          272,
+          276,
+          347,
+          360,
+          381,
+          423,
+          433
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          66,
+          67,
+          87,
+          88,
+          110,
+          130,
+          139,
+          161,
+          186,
+          187,
+          192,
+          209,
+          221,
+          360,
+          361,
+          381,
+          382,
+          404,
+          424,
+          433
+        ]
+      },
+      {
+        "path": "components\\Landing.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          53,
+          112,
+          254,
+          255,
+          269,
+          3168,
+          3286,
+          3329,
+          3488,
+          3765,
+          4057,
+          4265,
+          4909,
+          5023
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          724,
+          827,
+          892,
+          926,
+          1033
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          101,
+          103,
+          332,
+          424,
+          431,
+          433,
+          442,
+          475,
+          481
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          335,
+          421,
+          448,
+          490,
+          558
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          336,
+          422,
+          441,
+          491,
+          510,
+          559,
+          578
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          337,
+          423,
+          441,
+          492,
+          510,
+          560,
+          578
+        ]
+      },
+      {
+        "path": "components\\SupportWidget.tsx",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          92,
+          95,
+          103,
+          116,
+          119,
+          339,
+          420,
+          431,
+          432,
+          442,
+          482
+        ]
+      },
+      {
+        "path": "components\\admin\\AdminActivationStatsBlock.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          48,
+          49,
+          50,
+          51,
+          101,
+          102,
+          103,
+          120,
+          121,
+          123
+        ]
+      },
+      {
+        "path": "components\\admin\\AdminActivationStatsBlock.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          3,
+          12,
+          22,
+          23,
+          24,
+          25,
+          50
+        ]
+      },
+      {
+        "path": "components\\admin\\AdminActivationStatsBlock.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          3,
+          12,
+          22,
+          23,
+          24,
+          25,
+          51
+        ]
+      },
+      {
+        "path": "components\\admin\\AdminActivationStatsBlock.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          3,
+          12,
+          22,
+          23,
+          24,
+          25,
+          52
+        ]
+      },
+      {
+        "path": "components\\admin\\InvestorDashboardSection.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          388
+        ]
+      },
+      {
+        "path": "components\\admin\\InvestorDashboardSection.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          232,
+          276,
+          277
+        ]
+      },
+      {
+        "path": "components\\dashboard\\PersonalEdgeTab.tsx",
+        "pattern": "\\btier\\b",
+        "lines": [
+          88,
+          133,
+          177,
+          445
+        ]
+      },
+      {
+        "path": "components\\dashboard\\PersonalEdgeTab.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          57,
+          58,
+          102,
+          103,
+          146,
+          147
+        ]
+      },
+      {
+        "path": "components\\dashboard\\TelegramSignalsConnectButton.tsx",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "path": "components\\marketing\\LegalPageShell.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          219
+        ]
+      },
+      {
+        "path": "components\\marketing\\SeoJsonLd.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          37
+        ]
+      },
+      {
+        "path": "components\\marketing\\SeoJsonLd.tsx",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          41
+        ]
+      },
+      {
+        "path": "components\\marketing\\SeoJsonLd.tsx",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          49
+        ]
+      },
+      {
+        "path": "components\\marketing\\SeoJsonLd.tsx",
+        "pattern": "\\belite\\b",
+        "lines": [
+          57
+        ]
+      },
+      {
+        "path": "components\\marketing\\SiteFooter.tsx",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          44
+        ]
+      },
+      {
+        "path": "components\\marketing\\SiteFooter.tsx",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          43
+        ]
+      },
+      {
+        "path": "lib\\ai-usage-limits.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          1
+        ]
+      },
+      {
+        "path": "lib\\billing-plans.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          76,
+          78,
+          79,
+          93,
+          97,
+          98
+        ]
+      },
+      {
+        "path": "lib\\billing-plans.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          70
+        ]
+      },
+      {
+        "path": "lib\\billing-plans.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          1,
+          17,
+          18,
+          19,
+          20,
+          31,
+          44,
+          81
+        ]
+      },
+      {
+        "path": "lib\\billing-plans.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          1,
+          34,
+          35,
+          36,
+          37,
+          39,
+          47,
+          59,
+          64,
+          66,
+          78
+        ]
+      },
+      {
+        "path": "lib\\billing-plans.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          1,
+          54,
+          55,
+          56,
+          57,
+          79
+        ]
+      },
+      {
+        "path": "lib\\plan-limits.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          1,
+          31,
+          96,
+          97,
+          108
+        ]
+      },
+      {
+        "path": "lib\\plan-limits.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          1,
+          52,
+          100,
+          101
+        ]
+      },
+      {
+        "path": "lib\\plan-limits.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          1,
+          73,
+          104,
+          105
+        ]
+      },
+      {
+        "path": "lib\\site.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          7
+        ]
+      },
+      {
+        "path": "lib\\stockEngineInvestorDashboard.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          144,
+          235
+        ]
+      },
+      {
+        "path": "lib\\supabaseAdmin.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          16
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-ai-master-prompt.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          3,
+          7,
+          8,
+          26,
+          29,
+          132,
+          196,
+          255
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-ai-master-prompt.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          12,
+          117
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-ai-master-prompt.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          11,
+          120,
+          249,
+          255,
+          267
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-ai-master-prompt.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          17,
+          43,
+          44,
+          101,
+          215,
+          238,
+          367
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          161
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          13,
+          46,
+          138
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          13,
+          47,
+          104,
+          281,
+          358
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          13,
+          48
+        ]
+      },
+      {
+        "path": "lib\\ai\\skill-edge-prompts.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          433
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          15
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          10
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          50,
+          141,
+          233
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          51,
+          54,
+          142,
+          145,
+          234,
+          237
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          52,
+          56,
+          143,
+          147,
+          235,
+          239
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionaries.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          49,
+          89,
+          140,
+          232
+        ]
+      },
+      {
+        "path": "lib\\i18n\\dictionary-types.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          48
+        ]
+      },
+      {
+        "path": "lib\\security\\admin-access.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          2,
+          31,
+          33,
+          37,
+          38,
+          43,
+          70
+        ]
+      },
+      {
+        "path": "lib\\security\\admin-access.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          61
+        ]
+      },
+      {
+        "path": "lib\\security\\admin-route-gate.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          2
+        ]
+      },
+      {
+        "path": "lib\\security\\ai-route-gate.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          2,
+          13,
+          36,
+          38,
+          42,
+          43,
+          52,
+          65,
+          84
+        ]
+      },
+      {
+        "path": "lib\\security\\ai-route-gate.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          72
+        ]
+      },
+      {
+        "path": "lib\\security\\ai-route-gate.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "path": "lib\\security\\ai-route-gate.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "path": "lib\\security\\ai-route-gate.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          14
+        ]
+      },
+      {
+        "path": "lib\\security\\ai-route-gate.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          8,
+          65,
+          67,
+          74,
+          75,
+          85,
+          86,
+          87
+        ]
+      },
+      {
+        "path": "lib\\security\\client-auth-fetch.backup-before-full-clean-singleton.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          17
+        ]
+      },
+      {
+        "path": "lib\\security\\client-auth-fetch.backup-before-singleton-supabase.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          18
+        ]
+      },
+      {
+        "path": "lib\\security\\client-auth-fetch.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          9
+        ]
+      },
+      {
+        "path": "lib\\security\\feature-gate.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          5,
+          21,
+          55,
+          57,
+          61,
+          62,
+          70,
+          83,
+          104
+        ]
+      },
+      {
+        "path": "lib\\security\\feature-gate.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          47,
+          91
+        ]
+      },
+      {
+        "path": "lib\\security\\feature-gate.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          44
+        ]
+      },
+      {
+        "path": "lib\\security\\feature-gate.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          37,
+          44
+        ]
+      },
+      {
+        "path": "lib\\security\\feature-gate.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          11,
+          22,
+          83,
+          84,
+          93,
+          94,
+          105
+        ]
+      },
+      {
+        "path": "lib\\security\\server-auth.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          54,
+          69,
+          91,
+          104
+        ]
+      },
+      {
+        "path": "lib\\security\\subscription-access.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          1
+        ]
+      },
+      {
+        "path": "lib\\security\\subscription-access.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          25,
+          27,
+          28
+        ]
+      },
+      {
+        "path": "lib\\security\\subscription-access.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          3,
+          30,
+          193
+        ]
+      },
+      {
+        "path": "lib\\security\\subscription-access.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          3,
+          27,
+          69,
+          73,
+          77
+        ]
+      },
+      {
+        "path": "lib\\security\\subscription-access.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          3,
+          28,
+          69,
+          73,
+          77,
+          81
+        ]
+      },
+      {
+        "path": "lib\\security\\subscription-access.ts",
+        "pattern": "\\baccess\\b",
+        "lines": [
+          57,
+          64,
+          69,
+          73,
+          77,
+          81
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-cron-runner.ts",
+        "pattern": "\\bauth\\b",
+        "lines": [
+          17,
+          22
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-cron-runner.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          34
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-generator.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          5843,
+          5847,
+          5851,
+          5879,
+          5889,
+          5890,
+          5891,
+          5892,
+          5893,
+          5917,
+          5932,
+          5996,
+          5997,
+          6754,
+          6759,
+          6760,
+          6761,
+          6762,
+          6767,
+          6768
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-generator.ts",
+        "pattern": "\\btier\\b",
+        "lines": [
+          8526
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-generator.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          709,
+          9177
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-generator.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          2,
+          5503,
+          5572,
+          5573
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-alert-generator.ts",
+        "pattern": "\\belite\\b",
+        "lines": [
+          8680
+        ]
+      },
+      {
+        "path": "lib\\trading\\market-structure.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          329
+        ]
+      },
+      {
+        "path": "lib\\trading\\setup-playbook.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          216,
+          239,
+          262
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-ai-validation-ui.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          10,
+          115,
+          132,
+          156,
+          179
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-ai-validator.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          146,
+          168,
+          289,
+          847,
+          850,
+          852,
+          854,
+          856,
+          860,
+          862,
+          866,
+          869,
+          871
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-ai-validator.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          450,
+          466,
+          621,
+          649,
+          684,
+          780,
+          805,
+          809,
+          862,
+          893,
+          1022
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-confidence.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          592,
+          594,
+          612,
+          621
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-confidence.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          232,
+          488,
+          724
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-outcome-resolver.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          440
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-personalization.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          155
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-layers.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          37,
+          515
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-profile.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          250
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-profile.ts",
+        "pattern": "\\btier\\b",
+        "lines": [
+          17,
+          147,
+          242,
+          270,
+          297,
+          324,
+          351,
+          376
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-quality-profile.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          9,
+          243,
+          244,
+          253
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-text-i18n.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          449
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-text-i18n.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          80,
+          81,
+          82,
+          104,
+          105,
+          106,
+          134,
+          135,
+          136
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-text-i18n.ts",
+        "pattern": "\\bcore\\b",
+        "lines": [
+          55
+        ]
+      },
+      {
+        "path": "lib\\trading\\signal-text-i18n.ts",
+        "pattern": "\\bedge\\b",
+        "lines": [
+          375,
+          376,
+          377
+        ]
+      },
+      {
+        "path": "lib\\trading\\skill-edge-alert-engine.ts",
+        "pattern": "\\bpremium\\b",
+        "lines": [
+          585,
+          724
+        ]
+      },
+      {
+        "path": "lib\\trading\\telegram-signal-alerts.ts",
+        "pattern": "\\bplan\\b",
+        "lines": [
+          286
+        ]
+      }
+    ]
+  },
+  "errors": [],
+  "warnings": [
+    "REAL_ENV_FILE_PRESENT_NOT_READ_.env.local"
+  ],
+  "recommendedOrder": [
+    "FRONTEND_BUG_AND_LAYOUT_AUDIT",
+    "PAYMENT_DOMAIN_AND_DATABASE_FLOW",
+    "PAYMENT_PROVIDER_DECISION_WITH_COST_DISCLOSURE",
+    "EN_RU_UA_DICTIONARY_PARITY",
+    "PRODUCTION_BUILD_AND_SMOKE_TEST"
+  ],
+  "nextAction": "UPLOAD_S10_9A_REPORT_AND_RAW_FOR_IMPLEMENTATION_PLAN"
+}

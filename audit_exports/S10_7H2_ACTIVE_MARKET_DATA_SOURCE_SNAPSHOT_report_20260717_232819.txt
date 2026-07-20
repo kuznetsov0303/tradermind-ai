@@ -1,0 +1,18 @@
+﻿S10.7H2 ACTIVE MARKET-DATA SOURCE SNAPSHOT
+Generated=20260717_232819
+OK=True
+CLASSIFICATION=DAY7D_ACTIVE_MARKET_DATA_SOURCE_SNAPSHOT_COLLECTED
+RESOLVED_MODULE=app.market_data.stream_service
+RESOLVED_ENTRY_FILE=app/market_data/stream_service.py
+ACTIVE_FILE_COUNT=9
+MARKET_DATA_FILE_COUNT=8
+MARKET_DATA_FILES=app/market_data/__init__.py,app/market_data/candle_engine.py,app/market_data/contracts.py,app/market_data/databento_adapter.py,app/market_data/market_state.py,app/market_data/quote_quality.py,app/market_data/scanner.py,app/market_data/stream_service.py
+VALIDATION_ERRORS=
+NEXT_ACTION=BUILD_EXACT_SECURITY_MASTER_AND_FULL_INSTRUMENTATION_PATCH
+PRODUCTION_MUTATION=False
+SERVICE_RESTARTED=False
+SYSTEMD_TOUCHED=False
+STREAM_SYMBOLS_CHANGED=False
+SNAPSHOT_DIR=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\S10_7H2_active_market_data_source_snapshot
+ARCHIVE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_7H2_ACTIVE_MARKET_DATA_SOURCE_SNAPSHOT_20260717_232819.tar.gz
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_7H2_ACTIVE_MARKET_DATA_SOURCE_SNAPSHOT_raw_20260717_232819.json

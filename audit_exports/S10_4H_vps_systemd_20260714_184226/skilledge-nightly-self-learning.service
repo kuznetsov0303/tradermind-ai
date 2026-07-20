@@ -1,0 +1,12 @@
+[Unit]
+Description=SkillEdge Nightly Self Learning Runner
+After=skilledge-stock-engine-api.service
+Wants=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python run_nightly_self_learning.py --lookback-days 3 --max-days 3 --min-closed 10
+User=skilledge
+Group=skilledge

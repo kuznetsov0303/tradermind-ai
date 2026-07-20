@@ -1,0 +1,17 @@
+﻿{
+    "ok":  true,
+    "classification":  "LANDING_LANGUAGE_DROPDOWN_REFERENCE_STYLE_PASSED",
+    "landingComponentChanged":  true,
+    "desktopVerticalList":  true,
+    "languageSearch":  true,
+    "activeRowHighlight":  true,
+    "activeCheckmark":  true,
+    "circularSelectionRemoved":  true,
+    "internalScroll":  true,
+    "buildPassed":  true,
+    "productionMutation":  false,
+    "vpsTouched":  false,
+    "backupRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9X4_language_dropdown_reference_backup_20260720_134513",
+    "buildLog":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9X4_LANGUAGE_DROPDOWN_REFERENCE_build_20260720_134513.txt",
+    "nextAction":  "RUN_DROPDOWN_VISUAL_QA"
+}

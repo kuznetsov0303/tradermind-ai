@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "classification": "JOURNAL_ACTIONS_SINGLE_ROW_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "fileChanged": "app/dashboard/page.tsx",
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9G5_journal_actions_single_row_backup_20260719_181501",
+  "pnlMovedToHeader": true,
+  "actionsGridDesktopColumns": 4,
+  "actionsGridCompactColumns": 2,
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9G5_JOURNAL_ACTIONS_SINGLE_ROW_build_20260719_181501.txt",
+  "nextAction": "LOCAL_VISUAL_VERIFY_JOURNAL"
+}

@@ -1,0 +1,3471 @@
+[
+  {
+    "path": "dict.en.lang",
+    "text": "EN",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 31
+  },
+  {
+    "path": "dict.en.switchLanguage",
+    "text": "Language",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 32
+  },
+  {
+    "path": "dict.en.brandTag",
+    "text": "Performance intelligence",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.brandTag",
+    "localeMatchKeys": [
+      "landing.brandTag"
+    ],
+    "line": 33
+  },
+  {
+    "path": "dict.en.requestDemo",
+    "text": "Request demo",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.requestDemo",
+    "localeMatchKeys": [
+      "landing.requestDemo"
+    ],
+    "line": 34
+  },
+  {
+    "path": "dict.en.choosePlan",
+    "text": "Choose plan",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.choosePlan",
+    "localeMatchKeys": [
+      "landing.choosePlan"
+    ],
+    "line": 35
+  },
+  {
+    "path": "dict.en.viewProduct",
+    "text": "View product",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.viewProduct",
+      "landing.secondary.2"
+    ],
+    "line": 36
+  },
+  {
+    "path": "dict.en.viewPricing",
+    "text": "View pricing",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.viewPricing",
+      "landing.secondary",
+      "landing.secondaryCta"
+    ],
+    "line": 37
+  },
+  {
+    "path": "dict.en.viewAbout",
+    "text": "About us",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.viewAbout",
+      "landing.team"
+    ],
+    "line": 38
+  },
+  {
+    "path": "dict.en.nav.home",
+    "text": "Home",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 40
+  },
+  {
+    "path": "dict.en.nav.desk",
+    "text": "Desk",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 41
+  },
+  {
+    "path": "dict.en.nav.product",
+    "text": "Product",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 42
+  },
+  {
+    "path": "dict.en.nav.pricing",
+    "text": "Pricing",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 43
+  },
+  {
+    "path": "dict.en.nav.team",
+    "text": "About us",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.viewAbout",
+      "landing.team"
+    ],
+    "line": 44
+  },
+  {
+    "path": "dict.en.heroBadge",
+    "text": "Premium AI trading workspace",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroBadge",
+    "localeMatchKeys": [
+      "landing.heroBadge"
+    ],
+    "line": 46
+  },
+  {
+    "path": "dict.en.heroTitle",
+    "text": "Turn market noise, trade history and execution mistakes into a clearer trading process.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroTitle",
+    "localeMatchKeys": [
+      "landing.heroTitle"
+    ],
+    "line": 47
+  },
+  {
+    "path": "dict.en.heroText",
+    "text": "SkillEdge AI connects your journal, screenshots, chart review, market intelligence, AI scanner, alerts, reports and learning workflow into one premium trading workspace — without promising profits or replacing your own judgment.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroText",
+    "localeMatchKeys": [
+      "landing.heroText"
+    ],
+    "line": 49
+  },
+  {
+    "path": "dict.en.start",
+    "text": "Start with a plan",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.start",
+    "localeMatchKeys": [
+      "landing.start"
+    ],
+    "line": 50
+  },
+  {
+    "path": "dict.en.tour",
+    "text": "View product flow",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.tour",
+    "localeMatchKeys": [
+      "landing.tour"
+    ],
+    "line": 51
+  },
+  {
+    "path": "dict.en.stats[0][0]",
+    "text": "Private beta",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 53
+  },
+  {
+    "path": "dict.en.stats[0][1]",
+    "text": "built for serious active traders",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 53
+  },
+  {
+    "path": "dict.en.stats[1][0]",
+    "text": "Journal-first",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 54
+  },
+  {
+    "path": "dict.en.stats[1][1]",
+    "text": "your trades become the data source",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 54
+  },
+  {
+    "path": "dict.en.stats[2][0]",
+    "text": "Edge+",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 55
+  },
+  {
+    "path": "dict.en.stats[2][1]",
+    "text": "scanner and market brief access",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 55
+  },
+  {
+    "path": "dict.en.problemEyebrow",
+    "text": "The problem",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.problemEyebrow",
+    "localeMatchKeys": [
+      "landing.problemEyebrow"
+    ],
+    "line": 57
+  },
+  {
+    "path": "dict.en.problemTitle",
+    "text": "Most traders do not need more noise. They need a cleaner process.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.problemTitle",
+    "localeMatchKeys": [
+      "landing.problemTitle"
+    ],
+    "line": 58
+  },
+  {
+    "path": "dict.en.problemText",
+    "text": "Charts, screenshots, emotions, watchlists, notes and mistakes often live in different places. SkillEdge AI brings them into one workflow so the trader can review decisions, understand patterns and build a repeatable process.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.problemText",
+    "localeMatchKeys": [
+      "landing.problemText"
+    ],
+    "line": 60
+  },
+  {
+    "path": "dict.en.homeSections.whyTitle",
+    "text": "What SkillEdge AI helps you organize",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.whyTitle",
+    "localeMatchKeys": [
+      "landing.whyTitle"
+    ],
+    "line": 62
+  },
+  {
+    "path": "dict.en.homeSections.whyText",
+    "text": "The platform is designed around the real trading loop: find what matters, plan the trade, execute with discipline, record the result and learn from the outcome.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.whyText",
+    "localeMatchKeys": [
+      "landing.whyText"
+    ],
+    "line": 64
+  },
+  {
+    "path": "dict.en.homeSections.cards[0][0]",
+    "text": "Journal & screenshots",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 66
+  },
+  {
+    "path": "dict.en.homeSections.cards[0][1]",
+    "text": "Track trades, screenshots, emotions, mistakes, risk and lessons in one place.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 66
+  },
+  {
+    "path": "dict.en.homeSections.cards[1][0]",
+    "text": "AI Coach",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 67
+  },
+  {
+    "path": "dict.en.homeSections.cards[1][1]",
+    "text": "Get structured feedback on trade logic, risk, discipline and decision quality.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 67
+  },
+  {
+    "path": "dict.en.homeSections.cards[2][0]",
+    "text": "Market Intelligence",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.4",
+    "localeMatchKeys": [
+      "landing.label.4"
+    ],
+    "line": 68
+  },
+  {
+    "path": "dict.en.homeSections.cards[2][1]",
+    "text": "Edge and Elite unlock the scanner layer for stocks, crypto and in-play market context.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 68
+  },
+  {
+    "path": "dict.en.homeSections.cards[3][0]",
+    "text": "AI Alerts",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 69
+  },
+  {
+    "path": "dict.en.homeSections.cards[3][1]",
+    "text": "Elite unlocks the premium alert workflow with setup, trigger, entry, stop, targets and outcome review.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 69
+  },
+  {
+    "path": "dict.en.productPage.heroBadge",
+    "text": "Product",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 73
+  },
+  {
+    "path": "dict.en.productPage.heroTitle",
+    "text": "One connected workspace for trading performance.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroTitle.2",
+    "localeMatchKeys": [
+      "landing.heroTitle.2"
+    ],
+    "line": 74
+  },
+  {
+    "path": "dict.en.productPage.heroText",
+    "text": "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroText.2",
+    "localeMatchKeys": [
+      "landing.heroText.2"
+    ],
+    "line": 76
+  },
+  {
+    "path": "dict.en.productPage.ctaPrimary",
+    "text": "Choose your plan",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.ctaPrimary",
+    "localeMatchKeys": [
+      "landing.ctaPrimary"
+    ],
+    "line": 77
+  },
+  {
+    "path": "dict.en.productPage.ctaSecondary",
+    "text": "Why SkillEdge exists",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.ctaSecondary",
+    "localeMatchKeys": [
+      "landing.ctaSecondary"
+    ],
+    "line": 78
+  },
+  {
+    "path": "dict.en.productPage.heroCards[0][0]",
+    "text": "AI Trading Desk",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label",
+    "localeMatchKeys": [
+      "landing.label"
+    ],
+    "line": 80
+  },
+  {
+    "path": "dict.en.productPage.heroCards[0][1]",
+    "text": "Market intelligence, alerts, journal and coaching in one system.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 80
+  },
+  {
+    "path": "dict.en.productPage.heroCards[1][0]",
+    "text": "Signal-to-Journal",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 81
+  },
+  {
+    "path": "dict.en.productPage.heroCards[1][1]",
+    "text": "Create a trade draft from an alert and compare the plan with your execution.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 81
+  },
+  {
+    "path": "dict.en.productPage.heroCards[2][0]",
+    "text": "Personal Edge",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 82
+  },
+  {
+    "path": "dict.en.productPage.heroCards[2][1]",
+    "text": "The long-term architecture is built around the trader’s own best and worst patterns.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 82
+  },
+  {
+    "path": "dict.en.productPage.deskTitle",
+    "text": "A trading desk should give context, not blind calls.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.deskTitle",
+    "localeMatchKeys": [
+      "landing.deskTitle"
+    ],
+    "line": 84
+  },
+  {
+    "path": "dict.en.productPage.deskText",
+    "text": "SkillEdge AI is designed to explain why an opportunity matters, what confirms it, what invalidates it and where the risk sits. The goal is better decision-making, not blind dependency.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.deskText",
+    "localeMatchKeys": [
+      "landing.deskText"
+    ],
+    "line": 86
+  },
+  {
+    "path": "dict.en.productPage.deskCards[0][0]",
+    "text": "Market Intelligence",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.4",
+    "localeMatchKeys": [
+      "landing.label.4"
+    ],
+    "line": 88
+  },
+  {
+    "path": "dict.en.productPage.deskCards[0][1]",
+    "text": "Find stocks and crypto that deserve attention before wasting time on dead charts.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 88
+  },
+  {
+    "path": "dict.en.productPage.deskCards[1][0]",
+    "text": "AI Scanner",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 89
+  },
+  {
+    "path": "dict.en.productPage.deskCards[1][1]",
+    "text": "Edge and Elite receive AI Market Brief logic around the best in-play candidates.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 89
+  },
+  {
+    "path": "dict.en.productPage.deskCards[2][0]",
+    "text": "AI Alerts",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 90
+  },
+  {
+    "path": "dict.en.productPage.deskCards[2][1]",
+    "text": "Elite receives structured signals with setup, direction, trigger, entry zone, stop and targets.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 90
+  },
+  {
+    "path": "dict.en.productPage.deskCards[3][0]",
+    "text": "Outcome Learning",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.7",
+    "localeMatchKeys": [
+      "landing.label.7"
+    ],
+    "line": 91
+  },
+  {
+    "path": "dict.en.productPage.deskCards[3][1]",
+    "text": "Track taken, skipped and missed alerts so every outcome becomes a learning point.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 91
+  },
+  {
+    "path": "dict.en.productPage.flowEyebrow",
+    "text": "Workflow",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 93
+  },
+  {
+    "path": "dict.en.productPage.flowTitle",
+    "text": "From market scan to personal improvement — one connected loop.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.flowTitle",
+    "localeMatchKeys": [
+      "landing.flowTitle"
+    ],
+    "line": 94
+  },
+  {
+    "path": "dict.en.productPage.flowText",
+    "text": "Every serious trading idea should become data: what the market showed, what the trader planned, what was executed and what the outcome taught.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.flowText",
+    "localeMatchKeys": [
+      "landing.flowText"
+    ],
+    "line": 96
+  },
+  {
+    "path": "dict.en.productPage.flow[0][0]",
+    "text": "01",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 98
+  },
+  {
+    "path": "dict.en.productPage.flow[0][1]",
+    "text": "Market moves",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 98
+  },
+  {
+    "path": "dict.en.productPage.flow[0][2]",
+    "text": "SkillEdge watches active stocks, crypto, unusual movement, catalysts and market context.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 98
+  },
+  {
+    "path": "dict.en.productPage.flow[1][0]",
+    "text": "02",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 99
+  },
+  {
+    "path": "dict.en.productPage.flow[1][1]",
+    "text": "AI filters noise",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 99
+  },
+  {
+    "path": "dict.en.productPage.flow[1][2]",
+    "text": "The system ranks opportunities by quality, freshness, risk and setup clarity.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 99
+  },
+  {
+    "path": "dict.en.productPage.flow[2][0]",
+    "text": "03",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 100
+  },
+  {
+    "path": "dict.en.productPage.flow[2][1]",
+    "text": "Plan appears",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 100
+  },
+  {
+    "path": "dict.en.productPage.flow[2][2]",
+    "text": "The trader sees direction, trigger, entry zone, stop, targets, management and invalidation.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 100
+  },
+  {
+    "path": "dict.en.productPage.flow[3][0]",
+    "text": "04",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 101
+  },
+  {
+    "path": "dict.en.productPage.flow[3][1]",
+    "text": "Journal connects",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 101
+  },
+  {
+    "path": "dict.en.productPage.flow[3][2]",
+    "text": "A taken alert can become a journal trade with screenshots, notes and execution review.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 101
+  },
+  {
+    "path": "dict.en.productPage.flow[4][0]",
+    "text": "05",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 102
+  },
+  {
+    "path": "dict.en.productPage.flow[4][1]",
+    "text": "Learning compounds",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 102
+  },
+  {
+    "path": "dict.en.productPage.flow[4][2]",
+    "text": "Reports, outcome review and coaching turn repetition into a stronger process.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 102
+  },
+  {
+    "path": "dict.en.productPage.modulesEyebrow",
+    "text": "Modules",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 104
+  },
+  {
+    "path": "dict.en.productPage.modulesTitle",
+    "text": "Everything is designed to work together.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.modulesTitle",
+    "localeMatchKeys": [
+      "landing.modulesTitle"
+    ],
+    "line": 105
+  },
+  {
+    "path": "dict.en.productPage.modulesText",
+    "text": "Each module can be useful alone. Together they create a premium workspace where the trader can discover opportunities, execute with structure and review performance.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.modulesText",
+    "localeMatchKeys": [
+      "landing.modulesText"
+    ],
+    "line": 107
+  },
+  {
+    "path": "dict.en.productPage.modules[0][0]",
+    "text": "Journal & Screenshots",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.5",
+    "localeMatchKeys": [
+      "landing.label.5"
+    ],
+    "line": 109
+  },
+  {
+    "path": "dict.en.productPage.modules[0][1]",
+    "text": "A serious journal that becomes the data source for analysis, reports and future personalization.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 109
+  },
+  {
+    "path": "dict.en.productPage.modules[0][2][0]",
+    "text": "Trades and screenshots",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 109
+  },
+  {
+    "path": "dict.en.productPage.modules[0][2][1]",
+    "text": "PnL and win rate",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 109
+  },
+  {
+    "path": "dict.en.productPage.modules[0][2][2]",
+    "text": "CSV/XLSX export",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 109
+  },
+  {
+    "path": "dict.en.productPage.modules[0][2][3]",
+    "text": "AI journal review",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 109
+  },
+  {
+    "path": "dict.en.productPage.modules[1][0]",
+    "text": "Charts & Watchlists",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 110
+  },
+  {
+    "path": "dict.en.productPage.modules[1][1]",
+    "text": "A chart workspace connected to tickers, watchlists, screenshots and future premium chart analysis.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 110
+  },
+  {
+    "path": "dict.en.productPage.modules[1][2][0]",
+    "text": "TradingView workspace",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 110
+  },
+  {
+    "path": "dict.en.productPage.modules[1][2][1]",
+    "text": "Ticker input",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 110
+  },
+  {
+    "path": "dict.en.productPage.modules[1][2][2]",
+    "text": "Watchlist",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 110
+  },
+  {
+    "path": "dict.en.productPage.modules[1][2][3]",
+    "text": "AI chart analysis foundation",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 110
+  },
+  {
+    "path": "dict.en.productPage.modules[2][0]",
+    "text": "Market Intelligence",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.4",
+    "localeMatchKeys": [
+      "landing.label.4"
+    ],
+    "line": 111
+  },
+  {
+    "path": "dict.en.productPage.modules[2][1]",
+    "text": "A scanner layer for finding active stocks and crypto with clear source transparency.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 111
+  },
+  {
+    "path": "dict.en.productPage.modules[2][2][0]",
+    "text": "Stocks and crypto candidates",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 111
+  },
+  {
+    "path": "dict.en.productPage.modules[2][2][1]",
+    "text": "Market context",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 111
+  },
+  {
+    "path": "dict.en.productPage.modules[2][2][2]",
+    "text": "Source labels",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 111
+  },
+  {
+    "path": "dict.en.productPage.modules[2][2][3]",
+    "text": "AI Market Brief",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 111
+  },
+  {
+    "path": "dict.en.productPage.modules[3][0]",
+    "text": "AI Alerts",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 112
+  },
+  {
+    "path": "dict.en.productPage.modules[3][1]",
+    "text": "Elite-level actionable signals with structure, education and outcome review.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 112
+  },
+  {
+    "path": "dict.en.productPage.modules[3][2][0]",
+    "text": "Floating alert widget",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 112
+  },
+  {
+    "path": "dict.en.productPage.modules[3][2][1]",
+    "text": "Full Alerts Center",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 112
+  },
+  {
+    "path": "dict.en.productPage.modules[3][2][2]",
+    "text": "Breakdown modal",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 112
+  },
+  {
+    "path": "dict.en.productPage.modules[3][2][3]",
+    "text": "Signal-to-Journal",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 112
+  },
+  {
+    "path": "dict.en.productPage.modules[4][0]",
+    "text": "Reports & Learning",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 113
+  },
+  {
+    "path": "dict.en.productPage.modules[4][1]",
+    "text": "A review layer that turns trades into performance feedback and repeatable lessons.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 113
+  },
+  {
+    "path": "dict.en.productPage.modules[4][2][0]",
+    "text": "AI reports",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 113
+  },
+  {
+    "path": "dict.en.productPage.modules[4][2][1]",
+    "text": "Learning blocks",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 113
+  },
+  {
+    "path": "dict.en.productPage.modules[4][2][2]",
+    "text": "Playbook foundation",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 113
+  },
+  {
+    "path": "dict.en.productPage.modules[4][2][3]",
+    "text": "Execution focus",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 113
+  },
+  {
+    "path": "dict.en.productPage.modules[5][0]",
+    "text": "Support",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 114
+  },
+  {
+    "path": "dict.en.productPage.modules[5][1]",
+    "text": "A site-wide support assistant and operator flow for product, payment and access questions.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 114
+  },
+  {
+    "path": "dict.en.productPage.modules[5][2][0]",
+    "text": "Support assistant",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 114
+  },
+  {
+    "path": "dict.en.productPage.modules[5][2][1]",
+    "text": "Operator request",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 114
+  },
+  {
+    "path": "dict.en.productPage.modules[5][2][2]",
+    "text": "Email support",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 114
+  },
+  {
+    "path": "dict.en.productPage.modules[5][2][3]",
+    "text": "Admin reply flow",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 114
+  },
+  {
+    "path": "dict.en.productPage.differentEyebrow",
+    "text": "Difference",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 116
+  },
+  {
+    "path": "dict.en.productPage.differentTitle",
+    "text": "This is not another signal service. It is a performance system.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.differentTitle",
+    "localeMatchKeys": [
+      "landing.differentTitle"
+    ],
+    "line": 117
+  },
+  {
+    "path": "dict.en.productPage.differentText",
+    "text": "The best traders do not only search for entries. They build process, risk control, review, discipline and repeatable patterns. SkillEdge AI is being built around that reality.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.differentText",
+    "localeMatchKeys": [
+      "landing.differentText"
+    ],
+    "line": 119
+  },
+  {
+    "path": "dict.en.productPage.comparisons[0][0]",
+    "text": "Instead of a normal scanner",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 121
+  },
+  {
+    "path": "dict.en.productPage.comparisons[0][1]",
+    "text": "You only see tickers and still have to guess what matters.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 121
+  },
+  {
+    "path": "dict.en.productPage.comparisons[0][2]",
+    "text": "SkillEdge explains why the ticker matters, what the setup is, what can go wrong and what confirms the idea.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 121
+  },
+  {
+    "path": "dict.en.productPage.comparisons[1][0]",
+    "text": "Instead of a simple journal",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 122
+  },
+  {
+    "path": "dict.en.productPage.comparisons[1][1]",
+    "text": "You store trades but do not transform them into an edge.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 122
+  },
+  {
+    "path": "dict.en.productPage.comparisons[1][2]",
+    "text": "SkillEdge connects trades, screenshots, alerts, outcomes and mistakes into a personal improvement system.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 122
+  },
+  {
+    "path": "dict.en.productPage.comparisons[2][0]",
+    "text": "Instead of a generic chatbot",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 123
+  },
+  {
+    "path": "dict.en.productPage.comparisons[2][1]",
+    "text": "You ask random questions and receive disconnected answers.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 123
+  },
+  {
+    "path": "dict.en.productPage.comparisons[2][2]",
+    "text": "SkillEdge works inside the workflow: alerts, journal, reports, execution, learning and playbook.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 123
+  },
+  {
+    "path": "dict.en.productPage.finalTitle",
+    "text": "Build a trading system around your real behavior.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.finalTitle",
+    "localeMatchKeys": [
+      "landing.finalTitle"
+    ],
+    "line": 125
+  },
+  {
+    "path": "dict.en.productPage.finalText",
+    "text": "SkillEdge AI is for traders who are tired of scattered tools, emotional decisions and unclear reviews. The product helps the client see the market cleaner, execute with more structure and understand what to improve next.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.finalText",
+    "localeMatchKeys": [
+      "landing.finalText"
+    ],
+    "line": 127
+  },
+  {
+    "path": "dict.en.productPage.finalChecklist[0]",
+    "text": "Journal, screenshots and analytics",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 129
+  },
+  {
+    "path": "dict.en.productPage.finalChecklist[1]",
+    "text": "AI Coach and chart review",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 130
+  },
+  {
+    "path": "dict.en.productPage.finalChecklist[2]",
+    "text": "Market Intelligence and AI Scanner for Edge+",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 131
+  },
+  {
+    "path": "dict.en.productPage.finalChecklist[3]",
+    "text": "AI Alerts and Signal-to-Journal for Elite",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 132
+  },
+  {
+    "path": "dict.en.productPage.finalChecklist[4]",
+    "text": "Reports, learning blocks and playbook foundation",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 133
+  },
+  {
+    "path": "dict.en.productPage.finalChecklist[5]",
+    "text": "Support assistant and operator request flow",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 134
+  },
+  {
+    "path": "dict.en.pricingPage.heroBadge",
+    "text": "Pricing",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 138
+  },
+  {
+    "path": "dict.en.pricingPage.heroTitle",
+    "text": "Choose the level of intelligence around your trading process.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroTitle.3",
+    "localeMatchKeys": [
+      "landing.heroTitle.3"
+    ],
+    "line": 139
+  },
+  {
+    "path": "dict.en.pricingPage.heroText",
+    "text": "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroText.3",
+    "localeMatchKeys": [
+      "landing.heroText.3"
+    ],
+    "line": 141
+  },
+  {
+    "path": "dict.en.pricingPage.billingToggle.monthly",
+    "text": "1 month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 143
+  },
+  {
+    "path": "dict.en.pricingPage.billingToggle.halfyear",
+    "text": "6 months",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.halfyear",
+    "localeMatchKeys": [
+      "landing.halfyear"
+    ],
+    "line": 144
+  },
+  {
+    "path": "dict.en.pricingPage.billingToggle.yearly",
+    "text": "1 year",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 145
+  },
+  {
+    "path": "dict.en.pricingPage.period.monthly",
+    "text": "/ month",
+    "technical": true,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 148
+  },
+  {
+    "path": "dict.en.pricingPage.period.halfyear",
+    "text": "/ 6 months",
+    "technical": true,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 149
+  },
+  {
+    "path": "dict.en.pricingPage.period.yearly",
+    "text": "/ year",
+    "technical": true,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 150
+  },
+  {
+    "path": "dict.en.pricingPage.cardPayment",
+    "text": "Card payment is being prepared",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.cardPayment",
+    "localeMatchKeys": [
+      "landing.cardPayment"
+    ],
+    "line": 152
+  },
+  {
+    "path": "dict.en.pricingPage.cryptoNote",
+    "text": "* crypto payment through the available launch flow",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.cryptoNote",
+    "localeMatchKeys": [
+      "landing.cryptoNote"
+    ],
+    "line": 153
+  },
+  {
+    "path": "dict.en.pricingPage.checkoutStatus.checking",
+    "text": "Checking your account...",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.checking",
+    "localeMatchKeys": [
+      "landing.checking"
+    ],
+    "line": 155
+  },
+  {
+    "path": "dict.en.pricingPage.checkoutStatus.invoice",
+    "text": "Creating crypto invoice...",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.invoice",
+      "landing.creatingInvoice"
+    ],
+    "line": 156
+  },
+  {
+    "path": "dict.en.pricingPage.checkoutStatus.noUrl",
+    "text": "Crypto invoice was created, but payment URL was not returned.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.noUrl",
+    "localeMatchKeys": [
+      "landing.noUrl"
+    ],
+    "line": 157
+  },
+  {
+    "path": "dict.en.pricingPage.checkoutStatus.unavailable",
+    "text": "Crypto payment is not available right now.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.unavailable",
+    "localeMatchKeys": [
+      "landing.unavailable"
+    ],
+    "line": 158
+  },
+  {
+    "path": "dict.en.pricingPage.planBadge.core",
+    "text": "Start with discipline",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.core",
+      "landing.badge.3"
+    ],
+    "line": 161
+  },
+  {
+    "path": "dict.en.pricingPage.planBadge.edge",
+    "text": "Best active-trader value",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.edge",
+    "localeMatchKeys": [
+      "landing.edge"
+    ],
+    "line": 162
+  },
+  {
+    "path": "dict.en.pricingPage.planBadge.elite",
+    "text": "Full AI Trading Desk",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.elite",
+      "landing.badge.5"
+    ],
+    "line": 163
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].id",
+    "text": "starter",
+    "technical": true,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 167
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].name",
+    "text": "SkillEdge Core",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.name",
+    "localeMatchKeys": [
+      "landing.name"
+    ],
+    "line": 168
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].headline",
+    "text": "For traders who need structure first.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.headline",
+    "localeMatchKeys": [
+      "landing.headline"
+    ],
+    "line": 169
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].text",
+    "text": "Build the foundation: journal, screenshots, AI Coach, chart analysis foundation, exports and a cleaner review process.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.text",
+    "localeMatchKeys": [
+      "landing.text"
+    ],
+    "line": 171
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].bestFor",
+    "text": "Best for building discipline, tracking trades and stopping reliance on memory.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.bestFor",
+    "localeMatchKeys": [
+      "landing.bestFor"
+    ],
+    "line": 172
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].cta",
+    "text": "Start with Core",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.cta",
+    "localeMatchKeys": [
+      "landing.cta"
+    ],
+    "line": 173
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].features[0]",
+    "text": "Up to 300 trades",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 174
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].features[1]",
+    "text": "3 screenshots per trade",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 174
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].features[2]",
+    "text": "50 AI Coach requests / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 174
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].features[3]",
+    "text": "10 journal AI analyses / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 174
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].features[4]",
+    "text": "20 chart AI analyses / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 174
+  },
+  {
+    "path": "dict.en.pricingPage.plans[0].features[5]",
+    "text": "CSV/XLSX export",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 174
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].id",
+    "text": "pro",
+    "technical": true,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 177
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].name",
+    "text": "SkillEdge Edge",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.name.2",
+    "localeMatchKeys": [
+      "landing.name.2"
+    ],
+    "line": 178
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].headline",
+    "text": "For active traders who need deeper review and market context.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.headline.2",
+    "localeMatchKeys": [
+      "landing.headline.2"
+    ],
+    "line": 179
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].text",
+    "text": "Unlock higher limits, AI reports, premium chart analysis, social/market context and the AI Scanner / AI Market Brief layer.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.text.2",
+    "localeMatchKeys": [
+      "landing.text.2"
+    ],
+    "line": 181
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].bestFor",
+    "text": "Best for active traders who review seriously and want better setup and mistake discovery.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.bestFor.2",
+    "localeMatchKeys": [
+      "landing.bestFor.2"
+    ],
+    "line": 182
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].cta",
+    "text": "Upgrade to Edge",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.cta.2",
+    "localeMatchKeys": [
+      "landing.cta.2"
+    ],
+    "line": 183
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].features[0]",
+    "text": "Everything in Core",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 184
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].features[1]",
+    "text": "Strategy OS: build your own trading strategy",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 185
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].features[2]",
+    "text": "Up to 2,000 trades",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 185
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].features[3]",
+    "text": "5 screenshots per trade",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 185
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].features[4]",
+    "text": "200 AI Coach requests / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 185
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].features[5]",
+    "text": "30 AI reports / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 185
+  },
+  {
+    "path": "dict.en.pricingPage.plans[1].features[6]",
+    "text": "AI Scanner / Market Intelligence",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 185
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].id",
+    "text": "elite",
+    "technical": true,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 188
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].name",
+    "text": "SkillEdge Elite",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.name.3",
+    "localeMatchKeys": [
+      "landing.name.3"
+    ],
+    "line": 189
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].headline",
+    "text": "For serious traders who want the full AI Trading Desk.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.headline.3",
+    "localeMatchKeys": [
+      "landing.headline.3"
+    ],
+    "line": 190
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].text",
+    "text": "Unlock AI Alerts, floating alert widget, Signal-to-Journal workflow, decision tracking, outcome learning and maximum AI limits.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.text.3",
+    "localeMatchKeys": [
+      "landing.text.3"
+    ],
+    "line": 192
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].bestFor",
+    "text": "Best for advanced traders who want structured signals and a complete feedback loop.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.bestFor.3",
+    "localeMatchKeys": [
+      "landing.bestFor.3"
+    ],
+    "line": 193
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].cta",
+    "text": "Unlock Elite",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.cta.3",
+      "landing.button"
+    ],
+    "line": 194
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].features[0]",
+    "text": "Everything in Edge",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 195
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].features[1]",
+    "text": "Up to 10,000 trades",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 195
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].features[2]",
+    "text": "10 screenshots per trade",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 195
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].features[3]",
+    "text": "1,000 AI Coach requests / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 195
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].features[4]",
+    "text": "150 AI reports / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 195
+  },
+  {
+    "path": "dict.en.pricingPage.plans[2].features[5]",
+    "text": "AI Alerts + Signal-to-Journal",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 195
+  },
+  {
+    "path": "dict.en.pricingPage.signalEyebrow",
+    "text": "Why the signal layer matters",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.signalEyebrow",
+    "localeMatchKeys": [
+      "landing.signalEyebrow"
+    ],
+    "line": 198
+  },
+  {
+    "path": "dict.en.pricingPage.signalTitle",
+    "text": "SkillEdge signals are built to educate, not to make the trader blindly click.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.signalTitle",
+    "localeMatchKeys": [
+      "landing.signalTitle"
+    ],
+    "line": 199
+  },
+  {
+    "path": "dict.en.pricingPage.signalText",
+    "text": "A weak signal service creates dependency. A strong trading system creates clarity: setup, risk, confirmation, invalidation and the lesson after the outcome.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.signalText",
+    "localeMatchKeys": [
+      "landing.signalText"
+    ],
+    "line": 201
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[0][0]",
+    "text": "Structured signals",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 203
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[0][1]",
+    "text": "Signals are structured setups with direction, trigger, entry zone, stop, targets and risk.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 203
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[1][0]",
+    "text": "Breakdown before action",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 204
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[1][1]",
+    "text": "Every serious alert explains why it appeared, what confirms it and what makes it dangerous.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 204
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[2][0]",
+    "text": "Signal-to-Journal",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 205
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[2][1]",
+    "text": "A taken alert can become a journal trade so the plan and execution can be compared.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 205
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[3][0]",
+    "text": "Outcome coaching",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 206
+  },
+  {
+    "path": "dict.en.pricingPage.signalCards[3][1]",
+    "text": "Taken, skipped and missed decisions show missed opportunities, good skips and weak execution.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 206
+  },
+  {
+    "path": "dict.en.pricingPage.comparisonTitle",
+    "text": "Plan comparison",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.comparisonTitle",
+    "localeMatchKeys": [
+      "landing.comparisonTitle"
+    ],
+    "line": 208
+  },
+  {
+    "path": "dict.en.pricingPage.comparisonText",
+    "text": "Choose the plan that matches your current trading process.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.comparisonText",
+    "localeMatchKeys": [
+      "landing.comparisonText"
+    ],
+    "line": 209
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[0][0]",
+    "text": "Feature",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 211
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[0][1]",
+    "text": "Core",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 211
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[0][2]",
+    "text": "Edge",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 211
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[0][3]",
+    "text": "Elite",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 211
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[1][0]",
+    "text": "Journal + screenshots",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 212
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[1][1]",
+    "text": "Yes",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 212
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[1][2]",
+    "text": "Yes",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 212
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[1][3]",
+    "text": "Yes",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 212
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[2][0]",
+    "text": "AI Coach",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 213
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[2][1]",
+    "text": "50 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 213
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[2][2]",
+    "text": "200 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 213
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[2][3]",
+    "text": "1,000 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 213
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[3][0]",
+    "text": "Journal AI analysis",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 214
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[3][1]",
+    "text": "10 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 214
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[3][2]",
+    "text": "50 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 214
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[3][3]",
+    "text": "300 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 214
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[4][0]",
+    "text": "Chart AI analysis",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 215
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[4][1]",
+    "text": "20 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 215
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[4][2]",
+    "text": "100 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 215
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[4][3]",
+    "text": "500 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 215
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[5][0]",
+    "text": "AI Reports",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 216
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[5][1]",
+    "text": "—",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 216
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[5][2]",
+    "text": "30 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 216
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[5][3]",
+    "text": "150 / month",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 216
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[6][0]",
+    "text": "AI Scanner",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 217
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[6][1]",
+    "text": "—",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 217
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[6][2]",
+    "text": "Yes",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 217
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[6][3]",
+    "text": "Yes",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 217
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[7][0]",
+    "text": "AI Alerts",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 218
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[7][1]",
+    "text": "—",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 218
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[7][2]",
+    "text": "—",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 218
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[7][3]",
+    "text": "Yes",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 218
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[8][0]",
+    "text": "Best for",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.bestFor.7",
+    "localeMatchKeys": [
+      "landing.bestFor.7"
+    ],
+    "line": 219
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[8][1]",
+    "text": "Discipline",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 219
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[8][2]",
+    "text": "Active review",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 219
+  },
+  {
+    "path": "dict.en.pricingPage.comparison[8][3]",
+    "text": "AI Trading Desk",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label",
+    "localeMatchKeys": [
+      "landing.label"
+    ],
+    "line": 219
+  },
+  {
+    "path": "dict.en.pricingPage.finalTitle",
+    "text": "The clean recommendation",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.finalTitle.2",
+    "localeMatchKeys": [
+      "landing.finalTitle.2"
+    ],
+    "line": 221
+  },
+  {
+    "path": "dict.en.pricingPage.finalText",
+    "text": "Choose Core for structure, Edge for scanner intelligence and active review, Elite for real-time AI Alerts and the full signal-to-journal workflow.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.finalText.2",
+    "localeMatchKeys": [
+      "landing.finalText.2"
+    ],
+    "line": 223
+  },
+  {
+    "path": "dict.en.pricingPage.disclaimer",
+    "text": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.disclaimer",
+      "landing.risk"
+    ],
+    "line": 225
+  },
+  {
+    "path": "dict.en.teamPage.heroBadge",
+    "text": "About SkillEdge AI",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroBadge.2",
+    "localeMatchKeys": [
+      "landing.heroBadge.2"
+    ],
+    "line": 228
+  },
+  {
+    "path": "dict.en.teamPage.heroTitle",
+    "text": "We are building the AI trading system serious traders wish already existed.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroTitle.4",
+    "localeMatchKeys": [
+      "landing.heroTitle.4"
+    ],
+    "line": 229
+  },
+  {
+    "path": "dict.en.teamPage.heroText",
+    "text": "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.heroText.4",
+    "localeMatchKeys": [
+      "landing.heroText.4"
+    ],
+    "line": 231
+  },
+  {
+    "path": "dict.en.teamPage.ctaProduct",
+    "text": "Explore product",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.ctaProduct",
+    "localeMatchKeys": [
+      "landing.ctaProduct"
+    ],
+    "line": 232
+  },
+  {
+    "path": "dict.en.teamPage.ctaPricing",
+    "text": "View plans",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.ctaPricing",
+    "localeMatchKeys": [
+      "landing.ctaPricing"
+    ],
+    "line": 233
+  },
+  {
+    "path": "dict.en.teamPage.philosophyBadge",
+    "text": "Product philosophy",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.philosophyBadge",
+    "localeMatchKeys": [
+      "landing.philosophyBadge"
+    ],
+    "line": 234
+  },
+  {
+    "path": "dict.en.teamPage.philosophyTitle",
+    "text": "Process over prediction",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.philosophyTitle",
+    "localeMatchKeys": [
+      "landing.philosophyTitle"
+    ],
+    "line": 235
+  },
+  {
+    "path": "dict.en.teamPage.beliefs[0]",
+    "text": "Signals without education create dependency.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 237
+  },
+  {
+    "path": "dict.en.teamPage.beliefs[1]",
+    "text": "A trade without a plan cannot be reviewed properly.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 238
+  },
+  {
+    "path": "dict.en.teamPage.beliefs[2]",
+    "text": "A journal without feedback becomes a graveyard of old trades.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 239
+  },
+  {
+    "path": "dict.en.teamPage.beliefs[3]",
+    "text": "The best product should make the trader calmer, sharper and more disciplined.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 240
+  },
+  {
+    "path": "dict.en.teamPage.beliefs[4]",
+    "text": "Personal AI alerts become powerful only when the trader builds clean historical data.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 241
+  },
+  {
+    "path": "dict.en.teamPage.storyEyebrow",
+    "text": "Our story",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.storyEyebrow",
+    "localeMatchKeys": [
+      "landing.storyEyebrow"
+    ],
+    "line": 243
+  },
+  {
+    "path": "dict.en.teamPage.storyTitle",
+    "text": "SkillEdge AI is built for traders who want discipline, structure and measurable improvement.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.storyTitle",
+    "localeMatchKeys": [
+      "landing.storyTitle"
+    ],
+    "line": 244
+  },
+  {
+    "path": "dict.en.teamPage.storyText",
+    "text": "The product was born from the same problem many active traders face: the market gives too much information, but almost no honest feedback about execution. SkillEdge AI is designed to connect the trader’s decisions, screenshots, journal, alerts and outcomes into one serious review system.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.storyText",
+    "localeMatchKeys": [
+      "landing.storyText"
+    ],
+    "line": 246
+  },
+  {
+    "path": "dict.en.teamPage.teamEyebrow",
+    "text": "Team structure",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.teamEyebrow",
+    "localeMatchKeys": [
+      "landing.teamEyebrow"
+    ],
+    "line": 247
+  },
+  {
+    "path": "dict.en.teamPage.teamTitle",
+    "text": "Built like a focused product team — trading, product, data and support.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.teamTitle",
+    "localeMatchKeys": [
+      "landing.teamTitle"
+    ],
+    "line": 248
+  },
+  {
+    "path": "dict.en.teamPage.teamText",
+    "text": "Use these cards as the About Us layout. Later you can insert real team photos, names and roles without changing the page structure.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 250
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[0][0]",
+    "text": "Founder / Product Vision",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 252
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[0][1]",
+    "text": "Owns the product direction, trader workflow, pricing logic and premium positioning.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 252
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[1][0]",
+    "text": "Trading Research",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 253
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[1][1]",
+    "text": "Defines setups, alert logic, journal review criteria and educational playbooks.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 253
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[2][0]",
+    "text": "AI & Data Layer",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 254
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[2][1]",
+    "text": "Builds scanner logic, AI prompts, data enrichment, usage limits and backend gates.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 254
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[3][0]",
+    "text": "Design & Experience",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 255
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[3][1]",
+    "text": "Shapes the dashboard, public pages, locked states, loading states and premium interface.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 255
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[4][0]",
+    "text": "Support Operations",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 256
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[4][1]",
+    "text": "Handles customer questions, operator flow, payments, access and product guidance.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 256
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[5][0]",
+    "text": "Security & Infrastructure",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 257
+  },
+  {
+    "path": "dict.en.teamPage.teamCards[5][1]",
+    "text": "Protects private access, platform data, rate limits and client workflows.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 257
+  },
+  {
+    "path": "dict.en.teamPage.principlesEyebrow",
+    "text": "Principles",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 259
+  },
+  {
+    "path": "dict.en.teamPage.principlesTitle",
+    "text": "A serious trading product must be honest about risk and serious about process.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.principlesTitle",
+    "localeMatchKeys": [
+      "landing.principlesTitle"
+    ],
+    "line": 260
+  },
+  {
+    "path": "dict.en.teamPage.principles[0][0]",
+    "text": "No fake certainty",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 262
+  },
+  {
+    "path": "dict.en.teamPage.principles[0][1]",
+    "text": "Trading contains risk. SkillEdge AI must never pretend that any model or alert can guarantee profit.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 262
+  },
+  {
+    "path": "dict.en.teamPage.principles[1][0]",
+    "text": "Transparent logic",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 263
+  },
+  {
+    "path": "dict.en.teamPage.principles[1][1]",
+    "text": "The client should understand why an alert appears, which sources are tracked and what part of the idea is strong or weak.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 263
+  },
+  {
+    "path": "dict.en.teamPage.principles[2][0]",
+    "text": "Premium product mindset",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 264
+  },
+  {
+    "path": "dict.en.teamPage.principles[2][1]",
+    "text": "Every feature should feel useful, serious and connected to the trader’s real workflow.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 264
+  },
+  {
+    "path": "dict.en.teamPage.roadmapEyebrow",
+    "text": "Roadmap",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 266
+  },
+  {
+    "path": "dict.en.teamPage.roadmapTitle",
+    "text": "We are building toward a premium AI Trading Desk.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.roadmapTitle",
+    "localeMatchKeys": [
+      "landing.roadmapTitle"
+    ],
+    "line": 267
+  },
+  {
+    "path": "dict.en.teamPage.roadmapText",
+    "text": "The launch foundation is product-focused: journal, alerts, learning, reports, support, billing and market intelligence. The next layer is premium data, full market scanning and personal alerts based on the client’s own history.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.roadmapText",
+    "localeMatchKeys": [
+      "landing.roadmapText"
+    ],
+    "line": 269
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[0][0]",
+    "text": "01",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 271
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[0][1]",
+    "text": "Launch foundation",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 271
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[0][2]",
+    "text": "Journal, dashboard, screenshots, learning, reports, crypto access and support foundation.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 271
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[1][0]",
+    "text": "02",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 272
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[1][1]",
+    "text": "Signals and behavior",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 272
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[1][2]",
+    "text": "AI alerts, decision tracking, trade drafts, outcome learning and missed opportunity coaching.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 272
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[2][0]",
+    "text": "03",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 273
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[2][1]",
+    "text": "Premium data",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 273
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[2][2]",
+    "text": "Full ticker coverage, Binance universe, catalysts, heatmaps, halt screener and stronger scanner logic.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 273
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[3][0]",
+    "text": "04",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 274
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[3][1]",
+    "text": "Personal edge",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 274
+  },
+  {
+    "path": "dict.en.teamPage.roadmap[3][2]",
+    "text": "AI learns from the client’s best setups, weak patterns, execution mistakes and journal history.",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 274
+  },
+  {
+    "path": "dict.en.teamPage.finalTitle",
+    "text": "Help traders stop operating from chaos and start operating from a system.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.finalTitle.3",
+    "localeMatchKeys": [
+      "landing.finalTitle.3"
+    ],
+    "line": 276
+  },
+  {
+    "path": "dict.en.teamPage.finalText",
+    "text": "SkillEdge AI is for traders who want to review harder, think cleaner, execute with more discipline and build a repeatable edge from real data instead of emotion and memory.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.finalText.3",
+    "localeMatchKeys": [
+      "landing.finalText.3"
+    ],
+    "line": 278
+  },
+  {
+    "path": "dict.en.footer.description",
+    "text": "Premium AI trading workspace for serious traders: market intelligence, AI alerts, journal, execution review, playbook, reports and coaching in one connected system.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.description",
+    "localeMatchKeys": [
+      "landing.description"
+    ],
+    "line": 282
+  },
+  {
+    "path": "dict.en.footer.product",
+    "text": "Product",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 283
+  },
+  {
+    "path": "dict.en.footer.features",
+    "text": "Features",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 284
+  },
+  {
+    "path": "dict.en.footer.resources",
+    "text": "Resources",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 285
+  },
+  {
+    "path": "dict.en.footer.legal",
+    "text": "Legal",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 286
+  },
+  {
+    "path": "dict.en.footer.productLinks[0]",
+    "text": "Home",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 287
+  },
+  {
+    "path": "dict.en.footer.productLinks[1]",
+    "text": "Product",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 287
+  },
+  {
+    "path": "dict.en.footer.productLinks[2]",
+    "text": "Pricing",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 287
+  },
+  {
+    "path": "dict.en.footer.productLinks[3]",
+    "text": "About us",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.viewAbout",
+      "landing.team"
+    ],
+    "line": 287
+  },
+  {
+    "path": "dict.en.footer.featureLinks[0]",
+    "text": "AI Trading Desk",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label",
+    "localeMatchKeys": [
+      "landing.label"
+    ],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[1]",
+    "text": "AI Alerts",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[2]",
+    "text": "Market Intelligence",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.4",
+    "localeMatchKeys": [
+      "landing.label.4"
+    ],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[3]",
+    "text": "Journal & Screenshots",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.5",
+    "localeMatchKeys": [
+      "landing.label.5"
+    ],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[4]",
+    "text": "Execution Coach",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.6",
+    "localeMatchKeys": [
+      "landing.label.6"
+    ],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[5]",
+    "text": "Outcome Learning",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.7",
+    "localeMatchKeys": [
+      "landing.label.7"
+    ],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[6]",
+    "text": "Playbook",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[7]",
+    "text": "Reports",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[8]",
+    "text": "Learning Center",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.8",
+    "localeMatchKeys": [
+      "landing.label.8"
+    ],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.featureLinks[9]",
+    "text": "Support Assistant",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.9",
+    "localeMatchKeys": [
+      "landing.label.9"
+    ],
+    "line": 288
+  },
+  {
+    "path": "dict.en.footer.resourceLinks[0]",
+    "text": "Getting Started",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.10",
+    "localeMatchKeys": [
+      "landing.label.10"
+    ],
+    "line": 289
+  },
+  {
+    "path": "dict.en.footer.resourceLinks[1]",
+    "text": "How SkillEdge Works",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.11",
+    "localeMatchKeys": [
+      "landing.label.11"
+    ],
+    "line": 289
+  },
+  {
+    "path": "dict.en.footer.resourceLinks[2]",
+    "text": "Trading Journal Guide",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.12",
+    "localeMatchKeys": [
+      "landing.label.12"
+    ],
+    "line": 289
+  },
+  {
+    "path": "dict.en.footer.resourceLinks[3]",
+    "text": "AI Alerts Guide",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 289
+  },
+  {
+    "path": "dict.en.footer.resourceLinks[4]",
+    "text": "Referral program",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.14",
+    "localeMatchKeys": [
+      "landing.label.14"
+    ],
+    "line": 289
+  },
+  {
+    "path": "dict.en.footer.legalLinks[0]",
+    "text": "Privacy Policy",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.15",
+    "localeMatchKeys": [
+      "landing.label.15"
+    ],
+    "line": 290
+  },
+  {
+    "path": "dict.en.footer.legalLinks[1]",
+    "text": "Terms & Conditions",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.16",
+    "localeMatchKeys": [
+      "landing.label.16"
+    ],
+    "line": 290
+  },
+  {
+    "path": "dict.en.footer.legalLinks[2]",
+    "text": "Disclaimer Statement",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 290
+  },
+  {
+    "path": "dict.en.footer.legalLinks[3]",
+    "text": "EULA",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 290
+  },
+  {
+    "path": "dict.en.footer.legalLinks[4]",
+    "text": "Billing & Cancellation",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.17",
+    "localeMatchKeys": [
+      "landing.label.17"
+    ],
+    "line": 290
+  },
+  {
+    "path": "dict.en.footer.legalLinks[5]",
+    "text": "Cookie Policy",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.label.18",
+    "localeMatchKeys": [
+      "landing.label.18"
+    ],
+    "line": 290
+  },
+  {
+    "path": "dict.en.footer.cookieSettings",
+    "text": "Cookie settings",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.cookieSettings",
+    "localeMatchKeys": [
+      "landing.cookieSettings"
+    ],
+    "line": 291
+  },
+  {
+    "path": "dict.en.footer.choosePlan",
+    "text": "Choose plan",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.choosePlan",
+    "localeMatchKeys": [
+      "landing.choosePlan"
+    ],
+    "line": 292
+  },
+  {
+    "path": "dict.en.footer.requestDemo",
+    "text": "Request demo",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.requestDemo",
+    "localeMatchKeys": [
+      "landing.requestDemo"
+    ],
+    "line": 293
+  },
+  {
+    "path": "dict.en.footer.risk",
+    "text": "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.disclaimer",
+      "landing.risk"
+    ],
+    "line": 295
+  },
+  {
+    "path": "dict.en.footer.contact",
+    "text": "Contacts",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 296
+  },
+  {
+    "path": "dict.en.footer.location",
+    "text": "Dubai / Warsaw / Kyiv",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.location",
+    "localeMatchKeys": [
+      "landing.location"
+    ],
+    "line": 297
+  },
+  {
+    "path": "dict.en.footer.demo",
+    "text": "Product demo by request",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.demo",
+    "localeMatchKeys": [
+      "landing.demo"
+    ],
+    "line": 298
+  },
+  {
+    "path": "dict.en.footer.rights",
+    "text": "© 2026 SkillEdge AI. All rights reserved.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.rights",
+    "localeMatchKeys": [
+      "landing.rights"
+    ],
+    "line": 299
+  },
+  {
+    "path": "dict.en.footer.bottom",
+    "text": "Built for traders who want structure, discipline and measurable improvement.",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.bottom",
+      "landing.bottomNote"
+    ],
+    "line": 300
+  },
+  {
+    "path": "dict.en.auth.login",
+    "text": "Login",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 303
+  },
+  {
+    "path": "dict.en.auth.register",
+    "text": "Sign up",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.register",
+      "landing.registerButton"
+    ],
+    "line": 304
+  },
+  {
+    "path": "dict.en.auth.email",
+    "text": "Email",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 305
+  },
+  {
+    "path": "dict.en.auth.password",
+    "text": "Password",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 306
+  },
+  {
+    "path": "dict.en.auth.close",
+    "text": "Close",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 307
+  },
+  {
+    "path": "dict.en.auth.loginTitle",
+    "text": "Login to SkillEdge AI",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.loginTitle",
+    "localeMatchKeys": [
+      "landing.loginTitle"
+    ],
+    "line": 308
+  },
+  {
+    "path": "dict.en.auth.registerTitle",
+    "text": "Create account",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.registerTitle",
+    "localeMatchKeys": [
+      "landing.registerTitle"
+    ],
+    "line": 309
+  },
+  {
+    "path": "dict.en.auth.loginButton",
+    "text": "Login",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 310
+  },
+  {
+    "path": "dict.en.auth.registerButton",
+    "text": "Sign up",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.register",
+      "landing.registerButton"
+    ],
+    "line": 311
+  },
+  {
+    "path": "dict.en.auth.dashboard",
+    "text": "Dashboard",
+    "technical": false,
+    "mappingStatus": "missing",
+    "canonicalKey": null,
+    "localeMatchKeys": [],
+    "line": 312
+  },
+  {
+    "path": "dict.en.auth.logout",
+    "text": "Log out",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.logout",
+    "localeMatchKeys": [
+      "landing.logout"
+    ],
+    "line": 313
+  },
+  {
+    "path": "dict.en.auth.switchToLogin",
+    "text": "Already have an account? Login",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.switchToLogin",
+    "localeMatchKeys": [
+      "landing.switchToLogin"
+    ],
+    "line": 314
+  },
+  {
+    "path": "dict.en.auth.switchToRegister",
+    "text": "No account? Sign up",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.switchToRegister",
+    "localeMatchKeys": [
+      "landing.switchToRegister"
+    ],
+    "line": 315
+  },
+  {
+    "path": "dict.en.auth.checking",
+    "text": "Checking your account...",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.checking",
+    "localeMatchKeys": [
+      "landing.checking"
+    ],
+    "line": 316
+  },
+  {
+    "path": "dict.en.auth.creatingAccount",
+    "text": "Creating account...",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.creatingAccount",
+    "localeMatchKeys": [
+      "landing.creatingAccount"
+    ],
+    "line": 317
+  },
+  {
+    "path": "dict.en.auth.creatingInvoice",
+    "text": "Creating crypto invoice...",
+    "technical": false,
+    "mappingStatus": "exact-ambiguous",
+    "canonicalKey": null,
+    "localeMatchKeys": [
+      "landing.invoice",
+      "landing.creatingInvoice"
+    ],
+    "line": 318
+  },
+  {
+    "path": "dict.en.auth.loginRequired",
+    "text": "Login or sign up to pay for a plan.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.loginRequired",
+    "localeMatchKeys": [
+      "landing.loginRequired"
+    ],
+    "line": 319
+  },
+  {
+    "path": "dict.en.auth.afterRegister",
+    "text": "Account created. Confirm your email if required.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.afterRegister",
+    "localeMatchKeys": [
+      "landing.afterRegister"
+    ],
+    "line": 320
+  },
+  {
+    "path": "dict.en.auth.authError",
+    "text": "Authorization error.",
+    "technical": false,
+    "mappingStatus": "exact-unique",
+    "canonicalKey": "landing.authError",
+    "localeMatchKeys": [
+      "landing.authError"
+    ],
+    "line": 321
+  }
+]

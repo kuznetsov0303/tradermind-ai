@@ -1,0 +1,10 @@
+﻿[Unit]
+Description=Run SkillEdge Post-Close Evidence Automation at 23:12 Kyiv
+
+[Timer]
+OnCalendar=Mon..Fri 23:12
+Persistent=true
+Unit=skilledge-post-close-evidence.service
+
+[Install]
+WantedBy=timers.target

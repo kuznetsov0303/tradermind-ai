@@ -1,0 +1,34 @@
+S10.4R FINAL VPS LEGACY CLEANUP
+Generated=20260714_205043
+SourceProof=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4Q_final_legacy_nonapp_proof_result_20260714_204229.json
+SourceDeleteSet=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4O_verified_vps_delete_set_20260714_202759.json
+
+=== RESULT ===
+OK=True
+DELETED_TOTAL=6
+DELETED_NON_APP_BACKUPS=5
+LEGACY_DAEMON_DELETED=True
+CURRENT_APP_HASH_BEFORE=bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785
+CURRENT_APP_HASH_AFTER=bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785
+CURRENT_APP_HASH_UNCHANGED=True
+SNAPSHOT_ARCHIVE_EXISTS=True
+SNAPSHOT_ARCHIVE_UNCHANGED=True
+API_HEALTH_OK=True
+API_HEALTH_STATUS=200
+API_HEALTH_ERROR=
+DEPLOY_PERFORMED=False
+RESTART_PERFORMED=False
+SERVICE_STATE_CHANGED=False
+
+=== DELETED ===
+NON_APP_BACKUP | /opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py.bak_s902_20260711T220858Z | sha256=56496985a26e2986c3f7ead2e5b12d9dbcd610f04e63b23c77ad59509833956d
+NON_APP_BACKUP | /opt/skilledge/stock-engine/ops/scripts/post_close_evidence_automation.py.bak_s816e_20260626_204956 | sha256=efd178cfd471462ba7f14f81fff06e266109f5a377218412cfd8ff2287b2f769
+NON_APP_BACKUP | /opt/skilledge/stock-engine/ops/scripts/post_close_evidence_automation.py.bak_s820d_20260629_214115 | sha256=a24f102ba6dfe32e564604aec78326d5cb26f567b08ec888a93e2e0669ada1f4
+NON_APP_BACKUP | /opt/skilledge/stock-engine/ops/scripts/post_close_evidence_automation.py.bak_s852b1_20260706_212019 | sha256=2760791bb44be858093230a2a9ab42605b58e047f718bea6e64733aab5ca2ee1
+NON_APP_BACKUP | /opt/skilledge/stock-engine/run_nightly_self_learning.py.bak_s810d_20260623_000256 | sha256=35201b900807970c28547379cc3c92d31ba6d08d5d1ba7a9770d60fe9ee89776
+LEGACY_CONFIRMED | /opt/skilledge/stock-engine/ops/scripts/s10_paper_trading_daemon.py | sha256=40639ac7e7a186f9b4a5e564ee9dea24239f1b8e7d59f3de68e7f8a0571e6204
+
+=== RETAINED RECENT APP BACKUPS ===
+/opt/skilledge/stock-engine/app/api/app.py.bak_s103o_20260713T194931Z | exists=True | matchesExpected=True | sha256=a447441e717e5bf5bb58c3a0bb9cf014acb54674adf69bcda9aac58935667b3c
+/opt/skilledge/stock-engine/app/api/app.py.bak_s103m_20260713T193502Z | exists=True | matchesExpected=True | sha256=f3ea4dd06f245d27b95da2b08420a900a1ec0433f27d45e7534a7ec135d3251a
+/opt/skilledge/stock-engine/app/api/app.py.bak_s103i_20260713T191912Z | exists=True | matchesExpected=True | sha256=8afb1340e321648e7005ca06dbb89d473d77a1ac9243a675d1323232db5edd16

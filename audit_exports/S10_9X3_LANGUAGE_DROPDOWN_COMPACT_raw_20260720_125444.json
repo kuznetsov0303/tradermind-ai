@@ -1,0 +1,14 @@
+﻿{
+    "ok":  true,
+    "classification":  "LANDING_LANGUAGE_DROPDOWN_COMPACT_GRID_PASSED",
+    "desktopGridColumns":  4,
+    "mobileGridColumns":  4,
+    "circularSelectionRemoved":  true,
+    "activeTileHighlight":  true,
+    "scrollingRemoved":  true,
+    "buildPassed":  true,
+    "productionMutation":  false,
+    "vpsTouched":  false,
+    "backupRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9X3_language_dropdown_compact_backup_20260720_125444",
+    "buildLog":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9X3_LANGUAGE_DROPDOWN_COMPACT_build_20260720_125444.txt"
+}

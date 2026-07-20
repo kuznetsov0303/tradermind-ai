@@ -1,0 +1,72 @@
+services:
+  stock-engine-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skilledge-stock-engine-api
+    restart: unless-stopped
+    env_file:
+      - .env.server
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./reports:/app/reports
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  daily-ai-desk:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skilledge-daily-ai-desk
+    restart: unless-stopped
+    env_file:
+      - .env.server
+    environment:
+      STOCK_ENGINE_API_URL: "http://stock-engine-api:8000"
+    depends_on:
+      stock-engine-api:
+        condition: service_healthy
+    volumes:
+      - ./reports:/app/reports
+    command: ["python", "run_daily_ai_desk.py", "--loop", "--interval-seconds", "300", "--start-kyiv", "11:00", "--end-kyiv", "23:00"]
+
+  telegram-consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skilledge-telegram-consumer
+    restart: unless-stopped
+    env_file:
+      - .env.server
+    environment:
+      STOCK_ENGINE_API_URL: "http://stock-engine-api:8000"
+      TELEGRAM_CONSUMER_DRY_RUN: "false"
+    depends_on:
+      stock-engine-api:
+        condition: service_healthy
+    command: ["python", "telegram_cache_consumer.py"]
+
+  # Run manually or from host cron/systemd timer:
+  # docker compose -f docker-compose.stock-engine.yml run --rm nightly-self-learning
+  nightly-self-learning:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: skilledge-nightly-self-learning
+    restart: "no"
+    env_file:
+      - .env.server
+    environment:
+      STOCK_ENGINE_API_URL: "http://stock-engine-api:8000"
+    depends_on:
+      stock-engine-api:
+        condition: service_healthy
+    volumes:
+      - ./reports:/app/reports
+    command: ["python", "run_nightly_self_learning.py", "--lookback-days", "3", "--max-days", "3", "--min-closed", "10"]

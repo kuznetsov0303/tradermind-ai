@@ -1,0 +1,1622 @@
+﻿{
+    "generated":  "20260714_194206",
+    "projectRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai",
+    "summary":  {
+                    "KEEP_ACTIVE":  6,
+                    "KEEP_DEV_TOOLING":  6,
+                    "ARCHIVE_HISTORY":  46,
+                    "DELETE_AFTER_VERIFY":  0,
+                    "DO_NOT_TOUCH":  22,
+                    "REVIEW_REQUIRED":  8
+                },
+    "items":  [
+                  {
+                      "name":  ".code-backups",
+                      "type":  "dir",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  159,
+                      "totalBytes":  69682348,
+                      "exactCanonicalDuplicateFiles":  0,
+                      "uniqueFiles":  159,
+                      "sampleCanonicalMatches":  [
+
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  ".env.example",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  760,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     ".env.example -\u003e .env.example"
+                                                 ],
+                      "sha256":  "828595513023a3e2c35ac7385ca26d8ae1a80847f493cf1651b90ee5c54aaa4d"
+                  },
+                  {
+                      "name":  ".env.local",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  9962,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     ".env.local -\u003e .env.local"
+                                                 ],
+                      "sha256":  "72f6bed0c0254379b7f094e317333b3b0819d4e9ea84a56b1d98b95023dc80fd"
+                  },
+                  {
+                      "name":  ".git",
+                      "type":  "dir",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  2323,
+                      "totalBytes":  62849211,
+                      "exactCanonicalDuplicateFiles":  0,
+                      "uniqueFiles":  2323,
+                      "sampleCanonicalMatches":  [
+
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  ".gitignore",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  483,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     ".gitignore -\u003e .gitignore"
+                                                 ],
+                      "sha256":  "4a2235d2902738ded97a563ab6044dd56dcfbe25a900eba2105077fcb89a47dc"
+                  },
+                  {
+                      "name":  ".local-start",
+                      "type":  "dir",
+                      "classification":  "KEEP_DEV_TOOLING",
+                      "fileCount":  4,
+                      "totalBytes":  2960,
+                      "exactCanonicalDuplicateFiles":  4,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     ".local-start\\api.ps1 -\u003e .local-start\\api.ps1",
+                                                     ".local-start\\dashboard.ps1 -\u003e .local-start\\dashboard.ps1",
+                                                     ".local-start\\engine_loop.ps1 -\u003e .local-start\\engine_loop.ps1",
+                                                     ".local-start\\telegram_consumer.ps1 -\u003e .local-start\\telegram_consumer.ps1"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  ".next",
+                      "type":  "dir",
+                      "classification":  "KEEP_DEV_TOOLING",
+                      "fileCount":  5543,
+                      "totalBytes":  1324869466,
+                      "exactCanonicalDuplicateFiles":  4,
+                      "uniqueFiles":  5539,
+                      "sampleCanonicalMatches":  [
+                                                     ".next\\turbopack -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     ".next\\dev\\static\\media\\favicon.0x3dzn~oxb6tn.ico -\u003e app\\favicon.ico",
+                                                     ".next\\server\\app\\favicon.ico.body -\u003e app\\favicon.ico",
+                                                     ".next\\static\\media\\favicon.0x3dzn~oxb6tn.ico -\u003e app\\favicon.ico"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  ".vercel",
+                      "type":  "dir",
+                      "classification":  "KEEP_DEV_TOOLING",
+                      "fileCount":  2,
+                      "totalBytes":  737,
+                      "exactCanonicalDuplicateFiles":  0,
+                      "uniqueFiles":  2,
+                      "sampleCanonicalMatches":  [
+
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  ".vercelignore",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  15,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     ".vercelignore -\u003e .vercelignore"
+                                                 ],
+                      "sha256":  "6e7cb36a105cd00d0309c502216d5d17703ba3b70fe31b3515e9491190ece3d3"
+                  },
+                  {
+                      "name":  ".vs",
+                      "type":  "dir",
+                      "classification":  "KEEP_DEV_TOOLING",
+                      "fileCount":  6,
+                      "totalBytes":  349800,
+                      "exactCanonicalDuplicateFiles":  6,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     ".vs\\ProjectSettings.json -\u003e .vs\\ProjectSettings.json",
+                                                     ".vs\\slnx.sqlite -\u003e .vs\\slnx.sqlite",
+                                                     ".vs\\VSWorkspaceState.json -\u003e .vs\\VSWorkspaceState.json",
+                                                     ".vs\\tradermind-ai\\v17\\.wsuo -\u003e .vs\\tradermind-ai\\v17\\.wsuo",
+                                                     ".vs\\tradermind-ai\\v17\\DocumentLayout.json -\u003e .vs\\tradermind-ai\\v17\\DocumentLayout.json",
+                                                     ".vs\\tradermind-ai\\v17\\workspaceFileList.bin -\u003e .vs\\tradermind-ai\\v17\\workspaceFileList.bin"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "_archive",
+                      "type":  "dir",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  303685,
+                      "exactCanonicalDuplicateFiles":  0,
+                      "uniqueFiles":  1,
+                      "sampleCanonicalMatches":  [
+
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "_context_build.log",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  7472,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "_context_build.log -\u003e _context_build.log"
+                                                 ],
+                      "sha256":  "a0c59fdb02c813fcebfcf4829536091afcdd29a230028c7b2e0c03bd93048c0b"
+                  },
+                  {
+                      "name":  "_context_dev_3b2e_3b3.log",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  832,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "_context_dev_3b2e_3b3.log -\u003e _context_dev_3b2e_3b3.log"
+                                                 ],
+                      "sha256":  "99e3aab4b706ca1d30b6ed9c2f4c75d7cb9ade65b4729aefaa977721ba92c1cb"
+                  },
+                  {
+                      "name":  "_project_context",
+                      "type":  "dir",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  161,
+                      "totalBytes":  32821069,
+                      "exactCanonicalDuplicateFiles":  122,
+                      "uniqueFiles":  39,
+                      "sampleCanonicalMatches":  [
+                                                     "_project_context\\next.config.ts -\u003e next.config.ts",
+                                                     "_project_context\\postcss.config.mjs -\u003e postcss.config.mjs",
+                                                     "_project_context\\tsconfig.json -\u003e tsconfig.json",
+                                                     "_project_context\\app\\apple-icon.tsx -\u003e app\\apple-icon.tsx",
+                                                     "_project_context\\app\\favicon.ico -\u003e app\\favicon.ico",
+                                                     "_project_context\\app\\globals.css -\u003e app\\globals.css",
+                                                     "_project_context\\app\\icon.tsx -\u003e app\\icon.tsx",
+                                                     "_project_context\\app\\layout.tsx -\u003e app\\layout.tsx",
+                                                     "_project_context\\app\\opengraph-image.tsx -\u003e app\\opengraph-image.tsx",
+                                                     "_project_context\\app\\page.tsx -\u003e app\\page.tsx",
+                                                     "_project_context\\app\\robots.ts -\u003e app\\robots.ts",
+                                                     "_project_context\\app\\sitemap.ts -\u003e app\\sitemap.ts",
+                                                     "_project_context\\app\\twitter-image.tsx -\u003e app\\twitter-image.tsx",
+                                                     "_project_context\\app\\about\\page.tsx -\u003e app\\about\\page.tsx",
+                                                     "_project_context\\app\\admin\\referrals\\page.tsx -\u003e app\\admin\\referrals\\page.tsx",
+                                                     "_project_context\\app\\admin\\support\\page.tsx -\u003e app\\admin\\support\\page.tsx",
+                                                     "_project_context\\app\\api\\admin\\me\\route.ts -\u003e app\\api\\admin\\me\\route.ts",
+                                                     "_project_context\\app\\api\\admin\\referrals\\withdrawals\\route.ts -\u003e app\\api\\admin\\referrals\\withdrawals\\route.ts",
+                                                     "_project_context\\app\\api\\admin\\stats\\activations\\route.ts -\u003e app\\api\\admin\\stats\\activations\\route.ts",
+                                                     "_project_context\\app\\api\\create-crypto-payment\\route.ts -\u003e app\\api\\create-crypto-payment\\route.ts"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "_s10_0_paper_trading_install.py",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  26844,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "_s10_0_paper_trading_install.py -\u003e _s10_0_paper_trading_install.py"
+                                                 ],
+                      "sha256":  "ed6b48bff507d5e8092ecdd800c67d51507f7fd6af6964f146c647d49566ba99"
+                  },
+                  {
+                      "name":  "001-clean-env-signals-v2.ps1",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  12373,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "001-clean-env-signals-v2.ps1 -\u003e 001-clean-env-signals-v2.ps1"
+                                                 ],
+                      "sha256":  "880b06672fc37b20439455971d6562af0edbd2a405297cec947987a15d464ddc"
+                  },
+                  {
+                      "name":  "333333.ps1",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  10071,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "333333.ps1 -\u003e 333333.ps1"
+                                                 ],
+                      "sha256":  "f44e60feedce706c770eb0caa80600cb6c1417d519286c0fd09ad3114bf0d768"
+                  },
+                  {
+                      "name":  "AGENTS.md",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  327,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "AGENTS.md -\u003e AGENTS.md"
+                                                 ],
+                      "sha256":  "e3447d84251880fb34cfae09131cb4c57471529bbfe60976a3245793cf621627"
+                  },
+                  {
+                      "name":  "app",
+                      "type":  "dir",
+                      "classification":  "KEEP_ACTIVE",
+                      "fileCount":  120,
+                      "totalBytes":  3415837,
+                      "exactCanonicalDuplicateFiles":  120,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "app\\apple-icon.tsx -\u003e app\\apple-icon.tsx",
+                                                     "app\\favicon.ico -\u003e app\\favicon.ico",
+                                                     "app\\globals.css -\u003e app\\globals.css",
+                                                     "app\\icon.tsx -\u003e app\\icon.tsx",
+                                                     "app\\layout.tsx -\u003e app\\layout.tsx",
+                                                     "app\\opengraph-image.tsx -\u003e app\\opengraph-image.tsx",
+                                                     "app\\page.tsx -\u003e app\\page.tsx",
+                                                     "app\\robots.ts -\u003e app\\robots.ts",
+                                                     "app\\sitemap.ts -\u003e app\\sitemap.ts",
+                                                     "app\\twitter-image.tsx -\u003e app\\twitter-image.tsx",
+                                                     "app\\about\\page.tsx -\u003e app\\about\\page.tsx",
+                                                     "app\\admin\\page.tsx -\u003e app\\admin\\page.tsx",
+                                                     "app\\admin\\investor-dashboard\\page.tsx -\u003e app\\admin\\investor-dashboard\\page.tsx",
+                                                     "app\\admin\\referrals\\page.tsx -\u003e app\\admin\\referrals\\page.tsx",
+                                                     "app\\admin\\signals-review\\page.tsx -\u003e app\\admin\\signals-review\\page.tsx",
+                                                     "app\\admin\\support\\page.tsx -\u003e app\\admin\\support\\page.tsx",
+                                                     "app\\ai-guide\\page.tsx -\u003e app\\ai-guide\\page.tsx",
+                                                     "app\\api\\admin\\me\\route.ts -\u003e app\\api\\admin\\me\\route.ts",
+                                                     "app\\api\\admin\\referrals\\withdrawals\\route.ts -\u003e app\\api\\admin\\referrals\\withdrawals\\route.ts",
+                                                     "app\\api\\admin\\signals\\manual-approval\\route.ts -\u003e app\\api\\admin\\signals\\manual-approval\\route.ts"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "audit_exports",
+                      "type":  "dir",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  80,
+                      "totalBytes":  88954356,
+                      "exactCanonicalDuplicateFiles":  57,
+                      "uniqueFiles":  23,
+                      "sampleCanonicalMatches":  [
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\requirements.txt -\u003e services\\stock-engine\\requirements.txt",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\app\\api\\app.py -\u003e services\\stock-engine\\app\\api\\app.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\capitalization_aware_backfill_runner.py -\u003e services\\stock-engine\\ops\\scripts\\capitalization_aware_backfill_runner.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\forward_shadow_daily_evaluator.py -\u003e services\\stock-engine\\ops\\scripts\\forward_shadow_daily_evaluator.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\forward_shadow_promotion_gate_report.py -\u003e services\\stock-engine\\ops\\scripts\\forward_shadow_promotion_gate_report.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\internal_research_agents_daily.py -\u003e services\\stock-engine\\ops\\scripts\\internal_research_agents_daily.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\nightly_research_optimizer_controller.py -\u003e services\\stock-engine\\ops\\scripts\\nightly_research_optimizer_controller.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\s10_paper_entry_guarded_daemon.py -\u003e services\\stock-engine\\ops\\scripts\\s10_paper_entry_guarded_daemon.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\s10_paper_entry_guarded_wrapper.py -\u003e services\\stock-engine\\ops\\scripts\\s10_paper_entry_guarded_wrapper.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\s10_paper_evaluation_only_daemon.py -\u003e services\\stock-engine\\ops\\scripts\\s10_paper_evaluation_only_daemon.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\s10_paper_evaluation_only_wrapper.py -\u003e services\\stock-engine\\ops\\scripts\\s10_paper_evaluation_only_wrapper.py",
+                                                     "audit_exports\\S10_4F_vps_canonical_20260714_183205\\ops\\scripts\\universe_v1_overnight_backfill_runner.py -\u003e services\\stock-engine\\ops\\scripts\\universe_v1_overnight_backfill_runner.py",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-clean-elite-capture.service -\u003e services\\stock-engine\\ops\\systemd\\skilledge-clean-elite-capture.service",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-clean-elite-capture.timer -\u003e services\\stock-engine\\ops\\systemd\\skilledge-clean-elite-capture.timer",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-daily-ai-desk.service -\u003e services\\stock-engine\\ops\\systemd\\skilledge-daily-ai-desk.service",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-engine-watchdog.service -\u003e services\\stock-engine\\ops\\systemd\\skilledge-engine-watchdog.service",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-engine-watchdog.timer -\u003e services\\stock-engine\\ops\\systemd\\skilledge-engine-watchdog.timer",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-historical-learning-backfill.service -\u003e services\\stock-engine\\ops\\systemd\\skilledge-historical-learning-backfill.service",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-historical-learning-backfill.timer -\u003e services\\stock-engine\\ops\\systemd\\skilledge-historical-learning-backfill.timer",
+                                                     "audit_exports\\S10_4H_systemd_backup_20260714_184226\\skilledge-nightly-self-learning.service -\u003e services\\stock-engine\\ops\\systemd\\skilledge-nightly-self-learning.service"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "CLAUDE.md",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  11,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "CLAUDE.md -\u003e CLAUDE.md"
+                                                 ],
+                      "sha256":  "336cc4fbf19beaada7ccf9986414fa91851a8d7a07dfb3ccbe800a69eed0ab49"
+                  },
+                  {
+                      "name":  "components",
+                      "type":  "dir",
+                      "classification":  "KEEP_ACTIVE",
+                      "fileCount":  29,
+                      "totalBytes":  3501061,
+                      "exactCanonicalDuplicateFiles":  29,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "components\\GlobalAlertsWidget.tsx -\u003e components\\GlobalAlertsWidget.tsx",
+                                                     "components\\Landing.backup-before-compact-pricing-hero.tsx -\u003e components\\Landing.backup-before-compact-pricing-hero.tsx",
+                                                     "components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx -\u003e components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+                                                     "components\\Landing.backup-before-payment-modal-plan-name-fix.tsx -\u003e components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+                                                     "components\\Landing.backup-before-pricing-cards-strategy-feature.tsx -\u003e components\\Landing.backup-before-payment-modal-plan-name-fix.tsx",
+                                                     "components\\Landing.backup-before-pricing-strategy-simple-fix.tsx -\u003e components\\Landing.backup-before-force-pricing-cards-strategy-feature.tsx",
+                                                     "components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx -\u003e components\\Landing.backup-before-pricing-value-empty-shell-copy.tsx",
+                                                     "components\\Landing.backup-before-remove-pricing-payment-pills.tsx -\u003e components\\Landing.backup-before-remove-pricing-payment-pills.tsx",
+                                                     "components\\Landing.backup-before-strategy-title-comma-fix.tsx -\u003e components\\Landing.backup-before-strategy-title-comma-fix.tsx",
+                                                     "components\\Landing.tsx -\u003e components\\Landing.tsx",
+                                                     "components\\Landing.tsx.backup-before-referral-hero-copy-fix -\u003e components\\Landing.tsx",
+                                                     "components\\ReferralTracker.tsx -\u003e components\\ReferralTracker.tsx",
+                                                     "components\\SupportWidget.tsx -\u003e components\\SupportWidget.tsx",
+                                                     "components\\admin\\AdminActivationStatsBlock.tsx -\u003e components\\admin\\AdminActivationStatsBlock.tsx",
+                                                     "components\\admin\\InvestorDashboardSection.tsx -\u003e components\\admin\\InvestorDashboardSection.tsx",
+                                                     "components\\dashboard\\PersonalEdgeTab.tsx -\u003e components\\dashboard\\PersonalEdgeTab.tsx",
+                                                     "components\\dashboard\\SignalCockpitTab.tsx -\u003e components\\dashboard\\SignalCockpitTab.tsx",
+                                                     "components\\dashboard\\TelegramSignalsConnectButton.tsx -\u003e components\\dashboard\\TelegramSignalsConnectButton.tsx",
+                                                     "components\\dashboard\\UnifiedSkillEdgeSignalWidget.tsx -\u003e components\\dashboard\\UnifiedSkillEdgeSignalWidget.tsx",
+                                                     "components\\dashboard\\~$legramSignalsConnectButton.tsx -\u003e components\\dashboard\\~$legramSignalsConnectButton.tsx"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "components.json",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  517,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "components.json -\u003e components.json"
+                                                 ],
+                      "sha256":  "a39384a64384ceca47944248c992f4ab4d2ff565cfea3ff8daa89b2fc7b125e2"
+                  },
+                  {
+                      "name":  "dashboard-current.tsx",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  985613,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "dashboard-current.tsx -\u003e dashboard-current.tsx"
+                                                 ],
+                      "sha256":  "03ba486368e2364cf38718e6f0c358d8a5221ed5ab94ec511dc4781c5591ba2f"
+                  },
+                  {
+                      "name":  "deploy_stock_engine",
+                      "type":  "dir",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  59,
+                      "totalBytes":  25034100,
+                      "exactCanonicalDuplicateFiles":  54,
+                      "uniqueFiles":  5,
+                      "sampleCanonicalMatches":  [
+                                                     "deploy_stock_engine\\.env -\u003e services\\stock-engine\\.env",
+                                                     "deploy_stock_engine\\.env.server.example -\u003e services\\stock-engine\\.env.server.example",
+                                                     "deploy_stock_engine\\debug_after_s512b_discovery.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "deploy_stock_engine\\debug_s514e_discovery_raw.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "deploy_stock_engine\\debug_s514e_selected_best_ideas.json -\u003e services\\stock-engine\\debug_s514e_selected_best_ideas.json",
+                                                     "deploy_stock_engine\\debug_s514_discovery_response.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "deploy_stock_engine\\debug_s515_daily_forward_report.json -\u003e services\\stock-engine\\debug_s515_daily_forward_report.json",
+                                                     "deploy_stock_engine\\debug_s516b_forward_report_working.json -\u003e services\\stock-engine\\debug_s516b_forward_report_working.json",
+                                                     "deploy_stock_engine\\docker-compose.stock-engine.yml -\u003e services\\stock-engine\\docker-compose.stock-engine.yml",
+                                                     "deploy_stock_engine\\Dockerfile -\u003e services\\stock-engine\\Dockerfile",
+                                                     "deploy_stock_engine\\main.py -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "deploy_stock_engine\\run_engine_loop.py -\u003e services\\stock-engine\\run_engine_loop.py",
+                                                     "deploy_stock_engine\\s512_discovery_debug.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "deploy_stock_engine\\start_daily_ai_desk.ps1 -\u003e services\\stock-engine\\start_daily_ai_desk.ps1",
+                                                     "deploy_stock_engine\\start_nightly_self_learning.ps1 -\u003e services\\stock-engine\\start_nightly_self_learning.ps1",
+                                                     "deploy_stock_engine\\start_stock_engine_server.ps1 -\u003e services\\stock-engine\\start_stock_engine_server.ps1",
+                                                     "deploy_stock_engine\\telegram_cache_consumer.py -\u003e services\\stock-engine\\telegram_cache_consumer.py",
+                                                     "deploy_stock_engine\\app\\backtest.py -\u003e services\\stock-engine\\app\\backtest.py",
+                                                     "deploy_stock_engine\\app\\config.py -\u003e services\\stock-engine\\app\\config.py",
+                                                     "deploy_stock_engine\\app\\discovery.py -\u003e services\\stock-engine\\app\\discovery.py"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "eslint.config.mjs",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  465,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "eslint.config.mjs -\u003e eslint.config.mjs"
+                                                 ],
+                      "sha256":  "870f1adccecf3051cbcd9fd307cef51d7633cf510979c181a81f4b1797273493"
+                  },
+                  {
+                      "name":  "landing-current.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  154586,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "landing-current.txt -\u003e landing-current.txt"
+                                                 ],
+                      "sha256":  "661e8b76cf2304117efcbbe138ae8e286acc7ab75bd6dcde16e11bdb54188f32"
+                  },
+                  {
+                      "name":  "landing-pricing-current.tsx",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  299449,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "landing-pricing-current.tsx -\u003e landing-pricing-current.tsx"
+                                                 ],
+                      "sha256":  "a7c9befd459fe39fd70d05a4da77b81dfb530b59a54f0a312097e949a1718cc3"
+                  },
+                  {
+                      "name":  "landing-pricing-current.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  230480,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "landing-pricing-current.txt -\u003e landing-pricing-current.txt"
+                                                 ],
+                      "sha256":  "01aef40b9d4a7939e3e4fd0d44237b84a487d669d825e30b289b6c60cb523c16"
+                  },
+                  {
+                      "name":  "legal-pages-bundle.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  51819,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "legal-pages-bundle.txt -\u003e legal-pages-bundle.txt"
+                                                 ],
+                      "sha256":  "163f6e139ccd2c2504193a09eaaa5e43d6e527fdcd5f06cd7d15e20fd44b0efd"
+                  },
+                  {
+                      "name":  "lib",
+                      "type":  "dir",
+                      "classification":  "KEEP_ACTIVE",
+                      "fileCount":  49,
+                      "totalBytes":  732849,
+                      "exactCanonicalDuplicateFiles":  49,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "lib\\ai-usage-limits.ts -\u003e lib\\ai-usage-limits.ts",
+                                                     "lib\\billing-plans.ts -\u003e lib\\billing-plans.ts",
+                                                     "lib\\fondy.ts -\u003e lib\\fondy.ts",
+                                                     "lib\\marketSession.ts -\u003e lib\\marketSession.ts",
+                                                     "lib\\plan-limits.ts -\u003e lib\\plan-limits.ts",
+                                                     "lib\\site.ts -\u003e lib\\site.ts",
+                                                     "lib\\stockEngineInvestorDashboard.ts -\u003e lib\\stockEngineInvestorDashboard.ts",
+                                                     "lib\\stockEngineProxy.ts -\u003e lib\\stockEngineProxy.ts",
+                                                     "lib\\supabaseAdmin.ts -\u003e lib\\supabaseAdmin.ts",
+                                                     "lib\\supabaseClient.ts -\u003e lib\\supabaseClient.ts",
+                                                     "lib\\utils.ts -\u003e lib\\utils.ts",
+                                                     "lib\\ai\\skill-edge-ai-master-prompt.ts -\u003e lib\\ai\\skill-edge-ai-master-prompt.ts",
+                                                     "lib\\ai\\skill-edge-prompts.ts -\u003e lib\\ai\\skill-edge-prompts.ts",
+                                                     "lib\\i18n\\config.ts -\u003e lib\\i18n\\config.ts",
+                                                     "lib\\i18n\\dictionaries.ts -\u003e lib\\i18n\\dictionaries.ts",
+                                                     "lib\\i18n\\dictionary-types.ts -\u003e lib\\i18n\\dictionary-types.ts",
+                                                     "lib\\i18n\\index.ts -\u003e lib\\i18n\\index.ts",
+                                                     "lib\\security\\admin-access.ts -\u003e lib\\security\\admin-access.ts",
+                                                     "lib\\security\\admin-route-gate.ts -\u003e lib\\security\\admin-route-gate.ts",
+                                                     "lib\\security\\ai-route-gate.ts -\u003e lib\\security\\ai-route-gate.ts"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "market-alerts-route.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  29938,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "market-alerts-route.txt -\u003e market-alerts-route.txt"
+                                                 ],
+                      "sha256":  "bb4d56665a040c9fdb434338b7243e25c517ca3e82c0c8b707209a44bdec99aa"
+                  },
+                  {
+                      "name":  "metadata-logo-bundle.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  17879,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "metadata-logo-bundle.txt -\u003e metadata-logo-bundle.txt"
+                                                 ],
+                      "sha256":  "568a11f895a4e7659d8bdfe0a9392d3d6efb8860cb748b4b0e1bba13aa87abda"
+                  },
+                  {
+                      "name":  "next.config.ts",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  154,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "next.config.ts -\u003e next.config.ts"
+                                                 ],
+                      "sha256":  "719c7ed1e237d12b95c4a59feffcfc4d846fe940f967ec9ecf462dbde3d65d76"
+                  },
+                  {
+                      "name":  "next-env.d.ts",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  251,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "next-env.d.ts -\u003e next-env.d.ts"
+                                                 ],
+                      "sha256":  "7ad303e40d4fddf44f156129e397511953a71481c5cfd86b1862649aaaf240cc"
+                  },
+                  {
+                      "name":  "node_modules",
+                      "type":  "dir",
+                      "classification":  "KEEP_DEV_TOOLING",
+                      "fileCount":  42726,
+                      "totalBytes":  596556519,
+                      "exactCanonicalDuplicateFiles":  134,
+                      "uniqueFiles":  42592,
+                      "sampleCanonicalMatches":  [
+                                                     "node_modules\\@eslint\\config-array\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@eslint\\config-helpers\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@eslint\\core\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@eslint\\object-schema\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@eslint\\plugin-kit\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@hono\\node-server\\dist\\types.mjs -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "node_modules\\@humanfs\\core\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@humanfs\\node\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@humanwhocodes\\module-importer\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@humanwhocodes\\retry\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\@standard-schema\\spec\\dist\\index.js -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "node_modules\\@supabase\\auth-js\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\gotrue-2.12.4.dist-info\\LICENSE",
+                                                     "node_modules\\baseline-browser-mapping\\LICENSE.txt -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\tzdata-2026.2.dist-info\\licenses\\licenses\\LICENSE_APACHE",
+                                                     "node_modules\\client-only\\index.js -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "node_modules\\detect-libc\\LICENSE -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\deprecation-2.1.0.dist-info\\LICENSE",
+                                                     "node_modules\\doctrine\\LICENSE.closure-compiler -\u003e services\\stock-engine\\.venv\\Lib\\site-packages\\sniffio-1.3.1.dist-info\\LICENSE.APACHE2",
+                                                     "node_modules\\hono\\dist\\adapter\\aws-lambda\\types.js -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "node_modules\\hono\\dist\\adapter\\deno\\deno.d.js -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "node_modules\\hono\\dist\\adapter\\service-worker\\types.js -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "node_modules\\hono\\dist\\cjs\\adapter\\deno\\deno.d.js -\u003e services\\stock-engine\\debug_after_s512b_discovery.json"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "package.json",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  996,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "package.json -\u003e package.json"
+                                                 ],
+                      "sha256":  "74a0ae229769bf02b2b0935f25f3e6810aaded8175aba6685c569cc5539045f5"
+                  },
+                  {
+                      "name":  "package-lock.json",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  437460,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "package-lock.json -\u003e package-lock.json"
+                                                 ],
+                      "sha256":  "5c17422abad1969b95c727230925c1517ebd1c8a9367c4e48151137117c3816b"
+                  },
+                  {
+                      "name":  "postcss.config.mjs",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  94,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "postcss.config.mjs -\u003e postcss.config.mjs"
+                                                 ],
+                      "sha256":  "dfac7ac2d86d326a0e5adb024e7943c181393ed17a5fcb8f0315b24c7da6ddde"
+                  },
+                  {
+                      "name":  "premium-recolor-landing-safe.ps1",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  7637,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "premium-recolor-landing-safe.ps1 -\u003e premium-recolor-landing-safe.ps1"
+                                                 ],
+                      "sha256":  "2c817e8a7a8b4782f018a967062f13ae70aedd9a8b8b340913779c7e166a0b55"
+                  },
+                  {
+                      "name":  "PRODUCTION_MANIFEST_DRAFT.md",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  2870,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "PRODUCTION_MANIFEST_DRAFT.md -\u003e PRODUCTION_MANIFEST_DRAFT.md"
+                                                 ],
+                      "sha256":  "730e441f789e89fa0dfb7172409260134978c9fcc77f05c071050288358de991"
+                  },
+                  {
+                      "name":  "public",
+                      "type":  "dir",
+                      "classification":  "KEEP_ACTIVE",
+                      "fileCount":  18,
+                      "totalBytes":  27225551,
+                      "exactCanonicalDuplicateFiles":  18,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "public\\file.svg -\u003e public\\file.svg",
+                                                     "public\\globe.svg -\u003e public\\globe.svg",
+                                                     "public\\next.svg -\u003e public\\next.svg",
+                                                     "public\\vercel.svg -\u003e public\\vercel.svg",
+                                                     "public\\window.svg -\u003e public\\window.svg",
+                                                     "public\\learning\\Smart_Money_Blueprint.pptx -\u003e public\\learning\\Smart_Money_Blueprint.pptx",
+                                                     "public\\marketing\\trading-desk-loop.mp4 -\u003e public\\marketing\\trading-desk-loop.mp4",
+                                                     "public\\media\\desk-preview.mp4 -\u003e public\\media\\desk-preview.mp4",
+                                                     "public\\team\\aida-sarynova.jpg -\u003e public\\team\\aida-sarynova.jpg",
+                                                     "public\\team\\dilnoza-karimova.jpg -\u003e public\\team\\dilnoza-karimova.jpg",
+                                                     "public\\team\\jakub-zielinski.jpg -\u003e public\\team\\jakub-zielinski.jpg",
+                                                     "public\\team\\james-whitfield.jpg -\u003e public\\team\\james-whitfield.jpg",
+                                                     "public\\team\\kenji-watanabe.jpg -\u003e public\\team\\kenji-watanabe.jpg",
+                                                     "public\\team\\lukas-schneider.jpg -\u003e public\\team\\lukas-schneider.jpg",
+                                                     "public\\team\\marcus-hayes.jpg -\u003e public\\team\\marcus-hayes.jpg",
+                                                     "public\\team\\michal-nowak.jpg -\u003e public\\team\\michal-nowak.jpg",
+                                                     "public\\team\\niamh-oconnor.jpg -\u003e public\\team\\niamh-oconnor.jpg",
+                                                     "public\\team\\oliver-reed.jpg -\u003e public\\team\\oliver-reed.jpg"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "README.md",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  1450,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "README.md -\u003e README.md"
+                                                 ],
+                      "sha256":  "60b55ff7df79af72590f9524208e46642bc32bdc175cdad41349681c0e2f958f"
+                  },
+                  {
+                      "name":  "S10_4J_controlled_archive_and_clean_root.ps1",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  12268,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "S10_4J_controlled_archive_and_clean_root.ps1 -\u003e S10_4J_controlled_archive_and_clean_root.ps1"
+                                                 ],
+                      "sha256":  "83edd7b27d56995a38e2971fba8e8fa92a3275141df05806473afc7e27f6d6ad"
+                  },
+                  {
+                      "name":  "S10_4J_resume_verify_and_clean_root_FIXED.ps1",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  12079,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "S10_4J_resume_verify_and_clean_root_FIXED.ps1 -\u003e S10_4J_resume_verify_and_clean_root_FIXED.ps1"
+                                                 ],
+                      "sha256":  "e9698338778eb4985e06eebac43ead4b7937d8dc844c6853206551b16b7e5e34"
+                  },
+                  {
+                      "name":  "S10_4K_final_local_root_cleanup_and_ops_dedupe.ps1",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  9919,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "S10_4K_final_local_root_cleanup_and_ops_dedupe.ps1 -\u003e S10_4K_final_local_root_cleanup_and_ops_dedupe.ps1"
+                                                 ],
+                      "sha256":  "10ac4063ffac19ba9791b83641871cf2ed4ee984988575915affe9514145c22d"
+                  },
+                  {
+                      "name":  "S10_4L_final_root_residue_classification.ps1",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  10909,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "S10_4L_final_root_residue_classification.ps1 -\u003e S10_4L_final_root_residue_classification.ps1"
+                                                 ],
+                      "sha256":  "6235e67b28b617d97a898841f0a32c4147c99a5906f796697780ab86935820f9"
+                  },
+                  {
+                      "name":  "S10_4L_final_root_residue_classification_FIXED.ps1",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  11133,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "S10_4L_final_root_residue_classification_FIXED.ps1 -\u003e S10_4L_final_root_residue_classification_FIXED.ps1"
+                                                 ],
+                      "sha256":  "7e27f01e4508e5da871447789fb807b657ed90f5b1d075448caa9ad78d560494"
+                  },
+                  {
+                      "name":  "s511b_restore_again",
+                      "type":  "dir",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  0,
+                      "totalBytes":  0,
+                      "exactCanonicalDuplicateFiles":  0,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "s58_start_scripts_fixed",
+                      "type":  "dir",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  3,
+                      "totalBytes":  4303,
+                      "exactCanonicalDuplicateFiles":  3,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s58_start_scripts_fixed\\START_ALL_FIXED_README.txt -\u003e s58_start_scripts_fixed\\START_ALL_FIXED_README.txt",
+                                                     "s58_start_scripts_fixed\\start_all_local.ps1 -\u003e s58_start_scripts_fixed\\start_all_local.ps1",
+                                                     "s58_start_scripts_fixed\\stop_local_ports.ps1 -\u003e s58_start_scripts_fixed\\stop_local_ports.ps1"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "s58_start_scripts_v2_fixed",
+                      "type":  "dir",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  3,
+                      "totalBytes":  6165,
+                      "exactCanonicalDuplicateFiles":  3,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s58_start_scripts_v2_fixed\\start_all_local.ps1 -\u003e start_all_local.ps1",
+                                                     "s58_start_scripts_v2_fixed\\START_ALL_README.txt -\u003e s58_start_scripts_v2_fixed\\START_ALL_README.txt",
+                                                     "s58_start_scripts_v2_fixed\\stop_local_ports.ps1 -\u003e stop_local_ports.ps1"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "s810a_trade_management_blocks.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  56200,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s810a_trade_management_blocks.txt -\u003e s810a_trade_management_blocks.txt"
+                                                 ],
+                      "sha256":  "c098ec5450647adeedf8657ef16cd31e9c9674ca27e81c18004b3c0a12f63c9a"
+                  },
+                  {
+                      "name":  "s811_dashboard_signals_snippet.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  101478,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s811_dashboard_signals_snippet.txt -\u003e s811_dashboard_signals_snippet.txt"
+                                                 ],
+                      "sha256":  "c63deacf474ba2ea7476f041446407a3bcc98f7cb8ec959d2ee1e495d192fa23"
+                  },
+                  {
+                      "name":  "s811_signal_cockpit_pinpoint.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  233410,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s811_signal_cockpit_pinpoint.txt -\u003e s811_signal_cockpit_pinpoint.txt"
+                                                 ],
+                      "sha256":  "08e94f090a3f70ae214d2164a36b200e0e3c4cdc4af06fccf943c2f035a53045"
+                  },
+                  {
+                      "name":  "s811d2_local_502_body.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  736,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s811d2_local_502_body.txt -\u003e s811d2_local_502_body.txt"
+                                                 ],
+                      "sha256":  "f304ab16c91d171a1c7212ebecc593f4022777dae77aa210fff95a8ed69160df"
+                  },
+                  {
+                      "name":  "s812b_forward_report_live_check.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  11056,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s812b_forward_report_live_check.txt -\u003e s812b_forward_report_live_check.txt"
+                                                 ],
+                      "sha256":  "21ee1f930d2dc49ea3a9cad36d50f9792c57bcc821e20933ec1c59f85f69a1b3"
+                  },
+                  {
+                      "name":  "s812c_current_forward_report_shape.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  20180,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s812c_current_forward_report_shape.txt -\u003e s812c_current_forward_report_shape.txt"
+                                                 ],
+                      "sha256":  "b456e501a14f3cc8f77d83aeaef800ef2f76cb46dfb3218a50dfcaf475f2cdac"
+                  },
+                  {
+                      "name":  "s813_final_verification.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  12504,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s813_final_verification.txt -\u003e s813_final_verification.txt"
+                                                 ],
+                      "sha256":  "1fa89560d7147d63216fe6991bad9ff5d0be5d928410adc4b021fd37a74ed546"
+                  },
+                  {
+                      "name":  "s813_post_close_evidence_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  39004,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s813_post_close_evidence_validation.txt -\u003e s813_post_close_evidence_validation.txt"
+                                                 ],
+                      "sha256":  "c34481290c2ff8e1d0290094de909ce0f6c0c61ec23050e79d6f02f15a173bd6"
+                  },
+                  {
+                      "name":  "s814a_elite_gate_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  6808,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814a_elite_gate_validation.txt -\u003e s814a_elite_gate_validation.txt"
+                                                 ],
+                      "sha256":  "5d55f79ef465c0e74d198cb5abfdb064aa24a933d21f69f28ff17da1ad77b092"
+                  },
+                  {
+                      "name":  "s814a_selector_quality_pinpoint.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  135250,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814a_selector_quality_pinpoint.txt -\u003e s814a_selector_quality_pinpoint.txt"
+                                                 ],
+                      "sha256":  "148c8e11814042118c5e379e95269d6e32b0730b14e5285630fb13428c950f55"
+                  },
+                  {
+                      "name":  "s814b_focused_service_check.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  84,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814b_focused_service_check.txt -\u003e s814b_focused_service_check.txt"
+                                                 ],
+                      "sha256":  "6df285e12731fb2883f904832240a835391d82c4866f6408cf8f1f15c391c636"
+                  },
+                  {
+                      "name":  "s814b_permission_fix_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  16140,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814b_permission_fix_validation.txt -\u003e s814b_permission_fix_validation.txt"
+                                                 ],
+                      "sha256":  "cc8a594d8ef8ecd7ef5f7cf57ea2d45733a55c7bfcd408e65c5b58e96021c5e8"
+                  },
+                  {
+                      "name":  "s814b_setup_learning_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  70778,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814b_setup_learning_validation.txt -\u003e s814b_setup_learning_validation.txt"
+                                                 ],
+                      "sha256":  "88343e64f744e743e819363c682449a3e9eac3b44c25bd33537ec34b841fb81c"
+                  },
+                  {
+                      "name":  "s814c_learning_selector_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  11204,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814c_learning_selector_validation.txt -\u003e s814c_learning_selector_validation.txt"
+                                                 ],
+                      "sha256":  "8f1e939adde87140a9a6a42d935d16b719ff00c2c481096d20b795efa83ef830"
+                  },
+                  {
+                      "name":  "s814d_investor_dashboard_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  8076,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814d_investor_dashboard_validation.txt -\u003e s814d_investor_dashboard_validation.txt"
+                                                 ],
+                      "sha256":  "9982de18f56660d5ff0135f38708f63aa8919b02fa45113d6fc56aed966d3c29"
+                  },
+                  {
+                      "name":  "s814e_admin_hub_pinpoint.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  12840,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s814e_admin_hub_pinpoint.txt -\u003e s814e_admin_hub_pinpoint.txt"
+                                                 ],
+                      "sha256":  "ffc608dacddcb9aa98e3a1e5a98647c7ea94b453ee419487d31ad1958a9e0fa3"
+                  },
+                  {
+                      "name":  "s815a_clean_elite_ledger_pinpoint.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  75848,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s815a_clean_elite_ledger_pinpoint.txt -\u003e s815a_clean_elite_ledger_pinpoint.txt"
+                                                 ],
+                      "sha256":  "8ecb821da8bacde1bff141b63f7f09aec7ada04556e8d5fb04f6c89d2506f4a9"
+                  },
+                  {
+                      "name":  "s815a_clean_elite_ledger_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  7590,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s815a_clean_elite_ledger_validation.txt -\u003e s815a_clean_elite_ledger_validation.txt"
+                                                 ],
+                      "sha256":  "692f0fa20707eb63e5f6d846eb3abd8e50b6102a5e0fe02e13f30052d58c3647"
+                  },
+                  {
+                      "name":  "s815b_clean_elite_investor_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  21596,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s815b_clean_elite_investor_validation.txt -\u003e s815b_clean_elite_investor_validation.txt"
+                                                 ],
+                      "sha256":  "1fb9bdb63e8f32711ff40ce33d0d6f0f219bf9d995152f7156a1cc7883653f63"
+                  },
+                  {
+                      "name":  "s815c_clean_elite_live_timer_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  8778,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s815c_clean_elite_live_timer_validation.txt -\u003e s815c_clean_elite_live_timer_validation.txt"
+                                                 ],
+                      "sha256":  "2ee8ede372b231c070f8b493af72ee355d9fd13b8984efa03d9dfaf197f34980"
+                  },
+                  {
+                      "name":  "s816a_elite_gate_calibration_pinpoint.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  130956,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s816a_elite_gate_calibration_pinpoint.txt -\u003e s816a_elite_gate_calibration_pinpoint.txt"
+                                                 ],
+                      "sha256":  "bfc4e89f42c63fcee0c883f1b6a5a450590f748c9fdd3ff0c6154bfab413b78c"
+                  },
+                  {
+                      "name":  "s816a1_forward_elite_test_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  9418,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s816a1_forward_elite_test_validation.txt -\u003e s816a1_forward_elite_test_validation.txt"
+                                                 ],
+                      "sha256":  "14682e1250ce04b4e66072ca785250316747c78b9b08a40003d9363a6368612a"
+                  },
+                  {
+                      "name":  "s816a2_ledger_split_validation.txt",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  3696,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s816a2_ledger_split_validation.txt -\u003e s816a2_ledger_split_validation.txt"
+                                                 ],
+                      "sha256":  "9fc67aa523d45d4dd2423c45df9b1a7d37418b324d966b75c28c182bbc90a66f"
+                  },
+                  {
+                      "name":  "s819a_strategy_registry_local.ps1",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  9616,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s819a_strategy_registry_local.ps1 -\u003e s819a_strategy_registry_local.ps1"
+                                                 ],
+                      "sha256":  "c65d5488a1b605ea75490bb9023d54b5ca3d866803a063d8ce7ff9671cbc6441"
+                  },
+                  {
+                      "name":  "s819a_strategy_registry_local_nocd.ps1",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  9789,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s819a_strategy_registry_local_nocd.ps1 -\u003e s819a_strategy_registry_local_nocd.ps1"
+                                                 ],
+                      "sha256":  "3780ed0ab0296959002d4800f7a5410d529c71c296b7615177180760de07a717"
+                  },
+                  {
+                      "name":  "s820a_night_calibration_local.ps1",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  9634,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s820a_night_calibration_local.ps1 -\u003e s820a_night_calibration_local.ps1"
+                                                 ],
+                      "sha256":  "4c36298058d0dfb76e04387dd1ed4a7c58c738aaa0c9bf4dafd19410750fe486"
+                  },
+                  {
+                      "name":  "s824a_cockpit_root.json",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  907227,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s824a_cockpit_root.json -\u003e s824a_cockpit_root.json"
+                                                 ],
+                      "sha256":  "1ba958d01245b619767dc69ec672b895ee27784d49f60a887db8a69674ca9081"
+                  },
+                  {
+                      "name":  "s824a_symbol_SRFM.json",
+                      "type":  "file",
+                      "classification":  "ARCHIVE_HISTORY",
+                      "fileCount":  1,
+                      "totalBytes":  21836,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "s824a_symbol_SRFM.json -\u003e s824a_symbol_SRFM.json"
+                                                 ],
+                      "sha256":  "11c0dc6c43ea4c862bfb7b40f55fee90f16b1bbbdd0fd81d7c89765dc9b8644c"
+                  },
+                  {
+                      "name":  "services",
+                      "type":  "dir",
+                      "classification":  "KEEP_ACTIVE",
+                      "fileCount":  3366,
+                      "totalBytes":  72971807,
+                      "exactCanonicalDuplicateFiles":  3366,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "services\\stock-engine\\.env -\u003e services\\stock-engine\\.env",
+                                                     "services\\stock-engine\\.env.production-connectivity.example -\u003e services\\stock-engine\\.env.production-connectivity.example",
+                                                     "services\\stock-engine\\.env.server.example -\u003e services\\stock-engine\\.env.server.example",
+                                                     "services\\stock-engine\\debug_after_s512b_discovery.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "services\\stock-engine\\debug_s514e_discovery_raw.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "services\\stock-engine\\debug_s514e_selected_best_ideas.json -\u003e services\\stock-engine\\debug_s514e_selected_best_ideas.json",
+                                                     "services\\stock-engine\\debug_s514_discovery_response.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "services\\stock-engine\\debug_s515_daily_forward_report.json -\u003e services\\stock-engine\\debug_s515_daily_forward_report.json",
+                                                     "services\\stock-engine\\debug_s516b_forward_report_working.json -\u003e services\\stock-engine\\debug_s516b_forward_report_working.json",
+                                                     "services\\stock-engine\\docker-compose.stock-engine.yml -\u003e services\\stock-engine\\docker-compose.stock-engine.yml",
+                                                     "services\\stock-engine\\Dockerfile -\u003e services\\stock-engine\\Dockerfile",
+                                                     "services\\stock-engine\\main.py -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "services\\stock-engine\\requirements.txt -\u003e services\\stock-engine\\requirements.txt",
+                                                     "services\\stock-engine\\run_daily_ai_desk.py -\u003e services\\stock-engine\\run_daily_ai_desk.py",
+                                                     "services\\stock-engine\\run_engine_loop.py -\u003e services\\stock-engine\\run_engine_loop.py",
+                                                     "services\\stock-engine\\run_historical_learning_backfill.py -\u003e services\\stock-engine\\run_historical_learning_backfill.py",
+                                                     "services\\stock-engine\\run_nightly_self_learning.py -\u003e services\\stock-engine\\run_nightly_self_learning.py",
+                                                     "services\\stock-engine\\s512_discovery_debug.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                     "services\\stock-engine\\start_daily_ai_desk.ps1 -\u003e services\\stock-engine\\start_daily_ai_desk.ps1",
+                                                     "services\\stock-engine\\start_nightly_self_learning.ps1 -\u003e services\\stock-engine\\start_nightly_self_learning.ps1"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "start_all_local.ps1",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  4256,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "start_all_local.ps1 -\u003e start_all_local.ps1"
+                                                 ],
+                      "sha256":  "db2b494c9df3bc1b457696c5535c5e99901eb3fcb5cdb42010e541b8e3fef99c"
+                  },
+                  {
+                      "name":  "START_ALL_README.txt",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  439,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "START_ALL_README.txt -\u003e START_ALL_README.txt"
+                                                 ],
+                      "sha256":  "1814cc1b3c48c0f74daa8cc144667d372eeb03374b9135f8a435b0e361b8ded8"
+                  },
+                  {
+                      "name":  "stop_local_ports.ps1",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  1367,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "stop_local_ports.ps1 -\u003e stop_local_ports.ps1"
+                                                 ],
+                      "sha256":  "7924e96c55c89cb61c4b07359c40fb35e225e9ad412e30b8e7c398506ccd4b7d"
+                  },
+                  {
+                      "name":  "supabase",
+                      "type":  "dir",
+                      "classification":  "KEEP_ACTIVE",
+                      "fileCount":  3,
+                      "totalBytes":  22515,
+                      "exactCanonicalDuplicateFiles":  3,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "supabase\\migrations\\20260708_s872_historical_learning_schema.sql -\u003e services\\stock-engine\\ops\\sql\\s872_historical_learning_schema.sql",
+                                                     "supabase\\migrations\\20260709_s877a_walk_forward_supabase_schema_hotfix.sql -\u003e services\\stock-engine\\ops\\sql\\s877a_walk_forward_supabase_schema_hotfix.sql",
+                                                     "supabase\\migrations\\20260709_s878_strategy_promotion_policy_schema.sql -\u003e services\\stock-engine\\ops\\sql\\s878_strategy_promotion_policy_schema.sql"
+                                                 ],
+                      "sha256":  null
+                  },
+                  {
+                      "name":  "Supabase Snippet Untitled query.csv",
+                      "type":  "file",
+                      "classification":  "REVIEW_REQUIRED",
+                      "fileCount":  1,
+                      "totalBytes":  3804,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "Supabase Snippet Untitled query.csv -\u003e Supabase Snippet Untitled query.csv"
+                                                 ],
+                      "sha256":  "a55d2cc9ecbee4071e21bae45cd41a23ee06f01ef5be40c9e3db2cfded10f126"
+                  },
+                  {
+                      "name":  "tsconfig.json",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  666,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "tsconfig.json -\u003e tsconfig.json"
+                                                 ],
+                      "sha256":  "be18523b23b78b6e1a876ddd107d330f0168bddf09d751b57e0b5edce69c66f3"
+                  },
+                  {
+                      "name":  "tsconfig.tsbuildinfo",
+                      "type":  "file",
+                      "classification":  "KEEP_DEV_TOOLING",
+                      "fileCount":  1,
+                      "totalBytes":  256880,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "tsconfig.tsbuildinfo -\u003e tsconfig.tsbuildinfo"
+                                                 ],
+                      "sha256":  "4921f56c45127f328f17ba0f1d9b2028a0f8a048586a71fff43201c37a537114"
+                  },
+                  {
+                      "name":  "vercel.json",
+                      "type":  "file",
+                      "classification":  "DO_NOT_TOUCH",
+                      "fileCount":  1,
+                      "totalBytes":  420,
+                      "exactCanonicalDuplicateFiles":  1,
+                      "uniqueFiles":  0,
+                      "sampleCanonicalMatches":  [
+                                                     "vercel.json -\u003e vercel.json"
+                                                 ],
+                      "sha256":  "5e5ed794c66921cb8e9c182be33925153cc263adc4bf94aa3555f5ee50d42950"
+                  }
+              ],
+    "spotChecks":  [
+                       {
+                           "name":  ".code-backups",
+                           "type":  "dir",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  159,
+                           "totalBytes":  69682348,
+                           "exactCanonicalDuplicateFiles":  0,
+                           "uniqueFiles":  159,
+                           "sampleCanonicalMatches":  [
+
+                                                      ],
+                           "sha256":  null
+                       },
+                       {
+                           "name":  "_archive",
+                           "type":  "dir",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  303685,
+                           "exactCanonicalDuplicateFiles":  0,
+                           "uniqueFiles":  1,
+                           "sampleCanonicalMatches":  [
+
+                                                      ],
+                           "sha256":  null
+                       },
+                       {
+                           "name":  "_project_context",
+                           "type":  "dir",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  161,
+                           "totalBytes":  32821069,
+                           "exactCanonicalDuplicateFiles":  122,
+                           "uniqueFiles":  39,
+                           "sampleCanonicalMatches":  [
+                                                          "_project_context\\next.config.ts -\u003e next.config.ts",
+                                                          "_project_context\\postcss.config.mjs -\u003e postcss.config.mjs",
+                                                          "_project_context\\tsconfig.json -\u003e tsconfig.json",
+                                                          "_project_context\\app\\apple-icon.tsx -\u003e app\\apple-icon.tsx",
+                                                          "_project_context\\app\\favicon.ico -\u003e app\\favicon.ico",
+                                                          "_project_context\\app\\globals.css -\u003e app\\globals.css",
+                                                          "_project_context\\app\\icon.tsx -\u003e app\\icon.tsx",
+                                                          "_project_context\\app\\layout.tsx -\u003e app\\layout.tsx",
+                                                          "_project_context\\app\\opengraph-image.tsx -\u003e app\\opengraph-image.tsx",
+                                                          "_project_context\\app\\page.tsx -\u003e app\\page.tsx",
+                                                          "_project_context\\app\\robots.ts -\u003e app\\robots.ts",
+                                                          "_project_context\\app\\sitemap.ts -\u003e app\\sitemap.ts",
+                                                          "_project_context\\app\\twitter-image.tsx -\u003e app\\twitter-image.tsx",
+                                                          "_project_context\\app\\about\\page.tsx -\u003e app\\about\\page.tsx",
+                                                          "_project_context\\app\\admin\\referrals\\page.tsx -\u003e app\\admin\\referrals\\page.tsx",
+                                                          "_project_context\\app\\admin\\support\\page.tsx -\u003e app\\admin\\support\\page.tsx",
+                                                          "_project_context\\app\\api\\admin\\me\\route.ts -\u003e app\\api\\admin\\me\\route.ts",
+                                                          "_project_context\\app\\api\\admin\\referrals\\withdrawals\\route.ts -\u003e app\\api\\admin\\referrals\\withdrawals\\route.ts",
+                                                          "_project_context\\app\\api\\admin\\stats\\activations\\route.ts -\u003e app\\api\\admin\\stats\\activations\\route.ts",
+                                                          "_project_context\\app\\api\\create-crypto-payment\\route.ts -\u003e app\\api\\create-crypto-payment\\route.ts"
+                                                      ],
+                           "sha256":  null
+                       },
+                       {
+                           "name":  "deploy_stock_engine",
+                           "type":  "dir",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  59,
+                           "totalBytes":  25034100,
+                           "exactCanonicalDuplicateFiles":  54,
+                           "uniqueFiles":  5,
+                           "sampleCanonicalMatches":  [
+                                                          "deploy_stock_engine\\.env -\u003e services\\stock-engine\\.env",
+                                                          "deploy_stock_engine\\.env.server.example -\u003e services\\stock-engine\\.env.server.example",
+                                                          "deploy_stock_engine\\debug_after_s512b_discovery.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                          "deploy_stock_engine\\debug_s514e_discovery_raw.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                          "deploy_stock_engine\\debug_s514e_selected_best_ideas.json -\u003e services\\stock-engine\\debug_s514e_selected_best_ideas.json",
+                                                          "deploy_stock_engine\\debug_s514_discovery_response.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                          "deploy_stock_engine\\debug_s515_daily_forward_report.json -\u003e services\\stock-engine\\debug_s515_daily_forward_report.json",
+                                                          "deploy_stock_engine\\debug_s516b_forward_report_working.json -\u003e services\\stock-engine\\debug_s516b_forward_report_working.json",
+                                                          "deploy_stock_engine\\docker-compose.stock-engine.yml -\u003e services\\stock-engine\\docker-compose.stock-engine.yml",
+                                                          "deploy_stock_engine\\Dockerfile -\u003e services\\stock-engine\\Dockerfile",
+                                                          "deploy_stock_engine\\main.py -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                          "deploy_stock_engine\\run_engine_loop.py -\u003e services\\stock-engine\\run_engine_loop.py",
+                                                          "deploy_stock_engine\\s512_discovery_debug.json -\u003e services\\stock-engine\\debug_after_s512b_discovery.json",
+                                                          "deploy_stock_engine\\start_daily_ai_desk.ps1 -\u003e services\\stock-engine\\start_daily_ai_desk.ps1",
+                                                          "deploy_stock_engine\\start_nightly_self_learning.ps1 -\u003e services\\stock-engine\\start_nightly_self_learning.ps1",
+                                                          "deploy_stock_engine\\start_stock_engine_server.ps1 -\u003e services\\stock-engine\\start_stock_engine_server.ps1",
+                                                          "deploy_stock_engine\\telegram_cache_consumer.py -\u003e services\\stock-engine\\telegram_cache_consumer.py",
+                                                          "deploy_stock_engine\\app\\backtest.py -\u003e services\\stock-engine\\app\\backtest.py",
+                                                          "deploy_stock_engine\\app\\config.py -\u003e services\\stock-engine\\app\\config.py",
+                                                          "deploy_stock_engine\\app\\discovery.py -\u003e services\\stock-engine\\app\\discovery.py"
+                                                      ],
+                           "sha256":  null
+                       },
+                       {
+                           "name":  "_s10_0_paper_trading_install.py",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  26844,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "_s10_0_paper_trading_install.py -\u003e _s10_0_paper_trading_install.py"
+                                                      ],
+                           "sha256":  "ed6b48bff507d5e8092ecdd800c67d51507f7fd6af6964f146c647d49566ba99"
+                       },
+                       {
+                           "name":  "001-clean-env-signals-v2.ps1",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  12373,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "001-clean-env-signals-v2.ps1 -\u003e 001-clean-env-signals-v2.ps1"
+                                                      ],
+                           "sha256":  "880b06672fc37b20439455971d6562af0edbd2a405297cec947987a15d464ddc"
+                       },
+                       {
+                           "name":  "333333.ps1",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  10071,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "333333.ps1 -\u003e 333333.ps1"
+                                                      ],
+                           "sha256":  "f44e60feedce706c770eb0caa80600cb6c1417d519286c0fd09ad3114bf0d768"
+                       },
+                       {
+                           "name":  "dashboard-current.tsx",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  985613,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "dashboard-current.tsx -\u003e dashboard-current.tsx"
+                                                      ],
+                           "sha256":  "03ba486368e2364cf38718e6f0c358d8a5221ed5ab94ec511dc4781c5591ba2f"
+                       },
+                       {
+                           "name":  "landing-current.txt",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  154586,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "landing-current.txt -\u003e landing-current.txt"
+                                                      ],
+                           "sha256":  "661e8b76cf2304117efcbbe138ae8e286acc7ab75bd6dcde16e11bdb54188f32"
+                       },
+                       {
+                           "name":  "landing-pricing-current.tsx",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  299449,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "landing-pricing-current.tsx -\u003e landing-pricing-current.tsx"
+                                                      ],
+                           "sha256":  "a7c9befd459fe39fd70d05a4da77b81dfb530b59a54f0a312097e949a1718cc3"
+                       },
+                       {
+                           "name":  "landing-pricing-current.txt",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  230480,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "landing-pricing-current.txt -\u003e landing-pricing-current.txt"
+                                                      ],
+                           "sha256":  "01aef40b9d4a7939e3e4fd0d44237b84a487d669d825e30b289b6c60cb523c16"
+                       },
+                       {
+                           "name":  "legal-pages-bundle.txt",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  51819,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "legal-pages-bundle.txt -\u003e legal-pages-bundle.txt"
+                                                      ],
+                           "sha256":  "163f6e139ccd2c2504193a09eaaa5e43d6e527fdcd5f06cd7d15e20fd44b0efd"
+                       },
+                       {
+                           "name":  "market-alerts-route.txt",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  29938,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "market-alerts-route.txt -\u003e market-alerts-route.txt"
+                                                      ],
+                           "sha256":  "bb4d56665a040c9fdb434338b7243e25c517ca3e82c0c8b707209a44bdec99aa"
+                       },
+                       {
+                           "name":  "metadata-logo-bundle.txt",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  17879,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "metadata-logo-bundle.txt -\u003e metadata-logo-bundle.txt"
+                                                      ],
+                           "sha256":  "568a11f895a4e7659d8bdfe0a9392d3d6efb8860cb748b4b0e1bba13aa87abda"
+                       },
+                       {
+                           "name":  "premium-recolor-landing-safe.ps1",
+                           "type":  "file",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  1,
+                           "totalBytes":  7637,
+                           "exactCanonicalDuplicateFiles":  1,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "premium-recolor-landing-safe.ps1 -\u003e premium-recolor-landing-safe.ps1"
+                                                      ],
+                           "sha256":  "2c817e8a7a8b4782f018a967062f13ae70aedd9a8b8b340913779c7e166a0b55"
+                       },
+                       {
+                           "name":  "s511b_restore_again",
+                           "type":  "dir",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  0,
+                           "totalBytes":  0,
+                           "exactCanonicalDuplicateFiles":  0,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+
+                                                      ],
+                           "sha256":  null
+                       },
+                       {
+                           "name":  "s58_start_scripts_fixed",
+                           "type":  "dir",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  3,
+                           "totalBytes":  4303,
+                           "exactCanonicalDuplicateFiles":  3,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "s58_start_scripts_fixed\\START_ALL_FIXED_README.txt -\u003e s58_start_scripts_fixed\\START_ALL_FIXED_README.txt",
+                                                          "s58_start_scripts_fixed\\start_all_local.ps1 -\u003e s58_start_scripts_fixed\\start_all_local.ps1",
+                                                          "s58_start_scripts_fixed\\stop_local_ports.ps1 -\u003e s58_start_scripts_fixed\\stop_local_ports.ps1"
+                                                      ],
+                           "sha256":  null
+                       },
+                       {
+                           "name":  "s58_start_scripts_v2_fixed",
+                           "type":  "dir",
+                           "classification":  "ARCHIVE_HISTORY",
+                           "fileCount":  3,
+                           "totalBytes":  6165,
+                           "exactCanonicalDuplicateFiles":  3,
+                           "uniqueFiles":  0,
+                           "sampleCanonicalMatches":  [
+                                                          "s58_start_scripts_v2_fixed\\start_all_local.ps1 -\u003e start_all_local.ps1",
+                                                          "s58_start_scripts_v2_fixed\\START_ALL_README.txt -\u003e s58_start_scripts_v2_fixed\\START_ALL_README.txt",
+                                                          "s58_start_scripts_v2_fixed\\stop_local_ports.ps1 -\u003e stop_local_ports.ps1"
+                                                      ],
+                           "sha256":  null
+                       }
+                   ]
+}

@@ -1,0 +1,207 @@
+﻿{
+    "stage":  "S10.9Y1",
+    "name":  "Translation Context Audit",
+    "generatedAt":  "2026-07-20T15:11:20.1053695+03:00",
+    "repoRoot":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai",
+    "mutationScope":  [
+                          "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n\\landing_translation_context.json",
+                          "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n\\landing_glossary.json",
+                          "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n\\landing_style_guide.md",
+                          "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_report_20260720_151039.txt",
+                          "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_raw_20260720_151039.json",
+                          "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_build_20260720_151039.txt"
+                      ],
+    "activeRuntimeFilesChanged":  false,
+    "x6Evidence":  {
+                       "report":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9X6_LANGUAGE_DROPDOWN_FIXED_HEIGHT_report_20260720_141738.txt",
+                       "raw":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9X6_LANGUAGE_DROPDOWN_FIXED_HEIGHT_raw_20260720_141738.json",
+                       "build":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9X6_LANGUAGE_DROPDOWN_FIXED_HEIGHT_build_20260720_141738.txt",
+                       "checks":  {
+                                      "reportFound":  true,
+                                      "rawFound":  true,
+                                      "buildFound":  true,
+                                      "fixedHeight92":  true,
+                                      "visibleRows2":  true,
+                                      "inlineOverflowControl":  true,
+                                      "scrollbarHidden":  true,
+                                      "buildPassed":  true
+                                  },
+                       "formallyConfirmed":  true
+                   },
+    "source":  {
+                   "englishMaster":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\locales\\landing-complete\\en.json",
+                   "englishMasterSha256":  "3CE952C782DD73346A570E6A5600F5587BACBEF4D811DDE4B4976A5C9B78CC4B",
+                   "pathMap":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\locales\\landing-complete\\path-map.json",
+                   "pathMapSha256":  "2B1318EA30BE2FA2C879ED440CD44F4E5224F93C680777FEE1119653F1CF8A85",
+                   "manifest":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\locales\\landing-complete\\manifest.json",
+                   "landingComponent":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\components\\Landing.tsx",
+                   "landingComponentSha256":  "22919285DD380824DBB6FEE72D0DC7A904DFEBE4A506D80C102F5CC314A3E778"
+               },
+    "englishStringCount":  446,
+    "contextEntryCount":  446,
+    "translateModeCounts":  {
+                                "brand_name":  1,
+                                "translate":  365,
+                                "translate_but_preserve_terms":  68,
+                                "keep_exact":  12
+                            },
+    "runtimeReferenceChecks":  {
+                                   "landingStructuredLocalesReferenced":  true,
+                                   "completeBundleReferenced":  false,
+                                   "legacyLandingLocalesReferenced":  false,
+                                   "sharedStorageKeyReferenced":  false,
+                                   "inlineHeight92Present":  true,
+                                   "maxHeight92Present":  true,
+                                   "overflowYAutoPresent":  true
+                               },
+    "localeAudit":  [
+                        {
+                            "locale":  "ar",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "36E940E806E952EB8FEE35FAAF8316DBA777E4C92EAE6421EC206DAF1C286840"
+                        },
+                        {
+                            "locale":  "de",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "31CDF79CB0788A3C55D69E3DA6536C1B44EEAC4C8C4B40E58BFE2B6A90DA6A8A"
+                        },
+                        {
+                            "locale":  "el",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "9EAF4401CB7387E387401B5370F9D6EF3FD64A06677DE22ADEE328C44A22187C"
+                        },
+                        {
+                            "locale":  "en",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "3CE952C782DD73346A570E6A5600F5587BACBEF4D811DDE4B4976A5C9B78CC4B"
+                        },
+                        {
+                            "locale":  "es",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "3C03C15027890362F911C5D4C990576BD1F79F0B20074DBDAC4710480EE0A5D9"
+                        },
+                        {
+                            "locale":  "fr",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "FAEEC9460F91C6FCDE2BAD9A3B5791EC01633A95278B0CD4B71007609D1565D5"
+                        },
+                        {
+                            "locale":  "hi",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "76FD50BF5D5086D783510061F37DE5A5C60F7921B22B6611C9A2CA5283AE70C3"
+                        },
+                        {
+                            "locale":  "it",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "51935830DBF7B2E9039E0DF315646932CC1159E66D8F8B25D22E0205AB4BD454"
+                        },
+                        {
+                            "locale":  "ka",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "67B9A66FD2D40CE578E0115785F8125F1E62BBB9870A880992F9A35A0DC7C6CE"
+                        },
+                        {
+                            "locale":  "nb",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "2E3036B8074643444D65191D7B97DD2990D20CACC4811BA0A60CF152A17B0D3C"
+                        },
+                        {
+                            "locale":  "pl",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "05C79747747CEB4D70CEE85980833454B8C8686B557539EC4A3D5A8D8BC2D1EE"
+                        },
+                        {
+                            "locale":  "ru",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "973D4B950704441F59BCA615B11EA215A3AB71D39CC8604C18E1FACD874240A2"
+                        },
+                        {
+                            "locale":  "tr",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "F6D8DFE61A00EB0DEC44D0D794C6203DA953AB1AFBB959D34554A4FABF638DA5"
+                        },
+                        {
+                            "locale":  "uk",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "3214C77D3C8159B1168E4E1CA25FEDC4587F6DC69E4AFFBF95500EE878F7962A"
+                        },
+                        {
+                            "locale":  "zh",
+                            "stringCount":  446,
+                            "keyParityPassed":  true,
+                            "missingPathCount":  0,
+                            "extraPathCount":  0,
+                            "emptyValueCount":  0,
+                            "sha256":  "0948AA061216707F21C0D778DED10E6F75C8C55B873C3928CD015F059213126A"
+                        }
+                    ],
+    "outputFiles":  {
+                        "context":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n\\landing_translation_context.json",
+                        "glossary":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n\\landing_glossary.json",
+                        "styleGuide":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n\\landing_style_guide.md",
+                        "report":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_report_20260720_151039.txt",
+                        "raw":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_raw_20260720_151039.json",
+                        "build":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9Y1_TRANSLATION_CONTEXT_AUDIT_build_20260720_151039.txt"
+                    },
+    "build":  {
+                  "skipped":  false,
+                  "passed":  true,
+                  "exitCode":  0
+              }
+}

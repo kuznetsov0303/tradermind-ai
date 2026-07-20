@@ -1,0 +1,95 @@
+{
+  "model": "gpt-5.6-luna",
+  "sourceMissingFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9T_LANDING_DICT_AST_AUDIT_missing_20260719221834.json",
+  "sourceMappingFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9T_LANDING_DICT_AST_AUDIT_mapping_20260719221834.json",
+  "batchSize": 35,
+  "uniqueEntries": 194,
+  "pathAssignments": 223,
+  "periodRowsRestored": 3,
+  "locales": {
+    "ru": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\ru.json"
+    },
+    "uk": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\uk.json"
+    },
+    "zh": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\zh.json"
+    },
+    "de": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\de.json"
+    },
+    "fr": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\fr.json"
+    },
+    "es": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\es.json"
+    },
+    "ar": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\ar.json"
+    },
+    "it": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\it.json"
+    },
+    "nb": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\nb.json"
+    },
+    "ka": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\ka.json"
+    },
+    "pl": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\pl.json"
+    },
+    "tr": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\tr.json"
+    },
+    "el": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\el.json"
+    },
+    "hi": {
+      "entries": 194,
+      "batchesGeneratedThisRun": 6,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing_missing\\hi.json"
+    }
+  }
+}

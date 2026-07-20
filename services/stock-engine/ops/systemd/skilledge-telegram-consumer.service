@@ -1,0 +1,18 @@
+[Unit]
+Description=SkillEdge Telegram Cache Consumer
+After=skilledge-stock-engine-api.service
+Wants=skilledge-stock-engine-api.service
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/skilledge/stock-engine
+EnvironmentFile=/opt/skilledge/stock-engine/.env.server
+Environment=TELEGRAM_CONSUMER_DRY_RUN=false
+ExecStart=/opt/skilledge/stock-engine/.venv/bin/python telegram_cache_consumer.py
+Restart=always
+RestartSec=10
+User=skilledge
+Group=skilledge
+
+[Install]
+WantedBy=multi-user.target

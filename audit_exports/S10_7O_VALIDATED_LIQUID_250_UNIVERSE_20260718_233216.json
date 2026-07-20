@@ -1,0 +1,21 @@
+﻿{
+    "finalUniverse":  [
+
+                      ],
+    "thresholds":  {
+                       "minPrice":  1.0,
+                       "minAvgVolume":  500000,
+                       "minMarketCap":  50000000
+                   },
+    "clientEligible":  false,
+    "paperEligible":  false,
+    "replacementMap":  {
+
+                       },
+    "classification":  "DAY7D_LIQUIDITY_AWARE_REPLACEMENT_POOL_INSUFFICIENT",
+    "telegramEligible":  false,
+    "ok":  false,
+    "referenceProvider":  "fmp",
+    "liveProvider":  "databento",
+    "armAllowed":  false
+}

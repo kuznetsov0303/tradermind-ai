@@ -1,0 +1,47 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_GUARDED_50_SYMBOL_CAPACITY_CANARY_REVIEW_PASSED",
+    "localPackageChecks":  {
+                               "manifestExecutionAuthorized":  false,
+                               "manifestPackageExecuted":  false,
+                               "currentCapacity":  25,
+                               "targetCapacity":  50,
+                               "currentSymbolCount":  25,
+                               "targetSymbolCount":  50,
+                               "dynamicSymbolCount":  25,
+                               "targetSymbolsUnique":  true,
+                               "currentSymbolsPreserved":  true,
+                               "executionContainsMarketStreamRestart":  true,
+                               "executionContainsApiRestart":  false,
+                               "executionContainsPaperMutation":  false,
+                               "executionContainsTelegramMutation":  false,
+                               "executionContains30MinuteSoak":  true,
+                               "executionContains50SymbolCheck":  true,
+                               "executionContainsRollbackOnFailure":  true,
+                               "rollbackContainsMarketStreamRestart":  true,
+                               "rollbackContainsApiRestart":  false
+                           },
+    "remoteRuntimeChecks":  {
+                                "serviceHealthy":  true,
+                                "currentUnitCore25Exact":  true,
+                                "marketCount":  25,
+                                "candleCount":  25,
+                                "snapshotSetsMatch":  true,
+                                "snapshotExactCore25":  true,
+                                "negativeAgeSymbols":  [
+
+                                                       ],
+                                "mainPid":  "817328"
+                            },
+    "validationErrors":  [
+
+                         ],
+    "armAllowed":  true,
+    "executionAuthorized":  false,
+    "packageExecuted":  false,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "nextAction":  "REQUEST_EXPLICIT_50_SYMBOL_CANARY_EXECUTION_APPROVAL"
+}

@@ -1,0 +1,420 @@
+﻿{
+    "generated":  "20260714_210442",
+    "pythonFilesChecked":  36,
+    "pythonFailures":  0,
+    "powershellFilesChecked":  22,
+    "powershellFailures":  3,
+    "results":  [
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\main.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\run_daily_ai_desk.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\run_engine_loop.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\run_historical_learning_backfill.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\run_nightly_self_learning.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\telegram_cache_consumer.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\backtest.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\config.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\discovery.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\indicators.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\models.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\runtime_cache.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\setup_registry.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\state.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\storage.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\__init__.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\api\\app.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\app\\api\\__init__.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\market_calendar.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\runner_utils.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\capitalization_aware_backfill_runner.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\clean_elite_ledger.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\engine_watchdog.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\forward_shadow_daily_evaluator.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\forward_shadow_promotion_gate_report.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\internal_research_agents_daily.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\nightly_research_optimizer_controller.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\post_close_evidence_automation.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\production_live_day_readiness.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\s10_paper_entry_guarded_daemon.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\s10_paper_entry_guarded_wrapper.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\s10_paper_evaluation_only_daemon.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\s10_paper_evaluation_only_wrapper.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\server_healthcheck.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\setup_learning_report.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "python_syntax",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\scripts\\universe_v1_overnight_backfill_runner.py",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4M_final_local_archive_pass.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4N_vps_backup_legacy_retention_audit.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4N_vps_backup_legacy_retention_audit_FIXED.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4O_clean_rollback_snapshot_and_verified_delete_set.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4P_verified_vps_cleanup.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4Q_final_legacy_nonapp_backup_proof.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4R_final_vps_legacy_cleanup.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4S_final_source_of_truth_parity_manifest_smoke_FIXED.ps1",
+                        "ok":  false,
+                        "error":  "You must provide a value expression following the \u0027-\u0027 operator. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027Canonical\u0027 in expression or statement. | Unexpected token \u0027)\u0027 in expression or statement. | You must provide a value expression following the \u0027-\u0027 operator. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027Production\u0027 in expression or statement. | Unexpected token \u0027)\u0027 in expression or statement. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027$manifest\u0027 in expression or statement. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027$manifest\u0027 in expression or statement. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027$status\")\n}\n\n$manifest.Add(\"\")\n$manifest.Add(\"##\u0027 in expression or statement. | Unexpected token \u0027\")\n}\n\n$manifest.Add(\"\")\n$manifest.Add(\"\u0027 in expression or statement. | You must provide a value expression following the \u0027-\u0027 operator. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027`/opt/skilledge/stock-engine/reports/`\"\u0027 in expression or statement. | Missing closing \u0027}\u0027 in statement block or type definition. | Missing closing \u0027}\u0027 in statement block or type definition. | Unexpected token \u0027)\u0027 in expression or statement. | You must provide a value expression following the \u0027-\u0027 operator. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027`$\u0027 in expression or statement. | Unexpected token \u0027)\u0027 in expression or statement. | Unexpected token \u0027}\u0027 in expression or statement. | You must provide a value expression following the \u0027-\u0027 operator. | Missing \u0027)\u0027 in method call. | Unexpected token \u0027`brokerExecution=false`\"\u0027 in expression or statement. | Unexpected token \u0027)\u0027 in expression or statement."
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4S_final_source_of_truth_parity_manifest_smoke_FIXED_V2 (1).ps1",
+                        "ok":  false,
+                        "error":  "Missing \u0027)\u0027 in method call. | Unexpected token \u0027$status\")\n}\n\n$manifest.Add(\"\")\n$manifest.Add(\"##\u0027 in expression or statement. | Unexpected token \u0027\")\n}\n\n$manifest.Add(\"\")\n$manifest.Add(\"\u0027 in expression or statement. | Missing closing \u0027}\u0027 in statement block or type definition."
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4S_final_source_of_truth_parity_manifest_smoke_FIXED_V2.ps1",
+                        "ok":  false,
+                        "error":  "Missing \u0027)\u0027 in method call. | Unexpected token \u0027$status\")\n}\n\n$manifest.Add(\"\")\n$manifest.Add(\"##\u0027 in expression or statement. | Unexpected token \u0027\")\n}\n\n$manifest.Add(\"\")\n$manifest.Add(\"\u0027 in expression or statement. | Missing closing \u0027}\u0027 in statement block or type definition."
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\S10_4S_final_source_of_truth_parity_manifest_smoke_FIXED_V3_ASCII.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\start_all_local.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\stop_local_ports.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\.local-start\\api.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\.local-start\\dashboard.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\.local-start\\engine_loop.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\.local-start\\telegram_consumer.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\start_daily_ai_desk.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\start_nightly_self_learning.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\start_stock_engine_server.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\.venv\\Scripts\\Activate.ps1",
+                        "ok":  true,
+                        "error":  null
+                    },
+                    {
+                        "type":  "powershell_parse",
+                        "path":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\services\\stock-engine\\ops\\windows_task_scheduler_examples.ps1",
+                        "ok":  true,
+                        "error":  null
+                    }
+                ],
+    "runtimeHealth":  {
+                          "ok":  true,
+                          "status":  200,
+                          "error":  null,
+                          "body":  {
+                                       "ok":  true,
+                                       "service":  "SkillEdge Persistent Stock Engine",
+                                       "engineVersion":  "holly_persistent_v2",
+                                       "env":  "local",
+                                       "stockPersistentEngineEnabled":  true,
+                                       "stockLegacyEngineEnabled":  false,
+                                       "localDatabase":  {
+                                                             "storageVersion":  "s410_supabase_sqlite_persistence_v1",
+                                                             "dbPath":  "/opt/skilledge/stock-engine/data/stock_engine.db",
+                                                             "signalsCount":  10397,
+                                                             "outcomesCount":  3785,
+                                                             "closedOutcomeCount":  613,
+                                                             "workedOutcomeCount":  149,
+                                                             "failedOutcomeCount":  464,
+                                                             "winRateClosed":  24.31,
+                                                             "primaryStore":  "supabase",
+                                                             "sqlite":  {
+                                                                            "storageVersion":  "s410_supabase_sqlite_persistence_v1",
+                                                                            "dbPath":  "/opt/skilledge/stock-engine/data/stock_engine.db",
+                                                                            "signalsCount":  10397,
+                                                                            "outcomesCount":  3785,
+                                                                            "closedOutcomeCount":  613,
+                                                                            "workedOutcomeCount":  149,
+                                                                            "failedOutcomeCount":  464,
+                                                                            "winRateClosed":  24.31
+                                                                        },
+                                                             "supabase":  {
+                                                                              "enabled":  true,
+                                                                              "configured":  true,
+                                                                              "url":  "https://wddkqtclrtkavxzezgyv.supabase.co",
+                                                                              "signalsCount":  1000,
+                                                                              "outcomesCount":  1000,
+                                                                              "closedOutcomeCount":  70,
+                                                                              "workedOutcomeCount":  19,
+                                                                              "failedOutcomeCount":  51,
+                                                                              "winRateClosed":  27.14,
+                                                                              "lastError":  null
+                                                                          }
+                                                         },
+                                       "runtimeCache":  {
+                                                            "cacheVersion":  "s412_runtime_cache_v1",
+                                                            "enabled":  true,
+                                                            "mode":  "upstash_redis_rest",
+                                                            "configured":  true,
+                                                            "hasUpstashUrl":  true,
+                                                            "hasUpstashToken":  true,
+                                                            "cachePath":  "/opt/skilledge/stock-engine/data/runtime_cache.json",
+                                                            "lastError":  null
+                                                        },
+                                       "connections":  {
+                                                           "hasSupabaseUrl":  true,
+                                                           "hasSupabaseServiceKey":  true,
+                                                           "hasRedisUrl":  false,
+                                                           "hasFmpApiKey":  true,
+                                                           "fmpPlan":  "premium"
+                                                       }
+                                   }
+                      }
+}

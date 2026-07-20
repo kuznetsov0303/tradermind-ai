@@ -1,0 +1,111 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_FINAL_CANARY_PACKAGE_STATIC_REVIEW_PASSED",
+    "inspectionOnly":  true,
+    "packageExecuted":  false,
+    "deploymentAuthorized":  false,
+    "armAllowed":  false,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "sourcePackage":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_7V_guarded_v2_canary_with_v3_20260719_123445",
+    "universeCount":  250,
+    "universeUniqueCount":  250,
+    "requiredMetrics":  [
+                            "rawRecordsPerSecond",
+                            "marketEventsPerSecond",
+                            "processingLagP95Ms",
+                            "quoteFreshnessP95Seconds",
+                            "cpuPercent",
+                            "rssBytes",
+                            "snapshotWriteLatencyMs",
+                            "candleCompletenessPercent",
+                            "providerReconnectCount",
+                            "providerErrorCount",
+                            "scannerCycleMs",
+                            "setupCycleMs"
+                        ],
+    "resolvedMetrics":  [
+                            "rawRecordsPerSecond",
+                            "marketEventsPerSecond",
+                            "processingLagP95Ms",
+                            "cpuPercent",
+                            "snapshotWriteLatencyMs",
+                            "candleCompletenessPercent",
+                            "providerReconnectCount",
+                            "scannerCycleMs",
+                            "quoteFreshnessP95Seconds",
+                            "rssBytes",
+                            "providerErrorCount",
+                            "setupCycleMs"
+                        ],
+    "missingMetrics":  [
+
+                       ],
+    "stages":  [
+                   {
+                       "stage":  25,
+                       "durationMinutes":  5,
+                       "purpose":  "baseline",
+                       "requiresExplicitApproval":  false,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  50,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  100,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  150,
+                       "durationMinutes":  10,
+                       "purpose":  "intermediate-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  250,
+                       "durationMinutes":  30,
+                       "purpose":  "final-capacity-canary",
+                       "requiresExplicitApproval":  true,
+                       "rollbackOnFailure":  true
+                   }
+               ],
+    "rollbackRules":  {
+                          "serviceUnhealthy":  true,
+                          "negativeQuoteAge":  true,
+                          "providerReconnectBurst":  true,
+                          "providerErrorIncrease":  true,
+                          "processingLagP95RegressionPercent":  50,
+                          "quoteFreshnessP95RegressionPercent":  50,
+                          "cpuPercentCeiling":  85,
+                          "rssGrowthPercentCeiling":  50,
+                          "snapshotWriteRegressionPercent":  100,
+                          "candleCompletenessFloorPercent":  99,
+                          "scannerCycleRegressionPercent":  100,
+                          "setupCycleRegressionPercent":  100,
+                          "returnToUniverseSize":  25
+                      },
+    "explicitExecutionApprovalRequired":  true,
+    "clientEligibilityChanged":  false,
+    "telegramEligibilityChanged":  false,
+    "paperEligibilityChanged":  false,
+    "brokerEnabled":  false,
+    "realMoneyEnabled":  false,
+    "errors":  [
+
+               ],
+    "warnings":  [
+
+                 ],
+    "nextAction":  "REQUEST_EXPLICIT_CANARY_EXECUTION_APPROVAL"
+}

@@ -1,0 +1,92 @@
+﻿{
+    "ok":  false,
+    "classification":  "DAY7D_GUARDED_V2_CANARY_PACKAGE_BLOCKED",
+    "packageBuilt":  true,
+    "packageExecuted":  false,
+    "deploymentAuthorized":  false,
+    "armAllowed":  false,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "liveProvider":  "databento",
+    "referenceProvider":  "fmp",
+    "universeSource":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_7P_VALIDATED_LIQUID_250_UNIVERSE_20260718_235427.json",
+    "universeCount":  250,
+    "universeUniqueCount":  250,
+    "metricPresence":  {
+                           "rawRecordsPerSecond":  true,
+                           "marketEventsPerSecond":  true,
+                           "processingLagP95Ms":  true,
+                           "quoteFreshnessP95Seconds":  false,
+                           "cpuPercent":  true,
+                           "rssBytes":  false,
+                           "snapshotWriteLatencyMs":  true,
+                           "candleCompletenessPercent":  true,
+                           "providerReconnectCount":  true,
+                           "providerErrorCount":  false,
+                           "scannerCycleMs":  true,
+                           "setupCycleMs":  false
+                       },
+    "missingMetrics":  [
+                           "quoteFreshnessP95Seconds",
+                           "rssBytes",
+                           "providerErrorCount",
+                           "setupCycleMs"
+                       ],
+    "baselineStageDeltasRequired":  true,
+    "stages":  [
+                   {
+                       "stage":  25,
+                       "durationMinutes":  5,
+                       "purpose":  "baseline",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  50,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  100,
+                       "durationMinutes":  5,
+                       "purpose":  "micro-canary",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  150,
+                       "durationMinutes":  10,
+                       "purpose":  "intermediate-canary",
+                       "rollbackOnFailure":  true
+                   },
+                   {
+                       "stage":  250,
+                       "durationMinutes":  30,
+                       "purpose":  "final-capacity-canary",
+                       "rollbackOnFailure":  true
+                   }
+               ],
+    "rollbackRules":  {
+                          "serviceUnhealthy":  true,
+                          "reconnectBurst":  true,
+                          "providerErrorsIncrease":  true,
+                          "negativeQuoteAge":  true,
+                          "quoteFreshnessP95RegressionPercent":  50,
+                          "processingLagP95RegressionPercent":  50,
+                          "cpuPercentCeiling":  85,
+                          "rssGrowthPercentCeiling":  50,
+                          "candleCompletenessFloorPercent":  99,
+                          "scannerCycleRegressionPercent":  100,
+                          "setupCycleRegressionPercent":  100,
+                          "snapshotWriteRegressionPercent":  100,
+                          "returnToUniverseSize":  25
+                      },
+    "errors":  [
+                   "MISSING_METRIC_quoteFreshnessP95Seconds",
+                   "MISSING_METRIC_rssBytes",
+                   "MISSING_METRIC_providerErrorCount",
+                   "MISSING_METRIC_setupCycleMs"
+               ],
+    "nextAction":  "BUILD_MISSING_CAPACITY_INSTRUMENTATION_PATCH_V3"
+}

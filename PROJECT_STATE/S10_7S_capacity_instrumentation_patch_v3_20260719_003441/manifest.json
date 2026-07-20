@@ -1,0 +1,51 @@
+{
+  "ok": true,
+  "classification": "DAY7D_CAPACITY_INSTRUMENTATION_V3_QUOTE_SCHEMA_FIXED",
+  "packageBuilt": true,
+  "packageExecuted": false,
+  "deploymentAuthorized": false,
+  "armAllowed": false,
+  "productionMutation": false,
+  "serviceRestarted": false,
+  "systemdTouched": false,
+  "streamSymbolsChanged": false,
+  "liveProvider": "databento",
+  "referenceProvider": "fmp",
+  "missingMetricsResolved": [
+    "quoteFreshnessP95Seconds",
+    "rssBytes",
+    "providerErrorCount",
+    "setupCycleMs"
+  ],
+  "implementation": {
+    "quoteFreshnessP95Seconds": "read-only market-state snapshot probe",
+    "rssBytes": "read-only /proc MainPID probe",
+    "providerErrorCount": "read-only systemd journal count since stage baseline",
+    "setupCycleMs": "instrumented discovery refresh timing JSON"
+  },
+  "contractTest": {
+    "quoteFreshnessP95Seconds": 0.9,
+    "rssBytes": 104857600,
+    "providerErrorCount": 2,
+    "setupCycleMs": 12.5
+  },
+  "errors": [],
+  "nextAction": "RERUN_V3_STATIC_AND_ISOLATED_REVIEW",
+  "quoteFreshnessSchema": {
+    "ageKeys": [
+      "eventAgeSeconds",
+      "receiveAgeSeconds"
+    ],
+    "timestampKeys": [
+      "lastEventAt",
+      "lastReceiveAt"
+    ],
+    "legacyFallbackKeysPreserved": true
+  },
+  "quoteFreshnessContractTest": {
+    "quoteFreshnessP95Seconds": 2.7,
+    "rssBytes": 104857600,
+    "providerErrorCount": 2,
+    "setupCycleMs": 12.5
+  }
+}

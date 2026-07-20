@@ -1,0 +1,26 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_GUARDED_CANARY_EXECUTION_PACKAGE_VALIDATED",
+    "packageBuilt":  true,
+    "packageExecuted":  false,
+    "executionAuthorized":  false,
+    "additions":  [
+                      "SDOT",
+                      "SLND"
+                  ],
+    "removals":  [
+                     "RIVN",
+                     "SOFI"
+                 ],
+    "protectedCoreCount":  21,
+    "soakMinutes":  30,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "validationErrors":  [
+
+                         ],
+    "nextAction":  "REVIEW_AND_ARM_CONTROLLED_CANARY",
+    "packageDirectory":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\guarded_rotation_canary_package_v1"
+}

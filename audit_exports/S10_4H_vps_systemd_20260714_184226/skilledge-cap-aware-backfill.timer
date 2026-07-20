@@ -1,0 +1,10 @@
+[Unit]
+Description=Run SkillEdge Capitalization-Aware Research Backfill
+
+[Timer]
+OnCalendar=*-*-* 01:25:00
+Persistent=true
+RandomizedDelaySec=600
+
+[Install]
+WantedBy=timers.target

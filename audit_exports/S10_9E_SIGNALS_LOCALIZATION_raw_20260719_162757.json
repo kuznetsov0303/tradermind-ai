@@ -1,0 +1,147 @@
+{
+  "ok": true,
+  "classification": "SIGNALS_EN_RU_UA_LOCALIZATION_PATCH_PASSED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "filesChanged": [
+    "app/dashboard/page.tsx",
+    "components/dashboard/SignalCockpitTab.tsx"
+  ],
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9E_signals_localization_backup_20260719_162757",
+  "ukrainianTabLabel": "Сповіщення",
+  "siteLanguagePropUsed": true,
+  "statusLocalizationAdded": true,
+  "visibleCockpitLocalizationAnchors": [
+    {
+      "anchor": "            Live signal cockpit",
+      "hits": 1
+    },
+    {
+      "anchor": "{loading ? \"Обновляем...\" : \"Обновить\"}",
+      "hits": 1
+    },
+    {
+      "anchor": "                  AI сопровождение",
+      "hits": 1
+    },
+    {
+      "anchor": ": \"Выбери тикер из watchlist. AI покажет план, риск и условия входа.\"}",
+      "hits": 1
+    },
+    {
+      "anchor": "<Card title=\"Trade management\" className=\"mt-3\">",
+      "hits": 1
+    },
+    {
+      "anchor": "                    Live action",
+      "hits": 1
+    },
+    {
+      "anchor": "? \"candidate still valid\"\n      : \"monitor only\";",
+      "hits": 1
+    },
+    {
+      "anchor": "                  label=\"Current R\"",
+      "hits": 1
+    },
+    {
+      "anchor": "                  label=\"Freshness\"",
+      "hits": 1
+    },
+    {
+      "anchor": "                  label=\"Price age\"",
+      "hits": 1
+    },
+    {
+      "anchor": "                  label=\"Actionable\"",
+      "hits": 1
+    },
+    {
+      "anchor": "? \"YES\"\n                      : selectedIsActionable === false\n                 ",
+      "hits": 1
+    },
+    {
+      "anchor": "                    strict blocked",
+      "hits": 1
+    },
+    {
+      "anchor": "                    late session",
+      "hits": 1
+    },
+    {
+      "anchor": "                    market closed",
+      "hits": 1
+    },
+    {
+      "anchor": "                    No live blockers from the trade-management guard.",
+      "hits": 1
+    },
+    {
+      "anchor": "<Card title=\"Что делать дальше\" className=\"mt-3\">",
+      "hits": 1
+    },
+    {
+      "anchor": "\"Ждать подтверждение. Не входить без setup + risk/reward + invalidation.\",",
+      "hits": 1
+    },
+    {
+      "anchor": "<Card title=\"План сделки\" className=\"mt-3\">",
+      "hits": 1
+    },
+    {
+      "anchor": "                label=\"Вход\"",
+      "hits": 1
+    },
+    {
+      "anchor": "                label=\"Стоп\"",
+      "hits": 1
+    },
+    {
+      "anchor": "                label=\"R сейчас\"",
+      "hits": 1
+    },
+    {
+      "anchor": "                  Confirmations появятся после загрузки candle context.",
+      "hits": 1
+    },
+    {
+      "anchor": "                  AI WATCHLIST",
+      "hits": 0
+    },
+    {
+      "anchor": "                  Поиск тикера...",
+      "hits": 0
+    },
+    {
+      "anchor": "                  Нет тикеров под выбранный фильтр.",
+      "hits": 1
+    },
+    {
+      "anchor": "                  Выбери тикер справа.",
+      "hits": 0
+    },
+    {
+      "anchor": "                    ЦЕНА",
+      "hits": 0
+    },
+    {
+      "anchor": "                    SCORE",
+      "hits": 0
+    },
+    {
+      "anchor": "                    VOLUME",
+      "hits": 0
+    },
+    {
+      "anchor": "                  Updated: {formatDateTime(lastUpdated)}",
+      "hits": 0
+    }
+  ],
+  "dashboardReplacementHits": {
+    "\"Сигнали\"": 1,
+    "'Сигнали'": 0
+  },
+  "buildPassed": true,
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9E_SIGNALS_LOCALIZATION_build_20260719_162757.txt",
+  "nextAction": "LOCAL_VISUAL_VERIFY_SIGNALS_EN_RU_UA"
+}

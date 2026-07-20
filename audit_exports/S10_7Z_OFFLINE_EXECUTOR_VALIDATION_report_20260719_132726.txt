@@ -1,0 +1,21 @@
+﻿S10.7Z OFFLINE EXECUTOR VALIDATION
+Generated=20260719_132726
+OK=False
+CLASSIFICATION=DAY7D_OFFLINE_CANARY_EXECUTOR_VALIDATION_BLOCKED
+EXECUTE_SWITCH_PRESENT=True
+EXECUTE_SWITCH_ENFORCED=True
+MARKET_HOURS_GATE_PRESENT=True
+EXACT_CORE25_RESTORE_PRESENT=True
+SCENARIOS=all_pass_no_existing_dropin:rollback=False:core25=True:dropinExact=True ; fail_at_100_no_existing_dropin:rollback=True:core25=True:dropinExact=True ; all_pass_existing_dropin:rollback=False:core25=True:dropinExact=True ; fail_at_150_existing_dropin:rollback=True:core25=True:dropinExact=True
+ERRORS=MISSING_EXECUTOR_TOKEN_150
+WARNINGS=
+EXECUTOR_EXECUTED_AGAINST_VPS=False
+PRODUCTION_MUTATION=False
+SERVICE_RESTARTED=False
+SYSTEMD_TOUCHED=False
+STREAM_SYMBOLS_CHANGED=False
+PACKAGE_EXECUTED=False
+DEPLOYMENT_AUTHORIZED=False
+ARM_ALLOWED=False
+NEXT_ACTION=FIX_OFFLINE_EXECUTOR_VALIDATION
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_7Z_OFFLINE_EXECUTOR_VALIDATION_raw_20260719_132726.json

@@ -1,0 +1,351 @@
+﻿[
+    {
+        "symbol":  "BTBT",
+        "setupSlug":  "vwap_reclaim_long",
+        "setupName":  "VWAP Reclaim Long",
+        "direction":  "long",
+        "status":  "ENTRY_STILL_VALID",
+        "lifecycleStatus":  "ENTRY_STILL_VALID",
+        "grade":  "A+",
+        "score":  100.0,
+        "selectorScore":  162.0,
+        "tier":  "BEST_DESK_IDEA",
+        "source":  "active",
+        "rrToTp1":  2.0,
+        "entry":  2.15,
+        "stop":  2.1231,
+        "tp1":  2.2038,
+        "tp2":  2.2307,
+        "currentPrice":  2.14,
+        "currentR":  -0.37,
+        "telegramEligible":  false,
+        "deskPassed":  true,
+        "telegramPassed":  false,
+        "isActionable":  true,
+        "strictEligible":  true,
+        "strictBlockedReasons":  [
+
+                                 ],
+        "metrics":  {
+                        "entryDistancePct":  0.0,
+                        "triggerCount":  3.0,
+                        "executionTriggerCount":  2.0,
+                        "inPlayScore":  78.0,
+                        "changePercent":  10.62,
+                        "volume":  40800057.0,
+                        "price":  2.14
+                    },
+        "reasons":  [
+                        "actionable_now",
+                        "desk_quality_passed",
+                        "grade_a_plus",
+                        "rr_2r_plus",
+                        "execution_confirmation_present",
+                        "multi_trigger_confirmation",
+                        "two_execution_triggers",
+                        "entry_distance_elite",
+                        "volume_3m_plus",
+                        "lifecycle_valid"
+                    ],
+        "cautions":  [
+                         "telegram_requires_rr_2_2_plus"
+                     ],
+        "telegramReasons":  [
+                                "telegram_requires_rr_2_2_plus"
+                            ],
+        "deskReasons":  [
+                            "desk_active_quality_passed"
+                        ],
+        "whySelected":  [
+                            "actionable_now",
+                            "desk_quality_passed",
+                            "grade_a_plus",
+                            "rr_2r_plus",
+                            "execution_confirmation_present"
+                        ],
+        "whyNotElite":  [
+                            "telegram_requires_rr_2_2_plus"
+                        ],
+        "rank":  1,
+        "role":  "PRIMARY_IDEA"
+    },
+    {
+        "symbol":  "GIL",
+        "setupSlug":  "large_cap_vwap_trend_long",
+        "setupName":  "Large Cap VWAP Trend Long",
+        "direction":  "long",
+        "status":  "ENTRY_STILL_VALID",
+        "lifecycleStatus":  "ENTRY_STILL_VALID",
+        "grade":  "A+",
+        "score":  100.0,
+        "selectorScore":  162.0,
+        "tier":  "BEST_DESK_IDEA",
+        "source":  "active",
+        "rrToTp1":  2.0,
+        "entry":  49.93,
+        "stop":  49.3059,
+        "tp1":  51.1782,
+        "tp2":  51.8023,
+        "currentPrice":  49.74,
+        "currentR":  -0.3,
+        "telegramEligible":  false,
+        "deskPassed":  true,
+        "telegramPassed":  false,
+        "isActionable":  true,
+        "strictEligible":  true,
+        "strictBlockedReasons":  [
+
+                                 ],
+        "metrics":  {
+                        "entryDistancePct":  0.0,
+                        "triggerCount":  3.0,
+                        "executionTriggerCount":  2.0,
+                        "inPlayScore":  77.0,
+                        "changePercent":  -19.77,
+                        "volume":  11373173.0,
+                        "price":  49.74
+                    },
+        "reasons":  [
+                        "actionable_now",
+                        "desk_quality_passed",
+                        "grade_a_plus",
+                        "rr_2r_plus",
+                        "execution_confirmation_present",
+                        "multi_trigger_confirmation",
+                        "two_execution_triggers",
+                        "entry_distance_elite",
+                        "volume_3m_plus",
+                        "lifecycle_valid"
+                    ],
+        "cautions":  [
+                         "telegram_requires_rr_2_2_plus"
+                     ],
+        "telegramReasons":  [
+                                "telegram_requires_rr_2_2_plus"
+                            ],
+        "deskReasons":  [
+                            "desk_active_quality_passed"
+                        ],
+        "whySelected":  [
+                            "actionable_now",
+                            "desk_quality_passed",
+                            "grade_a_plus",
+                            "rr_2r_plus",
+                            "execution_confirmation_present"
+                        ],
+        "whyNotElite":  [
+                            "telegram_requires_rr_2_2_plus"
+                        ],
+        "rank":  2,
+        "role":  "BACKUP_IDEA"
+    },
+    {
+        "symbol":  "SMCI",
+        "setupSlug":  "large_cap_vwap_trend_long",
+        "setupName":  "Large Cap VWAP Trend Long",
+        "direction":  "long",
+        "status":  "ENTRY_STILL_VALID",
+        "lifecycleStatus":  "ENTRY_STILL_VALID",
+        "grade":  "A+",
+        "score":  100.0,
+        "selectorScore":  162.0,
+        "tier":  "BEST_DESK_IDEA",
+        "source":  "active",
+        "rrToTp1":  2.0,
+        "entry":  30.34,
+        "stop":  29.788,
+        "tp1":  31.444,
+        "tp2":  31.996,
+        "currentPrice":  29.9972,
+        "currentR":  -0.62,
+        "telegramEligible":  false,
+        "deskPassed":  true,
+        "telegramPassed":  false,
+        "isActionable":  true,
+        "strictEligible":  true,
+        "strictBlockedReasons":  [
+
+                                 ],
+        "metrics":  {
+                        "entryDistancePct":  0.0,
+                        "triggerCount":  3.0,
+                        "executionTriggerCount":  2.0,
+                        "inPlayScore":  73.0,
+                        "changePercent":  -2.79,
+                        "volume":  35746391.0,
+                        "price":  29.9972
+                    },
+        "reasons":  [
+                        "actionable_now",
+                        "desk_quality_passed",
+                        "grade_a_plus",
+                        "rr_2r_plus",
+                        "execution_confirmation_present",
+                        "multi_trigger_confirmation",
+                        "two_execution_triggers",
+                        "entry_distance_elite",
+                        "volume_3m_plus",
+                        "lifecycle_valid"
+                    ],
+        "cautions":  [
+                         "telegram_requires_rr_2_2_plus"
+                     ],
+        "telegramReasons":  [
+                                "telegram_requires_rr_2_2_plus"
+                            ],
+        "deskReasons":  [
+                            "desk_active_quality_passed"
+                        ],
+        "whySelected":  [
+                            "actionable_now",
+                            "desk_quality_passed",
+                            "grade_a_plus",
+                            "rr_2r_plus",
+                            "execution_confirmation_present"
+                        ],
+        "whyNotElite":  [
+                            "telegram_requires_rr_2_2_plus"
+                        ],
+        "rank":  3,
+        "role":  "BACKUP_IDEA"
+    },
+    {
+        "symbol":  "VNCE",
+        "setupSlug":  "vwap_reclaim_long",
+        "setupName":  "VWAP Reclaim Long",
+        "direction":  "long",
+        "status":  "ENTRY_STILL_VALID",
+        "lifecycleStatus":  "ENTRY_STILL_VALID",
+        "grade":  "A+",
+        "score":  100.0,
+        "selectorScore":  159.0,
+        "tier":  "BEST_DESK_IDEA",
+        "source":  "active",
+        "rrToTp1":  2.0,
+        "entry":  6.9,
+        "stop":  6.7886,
+        "tp1":  7.1228,
+        "tp2":  7.2342,
+        "currentPrice":  6.86,
+        "currentR":  -0.36,
+        "telegramEligible":  false,
+        "deskPassed":  true,
+        "telegramPassed":  false,
+        "isActionable":  true,
+        "strictEligible":  true,
+        "strictBlockedReasons":  [
+
+                                 ],
+        "metrics":  {
+                        "entryDistancePct":  0.0,
+                        "triggerCount":  3.0,
+                        "executionTriggerCount":  2.0,
+                        "inPlayScore":  74.0,
+                        "changePercent":  36.93,
+                        "volume":  1559673.0,
+                        "price":  6.86
+                    },
+        "reasons":  [
+                        "actionable_now",
+                        "desk_quality_passed",
+                        "grade_a_plus",
+                        "rr_2r_plus",
+                        "execution_confirmation_present",
+                        "multi_trigger_confirmation",
+                        "two_execution_triggers",
+                        "entry_distance_elite",
+                        "volume_1m_plus",
+                        "lifecycle_valid"
+                    ],
+        "cautions":  [
+                         "telegram_requires_rr_2_2_plus"
+                     ],
+        "telegramReasons":  [
+                                "telegram_requires_rr_2_2_plus"
+                            ],
+        "deskReasons":  [
+                            "desk_active_quality_passed"
+                        ],
+        "whySelected":  [
+                            "actionable_now",
+                            "desk_quality_passed",
+                            "grade_a_plus",
+                            "rr_2r_plus",
+                            "execution_confirmation_present"
+                        ],
+        "whyNotElite":  [
+                            "telegram_requires_rr_2_2_plus"
+                        ],
+        "rank":  4,
+        "role":  "BACKUP_IDEA"
+    },
+    {
+        "symbol":  "GDHG",
+        "setupSlug":  "vwap_reclaim_long",
+        "setupName":  "VWAP Reclaim Long",
+        "direction":  "long",
+        "status":  "ENTRY_STILL_VALID",
+        "lifecycleStatus":  "ENTRY_STILL_VALID",
+        "grade":  "A+",
+        "score":  100.0,
+        "selectorScore":  157.0,
+        "tier":  "BEST_DESK_IDEA",
+        "source":  "active",
+        "rrToTp1":  2.0,
+        "entry":  2.31,
+        "stop":  2.2457,
+        "tp1":  2.4386,
+        "tp2":  2.5029,
+        "currentPrice":  2.325,
+        "currentR":  0.23,
+        "telegramEligible":  false,
+        "deskPassed":  true,
+        "telegramPassed":  false,
+        "isActionable":  true,
+        "strictEligible":  true,
+        "strictBlockedReasons":  [
+
+                                 ],
+        "metrics":  {
+                        "entryDistancePct":  0.0,
+                        "triggerCount":  2.0,
+                        "executionTriggerCount":  1.0,
+                        "inPlayScore":  75.0,
+                        "changePercent":  42.64,
+                        "volume":  15848972.0,
+                        "price":  2.325
+                    },
+        "reasons":  [
+                        "actionable_now",
+                        "desk_quality_passed",
+                        "grade_a_plus",
+                        "rr_2r_plus",
+                        "execution_confirmation_present",
+                        "multi_trigger_confirmation",
+                        "entry_distance_elite",
+                        "volume_3m_plus",
+                        "lifecycle_valid"
+                    ],
+        "cautions":  [
+                         "telegram_requires_rr_2_2_plus"
+                     ],
+        "telegramReasons":  [
+                                "telegram_requires_rr_2_2_plus"
+                            ],
+        "deskReasons":  [
+                            "desk_active_quality_passed"
+                        ],
+        "whySelected":  [
+                            "actionable_now",
+                            "desk_quality_passed",
+                            "grade_a_plus",
+                            "rr_2r_plus",
+                            "execution_confirmation_present"
+                        ],
+        "whyNotElite":  [
+                            "telegram_requires_rr_2_2_plus"
+                        ],
+        "rank":  5,
+        "role":  "BACKUP_IDEA"
+    }
+]

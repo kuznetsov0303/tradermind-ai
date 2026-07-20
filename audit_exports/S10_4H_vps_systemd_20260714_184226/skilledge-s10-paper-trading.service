@@ -1,0 +1,16 @@
+[Unit]
+Description=SkillEdge S10 market-hours guarded paper entry runner
+After=network-online.target skilledge-stock-engine-api.service
+Wants=network-online.target
+Requires=skilledge-stock-engine-api.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/skilledge/stock-engine
+ExecStart=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py
+TimeoutStartSec=180
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

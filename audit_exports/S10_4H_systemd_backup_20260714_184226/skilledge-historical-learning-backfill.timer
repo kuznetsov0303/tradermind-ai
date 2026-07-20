@@ -1,0 +1,11 @@
+[Unit]
+Description=Run SkillEdge Historical Learning Backfill Scheduler nightly
+
+[Timer]
+OnCalendar=Mon..Sat *-*-* 01:15:00
+Persistent=true
+RandomizedDelaySec=300
+Unit=skilledge-historical-learning-backfill.service
+
+[Install]
+WantedBy=timers.target

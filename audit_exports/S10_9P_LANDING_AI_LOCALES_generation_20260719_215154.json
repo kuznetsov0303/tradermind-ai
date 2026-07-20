@@ -1,0 +1,93 @@
+{
+  "model": "gpt-5.6-luna",
+  "masterFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_exports\\landing_en_master_20260719_213942.json",
+  "manifestFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_exports\\landing_translation_manifest_20260719_213942.json",
+  "batchSize": 40,
+  "englishEntries": 252,
+  "locales": {
+    "ru": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\ru.json"
+    },
+    "uk": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\uk.json"
+    },
+    "zh": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\zh.json"
+    },
+    "de": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\de.json"
+    },
+    "fr": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\fr.json"
+    },
+    "es": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\es.json"
+    },
+    "ar": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\ar.json"
+    },
+    "it": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\it.json"
+    },
+    "nb": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\nb.json"
+    },
+    "ka": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\ka.json"
+    },
+    "pl": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\pl.json"
+    },
+    "tr": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\tr.json"
+    },
+    "el": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\el.json"
+    },
+    "hi": {
+      "entries": 252,
+      "batchesGeneratedThisRun": 7,
+      "issues": [],
+      "file": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\i18n_generated\\landing\\hi.json"
+    }
+  }
+}

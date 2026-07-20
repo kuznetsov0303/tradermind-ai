@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "classification": "COMPLETE_LANDING_LOCALE_BUNDLE_MERGED",
+  "productionMutation": false,
+  "vpsTouched": false,
+  "runtimeAiTranslation": false,
+  "landingComponentChanged": false,
+  "baseEntries": 252,
+  "supplementalEntries": 194,
+  "completeEntriesPerLocale": 446,
+  "localesMerged": 15,
+  "resolvedPathAssignments": 352,
+  "ambiguousOverridesResolved": 15,
+  "technicalPathsSkipped": 3,
+  "keyParityPassed": true,
+  "buildPassed": true,
+  "completeDirectory": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\locales\\landing-complete",
+  "pathMap": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\locales\\landing-complete\\path-map.json",
+  "loaderFile": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\lib\\i18n\\landing-complete-locales.ts",
+  "backupRoot": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\S10_9V_complete_landing_backup_20260720_014836",
+  "buildLog": "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\audit_exports\\S10_9V_COMPLETE_LANDING_LOCALES_build_20260720_014836.txt",
+  "nextAction": "WIRE_LANDING_TO_COMPLETE_AST_PATH_MAP"
+}

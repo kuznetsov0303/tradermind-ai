@@ -1,0 +1,160 @@
+{
+  "ok": true,
+  "classification": "DAY7D_SECURITY_MASTER_AND_INSTRUMENTATION_V2_PACKAGE_VALIDATED",
+  "packageBuilt": true,
+  "packageExecuted": false,
+  "deploymentAuthorized": false,
+  "productionMutation": false,
+  "serviceRestarted": false,
+  "systemdTouched": false,
+  "streamSymbolsChanged": false,
+  "liveProvider": "databento",
+  "referenceProvider": "fmp",
+  "core25Tested": 25,
+  "core25Blocked": [],
+  "core25Results": {
+    "AAPL": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "MSFT": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "NVDA": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "TSLA": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "AMD": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "AMZN": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "META": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "GOOGL": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "AVGO": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "PLTR": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "SMCI": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "MSTR": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "COIN": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "NFLX": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "CRM": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "ORCL": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "INTC": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "MU": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "ARM": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "UBER": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "SHOP": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "RIVN": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "SOFI": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "CRWD": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    },
+    "NOW": {
+      "allowed": true,
+      "classification": "COMMON_STOCK_REFERENCE_FLAGS",
+      "reasons": []
+    }
+  },
+  "qqqBlocked": true,
+  "warrantBlocked": true,
+  "unknownFailClosed": true,
+  "instrumentationFields": [
+    "rawRecordsPerSecond",
+    "marketEventsPerSecond",
+    "cpuPercent",
+    "callbackLatencyMs",
+    "snapshotWriteLatencyMs",
+    "scannerBuildLatencyMs",
+    "candleCompleteness"
+  ],
+  "missingInstrumentationFields": [],
+  "semanticErrors": [],
+  "clientEligibilityChanged": false,
+  "telegramEligibilityChanged": false,
+  "paperEligibilityChanged": false,
+  "nextAction": "RUN_ISOLATED_STREAM_INSTRUMENTATION_TESTS"
+}

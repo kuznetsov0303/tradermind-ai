@@ -1,0 +1,15 @@
+﻿S10.7H ACTIVE SOURCE SNAPSHOT
+Generated=20260717_232458
+OK=True
+CLASSIFICATION=DAY7D_ACTIVE_SOURCE_SNAPSHOT_COLLECTED
+INSPECTION_ONLY=True
+ACTIVE_FILE_COUNT=11
+ACTIVE_FILES=app/discovery.py,app/storage.py,app/api/app.py,ops/runner_utils.py,app/data/fmp_client.py,app/indicators.py,app/state.py,app/setup_registry.py,app/config.py,app/backtest.py,app/runtime_cache.py
+NEXT_ACTION=BUILD_EXACT_SECURITY_MASTER_AND_FULL_INSTRUMENTATION_PATCH
+PRODUCTION_MUTATION=False
+SERVICE_RESTARTED=False
+SYSTEMD_TOUCHED=False
+STREAM_SYMBOLS_CHANGED=False
+SNAPSHOT_DIR=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\S10_7H_active_source_snapshot
+ARCHIVE=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_7H_ACTIVE_SOURCE_SNAPSHOT_20260717_232458.tar.gz
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_7H_ACTIVE_SOURCE_SNAPSHOT_raw_20260717_232458.json

@@ -1,0 +1,36 @@
+S10.4S FINAL SOURCE OF TRUTH / PARITY / MANIFEST / SMOKE
+Generated=20260714_210442
+
+=== LOCAL <-> VPS PARITY ===
+FILES_TOTAL=55
+FILES_MATCHED=35
+FILES_MISSING=20
+FILES_DIFFERENT=0
+
+=== SYSTEMD ===
+SYSTEMD_TOTAL=11
+SYSTEMD_MATCHED=11
+SYSTEMD_MISSING_RUNTIME=0
+SYSTEMD_DIFFERENT=0
+
+=== STATIC / RUNTIME SMOKE ===
+PYTHON_FILES_CHECKED=36
+PYTHON_FAILURES=0
+POWERSHELL_FILES_CHECKED=22
+POWERSHELL_FAILURES=3
+API_HEALTH_OK=True
+API_HEALTH_STATUS=200
+
+=== ROLLBACK ===
+ROLLBACK_SNAPSHOT_COUNT=1
+
+=== OUTPUTS ===
+Manifest=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PRODUCTION_MANIFEST.md
+Parity=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4S_local_vps_parity_20260714_210442.json
+Smoke=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4S_static_runtime_smoke_20260714_210442.json
+RequirementsDiff=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4S_requirements_diff_20260714_210442.txt
+
+=== SAFETY ===
+DEPLOY_PERFORMED=false
+RESTART_PERFORMED=false
+SERVICE_STATE_CHANGED=false

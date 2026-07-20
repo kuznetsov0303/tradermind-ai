@@ -1,0 +1,18 @@
+S10.9K UNIFIED I18N FOUNDATION
+Generated=20260719_210736
+OK=True
+CLASSIFICATION=UNIFIED_I18N_FOUNDATION_PATCH_PASSED
+STORAGE_KEY=skilledge_language
+EVENT=skilledge:language-changed
+DEFAULT_LOCALE=en
+ALIASES=ua->uk,no->nb
+RTL_LOCALE=ar
+RUNTIME_AI_TRANSLATION=False
+LOCALE_VALIDATION_SCRIPT_READY=True
+BUILD_PASSED=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+BACKUP_ROOT=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PROJECT_STATE\S10_9K_i18n_foundation_backup_20260719_210736
+BUILD_LOG=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9K_I18N_FOUNDATION_build_20260719_210736.txt
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9K_I18N_FOUNDATION_raw_20260719_210736.json
+NEXT_ACTION=MIGRATE_LANDING_LANGUAGE_SELECTOR_TO_UNIFIED_RUNTIME

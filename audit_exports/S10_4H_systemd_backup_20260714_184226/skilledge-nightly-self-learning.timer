@@ -1,0 +1,10 @@
+[Unit]
+Description=Run SkillEdge Nightly Self Learning at 23:35 Kyiv
+
+[Timer]
+OnCalendar=Mon..Fri 23:35
+Persistent=true
+Unit=skilledge-nightly-self-learning.service
+
+[Install]
+WantedBy=timers.target

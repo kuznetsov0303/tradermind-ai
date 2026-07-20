@@ -1,0 +1,117 @@
+﻿{
+    "schemaVersion":  "1.0",
+    "generatedAt":  "2026-07-20T15:10:39.7468173+03:00",
+    "project":  "SkillEdge AI / UpYourSkills",
+    "defaultRules":  {
+                         "preserveBrandCase":  true,
+                         "preservePlaceholders":  true,
+                         "preserveNumbersAndPrices":  true,
+                         "noProfitGuarantees":  true,
+                         "noRuntimeTranslation":  true,
+                         "nativeFinancialSaaSTone":  true
+                     },
+    "protectedExact":  [
+                           "AI Alerts",
+                           "AI Coach",
+                           "AI Market Brief",
+                           "AI Scanner",
+                           "AI Trading Desk",
+                           "Breakout Retest Long",
+                           "Crypto SMC Sweep + Reclaim",
+                           "CSV",
+                           "EMA20",
+                           "Failed Breakout / Stuff",
+                           "Gap and Crap Short",
+                           "Liquidity Trap Reversal",
+                           "Long",
+                           "Lower High Breakdown Short",
+                           "Market Intelligence",
+                           "Opening Range Breakout",
+                           "Personal Edge",
+                           "PnL",
+                           "Premarket Pump Short",
+                           "Pullback Continuation Long",
+                           "RR",
+                           "RVOL",
+                           "Short",
+                           "Signal-to-Journal",
+                           "SkillEdge AI",
+                           "SkillEdge Core",
+                           "SkillEdge Edge",
+                           "SkillEdge Elite",
+                           "Strategy OS",
+                           "TP1",
+                           "TP2",
+                           "TradingView",
+                           "TRC20",
+                           "USDT",
+                           "VWAP",
+                           "VWAP Reclaim Long",
+                           "VWAP Rejection Short",
+                           "XLSX"
+                       ],
+    "setupNames":  [
+                       "VWAP Reclaim Long",
+                       "VWAP Rejection Short",
+                       "Premarket Pump Short",
+                       "Gap and Crap Short",
+                       "Failed Breakout / Stuff",
+                       "Breakout Retest Long",
+                       "Pullback Continuation Long",
+                       "Opening Range Breakout",
+                       "Lower High Breakdown Short",
+                       "Liquidity Trap Reversal",
+                       "Crypto SMC Sweep + Reclaim"
+                   ],
+    "contextualTerms":  [
+                            {
+                                "source":  "Watch",
+                                "guidance":  "Translate by UI role. Signal status should mean under observation, never the verb \u0027to watch\u0027. Watchlist should mean a list of monitored instruments."
+                            },
+                            {
+                                "source":  "Armed",
+                                "guidance":  "For a trading signal lifecycle, express readiness for entry/trigger confirmation. Never use a literal military translation."
+                            },
+                            {
+                                "source":  "Active",
+                                "guidance":  "Translate by object: active trade, active signal, active plan, or enabled feature."
+                            },
+                            {
+                                "source":  "Setup",
+                                "guidance":  "Preserve official setup names in English. In explanatory prose, use the natural local trading term appropriate for the locale."
+                            },
+                            {
+                                "source":  "Signal",
+                                "guidance":  "Use the established local financial/trading term. Distinguish a trading signal from a notification or status."
+                            },
+                            {
+                                "source":  "Edge",
+                                "guidance":  "Never translate inside SkillEdge Edge or Personal Edge. Translate only when it is ordinary prose and context clearly requires it."
+                            }
+                        ],
+    "localeSpecificRules":  {
+                                "ru":  [
+                                           "Use natural professional Russian.",
+                                           "Do not use Ukrainian letters і, ї, є, ґ.",
+                                           "Avoid literal English word order and awkward calques."
+                                       ],
+                                "uk":  [
+                                           "Use natural professional Ukrainian.",
+                                           "Do not use Russian letters ы, э, ё, ъ.",
+                                           "Use Ukrainian financial and SaaS terminology consistently."
+                                       ],
+                                "de":  [
+                                           "Prefer concise professional German to reduce UI overflow.",
+                                           "Avoid unnecessary nominal compounds when a shorter natural phrase is available."
+                                       ],
+                                "ar":  [
+                                           "Use Modern Standard Arabic suitable for professional financial software.",
+                                           "Keep protected Latin trading terms exactly.",
+                                           "Assume RTL layout and avoid punctuation patterns that render poorly."
+                                       ],
+                                "zh":  [
+                                           "Use concise Simplified Chinese suitable for premium financial SaaS.",
+                                           "Preserve protected Latin trading abbreviations and product names."
+                                       ]
+                            }
+}

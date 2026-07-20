@@ -1,0 +1,30 @@
+S10.4T FINAL 31-UNIT SYSTEMD RUNTIME RECONCILIATION
+Generated=20260714_211029
+
+=== SYSTEMD RUNTIME PARITY ===
+TOTAL=31
+MATCHED=31
+MISSING=0
+DIFFERENT=0
+SYMLINKS=0
+
+=== CLEAN STATIC SMOKE ===
+PYTHON_FILES_CHECKED=36
+PYTHON_FAILURES=0
+POWERSHELL_FILES_CHECKED=20
+POWERSHELL_FAILURES=0
+
+=== REQUIREMENTS SANITY ===
+INVALID_MERGED_LINES=0
+DUPLICATE_LINES=0
+
+=== OUTPUTS ===
+SystemdParity=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4T_31_unit_systemd_runtime_parity_20260714_211029.json
+StaticSmoke=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4T_clean_static_smoke_20260714_211029.json
+RequirementsSanity=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4T_requirements_sanity_20260714_211029.txt
+Manifest=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PRODUCTION_MANIFEST.md
+
+=== SAFETY ===
+DEPLOY_PERFORMED=false
+RESTART_PERFORMED=false
+SERVICE_STATE_CHANGED=false

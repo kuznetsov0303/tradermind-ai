@@ -1,0 +1,3555 @@
+S10.9F LANDING / EDGE / JOURNAL LAYOUT CONTEXT AUDIT
+Generated=20260719_165812
+OK=True
+CLASSIFICATION=WEEKEND_LAYOUT_CONTEXT_AUDIT_COMPLETE
+INSPECTION_ONLY=True
+PRODUCTION_MUTATION=False
+VPS_TOUCHED=False
+
+=== LANDING CONTEXTS (120) ===
+
+-- line 13 | terms=pricing --
+9: import BrandMark from "@/components/marketing/BrandMark";
+10: import TradingBackground from "@/components/marketing/TradingBackground";
+11: 
+12: type Language = "en" | "ru" | "ua";
+13: type PageKey = "home" | "desk" | "product" | "pricing" | "team";
+14: type BillingPeriod = "monthly" | "halfyear" | "yearly";
+15: type AuthMode = "login" | "register" | null;
+16: 
+17: const navKeys: PageKey[] = ["home", "desk", "product", "pricing", "team"];
+
+-- line 17 | terms=pricing --
+13: type PageKey = "home" | "desk" | "product" | "pricing" | "team";
+14: type BillingPeriod = "monthly" | "halfyear" | "yearly";
+15: type AuthMode = "login" | "register" | null;
+16: 
+17: const navKeys: PageKey[] = ["home", "desk", "product", "pricing", "team"];
+18: 
+19: const pageHref: Record<PageKey, string> = {
+20:   home: "/",
+21:   desk: "/desk",
+
+-- line 23 | terms=pricing --
+19: const pageHref: Record<PageKey, string> = {
+20:   home: "/",
+21:   desk: "/desk",
+22:   product: "/product",
+23:   pricing: "/pricing",
+24:   team: "/about",
+25: };
+26: 
+27: const dict = {
+
+-- line 35 | terms=pricing --
+31:     brandTag: "Performance intelligence",
+32:     requestDemo: "Request demo",
+33:     choosePlan: "Choose plan",
+34:     viewProduct: "View product",
+35:     viewPricing: "View pricing",
+36:     viewAbout: "About us",
+37:     nav: {
+38:       home: "Home",
+39:       desk: "Desk",
+
+-- line 41 | terms=pricing --
+37:     nav: {
+38:       home: "Home",
+39:       desk: "Desk",
+40:       product: "Product",
+41:       pricing: "Pricing",
+42:       team: "About us",
+43:     },
+44:     heroBadge: "Premium AI trading workspace",
+45:     heroTitle: "Turn market noise, trade history and execution mistakes into a clearer trading process.",
+
+-- line 44 | terms=hero --
+40:       product: "Product",
+41:       pricing: "Pricing",
+42:       team: "About us",
+43:     },
+44:     heroBadge: "Premium AI trading workspace",
+45:     heroTitle: "Turn market noise, trade history and execution mistakes into a clearer trading process.",
+46:     heroText:
+47:       "SkillEdge AI connects your journal, screenshots, chart review, market intelligence, AI scanner, alerts, reports and learning workflow into one premium trading workspace — without promising profits or replacing your own judgment.",
+48:     start: "Start with a plan",
+
+-- line 45 | terms=hero --
+41:       pricing: "Pricing",
+42:       team: "About us",
+43:     },
+44:     heroBadge: "Premium AI trading workspace",
+45:     heroTitle: "Turn market noise, trade history and execution mistakes into a clearer trading process.",
+46:     heroText:
+47:       "SkillEdge AI connects your journal, screenshots, chart review, market intelligence, AI scanner, alerts, reports and learning workflow into one premium trading workspace — without promising profits or replacing your own judgment.",
+48:     start: "Start with a plan",
+49:     tour: "View product flow",
+
+-- line 46 | terms=hero --
+42:       team: "About us",
+43:     },
+44:     heroBadge: "Premium AI trading workspace",
+45:     heroTitle: "Turn market noise, trade history and execution mistakes into a clearer trading process.",
+46:     heroText:
+47:       "SkillEdge AI connects your journal, screenshots, chart review, market intelligence, AI scanner, alerts, reports and learning workflow into one premium trading workspace — without promising profits or replacing your own judgment.",
+48:     start: "Start with a plan",
+49:     tour: "View product flow",
+50:     stats: [
+
+-- line 71 | terms=hero --
+67:         ["AI Alerts", "Elite unlocks the premium alert workflow with setup, trigger, entry, stop, targets and outcome review."],
+68:       ],
+69:     },
+70:     productPage: {
+71:       heroBadge: "Product",
+72:       heroTitle: "One connected workspace for trading performance.",
+73:       heroText:
+74:         "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow.",
+75:       ctaPrimary: "Choose your plan",
+
+-- line 72 | terms=hero --
+68:       ],
+69:     },
+70:     productPage: {
+71:       heroBadge: "Product",
+72:       heroTitle: "One connected workspace for trading performance.",
+73:       heroText:
+74:         "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow.",
+75:       ctaPrimary: "Choose your plan",
+76:       ctaSecondary: "Why SkillEdge exists",
+
+-- line 73 | terms=hero --
+69:     },
+70:     productPage: {
+71:       heroBadge: "Product",
+72:       heroTitle: "One connected workspace for trading performance.",
+73:       heroText:
+74:         "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow.",
+75:       ctaPrimary: "Choose your plan",
+76:       ctaSecondary: "Why SkillEdge exists",
+77:       heroCards: [
+
+-- line 77 | terms=hero --
+73:       heroText:
+74:         "SkillEdge AI is built as a premium trading operating system: journal, screenshots, AI Coach, reports, charts, scanner, alerts, playbook and support in one clean workflow.",
+75:       ctaPrimary: "Choose your plan",
+76:       ctaSecondary: "Why SkillEdge exists",
+77:       heroCards: [
+78:         ["AI Trading Desk", "Market intelligence, alerts, journal and coaching in one system."],
+79:         ["Signal-to-Journal", "Create a trade draft from an alert and compare the plan with your execution."],
+80:         ["Personal Edge", "The long-term architecture is built around the trader’s own best and worst patterns."],
+81:       ],
+
+-- line 135 | terms=pricing --
+131:         "Reports, learning blocks and playbook foundation",
+132:         "Support assistant and operator request flow",
+133:       ],
+134:     },
+135:     pricingPage: {
+136:       heroBadge: "Pricing",
+137:       heroTitle: "Choose the level of intelligence around your trading process.",
+138:       heroText:
+139:         "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning.",
+
+-- line 136 | terms=hero,pricing --
+132:         "Support assistant and operator request flow",
+133:       ],
+134:     },
+135:     pricingPage: {
+136:       heroBadge: "Pricing",
+137:       heroTitle: "Choose the level of intelligence around your trading process.",
+138:       heroText:
+139:         "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning.",
+140:       billingToggle: {
+
+-- line 137 | terms=hero --
+133:       ],
+134:     },
+135:     pricingPage: {
+136:       heroBadge: "Pricing",
+137:       heroTitle: "Choose the level of intelligence around your trading process.",
+138:       heroText:
+139:         "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning.",
+140:       billingToggle: {
+141:         monthly: "1 month",
+
+-- line 138 | terms=hero --
+134:     },
+135:     pricingPage: {
+136:       heroBadge: "Pricing",
+137:       heroTitle: "Choose the level of intelligence around your trading process.",
+138:       heroText:
+139:         "Core builds structure. Edge adds market intelligence and AI Scanner. Elite unlocks the full AI Trading Desk with alerts, signal workflow and outcome learning.",
+140:       billingToggle: {
+141:         monthly: "1 month",
+142:         halfyear: "6 months",
+
+-- line 156 | terms=right --
+152:       checkoutStatus: {
+153:         checking: "Checking your account...",
+154:         invoice: "Creating crypto invoice...",
+155:         noUrl: "Crypto invoice was created, but payment URL was not returned.",
+156:         unavailable: "Crypto payment is not available right now.",
+157:       },
+158:       planBadge: {
+159:         core: "Start with discipline",
+160:         edge: "Best active-trader value",
+
+-- line 226 | terms=hero --
+222:       disclaimer:
+223:         "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+224:     },
+225:     teamPage: {
+226:       heroBadge: "About SkillEdge AI",
+227:       heroTitle: "We are building the AI trading system serious traders wish already existed.",
+228:       heroText:
+229:         "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement.",
+230:       ctaProduct: "Explore product",
+
+-- line 227 | terms=hero --
+223:         "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+224:     },
+225:     teamPage: {
+226:       heroBadge: "About SkillEdge AI",
+227:       heroTitle: "We are building the AI trading system serious traders wish already existed.",
+228:       heroText:
+229:         "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement.",
+230:       ctaProduct: "Explore product",
+231:       ctaPricing: "View plans",
+
+-- line 228 | terms=hero --
+224:     },
+225:     teamPage: {
+226:       heroBadge: "About SkillEdge AI",
+227:       heroTitle: "We are building the AI trading system serious traders wish already existed.",
+228:       heroText:
+229:         "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement.",
+230:       ctaProduct: "Explore product",
+231:       ctaPricing: "View plans",
+232:       philosophyBadge: "Product philosophy",
+
+-- line 231 | terms=pricing --
+227:       heroTitle: "We are building the AI trading system serious traders wish already existed.",
+228:       heroText:
+229:         "SkillEdge AI is built around one clear idea: traders do not need more noise. They need a system that connects market opportunities, journal review, execution discipline, learning and personal improvement.",
+230:       ctaProduct: "Explore product",
+231:       ctaPricing: "View plans",
+232:       philosophyBadge: "Product philosophy",
+233:       philosophyTitle: "Process over prediction",
+234:       beliefs: [
+235:         "Signals without education create dependency.",
+
+-- line 250 | terms=pricing --
+246:       teamTitle: "Built like a focused product team — trading, product, data and support.",
+247:       teamText:
+248:         "Use these cards as the About Us layout. Later you can insert real team photos, names and roles without changing the page structure.",
+249:       teamCards: [
+250:         ["Founder / Product Vision", "Owns the product direction, trader workflow, pricing logic and premium positioning."],
+251:         ["Trading Research", "Defines setups, alert logic, journal review criteria and educational playbooks."],
+252:         ["AI & Data Layer", "Builds scanner logic, AI prompts, data enrichment, usage limits and backend gates."],
+253:         ["Design & Experience", "Shapes the dashboard, public pages, locked states, loading states and premium interface."],
+254:         ["Support Operations", "Handles customer questions, operator flow, payments, access and product guidance."],
+
+-- line 285 | terms=pricing --
+281:       product: "Product",
+282:       features: "Features",
+283:       resources: "Resources",
+284:       legal: "Legal",
+285:       productLinks: ["Home", "Product", "Pricing", "About us"],
+286:       featureLinks: ["AI Trading Desk", "AI Alerts", "Market Intelligence", "Journal & Screenshots", "Execution Coach", "Outcome Learning", "Playbook", "Reports", "Learning Center", "Support Assistant"],
+287:       resourceLinks: ["Getting Started", "How SkillEdge Works", "Trading Journal Guide", "AI Alerts Guide", "Referral program"],
+288:       legalLinks: ["Privacy Policy", "Terms & Conditions", "Disclaimer Statement", "EULA", "Billing & Cancellation", "Cookie Policy"],
+289:       cookieSettings: "Cookie settings",
+
+-- line 297 | terms=right --
+293:         "SkillEdge AI is not financial advice and does not guarantee profits. The platform is built to improve structure, review, decision quality and trading process.",
+294:       contact: "Contacts",
+295:       location: "Dubai / Warsaw / Kyiv",
+296:       demo: "Product demo by request",
+297:       rights: "© 2026 SkillEdge AI. All rights reserved.",
+298:       bottom: "Built for traders who want structure, discipline and measurable improvement.",
+299:     },
+300:     auth: {
+301:       login: "Login",
+
+-- line 329 | terms=pricing --
+325:     brandTag: "Интеллект эффективности",
+326:     requestDemo: "Запросить демо",
+327:     choosePlan: "Выбрать тариф",
+328:     viewProduct: "Посмотреть продукт",
+329:     viewPricing: "Посмотреть тарифы",
+330:     viewAbout: "О нас",
+331:     nav: {
+332:       home: "Главная",
+333:       desk: "AI-деск",
+
+-- line 335 | terms=pricing --
+331:     nav: {
+332:       home: "Главная",
+333:       desk: "AI-деск",
+334:       product: "Продукт",
+335:       pricing: "Тарифы",
+336:       team: "О нас",
+337:     },
+338:     heroBadge: "Premium AI-платформа для трейдера",
+339:     heroTitle: "Преврати рыночный шум, историю сделок и ошибки исполнения в более понятный торговый процесс.",
+
+-- line 338 | terms=hero --
+334:       product: "Продукт",
+335:       pricing: "Тарифы",
+336:       team: "О нас",
+337:     },
+338:     heroBadge: "Premium AI-платформа для трейдера",
+339:     heroTitle: "Преврати рыночный шум, историю сделок и ошибки исполнения в более понятный торговый процесс.",
+340:     heroText:
+341:       "SkillEdge AI соединяет журнал, скриншоты, анализ графиков, рыночную разведку, AI-сканер, сигналы, отчёты и обучение в одно premium-пространство — без обещаний прибыли и без замены твоего собственного решения.",
+342:     start: "Выбрать тариф",
+
+-- line 339 | terms=hero --
+335:       pricing: "Тарифы",
+336:       team: "О нас",
+337:     },
+338:     heroBadge: "Premium AI-платформа для трейдера",
+339:     heroTitle: "Преврати рыночный шум, историю сделок и ошибки исполнения в более понятный торговый процесс.",
+340:     heroText:
+341:       "SkillEdge AI соединяет журнал, скриншоты, анализ графиков, рыночную разведку, AI-сканер, сигналы, отчёты и обучение в одно premium-пространство — без обещаний прибыли и без замены твоего собственного решения.",
+342:     start: "Выбрать тариф",
+343:     tour: "Посмотреть продукт",
+
+-- line 340 | terms=hero --
+336:       team: "О нас",
+337:     },
+338:     heroBadge: "Premium AI-платформа для трейдера",
+339:     heroTitle: "Преврати рыночный шум, историю сделок и ошибки исполнения в более понятный торговый процесс.",
+340:     heroText:
+341:       "SkillEdge AI соединяет журнал, скриншоты, анализ графиков, рыночную разведку, AI-сканер, сигналы, отчёты и обучение в одно premium-пространство — без обещаний прибыли и без замены твоего собственного решения.",
+342:     start: "Выбрать тариф",
+343:     tour: "Посмотреть продукт",
+344:     stats: [
+
+-- line 365 | terms=hero --
+361:         ["AI-сигналы", "Elite открывает premium-сигналы с сетапом, триггером, зоной входа, стопом, целями и разбором исхода."],
+362:       ],
+363:     },
+364:     productPage: {
+365:       heroBadge: "Продукт",
+366:       heroTitle: "Единое рабочее пространство для торговой эффективности.",
+367:       heroText:
+368:         "SkillEdge AI создаётся как premium trading operating system: журнал, скриншоты, AI-коуч, отчёты, графики, сканер, сигналы, плейбук и поддержка в одном чистом процессе.",
+369:       ctaPrimary: "Выбрать тариф",
+
+-- line 366 | terms=hero --
+362:       ],
+363:     },
+364:     productPage: {
+365:       heroBadge: "Продукт",
+366:       heroTitle: "Единое рабочее пространство для торговой эффективности.",
+367:       heroText:
+368:         "SkillEdge AI создаётся как premium trading operating system: журнал, скриншоты, AI-коуч, отчёты, графики, сканер, сигналы, плейбук и поддержка в одном чистом процессе.",
+369:       ctaPrimary: "Выбрать тариф",
+370:       ctaSecondary: "Зачем мы это строим",
+
+-- line 367 | terms=hero --
+363:     },
+364:     productPage: {
+365:       heroBadge: "Продукт",
+366:       heroTitle: "Единое рабочее пространство для торговой эффективности.",
+367:       heroText:
+368:         "SkillEdge AI создаётся как premium trading operating system: журнал, скриншоты, AI-коуч, отчёты, графики, сканер, сигналы, плейбук и поддержка в одном чистом процессе.",
+369:       ctaPrimary: "Выбрать тариф",
+370:       ctaSecondary: "Зачем мы это строим",
+371:       heroCards: [
+
+-- line 371 | terms=hero --
+367:       heroText:
+368:         "SkillEdge AI создаётся как premium trading operating system: журнал, скриншоты, AI-коуч, отчёты, графики, сканер, сигналы, плейбук и поддержка в одном чистом процессе.",
+369:       ctaPrimary: "Выбрать тариф",
+370:       ctaSecondary: "Зачем мы это строим",
+371:       heroCards: [
+372:         ["AI Trading Desk", "Рыночная разведка, сигналы, журнал и коучинг в одной системе."],
+373:         ["Сигнал → журнал", "Создавай сделку из сигнала и сравнивай план с реальным исполнением."],
+374:         ["Личное преимущество", "Долгосрочная архитектура строится вокруг лучших и худших паттернов самого трейдера."],
+375:       ],
+
+-- line 429 | terms=pricing --
+425:         "Отчёты, обучение и основа плейбука",
+426:         "Помощник поддержки и запрос оператора",
+427:       ],
+428:     },
+429:     pricingPage: {
+430:       heroBadge: "Тарифы",
+431:       heroTitle: "Выбери уровень интеллекта вокруг своего торгового процесса.",
+432:       heroText:
+433:         "Core строит структуру. Edge добавляет рыночную разведку и AI-сканер. Elite открывает полный AI Trading Desk с сигналами, связкой с журналом и обучением на исходах.",
+
+-- line 430 | terms=hero --
+426:         "Помощник поддержки и запрос оператора",
+427:       ],
+428:     },
+429:     pricingPage: {
+430:       heroBadge: "Тарифы",
+431:       heroTitle: "Выбери уровень интеллекта вокруг своего торгового процесса.",
+432:       heroText:
+433:         "Core строит структуру. Edge добавляет рыночную разведку и AI-сканер. Elite открывает полный AI Trading Desk с сигналами, связкой с журналом и обучением на исходах.",
+434:       billingToggle: {
+
+-- line 431 | terms=hero --
+427:       ],
+428:     },
+429:     pricingPage: {
+430:       heroBadge: "Тарифы",
+431:       heroTitle: "Выбери уровень интеллекта вокруг своего торгового процесса.",
+432:       heroText:
+433:         "Core строит структуру. Edge добавляет рыночную разведку и AI-сканер. Elite открывает полный AI Trading Desk с сигналами, связкой с журналом и обучением на исходах.",
+434:       billingToggle: {
+435:         monthly: "1 месяц",
+
+-- line 432 | terms=hero --
+428:     },
+429:     pricingPage: {
+430:       heroBadge: "Тарифы",
+431:       heroTitle: "Выбери уровень интеллекта вокруг своего торгового процесса.",
+432:       heroText:
+433:         "Core строит структуру. Edge добавляет рыночную разведку и AI-сканер. Elite открывает полный AI Trading Desk с сигналами, связкой с журналом и обучением на исходах.",
+434:       billingToggle: {
+435:         monthly: "1 месяц",
+436:         halfyear: "6 месяцев",
+
+-- line 520 | terms=hero --
+516:       disclaimer:
+517:         "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.",
+518:     },
+519:     teamPage: {
+520:       heroBadge: "О SkillEdge AI",
+521:       heroTitle: "Мы строим AI-систему для трейдинга, которую серьёзные трейдеры хотели бы иметь уже сейчас.",
+522:       heroText:
+523:         "SkillEdge AI создаётся вокруг одной идеи: трейдерам не нужен ещё больший шум. Им нужна система, которая соединяет рыночные возможности, журнал, дисциплину исполнения, обучение и личный прогресс.",
+524:       ctaProduct: "Посмотреть продукт",
+
+-- line 521 | terms=hero --
+517:         "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.",
+518:     },
+519:     teamPage: {
+520:       heroBadge: "О SkillEdge AI",
+521:       heroTitle: "Мы строим AI-систему для трейдинга, которую серьёзные трейдеры хотели бы иметь уже сейчас.",
+522:       heroText:
+523:         "SkillEdge AI создаётся вокруг одной идеи: трейдерам не нужен ещё больший шум. Им нужна система, которая соединяет рыночные возможности, журнал, дисциплину исполнения, обучение и личный прогресс.",
+524:       ctaProduct: "Посмотреть продукт",
+525:       ctaPricing: "Посмотреть тарифы",
+
+-- line 522 | terms=hero --
+518:     },
+519:     teamPage: {
+520:       heroBadge: "О SkillEdge AI",
+521:       heroTitle: "Мы строим AI-систему для трейдинга, которую серьёзные трейдеры хотели бы иметь уже сейчас.",
+522:       heroText:
+523:         "SkillEdge AI создаётся вокруг одной идеи: трейдерам не нужен ещё больший шум. Им нужна система, которая соединяет рыночные возможности, журнал, дисциплину исполнения, обучение и личный прогресс.",
+524:       ctaProduct: "Посмотреть продукт",
+525:       ctaPricing: "Посмотреть тарифы",
+526:       philosophyBadge: "Философия продукта",
+
+-- line 525 | terms=pricing --
+521:       heroTitle: "Мы строим AI-систему для трейдинга, которую серьёзные трейдеры хотели бы иметь уже сейчас.",
+522:       heroText:
+523:         "SkillEdge AI создаётся вокруг одной идеи: трейдерам не нужен ещё больший шум. Им нужна система, которая соединяет рыночные возможности, журнал, дисциплину исполнения, обучение и личный прогресс.",
+524:       ctaProduct: "Посмотреть продукт",
+525:       ctaPricing: "Посмотреть тарифы",
+526:       philosophyBadge: "Философия продукта",
+527:       philosophyTitle: "Процесс важнее предсказаний",
+528:       beliefs: [
+529:         "Сигналы без обучения создают зависимость.",
+
+-- line 591 | terms=right --
+587:         "SkillEdge AI не является финансовой рекомендацией и не гарантирует прибыль. Платформа создана для улучшения структуры, разбора, качества решений и торгового процесса.",
+588:       contact: "Контакты",
+589:       location: "Dubai / Warsaw / Kyiv",
+590:       demo: "Демо продукта по запросу",
+591:       rights: "© 2026 SkillEdge AI. Все права защищены.",
+592:       bottom: "Создано для трейдеров, которым нужны структура, дисциплина и измеримый прогресс.",
+593:     },
+594:     auth: {
+595:       login: "Вход",
+
+-- line 623 | terms=pricing --
+619:     brandTag: "Інтелект ефективності",
+620:     requestDemo: "Запросити демо",
+621:     choosePlan: "Обрати тариф",
+622:     viewProduct: "Переглянути продукт",
+623:     viewPricing: "Переглянути тарифи",
+624:     viewAbout: "Про нас",
+625:     nav: {
+626:       home: "Головна",
+627:       desk: "AI-деск",
+
+-- line 629 | terms=pricing --
+625:     nav: {
+626:       home: "Головна",
+627:       desk: "AI-деск",
+628:       product: "Продукт",
+629:       pricing: "Тарифи",
+630:       team: "Про нас",
+631:     },
+632:     heroBadge: "Premium AI-платформа для трейдера",
+633:     heroTitle: "Перетвори ринковий шум, історію угод і помилки виконання на зрозуміліший торговий процес.",
+
+-- line 632 | terms=hero --
+628:       product: "Продукт",
+629:       pricing: "Тарифи",
+630:       team: "Про нас",
+631:     },
+632:     heroBadge: "Premium AI-платформа для трейдера",
+633:     heroTitle: "Перетвори ринковий шум, історію угод і помилки виконання на зрозуміліший торговий процес.",
+634:     heroText:
+635:       "SkillEdge AI поєднує журнал, скріншоти, аналіз графіків, ринкову розвідку, AI-сканер, сигнали, звіти та навчання в одному premium-просторі — без обіцянок прибутку і без заміни твого власного рішення.",
+636:     start: "Обрати тариф",
+
+-- line 633 | terms=hero --
+629:       pricing: "Тарифи",
+630:       team: "Про нас",
+631:     },
+632:     heroBadge: "Premium AI-платформа для трейдера",
+633:     heroTitle: "Перетвори ринковий шум, історію угод і помилки виконання на зрозуміліший торговий процес.",
+634:     heroText:
+635:       "SkillEdge AI поєднує журнал, скріншоти, аналіз графіків, ринкову розвідку, AI-сканер, сигнали, звіти та навчання в одному premium-просторі — без обіцянок прибутку і без заміни твого власного рішення.",
+636:     start: "Обрати тариф",
+637:     tour: "Переглянути продукт",
+
+-- line 634 | terms=hero --
+630:       team: "Про нас",
+631:     },
+632:     heroBadge: "Premium AI-платформа для трейдера",
+633:     heroTitle: "Перетвори ринковий шум, історію угод і помилки виконання на зрозуміліший торговий процес.",
+634:     heroText:
+635:       "SkillEdge AI поєднує журнал, скріншоти, аналіз графіків, ринкову розвідку, AI-сканер, сигнали, звіти та навчання в одному premium-просторі — без обіцянок прибутку і без заміни твого власного рішення.",
+636:     start: "Обрати тариф",
+637:     tour: "Переглянути продукт",
+638:     stats: [
+
+-- line 659 | terms=hero --
+655:         ["AI-сигнали", "Elite відкриває premium-сигнали із сетапом, тригером, зоною входу, стопом, цілями та розбором результату."],
+656:       ],
+657:     },
+658:     productPage: {
+659:       heroBadge: "Продукт",
+660:       heroTitle: "Єдиний робочий простір для торгової ефективності.",
+661:       heroText:
+662:         "SkillEdge AI створюється як premium trading operating system: журнал, скріншоти, AI-коуч, звіти, графіки, сканер, сигнали, плейбук і підтримка в одному чистому процесі.",
+663:       ctaPrimary: "Обрати тариф",
+
+-- line 660 | terms=hero --
+656:       ],
+657:     },
+658:     productPage: {
+659:       heroBadge: "Продукт",
+660:       heroTitle: "Єдиний робочий простір для торгової ефективності.",
+661:       heroText:
+662:         "SkillEdge AI створюється як premium trading operating system: журнал, скріншоти, AI-коуч, звіти, графіки, сканер, сигнали, плейбук і підтримка в одному чистому процесі.",
+663:       ctaPrimary: "Обрати тариф",
+664:       ctaSecondary: "Навіщо ми це будуємо",
+
+-- line 661 | terms=hero --
+657:     },
+658:     productPage: {
+659:       heroBadge: "Продукт",
+660:       heroTitle: "Єдиний робочий простір для торгової ефективності.",
+661:       heroText:
+662:         "SkillEdge AI створюється як premium trading operating system: журнал, скріншоти, AI-коуч, звіти, графіки, сканер, сигнали, плейбук і підтримка в одному чистому процесі.",
+663:       ctaPrimary: "Обрати тариф",
+664:       ctaSecondary: "Навіщо ми це будуємо",
+665:       heroCards: [
+
+-- line 665 | terms=hero --
+661:       heroText:
+662:         "SkillEdge AI створюється як premium trading operating system: журнал, скріншоти, AI-коуч, звіти, графіки, сканер, сигнали, плейбук і підтримка в одному чистому процесі.",
+663:       ctaPrimary: "Обрати тариф",
+664:       ctaSecondary: "Навіщо ми це будуємо",
+665:       heroCards: [
+666:         ["AI Trading Desk", "Ринкова розвідка, сигнали, журнал і коучинг в одній системі."],
+667:         ["Сигнал → журнал", "Створюй угоди із сигналів та порівнюй план із реальним виконанням."],
+668:         ["Особиста перевага", "Довгострокова архітектура будується навколо найкращих і найгірших патернів самого трейдера."],
+669:       ],
+
+-- line 723 | terms=pricing --
+719:         "Звіти, навчання й основа плейбука",
+720:         "Помічник підтримки та запит оператора",
+721:       ],
+722:     },
+723:     pricingPage: {
+724:       heroBadge: "Тарифи",
+725:       heroTitle: "Обери рівень інтелекту навколо свого торгового процесу.",
+726:       heroText:
+727:         "Core будує структуру. Edge додає ринкову розвідку та AI-сканер. Elite відкриває повний AI Trading Desk із сигналами, зв’язкою з журналом і навчанням на результатах.",
+
+-- line 724 | terms=hero --
+720:         "Помічник підтримки та запит оператора",
+721:       ],
+722:     },
+723:     pricingPage: {
+724:       heroBadge: "Тарифи",
+725:       heroTitle: "Обери рівень інтелекту навколо свого торгового процесу.",
+726:       heroText:
+727:         "Core будує структуру. Edge додає ринкову розвідку та AI-сканер. Elite відкриває повний AI Trading Desk із сигналами, зв’язкою з журналом і навчанням на результатах.",
+728:       billingToggle: {
+
+-- line 725 | terms=hero --
+721:       ],
+722:     },
+723:     pricingPage: {
+724:       heroBadge: "Тарифи",
+725:       heroTitle: "Обери рівень інтелекту навколо свого торгового процесу.",
+726:       heroText:
+727:         "Core будує структуру. Edge додає ринкову розвідку та AI-сканер. Elite відкриває повний AI Trading Desk із сигналами, зв’язкою з журналом і навчанням на результатах.",
+728:       billingToggle: {
+729:         monthly: "1 місяць",
+
+-- line 726 | terms=hero --
+722:     },
+723:     pricingPage: {
+724:       heroBadge: "Тарифи",
+725:       heroTitle: "Обери рівень інтелекту навколо свого торгового процесу.",
+726:       heroText:
+727:         "Core будує структуру. Edge додає ринкову розвідку та AI-сканер. Elite відкриває повний AI Trading Desk із сигналами, зв’язкою з журналом і навчанням на результатах.",
+728:       billingToggle: {
+729:         monthly: "1 місяць",
+730:         halfyear: "6 місяців",
+
+-- line 814 | terms=hero --
+810:       disclaimer:
+811:         "SkillEdge AI не є фінансовою рекомендацією і не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу.",
+812:     },
+813:     teamPage: {
+814:       heroBadge: "Про SkillEdge AI",
+815:       heroTitle: "Ми будуємо AI-систему для трейдингу, яку серйозні трейдери хотіли б мати вже зараз.",
+816:       heroText:
+817:         "SkillEdge AI створюється навколо однієї ідеї: трейдерам не потрібен ще більший шум. Їм потрібна система, яка поєднує ринкові можливості, журнал, дисципліну виконання, навчання та особистий прогрес.",
+818:       ctaProduct: "Переглянути продукт",
+
+-- line 815 | terms=hero --
+811:         "SkillEdge AI не є фінансовою рекомендацією і не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу.",
+812:     },
+813:     teamPage: {
+814:       heroBadge: "Про SkillEdge AI",
+815:       heroTitle: "Ми будуємо AI-систему для трейдингу, яку серйозні трейдери хотіли б мати вже зараз.",
+816:       heroText:
+817:         "SkillEdge AI створюється навколо однієї ідеї: трейдерам не потрібен ще більший шум. Їм потрібна система, яка поєднує ринкові можливості, журнал, дисципліну виконання, навчання та особистий прогрес.",
+818:       ctaProduct: "Переглянути продукт",
+819:       ctaPricing: "Переглянути тарифи",
+
+-- line 816 | terms=hero --
+812:     },
+813:     teamPage: {
+814:       heroBadge: "Про SkillEdge AI",
+815:       heroTitle: "Ми будуємо AI-систему для трейдингу, яку серйозні трейдери хотіли б мати вже зараз.",
+816:       heroText:
+817:         "SkillEdge AI створюється навколо однієї ідеї: трейдерам не потрібен ще більший шум. Їм потрібна система, яка поєднує ринкові можливості, журнал, дисципліну виконання, навчання та особистий прогрес.",
+818:       ctaProduct: "Переглянути продукт",
+819:       ctaPricing: "Переглянути тарифи",
+820:       philosophyBadge: "Філософія продукту",
+
+-- line 819 | terms=pricing --
+815:       heroTitle: "Ми будуємо AI-систему для трейдингу, яку серйозні трейдери хотіли б мати вже зараз.",
+816:       heroText:
+817:         "SkillEdge AI створюється навколо однієї ідеї: трейдерам не потрібен ще більший шум. Їм потрібна система, яка поєднує ринкові можливості, журнал, дисципліну виконання, навчання та особистий прогрес.",
+818:       ctaProduct: "Переглянути продукт",
+819:       ctaPricing: "Переглянути тарифи",
+820:       philosophyBadge: "Філософія продукту",
+821:       philosophyTitle: "Процес важливіший за передбачення",
+822:       beliefs: [
+823:         "Сигнали без навчання створюють залежність.",
+
+-- line 885 | terms=right --
+881:         "SkillEdge AI не є фінансовою рекомендацією і не гарантує прибуток. Платформа створена для покращення структури, розбору, якості рішень і торгового процесу.",
+882:       contact: "Контакти",
+883:       location: "Dubai / Warsaw / Kyiv",
+884:       demo: "Демо продукту за запитом",
+885:       rights: "© 2026 SkillEdge AI. Усі права захищено.",
+886:       bottom: "Створено для трейдерів, яким потрібні структура, дисципліна та вимірюваний прогрес.",
+887:     },
+888:     auth: {
+889:       login: "Вхід",
+
+-- line 1002 | terms=pricing --
+998:     if (
+999:   page === "home" ||
+1000:   page === "desk" ||
+1001:   page === "product" ||
+1002:   page === "pricing" ||
+1003:   page === "team"
+1004: ) {
+1005:   setActive(page);
+1006: }
+
+-- line 1111 | terms=pricing --
+1107:   };
+1108: 
+1109:   const handleCheckout = async (id: string, billingPeriod: BillingPeriod = "monthly") => {
+1110:     try {
+1111:       setCheckoutStatus(t.pricingPage.checkoutStatus.checking);
+1112: 
+1113:       const { data } = await supabase.auth.getSession();
+1114:       const token = data.session?.access_token;
+1115: 
+
+-- line 1123 | terms=pricing --
+1119:         setAuthMode("login");
+1120:         return;
+1121:       }
+1122: 
+1123:       setCheckoutStatus(t.pricingPage.checkoutStatus.invoice);
+1124: 
+1125:       const response = await fetch("/api/create-crypto-payment", {
+1126:         method: "POST",
+1127:         headers: {
+
+-- line 1140 | terms=pricing --
+1136:       if (!response.ok) {
+1137:         throw new Error(
+1138:           result?.details
+1139:             ? `${result?.error}: ${result.details}`
+1140:             : result?.error || t.pricingPage.checkoutStatus.unavailable
+1141:         );
+1142:       }
+1143: 
+1144:       if (result?.url) {
+
+-- line 1149 | terms=pricing --
+1145:         window.location.href = result.url;
+1146:         return;
+1147:       }
+1148: 
+1149:       setCheckoutStatus(t.pricingPage.checkoutStatus.noUrl);
+1150:     } catch (error) {
+1151:       const message = error instanceof Error ? error.message : t.pricingPage.checkoutStatus.unavailable;
+1152:       setCheckoutStatus(message);
+1153:       console.error(error);
+
+-- line 1151 | terms=pricing --
+1147:       }
+1148: 
+1149:       setCheckoutStatus(t.pricingPage.checkoutStatus.noUrl);
+1150:     } catch (error) {
+1151:       const message = error instanceof Error ? error.message : t.pricingPage.checkoutStatus.unavailable;
+1152:       setCheckoutStatus(message);
+1153:       console.error(error);
+1154:     }
+1155:   };
+
+-- line 1176 | terms=pricing --
+1172: };
+1173: 
+1174: const handleCardPaymentFromModal = () => {
+1175:   setPaymentModal(null);
+1176:   setCheckoutStatus(t.pricingPage.cardPayment || "Card payment is being prepared.");
+1177: };
+1178: 
+1179: const backgroundVariant = active === "desk" ? "product" : active;
+1180:   
+
+-- line 1182 | terms=overflow-hidden --
+1178: 
+1179: const backgroundVariant = active === "desk" ? "product" : active;
+1180:   
+1181:   return (
+1182:   <div className="relative isolate min-h-screen overflow-hidden bg-[#07111F] text-white">
+1183:     <AnimatePresence>
+1184:       {showSplashIntro ? <SkillEdgeSplashIntro language={language} /> : null}
+1185:     </AnimatePresence>
+1186: 
+
+-- line 1189 | terms=max-w- --
+1185:     </AnimatePresence>
+1186: 
+1187:     <TradingBackground variant={backgroundVariant} />
+1188:       <header className="sticky top-0 z-40 border-b border-white/10 bg-[#07111F]/70 backdrop-blur-xl">
+1189:         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-8">
+1190:           <Link href="/" className="flex items-center gap-3">
+1191:             <BrandMark size="sm" />
+1192:             <div className="text-left">
+1193:               <div className="text-lg font-semibold">SkillEdge AI</div>
+
+-- line 1215 | terms=min-w- --
+1211: 
+1212:           <div className="hidden items-center gap-3 md:flex">
+1213:             <button
+1214:               onClick={cycle}
+1215:               className="flex h-11 min-w-[58px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 text-sm font-medium text-white hover:bg-white/10"
+1216:             >
+1217:               <Icon name="globe" className="mr-2 h-4 w-4" />
+1218:               {t.lang}
+1219:             </button>
+
+-- line 1324 | terms=max-w- --
+1320:           )}
+1321:         </AnimatePresence>
+1322:       </header>
+1323: 
+1324:       <main className="relative z-10 mx-auto max-w-6xl px-4 py-12 md:px-8">
+1325:                 <AnimatePresence mode="wait">
+1326:           {active === "home" && (
+1327:             <motion.div key="home">
+1328:               <HomePage t={t} setActive={setActive} />
+
+-- line 1344 | terms=pricing --
+1340:               <ProductPage t={t} setActive={setActive} />
+1341:             </motion.div>
+1342:           )}
+1343: 
+1344:           {active === "pricing" && (
+1345:             <motion.div key="pricing">
+1346:               <PricingPage
+1347:                 t={t}
+1348:                 handleCheckout={openPaymentModal}
+
+-- line 1345 | terms=pricing --
+1341:             </motion.div>
+1342:           )}
+1343: 
+1344:           {active === "pricing" && (
+1345:             <motion.div key="pricing">
+1346:               <PricingPage
+1347:                 t={t}
+1348:                 handleCheckout={openPaymentModal}
+1349:                 checkoutStatus={checkoutStatus}
+
+-- line 1346 | terms=pricing --
+1342:           )}
+1343: 
+1344:           {active === "pricing" && (
+1345:             <motion.div key="pricing">
+1346:               <PricingPage
+1347:                 t={t}
+1348:                 handleCheckout={openPaymentModal}
+1349:                 checkoutStatus={checkoutStatus}
+1350:               />
+
+-- line 1425 | terms=pricing --
+1421:       text:
+1422:         "SkillEdge AI turns market chaos, trades, screenshots, mistakes and alerts into one trading workflow — so you see structure, not noise.",
+1423:       accent: "Setup. Risk. Execution. Review.",
+1424:       primary: "Open product",
+1425:       secondary: "View pricing",
+1426:       how: "How it works",
+1427:       proofTitle: "Professional-grade trust",
+1428:       trustItems: [
+1429:         ["Protected data", "Your journal and stats stay private."],
+
+-- line 1427 | terms=trust --
+1423:       accent: "Setup. Risk. Execution. Review.",
+1424:       primary: "Open product",
+1425:       secondary: "View pricing",
+1426:       how: "How it works",
+1427:       proofTitle: "Professional-grade trust",
+1428:       trustItems: [
+1429:         ["Protected data", "Your journal and stats stay private."],
+1430:         ["Transparent methodology", "Every setup needs context, risk and invalidation."],
+1431:         ["Built for traders", "Designed around real execution and review."],
+
+-- line 1428 | terms=trust --
+1424:       primary: "Open product",
+1425:       secondary: "View pricing",
+1426:       how: "How it works",
+1427:       proofTitle: "Professional-grade trust",
+1428:       trustItems: [
+1429:         ["Protected data", "Your journal and stats stay private."],
+1430:         ["Transparent methodology", "Every setup needs context, risk and invalidation."],
+1431:         ["Built for traders", "Designed around real execution and review."],
+1432:       ],
+
+-- line 1469 | terms=trust --
+1465:       primary: "Відкрити продукт",
+1466:       secondary: "Дивитися тарифи",
+1467:       how: "Як це працює",
+1468:       proofTitle: "Довіра професійного рівня",
+1469:       trustItems: [
+1470:         ["Дані під захистом", "Журнал і статистика клієнта залишаються приватними."],
+1471:         ["Прозора методологія", "Кожен сетап має контекст, ризик та invalidation."],
+1472:         ["Створено для трейдерів", "Продукт побудований навколо виконання і review."],
+1473:       ],
+
+-- line 1509 | terms=trust --
+1505:     primary: "Открыть продукт",
+1506:     secondary: "Смотреть тарифы",
+1507:     how: "Как это работает",
+1508:     proofTitle: "Доверие профессионального уровня",
+1509:     trustItems: [
+1510:       ["Данные под защитой", "Журнал и статистика клиента остаются приватными."],
+1511:       ["Прозрачная методология", "Каждый сетап требует контекст, риск и invalidation."],
+1512:       ["Сделано для трейдеров", "Продукт построен вокруг исполнения и review."],
+1513:     ],
+
+-- line 1552 | terms=pricing --
+1548:         "Clients start with different account sizes, trading styles and growth speeds. But when a trader journals consistently, tracks trades and reviews execution, the process usually becomes cleaner, stronger and more stable.",
+1549:       note:
+1550:         "These are product examples, not a profit promise. Trading involves risk. SkillEdge AI helps traders build structure, review decisions and improve execution discipline.",
+1551:       cta: "Open product",
+1552:       secondaryCta: "View pricing",
+1553:       periodLabel: "Period",
+1554:       trendLabel: "Trend",
+1555:       stabilityLabel: "Stability",
+1556:       capitalLabel: "Starting capital",
+
+-- line 1564 | terms=trust --
+1560:       drawdownLabel: "Max drawdown",
+1561:       weeksLabel: "Last 8 weeks",
+1562:       chartLabel: "Cumulative Net PnL",
+1563:       clickHint: "Click the card to open the product",
+1564:       trustTitle: "Why this matters",
+1565:       trustBlocks: [
+1566:         [
+1567:           "Not a blind signal feed",
+1568:           "The system is built around context, setup, trigger, stop, targets and invalidation.",
+
+-- line 1565 | terms=trust --
+1561:       weeksLabel: "Last 8 weeks",
+1562:       chartLabel: "Cumulative Net PnL",
+1563:       clickHint: "Click the card to open the product",
+1564:       trustTitle: "Why this matters",
+1565:       trustBlocks: [
+1566:         [
+1567:           "Not a blind signal feed",
+1568:           "The system is built around context, setup, trigger, stop, targets and invalidation.",
+1569:         ],
+
+-- line 1604 | terms=trust --
+1600:       drawdownLabel: "Макс. просадка",
+1601:       weeksLabel: "Останні 8 тижнів",
+1602:       chartLabel: "Кумулятивний чистий PnL",
+1603:       clickHint: "Натисни на картку, щоб відкрити продукт",
+1604:       trustTitle: "Чому це важливо",
+1605:       trustBlocks: [
+1606:         [
+1607:           "Не сліпа стрічка сигналів",
+1608:           "Система будується навколо контексту, сетапу, тригера, стопа, цілей та invalidation.",
+
+-- line 1605 | terms=trust --
+1601:       weeksLabel: "Останні 8 тижнів",
+1602:       chartLabel: "Кумулятивний чистий PnL",
+1603:       clickHint: "Натисни на картку, щоб відкрити продукт",
+1604:       trustTitle: "Чому це важливо",
+1605:       trustBlocks: [
+1606:         [
+1607:           "Не сліпа стрічка сигналів",
+1608:           "Система будується навколо контексту, сетапу, тригера, стопа, цілей та invalidation.",
+1609:         ],
+
+-- line 1643 | terms=trust --
+1639:     drawdownLabel: "Макс. просадка",
+1640:     weeksLabel: "Последние 8 недель",
+1641:     chartLabel: "Кумулятивный чистый PnL",
+1642:     clickHint: "Нажми на карточку, чтобы открыть продукт",
+1643:     trustTitle: "Почему это важно",
+1644:     trustBlocks: [
+1645:       [
+1646:         "Не слепая лента сигналов",
+1647:         "Система строится вокруг контекста, сетапа, триггера, стопа, целей и invalidation.",
+
+-- line 1644 | terms=trust --
+1640:     weeksLabel: "Последние 8 недель",
+1641:     chartLabel: "Кумулятивный чистый PnL",
+1642:     clickHint: "Нажми на карточку, чтобы открыть продукт",
+1643:     trustTitle: "Почему это важно",
+1644:     trustBlocks: [
+1645:       [
+1646:         "Не слепая лента сигналов",
+1647:         "Система строится вокруг контекста, сетапа, триггера, стопа, целей и invalidation.",
+1648:       ],
+
+-- line 1773 | terms=overflow-hidden --
+1769:     width - paddingX
+1770:   },${height - paddingY}`;
+1771: 
+1772:   return (
+1773:     <div className="mt-5 overflow-hidden rounded-[1.75rem] border border-[#00C076]/15 bg-[#0F172A]/90 p-4">
+1774:       <svg viewBox={`0 0 ${width} ${height}`} className="h-[300px] w-full">
+1775:         <defs>
+1776:           <linearGradient id="clientChartLine" x1="0" x2="1" y1="0" y2="0">
+1777:             <stop offset="0%" stopColor="#38d6ff" />
+
+-- line 1930 | terms=overflow-hidden --
+1926:       className="relative z-10 w-full"
+1927:     >
+1928:       <div className="absolute -inset-10 rounded-[2.8rem] bg-[#00C076]/12 blur-3xl" />
+1929: 
+1930:       <div className="relative w-full overflow-hidden rounded-[2.6rem] border border-white/18 bg-[#111C2D]/86 p-5 shadow-[0_44px_170px_rgba(0,0,0,0.36)] backdrop-blur-2xl md:p-6 xl:p-7">
+1931:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(0,192,118,0.22),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(200,169,107,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_44%)]" />
+1932: 
+1933:         <div className="relative z-10 flex items-center justify-between">
+1934:           <div className="text-sm font-black text-white/82">SkillEdge AI</div>
+
+-- line 1972 | terms=grid-cols --
+1968:                 key={title}
+1969:                 initial={{ opacity: 0, x: 18 }}
+1970:                 animate={{ opacity: 1, x: 0 }}
+1971:                 transition={{ delay: 0.22 + index * 0.08, duration: 0.45 }}
+1972:                 className="grid grid-cols-[58px_1fr] gap-3 rounded-2xl border border-white/10 bg-white/[0.045] p-3"
+1973:               >
+1974:                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/15 bg-[#C8A96B]/[0.08] text-xs font-black text-[#E6EDF7]">
+1975:                   {number}
+1976:                 </div>
+
+-- line 1988 | terms=grid-cols --
+1984:               </motion.div>
+1985:             ))}
+1986:           </div>
+1987: 
+1988:           <div className="mt-5 grid gap-3 md:grid-cols-3">
+1989:             {copy.bottom.map(([title, text]) => (
+1990:               <div
+1991:                 key={title}
+1992:                 className="rounded-2xl border border-white/10 bg-black/22 p-4"
+
+-- line 2044 | terms=overflow-hidden --
+2040:     }
+2041:   };
+2042: 
+2043:   return (
+2044:     <section className="relative overflow-hidden rounded-[2.6rem] border border-[#C8A96B]/14 bg-[#111C2D]/82 p-5 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-2xl md:p-6 lg:p-7">
+2045:       <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.16),transparent_30%),radial-gradient(circle_at_88%_20%,rgba(200,169,107,0.12),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
+2046: 
+2047:       <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-stretch">
+2048:         <div className="flex flex-col justify-between">
+
+-- line 2047 | terms=grid-cols --
+2043:   return (
+2044:     <section className="relative overflow-hidden rounded-[2.6rem] border border-[#C8A96B]/14 bg-[#111C2D]/82 p-5 shadow-[0_34px_140px_rgba(0,0,0,0.24)] backdrop-blur-2xl md:p-6 lg:p-7">
+2045:       <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.16),transparent_30%),radial-gradient(circle_at_88%_20%,rgba(200,169,107,0.12),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_44%)]" />
+2046: 
+2047:       <div className="relative grid gap-7 lg:grid-cols-[0.72fr_1.28fr] lg:items-stretch">
+2048:         <div className="flex flex-col justify-between">
+2049:           <div>
+2050:             <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
+2051:               {copy.eyebrow}
+
+-- line 2054 | terms=max-w- --
+2050:             <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
+2051:               {copy.eyebrow}
+2052:             </div>
+2053: 
+2054:             <h2 className="mt-5 max-w-3xl text-3xl font-black leading-[1.02] tracking-[-0.05em] text-white md:text-4xl">
+2055:               {copy.title}
+2056:             </h2>
+2057: 
+2058:             <p className="mt-4 text-sm font-semibold leading-7 text-white/64">
+
+-- line 2068 | terms=trust --
+2064:             </p>
+2065:           </div>
+2066: 
+2067:           <div className="mt-6 grid gap-3">
+2068:             {copy.trustBlocks.map((item, index) => (
+2069:               <button
+2070:                 key={item[0]}
+2071:                 type="button"
+2072:                 onClick={() => setActive("product")}
+
+-- line 2099 | terms=overflow-hidden --
+2095:           initial={{ opacity: 0, x: 26, scale: 0.98 }}
+2096:           animate={{ opacity: 1, x: 0, scale: 1 }}
+2097:           transition={{ duration: 0.45 }}
+2098:           onClick={openProduct}
+2099:           className="relative cursor-pointer overflow-hidden rounded-[2.25rem] border border-white/18 bg-[#0F172A]/92 p-5 text-left shadow-[0_34px_140px_rgba(0,0,0,0.34)] backdrop-blur-2xl transition duration-300 hover:-translate-y-1 hover:border-white/30 md:p-6"
+2100:         >
+2101:           <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_92%_12%,rgba(200,169,107,0.14),transparent_30%)]" />
+2102: 
+2103:           <div className="relative z-10 flex items-center justify-between">
+
+-- line 2131 | terms=grid-cols --
+2127:                 {copy.weeksLabel}
+2128:               </div>
+2129:             </div>
+2130: 
+2131:             <div className="mt-5 grid gap-3 md:grid-cols-4">
+2132:               {[
+2133:                 [copy.pnlLabel, activeCard.netProfit, activeCard.netProfitValue, "text-[#00C076]"],
+2134:                 [copy.winRateLabel, activeCard.winRate, activeCard.trades, "text-white"],
+2135:                 [copy.avgRLabel, activeCard.avgR, "", "text-white"],
+
+-- line 2167 | terms=grid-cols --
+2163:             </div>
+2164: 
+2165:             <ClientResultLineChart points={activeCard.points} />
+2166: 
+2167:             <div className="mt-5 grid gap-3 md:grid-cols-3">
+2168:               {[
+2169:                 [copy.trendLabel, activeCard.trend],
+2170:                 [copy.stabilityLabel, activeCard.stability],
+2171:                 [copy.periodLabel, activeCard.period],
+
+-- line 2249 | terms=max-w- --
+2245:       initial={{ opacity: 0, y: 18 }}
+2246:       animate={{ opacity: 1, y: 0 }}
+2247:       exit={{ opacity: 0, y: -18 }}
+2248:       transition={{ duration: 0.35 }}
+2249:       className="mx-auto w-full max-w-[1760px] space-y-14 px-4 pb-24 pt-8 sm:px-6 lg:px-10 xl:px-14 2xl:px-16"
+2250:     >
+2251:       <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[2.8rem] border border-white/14 bg-[#111C2D]/82 p-6 shadow-[0_44px_170px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10 xl:p-14">
+2252:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(200,169,107,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
+2253:         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
+
+-- line 2251 | terms=overflow-hidden --
+2247:       exit={{ opacity: 0, y: -18 }}
+2248:       transition={{ duration: 0.35 }}
+2249:       className="mx-auto w-full max-w-[1760px] space-y-14 px-4 pb-24 pt-8 sm:px-6 lg:px-10 xl:px-14 2xl:px-16"
+2250:     >
+2251:       <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[2.8rem] border border-white/14 bg-[#111C2D]/82 p-6 shadow-[0_44px_170px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10 xl:p-14">
+2252:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(200,169,107,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
+2253:         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
+2254: 
+2255:         <div className="relative grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+
+-- line 2255 | terms=grid-cols --
+2251:       <section className="relative min-h-[calc(100vh-120px)] overflow-hidden rounded-[2.8rem] border border-white/14 bg-[#111C2D]/82 p-6 shadow-[0_44px_170px_rgba(0,0,0,0.34)] backdrop-blur-2xl md:p-8 lg:p-10 xl:p-14">
+2252:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_12%,rgba(200,169,107,0.14),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.065),transparent_44%)]" />
+2253:         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.032)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:64px_64px] opacity-25" />
+2254: 
+2255:         <div className="relative grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+2256:           <div>
+2257:             <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
+2258:               {copy.badge}
+2259:             </div>
+
+-- line 2261 | terms=max-w- --
+2257:             <div className="inline-flex rounded-full border border-[#00C076]/20 bg-[#00C076]/[0.07] px-4 py-2 text-[11px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/76">
+2258:               {copy.badge}
+2259:             </div>
+2260: 
+2261:             <h1 className="mt-7 max-w-4xl text-4xl font-black leading-[0.95] tracking-[-0.065em] text-white md:text-6xl xl:text-8xl">
+2262:               {copy.title.split("по структуре.")[0]}
+2263:               <span className="bg-gradient-to-r from-[#C8A96B] via-[#00D084] to-[#00C076] bg-clip-text text-transparent">
+2264:                 {copy.title.includes("по структуре.") ? "по структуре." : ""}
+2265:               </span>
+
+-- line 2268 | terms=max-w- --
+2264:                 {copy.title.includes("по структуре.") ? "по структуре." : ""}
+2265:               </span>
+2266:             </h1>
+2267: 
+2268:             <p className="mt-6 max-w-2xl text-base font-semibold leading-8 text-white/70 md:text-lg">
+2269:               {copy.text}
+2270:             </p>
+2271: 
+2272:             <p className="mt-2 text-lg font-black text-[#00D084]">
+
+-- line 2288 | terms=pricing --
+2284:               </button>
+2285: 
+2286:               <button
+2287:                 type="button"
+2288:                 onClick={() => setActive("pricing")}
+2289:                 className="rounded-full border border-[#C8A96B]/22 bg-[#C8A96B]/[0.07] px-7 py-3.5 text-sm font-black text-[#E6EDF7] transition duration-300 hover:-translate-y-0.5 hover:bg-[#C8A96B]/[0.12]"
+2290:               >
+2291:                 {copy.secondary}
+2292:               </button>
+
+-- line 2304 | terms=grid-cols --
+2300:                 <span className="ml-2">↗</span>
+2301:               </button>
+2302:             </div>
+2303: 
+2304:             <div className="mt-7 grid gap-4 md:grid-cols-3">
+2305:               {copy.trustItems.map((item) => (
+2306:                 <button
+2307:                   key={item[0]}
+2308:                   type="button"
+
+-- line 2305 | terms=trust --
+2301:               </button>
+2302:             </div>
+2303: 
+2304:             <div className="mt-7 grid gap-4 md:grid-cols-3">
+2305:               {copy.trustItems.map((item) => (
+2306:                 <button
+2307:                   key={item[0]}
+2308:                   type="button"
+2309:                   onClick={() => setActive("product")}
+
+-- line 2324 | terms=grid-cols --
+2320: 
+2321:           <HomeClientPnlVisual lang={t.lang} />
+2322:         </div>
+2323: 
+2324:         <div className="relative mt-9 grid gap-4 lg:grid-cols-4">
+2325:           {copy.features.map((feature, index) => (
+2326:             <button
+2327:               key={feature[0]}
+2328:               type="button"
+
+-- line 2330 | terms=pricing --
+2326:             <button
+2327:               key={feature[0]}
+2328:               type="button"
+2329:               onClick={() =>
+2330:                 setActive(index === 0 ? "pricing" : index === 3 ? "product" : "product")
+2331:               }
+2332:               className="group rounded-[1.75rem] border border-white/10 bg-white/[0.045] p-5 text-left shadow-[0_18px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-[#C8A96B]/24 hover:bg-[#C8A96B]/[0.075]"
+2333:             >
+2334:               <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#C8A96B]/16 bg-[#C8A96B]/[0.08] text-sm font-black text-[#E6EDF7]">
+
+-- line 2355 | terms=overflow-hidden --
+2351:       </section>
+2352: 
+2353:       <ClientResultsCarousel lang={t.lang} setActive={setActive} />
+2354: 
+2355:       <section className="relative overflow-hidden rounded-[2.7rem] border border-white/10 bg-white/[0.035] p-6 shadow-[0_34px_140px_rgba(0,0,0,0.22)] backdrop-blur-xl md:p-8">
+2356:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_14%_0%,rgba(0,192,118,0.12),transparent_32%),radial-gradient(circle_at_92%_18%,rgba(200,169,107,0.1),transparent_30%)]" />
+2357: 
+2358:         <div className="relative">
+2359:           <div className="text-center text-[11px] font-black uppercase tracking-[0.28em] text-white/38">
+
+-- line 2363 | terms=grid-cols --
+2359:           <div className="text-center text-[11px] font-black uppercase tracking-[0.28em] text-white/38">
+2360:             {copy.proofTitle}
+2361:           </div>
+2362: 
+2363:           <div className="mt-6 grid gap-4 md:grid-cols-3">
+2364:             {copy.trustItems.map((item, index) => (
+2365:               <button
+2366:                 key={`${item[0]}-bottom`}
+2367:                 type="button"
+
+-- line 2364 | terms=trust --
+2360:             {copy.proofTitle}
+2361:           </div>
+2362: 
+2363:           <div className="mt-6 grid gap-4 md:grid-cols-3">
+2364:             {copy.trustItems.map((item, index) => (
+2365:               <button
+2366:                 key={`${item[0]}-bottom`}
+2367:                 type="button"
+2368:                 onClick={() => setActive("product")}
+
+-- line 2396 | terms=overflow-hidden --
+2392:       <motion.div
+2393:         initial={{ opacity: 0, y: 24, scale: 0.97 }}
+2394:         animate={{ opacity: 1, y: 0, scale: 1 }}
+2395:         transition={{ delay: 0.28, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+2396:         className="relative overflow-hidden rounded-[2.8rem] border border-[#C8A96B]/12 bg-[#07111F]/72 p-3 shadow-[0_34px_130px_rgba(0,0,0,0.22)] backdrop-blur-2xl"
+2397:       >
+2398:         <div className="pointer-events-none absolute inset-0 z-20 rounded-[2.8rem] bg-[radial-gradient(circle_at_20%_0%,rgba(0,192,118,0.16),transparent_34%),radial-gradient(circle_at_90%_20%,rgba(200,169,107,0.11),transparent_32%),linear-gradient(180deg,rgba(3,7,18,0.16),rgba(3,7,18,0.42))]" />
+2399: 
+2400:         <div className="pointer-events-none absolute inset-0 z-30 rounded-[2.8rem] ring-1 ring-inset ring-white/8" />
+
+-- line 2409 | terms=overflow-hidden --
+2405:           transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+2406:           className="pointer-events-none absolute left-0 top-0 z-30 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/42 to-transparent"
+2407:         />
+2408: 
+2409:         <div className="relative z-10 overflow-hidden rounded-[2.25rem] bg-[#07111F]">
+2410:           <video
+2411:             src="/media/desk-preview.mp4"
+2412:             autoPlay
+2413:             muted
+
+-- line 2417 | terms=right --
+2413:             muted
+2414:             loop
+2415:             playsInline
+2416:             preload="metadata"
+2417:             className="h-[620px] w-full object-cover opacity-[0.42] mix-blend-screen saturate-[0.72] contrast-[1.08] brightness-[0.68]"
+2418:           />
+2419: 
+2420:           <div className="pointer-events-none absolute inset-0 bg-[#07111F]/34" />
+2421:           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#07111F] via-[#07111F]/18 to-[#07111F]/45" />
+
+-- line 2427 | terms=right --
+2423:           <div className="pointer-events-none absolute left-5 top-5 rounded-full border border-[#C8A96B]/16 bg-[#C8A96B]/[0.065] px-4 py-2 text-[10px] font-black uppercase tracking-[0.22em] text-[#E6EDF7]/70 backdrop-blur-xl">
+2424:             SkillEdge AI visual layer
+2425:           </div>
+2426: 
+2427:           <div className="pointer-events-none absolute bottom-5 left-5 right-5 rounded-[1.6rem] border border-white/10 bg-[#07111F]/62 p-4 backdrop-blur-xl">
+2428:             <div className="flex items-center justify-between gap-4">
+2429:               <div>
+2430:                 <div className="text-xs font-black uppercase tracking-[0.22em] text-white/38">
+2431:                   Live desk preview
+
+-- line 2446 | terms=right --
+2442:           </div>
+2443:         </div>
+2444:       </motion.div>
+2445: 
+2446:       <div className="pointer-events-none absolute -right-16 top-12 h-44 w-44 rounded-full bg-[#00C076]/10 blur-3xl" />
+2447:       <div className="pointer-events-none absolute -bottom-16 left-10 h-52 w-52 rounded-full bg-[#00C076]/8 blur-3xl" />
+2448:     </div>
+2449:   );
+2450: }
+
+-- line 2463 | terms=pricing --
+2459:           eyebrow: "SkillEdge AI Trading Desk",
+2460:           title: "Turn market noise into a clear execution process.",
+2461:           text:
+2462:             "A premium workspace for traders who want structure: market context, AI alerts, journal, screenshots, reports and review logic in one connected desk.",
+2463:           primary: "Open pricing",
+2464:           secondary: "View product",
+2465:           outcomeTitle: "What the trader gets",
+2466:           outcomeText:
+2467:             "SkillEdge AI is not built to throw random signals. It is built to help you understand the setup, the risk, the trigger and your own execution quality.",
+
+-- line 2568 | terms=max-w- --
+2564:       initial={{ opacity: 0, y: 18 }}
+2565:       animate={{ opacity: 1, y: 0 }}
+2566:       exit={{ opacity: 0, y: -18 }}
+2567:       transition={{ duration: 0.38 }}
+2568:       className="mx-auto w-full max-w-[1700px] space-y-7 px-4 pb-28 pt-8 sm:px-6 lg:px-10 xl:px-14"
+2569:     >
+2570:       <section className="relative overflow-hidden rounded-[3.1rem] border border-white/14 bg-[#0F172A]/90 p-5 shadow-[0_38px_150px_rgba(0,0,0,0.30)] backdrop-blur-2xl md:p-7 lg:p-10">
+2571:   <video
+2572:     src="/media/desk-preview.mp4"
+
+-- line 2570 | terms=overflow-hidden --
+2566:       exit={{ opacity: 0, y: -18 }}
+2567:       transition={{ duration: 0.38 }}
+2568:       className="mx-auto w-full max-w-[1700px] space-y-7 px-4 pb-28 pt-8 sm:px-6 lg:px-10 xl:px-14"
+2569:     >
+2570:       <section className="relative overflow-hidden rounded-[3.1rem] border border-white/14 bg-[#0F172A]/90 p-5 shadow-[0_38px_150px_rgba(0,0,0,0.30)] backdrop-blur-2xl md:p-7 lg:p-10">
+2571:   <video
+2572:     src="/media/desk-preview.mp4"
+2573:     autoPlay
+2574:     muted
+
+-- line 2578 | terms=right --
+2574:     muted
+2575:     loop
+2576:     playsInline
+2577:     preload="metadata"
+2578:     className="absolute left-0 top-1/2 h-[86%] w-full -translate-y-1/2 object-cover object-center opacity-[0.42] saturate-[0.95] contrast-[1.12] brightness-[0.92]"
+2579:   />
+2580: 
+2581:   <div className="absolute inset-0 bg-[#07111F]/34" />
+2582:   <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(0,192,118,0.16),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(200,169,107,0.12),transparent_30%),linear-gradient(90deg,rgba(3,7,18,0.82),rgba(3,7,18,0.52)_48%,rgba(3,7,18,0.22)_100%)]" />
+
+-- line 2593 | terms=max-w- --
+2589:     className="pointer-events-none absolute top-0 h-px w-1/2 bg-gradient-to-r from-transparent via-[#E6EDF7]/55 to-transparent"
+2590:   />
+2591: 
+2592:   <div className="relative z-10 flex min-h-[560px] items-center py-8 md:min-h-[610px] lg:py-10">
+2593:     <div className="max-w-4xl">
+2594:       <motion.div
+2595:         initial={{ opacity: 0, y: 12 }}
+2596:         animate={{ opacity: 1, y: 0 }}
+2597:         transition={{ delay: 0.08, duration: 0.45 }}
+
+=== EDGE CONTEXTS (82) ===
+
+-- line 2 | terms=edge --
+1: type Language = string;
+2: type EdgeAny = Record<string, any>;
+3: 
+4: 
+5: 
+6: type PersonalEdgeTabProps = {
+
+-- line 6 | terms=edge --
+2: type EdgeAny = Record<string, any>;
+3: 
+4: 
+5: 
+6: type PersonalEdgeTabProps = {
+7:   language: Language;
+8:   summary: any | null;
+9:   loading: boolean;
+10:   error: string;
+
+-- line 8 | terms=summary --
+4: 
+5: 
+6: type PersonalEdgeTabProps = {
+7:   language: Language;
+8:   summary: any | null;
+9:   loading: boolean;
+10:   error: string;
+11:   onRefresh: () => void;
+12:   onOpenJournal: () => void;
+
+-- line 44 | terms=edge --
+40: function widthStyle(value: number | null | undefined) {
+41:   return { width: `${Math.max(4, Math.min(100, Number(value || 0)))}%` };
+42: }
+43: 
+44: export default function PersonalEdgeTab({
+45:   language,
+46:   summary,
+47:   loading,
+48:   error,
+
+-- line 46 | terms=summary --
+42: }
+43: 
+44: export default function PersonalEdgeTab({
+45:   language,
+46:   summary,
+47:   loading,
+48:   error,
+49:   onRefresh,
+50:   onOpenJournal,
+
+-- line 51 | terms=edge --
+47:   loading,
+48:   error,
+49:   onRefresh,
+50:   onOpenJournal,
+51: }: PersonalEdgeTabProps) {
+52:   const isRu = language === "ru";
+53:   const isUa = language === "ua";
+54: 
+55:   const copy = isRu
+
+-- line 57 | terms=Personal Edge,edge --
+53:   const isUa = language === "ua";
+54: 
+55:   const copy = isRu
+56:     ? {
+57:         badge: "Personal Edge Engine",
+58:         title: "Твой персональный trading desk, построенный вокруг твоего edge.",
+59:         text:
+60:           "SkillEdge AI соединяет журнал, скриншоты, разборы сделок и будущие сигналы в одну систему: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard и Execution Score.",
+61:         refresh: "Обновить",
+
+-- line 58 | terms=edge --
+54: 
+55:   const copy = isRu
+56:     ? {
+57:         badge: "Personal Edge Engine",
+58:         title: "Твой персональный trading desk, построенный вокруг твоего edge.",
+59:         text:
+60:           "SkillEdge AI соединяет журнал, скриншоты, разборы сделок и будущие сигналы в одну систему: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard и Execution Score.",
+61:         refresh: "Обновить",
+62:         loading: "Обновляем...",
+
+-- line 60 | terms=edge --
+56:     ? {
+57:         badge: "Personal Edge Engine",
+58:         title: "Твой персональный trading desk, построенный вокруг твоего edge.",
+59:         text:
+60:           "SkillEdge AI соединяет журнал, скриншоты, разборы сделок и будущие сигналы в одну систему: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard и Execution Score.",
+61:         refresh: "Обновить",
+62:         loading: "Обновляем...",
+63:         reviewTrade: "Разобрать сделку",
+64:         noDataTitle: "Профиль ещё прогревается",
+
+-- line 95 | terms=empty --
+91:         confirmation: "Confirmation",
+92:         avoid: "Avoid",
+93:         nextFocus: "Следующий фокус",
+94:         missing: "Что усилит профиль",
+95:         emptyFingerprints: "Система ещё собирает первые fingerprints. Добавь больше review со скринами.",
+96:         emptyPlaybook: "Playbook появится после нескольких качественных разборов сделок.",
+97:         emptyRules: "Personal rules появятся автоматически из повторяющихся ошибок и risk patterns.",
+98:         emptyReviews: "Последние разборы появятся после AI review сделки.",
+99:       }
+
+-- line 96 | terms=empty --
+92:         avoid: "Avoid",
+93:         nextFocus: "Следующий фокус",
+94:         missing: "Что усилит профиль",
+95:         emptyFingerprints: "Система ещё собирает первые fingerprints. Добавь больше review со скринами.",
+96:         emptyPlaybook: "Playbook появится после нескольких качественных разборов сделок.",
+97:         emptyRules: "Personal rules появятся автоматически из повторяющихся ошибок и risk patterns.",
+98:         emptyReviews: "Последние разборы появятся после AI review сделки.",
+99:       }
+100:     : isUa
+
+-- line 97 | terms=empty --
+93:         nextFocus: "Следующий фокус",
+94:         missing: "Что усилит профиль",
+95:         emptyFingerprints: "Система ещё собирает первые fingerprints. Добавь больше review со скринами.",
+96:         emptyPlaybook: "Playbook появится после нескольких качественных разборов сделок.",
+97:         emptyRules: "Personal rules появятся автоматически из повторяющихся ошибок и risk patterns.",
+98:         emptyReviews: "Последние разборы появятся после AI review сделки.",
+99:       }
+100:     : isUa
+101:       ? {
+
+-- line 98 | terms=empty --
+94:         missing: "Что усилит профиль",
+95:         emptyFingerprints: "Система ещё собирает первые fingerprints. Добавь больше review со скринами.",
+96:         emptyPlaybook: "Playbook появится после нескольких качественных разборов сделок.",
+97:         emptyRules: "Personal rules появятся автоматически из повторяющихся ошибок и risk patterns.",
+98:         emptyReviews: "Последние разборы появятся после AI review сделки.",
+99:       }
+100:     : isUa
+101:       ? {
+102:           badge: "Personal Edge Engine",
+
+-- line 102 | terms=Personal Edge,edge --
+98:         emptyReviews: "Последние разборы появятся после AI review сделки.",
+99:       }
+100:     : isUa
+101:       ? {
+102:           badge: "Personal Edge Engine",
+103:           title: "Твій персональний trading desk, побудований навколо твого edge.",
+104:           text:
+105:             "SkillEdge AI зʼєднує журнал, скриншоти, розбори угод і майбутні сигнали в одну систему: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard і Execution Score.",
+106:           refresh: "Оновити",
+
+-- line 103 | terms=edge --
+99:       }
+100:     : isUa
+101:       ? {
+102:           badge: "Personal Edge Engine",
+103:           title: "Твій персональний trading desk, побудований навколо твого edge.",
+104:           text:
+105:             "SkillEdge AI зʼєднує журнал, скриншоти, розбори угод і майбутні сигнали в одну систему: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard і Execution Score.",
+106:           refresh: "Оновити",
+107:           loading: "Оновлюємо...",
+
+-- line 105 | terms=edge --
+101:       ? {
+102:           badge: "Personal Edge Engine",
+103:           title: "Твій персональний trading desk, побудований навколо твого edge.",
+104:           text:
+105:             "SkillEdge AI зʼєднує журнал, скриншоти, розбори угод і майбутні сигнали в одну систему: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard і Execution Score.",
+106:           refresh: "Оновити",
+107:           loading: "Оновлюємо...",
+108:           reviewTrade: "Розібрати угоду",
+109:           noDataTitle: "Профіль ще прогрівається",
+
+-- line 140 | terms=empty --
+136:           confirmation: "Confirmation",
+137:           avoid: "Avoid",
+138:           nextFocus: "Наступний фокус",
+139:           missing: "Що посилить профіль",
+140:           emptyFingerprints: "Система ще збирає перші fingerprints. Додай більше review зі скринами.",
+141:           emptyPlaybook: "Playbook зʼявиться після кількох якісних розборів угод.",
+142:           emptyRules: "Personal rules зʼявляться автоматично з повторюваних помилок і risk patterns.",
+143:           emptyReviews: "Останні розбори зʼявляться після AI review угоди.",
+144:         }
+
+-- line 141 | terms=empty --
+137:           avoid: "Avoid",
+138:           nextFocus: "Наступний фокус",
+139:           missing: "Що посилить профіль",
+140:           emptyFingerprints: "Система ще збирає перші fingerprints. Додай більше review зі скринами.",
+141:           emptyPlaybook: "Playbook зʼявиться після кількох якісних розборів угод.",
+142:           emptyRules: "Personal rules зʼявляться автоматично з повторюваних помилок і risk patterns.",
+143:           emptyReviews: "Останні розбори зʼявляться після AI review угоди.",
+144:         }
+145:       : {
+
+-- line 142 | terms=empty --
+138:           nextFocus: "Наступний фокус",
+139:           missing: "Що посилить профіль",
+140:           emptyFingerprints: "Система ще збирає перші fingerprints. Додай більше review зі скринами.",
+141:           emptyPlaybook: "Playbook зʼявиться після кількох якісних розборів угод.",
+142:           emptyRules: "Personal rules зʼявляться автоматично з повторюваних помилок і risk patterns.",
+143:           emptyReviews: "Останні розбори зʼявляться після AI review угоди.",
+144:         }
+145:       : {
+146:           badge: "Personal Edge Engine",
+
+-- line 143 | terms=empty --
+139:           missing: "Що посилить профіль",
+140:           emptyFingerprints: "Система ще збирає перші fingerprints. Додай більше review зі скринами.",
+141:           emptyPlaybook: "Playbook зʼявиться після кількох якісних розборів угод.",
+142:           emptyRules: "Personal rules зʼявляться автоматично з повторюваних помилок і risk patterns.",
+143:           emptyReviews: "Останні розбори зʼявляться після AI review угоди.",
+144:         }
+145:       : {
+146:           badge: "Personal Edge Engine",
+147:           title: "Your personal trading desk, built around your edge.",
+
+-- line 146 | terms=Personal Edge,edge --
+142:           emptyRules: "Personal rules зʼявляться автоматично з повторюваних помилок і risk patterns.",
+143:           emptyReviews: "Останні розбори зʼявляться після AI review угоди.",
+144:         }
+145:       : {
+146:           badge: "Personal Edge Engine",
+147:           title: "Your personal trading desk, built around your edge.",
+148:           text:
+149:             "SkillEdge AI connects your journal, screenshots, trade reviews and future signals into one system: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard and Execution Score.",
+150:           refresh: "Refresh",
+
+-- line 147 | terms=edge --
+143:           emptyReviews: "Останні розбори зʼявляться після AI review угоди.",
+144:         }
+145:       : {
+146:           badge: "Personal Edge Engine",
+147:           title: "Your personal trading desk, built around your edge.",
+148:           text:
+149:             "SkillEdge AI connects your journal, screenshots, trade reviews and future signals into one system: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard and Execution Score.",
+150:           refresh: "Refresh",
+151:           loading: "Refreshing...",
+
+-- line 149 | terms=edge --
+145:       : {
+146:           badge: "Personal Edge Engine",
+147:           title: "Your personal trading desk, built around your edge.",
+148:           text:
+149:             "SkillEdge AI connects your journal, screenshots, trade reviews and future signals into one system: Trading DNA, Setup Fingerprints, Playbook, Anti-Setup Guard and Execution Score.",
+150:           refresh: "Refresh",
+151:           loading: "Refreshing...",
+152:           reviewTrade: "Review a trade",
+153:           noDataTitle: "Profile is warming up",
+
+-- line 184 | terms=empty --
+180:           confirmation: "Confirmation",
+181:           avoid: "Avoid",
+182:           nextFocus: "Next focus",
+183:           missing: "What will strengthen it",
+184:           emptyFingerprints: "The system is still building first fingerprints. Add more reviewed screenshots.",
+185:           emptyPlaybook: "Playbook appears after several high-quality trade reviews.",
+186:           emptyRules: "Personal rules appear automatically from repeated mistakes and risk patterns.",
+187:           emptyReviews: "Recent reviews will appear after AI trade review.",
+188:         };
+
+-- line 185 | terms=empty --
+181:           avoid: "Avoid",
+182:           nextFocus: "Next focus",
+183:           missing: "What will strengthen it",
+184:           emptyFingerprints: "The system is still building first fingerprints. Add more reviewed screenshots.",
+185:           emptyPlaybook: "Playbook appears after several high-quality trade reviews.",
+186:           emptyRules: "Personal rules appear automatically from repeated mistakes and risk patterns.",
+187:           emptyReviews: "Recent reviews will appear after AI trade review.",
+188:         };
+189: 
+
+-- line 186 | terms=empty --
+182:           nextFocus: "Next focus",
+183:           missing: "What will strengthen it",
+184:           emptyFingerprints: "The system is still building first fingerprints. Add more reviewed screenshots.",
+185:           emptyPlaybook: "Playbook appears after several high-quality trade reviews.",
+186:           emptyRules: "Personal rules appear automatically from repeated mistakes and risk patterns.",
+187:           emptyReviews: "Recent reviews will appear after AI trade review.",
+188:         };
+189: 
+190:   const translate = (value?: string | null) => {
+
+-- line 187 | terms=empty --
+183:           missing: "What will strengthen it",
+184:           emptyFingerprints: "The system is still building first fingerprints. Add more reviewed screenshots.",
+185:           emptyPlaybook: "Playbook appears after several high-quality trade reviews.",
+186:           emptyRules: "Personal rules appear automatically from repeated mistakes and risk patterns.",
+187:           emptyReviews: "Recent reviews will appear after AI trade review.",
+188:         };
+189: 
+190:   const translate = (value?: string | null) => {
+191:     const raw = String(value || "").trim();
+
+-- line 250 | terms=summary --
+246:     return (isRu ? ru : ua)[normalized] || raw;
+247:   };
+248: 
+249:   const stageDescription = () => {
+250:     if (!summary) return copy.noDataText;
+251: 
+252:     const stage = summary.profile.stage.stage;
+253: 
+254:     if (isRu) {
+
+-- line 252 | terms=summary --
+248: 
+249:   const stageDescription = () => {
+250:     if (!summary) return copy.noDataText;
+251: 
+252:     const stage = summary.profile.stage.stage;
+253: 
+254:     if (isRu) {
+255:       if (stage === "empty") return "Пока данных мало. Разбери первую сделку со скрином, чтобы AI начал строить личный профиль.";
+256:       if (stage === "warming_up") return "AI уже начал читать твоё исполнение. Добавь больше review, чтобы повысить точность Personal Match.";
+
+-- line 255 | terms=empty --
+251: 
+252:     const stage = summary.profile.stage.stage;
+253: 
+254:     if (isRu) {
+255:       if (stage === "empty") return "Пока данных мало. Разбери первую сделку со скрином, чтобы AI начал строить личный профиль.";
+256:       if (stage === "warming_up") return "AI уже начал читать твоё исполнение. Добавь больше review, чтобы повысить точность Personal Match.";
+257:       if (stage === "building_edge") return "Система видит первые повторяемые сетапы и формирует твой playbook.";
+258:       if (stage === "strong_profile") return "Профиль достаточно сильный для более точной персонализации сигналов и risk warnings.";
+259:       return "Профиль готов к работе на уровне персонального trading desk.";
+
+-- line 257 | terms=edge --
+253: 
+254:     if (isRu) {
+255:       if (stage === "empty") return "Пока данных мало. Разбери первую сделку со скрином, чтобы AI начал строить личный профиль.";
+256:       if (stage === "warming_up") return "AI уже начал читать твоё исполнение. Добавь больше review, чтобы повысить точность Personal Match.";
+257:       if (stage === "building_edge") return "Система видит первые повторяемые сетапы и формирует твой playbook.";
+258:       if (stage === "strong_profile") return "Профиль достаточно сильный для более точной персонализации сигналов и risk warnings.";
+259:       return "Профиль готов к работе на уровне персонального trading desk.";
+260:     }
+261: 
+
+-- line 263 | terms=empty --
+259:       return "Профиль готов к работе на уровне персонального trading desk.";
+260:     }
+261: 
+262:     if (isUa) {
+263:       if (stage === "empty") return "Даних поки мало. Розбери першу угоду зі скрином, щоб AI почав будувати особистий профіль.";
+264:       if (stage === "warming_up") return "AI уже почав читати твоє виконання. Додай більше review, щоб підвищити точність Personal Match.";
+265:       if (stage === "building_edge") return "Система бачить перші повторювані сетапи й формує твій playbook.";
+266:       if (stage === "strong_profile") return "Профіль достатньо сильний для точнішої персоналізації сигналів і risk warnings.";
+267:       return "Профіль готовий до роботи на рівні персонального trading desk.";
+
+-- line 265 | terms=edge --
+261: 
+262:     if (isUa) {
+263:       if (stage === "empty") return "Даних поки мало. Розбери першу угоду зі скрином, щоб AI почав будувати особистий профіль.";
+264:       if (stage === "warming_up") return "AI уже почав читати твоє виконання. Додай більше review, щоб підвищити точність Personal Match.";
+265:       if (stage === "building_edge") return "Система бачить перші повторювані сетапи й формує твій playbook.";
+266:       if (stage === "strong_profile") return "Профіль достатньо сильний для точнішої персоналізації сигналів і risk warnings.";
+267:       return "Профіль готовий до роботи на рівні персонального trading desk.";
+268:     }
+269: 
+
+-- line 270 | terms=summary --
+266:       if (stage === "strong_profile") return "Профіль достатньо сильний для точнішої персоналізації сигналів і risk warnings.";
+267:       return "Профіль готовий до роботи на рівні персонального trading desk.";
+268:     }
+269: 
+270:     return summary.profile.stage.description;
+271:   };
+272: 
+273:   const riskDescription = () => {
+274:     const riskMode = summary?.profile.riskMode || "normal";
+
+-- line 274 | terms=summary --
+270:     return summary.profile.stage.description;
+271:   };
+272: 
+273:   const riskDescription = () => {
+274:     const riskMode = summary?.profile.riskMode || "normal";
+275: 
+276:     if (isRu) {
+277:       if (riskMode === "defensive") return "Система видит слабые места в исполнении. Сейчас приоритет — только A+ сетапы и жёсткий риск.";
+278:       if (riskMode === "cooldown") return "Risk Guard предлагает снизить активность. Сначала восстанови дисциплину.";
+
+-- line 292 | terms=summary --
+288:       if (riskMode === "aggressive_allowed") return "Профіль і виконання дозволяють активніше працювати тільки з підтвердженими сетапами.";
+289:       return "Критичних ризиків не знайдено. Продовжуй працювати за personal playbook і правилами ризику.";
+290:     }
+291: 
+292:     return summary?.profile.riskModeCopy.description || "";
+293:   };
+294: 
+295:   const scoreCards = [
+296:     { label: copy.profileStrength, value: summary?.profile.profileStrength || 0, gradient: "from-[#00C076] to-[#00D084]" },
+
+-- line 296 | terms=summary --
+292:     return summary?.profile.riskModeCopy.description || "";
+293:   };
+294: 
+295:   const scoreCards = [
+296:     { label: copy.profileStrength, value: summary?.profile.profileStrength || 0, gradient: "from-[#00C076] to-[#00D084]" },
+297:     { label: copy.execution, value: summary?.profile.executionScore || 0, gradient: "from-[#C8A96B] to-[#F5D58A]" },
+298:     { label: copy.dataQuality, value: summary?.profile.dataQualityScore || 0, gradient: "from-[#38BDF8] to-[#00C076]" },
+299:     { label: copy.discipline, value: summary?.profile.disciplineScore || 0, gradient: "from-[#FF5A5F] to-[#F59E0B]" },
+300:   ];
+
+-- line 297 | terms=summary --
+293:   };
+294: 
+295:   const scoreCards = [
+296:     { label: copy.profileStrength, value: summary?.profile.profileStrength || 0, gradient: "from-[#00C076] to-[#00D084]" },
+297:     { label: copy.execution, value: summary?.profile.executionScore || 0, gradient: "from-[#C8A96B] to-[#F5D58A]" },
+298:     { label: copy.dataQuality, value: summary?.profile.dataQualityScore || 0, gradient: "from-[#38BDF8] to-[#00C076]" },
+299:     { label: copy.discipline, value: summary?.profile.disciplineScore || 0, gradient: "from-[#FF5A5F] to-[#F59E0B]" },
+300:   ];
+301: 
+
+-- line 298 | terms=summary --
+294: 
+295:   const scoreCards = [
+296:     { label: copy.profileStrength, value: summary?.profile.profileStrength || 0, gradient: "from-[#00C076] to-[#00D084]" },
+297:     { label: copy.execution, value: summary?.profile.executionScore || 0, gradient: "from-[#C8A96B] to-[#F5D58A]" },
+298:     { label: copy.dataQuality, value: summary?.profile.dataQualityScore || 0, gradient: "from-[#38BDF8] to-[#00C076]" },
+299:     { label: copy.discipline, value: summary?.profile.disciplineScore || 0, gradient: "from-[#FF5A5F] to-[#F59E0B]" },
+300:   ];
+301: 
+302:   const topFingerprints: EdgeAny[] = Array.isArray(summary?.fingerprints)
+
+-- line 299 | terms=summary --
+295:   const scoreCards = [
+296:     { label: copy.profileStrength, value: summary?.profile.profileStrength || 0, gradient: "from-[#00C076] to-[#00D084]" },
+297:     { label: copy.execution, value: summary?.profile.executionScore || 0, gradient: "from-[#C8A96B] to-[#F5D58A]" },
+298:     { label: copy.dataQuality, value: summary?.profile.dataQualityScore || 0, gradient: "from-[#38BDF8] to-[#00C076]" },
+299:     { label: copy.discipline, value: summary?.profile.disciplineScore || 0, gradient: "from-[#FF5A5F] to-[#F59E0B]" },
+300:   ];
+301: 
+302:   const topFingerprints: EdgeAny[] = Array.isArray(summary?.fingerprints)
+303:   ? summary.fingerprints
+
+-- line 302 | terms=edge,summary --
+298:     { label: copy.dataQuality, value: summary?.profile.dataQualityScore || 0, gradient: "from-[#38BDF8] to-[#00C076]" },
+299:     { label: copy.discipline, value: summary?.profile.disciplineScore || 0, gradient: "from-[#FF5A5F] to-[#F59E0B]" },
+300:   ];
+301: 
+302:   const topFingerprints: EdgeAny[] = Array.isArray(summary?.fingerprints)
+303:   ? summary.fingerprints
+304:   : [];
+305: 
+306: const playbook: EdgeAny[] = Array.isArray(summary?.playbook)
+
+-- line 303 | terms=summary --
+299:     { label: copy.discipline, value: summary?.profile.disciplineScore || 0, gradient: "from-[#FF5A5F] to-[#F59E0B]" },
+300:   ];
+301: 
+302:   const topFingerprints: EdgeAny[] = Array.isArray(summary?.fingerprints)
+303:   ? summary.fingerprints
+304:   : [];
+305: 
+306: const playbook: EdgeAny[] = Array.isArray(summary?.playbook)
+307:   ? summary.playbook
+
+-- line 306 | terms=edge,summary --
+302:   const topFingerprints: EdgeAny[] = Array.isArray(summary?.fingerprints)
+303:   ? summary.fingerprints
+304:   : [];
+305: 
+306: const playbook: EdgeAny[] = Array.isArray(summary?.playbook)
+307:   ? summary.playbook
+308:   : [];
+309: 
+310: const rules: EdgeAny[] = Array.isArray(summary?.rules)
+
+-- line 307 | terms=summary --
+303:   ? summary.fingerprints
+304:   : [];
+305: 
+306: const playbook: EdgeAny[] = Array.isArray(summary?.playbook)
+307:   ? summary.playbook
+308:   : [];
+309: 
+310: const rules: EdgeAny[] = Array.isArray(summary?.rules)
+311:   ? summary.rules
+
+-- line 310 | terms=edge,summary --
+306: const playbook: EdgeAny[] = Array.isArray(summary?.playbook)
+307:   ? summary.playbook
+308:   : [];
+309: 
+310: const rules: EdgeAny[] = Array.isArray(summary?.rules)
+311:   ? summary.rules
+312:   : [];
+313: 
+314: const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
+
+-- line 311 | terms=summary --
+307:   ? summary.playbook
+308:   : [];
+309: 
+310: const rules: EdgeAny[] = Array.isArray(summary?.rules)
+311:   ? summary.rules
+312:   : [];
+313: 
+314: const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
+315:   ? summary.recentReviews
+
+-- line 314 | terms=edge,summary --
+310: const rules: EdgeAny[] = Array.isArray(summary?.rules)
+311:   ? summary.rules
+312:   : [];
+313: 
+314: const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
+315:   ? summary.recentReviews
+316:   : [];
+317: 
+318:   const missingData: string[] = Array.isArray(summary?.readiness?.missingData)
+
+-- line 315 | terms=summary --
+311:   ? summary.rules
+312:   : [];
+313: 
+314: const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
+315:   ? summary.recentReviews
+316:   : [];
+317: 
+318:   const missingData: string[] = Array.isArray(summary?.readiness?.missingData)
+319:   ? summary.readiness.missingData
+
+-- line 318 | terms=summary --
+314: const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
+315:   ? summary.recentReviews
+316:   : [];
+317: 
+318:   const missingData: string[] = Array.isArray(summary?.readiness?.missingData)
+319:   ? summary.readiness.missingData
+320:   : [];
+321: 
+322:   return (
+
+-- line 319 | terms=summary --
+315:   ? summary.recentReviews
+316:   : [];
+317: 
+318:   const missingData: string[] = Array.isArray(summary?.readiness?.missingData)
+319:   ? summary.readiness.missingData
+320:   : [];
+321: 
+322:   return (
+323:     <div className="space-y-6">
+
+-- line 324 | terms=overflow-hidden --
+320:   : [];
+321: 
+322:   return (
+323:     <div className="space-y-6">
+324:       <section className="se-dashboard-panel relative overflow-hidden rounded-[2.35rem] border border-white/[0.08] p-6 shadow-[0_34px_130px_rgba(0,0,0,0.38)]">
+325:         <div className="absolute inset-0 bg-[radial-gradient(circle_at_10%_0%,rgba(0,192,118,0.18),transparent_32%),radial-gradient(circle_at_88%_10%,rgba(200,169,107,0.15),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.045),transparent_46%)]" />
+326:         <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#00C076]/10 blur-3xl" />
+327:         <div className="absolute -bottom-28 left-1/3 h-72 w-72 rounded-full bg-[#C8A96B]/10 blur-3xl" />
+328: 
+
+-- line 336 | terms=summary --
+332:               <span className="rounded-full border border-[#C8A96B]/25 bg-[#C8A96B]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.24em] text-[#F4E8C8]/85">
+333:                 {copy.badge}
+334:               </span>
+335:               <span className="rounded-full border border-[#00C076]/22 bg-[#00C076]/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-[#DFFFEF]/82">
+336:                 {summary?.profile.stage.label || copy.noDataTitle}
+337:               </span>
+338:             </div>
+339: 
+340:             <h2 className="mt-5 max-w-4xl text-3xl font-black tracking-[-0.055em] text-[#E6EDF7] md:text-5xl">
+
+-- line 345 | terms=summary --
+341:               {copy.title}
+342:             </h2>
+343: 
+344:             <p className="mt-4 max-w-4xl text-sm font-semibold leading-7 text-[#94A3B8] md:text-base">
+345:               {summary ? stageDescription() : copy.text}
+346:             </p>
+347: 
+348:             <div className="mt-5 flex flex-wrap gap-2">
+349:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+
+-- line 350 | terms=summary --
+346:             </p>
+347: 
+348:             <div className="mt-5 flex flex-wrap gap-2">
+349:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+350:                 {summary?.profile.totalReviewedTrades || 0} {copy.reviewedTrades}
+351:               </span>
+352:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+353:                 {summary?.profile.totalScreenshotReviews || 0} {copy.screenshots}
+354:               </span>
+
+-- line 353 | terms=summary --
+349:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+350:                 {summary?.profile.totalReviewedTrades || 0} {copy.reviewedTrades}
+351:               </span>
+352:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+353:                 {summary?.profile.totalScreenshotReviews || 0} {copy.screenshots}
+354:               </span>
+355:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+356:                 {summary?.profile.totalAlertLinkedTrades || 0} {copy.alertLinked}
+357:               </span>
+
+-- line 356 | terms=summary --
+352:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+353:                 {summary?.profile.totalScreenshotReviews || 0} {copy.screenshots}
+354:               </span>
+355:               <span className="rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[11px] font-bold text-white/62">
+356:                 {summary?.profile.totalAlertLinkedTrades || 0} {copy.alertLinked}
+357:               </span>
+358:             </div>
+359:           </div>
+360: 
+
+-- line 387 | terms=summary --
+383:             {error}
+384:           </div>
+385:         ) : null}
+386: 
+387:         {!summary ? (
+388:           <div className="relative mt-6 rounded-[1.5rem] border border-white/10 bg-black/20 p-5">
+389:             <div className="text-sm font-black text-white">{copy.noDataTitle}</div>
+390:             <p className="mt-2 text-sm font-semibold leading-6 text-white/54">{copy.noDataText}</p>
+391:           </div>
+
+-- line 393 | terms=grid-cols --
+389:             <div className="text-sm font-black text-white">{copy.noDataTitle}</div>
+390:             <p className="mt-2 text-sm font-semibold leading-6 text-white/54">{copy.noDataText}</p>
+391:           </div>
+392:         ) : (
+393:           <div className="relative mt-6 grid gap-3 md:grid-cols-4">
+394:             {scoreCards.map((card) => (
+395:               <div key={card.label} className="rounded-[1.35rem] border border-white/10 bg-[#07111F]/46 p-4">
+396:                 <div className="flex items-center justify-between gap-3">
+397:                   <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/42">{card.label}</span>
+
+-- line 400 | terms=overflow-hidden --
+396:                 <div className="flex items-center justify-between gap-3">
+397:                   <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/42">{card.label}</span>
+398:                   <span className="text-sm font-black text-[#E6EDF7]">{formatScore(card.value)}</span>
+399:                 </div>
+400:                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+401:                   <div className={`h-full rounded-full bg-gradient-to-r ${card.gradient}`} style={widthStyle(card.value)} />
+402:                 </div>
+403:               </div>
+404:             ))}
+
+-- line 401 | terms=h-full --
+397:                   <span className="text-[10px] font-black uppercase tracking-[0.18em] text-white/42">{card.label}</span>
+398:                   <span className="text-sm font-black text-[#E6EDF7]">{formatScore(card.value)}</span>
+399:                 </div>
+400:                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+401:                   <div className={`h-full rounded-full bg-gradient-to-r ${card.gradient}`} style={widthStyle(card.value)} />
+402:                 </div>
+403:               </div>
+404:             ))}
+405:           </div>
+
+-- line 409 | terms=summary --
+405:           </div>
+406:         )}
+407:       </section>
+408: 
+409:       {summary ? (
+410:         <>
+411:           <section className="grid gap-4 xl:grid-cols-5">
+412:             {([
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+
+-- line 411 | terms=grid-cols --
+407:       </section>
+408: 
+409:       {summary ? (
+410:         <>
+411:           <section className="grid gap-4 xl:grid-cols-5">
+412:             {([
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+414:   [copy.bestDirection, translate(summary.highlights.bestDirection), "border-white/10 bg-white/[0.045]"],
+415:   [copy.bestAsset, translate(summary.highlights.bestAssetType), "border-white/10 bg-white/[0.045]"],
+
+-- line 413 | terms=summary --
+409:       {summary ? (
+410:         <>
+411:           <section className="grid gap-4 xl:grid-cols-5">
+412:             {([
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+414:   [copy.bestDirection, translate(summary.highlights.bestDirection), "border-white/10 bg-white/[0.045]"],
+415:   [copy.bestAsset, translate(summary.highlights.bestAssetType), "border-white/10 bg-white/[0.045]"],
+416:   [copy.mainRisk, translate(summary.highlights.mainRiskPattern), "border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.07]"],
+417:   [copy.strongestCondition, translate(summary.highlights.strongestCondition), "border-[#C8A96B]/20 bg-[#C8A96B]/[0.08]"],
+
+-- line 414 | terms=summary --
+410:         <>
+411:           <section className="grid gap-4 xl:grid-cols-5">
+412:             {([
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+414:   [copy.bestDirection, translate(summary.highlights.bestDirection), "border-white/10 bg-white/[0.045]"],
+415:   [copy.bestAsset, translate(summary.highlights.bestAssetType), "border-white/10 bg-white/[0.045]"],
+416:   [copy.mainRisk, translate(summary.highlights.mainRiskPattern), "border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.07]"],
+417:   [copy.strongestCondition, translate(summary.highlights.strongestCondition), "border-[#C8A96B]/20 bg-[#C8A96B]/[0.08]"],
+418: ] as Array<[string, string, string]>).map(([label, value, className]) => (
+
+-- line 415 | terms=summary --
+411:           <section className="grid gap-4 xl:grid-cols-5">
+412:             {([
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+414:   [copy.bestDirection, translate(summary.highlights.bestDirection), "border-white/10 bg-white/[0.045]"],
+415:   [copy.bestAsset, translate(summary.highlights.bestAssetType), "border-white/10 bg-white/[0.045]"],
+416:   [copy.mainRisk, translate(summary.highlights.mainRiskPattern), "border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.07]"],
+417:   [copy.strongestCondition, translate(summary.highlights.strongestCondition), "border-[#C8A96B]/20 bg-[#C8A96B]/[0.08]"],
+418: ] as Array<[string, string, string]>).map(([label, value, className]) => (
+419:               <div key={label} className={`rounded-[1.5rem] border p-5 ${className}`}>
+
+-- line 416 | terms=summary --
+412:             {([
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+414:   [copy.bestDirection, translate(summary.highlights.bestDirection), "border-white/10 bg-white/[0.045]"],
+415:   [copy.bestAsset, translate(summary.highlights.bestAssetType), "border-white/10 bg-white/[0.045]"],
+416:   [copy.mainRisk, translate(summary.highlights.mainRiskPattern), "border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.07]"],
+417:   [copy.strongestCondition, translate(summary.highlights.strongestCondition), "border-[#C8A96B]/20 bg-[#C8A96B]/[0.08]"],
+418: ] as Array<[string, string, string]>).map(([label, value, className]) => (
+419:               <div key={label} className={`rounded-[1.5rem] border p-5 ${className}`}>
+420:                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/38">{label}</div>
+
+-- line 417 | terms=summary --
+413:   [copy.bestSetup, translate(summary.highlights.bestSetup), "border-[#00C076]/18 bg-[#00C076]/[0.07]"],
+414:   [copy.bestDirection, translate(summary.highlights.bestDirection), "border-white/10 bg-white/[0.045]"],
+415:   [copy.bestAsset, translate(summary.highlights.bestAssetType), "border-white/10 bg-white/[0.045]"],
+416:   [copy.mainRisk, translate(summary.highlights.mainRiskPattern), "border-[#FF5A5F]/18 bg-[#FF5A5F]/[0.07]"],
+417:   [copy.strongestCondition, translate(summary.highlights.strongestCondition), "border-[#C8A96B]/20 bg-[#C8A96B]/[0.08]"],
+418: ] as Array<[string, string, string]>).map(([label, value, className]) => (
+419:               <div key={label} className={`rounded-[1.5rem] border p-5 ${className}`}>
+420:                 <div className="text-[10px] font-black uppercase tracking-[0.2em] text-white/38">{label}</div>
+421:                 <div className="mt-3 text-lg font-black text-[#E6EDF7]">{value}</div>
+
+-- line 426 | terms=grid-cols --
+422:               </div>
+423:             ))}
+424:           </section>
+425: 
+426:           <section className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+427:             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+428:               <div className="flex items-center justify-between gap-4">
+429:                 <div>
+430:                   <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#00D084]/75">{copy.fingerprints}</div>
+
+-- line 454 | terms=grid-cols --
+450:                           {copy.confidence}: {formatScore(item.confidenceScore)}
+451:                         </div>
+452:                       </div>
+453: 
+454:                       <div className="mt-4 grid gap-2 md:grid-cols-3">
+455:                         <MetricPill label={copy.winRate} value={formatScore(item.winRate)} />
+456:                         <MetricPill label={copy.trades} value={String(item.totalTrades)} />
+457:                         <MetricPill label={copy.execution} value={formatScore(item.avgExecutionScore)} />
+458:                       </div>
+
+-- line 475 | terms=edge,empty --
+471:                       ) : null}
+472:                     </div>
+473:                   ))
+474:                 ) : (
+475:                   <EmptyEdgeState text={copy.emptyFingerprints} />
+476:                 )}
+477:               </div>
+478:             </div>
+479: 
+
+-- line 483 | terms=summary --
+479: 
+480:             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+481:               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#FFB4B7]/75">{copy.guard}</div>
+482:               <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+483:                 {translate(summary.highlights.mainRiskPattern)}
+484:               </h3>
+485:               <p className="mt-3 text-sm font-semibold leading-7 text-white/55">{riskDescription()}</p>
+486: 
+487:               <div className="mt-5 space-y-2">
+
+-- line 489 | terms=edge --
+485:               <p className="mt-3 text-sm font-semibold leading-7 text-white/55">{riskDescription()}</p>
+486: 
+487:               <div className="mt-5 space-y-2">
+488:                 {rules.length ? (
+489:                   rules.slice(0, 5).map((rule: EdgeAny) => (
+490:                     <div key={rule.id} className="rounded-[1.2rem] border border-white/10 bg-[#07111F]/42 p-4">
+491:                       <div className="flex items-start justify-between gap-3">
+492:                         <div>
+493:                           <div className="text-sm font-black text-white">{translate(rule.title)}</div>
+
+-- line 505 | terms=edge,empty --
+501:                       </div>
+502:                     </div>
+503:                   ))
+504:                 ) : (
+505:                   <EmptyEdgeState text={copy.emptyRules} />
+506:                 )}
+507:               </div>
+508:             </div>
+509:           </section>
+
+-- line 511 | terms=grid-cols --
+507:               </div>
+508:             </div>
+509:           </section>
+510: 
+511:           <section className="grid gap-5 xl:grid-cols-2">
+512:             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+513:               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8A96B]/80">{copy.playbook}</div>
+514:               <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+515:                 {playbook.length} {copy.playbook}
+
+-- line 520 | terms=edge --
+516:               </h3>
+517: 
+518:               <div className="mt-5 grid gap-3">
+519:                 {playbook.length ? (
+520:                   playbook.slice(0, 5).map((item: EdgeAny) => (
+521:                     <div key={item.id} className="rounded-[1.35rem] border border-white/10 bg-[#07111F]/42 p-4">
+522:                       <div className="flex flex-wrap items-center justify-between gap-3">
+523:                         <div className="text-base font-black text-white">{translate(item.title)}</div>
+524:                         <div className="rounded-full border border-[#C8A96B]/20 bg-[#C8A96B]/10 px-3 py-1 text-[11px] font-black text-[#F4E8C8]">
+
+-- line 534 | terms=edge,empty --
+530:                       ) : null}
+531:                     </div>
+532:                   ))
+533:                 ) : (
+534:                   <EmptyEdgeState text={copy.emptyPlaybook} />
+535:                 )}
+536:               </div>
+537:             </div>
+538: 
+
+-- line 547 | terms=edge --
+543:               </h3>
+544: 
+545:               <div className="mt-5 grid gap-3">
+546:                 {reviews.length ? (
+547:                   reviews.slice(0, 5).map((review: EdgeAny, index: number) => (
+548:                     <div key={review.id || index} className="rounded-[1.35rem] border border-white/10 bg-[#07111F]/42 p-4">
+549:                       <div className="flex flex-wrap items-start justify-between gap-3">
+550:                         <div>
+551:                           <div className="text-base font-black text-white">
+
+-- line 570 | terms=summary --
+566:                           {review.aPlusCandidate ? "A+" : review.avoidPattern ? "Guard" : "Review"}
+567:                         </div>
+568:                       </div>
+569: 
+570:                       {review.publicSummary ? (
+571:                         <p className="mt-2 text-xs font-semibold leading-5 text-white/48">{translate(review.publicSummary)}</p>
+572:                       ) : null}
+573:                     </div>
+574:                   ))
+
+-- line 571 | terms=summary --
+567:                         </div>
+568:                       </div>
+569: 
+570:                       {review.publicSummary ? (
+571:                         <p className="mt-2 text-xs font-semibold leading-5 text-white/48">{translate(review.publicSummary)}</p>
+572:                       ) : null}
+573:                     </div>
+574:                   ))
+575:                 ) : (
+
+-- line 576 | terms=edge,empty --
+572:                       ) : null}
+573:                     </div>
+574:                   ))
+575:                 ) : (
+576:                   <EmptyEdgeState text={copy.emptyReviews} />
+577:                 )}
+578:               </div>
+579:             </div>
+580:           </section>
+
+-- line 585 | terms=summary --
+581: 
+582:           <section className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
+583:             <div className="text-[10px] font-black uppercase tracking-[0.22em] text-white/35">{copy.nextFocus}</div>
+584:             <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">
+585:               {translate(summary.profile.nextFocus)}
+586:             </h3>
+587: 
+588:             {missingData.length > 0 ? (
+589:               <>
+
+-- line 616 | terms=edge,empty --
+612:     </div>
+613:   );
+614: }
+615: 
+616: function EmptyEdgeState({ text }: { text: string }) {
+617:   return (
+618:     <div className="rounded-[1.35rem] border border-dashed border-white/12 bg-white/[0.025] p-5 text-sm font-semibold leading-6 text-white/45">
+619:       {text}
+620:     </div>
+
+=== DASHBOARD CONTEXTS (120) ===
+
+-- line 29 | terms=button --
+25:   getPlanLimits,
+26:   normalizePlanId,
+27: } from "@/lib/plan-limits";
+28: 
+29: import TelegramSignalsConnectButton from "@/components/dashboard/TelegramSignalsConnectButton";
+30: import SignalCockpitTab from "@/components/dashboard/SignalCockpitTab";
+31: import {
+32:   buildSkillEdgeAiValidationUiPanel,
+33:   type SkillEdgeAiValidationUiPanel,
+
+-- line 48 | terms=journal --
+44: 
+45: type TabId =
+46:   | "overview"
+47:   | "edge"
+48:   | "journal"
+49:   | "strategy"
+50:   | "charts"
+51:   | "market"
+52:   | "cockpit"
+
+-- line 134 | terms=trade --
+130: type StrategyAnalytics = {
+131:   summary?: Record<string, number>;
+132:   scores?: Record<string, number>;
+133:   evidence?: Record<string, unknown>;
+134:   beforeTradeGate?: Record<string, unknown>;
+135:   afterTradeDebrief?: Record<string, unknown>;
+136:   mistakes?: { top?: Array<{ key: string; count: number }> };
+137:   readinessGates?: Array<{ key: string; done: boolean; progress?: number; target?: number }>;
+138:   improvementQueue?: string[];
+
+-- line 135 | terms=trade --
+131:   summary?: Record<string, number>;
+132:   scores?: Record<string, number>;
+133:   evidence?: Record<string, unknown>;
+134:   beforeTradeGate?: Record<string, unknown>;
+135:   afterTradeDebrief?: Record<string, unknown>;
+136:   mistakes?: { top?: Array<{ key: string; count: number }> };
+137:   readinessGates?: Array<{ key: string; done: boolean; progress?: number; target?: number }>;
+138:   improvementQueue?: string[];
+139:   skillMap?: Record<string, number>;
+
+-- line 206 | terms=trade --
+202:   evidence_summary?: Record<string, unknown> | null;
+203: };
+204: 
+205: 
+206: type StrategyDrillMode = "beginner" | "decision" | "no_trade";
+207: 
+208: type StrategyDrillDecision =
+209:   | "mark_context"
+210:   | "wait_for_confirmation"
+
+-- line 212 | terms=trade --
+208: type StrategyDrillDecision =
+209:   | "mark_context"
+210:   | "wait_for_confirmation"
+211:   | "enter_if_checklist_confirms"
+212:   | "skip_no_trade"
+213:   | "send_to_evidence_locker";
+214: 
+215: type StrategyDrillVerdict = "correct" | "risky" | "playbook_violation" | "incomplete";
+216: 
+
+-- line 220 | terms=ticker --
+216: 
+217: type StrategyDrillExample = Record<string, unknown> & {
+218:   id?: string | null;
+219:   symbol?: string | null;
+220:   ticker?: string | null;
+221:   timeframe?: string | null;
+222:   quality_tag?: string | null;
+223:   quality?: string | null;
+224:   notes?: string | null;
+
+-- line 231 | terms=journal --
+227:   setup_slug?: string | null;
+228:   created_at?: string | null;
+229:   example_date?: string | null;
+230:   date?: string | null;
+231:   source_type?: "evidence_locker" | "journal_history" | "desk_simulation" | string | null;
+232:   source_label?: string | null;
+233:   source_trade_id?: string | null;
+234:   is_generated?: boolean | null;
+235: };
+
+-- line 233 | terms=trade --
+229:   example_date?: string | null;
+230:   date?: string | null;
+231:   source_type?: "evidence_locker" | "journal_history" | "desk_simulation" | string | null;
+232:   source_label?: string | null;
+233:   source_trade_id?: string | null;
+234:   is_generated?: boolean | null;
+235: };
+236: 
+237: type StrategyDrillResult = Record<string, unknown> & {
+
+-- line 331 | terms=trade --
+327:     "Break above reclaim candle/high confirms demand.": "Пробой high свечи возврата подтверждает спрос.",
+328:     "Volume should expand on reclaim or hold steady during retest.": "Объём должен расширяться на reclaim или стабильно держаться на ретесте.",
+329:     "Avoid reclaim with dead volume or heavy selling into VWAP.": "Избегай reclaim на мёртвом объёме или при сильных продажах в VWAP.",
+330:     "Execution VWAP should be based on intraday/session 5m data, not daily/HTF candles.": "Execution VWAP должен строиться по intraday/session 5m данным, а не по daily/HTF свечам.",
+331:     "VWAP acts as decision line: reclaim + hold = long bias, failed hold = no trade.": "VWAP — линия решения: reclaim + удержание = long bias, провал удержания = no trade.",
+332:     "5m/3m close back above VWAP, successful retest, then break of local structure high.": "Закрытие 5m/3m обратно выше VWAP, успешный ретест, затем пробой локального structure high.",
+333:     "Near VWAP retest or after first controlled higher low; avoid chasing far above VWAP.": "Рядом с ретестом VWAP или после первого контролируемого higher low; не догонять далеко над VWAP.",
+334:     "Below reclaim candle low, below retest low, or below VWAP hold level if thesis is VWAP control.": "Ниже low свечи reclaim, ниже low ретеста или ниже уровня удержания VWAP, если идея строится на VWAP control.",
+335:     "TP1 previous intraday high": "TP1: предыдущий intraday high",
+
+-- line 473 | terms=trade --
+469:     "Break above reclaim candle/high confirms demand.": "Пробій high свічки reclaim підтверджує попит.",
+470:     "Volume should expand on reclaim or hold steady during retest.": "Обʼєм має розширюватися на reclaim або стабільно триматися на ретесті.",
+471:     "Avoid reclaim with dead volume or heavy selling into VWAP.": "Уникай reclaim на мертвому обʼємі або при сильних продажах у VWAP.",
+472:     "Execution VWAP should be based on intraday/session 5m data, not daily/HTF candles.": "Execution VWAP має будуватися по intraday/session 5m даних, а не по daily/HTF свічках.",
+473:     "VWAP acts as decision line: reclaim + hold = long bias, failed hold = no trade.": "VWAP — лінія рішення: reclaim + утримання = long bias, провал утримання = no trade.",
+474:     "5m/3m close back above VWAP, successful retest, then break of local structure high.": "Закриття 5m/3m назад вище VWAP, успішний ретест, потім пробій локального structure high.",
+475:     "Near VWAP retest or after first controlled higher low; avoid chasing far above VWAP.": "Поруч із ретестом VWAP або після першого контрольованого higher low; не наздоганяти далеко над VWAP.",
+476:     "Below reclaim candle low, below retest low, or below VWAP hold level if thesis is VWAP control.": "Нижче low свічки reclaim, нижче low ретесту або нижче рівня утримання VWAP, якщо ідея — VWAP control.",
+477:     "TP1 previous intraday high": "TP1: попередній intraday high",
+
+-- line 671 | terms=trade --
+667: ) {
+668:   const normalized = (description || "").trim().toLowerCase();
+669: 
+670:   const missionDescriptionMap: Record<string, Record<Language, string>> = {
+671:     "build your trader profile, choose one setup and start a guided path instead of trading randomly.": {
+672:       en: "Build your trader profile, choose one setup and start a guided path instead of trading randomly.",
+673:       ru: "Собери профиль трейдера, выбери один сетап и начни понятный маршрут вместо хаотичной торговли.",
+674:       ua: "Збери профіль трейдера, обери один сетап і почни зрозумілий маршрут замість хаотичної торгівлі.",
+675:     },
+
+-- line 672 | terms=trade --
+668:   const normalized = (description || "").trim().toLowerCase();
+669: 
+670:   const missionDescriptionMap: Record<string, Record<Language, string>> = {
+671:     "build your trader profile, choose one setup and start a guided path instead of trading randomly.": {
+672:       en: "Build your trader profile, choose one setup and start a guided path instead of trading randomly.",
+673:       ru: "Собери профиль трейдера, выбери один сетап и начни понятный маршрут вместо хаотичной торговли.",
+674:       ua: "Збери профіль трейдера, обери один сетап і почни зрозумілий маршрут замість хаотичної торгівлі.",
+675:     },
+676:     "collect evidence, complete the checklist and move this strategy toward a real tested playbook.": {
+
+-- line 726 | terms=trade --
+722:       en: "Add 3 historical examples",
+723:       ru: "Добавить 3 исторических примера",
+724:       ua: "Додати 3 історичні приклади",
+725:     },
+726:     "write one no-trade rule": {
+727:       en: "Write one no-trade rule",
+728:       ru: "Записать одно no-trade правило",
+729:       ua: "Записати одне no-trade правило",
+730:     },
+
+-- line 727 | terms=trade --
+723:       ru: "Добавить 3 исторических примера",
+724:       ua: "Додати 3 історичні приклади",
+725:     },
+726:     "write one no-trade rule": {
+727:       en: "Write one no-trade rule",
+728:       ru: "Записать одно no-trade правило",
+729:       ua: "Записати одне no-trade правило",
+730:     },
+731:     "choose your experience level": {
+
+-- line 728 | terms=trade --
+724:       ua: "Додати 3 історичні приклади",
+725:     },
+726:     "write one no-trade rule": {
+727:       en: "Write one no-trade rule",
+728:       ru: "Записать одно no-trade правило",
+729:       ua: "Записати одне no-trade правило",
+730:     },
+731:     "choose your experience level": {
+732:       en: "Lock experience level",
+
+-- line 729 | terms=trade --
+725:     },
+726:     "write one no-trade rule": {
+727:       en: "Write one no-trade rule",
+728:       ru: "Записать одно no-trade правило",
+729:       ua: "Записати одне no-trade правило",
+730:     },
+731:     "choose your experience level": {
+732:       en: "Lock experience level",
+733:       ru: "Выбрать уровень опыта",
+
+-- line 829 | terms=trade --
+825:     profileStrength: number;
+826:     dataQualityScore: number;
+827:     executionScore: number;
+828:     disciplineScore: number;
+829:     totalReviewedTrades: number;
+830:     totalScreenshotReviews: number;
+831:     totalAlertLinkedTrades: number;
+832:     preferredRrMin: number;
+833:     preferredRrAvg: number | null;
+
+-- line 831 | terms=trade --
+827:     executionScore: number;
+828:     disciplineScore: number;
+829:     totalReviewedTrades: number;
+830:     totalScreenshotReviews: number;
+831:     totalAlertLinkedTrades: number;
+832:     preferredRrMin: number;
+833:     preferredRrAvg: number | null;
+834:     riskMode: string;
+835:     riskModeCopy: {
+
+-- line 865 | terms=trade --
+861:     direction: string;
+862:     tier: string;
+863:     profileStrength: number;
+864:     confidenceScore: number;
+865:     totalTrades: number;
+866:     winningTrades: number;
+867:     losingTrades: number;
+868:     winRate: number;
+869:     avgExecutionScore: number;
+
+-- line 866 | terms=trade --
+862:     tier: string;
+863:     profileStrength: number;
+864:     confidenceScore: number;
+865:     totalTrades: number;
+866:     winningTrades: number;
+867:     losingTrades: number;
+868:     winRate: number;
+869:     avgExecutionScore: number;
+870:     avgPlanAdherenceScore: number;
+
+-- line 867 | terms=trade --
+863:     profileStrength: number;
+864:     confidenceScore: number;
+865:     totalTrades: number;
+866:     winningTrades: number;
+867:     losingTrades: number;
+868:     winRate: number;
+869:     avgExecutionScore: number;
+870:     avgPlanAdherenceScore: number;
+871:     requiredConditions: unknown[];
+
+-- line 888 | terms=trade --
+884:     slug: string;
+885:     assetType: string;
+886:     direction: string;
+887:     description: string | null;
+888:     whenToTrade: unknown[];
+889:     confirmationChecklist: unknown[];
+890:     invalidationRules: unknown[];
+891:     avoidIf: unknown[];
+892:     commonMistakes: unknown[];
+
+-- line 968 | terms=trade --
+964:   referral_count: 0,
+965:   withdrawal_threshold: 75,
+966: };
+967: 
+968: type ReferralInvitedTrader = {
+969:   id: string;
+970:   referredUserId: string;
+971:   email: string;
+972:   status: string;
+
+-- line 1005 | terms=trade --
+1001: type ReferralDashboardData = {
+1002:   referralCode: string;
+1003:   referralLink: string;
+1004:   summary: ReferralBalanceSummary;
+1005:   invitedTraders: ReferralInvitedTrader[];
+1006:   rewardHistory: ReferralRewardHistoryItem[];
+1007:   withdrawalHistory: ReferralWithdrawalHistoryItem[];
+1008: };
+1009: 
+
+-- line 1014 | terms=trade --
+1010: const emptyReferralDashboard: ReferralDashboardData = {
+1011:   referralCode: "",
+1012:   referralLink: "",
+1013:   summary: emptyReferralBalance,
+1014:   invitedTraders: [],
+1015:   rewardHistory: [],
+1016:   withdrawalHistory: [],
+1017: };
+1018: 
+
+-- line 1033 | terms=trade --
+1029: type AiAnalysis = {
+1030:   id: string;
+1031:   user_id: string | null;
+1032:   subscription_id: string | null;
+1033:   trade_id: string | null;
+1034:   analysis_type: string | null;
+1035:   user_message: string | null;
+1036:   ai_response: string | null;
+1037:   model: string | null;
+
+-- line 1042 | terms=trade --
+1038:   tokens_used: number | null;
+1039:   created_at: string | null;
+1040: };
+1041: 
+1042: type Trade = {
+1043:   id: string;
+1044:   user_id: string;
+1045:   ticker: string;
+1046:   market: "stocks" | "crypto" | "futures" | "forex" | "options";
+
+-- line 1045 | terms=ticker --
+1041: 
+1042: type Trade = {
+1043:   id: string;
+1044:   user_id: string;
+1045:   ticker: string;
+1046:   market: "stocks" | "crypto" | "futures" | "forex" | "options";
+1047:   direction: "long" | "short";
+1048:   entry_price: number | null;
+1049:   exit_price: number | null;
+
+-- line 1061 | terms=trade --
+1057:   mistake: string | null;
+1058:   lesson: string | null;
+1059:   notes: string | null;
+1060:   screenshot_url: string | null;
+1061:   trade_date: string;
+1062:   created_at: string;
+1063:   strategy_id?: string | null;
+1064:   strategy_version_id?: string | null;
+1065:   setup_id?: string | null;
+
+-- line 1100 | terms=trade --
+1096:     setup?: string;
+1097:     setupLabel?: string;
+1098:   };
+1099:   summary: {
+1100:     totalTrades?: number;
+1101:     totalPnl?: number;
+1102:     winRate?: number;
+1103:     averagePnl?: number;
+1104:     profitFactor?: number | null;
+
+-- line 1105 | terms=trade --
+1101:     totalPnl?: number;
+1102:     winRate?: number;
+1103:     averagePnl?: number;
+1104:     profitFactor?: number | null;
+1105:     bestTrade?: number;
+1106:     worstTrade?: number;
+1107:     longTrades?: number;
+1108:     shortTrades?: number;
+1109:     longPnl?: number;
+
+-- line 1106 | terms=trade --
+1102:     winRate?: number;
+1103:     averagePnl?: number;
+1104:     profitFactor?: number | null;
+1105:     bestTrade?: number;
+1106:     worstTrade?: number;
+1107:     longTrades?: number;
+1108:     shortTrades?: number;
+1109:     longPnl?: number;
+1110:     shortPnl?: number;
+
+-- line 1107 | terms=trade --
+1103:     averagePnl?: number;
+1104:     profitFactor?: number | null;
+1105:     bestTrade?: number;
+1106:     worstTrade?: number;
+1107:     longTrades?: number;
+1108:     shortTrades?: number;
+1109:     longPnl?: number;
+1110:     shortPnl?: number;
+1111:   };
+
+-- line 1108 | terms=trade --
+1104:     profitFactor?: number | null;
+1105:     bestTrade?: number;
+1106:     worstTrade?: number;
+1107:     longTrades?: number;
+1108:     shortTrades?: number;
+1109:     longPnl?: number;
+1110:     shortPnl?: number;
+1111:   };
+1112:   created_at: string;
+
+-- line 1115 | terms=trade --
+1111:   };
+1112:   created_at: string;
+1113: };
+1114: 
+1115: type TradeScreenshot = {
+1116:   id: string;
+1117:   trade_id: string;
+1118:   user_id: string;
+1119:   file_path: string;
+
+-- line 1117 | terms=trade --
+1113: };
+1114: 
+1115: type TradeScreenshot = {
+1116:   id: string;
+1117:   trade_id: string;
+1118:   user_id: string;
+1119:   file_path: string;
+1120:   file_name: string | null;
+1121:   file_size: number | null;
+
+-- line 1131 | terms=trade --
+1127: const dashboardDict = {
+1128:   en: {
+1129:     terminal: "SkillEdge Trading Desk",
+1130:     dashboard: "SkillEdge Trading Desk",
+1131:     user: "Trader",
+1132:     choosePlan: "Open access",
+1133:     logout: "Exit desk",
+1134:     currentPlan: "Desk access",
+1135:     loading: "Loading desk...",
+
+-- line 1137 | terms=journal --
+1133:     logout: "Exit desk",
+1134:     currentPlan: "Desk access",
+1135:     loading: "Loading desk...",
+1136:     notActivated: "Access offline",
+1137:     activatePlan: "Activate access. The desk opens Journal, Signals, Strategy, Reports and execution review.",
+1138:     aiUsage: "Desk capacity",
+1139:     quickActions: "Trade commands",
+1140:     addTrade: "Log execution",
+1141:     uploadScreenshot: "Attach evidence",
+
+-- line 1139 | terms=trade,actions --
+1135:     loading: "Loading desk...",
+1136:     notActivated: "Access offline",
+1137:     activatePlan: "Activate access. The desk opens Journal, Signals, Strategy, Reports and execution review.",
+1138:     aiUsage: "Desk capacity",
+1139:     quickActions: "Trade commands",
+1140:     addTrade: "Log execution",
+1141:     uploadScreenshot: "Attach evidence",
+1142:     askAI: "Ask Desk Mentor",
+1143:     createReport: "Build desk report",
+
+-- line 1140 | terms=trade --
+1136:     notActivated: "Access offline",
+1137:     activatePlan: "Activate access. The desk opens Journal, Signals, Strategy, Reports and execution review.",
+1138:     aiUsage: "Desk capacity",
+1139:     quickActions: "Trade commands",
+1140:     addTrade: "Log execution",
+1141:     uploadScreenshot: "Attach evidence",
+1142:     askAI: "Ask Desk Mentor",
+1143:     createReport: "Build desk report",
+1144:     overview: {
+
+-- line 1152 | terms=journal --
+1148:       winRate: "Win rate",
+1149:       discipline: "Discipline",
+1150:       weeklyAi: "Weekly desk review",
+1151:       weeklyAiText:
+1152:         "SkillEdge turns journal, risk behavior, discipline and recurring leaks into a desk mission for the next trading week.",
+1153:     },
+1154:     charts: {
+1155:       title: "Chart desk",
+1156:       text: "TradingView workspace for ticker work, levels, context and execution zones.",
+
+-- line 1156 | terms=ticker --
+1152:         "SkillEdge turns journal, risk behavior, discipline and recurring leaks into a desk mission for the next trading week.",
+1153:     },
+1154:     charts: {
+1155:       title: "Chart desk",
+1156:       text: "TradingView workspace for ticker work, levels, context and execution zones.",
+1157:       placeholder: "Chart desk is ready inside the Charts module.",
+1158:       analyzeCurrentChart: "Run chart review",
+1159:       workspaceText: "Chart, watchlist, movers and decision context in one execution workspace.",
+1160:       watchlistExamples: "Watchlist examples: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+
+-- line 1164 | terms=ticker --
+1160:       watchlistExamples: "Watchlist examples: AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+1161:       openWatchlist: "Open watchlist",
+1162:       hideWatchlist: "Hide watchlist",
+1163:       watchlistTitle: "Watchlist",
+1164:       watchlistSubtitle: "Ticker / 24h % / volume",
+1165:       addTickerButton: "Add ticker",
+1166:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+1167:       addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+1168:       sortSymbol: "Symbol",
+
+-- line 1165 | terms=ticker,button --
+1161:       openWatchlist: "Open watchlist",
+1162:       hideWatchlist: "Hide watchlist",
+1163:       watchlistTitle: "Watchlist",
+1164:       watchlistSubtitle: "Ticker / 24h % / volume",
+1165:       addTickerButton: "Add ticker",
+1166:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+1167:       addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+1168:       sortSymbol: "Symbol",
+1169:       sortChange: "% 24h",
+
+-- line 1166 | terms=ticker --
+1162:       hideWatchlist: "Hide watchlist",
+1163:       watchlistTitle: "Watchlist",
+1164:       watchlistSubtitle: "Ticker / 24h % / volume",
+1165:       addTickerButton: "Add ticker",
+1166:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+1167:       addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+1168:       sortSymbol: "Symbol",
+1169:       sortChange: "% 24h",
+1170:       sortVolume: "Vol",
+
+-- line 1167 | terms=ticker --
+1163:       watchlistTitle: "Watchlist",
+1164:       watchlistSubtitle: "Ticker / 24h % / volume",
+1165:       addTickerButton: "Add ticker",
+1166:       addTickerPlaceholder: "AA.NY / TSLA.NQ / SPY.AM / BTCUSDT",
+1167:       addTickerHint: "Example: AA.NY = NYSE, TSLA.NQ = NASDAQ, SPY.AM = AMEX, BTCUSDT = Binance.",
+1168:       sortSymbol: "Symbol",
+1169:       sortChange: "% 24h",
+1170:       sortVolume: "Vol",
+1171:       symbolColumn: "Symbol",
+
+-- line 1175 | terms=ticker --
+1171:       symbolColumn: "Symbol",
+1172:       percentColumn: "%",
+1173:       volumeColumn: "Volume",
+1174:       loadingWatchlist: "Loading watchlist...",
+1175:       emptyWatchlist: "No tickers yet. Build the execution universe before the session starts.",
+1176:       removeFromWatchlist: "Remove ticker",
+1177:       loginFirst: "Log in to work inside the desk.",
+1178:       settingsLoadError: "Chart settings did not load. Retry from the desk.",
+1179:       addTickerError: "Ticker was not added. Check symbol format.",
+
+-- line 1176 | terms=ticker,remove --
+1172:       percentColumn: "%",
+1173:       volumeColumn: "Volume",
+1174:       loadingWatchlist: "Loading watchlist...",
+1175:       emptyWatchlist: "No tickers yet. Build the execution universe before the session starts.",
+1176:       removeFromWatchlist: "Remove ticker",
+1177:       loginFirst: "Log in to work inside the desk.",
+1178:       settingsLoadError: "Chart settings did not load. Retry from the desk.",
+1179:       addTickerError: "Ticker was not added. Check symbol format.",
+1180:       removeTickerError: "Ticker was not removed. Retry.",
+
+-- line 1179 | terms=ticker --
+1175:       emptyWatchlist: "No tickers yet. Build the execution universe before the session starts.",
+1176:       removeFromWatchlist: "Remove ticker",
+1177:       loginFirst: "Log in to work inside the desk.",
+1178:       settingsLoadError: "Chart settings did not load. Retry from the desk.",
+1179:       addTickerError: "Ticker was not added. Check symbol format.",
+1180:       removeTickerError: "Ticker was not removed. Retry.",
+1181:       moversStocks: "Stocks",
+1182:       moversCrypto: "Crypto",
+1183:       moversGainers: "Top gainers",
+
+-- line 1180 | terms=ticker,remove --
+1176:       removeFromWatchlist: "Remove ticker",
+1177:       loginFirst: "Log in to work inside the desk.",
+1178:       settingsLoadError: "Chart settings did not load. Retry from the desk.",
+1179:       addTickerError: "Ticker was not added. Check symbol format.",
+1180:       removeTickerError: "Ticker was not removed. Retry.",
+1181:       moversStocks: "Stocks",
+1182:       moversCrypto: "Crypto",
+1183:       moversGainers: "Top gainers",
+1184:       moversLosers: "Top losers",
+
+-- line 1197 | terms=ticker --
+1193:       moversSourceNote:
+1194:         "Crypto: Binance + Hyperliquid market activity. Stocks: price movement + volume.",
+1195:       chartAnalysisTitle: "Chart review",
+1196:       chartAnalysisText:
+1197:         "SkillEdge reads ticker, timeframe, candles, volume, levels and risk context as a trading review.",
+1198:       chartAnalysisLoading: "Reading chart structure...",
+1199:       chartAnalysisError: "Chart review failed. Retry or switch ticker/timeframe.",
+1200:       chartAnalysisEmpty: "Run chart review to get structure, trigger, risk and invalidation.",
+1201:       chartAnalysisClose: "Close",
+
+-- line 1199 | terms=ticker --
+1195:       chartAnalysisTitle: "Chart review",
+1196:       chartAnalysisText:
+1197:         "SkillEdge reads ticker, timeframe, candles, volume, levels and risk context as a trading review.",
+1198:       chartAnalysisLoading: "Reading chart structure...",
+1199:       chartAnalysisError: "Chart review failed. Retry or switch ticker/timeframe.",
+1200:       chartAnalysisEmpty: "Run chart review to get structure, trigger, risk and invalidation.",
+1201:       chartAnalysisClose: "Close",
+1202:       chartAnalysisSymbol: "Symbol",
+1203:       chartAnalysisInterval: "Timeframe",
+
+-- line 1209 | terms=ticker --
+1205:       chartAnalysisDataLabel: "Structure / risk report",
+1206:       chartAnalysisSectionsLabel: "Desk sections",
+1207:       marketDataUnavailableTitle: "Market data offline",
+1208:       marketDataUnavailableText:
+1209:         "Market data did not load for this symbol on the current data stack. Use liquid tickers such as AAPL, TSLA, NVDA, SPY or QQQ.",
+1210:       marketDataPremiumTitle: "Premium data required",
+1211:       marketDataPremiumText:
+1212:   "This symbol, timeframe or endpoint requires stronger market data coverage. Premium data is the production standard for this desk.",
+1213:       marketDataGenericErrorTitle: "Review unavailable",
+
+-- line 1215 | terms=ticker --
+1211:       marketDataPremiumText:
+1212:   "This symbol, timeframe or endpoint requires stronger market data coverage. Premium data is the production standard for this desk.",
+1213:       marketDataGenericErrorTitle: "Review unavailable",
+1214:       marketDataGenericErrorText:
+1215:         "Chart review did not complete. Switch ticker/timeframe or run it again.",
+1216:       chartControlTickerLabel: "Ticker",
+1217:       chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+1218:       chartControlIntervalLabel: "Timeframe",
+1219:       chartControlOpenChart: "Open chart",
+
+-- line 1216 | terms=ticker --
+1212:   "This symbol, timeframe or endpoint requires stronger market data coverage. Premium data is the production standard for this desk.",
+1213:       marketDataGenericErrorTitle: "Review unavailable",
+1214:       marketDataGenericErrorText:
+1215:         "Chart review did not complete. Switch ticker/timeframe or run it again.",
+1216:       chartControlTickerLabel: "Ticker",
+1217:       chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+1218:       chartControlIntervalLabel: "Timeframe",
+1219:       chartControlOpenChart: "Open chart",
+1220:       chartControlHint:
+
+-- line 1217 | terms=ticker --
+1213:       marketDataGenericErrorTitle: "Review unavailable",
+1214:       marketDataGenericErrorText:
+1215:         "Chart review did not complete. Switch ticker/timeframe or run it again.",
+1216:       chartControlTickerLabel: "Ticker",
+1217:       chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+1218:       chartControlIntervalLabel: "Timeframe",
+1219:       chartControlOpenChart: "Open chart",
+1220:       chartControlHint:
+1221:         "Control TradingView and chart review from this bar. Keep the ticker here aligned with your execution plan.",
+
+-- line 1221 | terms=ticker --
+1217:       chartControlTickerPlaceholder: "AAPL / TSLA.NQ / AA.NY / BTCUSDT",
+1218:       chartControlIntervalLabel: "Timeframe",
+1219:       chartControlOpenChart: "Open chart",
+1220:       chartControlHint:
+1221:         "Control TradingView and chart review from this bar. Keep the ticker here aligned with your execution plan.",
+1222:     },
+1223:     strategy: {
+1224:       title: "Strategy OS",
+1225:       text: "A Strategy OS that turns random trades into a repeatable edge: setup logic, evidence, rulebook, journal loop and Personal Playbook.",
+
+-- line 1225 | terms=journal,trade --
+1221:         "Control TradingView and chart review from this bar. Keep the ticker here aligned with your execution plan.",
+1222:     },
+1223:     strategy: {
+1224:       title: "Strategy OS",
+1225:       text: "A Strategy OS that turns random trades into a repeatable edge: setup logic, evidence, rulebook, journal loop and Personal Playbook.",
+1226:       badge: "Strategy Growth Engine",
+1227:       heroTitle: "Build the trading system. Then trade the system.",
+1228:       heroText:
+1229:         "This is the development loop: pick one setup, learn the logic, collect evidence, build Strategy v1, test it in the Journal, review mistakes, upgrade rules and graduate only proven behavior into the Personal Playbook.",
+
+-- line 1227 | terms=trade --
+1223:     strategy: {
+1224:       title: "Strategy OS",
+1225:       text: "A Strategy OS that turns random trades into a repeatable edge: setup logic, evidence, rulebook, journal loop and Personal Playbook.",
+1226:       badge: "Strategy Growth Engine",
+1227:       heroTitle: "Build the trading system. Then trade the system.",
+1228:       heroText:
+1229:         "This is the development loop: pick one setup, learn the logic, collect evidence, build Strategy v1, test it in the Journal, review mistakes, upgrade rules and graduate only proven behavior into the Personal Playbook.",
+1230:       connectedTitle: "Journal is the source of truth",
+1231:       connectedText:
+
+-- line 1229 | terms=journal --
+1225:       text: "A Strategy OS that turns random trades into a repeatable edge: setup logic, evidence, rulebook, journal loop and Personal Playbook.",
+1226:       badge: "Strategy Growth Engine",
+1227:       heroTitle: "Build the trading system. Then trade the system.",
+1228:       heroText:
+1229:         "This is the development loop: pick one setup, learn the logic, collect evidence, build Strategy v1, test it in the Journal, review mistakes, upgrade rules and graduate only proven behavior into the Personal Playbook.",
+1230:       connectedTitle: "Journal is the source of truth",
+1231:       connectedText:
+1232:         "Journal trades feed Strategy Score, discipline, mistake heatmap, desk reviews, playbook graduation and future personal signals.",
+1233:       cockpit: "Strategy Cockpit",
+
+-- line 1230 | terms=journal --
+1226:       badge: "Strategy Growth Engine",
+1227:       heroTitle: "Build the trading system. Then trade the system.",
+1228:       heroText:
+1229:         "This is the development loop: pick one setup, learn the logic, collect evidence, build Strategy v1, test it in the Journal, review mistakes, upgrade rules and graduate only proven behavior into the Personal Playbook.",
+1230:       connectedTitle: "Journal is the source of truth",
+1231:       connectedText:
+1232:         "Journal trades feed Strategy Score, discipline, mistake heatmap, desk reviews, playbook graduation and future personal signals.",
+1233:       cockpit: "Strategy Cockpit",
+1234:       currentMission: "Current mission",
+
+-- line 1232 | terms=journal,trade --
+1228:       heroText:
+1229:         "This is the development loop: pick one setup, learn the logic, collect evidence, build Strategy v1, test it in the Journal, review mistakes, upgrade rules and graduate only proven behavior into the Personal Playbook.",
+1230:       connectedTitle: "Journal is the source of truth",
+1231:       connectedText:
+1232:         "Journal trades feed Strategy Score, discipline, mistake heatmap, desk reviews, playbook graduation and future personal signals.",
+1233:       cockpit: "Strategy Cockpit",
+1234:       currentMission: "Current mission",
+1235:       roadmap: "Desk roadmap",
+1236:       setupAcademy: "Setup Academy",
+
+-- line 1242 | terms=trade --
+1238:       playbookLibraryTitle: "Pro Setup Library",
+1239:       activeTemplatesLabel: "active",
+1240:       quickCommandCenter: "Панель команд",
+1241:       quickLive: "Live",
+1242:       quickAddTradeDescription: "Open the trade ticket and record the decision.",
+1243:       quickStrategyDescription: "Open Strategy OS and lock the next mission",
+1244:       quickCoachDescription: "Open Desk Mentor and cut the next mistake",
+1245:       quickNoteDescription: "Session command note",
+1246:       quickReportDescription: "Open the report layer and convert data into rules.",
+
+-- line 1251 | terms=trade --
+1247:       processTitle: "Process protocol",
+1248:       termsTitle: "Desk terms",
+1249:       emptyTitle: "Playbook not activated",
+1250:       emptyText:
+1251:         "Lock one pro setup. SkillEdge builds the roadmap, checklist, evidence tasks and 20-trade experiment around that edge.",
+1252:       startButton: "Start strategy build",
+1253:       continueButton: "Continue mission",
+1254:       addExampleButton: "Add evidence",
+1255:       openJournalButton: "Open Journal",
+
+-- line 1252 | terms=button --
+1248:       termsTitle: "Desk terms",
+1249:       emptyTitle: "Playbook not activated",
+1250:       emptyText:
+1251:         "Lock one pro setup. SkillEdge builds the roadmap, checklist, evidence tasks and 20-trade experiment around that edge.",
+1252:       startButton: "Start strategy build",
+1253:       continueButton: "Continue mission",
+1254:       addExampleButton: "Add evidence",
+1255:       openJournalButton: "Open Journal",
+1256:       reviewProgressButton: "Review progress",
+
+-- line 1253 | terms=button --
+1249:       emptyTitle: "Playbook not activated",
+1250:       emptyText:
+1251:         "Lock one pro setup. SkillEdge builds the roadmap, checklist, evidence tasks and 20-trade experiment around that edge.",
+1252:       startButton: "Start strategy build",
+1253:       continueButton: "Continue mission",
+1254:       addExampleButton: "Add evidence",
+1255:       openJournalButton: "Open Journal",
+1256:       reviewProgressButton: "Review progress",
+1257:       loading: "Loading Strategy OS...",
+
+-- line 1254 | terms=button --
+1250:       emptyText:
+1251:         "Lock one pro setup. SkillEdge builds the roadmap, checklist, evidence tasks and 20-trade experiment around that edge.",
+1252:       startButton: "Start strategy build",
+1253:       continueButton: "Continue mission",
+1254:       addExampleButton: "Add evidence",
+1255:       openJournalButton: "Open Journal",
+1256:       reviewProgressButton: "Review progress",
+1257:       loading: "Loading Strategy OS...",
+1258:       loadError: "Strategy OS did not load. Retry.",
+
+-- line 1255 | terms=journal,button --
+1251:         "Lock one pro setup. SkillEdge builds the roadmap, checklist, evidence tasks and 20-trade experiment around that edge.",
+1252:       startButton: "Start strategy build",
+1253:       continueButton: "Continue mission",
+1254:       addExampleButton: "Add evidence",
+1255:       openJournalButton: "Open Journal",
+1256:       reviewProgressButton: "Review progress",
+1257:       loading: "Loading Strategy OS...",
+1258:       loadError: "Strategy OS did not load. Retry.",
+1259:       stageLabel: "Stage",
+
+-- line 1256 | terms=button --
+1252:       startButton: "Start strategy build",
+1253:       continueButton: "Continue mission",
+1254:       addExampleButton: "Add evidence",
+1255:       openJournalButton: "Open Journal",
+1256:       reviewProgressButton: "Review progress",
+1257:       loading: "Loading Strategy OS...",
+1258:       loadError: "Strategy OS did not load. Retry.",
+1259:       stageLabel: "Stage",
+1260:       progressLabel: "Progress",
+
+-- line 1279 | terms=trade --
+1275:       learnSetup: "Study setup",
+1276:       buildStrategy: "Build Strategy v1",
+1277:       noTemplates: "Core setup library is loading. Desk will not push random plays.",
+1278:       roadmapSteps: [
+1279:         "Trader profile / level",
+1280:         "Pick one setup",
+1281:         "Study the pro playbook",
+1282:         "Collect evidence",
+1283:         "Build Strategy v1",
+
+-- line 1284 | terms=trade --
+1280:         "Pick one setup",
+1281:         "Study the pro playbook",
+1282:         "Collect evidence",
+1283:         "Build Strategy v1",
+1284:         "Run 20-trade experiment",
+1285:         "Desk review + version upgrade",
+1286:         "Graduate to Personal Playbook",
+1287:       ],
+1288:       firstSevenDays: [
+
+-- line 1295 | terms=trade --
+1291:         "Day 3: study context, triggers, stop and avoid rules.",
+1292:         "Day 4: collect 3 historical examples.",
+1293:         "Day 5: upload a screenshot and get desk review.",
+1294:         "Day 6: build Strategy v1 and checklist.",
+1295:         "Day 7: start the 20-trade experiment.",
+1296:       ],
+1297:       processSteps: [
+1298:         "Learn the setup logic.",
+1299:         "Mark historical examples.",
+
+-- line 1300 | terms=trade --
+1296:       ],
+1297:       processSteps: [
+1298:         "Learn the setup logic.",
+1299:         "Mark historical examples.",
+1300:         "Tag valid, invalid and no-trade cases.",
+1301:         "Build rules and checklist.",
+1302:         "Journal every attempt.",
+1303:         "Review execution with SkillEdge.",
+1304:         "Upgrade v2/v3 from facts, not emotions.",
+
+-- line 1302 | terms=journal --
+1298:         "Learn the setup logic.",
+1299:         "Mark historical examples.",
+1300:         "Tag valid, invalid and no-trade cases.",
+1301:         "Build rules and checklist.",
+1302:         "Journal every attempt.",
+1303:         "Review execution with SkillEdge.",
+1304:         "Upgrade v2/v3 from facts, not emotions.",
+1305:         "Move only validated rules into Personal Playbook.",
+1306:       ],
+
+-- line 1309 | terms=trade --
+1305:         "Move only validated rules into Personal Playbook.",
+1306:       ],
+1307:       terms: [
+1308:         ["Strategy Cockpit", "The main control panel: stage, mission, progress, trust, discipline and next action."],
+1309:         ["Current Mission", "The next concrete task SkillEdge wants the trader to complete."],
+1310:         ["Evidence Locker", "A structured evidence base: clean, weak, missed and no-trade examples for the strategy."],
+1311:         ["Before-Trade Gate", "A pre-entry checklist that blocks weak, late or rule-breaking trades."],
+1312:         ["After-Trade Debrief", "A structured review after a trade to improve execution and discipline."],
+1313:         ["Strategy Trust", "How much evidence and consistency the strategy has before it becomes playbook-ready."],
+
+-- line 1310 | terms=trade --
+1306:       ],
+1307:       terms: [
+1308:         ["Strategy Cockpit", "The main control panel: stage, mission, progress, trust, discipline and next action."],
+1309:         ["Current Mission", "The next concrete task SkillEdge wants the trader to complete."],
+1310:         ["Evidence Locker", "A structured evidence base: clean, weak, missed and no-trade examples for the strategy."],
+1311:         ["Before-Trade Gate", "A pre-entry checklist that blocks weak, late or rule-breaking trades."],
+1312:         ["After-Trade Debrief", "A structured review after a trade to improve execution and discipline."],
+1313:         ["Strategy Trust", "How much evidence and consistency the strategy has before it becomes playbook-ready."],
+1314:       ],
+
+-- line 1311 | terms=trade --
+1307:       terms: [
+1308:         ["Strategy Cockpit", "The main control panel: stage, mission, progress, trust, discipline and next action."],
+1309:         ["Current Mission", "The next concrete task SkillEdge wants the trader to complete."],
+1310:         ["Evidence Locker", "A structured evidence base: clean, weak, missed and no-trade examples for the strategy."],
+1311:         ["Before-Trade Gate", "A pre-entry checklist that blocks weak, late or rule-breaking trades."],
+1312:         ["After-Trade Debrief", "A structured review after a trade to improve execution and discipline."],
+1313:         ["Strategy Trust", "How much evidence and consistency the strategy has before it becomes playbook-ready."],
+1314:       ],
+1315:     },
+
+-- line 1312 | terms=trade --
+1308:         ["Strategy Cockpit", "The main control panel: stage, mission, progress, trust, discipline and next action."],
+1309:         ["Current Mission", "The next concrete task SkillEdge wants the trader to complete."],
+1310:         ["Evidence Locker", "A structured evidence base: clean, weak, missed and no-trade examples for the strategy."],
+1311:         ["Before-Trade Gate", "A pre-entry checklist that blocks weak, late or rule-breaking trades."],
+1312:         ["After-Trade Debrief", "A structured review after a trade to improve execution and discipline."],
+1313:         ["Strategy Trust", "How much evidence and consistency the strategy has before it becomes playbook-ready."],
+1314:       ],
+1315:     },
+1316:     learning: {
+
+-- line 1317 | terms=trade --
+1313:         ["Strategy Trust", "How much evidence and consistency the strategy has before it becomes playbook-ready."],
+1314:       ],
+1315:     },
+1316:     learning: {
+1317:       title: "Trader Training Desk",
+1318:       text: "Setup logic, risk rules, psychology, drills and playbook building for disciplined execution.",
+1319:       learningNoteTitle: "Training Desk: build the base",
+1320:       learningNoteText:
+1321:         "SkillEdge is built around Journal, chart review, Strategy OS and execution feedback. Training is the knowledge base that keeps risk, structure, setups and review logic sharp.",
+
+-- line 1321 | terms=journal --
+1317:       title: "Trader Training Desk",
+1318:       text: "Setup logic, risk rules, psychology, drills and playbook building for disciplined execution.",
+1319:       learningNoteTitle: "Training Desk: build the base",
+1320:       learningNoteText:
+1321:         "SkillEdge is built around Journal, chart review, Strategy OS and execution feedback. Training is the knowledge base that keeps risk, structure, setups and review logic sharp.",
+1322:       overviewLabel: "Training cockpit",
+1323:       modulesLabel: "Modules",
+1324:       lessonsLabel: "lessons",
+1325:       progressLabel: "Progress",
+
+-- line 1327 | terms=button --
+1323:       modulesLabel: "Modules",
+1324:       lessonsLabel: "lessons",
+1325:       progressLabel: "Progress",
+1326:       totalProgressLabel: "Desk progress",
+1327:       startButton: "Start",
+1328:       continueButton: "Continue drill",
+1329:       reviewButton: "Review",
+1330:       notStartedStatus: "Not started",
+1331:       inProgressStatus: "In progress",
+
+-- line 1328 | terms=button --
+1324:       lessonsLabel: "lessons",
+1325:       progressLabel: "Progress",
+1326:       totalProgressLabel: "Desk progress",
+1327:       startButton: "Start",
+1328:       continueButton: "Continue drill",
+1329:       reviewButton: "Review",
+1330:       notStartedStatus: "Not started",
+1331:       inProgressStatus: "In progress",
+1332:       completedStatus: "Completed",
+
+-- line 1329 | terms=button --
+1325:       progressLabel: "Progress",
+1326:       totalProgressLabel: "Desk progress",
+1327:       startButton: "Start",
+1328:       continueButton: "Continue drill",
+1329:       reviewButton: "Review",
+1330:       notStartedStatus: "Not started",
+1331:       inProgressStatus: "In progress",
+1332:       completedStatus: "Completed",
+1333:       lockedLabel: "Access required",
+
+-- line 1347 | terms=trade --
+1343:       moduleTwoText:
+1344:         "Read candles, levels, trend/range, volume and clean reaction zones.",
+1345:       moduleThreeTitle: "Risk Desk",
+1346:       moduleThreeText:
+1347:         "Set risk per trade, stop logic, sizing and R:R before the entry.",
+1348:       moduleFourTitle: "Intraday Momentum",
+1349:       moduleFourText:
+1350:         "Momentum, breakout, reclaim, failed breakout and continuation logic.",
+1351:       moduleFiveTitle: "Execution Psychology",
+
+-- line 1365 | terms=trade --
+1361:       lessonCandles: "Candles",
+1362:       lessonLevels: "Support and resistance",
+1363:       lessonTrendRange: "Trend vs range",
+1364:       lessonVolume: "Volume analysis",
+1365:       lessonRiskPerTrade: "Risk per trade",
+1366:       lessonStopLoss: "Stop loss",
+1367:       lessonRiskReward: "Risk / Reward",
+1368:       lessonPositionSizing: "Position sizing",
+1369:       lessonMomentumLogic: "Momentum logic",
+
+-- line 1384 | terms=button --
+1380:       lessonReviewProcess: "Review process",
+1381:       advancedTracksLabel: "Advanced tracks",
+1382:       advancedTracksText:
+1383:         "Additional specialized learning paths for deepening the trading system inside SkillEdge.",
+1384:       comingSoonButton: "Access required",
+1385:       activeModuleLabel: "Active module",
+1386:       openLessonButton: "Open drill",
+1387:       selectedModuleHint:
+1388:         "Select a module to see its lessons, progress and next learning step.",
+
+-- line 1386 | terms=button --
+1382:       advancedTracksText:
+1383:         "Additional specialized learning paths for deepening the trading system inside SkillEdge.",
+1384:       comingSoonButton: "Access required",
+1385:       activeModuleLabel: "Active module",
+1386:       openLessonButton: "Open drill",
+1387:       selectedModuleHint:
+1388:         "Select a module to see its lessons, progress and next learning step.",
+1389:       nextLessonLabel: "Next drill",
+1390:       moduleDetailsLabel: "Module protocol",
+
+-- line 1390 | terms=details --
+1386:       openLessonButton: "Open drill",
+1387:       selectedModuleHint:
+1388:         "Select a module to see its lessons, progress and next learning step.",
+1389:       nextLessonLabel: "Next drill",
+1390:       moduleDetailsLabel: "Module protocol",
+1391:       lessonViewerLabel: "Lesson desk",
+1392:       lessonContentLabel: "Core material",
+1393:       lessonCloseButton: "Close lesson",
+1394:       lessonStartText:
+
+-- line 1393 | terms=button --
+1389:       nextLessonLabel: "Next drill",
+1390:       moduleDetailsLabel: "Module protocol",
+1391:       lessonViewerLabel: "Lesson desk",
+1392:       lessonContentLabel: "Core material",
+1393:       lessonCloseButton: "Close lesson",
+1394:       lessonStartText:
+1395:         "Study the concept, run the drill and connect it to your own trades. No theory without execution.",
+1396:       lessonKeyPointsLabel: "Key rules",
+1397:       lessonPracticeLabel: "Execution drill",
+
+-- line 1395 | terms=trade --
+1391:       lessonViewerLabel: "Lesson desk",
+1392:       lessonContentLabel: "Core material",
+1393:       lessonCloseButton: "Close lesson",
+1394:       lessonStartText:
+1395:         "Study the concept, run the drill and connect it to your own trades. No theory without execution.",
+1396:       lessonKeyPointsLabel: "Key rules",
+1397:       lessonPracticeLabel: "Execution drill",
+1398:       lessonPracticeText:
+1399:         "Find one chart example. Mark context, trigger, invalidation and whether the trade is allowed.",
+
+-- line 1399 | terms=trade --
+1395:         "Study the concept, run the drill and connect it to your own trades. No theory without execution.",
+1396:       lessonKeyPointsLabel: "Key rules",
+1397:       lessonPracticeLabel: "Execution drill",
+1398:       lessonPracticeText:
+1399:         "Find one chart example. Mark context, trigger, invalidation and whether the trade is allowed.",
+1400:       markLessonCompletedButton: "Mark drill complete",
+1401:       lessonCompletedButton: "Drill complete",
+1402:       frontendProgressNote:
+1403:         "Progress is saved to your SkillEdge account and will stay available after reload.",
+
+-- line 1400 | terms=button --
+1396:       lessonKeyPointsLabel: "Key rules",
+1397:       lessonPracticeLabel: "Execution drill",
+1398:       lessonPracticeText:
+1399:         "Find one chart example. Mark context, trigger, invalidation and whether the trade is allowed.",
+1400:       markLessonCompletedButton: "Mark drill complete",
+1401:       lessonCompletedButton: "Drill complete",
+1402:       frontendProgressNote:
+1403:         "Progress is saved to your SkillEdge account and will stay available after reload.",
+1404:       learningProgressLoading: "Loading learning progress...",
+
+-- line 1401 | terms=button --
+1397:       lessonPracticeLabel: "Execution drill",
+1398:       lessonPracticeText:
+1399:         "Find one chart example. Mark context, trigger, invalidation and whether the trade is allowed.",
+1400:       markLessonCompletedButton: "Mark drill complete",
+1401:       lessonCompletedButton: "Drill complete",
+1402:       frontendProgressNote:
+1403:         "Progress is saved to your SkillEdge account and will stay available after reload.",
+1404:       learningProgressLoading: "Loading learning progress...",
+1405:       learningProgressSaving: "Saving progress...",
+
+-- line 1442 | terms=journal --
+1438:       extraModuleFourLessonFour: "Lesson 4",
+1439:     },
+1440:     reports: {
+1441:       title: "Reports Desk",
+1442:       text: "PnL, setup quality, leaks, strengths and next focus from the Journal.",
+1443:       placeholder:
+1444:         "Reports are built from Journal data, filters and saved trade evidence.",
+1445:       emptyTitle: "Sample too thin",
+1446:       emptyText:
+
+-- line 1444 | terms=journal,trade --
+1440:     reports: {
+1441:       title: "Reports Desk",
+1442:       text: "PnL, setup quality, leaks, strengths and next focus from the Journal.",
+1443:       placeholder:
+1444:         "Reports are built from Journal data, filters and saved trade evidence.",
+1445:       emptyTitle: "Sample too thin",
+1446:       emptyText:
+1447:         "Log more trades. Reports need facts: PnL, win rate, setups, mistakes and execution patterns.",
+1448:       totalTrades: "Total trades",
+
+-- line 1447 | terms=trade --
+1443:       placeholder:
+1444:         "Reports are built from Journal data, filters and saved trade evidence.",
+1445:       emptyTitle: "Sample too thin",
+1446:       emptyText:
+1447:         "Log more trades. Reports need facts: PnL, win rate, setups, mistakes and execution patterns.",
+1448:       totalTrades: "Total trades",
+1449:       totalTradesHelper: "All Journal trades",
+1450:       totalPnl: "Total PnL",
+1451:       totalPnlHelper: "Closed-trade result",
+
+-- line 1448 | terms=trade --
+1444:         "Reports are built from Journal data, filters and saved trade evidence.",
+1445:       emptyTitle: "Sample too thin",
+1446:       emptyText:
+1447:         "Log more trades. Reports need facts: PnL, win rate, setups, mistakes and execution patterns.",
+1448:       totalTrades: "Total trades",
+1449:       totalTradesHelper: "All Journal trades",
+1450:       totalPnl: "Total PnL",
+1451:       totalPnlHelper: "Closed-trade result",
+1452:       winRate: "Win rate",
+
+-- line 1449 | terms=journal,trade --
+1445:       emptyTitle: "Sample too thin",
+1446:       emptyText:
+1447:         "Log more trades. Reports need facts: PnL, win rate, setups, mistakes and execution patterns.",
+1448:       totalTrades: "Total trades",
+1449:       totalTradesHelper: "All Journal trades",
+1450:       totalPnl: "Total PnL",
+1451:       totalPnlHelper: "Closed-trade result",
+1452:       winRate: "Win rate",
+1453:       averagePnl: "Average PnL",
+
+-- line 1451 | terms=trade --
+1447:         "Log more trades. Reports need facts: PnL, win rate, setups, mistakes and execution patterns.",
+1448:       totalTrades: "Total trades",
+1449:       totalTradesHelper: "All Journal trades",
+1450:       totalPnl: "Total PnL",
+1451:       totalPnlHelper: "Closed-trade result",
+1452:       winRate: "Win rate",
+1453:       averagePnl: "Average PnL",
+1454:       averagePnlHelper: "Average per trade",
+1455:       profitFactor: "Profit Factor",
+
+-- line 1454 | terms=trade --
+1450:       totalPnl: "Total PnL",
+1451:       totalPnlHelper: "Closed-trade result",
+1452:       winRate: "Win rate",
+1453:       averagePnl: "Average PnL",
+1454:       averagePnlHelper: "Average per trade",
+1455:       profitFactor: "Profit Factor",
+1456:       profitFactorHelper: "Gross profit / gross loss",
+1457:       bestWorst: "Best / Worst",
+1458:       bestWorstHelper: "Best / worst execution",
+
+-- line 1483 | terms=trade --
+1479:       directionFilter: "Direction",
+1480:       allDirections: "All directions",
+1481:       setupFilter: "Setup",
+1482:       allSetups: "All setups",
+1483:       filteredTrades: "Filtered trades",
+1484:       noFilteredTradesTitle: "No trades in this sample",
+1485:       noFilteredTradesText:
+1486:         "Change period, market, direction or setup. Current sample has no edge data.",
+1487:       aiReportTitle: "Desk report",
+
+-- line 1484 | terms=trade --
+1480:       allDirections: "All directions",
+1481:       setupFilter: "Setup",
+1482:       allSetups: "All setups",
+1483:       filteredTrades: "Filtered trades",
+1484:       noFilteredTradesTitle: "No trades in this sample",
+1485:       noFilteredTradesText:
+1486:         "Change period, market, direction or setup. Current sample has no edge data.",
+1487:       aiReportTitle: "Desk report",
+1488:       aiReportSubtitle: "Selected-sample review",
+
+-- line 1485 | terms=trade --
+1481:       setupFilter: "Setup",
+1482:       allSetups: "All setups",
+1483:       filteredTrades: "Filtered trades",
+1484:       noFilteredTradesTitle: "No trades in this sample",
+1485:       noFilteredTradesText:
+1486:         "Change period, market, direction or setup. Current sample has no edge data.",
+1487:       aiReportTitle: "Desk report",
+1488:       aiReportSubtitle: "Selected-sample review",
+1489:       aiReportText:
+
+-- line 1491 | terms=button --
+1487:       aiReportTitle: "Desk report",
+1488:       aiReportSubtitle: "Selected-sample review",
+1489:       aiReportText:
+1490:         "Build a desk report for this sample: what works, where leaks sit, risk quality, best setups and next focus.",
+1491:       aiReportButton: "Build report",
+1492:       aiReportLoading: "Building...",
+1493:       aiReportError: "Report build failed. Retry.",
+1494:       aiReportLabel: "Desk report",
+1495:       generateAiReport: "Build report",
+
+-- line 1509 | terms=delete --
+1505:         "Open previous desk reports by filter and return to the decisions that changed execution.",
+1506:       aiReportHistoryEmpty: "No saved desk reports yet.",
+1507:       currentSummaryLabel: "Current summary",
+1508:       allPeriods: "All periods",
+1509:       deleteAiReport: "Delete report",
+1510:       copyAiReport: "Copy",
+1511:       downloadAiReport: "Download .txt",
+1512:       aiReportCopied: "Report copied.",
+1513:       aiReportCopyFailed: "Report copy failed.",
+
+-- line 1519 | terms=trade --
+1515:       upgradeForAiReports: "Edge required",
+1516:       aiReportUpgradeRequired:
+1517:         "Desk reports are unlocked on SkillEdge Edge and SkillEdge Elite.",
+1518:       aiReportLockedText:
+1519:         "Desk reports review selected trades, rank setups, expose leaks and set the next focus. Available on Edge and Elite.",
+1520:       aiReportPlanHint: "AI reports per month on current plan",
+1521:     },
+1522:     journal: {
+1523:       title: "Journal",
+
+-- line 1522 | terms=journal --
+1518:       aiReportLockedText:
+1519:         "Desk reports review selected trades, rank setups, expose leaks and set the next focus. Available on Edge and Elite.",
+1520:       aiReportPlanHint: "AI reports per month on current plan",
+1521:     },
+1522:     journal: {
+1523:       title: "Journal",
+1524:       text: "Log trades, risk, result, emotions, mistakes and lessons. Build the database of your edge.",
+1525:       locked: "Active access or demo is required to log trades.",
+1526:       addTitle: "Log trade",
+
+-- line 1523 | terms=journal --
+1519:         "Desk reports review selected trades, rank setups, expose leaks and set the next focus. Available on Edge and Elite.",
+1520:       aiReportPlanHint: "AI reports per month on current plan",
+1521:     },
+1522:     journal: {
+1523:       title: "Journal",
+1524:       text: "Log trades, risk, result, emotions, mistakes and lessons. Build the database of your edge.",
+1525:       locked: "Active access or demo is required to log trades.",
+1526:       addTitle: "Log trade",
+1527:       editTitle: "Edit trade",
+
+-- line 1524 | terms=trade --
+1520:       aiReportPlanHint: "AI reports per month on current plan",
+1521:     },
+1522:     journal: {
+1523:       title: "Journal",
+1524:       text: "Log trades, risk, result, emotions, mistakes and lessons. Build the database of your edge.",
+1525:       locked: "Active access or demo is required to log trades.",
+1526:       addTitle: "Log trade",
+1527:       editTitle: "Edit trade",
+1528:       addModeText: "Log a trade into your personal performance database.",
+
+-- line 1525 | terms=trade --
+1521:     },
+1522:     journal: {
+1523:       title: "Journal",
+1524:       text: "Log trades, risk, result, emotions, mistakes and lessons. Build the database of your edge.",
+1525:       locked: "Active access or demo is required to log trades.",
+1526:       addTitle: "Log trade",
+1527:       editTitle: "Edit trade",
+1528:       addModeText: "Log a trade into your personal performance database.",
+1529:       addText:
+
+-- line 1526 | terms=trade --
+1522:     journal: {
+1523:       title: "Journal",
+1524:       text: "Log trades, risk, result, emotions, mistakes and lessons. Build the database of your edge.",
+1525:       locked: "Active access or demo is required to log trades.",
+1526:       addTitle: "Log trade",
+1527:       editTitle: "Edit trade",
+1528:       addModeText: "Log a trade into your personal performance database.",
+1529:       addText:
+1530:         "Add data, attach charts and run a desk review on execution quality.",
+
+-- line 1527 | terms=edit,trade --
+1523:       title: "Journal",
+1524:       text: "Log trades, risk, result, emotions, mistakes and lessons. Build the database of your edge.",
+1525:       locked: "Active access or demo is required to log trades.",
+1526:       addTitle: "Log trade",
+1527:       editTitle: "Edit trade",
+1528:       addModeText: "Log a trade into your personal performance database.",
+1529:       addText:
+1530:         "Add data, attach charts and run a desk review on execution quality.",
+1531:       totalTrades: "Total trades",
+
+-- line 1528 | terms=trade --
+1524:       text: "Log trades, risk, result, emotions, mistakes and lessons. Build the database of your edge.",
+1525:       locked: "Active access or demo is required to log trades.",
+1526:       addTitle: "Log trade",
+1527:       editTitle: "Edit trade",
+1528:       addModeText: "Log a trade into your personal performance database.",
+1529:       addText:
+1530:         "Add data, attach charts and run a desk review on execution quality.",
+1531:       totalTrades: "Total trades",
+1532:       totalPnl: "Total PnL",
+
+-- line 1531 | terms=trade --
+1527:       editTitle: "Edit trade",
+1528:       addModeText: "Log a trade into your personal performance database.",
+1529:       addText:
+1530:         "Add data, attach charts and run a desk review on execution quality.",
+1531:       totalTrades: "Total trades",
+1532:       totalPnl: "Total PnL",
+1533:       winRate: "Win rate",
+1534:       avgPnl: "Avg PnL",
+1535:       grossProfit: "Gross profit",
+
+-- line 1537 | terms=trade --
+1533:       winRate: "Win rate",
+1534:       avgPnl: "Avg PnL",
+1535:       grossProfit: "Gross profit",
+1536:       grossLoss: "Gross loss",
+1537:       bestTrade: "Best trade",
+1538:       worstTrade: "Worst trade",
+1539:       profitFactor: "Profit Factor",
+1540:       equityTitle: "Equity curve",
+1541:       equityText: "Cumulative PnL from saved trades.",
+
+-- line 1538 | terms=trade --
+1534:       avgPnl: "Avg PnL",
+1535:       grossProfit: "Gross profit",
+1536:       grossLoss: "Gross loss",
+1537:       bestTrade: "Best trade",
+1538:       worstTrade: "Worst trade",
+1539:       profitFactor: "Profit Factor",
+1540:       equityTitle: "Equity curve",
+1541:       equityText: "Cumulative PnL from saved trades.",
+1542:       equityEmpty: "Log trades with PnL to build the curve.",
+
+-- line 1541 | terms=trade --
+1537:       bestTrade: "Best trade",
+1538:       worstTrade: "Worst trade",
+1539:       profitFactor: "Profit Factor",
+1540:       equityTitle: "Equity curve",
+1541:       equityText: "Cumulative PnL from saved trades.",
+1542:       equityEmpty: "Log trades with PnL to build the curve.",
+1543:       equityPoints: "points",
+1544:       expand: "Expand",
+1545:       close: "Close",
+
+-- line 1542 | terms=trade --
+1538:       worstTrade: "Worst trade",
+1539:       profitFactor: "Profit Factor",
+1540:       equityTitle: "Equity curve",
+1541:       equityText: "Cumulative PnL from saved trades.",
+1542:       equityEmpty: "Log trades with PnL to build the curve.",
+1543:       equityPoints: "points",
+1544:       expand: "Expand",
+1545:       close: "Close",
+1546:       cardLabels: {
+
+-- line 1557 | terms=trade --
+1553:         mistake: "Mistake",
+1554:         lesson: "Lesson",
+1555:         notes: "Notes",
+1556:       },
+1557:       fullTitle: "Trade database",
+1558:       fullText: "Full trade database with filters, screenshots and export.",
+1559:       downloadCsv: "Download CSV",
+1560:       downloadXlsx: "Download XLSX",
+1561:       deleteTradeButton: "Delete trade",
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_9F_LAYOUT_CONTEXT_AUDIT_raw_20260719_165812.json
+NEXT_ACTION=BUILD_EXACT_LANDING_EDGE_JOURNAL_LAYOUT_PATCH

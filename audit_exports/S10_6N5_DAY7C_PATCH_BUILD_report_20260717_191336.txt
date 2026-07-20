@@ -1,0 +1,58 @@
+﻿S10.6N5 DAY 7C ISOLATED PATCH BUILD
+Generated=20260717_191336
+OK=False
+CLASSIFICATION=DAY7C_SCOPED_PATCH_TEST_FAILED
+TEST_FRAMEWORK=unittest
+NEW_PACKAGE_INSTALLED=False
+COMPILE_RETURN_CODE=0
+TEST_RETURN_CODE=1
+PATCHED_SHA256=217b7b29101b6b2577a012d64f8ce1e8f7a54effc20cb20509ad49aed053cdfc
+NEXT_ACTION=FIX_PATCH_IN_ISOLATION
+PRODUCTION_MUTATION=False
+SERVICE_RESTARTED=False
+TEST_OUTPUT=test_hydration_restores_context (tests.test_day7c_restart_continuity.Tests.test_hydration_restores_context) ... ERROR
+test_last_trade_age_non_negative (tests.test_day7c_restart_continuity.Tests.test_last_trade_age_non_negative) ... ERROR
+test_rollover_clears_prior_session (tests.test_day7c_restart_continuity.Tests.test_rollover_clears_prior_session) ... ERROR
+
+======================================================================
+ERROR: test_hydration_restores_context (tests.test_day7c_restart_continuity.Tests.test_hydration_restores_context)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/s10_6n5_day7c_patch_1784304817/tests/test_day7c_restart_continuity.py", line 38, in test_hydration_restores_context
+    source.apply(event("AAPL",datetime(2026,7,17,13,30,10,tzinfo=timezone.utc),"100",50))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/s10_6n5_day7c_patch_1784304817/tests/test_day7c_restart_continuity.py", line 9, in event
+    return MarketEvent(
+           ^^^^^^^^^^^^
+TypeError: MarketEvent.__init__() got an unexpected keyword argument 'latency_ms'
+
+======================================================================
+ERROR: test_last_trade_age_non_negative (tests.test_day7c_restart_continuity.Tests.test_last_trade_age_non_negative)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/s10_6n5_day7c_patch_1784304817/tests/test_day7c_restart_continuity.py", line 22, in test_last_trade_age_non_negative
+    e.apply(event("AAPL",trade,"330.50"))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/s10_6n5_day7c_patch_1784304817/tests/test_day7c_restart_continuity.py", line 9, in event
+    return MarketEvent(
+           ^^^^^^^^^^^^
+TypeError: MarketEvent.__init__() got an unexpected keyword argument 'latency_ms'
+
+======================================================================
+ERROR: test_rollover_clears_prior_session (tests.test_day7c_restart_continuity.Tests.test_rollover_clears_prior_session)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/s10_6n5_day7c_patch_1784304817/tests/test_day7c_restart_continuity.py", line 27, in test_rollover_clears_prior_session
+    e.apply(event("AAPL",datetime(2026,7,17,19,59,59,tzinfo=timezone.utc),"100"))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/s10_6n5_day7c_patch_1784304817/tests/test_day7c_restart_continuity.py", line 9, in event
+    return MarketEvent(
+           ^^^^^^^^^^^^
+TypeError: MarketEvent.__init__() got an unexpected keyword argument 'latency_ms'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.001s
+
+FAILED (errors=3)
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_6N5_DAY7C_PATCH_BUILD_raw_20260717_191336.json

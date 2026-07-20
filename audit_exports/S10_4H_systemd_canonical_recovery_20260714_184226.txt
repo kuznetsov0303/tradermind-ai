@@ -1,0 +1,102 @@
+S10.4H SYSTEMD CANONICAL RECOVERY + CLEAN DEPENDENCY MAP
+Generated=20260714_184226
+Direction=VPS_TO_LOCAL_ONLY
+NO_DELETE=true
+NO_DEPLOY=true
+NO_RESTART=true
+
+=== SYSTEMD PARITY ===
+UNITS_RECOVERED=31
+ALL_SHA256_MATCH=true
+
+=== CLEAN DEPENDENCY MAP ===
+SOURCE_FILES_SCANNED=42
+DIRECT_RUNTIME_REFS=13
+APP_OWNED_EDGES=27
+
+=== DIRECT RUNTIME REFS ===
+.env.server
+.venv/bin/python
+ops/scripts/capitalization_aware_backfill_runner.py
+ops/scripts/engine_watchdog.py
+ops/scripts/forward_shadow_daily_evaluator.py
+ops/scripts/forward_shadow_promotion_gate_report.py
+ops/scripts/internal_research_agents_daily.py
+ops/scripts/nightly_research_optimizer_controller.py
+ops/scripts/production_live_day_readiness.py
+ops/scripts/s10_paper_entry_guarded_wrapper.py
+ops/scripts/s10_paper_evaluation_only_wrapper.py
+ops/scripts/universe_v1_overnight_backfill_runner.py
+run_historical_learning_backfill.py
+
+=== RECOVERED UNITS ===
+skilledge-cap-aware-backfill.service
+skilledge-cap-aware-backfill.timer
+skilledge-clean-elite-capture.service
+skilledge-clean-elite-capture.timer
+skilledge-daily-ai-desk.service
+skilledge-engine-watchdog.service
+skilledge-engine-watchdog.timer
+skilledge-forward-shadow-daily.service
+skilledge-forward-shadow-daily.timer
+skilledge-forward-shadow-promotion-gate.service
+skilledge-forward-shadow-promotion-gate.timer
+skilledge-historical-learning-backfill.service
+skilledge-historical-learning-backfill.timer
+skilledge-internal-research-agents.service
+skilledge-internal-research-agents.timer
+skilledge-nightly-research-optimizer.service
+skilledge-nightly-research-optimizer.timer
+skilledge-nightly-self-learning.service
+skilledge-nightly-self-learning.timer
+skilledge-post-close-evidence.service
+skilledge-post-close-evidence.timer
+skilledge-production-readiness.service
+skilledge-production-readiness.timer
+skilledge-s10-paper-evaluation.service
+skilledge-s10-paper-evaluation.timer
+skilledge-s10-paper-trading.service
+skilledge-s10-paper-trading.timer
+skilledge-stock-engine-api.service
+skilledge-telegram-consumer.service
+skilledge-universe-v1-backfill.service
+skilledge-universe-v1-backfill.timer
+
+=== SHA256 ===
+skilledge-cap-aware-backfill.service | match=True | local=6ad80da9e098f011eb256b10dd75fde957f005772b5c7780041a6b42fe7c474d | vps=6ad80da9e098f011eb256b10dd75fde957f005772b5c7780041a6b42fe7c474d
+skilledge-cap-aware-backfill.timer | match=True | local=f036eea7104bef9527a0bfe6fc8255136dc5be3fde18ec711e1542b2e0eb29b8 | vps=f036eea7104bef9527a0bfe6fc8255136dc5be3fde18ec711e1542b2e0eb29b8
+skilledge-clean-elite-capture.service | match=True | local=a24d3d8d2399797171636e00404deb4feb938891fcb0ed8eeb9778132f97f4b4 | vps=a24d3d8d2399797171636e00404deb4feb938891fcb0ed8eeb9778132f97f4b4
+skilledge-clean-elite-capture.timer | match=True | local=4b1f519d7f5709c839127cd64423450772338b330d6ba5c6e884f658aa425de2 | vps=4b1f519d7f5709c839127cd64423450772338b330d6ba5c6e884f658aa425de2
+skilledge-daily-ai-desk.service | match=True | local=174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2 | vps=174a88b6662b8a5f3afffa9e8a375982126875f5e32a14939b6fc4905ddd0af2
+skilledge-engine-watchdog.service | match=True | local=b276e12b635c9a9c3336fd9bee58280063bfa0464d663644c2724253ad91d5e7 | vps=b276e12b635c9a9c3336fd9bee58280063bfa0464d663644c2724253ad91d5e7
+skilledge-engine-watchdog.timer | match=True | local=95855f938715506bc7dc625f4b846266ead1274dcd235884d6106fd9f40c630d | vps=95855f938715506bc7dc625f4b846266ead1274dcd235884d6106fd9f40c630d
+skilledge-forward-shadow-daily.service | match=True | local=e8215e5f928046c32901b0f44f560c8e5a793abed0c579ebacf07255feded4d6 | vps=e8215e5f928046c32901b0f44f560c8e5a793abed0c579ebacf07255feded4d6
+skilledge-forward-shadow-daily.timer | match=True | local=1bc443261df2845bc76bad5c63cefeece6745efa2555c725f4001abc21bd64de | vps=1bc443261df2845bc76bad5c63cefeece6745efa2555c725f4001abc21bd64de
+skilledge-forward-shadow-promotion-gate.service | match=True | local=8717a690efc1146dc09fbd70dea38b2044e157a5973009f9f5207107282bf911 | vps=8717a690efc1146dc09fbd70dea38b2044e157a5973009f9f5207107282bf911
+skilledge-forward-shadow-promotion-gate.timer | match=True | local=d56e16006f6d02f5d5ffb63f25f4d866c30ab1b2133860f158096eec909a058d | vps=d56e16006f6d02f5d5ffb63f25f4d866c30ab1b2133860f158096eec909a058d
+skilledge-historical-learning-backfill.service | match=True | local=52e7f3bcd35a4c9fe92cca1b32c18932fc5d6331a5c7796606390be0129c83ed | vps=52e7f3bcd35a4c9fe92cca1b32c18932fc5d6331a5c7796606390be0129c83ed
+skilledge-historical-learning-backfill.timer | match=True | local=93f839c506b0195aeb5a154e8aaf5a5777f699710d74694ed2d3750cdf26156c | vps=93f839c506b0195aeb5a154e8aaf5a5777f699710d74694ed2d3750cdf26156c
+skilledge-internal-research-agents.service | match=True | local=56f1525693904b208a22d877d7c0ad34f64e2cf8a5638d53fc2304b8ab12bb97 | vps=56f1525693904b208a22d877d7c0ad34f64e2cf8a5638d53fc2304b8ab12bb97
+skilledge-internal-research-agents.timer | match=True | local=4e29b018bf87226f3ea00cfaa7dda4a33f4190ef90570897760201bcc7936575 | vps=4e29b018bf87226f3ea00cfaa7dda4a33f4190ef90570897760201bcc7936575
+skilledge-nightly-research-optimizer.service | match=True | local=4293858801424b8851cef42cc0cf7b2beaa88e920462f973e320b2e3be4a9b01 | vps=4293858801424b8851cef42cc0cf7b2beaa88e920462f973e320b2e3be4a9b01
+skilledge-nightly-research-optimizer.timer | match=True | local=12944670f2759a6441cf0c57b09cb9a2609d86378b93bd2011f89769c9482f85 | vps=12944670f2759a6441cf0c57b09cb9a2609d86378b93bd2011f89769c9482f85
+skilledge-nightly-self-learning.service | match=True | local=d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693 | vps=d9e5816d74fae3ec3c5150be9065af32afc7af8dac6b065a2dfa792785251693
+skilledge-nightly-self-learning.timer | match=True | local=831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769 | vps=831dfbdb99b8404d94281cf2d28c2445b672462aebe9b0c3ae5d8a36acc1d769
+skilledge-post-close-evidence.service | match=True | local=7020b0c9da8bc4cfd71e93f192b2de55d21c79b57ef36c4d4c8b152693735e95 | vps=7020b0c9da8bc4cfd71e93f192b2de55d21c79b57ef36c4d4c8b152693735e95
+skilledge-post-close-evidence.timer | match=True | local=bf9171a30d1674e976a1e0803953fbe2c464893435947544143c2a97078d82cd | vps=bf9171a30d1674e976a1e0803953fbe2c464893435947544143c2a97078d82cd
+skilledge-production-readiness.service | match=True | local=7c60024504cd74fc75e9bd5364ad185ff0412f7c7f904055bd64fe078f016bac | vps=7c60024504cd74fc75e9bd5364ad185ff0412f7c7f904055bd64fe078f016bac
+skilledge-production-readiness.timer | match=True | local=301e821e9ea073cb598406c1c63f50dcff9b8d07906c92b3e6a63247f690e62e | vps=301e821e9ea073cb598406c1c63f50dcff9b8d07906c92b3e6a63247f690e62e
+skilledge-s10-paper-evaluation.service | match=True | local=71459ed66d43e1cd5b10566ca45df096500558c3a952fb06e09700e259e3d90f | vps=71459ed66d43e1cd5b10566ca45df096500558c3a952fb06e09700e259e3d90f
+skilledge-s10-paper-evaluation.timer | match=True | local=c6cbacb060b6077002208d46a279d1cbfe4cbe0c52fb0cdf36080a1e91056a17 | vps=c6cbacb060b6077002208d46a279d1cbfe4cbe0c52fb0cdf36080a1e91056a17
+skilledge-s10-paper-trading.service | match=True | local=ab2155022521904096ab2b76ef39e2746b6da76fb44ca3f8306d801f250c72a4 | vps=ab2155022521904096ab2b76ef39e2746b6da76fb44ca3f8306d801f250c72a4
+skilledge-s10-paper-trading.timer | match=True | local=eb74da39516589efdaaeefb94f72ff37a549b2a20701e0da2778f6259dce7a23 | vps=eb74da39516589efdaaeefb94f72ff37a549b2a20701e0da2778f6259dce7a23
+skilledge-stock-engine-api.service | match=True | local=707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c | vps=707bd5e5178bd663dfe500303be093784c22ef5bbf566ed80cd74c8bf97d725c
+skilledge-telegram-consumer.service | match=True | local=feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede | vps=feb29f38163fa30fb6f546d40353df6be9cd0b34987103e42581e86c7548cede
+skilledge-universe-v1-backfill.service | match=True | local=58dd804f5d52e3ade78be2dcd2ba9363b700a20710f7003005a757bd03258cc6 | vps=58dd804f5d52e3ade78be2dcd2ba9363b700a20710f7003005a757bd03258cc6
+skilledge-universe-v1-backfill.timer | match=True | local=fddd553b8fcc6716e3a2ce00c16efd866a65ca09ca1f0edf2cdda57cb2f50064 | vps=fddd553b8fcc6716e3a2ce00c16efd866a65ca09ca1f0edf2cdda57cb2f50064
+
+=== OUTPUTS ===
+BackupDir=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4H_systemd_backup_20260714_184226
+StageDir=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4H_vps_systemd_20260714_184226
+DependencyMap=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4H_clean_runtime_dependency_map_20260714_184226.json
+Manifest=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\PRODUCTION_MANIFEST_DRAFT.md

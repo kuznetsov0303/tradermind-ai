@@ -1,0 +1,28 @@
+S10.5D VERIFIED INTERMEDIATE CHAIN + FMP ENTITLEMENT RETRY
+Generated=20260714_225724
+HOST=websockets.financialmodelingprep.com
+ENDPOINT=wss://websockets.financialmodelingprep.com
+INTERMEDIATE_SOURCE=https://crt.sh/?d=4267304690
+EXPECTED_SUBJECT_TOKEN=Sectigo Public Server Authentication CA DV R36
+API_KEY_PRESENT=True
+API_KEY_SOURCE=.env.server
+API_KEY_OUTPUT=NEVER_EMITTED
+
+=== RESULT ===
+OK=False
+CLASSIFICATION=PROOF_EXCEPTION
+ERROR=<HTTPError 502: 'Bad Gateway'>
+
+=== SAFETY ===
+INSTALL_PERFORMED=False
+GLOBAL_CA_CHANGED=False
+SSL_VERIFICATION_DISABLED=False
+DEPLOY_PERFORMED=False
+RESTART_PERFORMED=False
+SERVICE_STATE_CHANGED=False
+PAPER_POST_PERFORMED=False
+SUBSCRIPTION_CHANGED=False
+API_KEY_EMITTED=False
+TEMPORARY_FILES_REMOVED=True
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_5D_verified_chain_entitlement_raw_20260714_225724.json

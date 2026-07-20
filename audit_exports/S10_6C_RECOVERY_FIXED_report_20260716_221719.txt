@@ -1,0 +1,35 @@
+﻿S10.6C ACCIDENTAL S10.3F RECOVERY - LF FIXED
+Generated=20260716_221719
+OK=True
+RESTORED_MATCHES_PRE_ACCIDENT_BACKUP=True
+CURRENT_SHA_BEFORE=0e979d1113db69832a29763ee53bc58b2e99a879bdf48f42190c9c947f465bc7
+PRE_ACCIDENT_SHA=bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785
+RESTORED_SHA=bfa208fbff50e942f9bb4be7b4f956435b84be21afe59a3e79b4333eb7b75785
+PRE_ACCIDENT_BACKUP=/opt/skilledge/stock-engine/app/api/app.py.bak_s103f_20260716T190359Z
+POST_ACCIDENT_BACKUP=/opt/skilledge/stock-engine/app/api/app.py.bak_accidental_s103f_post_20260716_221719
+API_HEALTH_OK=True
+PAPER_TIMER_CHANGED_BY_RECOVERY=False
+PAPER_SERVICE_STARTED_BY_RECOVERY=False
+PAPER_RUN_ONCE_EXECUTED=False
+PAPER_RESET_EXECUTED=False
+
+=== API SERVICE ===
+MainPID=789739
+Result=success
+NRestarts=0
+ActiveState=active
+SubState=running
+
+=== PAPER TIMER ===
+Result=success
+ActiveState=inactive
+SubState=dead
+UnitFileState=disabled
+
+=== PAPER SERVICE ===
+Result=success
+ExecMainStatus=0
+ActiveState=inactive
+SubState=dead
+
+RAW_JSON=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_6C_RECOVERY_FIXED_raw_20260716_221719.json

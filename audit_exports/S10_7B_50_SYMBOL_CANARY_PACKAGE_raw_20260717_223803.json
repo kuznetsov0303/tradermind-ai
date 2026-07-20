@@ -1,0 +1,20 @@
+﻿{
+    "ok":  true,
+    "classification":  "DAY7D_GUARDED_50_SYMBOL_CAPACITY_CANARY_PACKAGE_VALIDATED",
+    "packageBuilt":  true,
+    "packageExecuted":  false,
+    "executionAuthorized":  false,
+    "currentCapacity":  25,
+    "targetCapacity":  50,
+    "dynamicCount":  25,
+    "soakMinutes":  30,
+    "productionMutation":  false,
+    "serviceRestarted":  false,
+    "systemdTouched":  false,
+    "streamSymbolsChanged":  false,
+    "validationErrors":  [
+
+                         ],
+    "nextAction":  "REVIEW_AND_ARM_50_SYMBOL_CAPACITY_CANARY",
+    "packageDirectory":  "C:\\Users\\milli\\OneDrive\\Рабочий стол\\tradermind\\tradermind-ai\\PROJECT_STATE\\guarded_50_symbol_capacity_canary_package_v1"
+}

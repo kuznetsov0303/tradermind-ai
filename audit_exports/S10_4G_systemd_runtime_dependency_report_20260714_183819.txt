@@ -1,0 +1,434 @@
+S10.4G SYSTEMD PARITY + ACTIVE RUNTIME DEPENDENCY REPORT
+Generated=20260714_183819
+READ_ONLY=true
+NO_DELETE=true
+NO_DEPLOY=true
+NO_RESTART=true
+
+=== SUMMARY ===
+VPS_UNITS=31
+LOCAL_UNITS=15
+IDENTICAL_UNITS=14
+DIFFERENT_UNITS=1
+LOCAL_ONLY_UNITS=0
+VPS_ONLY_UNITS=16
+DIRECT_RUNTIME_PATH_REFS=13
+INDIRECT_RUNTIME_EDGES=307
+DUPLICATE_OPS_TREE_EXISTS=True
+DUPLICATE_OPS_FILES=9
+
+=== IDENTICAL UNITS ===
+skilledge-clean-elite-capture.service
+skilledge-clean-elite-capture.timer
+skilledge-daily-ai-desk.service
+skilledge-engine-watchdog.service
+skilledge-engine-watchdog.timer
+skilledge-historical-learning-backfill.service
+skilledge-historical-learning-backfill.timer
+skilledge-nightly-self-learning.service
+skilledge-nightly-self-learning.timer
+skilledge-post-close-evidence.timer
+skilledge-production-readiness.service
+skilledge-production-readiness.timer
+skilledge-stock-engine-api.service
+skilledge-telegram-consumer.service
+
+=== DIFFERENT UNITS - RECONCILE BEFORE DEPLOY ===
+skilledge-post-close-evidence.service
+
+=== VPS-ONLY UNITS - RECOVER/CATEGORIZE ===
+skilledge-cap-aware-backfill.service
+skilledge-cap-aware-backfill.timer
+skilledge-forward-shadow-daily.service
+skilledge-forward-shadow-daily.timer
+skilledge-forward-shadow-promotion-gate.service
+skilledge-forward-shadow-promotion-gate.timer
+skilledge-internal-research-agents.service
+skilledge-internal-research-agents.timer
+skilledge-nightly-research-optimizer.service
+skilledge-nightly-research-optimizer.timer
+skilledge-s10-paper-evaluation.service
+skilledge-s10-paper-evaluation.timer
+skilledge-s10-paper-trading.service
+skilledge-s10-paper-trading.timer
+skilledge-universe-v1-backfill.service
+skilledge-universe-v1-backfill.timer
+
+=== LOCAL-ONLY UNITS - VERIFY LEGACY/UNDEPLOYED ===
+
+=== VPS UNIT DETAILS ===
+skilledge-cap-aware-backfill.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-cap-aware-backfill.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/capitalization_aware_backfill_runner.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-cap-aware-backfill.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-cap-aware-backfill.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-clean-elite-capture.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-clean-elite-capture.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/clean_elite_ledger.py --base-url http://127.0.0.1:8000 --initial-capital 50000 --risk-pct 0.01 ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:33:56 EEST] ; stop_time=[Tue 2026-07-14 18:33:57 EEST] ; pid=685584 ; code=exited ; status=0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=no)
+skilledge-clean-elite-capture.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-clean-elite-capture.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-daily-ai-desk.service | active=active/running | enabled=enabled | fragment=/etc/systemd/system/skilledge-daily-ai-desk.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python run_daily_ai_desk.py --loop --interval-seconds 300 --start-kyiv 11:00 --end-kyiv 23:00 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=no)
+skilledge-engine-watchdog.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-engine-watchdog.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/engine_watchdog.py --public-url https://engine.upyourskills.site --auto-restart --alert ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:33:56 EEST] ; stop_time=[Tue 2026-07-14 18:34:08 EEST] ; pid=685585 ; code=exited ; status=0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=yes)
+skilledge-engine-watchdog.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-engine-watchdog.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-forward-shadow-daily.service | active=inactive/dead | enabled=disabled | fragment=/etc/systemd/system/skilledge-forward-shadow-daily.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-forward-shadow-daily.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-forward-shadow-daily.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-forward-shadow-promotion-gate.service | active=inactive/dead | enabled=disabled | fragment=/etc/systemd/system/skilledge-forward-shadow-promotion-gate.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/forward_shadow_promotion_gate_report.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-forward-shadow-promotion-gate.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-forward-shadow-promotion-gate.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-historical-learning-backfill.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-historical-learning-backfill.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/run_historical_learning_backfill.py --symbols AAPL,NVDA,TSLA --intervals 5min --years-back 5 --max-days 5 --chunk-days 1 --max-jobs 1 --max-candidates 5000 --sync-supabase true ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=yes)
+skilledge-historical-learning-backfill.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-historical-learning-backfill.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-internal-research-agents.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-internal-research-agents.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/internal_research_agents_daily.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-internal-research-agents.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-internal-research-agents.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-nightly-research-optimizer.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-nightly-research-optimizer.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/nightly_research_optimizer_controller.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-nightly-research-optimizer.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-nightly-research-optimizer.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-nightly-self-learning.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-nightly-self-learning.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python run_nightly_self_learning.py --lookback-days 3 --max-days 3 --min-closed 10 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=no)
+skilledge-nightly-self-learning.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-nightly-self-learning.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-post-close-evidence.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-post-close-evidence.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python ops/scripts/post_close_evidence_automation.py --base-url http://127.0.0.1:8000 --limit 160 --max-best 5 ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=no)
+skilledge-post-close-evidence.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-post-close-evidence.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-production-readiness.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-production-readiness.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/production_live_day_readiness.py --public-url https://engine.upyourskills.site --frontend-url https://www.upyourskills.site --alert-on-blocker ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=yes)
+skilledge-production-readiness.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-production-readiness.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-s10-paper-evaluation.service | active=inactive/dead | enabled=disabled | fragment=/etc/systemd/system/skilledge-s10-paper-evaluation.service | execStart={ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_evaluation_only_wrapper.py ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:37:56 EEST] ; stop_time=[Tue 2026-07-14 18:37:59 EEST] ; pid=685723 ; code=exited ; status=0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-s10-paper-evaluation.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-s10-paper-evaluation.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-s10-paper-trading.service | active=inactive/dead | enabled=disabled | fragment=/etc/systemd/system/skilledge-s10-paper-trading.service | execStart={ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /opt/skilledge/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:34:07 EEST] ; stop_time=[Tue 2026-07-14 18:34:07 EEST] ; pid=685592 ; code=exited ; status=0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-s10-paper-trading.timer | active=active/waiting | enabled=enabled | fragment=/etc/systemd/system/skilledge-s10-paper-trading.timer | execStart= | workingDirectory= | environmentFiles=
+skilledge-stock-engine-api.service | active=active/running | enabled=enabled | fragment=/etc/systemd/system/skilledge-stock-engine-api.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python -m uvicorn app.api.app:app --host 127.0.0.1 --port 8000 ; ignore_errors=no ; start_time=[Tue 2026-07-14 18:13:38 EEST] ; stop_time=[n/a] ; pid=683393 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=no)
+skilledge-telegram-consumer.service | active=active/running | enabled=enabled | fragment=/etc/systemd/system/skilledge-telegram-consumer.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python telegram_cache_consumer.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=/opt/skilledge/stock-engine/.env.server (ignore_errors=no)
+skilledge-universe-v1-backfill.service | active=inactive/dead | enabled=static | fragment=/etc/systemd/system/skilledge-universe-v1-backfill.service | execStart={ path=/opt/skilledge/stock-engine/.venv/bin/python ; argv[]=/opt/skilledge/stock-engine/.venv/bin/python /opt/skilledge/stock-engine/ops/scripts/universe_v1_overnight_backfill_runner.py ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 } | workingDirectory=/opt/skilledge/stock-engine | environmentFiles=
+skilledge-universe-v1-backfill.timer | active=inactive/dead | enabled=disabled | fragment=/etc/systemd/system/skilledge-universe-v1-backfill.timer | execStart= | workingDirectory= | environmentFiles=
+
+=== DIRECT RUNTIME PATH REFERENCES ===
+/opt/skilledge/stock-engine/.env.server
+/opt/skilledge/stock-engine/.venv/bin/python
+/opt/skilledge/stock-engine/ops/scripts/capitalization_aware_backfill_runner.py
+/opt/skilledge/stock-engine/ops/scripts/engine_watchdog.py
+/opt/skilledge/stock-engine/ops/scripts/forward_shadow_daily_evaluator.py
+/opt/skilledge/stock-engine/ops/scripts/forward_shadow_promotion_gate_report.py
+/opt/skilledge/stock-engine/ops/scripts/internal_research_agents_daily.py
+/opt/skilledge/stock-engine/ops/scripts/nightly_research_optimizer_controller.py
+/opt/skilledge/stock-engine/ops/scripts/production_live_day_readiness.py
+/opt/skilledge/stock-engine/ops/scripts/s10_paper_entry_guarded_wrapper.py
+/opt/skilledge/stock-engine/ops/scripts/s10_paper_evaluation_only_wrapper.py
+/opt/skilledge/stock-engine/ops/scripts/universe_v1_overnight_backfill_runner.py
+/opt/skilledge/stock-engine/run_historical_learning_backfill.py
+
+=== INDIRECT SCRIPT DEPENDENCY EDGES ===
+.venv/lib/python3.12/site-packages/_yaml/__init__.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/anyio/pytest_plugin.py -> .venv/lib/python3.12/site-packages/setuptools/command/test.py | match=test.py
+.venv/lib/python3.12/site-packages/anyio/streams/text.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/click/_textwrap.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/click/_textwrap.py -> .venv/lib/python3.12/site-packages/setuptools/tests/textwrap.py | match=textwrap.py
+.venv/lib/python3.12/site-packages/click/core.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/click/decorators.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/click/utils.py -> app/api/app.py | match=app.py
+.venv/lib/python3.12/site-packages/dateutil/tz/_common.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/datetime.py | match=datetime.py
+.venv/lib/python3.12/site-packages/fastapi/_compat.py -> .venv/lib/python3.12/site-packages/pydantic/v1/schema.py | match=schema.py
+.venv/lib/python3.12/site-packages/h11/_version.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/httpcore/_utils.py -> .venv/lib/python3.12/site-packages/redis/_parsers/socket.py | match=socket.py
+.venv/lib/python3.12/site-packages/httpx/_compat.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/httpx/_decoders.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/httpx/_models.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/httpx/_urlparse.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/httpx/_urlparse.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py | match=parse.py
+.venv/lib/python3.12/site-packages/httpx/_urls.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/jwt/utils.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py | match=core.py
+.venv/lib/python3.12/site-packages/packaging/licenses/__init__.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py | match=parse.py
+.venv/lib/python3.12/site-packages/packaging/utils.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_internal/build_env.py -> .venv/lib/python3.12/site-packages/pip/__pip-runner__.py | match=__pip-runner__.py
+.venv/lib/python3.12/site-packages/pip/_internal/cli/cmdoptions.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py -> .venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py | match=target_python.py
+.venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py | match=utils.py
+.venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py -> .venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/python.py | match=python.py
+.venv/lib/python3.12/site-packages/pip/_internal/cli/req_command.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/pip/_internal/commands/install.py -> .venv/lib/python3.12/site-packages/pip/_internal/operations/check.py | match=check.py
+.venv/lib/python3.12/site-packages/pip/_internal/commands/lock.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_internal/commands/lock.py -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py | match=utils.py
+.venv/lib/python3.12/site-packages/pip/_internal/index/package_finder.py -> .venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py | match=target_python.py
+.venv/lib/python3.12/site-packages/pip/_internal/index/package_finder.py -> .venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/python.py | match=python.py
+.venv/lib/python3.12/site-packages/pip/_internal/index/package_finder.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/pip/_internal/locations/__init__.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/pip/_internal/locations/__init__.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py | match=sysconfig.py
+.venv/lib/python3.12/site-packages/pip/_internal/locations/_distutils.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_internal/models/index.py -> .venv/lib/python3.12/site-packages/setuptools/command/test.py | match=test.py
+.venv/lib/python3.12/site-packages/pip/_internal/models/scheme.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/compatibility_tags.py | match=compatibility_tags.py
+.venv/lib/python3.12/site-packages/pip/_internal/models/target_python.py -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/tags.py | match=tags.py
+.venv/lib/python3.12/site-packages/pip/_internal/operations/install/wheel.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_internal/req/constructors.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_internal/req/constructors.py -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py | match=utils.py
+.venv/lib/python3.12/site-packages/pip/_internal/req/req_uninstall.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_internal/req/req_uninstall.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/pip/_internal/utils/misc.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_internal/utils/misc.py -> .venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py | match=__main__.py
+.venv/lib/python3.12/site-packages/pip/_internal/utils/pylock.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_vendor/cachecontrol/filewrapper.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_vendor/distlib/scripts.py -> .venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py | match=__main__.py
+.venv/lib/python3.12/site-packages/pip/_vendor/distlib/util.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_vendor/packaging/licenses/__init__.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py | match=parse.py
+.venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/pip/_vendor/pkg_resources/__init__.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/pip/_vendor/pkg_resources/__init__.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/__init__.py -> .venv/lib/python3.12/site-packages/anyio/streams/text.py | match=text.py
+.venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/__init__.py -> .venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py | match=ext.py
+.venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/__init__.py -> .venv/lib/python3.12/site-packages/setuptools/_vendor/importlib_metadata/_text.py | match=_text.py
+.venv/lib/python3.12/site-packages/pip/_vendor/pygments/lexers/python.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/__init__.py -> .venv/lib/python3.12/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py | match=_in_process.py
+.venv/lib/python3.12/site-packages/pip/_vendor/rich/console.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_vendor/rich/table.py -> .venv/lib/python3.12/site-packages/pip/_vendor/rich/box.py | match=box.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/connectionpool.py -> .venv/lib/python3.12/site-packages/redis/_parsers/socket.py | match=socket.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/emscripten/response.py -> .venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/emscripten/fetch.py | match=fetch.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/socks.py -> .venv/lib/python3.12/site-packages/httpcore/_sync/connection.py | match=connection.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/contrib/socks.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/connection.py -> .venv/lib/python3.12/site-packages/redis/_parsers/socket.py | match=socket.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/proxy.py -> .venv/lib/python3.12/site-packages/pip/_vendor/urllib3/poolmanager.py | match=poolmanager.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssl_match_hostname.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/ssltransport.py -> .venv/lib/python3.12/site-packages/redis/_parsers/socket.py | match=socket.py
+.venv/lib/python3.12/site-packages/pip/_vendor/urllib3/util/timeout.py -> .venv/lib/python3.12/site-packages/redis/_parsers/socket.py | match=socket.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_fields.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_generate_schema.py -> .venv/lib/python3.12/site-packages/typing_extensions.py | match=typing_extensions.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_generics.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_git.py -> .venv/lib/python3.12/site-packages/pip/_internal/vcs/git.py | match=git.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_namespace_utils.py -> .venv/lib/python3.12/site-packages/pip/_vendor/cachecontrol/adapter.py | match=adapter.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_namespace_utils.py -> .venv/lib/python3.12/site-packages/pydantic/type_adapter.py | match=type_adapter.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_typing_extra.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_typing_extra.py -> .venv/lib/python3.12/site-packages/pydantic/v1/typing.py | match=typing.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py -> .venv/lib/python3.12/site-packages/pip/_vendor/tomli/_types.py | match=_types.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py -> .venv/lib/python3.12/site-packages/pydantic/_internal/_std_types_schema.py | match=_std_types_schema.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py -> .venv/lib/python3.12/site-packages/pydantic/v1/schema.py | match=schema.py
+.venv/lib/python3.12/site-packages/pydantic/_internal/_validators.py -> .venv/lib/python3.12/site-packages/pydantic/v1/types.py | match=types.py
+.venv/lib/python3.12/site-packages/pydantic/_migration.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/_migration.py -> .venv/lib/python3.12/site-packages/httptools/parser/errors.py | match=errors.py
+.venv/lib/python3.12/site-packages/pydantic/aliases.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/color.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/config.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/dataclasses.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/fields.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/fields.py -> .venv/lib/python3.12/site-packages/pydantic/_internal/_fields.py | match=_fields.py
+.venv/lib/python3.12/site-packages/pydantic/functional_validators.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/functional_validators.py -> .venv/lib/python3.12/site-packages/httptools/parser/errors.py | match=errors.py
+.venv/lib/python3.12/site-packages/pydantic/json_schema.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/main.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/mypy.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/plugin/__init__.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/root_model.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/type_adapter.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/types.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/types.py -> .venv/lib/python3.12/site-packages/httptools/parser/errors.py | match=errors.py
+.venv/lib/python3.12/site-packages/pydantic/types.py -> .venv/lib/python3.12/site-packages/pip/_vendor/urllib3/fields.py | match=fields.py
+.venv/lib/python3.12/site-packages/pydantic/types.py -> .venv/lib/python3.12/site-packages/pydantic/_internal/_fields.py | match=_fields.py
+.venv/lib/python3.12/site-packages/pydantic/v1/_hypothesis_plugin.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/v1/datetime_parse.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py | match=parse.py
+.venv/lib/python3.12/site-packages/pydantic/v1/schema.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/v1/typing.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/v1/validators.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/validate_call_decorator.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic/warnings.py -> .venv/lib/python3.12/site-packages/httptools/parser/errors.py | match=errors.py
+.venv/lib/python3.12/site-packages/pydantic_core/core_schema.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/pydantic_core/core_schema.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py | match=core.py
+.venv/lib/python3.12/site-packages/pydantic_core/core_schema.py -> .venv/lib/python3.12/site-packages/pydantic/v1/schema.py | match=schema.py
+.venv/lib/python3.12/site-packages/pydantic_settings/sources.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/redis/asyncio/client.py -> .venv/lib/python3.12/site-packages/h11/_connection.py | match=_connection.py
+.venv/lib/python3.12/site-packages/redis/asyncio/client.py -> .venv/lib/python3.12/site-packages/httpcore/_sync/connection.py | match=connection.py
+.venv/lib/python3.12/site-packages/redis/asyncio/client.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/redis/asyncio/cluster.py -> .venv/lib/python3.12/site-packages/redis/backoff.py | match=backoff.py
+.venv/lib/python3.12/site-packages/redis/asyncio/cluster.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/off.py | match=off.py
+.venv/lib/python3.12/site-packages/redis/asyncio/connection.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/redis/client.py -> .venv/lib/python3.12/site-packages/h11/_connection.py | match=_connection.py
+.venv/lib/python3.12/site-packages/redis/client.py -> .venv/lib/python3.12/site-packages/httpcore/_sync/connection.py | match=connection.py
+.venv/lib/python3.12/site-packages/redis/client.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/redis/cluster.py -> .venv/lib/python3.12/site-packages/realtime/_sync/client.py | match=client.py
+.venv/lib/python3.12/site-packages/redis/commands/core.py -> .venv/lib/python3.12/site-packages/setuptools/command/test.py | match=test.py
+.venv/lib/python3.12/site-packages/redis/connection.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/setuptools/_core_metadata.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/_modified.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/cmd.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_clib.py -> .venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py | match=ext.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_clib.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py | match=build_ext.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py -> .venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py | match=bar.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py | match=sysconfig.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_py.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/install_lib.py | match=install_lib.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_py.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_py.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/install.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/cmd.py | match=cmd.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/command/install.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/install_lib.py | match=install_lib.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/compat/py39.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/compat/py39.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py | match=sysconfig.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/msvc.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/ccompiler.py | match=ccompiler.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/tests/test_unix.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/unix.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/ccompiler.py | match=ccompiler.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/zos.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/compilers/C/zos.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py | match=sysconfig.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/core.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py | match=core.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/extension.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/core.py | match=core.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/extension.py -> .venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py | match=ext.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/extension.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py | match=build_ext.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/filelist.py -> .venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py | match=bar.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_build_py.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_filelist.py -> .venv/lib/python3.12/site-packages/pip/_internal/commands/list.py | match=list.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_filelist.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/filelist.py | match=filelist.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_install_lib.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_sdist.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_sysconfig.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_sysconfig.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/sysconfig.py | match=sysconfig.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/version.py -> .venv/lib/python3.12/site-packages/pip/_vendor/urllib3/_version.py | match=_version.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/version.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_version.py | match=test_version.py
+.venv/lib/python3.12/site-packages/setuptools/_distutils/version.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/setuptools/_entry_points.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/_imp.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/_normalization.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/_static.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/_vendor/backports/tarfile/__init__.py -> .venv/lib/python3.12/site-packages/anyio/streams/file.py | match=file.py
+.venv/lib/python3.12/site-packages/setuptools/_vendor/backports/tarfile/__init__.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/_vendor/importlib_metadata/__init__.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/_vendor/more_itertools/recipes.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/setuptools/_vendor/packaging/licenses/__init__.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/parse.py | match=parse.py
+.venv/lib/python3.12/site-packages/setuptools/_vendor/zipp/__init__.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/_vendor/zipp/glob.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/command/_requirestxt.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/command/build_ext.py -> .venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py | match=ext.py
+.venv/lib/python3.12/site-packages/setuptools/command/build_py.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/command/build_py.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/command/editable_wheel.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/command/editable_wheel.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/command/editable_wheel.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/command/install_lib.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/config/_apply_pyprojecttoml.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/config/_apply_pyprojecttoml.py -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py | match=metadata.py
+.venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/extra_validations.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/fastjsonschema_validations.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/config/_validate_pyproject/formats.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/config/expand.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/config/pyprojecttoml.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/config/setupcfg.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/discovery.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/discovery.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/dist.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/dist.py -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/metadata.py | match=metadata.py
+.venv/lib/python3.12/site-packages/setuptools/dist.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/extension.py -> .venv/lib/python3.12/site-packages/pip/_vendor/msgpack/ext.py | match=ext.py
+.venv/lib/python3.12/site-packages/setuptools/extension.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/build_ext.py | match=build_ext.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/downloads/__init__.py -> .venv/lib/python3.12/site-packages/setuptools/tests/config/downloads/preload.py | match=preload.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_apply_pyprojecttoml.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_apply_pyprojecttoml.py -> .venv/lib/python3.12/site-packages/setuptools/tests/config/downloads/preload.py | match=preload.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_expand.py -> .venv/lib/python3.12/site-packages/pip/_internal/cli/main.py | match=main.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_expand.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py -> .venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py | match=__main__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py -> .venv/lib/python3.12/site-packages/pip/_vendor/requests/__version__.py | match=__version__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_pyprojecttoml_dynamic_deps.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_setupcfg.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/build.py | match=build.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_setupcfg.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/config/test_setupcfg.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/fixtures.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/integration/test_pip_install_sdist.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/tests/namespaces.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_bdist_wheel.py -> .venv/lib/python3.12/site-packages/pip/_internal/distributions/sdist.py | match=sdist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_bdist_wheel.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_bdist_wheel.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_build_meta.py -> .venv/lib/python3.12/site-packages/idna/cli.py | match=cli.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_build_meta.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_build_py.py -> .venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py | match=bar.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_build_py.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py -> .venv/lib/python3.12/site-packages/anyio/streams/file.py | match=file.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py -> .venv/lib/python3.12/site-packages/pip/_internal/cli/main.py | match=main.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_config_discovery.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_develop.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_dist.py -> .venv/lib/python3.12/site-packages/anyio/streams/file.py | match=file.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_dist.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_dist.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py -> .venv/lib/python3.12/site-packages/anyio/streams/file.py | match=file.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py -> .venv/lib/python3.12/site-packages/pip/_vendor/platformdirs/__main__.py | match=__main__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py -> .venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py | match=bar.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/command/config.py | match=config.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_editable_install.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_egg_info.py -> .venv/lib/python3.12/site-packages/pip/_internal/utils/packaging.py | match=packaging.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_egg_info.py -> .venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py | match=bar.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_find_packages.py -> .venv/lib/python3.12/site-packages/anyio/streams/file.py | match=file.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_find_packages.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_find_packages.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py -> .venv/lib/python3.12/site-packages/anyio/streams/file.py | match=file.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py -> .venv/lib/python3.12/site-packages/pip/_internal/models/link.py | match=link.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py -> .venv/lib/python3.12/site-packages/pip/_vendor/idna/compat.py | match=compat.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_find_py_modules.py -> .venv/lib/python3.12/site-packages/setuptools/command/test.py | match=test.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py -> .venv/lib/python3.12/site-packages/pip/_internal/commands/list.py | match=list.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/filelist.py | match=filelist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/tests/test_filelist.py | match=test_filelist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_manifest.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_sdist.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_setuptools.py -> .venv/lib/python3.12/site-packages/pip/_vendor/rich/bar.py | match=bar.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_setuptools.py -> .venv/lib/python3.12/site-packages/setuptools/_distutils/dist.py | match=dist.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_warnings.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/tests/test_wheel.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/setuptools/warnings.py -> .venv/lib/python3.12/site-packages/pydantic/deprecated/tools.py | match=tools.py
+.venv/lib/python3.12/site-packages/setuptools/wheel.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/sniffio/_version.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/typing_extensions.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/typing_extensions.py -> .venv/lib/python3.12/site-packages/pydantic/v1/typing.py | match=typing.py
+.venv/lib/python3.12/site-packages/uvicorn/_subprocess.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/uvicorn/config.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/uvloop/_testbase.py -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py | match=utils.py
+.venv/lib/python3.12/site-packages/websockets/asyncio/async_timeout.py -> .venv/lib/python3.12/site-packages/typing_extensions.py | match=typing_extensions.py
+.venv/lib/python3.12/site-packages/websockets/asyncio/async_timeout.py -> app/data/__init__.py | match=__init__.py
+.venv/lib/python3.12/site-packages/websockets/asyncio/connection.py -> .venv/lib/python3.12/site-packages/h11/_connection.py | match=_connection.py
+.venv/lib/python3.12/site-packages/websockets/asyncio/connection.py -> .venv/lib/python3.12/site-packages/httpx/_client.py | match=_client.py
+.venv/lib/python3.12/site-packages/websockets/asyncio/connection.py -> .venv/lib/python3.12/site-packages/realtime/_sync/client.py | match=client.py
+.venv/lib/python3.12/site-packages/websockets/asyncio/connection.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/websockets/cli.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/websockets/legacy/protocol.py -> .venv/lib/python3.12/site-packages/fastapi/openapi/docs.py | match=docs.py
+.venv/lib/python3.12/site-packages/websockets/sync/connection.py -> .venv/lib/python3.12/site-packages/h11/_connection.py | match=_connection.py
+.venv/lib/python3.12/site-packages/websockets/sync/connection.py -> .venv/lib/python3.12/site-packages/httpx/_client.py | match=_client.py
+.venv/lib/python3.12/site-packages/websockets/sync/connection.py -> .venv/lib/python3.12/site-packages/realtime/_sync/client.py | match=client.py
+.venv/lib/python3.12/site-packages/websockets/sync/connection.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+.venv/lib/python3.12/site-packages/websockets/version.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+ops/ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pip/_internal/operations/check.py | match=check.py
+ops/ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py | match=utils.py
+ops/ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pydantic/_internal/_utils.py | match=_utils.py
+ops/ops/scripts/deploy_ubuntu_systemd.sh -> ops/ops/scripts/server_healthcheck.py | match=server_healthcheck.py
+ops/ops/scripts/deploy_ubuntu_systemd.sh -> ops/runner_utils.py | match=runner_utils.py
+ops/ops/scripts/deploy_ubuntu_systemd.sh -> run_daily_ai_desk.py | match=run_daily_ai_desk.py
+ops/ops/scripts/deploy_ubuntu_systemd.sh -> run_nightly_self_learning.py | match=run_nightly_self_learning.py
+ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pip/_internal/operations/check.py | match=check.py
+ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pip/_internal/operations/check.py | match=check.py
+ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py | match=utils.py
+ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pip/_vendor/packaging/utils.py | match=utils.py
+ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pydantic/_internal/_utils.py | match=_utils.py
+ops/scripts/deploy_ubuntu_systemd.sh -> .venv/lib/python3.12/site-packages/pydantic/_internal/_utils.py | match=_utils.py
+ops/scripts/deploy_ubuntu_systemd.sh -> ops/ops/scripts/server_healthcheck.py | match=server_healthcheck.py
+ops/scripts/deploy_ubuntu_systemd.sh -> ops/ops/scripts/server_healthcheck.py | match=server_healthcheck.py
+ops/scripts/deploy_ubuntu_systemd.sh -> ops/runner_utils.py | match=runner_utils.py
+ops/scripts/deploy_ubuntu_systemd.sh -> ops/runner_utils.py | match=runner_utils.py
+ops/scripts/deploy_ubuntu_systemd.sh -> run_daily_ai_desk.py | match=run_daily_ai_desk.py
+ops/scripts/deploy_ubuntu_systemd.sh -> run_daily_ai_desk.py | match=run_daily_ai_desk.py
+ops/scripts/deploy_ubuntu_systemd.sh -> run_nightly_self_learning.py | match=run_nightly_self_learning.py
+ops/scripts/deploy_ubuntu_systemd.sh -> run_nightly_self_learning.py | match=run_nightly_self_learning.py
+ops/scripts/s10_paper_entry_guarded_wrapper.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+ops/scripts/s10_paper_entry_guarded_wrapper.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+ops/scripts/s10_paper_entry_guarded_wrapper.py -> ops/scripts/s10_paper_entry_guarded_daemon.py | match=s10_paper_entry_guarded_daemon.py
+ops/scripts/s10_paper_entry_guarded_wrapper.py -> ops/scripts/s10_paper_entry_guarded_daemon.py | match=s10_paper_entry_guarded_daemon.py
+ops/scripts/s10_paper_evaluation_only_wrapper.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+ops/scripts/s10_paper_evaluation_only_wrapper.py -> .venv/lib/python3.12/site-packages/uvicorn/lifespan/on.py | match=on.py
+ops/scripts/s10_paper_evaluation_only_wrapper.py -> ops/scripts/s10_paper_evaluation_only_daemon.py | match=s10_paper_evaluation_only_daemon.py
+ops/scripts/s10_paper_evaluation_only_wrapper.py -> ops/scripts/s10_paper_evaluation_only_daemon.py | match=s10_paper_evaluation_only_daemon.py
+
+=== DUPLICATE OPS TREE ===
+exists=True
+ops/ops/README_VPS_DEPLOY.md
+ops/ops/nginx/stock-engine.nginx.conf
+ops/ops/scripts/deploy_ubuntu_systemd.sh
+ops/ops/scripts/server_healthcheck.py
+ops/ops/systemd/skilledge-daily-ai-desk.service
+ops/ops/systemd/skilledge-nightly-self-learning.service
+ops/ops/systemd/skilledge-nightly-self-learning.timer
+ops/ops/systemd/skilledge-stock-engine-api.service
+ops/ops/systemd/skilledge-telegram-consumer.service
+
+=== NEXT CLASSIFICATION RULES ===
+KEEP_ACTIVE: active/enabled VPS units and all direct/indirect runtime dependencies.
+RECOVER_VPS_ONLY: VPS-only active canonical units/scripts that must exist locally.
+RECONCILE_DIFFERENT: unit exists on both sides but content hash differs.
+LEGACY_CANDIDATE: inactive/disabled unit with no runtime references, pending explicit verification.
+ARCHIVE_CANDIDATE: duplicate historical unit trees after parity and smoke verification.
+DO_NOT_DELETE: unknown dependencies, environment files, secrets, data stores, payment/pricing code, active gates.

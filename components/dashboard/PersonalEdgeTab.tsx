@@ -423,7 +423,7 @@ const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
             ))}
           </section>
 
-          <section className="grid gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+          <section className="grid items-start gap-5 xl:grid-cols-[1.2fr_0.8fr]">
             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
@@ -508,7 +508,7 @@ const reviews: EdgeAny[] = Array.isArray(summary?.recentReviews)
             </div>
           </section>
 
-          <section className="grid gap-5 xl:grid-cols-2">
+          <section className="grid items-start gap-5 xl:grid-cols-2">
             <div className="se-dashboard-card rounded-[2rem] border border-white/[0.08] p-5">
               <div className="text-[10px] font-black uppercase tracking-[0.22em] text-[#C8A96B]/80">{copy.playbook}</div>
               <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-white">

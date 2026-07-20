@@ -1,0 +1,47 @@
+﻿[
+    {
+        "file":  "components/Landing.tsx",
+        "bytes":  321470,
+        "sha256":  "1f9eecb61b3ce9dd37dc98afbc9dec8a5dde35601d69b04e303016967be9d18a"
+    },
+    {
+        "file":  "lib/i18n/config.ts",
+        "bytes":  2714,
+        "sha256":  "a0303b1feb509e8d61a21dd949bd0abae4aef79812d46969adb8650935f5f8aa"
+    },
+    {
+        "file":  "lib/i18n/runtime.ts",
+        "bytes":  2522,
+        "sha256":  "c10d5b4245b1018261ada8b20e47b28f06555b01b837a259bb8908b1a97d8c90"
+    },
+    {
+        "file":  "lib/i18n/landing-locales.ts",
+        "bytes":  1129,
+        "sha256":  "5684cb2392134cd439a29fcab239dd9ded03bf83577a998e00ea3d42c04b62f9"
+    },
+    {
+        "file":  "lib/i18n/index.ts",
+        "bytes":  190,
+        "sha256":  "6fdaeb1ee21b55147d2e44391f7bea29274bc2dd47ec505479147752e82fb772"
+    },
+    {
+        "file":  "locales/landing/en.json",
+        "bytes":  22003,
+        "sha256":  "8bcdd681d25518a72c3b3df330fc963a62ae209a423d2371f30e7e6ef009671c"
+    },
+    {
+        "file":  "locales/landing/ru.json",
+        "bytes":  36222,
+        "sha256":  "abb8b690d40ac327e3d61abcbaa515d05fc23908591bb300827a1b44eadf673b"
+    },
+    {
+        "file":  "locales/landing/uk.json",
+        "bytes":  35518,
+        "sha256":  "e093fc00924e97c9a637f9db36d4b97cdedd2292469b9d66bbfd44e2c036be20"
+    },
+    {
+        "file":  "PROJECT_STATE/i18n_exports/landing_en_master_review_20260719_213942.json",
+        "bytes":  63033,
+        "sha256":  "d70b403fba59c4917712975702fd9079b9b29d74d179b4d76807b9db4ac2cc02"
+    }
+]

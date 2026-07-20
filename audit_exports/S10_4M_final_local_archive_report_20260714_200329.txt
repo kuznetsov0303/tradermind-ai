@@ -1,0 +1,77 @@
+S10.4M FINAL LOCAL ARCHIVE PASS
+Generated=20260714_200329
+ProjectRoot=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai
+ArchiveSession=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4M_final_local_archive_20260714_200329
+SourceInventory=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4L_root_residue_inventory_20260714_194206.json
+
+=== RESULT ===
+TARGETS=54
+VERIFICATION_OK=true
+REMOVED_FROM_ROOT=54
+REMAINING_TARGETS=0
+CANONICAL_AND_PROTECTED_PATHS_PRESENT=true
+VPS_TOUCHED=false
+DEPLOY_PERFORMED=false
+RESTART_PERFORMED=false
+
+=== REMOVED ===
+.code-backups
+_archive
+_context_build.log
+_context_dev_3b2e_3b3.log
+_project_context
+_s10_0_paper_trading_install.py
+001-clean-env-signals-v2.ps1
+333333.ps1
+dashboard-current.tsx
+deploy_stock_engine
+landing-current.txt
+landing-pricing-current.tsx
+landing-pricing-current.txt
+legal-pages-bundle.txt
+market-alerts-route.txt
+metadata-logo-bundle.txt
+premium-recolor-landing-safe.ps1
+S10_4J_controlled_archive_and_clean_root.ps1
+S10_4J_resume_verify_and_clean_root_FIXED.ps1
+S10_4K_final_local_root_cleanup_and_ops_dedupe.ps1
+S10_4L_final_root_residue_classification.ps1
+S10_4L_final_root_residue_classification_FIXED.ps1
+s511b_restore_again
+s58_start_scripts_fixed
+s58_start_scripts_v2_fixed
+s810a_trade_management_blocks.txt
+s811_dashboard_signals_snippet.txt
+s811_signal_cockpit_pinpoint.txt
+s811d2_local_502_body.txt
+s812b_forward_report_live_check.txt
+s812c_current_forward_report_shape.txt
+s813_final_verification.txt
+s813_post_close_evidence_validation.txt
+s814a_elite_gate_validation.txt
+s814a_selector_quality_pinpoint.txt
+s814b_focused_service_check.txt
+s814b_permission_fix_validation.txt
+s814b_setup_learning_validation.txt
+s814c_learning_selector_validation.txt
+s814d_investor_dashboard_validation.txt
+s814e_admin_hub_pinpoint.txt
+s815a_clean_elite_ledger_pinpoint.txt
+s815a_clean_elite_ledger_validation.txt
+s815b_clean_elite_investor_validation.txt
+s815c_clean_elite_live_timer_validation.txt
+s816a_elite_gate_calibration_pinpoint.txt
+s816a1_forward_elite_test_validation.txt
+s816a2_ledger_split_validation.txt
+s819a_strategy_registry_local.ps1
+s819a_strategy_registry_local_nocd.ps1
+s820a_night_calibration_local.ps1
+s824a_cockpit_root.json
+s824a_symbol_SRFM.json
+Supabase Snippet Untitled query.csv
+
+=== REMAINING TARGETS ===
+
+=== OUTPUTS ===
+Manifest=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai-history\S10_4M_final_local_archive_20260714_200329\S10_4M_archive_manifest_20260714_200329.json
+FinalInventory=C:\Users\milli\OneDrive\Рабочий стол\tradermind\tradermind-ai\audit_exports\S10_4M_final_root_inventory_20260714_200329.json
