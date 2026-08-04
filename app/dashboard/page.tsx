@@ -16952,14 +16952,25 @@ const downloadTradesXlsx = () => {
       {t.journal.deleteTradeButton}
     </button>
 
-    <div className="col-span-2 text-right text-xs text-white/35 xl:col-span-4">
+    <button
+      type="button"
+      onClick={() => handleOpenTradeScreenshots(trade)}
+      disabled={
+        tradeScreenshots.filter(
+          (screenshot) => screenshot.trade_id === trade.id
+        ).length === 0
+      }
+      className="col-span-2 justify-self-end rounded-md px-1 text-right text-xs text-white/35 transition hover:text-cyan-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-300/70 disabled:cursor-default disabled:hover:text-white/35 xl:col-span-4"
+      aria-label={t.journal.openScreenshots}
+    >
+
       {
         tradeScreenshots.filter(
           (screenshot) => screenshot.trade_id === trade.id
         ).length
       }{" "}
       {t.journal.chartScreenshotsLabel}
-    </div>
+    </button>
   </div>
 </div>
 
